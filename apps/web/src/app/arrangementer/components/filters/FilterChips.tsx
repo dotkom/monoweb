@@ -2,7 +2,7 @@
 
 import type { EventType, Group } from "@dotkomonline/types"
 import { mapEventTypeToLabel } from "@dotkomonline/types"
-import { Button, cn } from "@dotkomonline/ui"
+import { Button, cn, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import type { EventListViewMode } from "../EventList"
 
@@ -75,8 +75,8 @@ export const FilterChips = ({
   return (
     <div className="flex flex-wrap items-center gap-2 transition duration-500">
       {chips.map((chip) => (
-        <button
-          type="button"
+        <Button
+          variant="unstyled"
           key={`${chip.filterType}-${chip.value}`}
           onClick={() => onRemoveFilter(chip.filterType, chip.value)}
           className={cn(
@@ -87,9 +87,9 @@ export const FilterChips = ({
             "transition"
           )}
         >
-          <span>{chip.label}</span>
+          <Text element="span">{chip.label}</Text>
           <IconX className="size-4" />
-        </button>
+        </Button>
       ))}
 
       <Button onClick={onResetAll} variant="solid" size="sm" className="text-sm rounded-full px-3 py-1.5">

@@ -1,7 +1,16 @@
 "use client"
 
 import type { Group, GroupId } from "@dotkomonline/types"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, Label, TextInput, cn } from "@dotkomonline/ui"
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Label,
+  Text,
+  TextInput,
+  cn,
+} from "@dotkomonline/ui"
 import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
 import { useMemo, useState } from "react"
 
@@ -39,9 +48,12 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
         <div className="flex items-center gap-2 h-5.5">
           <Label className="cursor-pointer">Arrangør</Label>
           {value.length > 0 && (
-            <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+            <Text
+              element="span"
+              className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full"
+            >
               {value.length}
-            </span>
+            </Text>
           )}
         </div>
         <IconChevronDown className="size-[1.25em] transition-transform" />
@@ -69,9 +81,9 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
             {filtered.map((group) => {
               const isSelected = value.includes(group.slug)
               return (
-                <button
+                <Button
+                  variant="unstyled"
                   key={group.slug}
-                  type="button"
                   onClick={() => handleToggle(group.slug)}
                   className={cn(
                     "flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors",
@@ -80,9 +92,9 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                       : "hover:bg-gray-100 dark:hover:bg-stone-800"
                   )}
                 >
-                  <span>{group.abbreviation}</span>
+                  <Text element="span">{group.abbreviation}</Text>
                   {isSelected && <IconCheck className="size-4" />}
-                </button>
+                </Button>
               )
             })}
           </div>

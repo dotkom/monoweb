@@ -1,7 +1,7 @@
 "use client"
 
 import { type EventType, EventTypeSchema, mapEventTypeToLabel } from "@dotkomonline/types"
-import { Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Label, cn } from "@dotkomonline/ui"
+import { Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Label, Text, cn } from "@dotkomonline/ui"
 import { IconChevronDown } from "@tabler/icons-react"
 
 interface TypeFilterProps {
@@ -35,9 +35,12 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
         <div className="flex items-center gap-2 h-5.5">
           <Label className="cursor-pointer">Kategori</Label>
           {value.length > 0 && (
-            <span className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full">
+            <Text
+              element="span"
+              className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full"
+            >
               {value.length}
-            </span>
+            </Text>
           )}
         </div>
         <IconChevronDown className="size-[1.25em] transition-transform" />

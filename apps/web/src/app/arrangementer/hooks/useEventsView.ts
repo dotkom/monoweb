@@ -10,8 +10,11 @@ export const useEventsView = () => {
 
   const view = useMemo<EventsView>(() => {
     const viewParam = searchParams.get("view")
-    if (viewParam === "month") return "month"
-    if (viewParam === "week") return "week"
+
+    if (viewParam === "month" || viewParam === "week") {
+      return viewParam
+    }
+
     return "list"
   }, [searchParams])
 
