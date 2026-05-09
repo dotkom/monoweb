@@ -112,7 +112,7 @@ const EventPage = () => {
         value={tabValue}
         onValueChange={(nextView) => {
           if (nextView === "calendar") {
-            navigateToView("week")
+            navigateToView("month")
           } else {
             navigateToView("list")
           }
@@ -218,18 +218,6 @@ const EventPage = () => {
                 <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 rounded-lg shrink-0">
                   <Button
                     variant="unstyled"
-                    onClick={() => navigateToView("week")}
-                    className={cn(
-                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
-                      view === "week"
-                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
-                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
-                    )}
-                  >
-                    Uke
-                  </Button>
-                  <Button
-                    variant="unstyled"
                     onClick={() => navigateToView("month")}
                     className={cn(
                       "px-3 py-1.5 rounded text-sm font-medium transition-colors",
@@ -240,6 +228,18 @@ const EventPage = () => {
                   >
                     Måned
                   </Button>
+                  <Button
+                    variant="unstyled"
+                    onClick={() => navigateToView("week")}
+                    className={cn(
+                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
+                      view === "week"
+                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
+                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
+                    )}
+                  >
+                    Uke
+                  </Button>
                 </div>
                 <div className="xs:hidden">
                   <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
@@ -247,11 +247,11 @@ const EventPage = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
-                      <SelectItem value="week" className="h-8 rounded-md">
-                        <Text element="span">Uke</Text>
-                      </SelectItem>
                       <SelectItem value="month" className="h-8 rounded-md">
                         <Text element="span">Måned</Text>
+                      </SelectItem>
+                      <SelectItem value="week" className="h-8 rounded-md">
+                        <Text element="span">Uke</Text>
                       </SelectItem>
                     </SelectContent>
                   </Select>
