@@ -58,8 +58,8 @@ export const auth0 = new Auth0Client({
   },
   session: {
     rolling: true,
-    inactivityDuration: hoursToSeconds(24 * 7),
-    absoluteDuration: hoursToSeconds(24 * 30),
+    absoluteDuration: hoursToSeconds(24 * 90),
+    inactivityDuration: hoursToSeconds(24 * 30),
   },
   tokenRefreshBuffer: minutesToSeconds(1),
   routes: {
