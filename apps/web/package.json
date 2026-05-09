@@ -32,7 +32,7 @@
     "@radix-ui/react-navigation-menu": "^1.2.13",
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-scroll-area": "^1.2.10",
-    "@sentry/nextjs": "^10.40.0",
+    "@sentry/nextjs": "^10.52.0",
     "@splinetool/react-spline": "^4.0.0",
     "@splinetool/runtime": "^1.9.98",
     "@tabler/icons-react": "^3.35.0",
