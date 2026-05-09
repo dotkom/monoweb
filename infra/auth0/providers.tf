@@ -10,15 +10,15 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.86"
+      version = "~> 6.44"
     }
     doppler = {
       source  = "DopplerHQ/doppler"
-      version = "~> 1.21.0"
+      version = "~> 1.21.2"
     }
     auth0 = {
       source  = "auth0/auth0"
-      version = "~> 1.14.0"
+      version = "~> 1.45.0"
     }
   }
 }

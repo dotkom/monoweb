@@ -6,7 +6,7 @@ resource "auth0_email_provider" "amazon_ses_email_provider" {
   credentials {
     access_key_id     = aws_iam_access_key.auth0_ses_emailer.id
     secret_access_key = aws_iam_access_key.auth0_ses_emailer.secret
-    region            = data.aws_region.current.name
+    region            = data.aws_region.current.region
   }
 }
 
