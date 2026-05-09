@@ -3,9 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useMemo, useState } from "react"
-
 import type { EventFilterQuery } from "@dotkomonline/types"
-
 import {
   Button,
   Drawer,
@@ -22,30 +20,24 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Text,
   Title,
   cn,
 } from "@dotkomonline/ui"
-
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
-
 import { useTRPC } from "@/utils/trpc/client"
 import { getCurrentUTC } from "@dotkomonline/utils"
-
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
-
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
-
 import { FilterChips } from "./components/filters/FilterChips"
 import { GroupFilter } from "./components/filters/GroupFilter"
 import { SearchInput } from "./components/filters/SearchInput"
 import { SortFilter } from "./components/filters/SortFilter"
 import { TypeFilter } from "./components/filters/TypeFilter"
-
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "./components/queries"
-
 import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
@@ -108,8 +100,7 @@ const EventPage = () => {
   const activeFilterCount =
     filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
 
-  // main tab value is either "list" or "cal"
-  const mainTabValue = isCalendar ? "cal" : "list"
+  const tabValue = isCalendar ? "calendar" : "list"
 
   return (
     <div className="flex flex-col gap-4">
@@ -118,13 +109,12 @@ const EventPage = () => {
       </Title>
 
       <Tabs
-        value={mainTabValue}
-        onValueChange={(v) => {
-          // when switching to calendar, default to week view
-          if (v === "cal") {
+        value={tabValue}
+        onValueChange={(nextView) => {
+          if (nextView === "calendar") {
             navigateToView("week")
           } else {
-            navigateToView(v as EventsView)
+            navigateToView("list")
           }
         }}
       >
@@ -135,7 +125,7 @@ const EventPage = () => {
                 <IconLayoutList className="mr-2 size-5" />
                 Liste
               </TabsTrigger>
-              <TabsTrigger value="cal" className="px-3 w-fit min-w-0 min-h-0">
+              <TabsTrigger value="calendar" className="px-3 w-fit min-w-0 min-h-0">
                 <IconCalendarMonth className="mr-2 size-5" />
                 Kalender
               </TabsTrigger>
@@ -170,7 +160,12 @@ const EventPage = () => {
                       <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
                         <div>
                           <div className="flex flex-col gap-2">
-                            <span className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">Sorter</span>
+                            <Text
+                              element="span"
+                              className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm"
+                            >
+                              Sorter
+                            </Text>
                             <SortFilter
                               value={filters.viewModeSort}
                               onChange={(viewModeSort) => updateFilters({ viewModeSort })}
@@ -221,8 +216,8 @@ const EventPage = () => {
             {isCalendar && (
               <>
                 <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 rounded-lg shrink-0">
-                  <button
-                    type="button"
+                  <Button
+                    variant="unstyled"
                     onClick={() => navigateToView("week")}
                     className={cn(
                       "px-3 py-1.5 rounded text-sm font-medium transition-colors",
@@ -232,9 +227,9 @@ const EventPage = () => {
                     )}
                   >
                     Uke
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="unstyled"
                     onClick={() => navigateToView("month")}
                     className={cn(
                       "px-3 py-1.5 rounded text-sm font-medium transition-colors",
@@ -244,7 +239,7 @@ const EventPage = () => {
                     )}
                   >
                     Måned
-                  </button>
+                  </Button>
                 </div>
                 <div className="xs:hidden">
                   <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
@@ -253,10 +248,10 @@ const EventPage = () => {
                     </SelectTrigger>
                     <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
                       <SelectItem value="week" className="h-8 rounded-md">
-                        Uke
+                        <Text element="span">Uke</Text>
                       </SelectItem>
                       <SelectItem value="month" className="h-8 rounded-md">
-                        Måned
+                        <Text element="span">Måned</Text>
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -314,16 +309,25 @@ const EventPage = () => {
                 viewMode={filters.viewModeSort}
                 groups={groups ?? []}
                 onRemoveFilter={(type, value) => {
-                  if (type === "search") updateFilters({ search: "" })
-                  if (type === "type")
+                  if (type === "search") {
+                    updateFilters({ search: "" })
+                  }
+
+                  if (type === "type") {
                     updateFilters({
-                      types: filters.types.filter((t) => t !== value),
+                      types: filters.types.filter((filterType) => filterType !== value),
                     })
-                  if (type === "group")
+                  }
+
+                  if (type === "group") {
                     updateFilters({
-                      groups: filters.groups.filter((g) => g !== value),
+                      groups: filters.groups.filter((filterGroup) => filterGroup !== value),
                     })
-                  if (type === "sort") updateFilters({ viewModeSort: "ATTENDANCE" })
+                  }
+
+                  if (type === "sort") {
+                    updateFilters({ viewModeSort: "ATTENDANCE" })
+                  }
                 }}
                 onResetAll={resetFilters}
               />
@@ -343,7 +347,7 @@ const EventPage = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="cal">
+        <TabsContent value="calendar">
           <div className="mt-4">
             {view === "week" && (
               <EventWeekCalendar year={calendarNavigation.year} weekNumber={calendarNavigation.week} />
