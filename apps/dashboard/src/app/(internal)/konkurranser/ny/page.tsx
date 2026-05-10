@@ -1,19 +1,20 @@
 "use client"
 
 import { Stack } from "@mantine/core"
-import { useEventWriteForm } from "../components/write-form"
-import { useCreateEventMutation } from "../mutations"
+import { useContestWriteForm } from "../components/contest-write-form"
+import { useCreateContestMutation } from "../mutations"
 
-export default function Page() {
-  const create = useCreateEventMutation()
-  const FormComponent = useEventWriteForm({
+export default function CreateContestPage() {
+  const create = useCreateContestMutation()
+  const FormComponent = useContestWriteForm({
     onSubmit: (data) => {
-      const { hostingGroupIds, companyIds, ...event } = data
       create.mutate({
-        groupIds: hostingGroupIds,
-        companyIds,
-        event,
-        parentId: event.parentId,
+        name: data.name,
+        description: data.description || null,
+        startDate: data.startDate ?? null,
+        resultType: data.resultType,
+        resultOrder: data.resultOrder,
+        groupId: data.groupId,
       })
     },
   })

@@ -1,558 +1,212 @@
-import { env } from "@/lib/env"
-import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib/notifications"
+import { useQueryNotification } from "@/lib/notifications"
 import { useTRPC } from "@/lib/trpc-client"
-import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 
-export const useCreateEventMutation = () => {
+export const useCreateContestMutation = () => {
   const trpc = useTRPC()
   const router = useRouter()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
-    trpc.event.create.mutationOptions({
+    trpc.contest.create.mutationOptions({
       onMutate: () => {
         notification.loading({
-          title: "Oppretter arrangement...",
-          message: "Arrangementet blir opprettet, og du vil bli videresendt til arrangementsiden.",
+          title: "Oppretter konkurranse...",
+          message: "Konkurransen blir opprettet.",
         })
       },
       onSuccess: async (data) => {
         notification.complete({
-          title: "Arrangement opprettet",
-          message: `Arrangementet "${data.event.title}" har blitt opprettet.`,
+          title: "Konkurranse opprettet",
+          message: `Konkurransen "${data.name}" har blitt opprettet.`,
         })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.all.queryKey() })
-
-        router.replace(`/arrangementer/${data.event.id}`)
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
+        router.replace(`/konkurranser/${data.id}`)
       },
       onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
-          message: `En feil oppsto under opprettelse av arrangementet: ${err.toString()}.`,
+          message: `En feil oppsto under opprettelse av konkurransen: ${err.toString()}.`,
         })
       },
     })
   )
 }
 
-export const useUpdateEventMutation = () => {
+export const useUpdateContestMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
-
   return useMutation(
-    trpc.event.edit.mutationOptions({
+    trpc.contest.update.mutationOptions({
       onMutate: () => {
         notification.loading({
-          title: "Oppdaterer arrangement...",
-          message: "Arrangementet blir oppdatert.",
+          title: "Oppdaterer konkurranse...",
+          message: "Konkurransen blir oppdatert.",
         })
       },
       onSuccess: async (data) => {
         notification.complete({
-          title: "Arrangement oppdatert",
-          message: `Arrangementet "${data.event.title}" har blitt oppdatert.`,
+          title: "Konkurranse oppdatert",
+          message: `Konkurransen "${data.name}" har blitt oppdatert.`,
         })
-
-        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.event.id))
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.id))
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
       },
       onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
-          message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
+          message: `En feil oppsto under oppdatering av konkurransen: ${err.toString()}.`,
         })
       },
     })
   )
 }
 
-export const useDeleteEventMutation = () => {
+export const useDeleteContestMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
-
   return useMutation(
-    trpc.event.delete.mutationOptions({
+    trpc.contest.delete.mutationOptions({
       onMutate: () => {
         notification.loading({
-          title: "Sletter arrangement...",
-          message: "Arrangementet blir slettet.",
+          title: "Sletter konkurranse...",
+          message: "Konkurransen blir slettet.",
+        })
+      },
+      onSuccess: async () => {
+        notification.complete({
+          title: "Konkurranse slettet",
+          message: "Konkurransen har blitt slettet.",
+        })
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under sletting av konkurransen: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
+export const useAddContestantMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+  return useMutation(
+    trpc.contest.contestant.add.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Legger til deltaker...",
+          message: "Deltakeren blir lagt til.",
         })
       },
       onSuccess: async (data) => {
         notification.complete({
-          title: "Arrangement slettet",
-          message: `Arrangementet "${data.title}" har blitt slettet.`,
+          title: "Deltaker lagt til",
+          message: "Deltakeren har blitt lagt til i konkurransen.",
         })
-
-        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.id))
-        await queryClient.invalidateQueries({ queryKey: trpc.event.all.queryKey() })
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.contestId))
       },
       onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
-          message: `En feil oppsto under sletting av arrangementet: ${err.toString()}.`,
+          message: `En feil oppsto under tillegging av deltaker: ${err.toString()}.`,
         })
       },
     })
   )
 }
 
-export const useDeletePoolMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "delete",
-  })
-
-  return useMutation(
-    trpc.event.attendance.deletePool.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-    })
-  )
-}
-
-export const useCreatePoolMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "create",
-  })
-
-  return useMutation(
-    trpc.event.attendance.createPool.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-    })
-  )
-}
-
-export const useUpdatePoolMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.updatePool.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-    })
-  )
-}
-
-export const useAdminForEventMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const notification = useQueryNotification()
-
-  return useMutation(
-    trpc.event.attendance.adminRegisterForEvent.mutationOptions({
-      onMutate: () => {
-        notification.loading({
-          title: "Melder på bruker",
-          message: "Brukeren blir meldt på arrangementet.",
-        })
-      },
-      onSuccess: async () => {
-        notification.complete({
-          title: "Påmelding vellykket",
-          message: "Bruker ble påmeldt arrangementet.",
-        })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-      onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under påmelding: ${err.toString()}.`,
-        })
-      },
-    })
-  )
-}
-
-export const useRegisterForEventMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const notification = useQueryNotification()
-
-  return useMutation(
-    trpc.event.attendance.registerForEvent.mutationOptions({
-      onMutate: () => {
-        notification.loading({
-          title: "Melder på bruker",
-          message: "Brukeren blir meldt på arrangementet.",
-        })
-      },
-      onSuccess: async () => {
-        notification.complete({
-          title: "Påmelding vellykket",
-          message: "Bruker ble påmeldt arrangementet.",
-        })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-      onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under påmelding: ${err.toString()}.`,
-        })
-      },
-    })
-  )
-}
-
-export const useDeregisterForEventMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const notification = useQueryNotification()
-
-  return useMutation(
-    trpc.event.attendance.adminDeregisterForEvent.mutationOptions({
-      onMutate: () => {
-        notification.loading({
-          title: "Melder av bruker",
-          message: "Brukeren blir meldt av arrangementet.",
-        })
-      },
-      onSuccess: async () => {
-        notification.complete({
-          title: "Avmelding vellykket",
-          message: "Bruker ble meldt av arrangementet.",
-        })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-      onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under avmelding: ${err.toString()}.`,
-        })
-      },
-    })
-  )
-}
-
-export const useUpdateEventAttendanceMutation = () => {
+export const useRemoveContestantMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
-    trpc.event.attendance.registerAttendance.mutationOptions({
+    trpc.contest.contestant.remove.mutationOptions({
       onMutate: () => {
         notification.loading({
-          title: "Oppdaterer oppmøte...",
-          message: "Brukerens oppmøte blir oppdatert.",
+          title: "Fjerner deltaker...",
+          message: "Deltakeren blir fjernet.",
         })
       },
-      onSuccess: async (_data) => {
+      onSuccess: async (_data, variables) => {
         notification.complete({
-          title: "Oppmøte oppdatert",
-          message: "Oppmøte er registrert",
+          title: "Deltaker fjernet",
+          message: "Deltakeren har blitt fjernet fra konkurransen.",
         })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        // We need to invalidate broadly since we don't have contestId in the response
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.getWithContestants.queryKey() })
       },
       onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
-          message: `En feil oppsto under oppdatering av oppmøte: ${err.toString()}.`,
+          message: `En feil oppsto under fjerning av deltaker: ${err.toString()}.`,
         })
       },
     })
   )
 }
 
-export const useAddAttendanceMutation = () => {
+export const useUpdateContestantResultMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "create",
-  })
-
+  const notification = useQueryNotification()
   return useMutation(
-    trpc.event.addAttendance.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async (_, input) => {
-        complete()
-
-        await queryClient.invalidateQueries(trpc.event.get.queryOptions(input.eventId))
+    trpc.contest.contestant.updateResult.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer resultat...",
+          message: "Resultatet blir oppdatert.",
+        })
       },
-    })
-  )
-}
-
-export const useUpdateAttendancePaymentMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.updateAttendancePayment.mutationOptions({
-      onError: fail,
-      onMutate: loading,
       onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+        notification.complete({
+          title: "Resultat oppdatert",
+          message: "Resultatet har blitt oppdatert.",
+        })
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.getWithContestants.queryKey() })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under oppdatering av resultatet: ${err.toString()}.`,
+        })
       },
     })
   )
 }
 
-export const useUpdateAttendanceMutation = () => {
+export const useSetWinnerMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
+  const notification = useQueryNotification()
   return useMutation(
-    trpc.event.attendance.updateAttendance.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+    trpc.contest.setWinner.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Setter vinner...",
+          message: "Vinneren blir satt.",
+        })
       },
-    })
-  )
-}
-
-export const useRefundAttendeeMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.cancelAttendeePayment.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey({}) })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-      },
-    })
-  )
-}
-
-export const useCreateAttendeePaymentAttendeeMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.startAttendeePayment.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-    })
-  )
-}
-
-export const useUpdateSelectionResponsesMutation = () => {
-  const trpc = useTRPC()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.updateSelectionResponses.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: complete,
-    })
-  )
-}
-
-export const useCreateFeedbackFormMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "create",
-  })
-
-  return useMutation(
-    trpc.event.feedback.createForm.mutationOptions({
-      onError: fail,
-      onMutate: loading,
       onSuccess: async (data) => {
-        complete()
-
-        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
-      },
-    })
-  )
-}
-
-export const useCreateFeedbackFormCopyMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "create",
-  })
-
-  return useMutation(
-    trpc.event.feedback.createFormCopy.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async (data) => {
-        complete()
-
-        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
-      },
-    })
-  )
-}
-
-export const useUpdateFeedbackFormMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.feedback.updateForm.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async (data) => {
-        complete()
-
-        await queryClient.invalidateQueries(trpc.event.feedback.findFormByEventId.queryOptions(data.eventId))
-      },
-    })
-  )
-}
-
-export const useDeleteFeedbackFormMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "delete",
-  })
-
-  return useMutation(
-    trpc.event.feedback.deleteForm.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({
-          queryKey: trpc.event.feedback.findFormByEventId.queryKey(),
-        })
-      },
-    })
-  )
-}
-
-export const useNotifyAttendeesMutation = () => {
-  const trpc = useTRPC()
-  const notification = useQueryNotification()
-
-  return useMutation(
-    trpc.event.attendance.notifyAttendees.mutationOptions({
-      onMutate: () => {
-        notification.loading({
-          title: "Sender e-post...",
-          message: "E-posten blir sendt til alle påmeldte.",
-        })
-      },
-      onSuccess: () => {
         notification.complete({
-          title: "E-post sendt",
-          message: "E-posten ble sendt til alle påmeldte.",
+          title: "Vinner satt",
+          message: "Vinneren har blitt satt for konkurransen.",
         })
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.id))
+        await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
       },
       onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
-          message: `En feil oppsto under sending av e-post: ${err.toString()}.`,
+          message: `En feil oppsto under setting av vinner: ${err.toString()}.`,
         })
       },
     })
   )
-}
-
-export const useUpdateAttendeeReservedMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { fail, loading, complete } = useQueryGenericMutationNotification({
-    method: "update",
-  })
-
-  return useMutation(
-    trpc.event.attendance.adminUpdateAtteendeeReserved.mutationOptions({
-      onError: fail,
-      onMutate: loading,
-      onSuccess: async () => {
-        complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
-      },
-    })
-  )
-}
-
-export const useEventFileUploadMutation = () => {
-  const trpc = useTRPC()
-
-  const createFileUploadMutation = useMutation(trpc.event.createFileUpload.mutationOptions())
-
-  return async (file: File) => {
-    const presignedPost = await createFileUploadMutation.mutateAsync({
-      filename: file.name,
-      contentType: file.type,
-    })
-
-    return await uploadFileToS3PresignedPost(env.AWS_CLOUDFRONT_URL, presignedPost, file)
-  }
 }

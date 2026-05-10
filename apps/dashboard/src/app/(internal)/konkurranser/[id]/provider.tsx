@@ -1,15 +1,19 @@
 "use client"
 
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { Contest, ContestantDetail } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
 
-/** Context consisting of everything required to use and render the form */
-export const EventContext = createContext<EventWithAttendance | null>(null)
+export interface ContestContextValue {
+  contest: Contest
+  contestants: ContestantDetail[]
+}
 
-export const useEventContext = () => {
-  const ctx = useContext(EventContext)
+export const ContestContext = createContext<ContestContextValue | null>(null)
+
+export const useContestContext = () => {
+  const ctx = useContext(ContestContext)
   if (ctx === null) {
-    throw new Error("useEventWithAttendancesContext called without Provider in tree")
+    throw new Error("useContestContext called without Provider in tree")
   }
   return ctx
 }

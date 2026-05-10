@@ -1,134 +1,82 @@
 "use client"
 
-import { env } from "@/lib/env"
-import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
+import { Badge, Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
-  IconAlertTriangleFilled,
   IconArrowLeft,
-  IconArrowUpRight,
-  IconCalendarEvent,
   IconCancel,
-  IconCreditCard,
-  IconForms,
   IconListDetails,
-  IconSelector,
   IconTrash,
-  IconUser,
+  IconTrophy,
+  IconUsers,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useDeleteEventMutation } from "../mutations"
-import { useEventFeedbackFormGetQuery } from "../queries"
-import { AttendancePage } from "./attendance-page"
-import { AttendeesPage } from "./attendees-page"
-import { EventEditCard } from "./edit-card"
-import { FeedbackPage } from "./feedback-page"
-import { PaymentPage } from "./payment-page"
-import { useEventContext } from "./provider"
-import { SelectionsPage } from "./selections-page"
+import { useDeleteContestMutation } from "../mutations"
+import { InfoPage } from "./info-page"
+import { DeltagarePage } from "./deltagere-page"
+import { ResultatPage } from "./resultat-page"
+import { useContestContext } from "./provider"
 
-const SIDEBAR_LINKS = [
-  {
-    icon: IconListDetails,
-    label: "Info",
-    slug: "info",
-    component: EventEditCard,
-  },
-  {
-    icon: IconForms,
-    label: "Tilbakemeldingsskjema",
-    slug: "tilbakemeldingsskjema",
-    component: FeedbackPage,
-  },
-  {
-    icon: IconCalendarEvent,
-    label: "Påmelding",
-    slug: "pamelding",
-    component: AttendancePage,
-  },
-  {
-    icon: IconUser,
-    label: "Påmeldte",
-    slug: "pameldte",
-    component: AttendeesPage,
-  },
-  {
-    icon: IconSelector,
-    label: "Valg",
-    slug: "valg",
-    component: SelectionsPage,
-  },
-  {
-    icon: IconCreditCard,
-    label: "Betaling",
-    slug: "betaling",
-    component: PaymentPage,
-  },
+const TABS = [
+  { icon: IconListDetails, label: "Info", slug: "info", component: InfoPage },
+  { icon: IconUsers, label: "Deltagere", slug: "deltagere", component: DeltagarePage },
+  { icon: IconTrophy, label: "Resultat", slug: "resultat", component: ResultatPage },
 ]
 
-export default function EventWithAttendancesPage() {
-  const { event, attendance } = useEventContext()
+export default function ContestDetailPage() {
+  const { contest, contestants } = useContestContext()
   const router = useRouter()
-
-  const deleteEvent = useDeleteEventMutation()
+  const deleteContest = useDeleteContestMutation()
   const [opened, { open, close }] = useDisclosure(false)
-
   const searchParams = useSearchParams()
-  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+  const currentTab = searchParams.get("tab") || TABS[0].slug
 
-  const hasAttendance = Boolean(attendance)
-  const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
+  const winner = contest.winnerContestantId
+    ? contestants.find((c) => c.id === contest.winnerContestantId)
+    : null
 
-  const { data: feedbackForm, isLoading: feedbackFormIsLoading } = useEventFeedbackFormGetQuery(event.id)
-
-  const now = getCurrentUTC()
-  const hasFeedbackForm = Boolean(feedbackForm)
-  const isCompanyEvent = event.type === "COMPANY"
-  const hasEventEnded = event.end < now
+  const winnerName = winner
+    ? winner.team
+      ? winner.team.name
+      : winner.user?.name ?? "Ukjent"
+    : null
 
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
-    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
-    router.replace(`/arrangementer/${event.id}?${params.toString()}`)
+    params.set("tab", value ?? TABS[0].slug)
+    router.replace(`/konkurranser/${contest.id}?${params.toString()}`)
   }
 
   return (
     <Stack>
-      {hasAttendance && !hasPools && <WarningBox content="Påmeldingen har ingen påmeldingsgrupper" />}
-      {!feedbackFormIsLoading && isCompanyEvent && !hasFeedbackForm && !hasEventEnded && (
-        <WarningBox content="Arrangementet mangler tilbakemeldingsskjema. Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over" />
+      {winnerName && (
+        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="yellow.1" p="md">
+          <Group gap="xs">
+            <IconTrophy size={20} color="gold" />
+            <Text fw={600}>Vinner: {winnerName}</Text>
+          </Group>
+        </Box>
       )}
 
-      <Group align="center">
+      <Group align="center" justify="space-between">
         <Group>
           <Button
             variant="light"
-            onClick={() => router.push("/arrangementer")}
+            onClick={() => router.push("/konkurranser")}
             leftSection={<IconArrowLeft height={14} width={14} />}
           >
             Tilbake
           </Button>
-          <Button
-            variant="light"
-            rightSection={<IconArrowUpRight height={14} width={14} />}
-            component="a"
-            href={createAbsoluteEventPageUrl(env.NEXT_PUBLIC_WEB_URL, event.id, event.title)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Se arrangementet
-          </Button>
         </Group>
 
         <Group>
-          <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette ${event.title}?`} centered>
+          <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette "${contest.name}"?`} centered>
             <Group>
               <Button
                 color="red"
                 onClick={() => {
-                  deleteEvent.mutate({ id: event.id })
-                  router.back()
+                  deleteContest.mutate({ id: contest.id })
+                  router.push("/konkurranser")
                 }}
                 leftSection={<IconTrash height={14} width={14} />}
               >
@@ -147,18 +95,19 @@ export default function EventWithAttendancesPage() {
       </Group>
 
       <Group>
-        <Title>{event.title}</Title>
+        <Title>{contest.name}</Title>
+        <Badge variant="light">{contest.groupId}</Badge>
       </Group>
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
+          {TABS.map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}
         </Tabs.List>
-        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
+        {TABS.map(({ slug, component: Component }) => (
           <Tabs.Panel mt="md" key={slug} value={slug}>
             <Component />
           </Tabs.Panel>
@@ -167,14 +116,3 @@ export default function EventWithAttendancesPage() {
     </Stack>
   )
 }
-
-const WarningBox = ({ content }: { content: string }) => (
-  <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
-    <Group p="md" gap="xs">
-      <IconAlertTriangleFilled color="white" size={24} />
-      <Text c="white" size="lg">
-        {content}
-      </Text>
-    </Group>
-  </Box>
-)
