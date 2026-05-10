@@ -67,6 +67,7 @@ export const auth0 = new Auth0Client({
     login: "/api/auth/authorize",
     logout: "/api/auth/logout",
     callback: "/api/auth/callback/auth0",
+    accessToken: env.NEXT_PUBLIC_ACCESS_TOKEN_ROUTE,
   },
   signInReturnToPath: "/",
 

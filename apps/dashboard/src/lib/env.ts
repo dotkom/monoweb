@@ -14,6 +14,7 @@ export const env = defineConfiguration({
     prd: "https://rpc.online.ntnu.no",
     dev: "http://localhost:4444",
   }),
+  NEXT_PUBLIC_ACCESS_TOKEN_ROUTE: config(process.env.NEXT_PUBLIC_ACCESS_TOKEN_ROUTE, "/api/auth/access-token"),
   RPC_HOST: config(process.env.RPC_HOST, {
     prd: "https://rpc.online.ntnu.no",
     dev: "http://localhost:4444",

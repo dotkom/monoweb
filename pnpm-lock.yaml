@@ -18,8 +18,8 @@ importers:
   apps/dashboard:
     dependencies:
       '@auth0/nextjs-auth0':
-        specifier: ^4.19.0
-        version: 4.19.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: ^4.20.0
+        version: 4.20.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1039.0
@@ -631,8 +631,8 @@ importers:
   apps/web:
     dependencies:
       '@auth0/nextjs-auth0':
-        specifier: ^4.19.0
-        version: 4.19.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: ^4.20.0
+        version: 4.20.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1039.0
@@ -1277,8 +1277,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@auth0/nextjs-auth0@4.19.0':
-    resolution: {integrity: sha512-v+uO+ajKOPBfXRq+hR+Ubqb3mYxGwkhc+CsFOstQmKMJ1i9jUWx8m+rj3XYDKBoCE5bo7jCdo3DKjv4KVb/Rhg==}
+  '@auth0/nextjs-auth0@4.20.0':
+    resolution: {integrity: sha512-F6kpRKcLUqtxE622+oazsXTbay+19G+jhIN8IamiGHGLjNdFgaDwgHCaWnZNuHQrhvlqoGLpJ+5bjfGh4v38cw==}
     peerDependencies:
       next: ^14.2.35 || ~15.0.7 || ~15.1.11 || ~15.2.8 || ~15.3.8 || ~15.4.10 || ~15.5.9 || ^16.0.10
       react: ^18.0.0 || ~19.0.1 ||  ~19.1.2 || ^19.2.1
@@ -8831,7 +8831,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@auth0/nextjs-auth0@4.19.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@auth0/nextjs-auth0@4.20.0(next@15.5.16(@opentelemetry/api@1.9.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
@@ -15583,7 +15583,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
-      styled-jsx: 5.1.6(react@19.2.5)
+      styled-jsx: 5.1.6(@babel/core@7.28.6)(react@19.2.5)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.16
       '@next/swc-darwin-x64': 15.5.16
@@ -16750,11 +16750,6 @@ snapshots:
       react: 19.2.5
     optionalDependencies:
       '@babel/core': 7.28.6
-
-  styled-jsx@5.1.6(react@19.2.5):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.5
 
   sugarss@5.0.1(postcss@8.5.14):
     dependencies:
