@@ -33,7 +33,6 @@
     "@dotkomonline/utils": "workspace:*",
     "@fastify/cors": "^11.0.0",
     "@opentelemetry/api": "^1.9.0",
-    "@prisma/client": "^6.8.2",
     "@trpc/server": "11.8.1",
     "cheerio": "^1.2.0",
     "date-fns": "^4.1.0",

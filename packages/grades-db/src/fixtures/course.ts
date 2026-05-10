@@ -1,4 +1,4 @@
-import type { Prisma } from "../generated"
+import type { Prisma } from "../index"
 
 export const getCourseFixtures = () =>
   [
