@@ -9,7 +9,7 @@ import { useMemo, useState } from "react"
 import { useSetWinnerMutation, useUpdateContestantResultMutation } from "../mutations"
 import { useContestContext } from "./provider"
 
-const ScoreCell = ({ contestant }: { contestant: ContestantDetail }) => {
+const ScoreCell = ({ contestant, suffix }: { contestant: ContestantDetail; suffix?: string }) => {
   const updateResult = useUpdateContestantResultMutation()
   const [value, setValue] = useState<number | string>(contestant.resultValue ?? "")
 
@@ -27,8 +27,9 @@ const ScoreCell = ({ contestant }: { contestant: ContestantDetail }) => {
       onChange={setValue}
       onBlur={handleBlur}
       placeholder="—"
-      style={{ width: 100 }}
+      style={{ width: 120 }}
       allowDecimal={false}
+      suffix={suffix ? ` ${suffix}` : undefined}
     />
   )
 }
@@ -68,8 +69,15 @@ export const ResultatPage = () => {
       }),
       columnHelper.display({
         id: "score",
-        header: () => "Resultat",
-        cell: (info) => <ScoreCell contestant={info.row.original} />,
+        header: () =>
+          contest.resultType === "DURATION"
+            ? "Resultat (sekunder)"
+            : contest.resultType === "SCORE"
+              ? "Resultat (poeng)"
+              : "Resultat",
+        cell: (info) => <ScoreCell contestant={info.row.original} suffix={
+          contest.resultType === "DURATION" ? "s" : contest.resultType === "SCORE" ? "p" : undefined
+        } />,
       }),
       ...(contest.resultType === "WINNER"
         ? [

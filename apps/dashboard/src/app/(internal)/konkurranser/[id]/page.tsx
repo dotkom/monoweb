@@ -50,10 +50,10 @@ export default function ContestDetailPage() {
   return (
     <Stack>
       {winnerName && (
-        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="yellow.1" p="md">
+        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="var(--mantine-color-yellow-light)" p="md">
           <Group gap="xs">
-            <IconTrophy size={20} color="gold" />
-            <Text fw={600}>Vinner: {winnerName}</Text>
+            <IconTrophy size={20} />
+            <Text fw={600} c="var(--mantine-color-yellow-light-color)">Vinner: {winnerName}</Text>
           </Group>
         </Box>
       )}
