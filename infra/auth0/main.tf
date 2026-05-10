@@ -174,6 +174,7 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
     expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
+    leeway                       = 60 # 1 minute
 
     token_lifetime      = 7776000 # 90 days
     idle_token_lifetime = 2592000 # 30 days
@@ -458,6 +459,7 @@ resource "auth0_client" "monoweb_web" {
     expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
+    leeway                       = 60 # 1 minute
 
     token_lifetime      = 7776000 # 90 days
     idle_token_lifetime = 2592000 # 30 days
@@ -501,6 +503,7 @@ resource "auth0_client" "monoweb_dashboard" {
     expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
+    leeway                       = 60 # 1 minute
 
     token_lifetime      = 7776000 # 90 days
     idle_token_lifetime = 2592000 # 30 days
