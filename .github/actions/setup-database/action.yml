@@ -1,0 +1,42 @@
+# This action starts a local PostgreSQL service and creates a database user and database, migrates, and generates Prisma
+# client and TypedSQL artifacts locally.
+
+name: Setup database
+description: Start a local Postgres database.
+inputs:
+  database-url:
+    description: Database URL used by Prisma while generating TypedSQL.
+    required: false
+    default: postgresql://ow:owpassword123@localhost:5432/ow
+runs:
+  using: composite
+  steps:
+    - name: Start local PostgreSQL service
+      shell: bash
+      run: |
+        sudo service postgresql start
+        until pg_isready -U postgres; do sleep 1; done
+
+    - name: Create database user and database
+      shell: bash
+      run: |
+        sudo -u postgres psql -c "CREATE USER ow WITH PASSWORD 'owpassword123';"
+        sudo -u postgres psql -c "CREATE DATABASE ow WITH OWNER ow;"
+
+    - name: Export database URL
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+      run: echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
+
+    - name: Apply Prisma migrations
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+      run: pnpm -F @dotkomonline/db prisma migrate deploy
+
+    - name: Generate Prisma Client and TypedSQL
+      shell: bash
+      env:
+        DATABASE_URL: ${{ inputs.database-url }}
+      run: pnpm -F @dotkomonline/db generate
