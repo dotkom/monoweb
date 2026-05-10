@@ -1,23 +1,18 @@
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../src/generated"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+
   previewFeatures = ["relationJoins", "postgresqlExtensions"]
 }
 
 generator zod {
-  provider         = "zod-prisma-types"
-  output           = "../src/schemas"
-  prismaClientPath = "../generated"
-
-  useMultipleFiles = false
-  createInputTypes = false
-  addIncludeType   = false
-  addSelectType    = false
+  provider = "prisma-zod-generator"
+  output   = "../generated/schema"
+  config   = "../zod-generator.config.json"
 }
 
 datasource db {
   provider   = "postgresql"
-  url        = env("DATABASE_URL")
   extensions = [pg_trgm]
 }
 

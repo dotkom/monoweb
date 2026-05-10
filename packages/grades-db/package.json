@@ -11,6 +11,10 @@
     "./schemas": {
       "import": "./src/schemas.ts",
       "types": "./src/schemas.ts"
+    },
+    "./test-harness": {
+      "import": "./src/test-harness.ts",
+      "types": "./src/test-harness.ts"
     }
   },
   "scripts": {
@@ -26,21 +30,22 @@
   "dependencies": {
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
-    "@prisma/client": "^6.8.2",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@testcontainers/postgresql": "^11.5.1",
     "date-fns": "^4.1.0",
     "pg": "^8.16.0",
-    "zod": "^3.25.47",
-    "zod-prisma-types": "^3.2.4"
+    "prisma-zod-generator": "^2.1.4",
+    "zod": "^3.25.47"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.14",
     "@dotkomonline/config": "workspace:*",
     "@types/common-tags": "1.8.4",
-    "@types/node": "22.19.3",
+    "@types/node": "22.19.7",
     "@types/pg": "8.20.0",
     "common-tags": "1.8.2",
-    "prisma": "6.19.3",
+    "prisma": "7.8.0",
     "tsx": "4.21.0",
     "typescript": "5.9.3"
   }

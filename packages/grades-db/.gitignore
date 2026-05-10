@@ -2,5 +2,4 @@ node_modules
 # Keep environment variables out of version control
 .env
 
-src/schemas
-src/generated
+generated/schema/.prisma-zod-generator-manifest.json
