@@ -34,6 +34,7 @@ import { capitalizeFirstLetter, getCurrentUTC, getPunishmentExpiryDate, getStudy
 import {
   IconChefHatOff,
   IconEdit,
+  IconExternalLink,
   IconGenderBigender,
   IconLock,
   IconMail,
@@ -228,36 +229,34 @@ export function ProfilePage() {
 
         <div className="flex flex-col gap-2 grow">
           <div className="flex flex-row w-full justify-between">
-            <div className="flex flex-row gap-4 items-center">
-              <Title element="h1" className="font-semibold text-xl md:text-2xl">
-                {user.name}
-              </Title>
+            <Title element="h1" className="font-semibold text-xl md:text-2xl">
+              {user.name}
+            </Title>
+            <div className="flex flex-row gap-2 items-center">
+              {isUser && (
+                <Button
+                  element={Link}
+                  href="/innstillinger/profil"
+                  color="dark"
+                  icon={<IconEdit width={20} height={20} />}
+                  className="hidden gap-2 md:flex"
+                >
+                  Rediger profil
+                </Button>
+              )}
               {isAdmin && (
                 <Button
                   element={Link}
                   href={dashboardUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  variant="unstyled"
-                  className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
-                  title="Rediger arrangement"
+                  aria-label="Rediger"
+                  icon={<IconExternalLink width={20} height={20} />}
                 >
-                  <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
-                  <Text className="md:hidden">Rediger</Text>
+                  Administrer bruker
                 </Button>
               )}
             </div>
-            {isUser && (
-              <Button
-                element={Link}
-                href="/innstillinger/profil"
-                color="dark"
-                icon={<IconEdit width={20} height={20} />}
-                className="hidden gap-2 md:flex"
-              >
-                Rediger profil
-              </Button>
-            )}
           </div>
 
           <div className="flex flex-col text-sm gap-1 md:flex-row md:items-center md:gap-2">
