@@ -4,7 +4,7 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ContestWriteSchema } from "@dotkomonline/types"
-import { z } from "zod"
+import type { z } from "zod"
 import { validateContestWrite } from "../validation"
 
 const RESULT_TYPE_OPTIONS = [

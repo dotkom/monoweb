@@ -43,9 +43,7 @@ export const ResultatPage = () => {
       if (a.resultValue == null && b.resultValue == null) return 0
       if (a.resultValue == null) return 1
       if (b.resultValue == null) return -1
-      return contest.resultOrder === "ASC"
-        ? a.resultValue - b.resultValue
-        : b.resultValue - a.resultValue
+      return contest.resultOrder === "ASC" ? a.resultValue - b.resultValue : b.resultValue - a.resultValue
     })
     return withResults
   }, [contestants, contest.resultOrder])
@@ -75,9 +73,12 @@ export const ResultatPage = () => {
             : contest.resultType === "SCORE"
               ? "Resultat (poeng)"
               : "Resultat",
-        cell: (info) => <ScoreCell contestant={info.row.original} suffix={
-          contest.resultType === "DURATION" ? "s" : contest.resultType === "SCORE" ? "p" : undefined
-        } />,
+        cell: (info) => (
+          <ScoreCell
+            contestant={info.row.original}
+            suffix={contest.resultType === "DURATION" ? "s" : contest.resultType === "SCORE" ? "p" : undefined}
+          />
+        ),
       }),
       ...(contest.resultType === "WINNER"
         ? [

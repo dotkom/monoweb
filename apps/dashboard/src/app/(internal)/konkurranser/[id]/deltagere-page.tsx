@@ -92,9 +92,7 @@ export const DeltagarePage = () => {
     columns,
   })
 
-  const existingUserIds = contestants
-    .filter((c) => c.user)
-    .map((c) => c.userId!)
+  const existingUserIds = contestants.filter((c) => c.user).map((c) => c.userId!)
 
   return (
     <Stack>

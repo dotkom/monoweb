@@ -2,14 +2,7 @@
 
 import { Badge, Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import {
-  IconArrowLeft,
-  IconCancel,
-  IconListDetails,
-  IconTrash,
-  IconTrophy,
-  IconUsers,
-} from "@tabler/icons-react"
+import { IconArrowLeft, IconCancel, IconListDetails, IconTrash, IconTrophy, IconUsers } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDeleteContestMutation } from "../mutations"
 import { InfoPage } from "./info-page"
@@ -31,15 +24,9 @@ export default function ContestDetailPage() {
   const searchParams = useSearchParams()
   const currentTab = searchParams.get("tab") || TABS[0].slug
 
-  const winner = contest.winnerContestantId
-    ? contestants.find((c) => c.id === contest.winnerContestantId)
-    : null
+  const winner = contest.winnerContestantId ? contestants.find((c) => c.id === contest.winnerContestantId) : null
 
-  const winnerName = winner
-    ? winner.team
-      ? winner.team.name
-      : winner.user?.name ?? "Ukjent"
-    : null
+  const winnerName = winner ? (winner.team ? winner.team.name : (winner.user?.name ?? "Ukjent")) : null
 
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -53,7 +40,9 @@ export default function ContestDetailPage() {
         <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="var(--mantine-color-yellow-light)" p="md">
           <Group gap="xs">
             <IconTrophy size={20} />
-            <Text fw={600} c="var(--mantine-color-yellow-light-color)">Vinner: {winnerName}</Text>
+            <Text fw={600} c="var(--mantine-color-yellow-light-color)">
+              Vinner: {winnerName}
+            </Text>
           </Group>
         </Box>
       )}

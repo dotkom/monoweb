@@ -7,7 +7,7 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ContestUpdateSchema } from "@dotkomonline/types"
 import { Text } from "@mantine/core"
-import { z } from "zod"
+import type { z } from "zod"
 import { useUpdateContestMutation } from "../mutations"
 import { useContestContext } from "./provider"
 
@@ -81,7 +81,9 @@ export const InfoPage = () => {
 
   return (
     <>
-      <Text size="sm" c="dimmed" mb="md">Komite: <strong>{groupLabel}</strong> (kan ikke endres)</Text>
+      <Text size="sm" c="dimmed" mb="md">
+        Komite: <strong>{groupLabel}</strong> (kan ikke endres)
+      </Text>
       <FormComponent />
     </>
   )

@@ -11,9 +11,7 @@ export default function ContestPage() {
   const { contests, isLoading } = useContestFindManyQuery()
   const [search, setSearch] = useState("")
 
-  const filtered = contests.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = contests.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
 
   return (
     <Stack>
