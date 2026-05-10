@@ -43,38 +43,40 @@ export default function AuditLogDetailsPage() {
   // Fetches specific audit
   const { auditLog } = useAuditLogDetailsQuery()
 
-  const changed_fields =
-    auditLog.rowData &&
-    Object.entries(auditLog.rowData).map(([field, change], _index) => {
-      return (
-        <Accordion.Item key={field} value={field}>
-          <Accordion.Control>
-            <strong>{field === "new" ? "Data lagt til" : field}</strong>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <div style={{ whiteSpace: "pre-wrap" }}>
-              {change.old ? (
-                <StringDiff // This component shows the string-difference
-                  oldValue={change.old ?? ""}
-                  newValue={change.new ?? ""}
-                  method={DiffMethod.Lines}
-                  styles={diffStyles}
-                  key={isDark ? "dark" : "light"}
-                />
-              ) : (
-                // Prints all values if there is no existing "old" value
-                Object.entries(change).map(([key, value]) => (
-                  <div key={key}>
-                    <strong>{key}:</strong> {String(value)}
-                  </div>
-                ))
-              )}
-            </div>
-          </Accordion.Panel>
-        </Accordion.Item>
-      )
-    })
-  if (!auditLog.rowData) return null
+  if (!auditLog.rowData) {
+    return null
+  }
+
+  const changed_fields = Object.entries(auditLog.rowData).map(([field, change]) => {
+    return (
+      <Accordion.Item key={field} value={field}>
+        <Accordion.Control>
+          <strong>{field === "new" ? "Data lagt til" : field}</strong>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <div style={{ whiteSpace: "pre-wrap" }}>
+            {change.old ? (
+              <StringDiff // This component shows the string-difference
+                oldValue={change.old ?? ""}
+                newValue={change.new ?? ""}
+                method={DiffMethod.Lines}
+                styles={diffStyles}
+                key={isDark ? "dark" : "light"}
+              />
+            ) : (
+              // Prints all values if there is no existing "old" value
+              Object.entries(change).map(([key, value]) => (
+                <div key={key}>
+                  <strong>{key}:</strong> {String(value)}
+                </div>
+              ))
+            )}
+          </div>
+        </Accordion.Panel>
+      </Accordion.Item>
+    )
+  })
+
   return (
     <Stack>
       <Title order={2}>Hendelse</Title>

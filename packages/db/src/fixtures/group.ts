@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client"
-import { GroupRoleTypeSchema } from "../schemas/index"
+import type { Prisma } from "../"
+import { GroupRoleTypeSchema } from "../../generated/schema/index"
 
 export const getGroupFixtures = () =>
   [
