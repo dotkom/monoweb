@@ -19,6 +19,8 @@ export const env = defineConfiguration({
     prd: "https://rpc.online.ntnu.no",
     dev: "http://localhost:4444",
   }),
+  // https://auth0.github.io/nextjs-auth0/types/client.AccessTokenOptions.html#route
+  NEXT_PUBLIC_ACCESS_TOKEN_ROUTE: config(process.env.NEXT_PUBLIC_ACCESS_TOKEN_ROUTE, "/api/auth/access-token"),
   NEXT_PUBLIC_DASHBOARD_URL: config(process.env.NEXT_PUBLIC_DASHBOARD_URL, {
     prd: "https://dashboard.online.ntnu.no",
     dev: "http://localhost:3002",
