@@ -1,8 +1,7 @@
 import { defineConfig } from "prisma/config"
 
-const commandNeedsDatabase = process.argv.some((argument) => {
-  return argument === "migrate" || argument === "db" || argument === "studio"
-})
+const commandsThatNeedDatabase = new Set(["migrate", "db", "studio", "--sql"])
+const commandNeedsDatabase = process.argv.some((argument) => commandsThatNeedDatabase.has(argument))
 
 if (commandNeedsDatabase && process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database URL")
@@ -15,5 +14,8 @@ export default defineConfig({
   },
   migrations: {
     path: "./prisma/migrations/",
+  },
+  typedSql: {
+    path: "./prisma/sql",
   },
 })

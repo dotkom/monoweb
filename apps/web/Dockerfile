@@ -33,10 +33,6 @@ RUN apk update && apk add --no-cache libc6-compat
 RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
-WORKDIR /app/packages/db
-RUN pnpm run generate
-WORKDIR /app
-
 ENV AUTH0_CLIENT_ID ${AUTH0_CLIENT_ID}
 ENV AUTH0_CLIENT_SECRET ${AUTH0_CLIENT_SECRET}
 ENV AUTH0_ISSUER ${AUTH0_ISSUER}
@@ -72,11 +68,6 @@ COPY . .
 RUN apk update && apk add --no-cache libc6-compat
 RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# Ensure the Prisma .prisma/client/default directory is generated at the monorepo root.
-WORKDIR /app/packages/db
-RUN pnpm run generate
-WORKDIR /app
 
 # We can now install the actual production dependencies.
 RUN pnpm install --frozen-lockfile --ignore-scripts --prod --config.confirmModulesPurge=false
