@@ -620,6 +620,40 @@ export type EnumNotificationPayloadTypeWithAggregatesFilter<$PrismaModel = never
   _max?: Prisma.NestedEnumNotificationPayloadTypeFilter<$PrismaModel>
 }
 
+export type EnumContestResultTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultType | Prisma.EnumContestResultTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel> | $Enums.ContestResultType
+}
+
+export type EnumContestResultOrderFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultOrder | Prisma.EnumContestResultOrderFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel> | $Enums.ContestResultOrder
+}
+
+export type EnumContestResultTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultType | Prisma.EnumContestResultTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultTypeWithAggregatesFilter<$PrismaModel> | $Enums.ContestResultType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel>
+}
+
+export type EnumContestResultOrderWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultOrder | Prisma.EnumContestResultOrderFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel> | $Enums.ContestResultOrder
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1183,6 +1217,40 @@ export type NestedEnumNotificationPayloadTypeWithAggregatesFilter<$PrismaModel =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumNotificationPayloadTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumNotificationPayloadTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumContestResultTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultType | Prisma.EnumContestResultTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel> | $Enums.ContestResultType
+}
+
+export type NestedEnumContestResultOrderFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultOrder | Prisma.EnumContestResultOrderFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel> | $Enums.ContestResultOrder
+}
+
+export type NestedEnumContestResultTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultType | Prisma.EnumContestResultTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultType[] | Prisma.ListEnumContestResultTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultTypeWithAggregatesFilter<$PrismaModel> | $Enums.ContestResultType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestResultTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestResultOrder | Prisma.EnumContestResultOrderFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestResultOrder[] | Prisma.ListEnumContestResultOrderFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel> | $Enums.ContestResultOrder
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
 }
 
 

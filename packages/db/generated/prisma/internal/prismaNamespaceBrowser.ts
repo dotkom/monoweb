@@ -86,7 +86,10 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   DeregisterReason: 'DeregisterReason',
   NotificationRecipient: 'NotificationRecipient',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  Contest: 'Contest',
+  Contestant: 'Contestant',
+  ContestTeam: 'ContestTeam'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -603,6 +606,39 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ContestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  startDate: 'startDate',
+  resultType: 'resultType',
+  resultOrder: 'resultOrder',
+  groupId: 'groupId',
+  winnerContestantId: 'winnerContestantId'
+} as const
+
+export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeof ContestScalarFieldEnum]
+
+
+export const ContestantScalarFieldEnum = {
+  id: 'id',
+  resultValue: 'resultValue',
+  contestId: 'contestId',
+  userId: 'userId'
+} as const
+
+export type ContestantScalarFieldEnum = (typeof ContestantScalarFieldEnum)[keyof typeof ContestantScalarFieldEnum]
+
+
+export const ContestTeamScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  contestantId: 'contestantId'
+} as const
+
+export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
 
 
 export const SortOrder = {

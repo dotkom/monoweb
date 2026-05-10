@@ -21,4 +21,6 @@ export interface $DbEnums {
   deregister_reason_type: "SCHOOL" | "WORK" | "ECONOMY" | "TIME" | "SICK" | "NO_FAMILIAR_FACES" | "OTHER"
   NotificationPayloadType: "URL" | "EVENT" | "ARTICLE" | "GROUP" | "USER" | "OFFLINE" | "JOB_LISTING" | "NONE"
   NotificationType: "BROADCAST" | "BROADCAST_IMPORTANT" | "EVENT_REGISTRATION" | "EVENT_REMINDER" | "EVENT_UPDATE" | "JOB_LISTING_REMINDER" | "NEW_ARTICLE" | "NEW_EVENT" | "NEW_INTEREST_GROUP" | "NEW_JOB_LISTING" | "NEW_OFFLINE" | "NEW_MARK" | "NEW_FEEDBACK_FORM"
+  contest_result_type: "SCORE" | "DURATION" | "WINNER"
+  contest_result_order: "asc" | "desc"
 }
