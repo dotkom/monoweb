@@ -9,6 +9,7 @@ CREATE TABLE "contest" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
+    "start_date" TIMESTAMP(3),
     "result_type" "contest_result_type" NOT NULL,
     "result_order" "contest_result_order" NOT NULL,
     "group_id" TEXT NOT NULL,

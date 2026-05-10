@@ -867,6 +867,7 @@ model Contest {
   id          String             @id @default(uuid())
   name        String
   description String?
+  startDate   DateTime?          @map("start_date")
   resultType  ContestResultType  @map("result_type")
   resultOrder ContestResultOrder @map("result_order")
 
