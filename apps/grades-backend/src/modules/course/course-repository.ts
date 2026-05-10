@@ -1,4 +1,4 @@
-import { type DBHandle, Prisma } from "@dotkomonline/grades-db"
+import { type DBHandle, sql } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
 import {
   type Course,
@@ -27,91 +27,32 @@ export function getCourseRepository(): CourseRepository {
     async findMany(handle, query, offset, limit) {
       const sortOrder = query.orderBy ?? "desc"
       const sortBy = query.sortBy ?? []
-      const sortColumnMap = {
-        AVERAGE_GRADE: "average_grade",
-        PASS_RATE: "pass_rate",
-        CANDIDATE_COUNT: "candidate_count",
-      } as const
-
-      const sortDirection = sortOrder === "asc" ? "ASC" : "DESC"
-      const orderByClause =
-        sortBy.length > 0
-          ? `${sortBy.map((sortKey) => `"${sortColumnMap[sortKey]}" ${sortDirection}`).join(", ")}, "id" DESC`
-          : '"id" DESC'
 
       const bySearch = query.bySearch?.trim()
       const searchContains = bySearch ? `%${bySearch}%` : undefined
-
-      const searchWhereSql = searchContains
-        ? Prisma.sql`AND ("code" ILIKE ${searchContains} OR "name_no" ILIKE ${searchContains} OR "name_en" ILIKE ${searchContains})`
-        : Prisma.empty
 
       const bySemester = query.bySemester ?? []
       const byTeachingLanguage = query.byTeachingLanguage ?? []
       const byCampus = query.byCampus ?? []
       const byMinGrade = query.byMinGrade
+      const minAverageGrade = byMinGrade != null ? mapLetterGradeFilterToMinAverageGrade(byMinGrade) : null
 
-      const semesterWhereSql =
-        bySemester.length > 0
-          ? Prisma.sql`AND "taught_semesters" && ARRAY[${Prisma.join(bySemester)}]::"semester"[]`
-          : Prisma.empty
-
-      const teachingLanguageWhereSql =
-        byTeachingLanguage.length > 0
-          ? Prisma.sql`AND "teaching_languages" && ARRAY[${Prisma.join(byTeachingLanguage)}]::"teaching_language"[]`
-          : Prisma.empty
-
-      const campusWhereSql =
-        byCampus.length > 0 ? Prisma.sql`AND "campuses" && ARRAY[${Prisma.join(byCampus)}]::"campus"[]` : Prisma.empty
-
-      const minGradeWhereSql =
-        byMinGrade != null
-          ? Prisma.sql`AND "average_grade" >= ${mapLetterGradeFilterToMinAverageGrade(byMinGrade)}`
-          : Prisma.empty
-
-      const courses = await handle.$queryRaw<Course[]>`
-        SELECT
-          "id",
-          "code",
-          "name_no" AS "nameNo",
-          "name_en" AS "nameEn",
-          "credits",
-          "study_level" AS "studyLevel",
-          "grade_type" AS "gradeType",
-          "first_year_taught" AS "firstYearTaught",
-          "last_year_taught" AS "lastYearTaught",
-          "content_no" AS "contentNo",
-          "content_en" AS "contentEn",
-          "teaching_methods_no" AS "teachingMethodsNo",
-          "teaching_methods_en" AS "teachingMethodsEn",
-          "learning_outcomes_no" AS "learningOutcomesNo",
-          "learning_outcomes_en" AS "learningOutcomesEn",
-          "exam_type_no" AS "examTypeNo",
-          "exam_type_en" AS "examTypeEn",
-          "candidate_count" AS "candidateCount",
-          "average_grade" AS "averageGrade",
-          "pass_rate" AS "passRate",
-          "created_at" AS "createdAt",
-          "updated_at" AS "updatedAt",
-          to_jsonb("taught_semesters") AS "taughtSemesters",
-          to_jsonb("teaching_languages") AS "teachingLanguages",
-          to_jsonb("campuses") AS "campuses",
-          "faculty_id" AS "facultyId",
-          "department_id" AS "departmentId",
-          "latest_year_checked_for_ntnu_data" AS "latestYearCheckedForNtnuData"
-        FROM "course"
-        WHERE 1 = 1
-        ${searchWhereSql}
-        ${semesterWhereSql}
-        ${teachingLanguageWhereSql}
-        ${campusWhereSql}
-        ${minGradeWhereSql}
-        ORDER BY
-          course_rank_score(code, name_no, name_en, last_year_taught, ${bySearch || null}) DESC,
-          ${Prisma.raw(orderByClause)}
-        OFFSET ${offset}
-        LIMIT ${limit}
-      `
+      const courses = await handle.$queryRawTyped(
+        sql.findManyCourses(
+          offset,
+          limit,
+          bySearch || null,
+          searchContains ?? null,
+          bySemester,
+          byTeachingLanguage,
+          byCampus,
+          minAverageGrade,
+          sortOrder,
+          sortBy[0] ?? null,
+          sortBy[1] ?? null,
+          sortBy[2] ?? null
+        )
+      )
 
       return parseOrReport(CourseSchema.array(), courses)
     },
