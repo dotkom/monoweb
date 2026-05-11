@@ -1,0 +1,5 @@
+# Only variables declared in *.tf belong here. See inputs.tf and providers.tf
+
+FEIDE_CLIENT_ID = ""
+FEIDE_CLIENT_SECRET = ""
+DOPPLER_TOKEN_ALL = ""
