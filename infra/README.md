@@ -37,14 +37,38 @@ be manually applied to all taggable resources declared in the module.
 
 ## Environment variables
 
-To hack on the infrastructure codebase, you need AWS credentials plus environment variables defined.
+To work with the Terraform stacks you need AWS credentials and the input variables Terraform expects. We at Dotkom use
+Doppler to inject the variables into the Terraform stacks, but you can also export the variables manually. See [`auth0/terraform.tfvars.example`](auth0/terraform.tfvars.example) for an example.
 
 ```bash
-# Set up your ~/.aws/credentials with
-aws configure
+cd auth0
 
-# Get vercel token
-export VERCEL_TOKEN=...
+# Without Doppler you need to create a terraform.tfvars file (once):
+cp terraform.tfvars.example terraform.tfvars
+# Then edit terraform.tfvars
 
-export TF_VAR_doppler_token=...
+aws configure sso
+# or however you configure your AWS credentials
+
+# Add your profile name to enviroment
+export AWS_PROFILE="my-aws-cli-profile-name"
+# Windows:
+# $Env:AWS_PROFILE = "my-aws-cli-profile-name"
+
+terraform workspace select dev
+
+terraform init
+
+terraform plan
+# With Doppler:
+# doppler run --project terraform --config dev -- terraform plan
+```
+
+Alternatively to creating a `terraform.tfvars` file, you can export the same variables with the
+[`TF_VAR_` prefix](https://developer.hashicorp.com/terraform/cli/config/environment-variables), for example:
+
+```bash
+export TF_VAR_FEIDE_CLIENT_ID=...
+export TF_VAR_FEIDE_CLIENT_SECRET=...
+export TF_VAR_DOPPLER_TOKEN_ALL=...
 ```

@@ -6,18 +6,18 @@ architecture, the tools used, and the local development process.
 ## Table of Contents
 
 - [Monoweb Developer Guide](#monoweb-developer-guide)
-  - [Table of Contents](#table-of-contents)
-  - [Architecture](#architecture)
-  - [Tools](#tools)
-  - [Local Development](#local-development)
-    - [Required Environment Variables](#required-environment-variables)
-    - [What runs where?](#what-runs-where)
-  - [Testing](#testing)
-    - [Integration tests](#integration-tests)
-      - [Prerequisites](#prerequisites)
-      - [How to run](#how-to-run)
-  - [Deployment](#deployment)
-    - [Database Migrations](#database-migrations)
+    - [Table of Contents](#table-of-contents)
+    - [Architecture](#architecture)
+    - [Tools](#tools)
+    - [Local Development](#local-development)
+        - [Required Environment Variables](#required-environment-variables)
+        - [What runs where?](#what-runs-where)
+    - [Testing](#testing)
+        - [Integration tests](#integration-tests)
+            - [Prerequisites](#prerequisites)
+            - [How to run](#how-to-run)
+    - [Deployment](#deployment)
+        - [Database Migrations](#database-migrations)
 
 ## Architecture
 
@@ -52,6 +52,7 @@ to bundle everything into a single file.
 
 Examples of both can be found in the different applications in the `apps/` directory. For example, `apps/web` uses
 Next.js.
+
 </details>
 
 ## Tools
@@ -80,7 +81,6 @@ The following tools are used to develop Monoweb:
 To get started with local development, ensure you have the [applicable tools](#tools) installed. To build and run all the
 applications, you can use the following commands:
 
-Terminal 1:
 ```bash
 git clone https://github.com/dotkom/monoweb
 cd monoweb
@@ -91,8 +91,9 @@ doppler setup # Press Y on every prompt
 docker compose up -d
 
 pnpm install
-pnpm migrate
-pnpm dev
+pnpm run generate    # Only needs to be run when there is a new schema or SQL file change
+pnpm run migrate:dev # Only needs to be run when there is a new migration
+pnpm run dev
 ```
 
 ### Required Environment Variables
@@ -122,6 +123,7 @@ Setup functions: `packages/core/vitest-integration.setup.ts`
 - Docker
 
 Monoweb uses test containers to run a PostgreSQL database in Docker for testing.
+
 #### How to run
 
 ```bash
@@ -135,13 +137,12 @@ doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts
 
 For filtering test you can use the normal vitest filtering, see [Vitest documentation](https://vitest.dev/guide/filtering).
 
-*Example: run a spesific test*
+_Example: run a spesific test_
 
 ```bash
 cd packages/core
 doppler run -- pnpm exec vitest run -c ./vitest-integration.config.ts user -t "can update users given their id"
 ```
-
 
 ## Deployment
 
@@ -154,16 +155,8 @@ This will build and deploy all applications to production.
 
 ### Database Migrations
 
-If you have made database schema changes, you need to run migrations manually. The timing is important for a seamless deployment:
-
-1. Start the "Deploy to production" workflow
-2. Wait for the `rpc` deployment to complete successfully
-3. Run the migration command locally **before** `web` finishes deploying:
+Migrations run automatically on deployment. If you need to manually run migrations, you can do so with the following command:
 
 ```bash
 doppler run --config prd --project monoweb-rpc -- pnpm run migrate:deploy
 ```
-
-This ensures the database schema is updated after the new RPC code is deployed but before the web application starts using it.
-
-For future fixing, this proccess should be automated in the deployment pipeline.
