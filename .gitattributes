@@ -1,1 +1,4 @@
 * text=auto eol=lf
+
+packages/db/generated/** linguist-generated=true
+packages/grades-db/generated/** linguist-generated=true
