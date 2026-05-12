@@ -1,11 +1,13 @@
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
+import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { ContestWriteSchema } from "@dotkomonline/types"
+import { ContestWriteSchema } from "@dotkomonline/rpc/contest"
 import type { z } from "zod"
 import { validateContestWrite } from "../validation"
+import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 
 const RESULT_TYPE_OPTIONS = [
   { value: "SCORE", label: "Poeng" },
@@ -33,7 +35,7 @@ const DEFAULT_VALUES: FormValidationResult = {
   startDate: null,
   resultType: "SCORE",
   resultOrder: "DESC",
-  groupId: "",
+  groups: [],
 }
 
 interface UseContestWriteFormProps {
@@ -54,19 +56,21 @@ export const useContestWriteForm = ({ onSubmit }: UseContestWriteFormProps) => {
         placeholder: "Fadderkonkurranse 2026",
         withAsterisk: true,
       }),
-      description: createTextInput({
+      description: createRichTextInput({
         label: "Beskrivelse",
-        placeholder: "Kort beskrivelse (valgfri)",
+        required: false,
       }),
-      groupId: createSelectInput({
-        label: "Komite",
-        placeholder: "Velg komite",
+      groups: createMultipleSelectInput({
+        label: "Arrangørkomiteer",
+        placeholder: "Velg én eller flere komiteer",
         data: groups.map((g) => ({ value: g.slug, label: g.abbreviation })),
         searchable: true,
+        required: true,
         withAsterisk: true,
       }),
       startDate: createDateTimeInput({
         label: "Startdato",
+        placeholder: "Start nå",
       }),
       resultType: createSelectInput({
         label: "Type konkurranse",

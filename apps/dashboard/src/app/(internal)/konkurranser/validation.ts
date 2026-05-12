@@ -1,4 +1,4 @@
-import type { ContestWrite } from "@dotkomonline/types"
+import type { ContestWrite } from "@dotkomonline/rpc/contest"
 import type { z } from "zod"
 
 const MIN_NAME_LENGTH = 2

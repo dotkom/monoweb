@@ -1,52 +1,59 @@
 "use client"
 
-import { Badge, Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
+import { Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconArrowLeft, IconCancel, IconListDetails, IconTrash, IconTrophy, IconUsers } from "@tabler/icons-react"
+import { IconArrowLeft, IconCancel, IconListDetails, IconTrash, IconUsers } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useMemo } from "react"
 import { useDeleteContestMutation } from "../mutations"
 import { InfoPage } from "./info-page"
-import { DeltagarePage } from "./deltagere-page"
-import { ResultatPage } from "./resultat-page"
+import { DeltagarePage } from "./contestants-result-page"
 import { useContestContext } from "./provider"
+import { useGroupAbbreviationMap } from "../../grupper/queries"
 
 const TABS = [
-  { icon: IconListDetails, label: "Info", slug: "info", component: InfoPage },
-  { icon: IconUsers, label: "Deltagere", slug: "deltagere", component: DeltagarePage },
-  { icon: IconTrophy, label: "Resultat", slug: "resultat", component: ResultatPage },
-]
+  {
+    icon: IconListDetails,
+    label: "Info",
+    slug: "info",
+    component: InfoPage,
+  },
+  {
+    icon: IconUsers,
+    label: "Deltagere og resultat",
+    slug: "deltagere",
+    component: DeltagarePage,
+  },
+] as const
+
+const TAB_SLUGS = new Set<string>(TABS.map((tab) => tab.slug))
 
 export default function ContestDetailPage() {
-  const { contest, contestants } = useContestContext()
+  const { contest } = useContestContext()
   const router = useRouter()
   const deleteContest = useDeleteContestMutation()
   const [opened, { open, close }] = useDisclosure(false)
   const searchParams = useSearchParams()
-  const currentTab = searchParams.get("tab") || TABS[0].slug
+  const { abbreviationBySlug, isLoading: isLoadingGroups } = useGroupAbbreviationMap()
+  const organizerSummary = useMemo(() => {
+    return contest.groups.map((slug) => abbreviationBySlug.get(slug) ?? slug).join(", ")
+  }, [abbreviationBySlug, contest.groups])
 
-  const winner = contest.winnerContestantId ? contestants.find((c) => c.id === contest.winnerContestantId) : null
-
-  const winnerName = winner ? (winner.team ? winner.team.name : (winner.user?.name ?? "Ukjent")) : null
+  const tabFromQuery = searchParams.get("tab") || TABS[0].slug
+  const coercedTab = tabFromQuery === "resultat" ? "deltagere" : tabFromQuery
+  const currentTab = TAB_SLUGS.has(coercedTab) ? coercedTab : TABS[0].slug
 
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? TABS[0].slug)
+
     router.replace(`/konkurranser/${contest.id}?${params.toString()}`)
   }
 
+  const groupLabel = isLoadingGroups ? "Laster komiteer..." : `Arrangørkomiteer: ${organizerSummary || "—"}`
+
   return (
     <Stack>
-      {winnerName && (
-        <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="var(--mantine-color-yellow-light)" p="md">
-          <Group gap="xs">
-            <IconTrophy size={20} />
-            <Text fw={600} c="var(--mantine-color-yellow-light-color)">
-              Vinner: {winnerName}
-            </Text>
-          </Group>
-        </Box>
-      )}
-
       <Group align="center" justify="space-between">
         <Group>
           <Button
@@ -64,7 +71,7 @@ export default function ContestDetailPage() {
               <Button
                 color="red"
                 onClick={() => {
-                  deleteContest.mutate({ id: contest.id })
+                  deleteContest.mutate({ contestId: contest.id })
                   router.push("/konkurranser")
                 }}
                 leftSection={<IconTrash height={14} width={14} />}
@@ -78,15 +85,17 @@ export default function ContestDetailPage() {
           </Modal>
 
           <Button color="red" variant="light" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
-            Slett
+            Slett konkurranse
           </Button>
         </Group>
       </Group>
 
-      <Group>
+      <Stack gap="0.25rem">
         <Title>{contest.name}</Title>
-        <Badge variant="light">{contest.groupId}</Badge>
-      </Group>
+        <Text size="sm" c="dimmed">
+          {groupLabel}
+        </Text>
+      </Stack>
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>

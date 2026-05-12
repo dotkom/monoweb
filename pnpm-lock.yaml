@@ -35,6 +35,9 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@dotkomonline/rpc':
+        specifier: workspace:*
+        version: link:../rpc
       '@dotkomonline/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -183,9 +186,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:^
         version: link:../../packages/config
-      '@dotkomonline/rpc':
-        specifier: workspace:*
-        version: link:../rpc
       '@tailwindcss/postcss':
         specifier: 4.1.18
         version: 4.1.18

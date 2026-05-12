@@ -8,6 +8,7 @@ export const useCreateContestMutation = () => {
   const router = useRouter()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.create.mutationOptions({
       onMutate: () => {
@@ -38,6 +39,7 @@ export const useUpdateContestMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.update.mutationOptions({
       onMutate: () => {
@@ -51,7 +53,7 @@ export const useUpdateContestMutation = () => {
           title: "Konkurranse oppdatert",
           message: `Konkurransen "${data.name}" har blitt oppdatert.`,
         })
-        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions({ contestId: data.id }))
         await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
       },
       onError: (err) => {
@@ -68,6 +70,7 @@ export const useDeleteContestMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.delete.mutationOptions({
       onMutate: () => {
@@ -97,6 +100,7 @@ export const useAddContestantMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.contestant.add.mutationOptions({
       onMutate: () => {
@@ -110,7 +114,7 @@ export const useAddContestantMutation = () => {
           title: "Deltaker lagt til",
           message: "Deltakeren har blitt lagt til i konkurransen.",
         })
-        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.contestId))
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions({ contestId: data.contestId }))
       },
       onError: (err) => {
         notification.fail({
@@ -122,10 +126,41 @@ export const useAddContestantMutation = () => {
   )
 }
 
+export const useUpdateTeamContestantMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.contest.contestant.updateTeam.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Oppdaterer lag...",
+          message: "Lagdetaljer blir oppdatert.",
+        })
+      },
+      onSuccess: async (data) => {
+        notification.complete({
+          title: "Lag oppdatert",
+          message: "Laget har blitt oppdatert.",
+        })
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions({ contestId: data.contestId }))
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under oppdatering av laget: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useRemoveContestantMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.contestant.remove.mutationOptions({
       onMutate: () => {
@@ -134,7 +169,7 @@ export const useRemoveContestantMutation = () => {
           message: "Deltakeren blir fjernet.",
         })
       },
-      onSuccess: async (_data, variables) => {
+      onSuccess: async () => {
         notification.complete({
           title: "Deltaker fjernet",
           message: "Deltakeren har blitt fjernet fra konkurransen.",
@@ -156,6 +191,7 @@ export const useUpdateContestantResultMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.contestant.updateResult.mutationOptions({
       onMutate: () => {
@@ -185,6 +221,7 @@ export const useSetWinnerMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+
   return useMutation(
     trpc.contest.setWinner.mutationOptions({
       onMutate: () => {
@@ -198,7 +235,7 @@ export const useSetWinnerMutation = () => {
           title: "Vinner satt",
           message: "Vinneren har blitt satt for konkurransen.",
         })
-        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions({ contestId: data.id }))
         await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
       },
       onError: (err) => {

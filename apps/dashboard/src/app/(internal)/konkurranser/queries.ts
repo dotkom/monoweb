@@ -1,4 +1,4 @@
-import type { ContestId } from "@dotkomonline/types"
+import type { ContestId } from "@dotkomonline/rpc/contest"
 import { useQuery } from "@tanstack/react-query"
 import { useTRPC } from "@/lib/trpc-client"
 
@@ -8,12 +8,12 @@ export const useContestFindManyQuery = () => {
   return { contests: data ?? [], ...query }
 }
 
-export const useContestGetByIdQuery = (id: ContestId) => {
+export const useContestGetByIdQuery = (contestId: ContestId) => {
   const trpc = useTRPC()
-  return useQuery(trpc.contest.getById.queryOptions(id))
+  return useQuery(trpc.contest.getById.queryOptions({ contestId }))
 }
 
-export const useContestWithContestantsQuery = (id: ContestId) => {
+export const useContestWithContestantsQuery = (contestId: ContestId) => {
   const trpc = useTRPC()
-  return useQuery(trpc.contest.getWithContestants.queryOptions(id))
+  return useQuery(trpc.contest.getWithContestants.queryOptions({ contestId }))
 }

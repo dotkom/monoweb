@@ -1,6 +1,7 @@
+import { useGroupAbbreviationMap } from "@/app/(internal)/grupper/queries"
 import { DateTooltip } from "@/components/DateTooltip"
 import { GenericTable } from "@/components/GenericTable"
-import type { Contest } from "@dotkomonline/types"
+import type { Contest } from "@dotkomonline/rpc/contest"
 import { Anchor, Badge } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
@@ -17,6 +18,8 @@ interface Props {
 }
 
 export const ContestsTable = ({ contests }: Props) => {
+  const { abbreviationBySlug } = useGroupAbbreviationMap()
+
   const columnHelper = createColumnHelper<Contest>()
   const columns = useMemo(
     () => [
@@ -32,9 +35,13 @@ export const ContestsTable = ({ contests }: Props) => {
         header: () => "Type",
         cell: (info) => RESULT_TYPE_LABELS[info.getValue()] ?? info.getValue(),
       }),
-      columnHelper.accessor("groupId", {
-        header: () => "Komite",
-        cell: (info) => info.getValue(),
+      columnHelper.accessor("groups", {
+        header: () => "Komiteer",
+        cell: (info) =>
+          info
+            .getValue()
+            .map((slug) => abbreviationBySlug.get(slug) ?? slug)
+            .join(", "),
       }),
       columnHelper.accessor("winnerContestantId", {
         header: () => "Status",
@@ -52,7 +59,7 @@ export const ContestsTable = ({ contests }: Props) => {
         },
       }),
     ],
-    [columnHelper]
+    [abbreviationBySlug, columnHelper]
   )
 
   const table = useReactTable({

@@ -18,6 +18,7 @@
     "@date-fns/tz": "^1.2.0",
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
+    "@dotkomonline/rpc": "workspace:*",
     "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
@@ -69,7 +70,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.14",
     "@dotkomonline/config": "workspace:^",
-    "@dotkomonline/rpc": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",
     "@types/node": "22.19.7",
     "@types/react": "19.2.14",
