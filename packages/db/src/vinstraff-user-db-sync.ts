@@ -32,7 +32,12 @@ if (!PROD_DATABASE_URL.includes("prod") && !PROD_DATABASE_URL.includes("prd")) {
 }
 
 console.log("Connecting to production database...")
-const prodDb = createPrisma(PROD_DATABASE_URL)
+// RDS rejects unencrypted connections from outside the VPC. Use libpq-compatible
+// sslmode=require (encrypt without CA verification) so this script can run from a developer machine.
+const prodUrlWithSsl = PROD_DATABASE_URL.includes("sslmode=")
+  ? PROD_DATABASE_URL
+  : `${PROD_DATABASE_URL}${PROD_DATABASE_URL.includes("?") ? "&" : "?"}sslmode=require&uselibpqcompat=true`
+const prodDb = createPrisma(prodUrlWithSsl)
 
 console.log("Connecting to local database...")
 const localDb = createPrisma(LOCAL_DATABASE_URL)
