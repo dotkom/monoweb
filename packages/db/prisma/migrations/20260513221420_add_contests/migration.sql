@@ -12,7 +12,6 @@ CREATE TABLE "contest" (
     "start_date" TIMESTAMP(3),
     "result_type" "contest_result_type" NOT NULL,
     "result_order" "contest_result_order" NOT NULL,
-    "group_id" TEXT NOT NULL,
     "winner_contestant_id" TEXT,
 
     CONSTRAINT "contest_pkey" PRIMARY KEY ("id")
@@ -38,6 +37,14 @@ CREATE TABLE "contest_team" (
 );
 
 -- CreateTable
+CREATE TABLE "_ContestOrganizerGroups" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_ContestOrganizerGroups_AB_pkey" PRIMARY KEY ("A","B")
+);
+
+-- CreateTable
 CREATE TABLE "_ContestTeamMember" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
@@ -55,10 +62,10 @@ CREATE UNIQUE INDEX "contestant_contest_id_user_id_key" ON "contestant"("contest
 CREATE UNIQUE INDEX "contest_team_contestant_id_key" ON "contest_team"("contestant_id");
 
 -- CreateIndex
-CREATE INDEX "_ContestTeamMember_B_index" ON "_ContestTeamMember"("B");
+CREATE INDEX "_ContestOrganizerGroups_B_index" ON "_ContestOrganizerGroups"("B");
 
--- AddForeignKey
-ALTER TABLE "contest" ADD CONSTRAINT "contest_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "group"("slug") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE INDEX "_ContestTeamMember_B_index" ON "_ContestTeamMember"("B");
 
 -- AddForeignKey
 ALTER TABLE "contest" ADD CONSTRAINT "contest_winner_contestant_id_fkey" FOREIGN KEY ("winner_contestant_id") REFERENCES "contestant"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -71,6 +78,12 @@ ALTER TABLE "contestant" ADD CONSTRAINT "contestant_user_id_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "contest_team" ADD CONSTRAINT "contest_team_contestant_id_fkey" FOREIGN KEY ("contestant_id") REFERENCES "contestant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ContestOrganizerGroups" ADD CONSTRAINT "_ContestOrganizerGroups_A_fkey" FOREIGN KEY ("A") REFERENCES "contest"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ContestOrganizerGroups" ADD CONSTRAINT "_ContestOrganizerGroups_B_fkey" FOREIGN KEY ("B") REFERENCES "group"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ContestTeamMember" ADD CONSTRAINT "_ContestTeamMember_A_fkey" FOREIGN KEY ("A") REFERENCES "contest_team"("id") ON DELETE CASCADE ON UPDATE CASCADE;

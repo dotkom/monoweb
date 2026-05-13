@@ -615,7 +615,6 @@ export const ContestScalarFieldEnum = {
   startDate: 'startDate',
   resultType: 'resultType',
   resultOrder: 'resultOrder',
-  groupId: 'groupId',
   winnerContestantId: 'winnerContestantId'
 } as const
 

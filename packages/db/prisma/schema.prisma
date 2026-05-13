@@ -186,7 +186,7 @@ model Group {
   type                GroupType
 
   events        EventHostingGroup[]
-  contests      Contest[]
+  contests      Contest[]           @relation("ContestOrganizerGroups")
   memberships   GroupMembership[]
   marks         MarkGroup[]
   roles         GroupRole[]
@@ -871,13 +871,11 @@ model Contest {
   resultType  ContestResultType  @map("result_type")
   resultOrder ContestResultOrder @map("result_order")
 
-  groupId String @map("group_id")
-  group   Group  @relation(fields: [groupId], references: [slug])
-
   winnerContestantId String?     @unique @map("winner_contestant_id")
   winnerContestant   Contestant? @relation("ContestWinner", fields: [winnerContestantId], references: [id], onDelete: SetNull)
 
   contestants Contestant[] @relation("ContestContestants")
+  groups      Group[]      @relation("ContestOrganizerGroups")
 
   @@map("contest")
 }
