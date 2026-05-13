@@ -14,16 +14,16 @@ export async function getServerSession(): Promise<AppSession | null> {
     return null
   }
 
-  const accessToken = session.tokenSet?.accessToken
+  try {
+    const { token } = await auth0.getAccessToken()
 
-  if (accessToken === undefined || accessToken === "") {
+    return {
+      ...session.user,
+      accessToken: token,
+      refreshToken: session.tokenSet?.refreshToken,
+    }
+  } catch {
     return null
-  }
-
-  return {
-    ...session.user,
-    accessToken,
-    refreshToken: session.tokenSet.refreshToken,
   }
 }
 
