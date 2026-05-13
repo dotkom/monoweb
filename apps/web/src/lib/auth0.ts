@@ -61,6 +61,9 @@ export const auth0 = new Auth0Client({
     rolling: true,
     absoluteDuration: hoursToSeconds(24 * 90),
     inactivityDuration: hoursToSeconds(24 * 30),
+    cookie: {
+      name: "onlineweb_session_web",
+    },
   },
   tokenRefreshBuffer: minutesToSeconds(1),
   routes: {
