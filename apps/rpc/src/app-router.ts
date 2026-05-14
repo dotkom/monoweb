@@ -1,6 +1,7 @@
 import { articleRouter } from "./modules/article/article-router"
 import { auditLogRouter } from "./modules/audit-log/audit-log-router"
 import { companyRouter } from "./modules/company/company-router"
+import { contestRouter } from "./modules/contest/contest-router"
 import { eventRouter } from "./modules/event/event-router"
 import { groupRouter } from "./modules/group/group-router"
 import { invoicificationRouter } from "./modules/invoicification/invoicification-router"
@@ -18,6 +19,7 @@ export const appRouter = t.router({
   event: eventRouter,
   user: userRouter,
   company: companyRouter,
+  contest: contestRouter,
   mark: markRouter,
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
