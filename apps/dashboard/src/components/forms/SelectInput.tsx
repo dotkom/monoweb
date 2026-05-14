@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { Select, type SelectProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export function createSelectInput<F extends FieldValues>({
   ...props
@@ -12,12 +11,7 @@ export function createSelectInput<F extends FieldValues>({
         control={control}
         name={name}
         render={({ field }) => (
-          <Select
-            {...props}
-            value={field.value}
-            onChange={field.onChange}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-          />
+          <Select {...props} value={field.value} onChange={field.onChange} error={getErrorMessage(state, name)} />
         )}
       />
     )

@@ -253,7 +253,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
               const decodedPart = decodeURIComponent(part)
 
               const isId = decodedPart.includes("|")
-              const isUuid = z.string().uuid().safeParse(decodedPart).success
+              const isUuid = z.uuid().safeParse(decodedPart).success
 
               // Ids should be lowercase
               const capitalizedPart = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)

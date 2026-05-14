@@ -9,7 +9,7 @@ import { z } from "zod"
 const validationSchema = z.object({
   title: z.string().max(255).optional(),
   alt: z.string().min(1).max(255),
-  imageUrl: z.string().url(),
+  imageUrl: z.url(),
 })
 
 interface UploadImageModalProps {

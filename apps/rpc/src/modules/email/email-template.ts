@@ -16,7 +16,7 @@ export type EmailType =
   | "WAITLIST_NOTIFICATION"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
-  getSchema(): z.ZodSchema<TData>
+  getSchema(): z.ZodType<TData>
   getTemplate(): Promise<string>
   type: TType
 }
@@ -41,7 +41,7 @@ export const emails = {
       z.object({
         companyName: z.string().min(1).max(140),
         contactName: z.string().min(1),
-        contactEmail: z.string().email(),
+        contactEmail: z.email(),
         contactTel: z.string(),
         requestsCompanyPresentation: z.boolean(),
         requestsCourseEvent: z.boolean(),
@@ -60,7 +60,7 @@ export const emails = {
       z.object({
         companyName: z.string().min(1).max(140),
         contactName: z.string().min(1),
-        contactEmail: z.string().email(),
+        contactEmail: z.email(),
         contactTel: z.string(),
         requestsCompanyPresentation: z.boolean(),
         requestsCourseEvent: z.boolean(),
@@ -80,7 +80,7 @@ export const emails = {
         companyName: z.string().min(1, "Bedriftsnavnet kan ikke være tomt"),
         organizationNumber: z.string().length(9, "Organisasjonsnummeret må være 9 siffer"),
         contactName: z.string().min(1, "Navn til kontaktperson kan ikke være tomt"),
-        contactEmail: z.string().email("E-post adressen må være en gyldig e-post adresse"),
+        contactEmail: z.email("E-post adressen må være en gyldig e-post adresse"),
         contactTel: z.string().min(1, "Telefonnummeret kan ikke være tomt"),
         invoiceRelation: z.string(),
         preferredDeliveryMethod: z.string(),
@@ -95,15 +95,15 @@ export const emails = {
     getSchema: () =>
       z.object({
         eventName: z.string(),
-        eventLink: z.string().url(),
-        feedbackLink: z.string().url(),
+        eventLink: z.url(),
+        feedbackLink: z.url(),
         eventStart: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM", { locale: nb })),
         feedbackDeadline: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
-        organizerEmail: z.string().email(),
+        organizerEmail: z.email(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "feedback_form_link.mustache"), "utf-8"),
   }),
@@ -112,7 +112,7 @@ export const emails = {
     getSchema: () =>
       z.object({
         eventName: z.string(),
-        eventLink: z.string().url(),
+        eventLink: z.url(),
         deregistrationDeadline: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
@@ -124,7 +124,7 @@ export const emails = {
     getSchema: () =>
       z.object({
         eventName: z.string(),
-        eventLink: z.string().url(),
+        eventLink: z.url(),
         message: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
@@ -147,7 +147,7 @@ export const emails = {
     getSchema: () =>
       z.object({
         eventName: z.string(),
-        eventLink: z.string().url(),
+        eventLink: z.url(),
         position: z.number(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "waitlist_notification.mustache"), "utf-8"),

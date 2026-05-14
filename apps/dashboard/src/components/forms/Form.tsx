@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Flex } from "@mantine/core"
-import { type DefaultValues, type UseFormReturn, useForm } from "react-hook-form"
+import { type DefaultValues, type FieldPath, type FieldValue, type UseFormReturn, useForm } from "react-hook-form"
 import type { z } from "zod"
 import type { InputProducerResult } from "./types"
 
@@ -9,7 +9,7 @@ function entriesOf<T extends Record<string, unknown>, K extends string & keyof T
 }
 
 interface FormBuilderOptions<T extends z.ZodRawShape> {
-  schema: z.ZodEffects<z.ZodObject<T>> | z.ZodObject<T>
+  schema: z.ZodObject<T>
   fields: Partial<{
     [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
   }>
@@ -37,11 +37,15 @@ export function useFormBuilder<T extends z.ZodRawShape>({
       throw new Error()
     }
     const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
+    // zod v4's $InferObjectOutput<T> is opaque in generics. FieldPath<T> cannot index DeepPartial<T> without this cast
+    const defaultValue = (form.formState.defaultValues as Record<string, unknown>)?.[name as string] as FieldValue<
+      z.infer<z.ZodObject<T>>
+    >
     return (
       <Component
-        defaultValue={form.formState.defaultValues?.[name]}
+        defaultValue={defaultValue}
         key={name}
-        name={name}
+        name={name as FieldPath<z.infer<z.ZodObject<T>>>}
         register={form.register}
         control={form.control}
         state={form.formState}
