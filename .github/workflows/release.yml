@@ -35,6 +35,13 @@ jobs:
         with:
           node-version: 22.21.1
           cache: 'pnpm'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            packages/db/tsconfig.tsbuildinfo
+            packages/grades-db/tsconfig.tsbuildinfo
+          key: tsbuildinfo-${{ hashFiles('packages/db/src/**', 'packages/db/generated/**', 'packages/grades-db/src/**', 'packages/grades-db/generated/**') }}
+          restore-keys: tsbuildinfo-
       - run: pnpm install --frozen-lockfile
         name: Install dependencies from pnpm lockfile
       - run: pnpm lint-check

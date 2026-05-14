@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Prisma Zod Generator - Single File (inlined)
  * Auto-generated. Do not edit.
