@@ -1,11 +1,10 @@
 import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
 import type { EventId } from "@dotkomonline/types"
-import { ErrorMessage } from "@hookform/error-message"
 import { Select, type SelectProps } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useState } from "react"
 import { Controller, type FieldValues, useController } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 interface Props extends Omit<SelectProps, "error"> {
   excludeEventIds?: EventId[]
@@ -56,7 +55,7 @@ export function createEventSelectInput<F extends FieldValues>({
             searchValue={searchQuery}
             onSearchChange={handleEventSearch}
             searchable={true}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={getErrorMessage(state, name)}
             data={options}
           />
         )}

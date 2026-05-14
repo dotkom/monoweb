@@ -52,7 +52,7 @@ const editJobListingProcedure = procedure
 export type FindManyJobListingsInput = inferProcedureInput<typeof findManyJobListingsProcedure>
 export type FindManyJobListingsOutput = inferProcedureOutput<typeof findManyJobListingsProcedure>
 const findManyJobListingsProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).default({}))
+  .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).prefault({}))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input

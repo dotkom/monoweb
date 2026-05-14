@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export type DefaultVariable<TSpec extends z.ZodSchema> =
+export type DefaultVariable<TSpec extends z.ZodType> =
   | z.infer<TSpec>
   | {
       prd: z.infer<TSpec>
@@ -51,18 +51,18 @@ export type DefaultEnvironmentValueSchema = z.ZodString
  * )
  * ```
  */
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodType = DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue?: DefaultVariable<TSpec>,
   spec?: TSpec
 ): z.infer<TSpec>
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodType = DefaultEnvironmentValueSchema>(
   value: string | undefined,
   defaultValue: z.infer<TSpec> | null,
   spec?: TSpec
 ): z.infer<TSpec> | null
 
-export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema>(
+export function config<TSpec extends z.ZodType = DefaultEnvironmentValueSchema>(
   value: z.infer<TSpec> | undefined,
   defaultValue?: DefaultVariable<TSpec> | null,
   spec?: TSpec
@@ -73,7 +73,7 @@ export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema
   function getDefaultValue(env: string): z.infer<TSpec> | undefined {
     if (typeof defaultValue === "object" && defaultValue !== null) {
       if (env in defaultValue) {
-        return defaultValue[env as keyof typeof defaultValue]
+        return defaultValue[env as keyof typeof defaultValue] as z.infer<TSpec>
       }
       throw new Error(`Default value object did not contain value for environment ${env}`)
     }
@@ -105,7 +105,7 @@ export function config<TSpec extends z.ZodSchema = DefaultEnvironmentValueSchema
       `The provided environment variable value for ${environment} does not fulfill the requirements of the schema: ${result.error.message}`
     )
   }
-  return result.data
+  return result.data as z.infer<TSpec>
 }
 
 /** Identity function to infer the type of the provided spec. */

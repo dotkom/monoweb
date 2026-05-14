@@ -1,9 +1,8 @@
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { ErrorMessage } from "@hookform/error-message"
 import { DateTimePicker, type DateTimePickerProps } from "@mantine/dates"
 import { roundToNearestHours } from "date-fns"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 import { IconX } from "@tabler/icons-react"
 import { ActionIcon } from "@mantine/core"
 
@@ -24,7 +23,7 @@ export function createDateTimeInput<F extends FieldValues>({
             defaultValue={defaultValue ?? roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })}
             value={field.value}
             onChange={field.onChange}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={getErrorMessage(state, name)}
             rightSection={
               props.required !== true && (
                 <ActionIcon w="fit-content" color="gray" variant="subtle" onClick={() => field.onChange(null)}>

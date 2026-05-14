@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { NumberInput, type NumberInputProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export function createNumberInput<F extends FieldValues>({
   ...props
@@ -16,7 +15,7 @@ export function createNumberInput<F extends FieldValues>({
             {...props}
             value={field.value}
             onChange={(value) => field.onChange({ target: { value } })}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={getErrorMessage(state, name)}
           />
         )}
       />

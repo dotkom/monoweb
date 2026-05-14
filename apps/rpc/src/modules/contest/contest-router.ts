@@ -237,7 +237,7 @@ const updateContestantResultProcedure = procedure
     z.object({
       contestantId: ContestantSchema.shape.id,
       data: z.object({
-        resultValue: z.number().int().nullable(),
+        resultValue: z.int().nullable(),
       }),
     })
   )
@@ -271,7 +271,7 @@ const updateTeamContestantProcedure = procedure
         }),
       })
       .refine((input) => input.data.teamName !== undefined || input.data.memberIds !== undefined, {
-        message: "At least one of teamName or memberIds must be provided",
+        error: "At least one of teamName or memberIds must be provided",
       })
   )
   .use(withAuthentication())
