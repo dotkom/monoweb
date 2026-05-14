@@ -245,6 +245,24 @@ export const NotificationScalarFieldEnumSchema = z.enum(['id', 'createdAt', 'upd
 
 export type NotificationScalarFieldEnum = z.infer<typeof NotificationScalarFieldEnumSchema>;
 
+// File: ContestScalarFieldEnum.schema.ts
+
+export const ContestScalarFieldEnumSchema = z.enum(['id', 'name', 'description', 'startDate', 'resultType', 'resultOrder', 'winnerContestantId'])
+
+export type ContestScalarFieldEnum = z.infer<typeof ContestScalarFieldEnumSchema>;
+
+// File: ContestantScalarFieldEnum.schema.ts
+
+export const ContestantScalarFieldEnumSchema = z.enum(['id', 'resultValue', 'contestId', 'userId'])
+
+export type ContestantScalarFieldEnum = z.infer<typeof ContestantScalarFieldEnumSchema>;
+
+// File: ContestTeamScalarFieldEnum.schema.ts
+
+export const ContestTeamScalarFieldEnumSchema = z.enum(['id', 'name', 'contestantId'])
+
+export type ContestTeamScalarFieldEnum = z.infer<typeof ContestTeamScalarFieldEnumSchema>;
+
 // File: SortOrder.schema.ts
 
 export const SortOrderSchema = z.enum(['asc', 'desc'])
@@ -383,6 +401,18 @@ export const NotificationPayloadTypeSchema = z.enum(['URL', 'EVENT', 'ARTICLE', 
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>;
 
+// File: ContestResultType.schema.ts
+
+export const ContestResultTypeSchema = z.enum(['SCORE', 'DURATION', 'WINNER'])
+
+export type ContestResultType = z.infer<typeof ContestResultTypeSchema>;
+
+// File: ContestResultOrder.schema.ts
+
+export const ContestResultOrderSchema = z.enum(['ASC', 'DESC'])
+
+export type ContestResultOrder = z.infer<typeof ContestResultOrderSchema>;
+
 // File: MembershipWhereInput.schema.ts
 
 const membershipwhereinputSchema = z.object({
@@ -496,7 +526,9 @@ const userwhereinputSchema = z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonListRelationFilterObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientListRelationFilterObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationListRelationFilterObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationListRelationFilterObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationListRelationFilterObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantListRelationFilterObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamListRelationFilterObjectSchema).optional()
 }).strict();
 export const UserWhereInputObjectSchema: z.ZodType<Prisma.UserWhereInput> = userwhereinputSchema as unknown as z.ZodType<Prisma.UserWhereInput>;
 export const UserWhereInputObjectZodSchema = userwhereinputSchema;
@@ -532,7 +564,9 @@ const __makeSchema_UserOrderByWithRelationInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonOrderByRelationAggregateInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientOrderByRelationAggregateInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationOrderByRelationAggregateInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationOrderByRelationAggregateInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationOrderByRelationAggregateInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantOrderByRelationAggregateInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const UserOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = __makeSchema_UserOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.UserOrderByWithRelationInput>;
 export const UserOrderByWithRelationInputObjectZodSchema = __makeSchema_UserOrderByWithRelationInput_schema();
@@ -722,6 +756,7 @@ const groupwhereinputSchema = z.object({
   recruitmentMethod: z.union([z.lazy(() => EnumGroupRecruitmentMethodFilterObjectSchema), GroupRecruitmentMethodSchema]).optional(),
   type: z.union([z.lazy(() => EnumGroupTypeFilterObjectSchema), GroupTypeSchema]).optional(),
   events: z.lazy(() => EventHostingGroupListRelationFilterObjectSchema).optional(),
+  contests: z.lazy(() => ContestListRelationFilterObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipListRelationFilterObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupListRelationFilterObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleListRelationFilterObjectSchema).optional(),
@@ -750,6 +785,7 @@ const __makeSchema_GroupOrderByWithRelationInput_schema = () => z.object({
   recruitmentMethod: SortOrderSchema.optional(),
   type: SortOrderSchema.optional(),
   events: z.lazy(() => EventHostingGroupOrderByRelationAggregateInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestOrderByRelationAggregateInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipOrderByRelationAggregateInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupOrderByRelationAggregateInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleOrderByRelationAggregateInputObjectSchema).optional(),
@@ -3405,6 +3441,226 @@ export const NotificationScalarWhereWithAggregatesInputObjectSchema: z.ZodType<P
 export const NotificationScalarWhereWithAggregatesInputObjectZodSchema = notificationscalarwherewithaggregatesinputSchema;
 
 
+// File: ContestWhereInput.schema.ts
+
+const contestwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestWhereInputObjectSchema), z.lazy(() => ContestWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestWhereInputObjectSchema), z.lazy(() => ContestWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  description: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  startDate: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  resultType: z.union([z.lazy(() => EnumContestResultTypeFilterObjectSchema), ContestResultTypeSchema]).optional(),
+  resultOrder: z.union([z.lazy(() => EnumContestResultOrderFilterObjectSchema), ContestResultOrderSchema]).optional(),
+  winnerContestantId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  winnerContestant: z.union([z.lazy(() => ContestantNullableScalarRelationFilterObjectSchema), z.lazy(() => ContestantWhereInputObjectSchema)]).optional(),
+  contestants: z.lazy(() => ContestantListRelationFilterObjectSchema).optional(),
+  groups: z.lazy(() => GroupListRelationFilterObjectSchema).optional()
+}).strict();
+export const ContestWhereInputObjectSchema: z.ZodType<Prisma.ContestWhereInput> = contestwhereinputSchema as unknown as z.ZodType<Prisma.ContestWhereInput>;
+export const ContestWhereInputObjectZodSchema = contestwhereinputSchema;
+
+
+// File: ContestOrderByWithRelationInput.schema.ts
+const __makeSchema_ContestOrderByWithRelationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  description: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  startDate: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  resultType: SortOrderSchema.optional(),
+  resultOrder: SortOrderSchema.optional(),
+  winnerContestantId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  winnerContestant: z.lazy(() => ContestantOrderByWithRelationInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantOrderByRelationAggregateInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupOrderByRelationAggregateInputObjectSchema).optional()
+}).strict();
+export const ContestOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.ContestOrderByWithRelationInput> = __makeSchema_ContestOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.ContestOrderByWithRelationInput>;
+export const ContestOrderByWithRelationInputObjectZodSchema = __makeSchema_ContestOrderByWithRelationInput_schema();
+
+
+// File: ContestWhereUniqueInput.schema.ts
+const __makeSchema_ContestWhereUniqueInput_schema = () => z.object({
+  id: z.string().optional(),
+  winnerContestantId: z.string().optional()
+}).strict();
+export const ContestWhereUniqueInputObjectSchema: z.ZodType<Prisma.ContestWhereUniqueInput> = __makeSchema_ContestWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.ContestWhereUniqueInput>;
+export const ContestWhereUniqueInputObjectZodSchema = __makeSchema_ContestWhereUniqueInput_schema();
+
+
+// File: ContestOrderByWithAggregationInput.schema.ts
+const __makeSchema_ContestOrderByWithAggregationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  description: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  startDate: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  resultType: SortOrderSchema.optional(),
+  resultOrder: SortOrderSchema.optional(),
+  winnerContestantId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  _count: z.lazy(() => ContestCountOrderByAggregateInputObjectSchema).optional(),
+  _max: z.lazy(() => ContestMaxOrderByAggregateInputObjectSchema).optional(),
+  _min: z.lazy(() => ContestMinOrderByAggregateInputObjectSchema).optional()
+}).strict();
+export const ContestOrderByWithAggregationInputObjectSchema: z.ZodType<Prisma.ContestOrderByWithAggregationInput> = __makeSchema_ContestOrderByWithAggregationInput_schema() as unknown as z.ZodType<Prisma.ContestOrderByWithAggregationInput>;
+export const ContestOrderByWithAggregationInputObjectZodSchema = __makeSchema_ContestOrderByWithAggregationInput_schema();
+
+
+// File: ContestScalarWhereWithAggregatesInput.schema.ts
+
+const contestscalarwherewithaggregatesinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestScalarWhereWithAggregatesInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  description: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  startDate: z.union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  resultType: z.union([z.lazy(() => EnumContestResultTypeWithAggregatesFilterObjectSchema), ContestResultTypeSchema]).optional(),
+  resultOrder: z.union([z.lazy(() => EnumContestResultOrderWithAggregatesFilterObjectSchema), ContestResultOrderSchema]).optional(),
+  winnerContestantId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const ContestScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.ContestScalarWhereWithAggregatesInput> = contestscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.ContestScalarWhereWithAggregatesInput>;
+export const ContestScalarWhereWithAggregatesInputObjectZodSchema = contestscalarwherewithaggregatesinputSchema;
+
+
+// File: ContestantWhereInput.schema.ts
+
+const contestantwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestantWhereInputObjectSchema), z.lazy(() => ContestantWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestantWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestantWhereInputObjectSchema), z.lazy(() => ContestantWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  resultValue: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
+  contestId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  contest: z.union([z.lazy(() => ContestScalarRelationFilterObjectSchema), z.lazy(() => ContestWhereInputObjectSchema)]).optional(),
+  user: z.union([z.lazy(() => UserNullableScalarRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
+  team: z.union([z.lazy(() => ContestTeamNullableScalarRelationFilterObjectSchema), z.lazy(() => ContestTeamWhereInputObjectSchema)]).optional(),
+  wonContest: z.union([z.lazy(() => ContestNullableScalarRelationFilterObjectSchema), z.lazy(() => ContestWhereInputObjectSchema)]).optional()
+}).strict();
+export const ContestantWhereInputObjectSchema: z.ZodType<Prisma.ContestantWhereInput> = contestantwhereinputSchema as unknown as z.ZodType<Prisma.ContestantWhereInput>;
+export const ContestantWhereInputObjectZodSchema = contestantwhereinputSchema;
+
+
+// File: ContestantOrderByWithRelationInput.schema.ts
+const __makeSchema_ContestantOrderByWithRelationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  resultValue: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  contestId: SortOrderSchema.optional(),
+  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  contest: z.lazy(() => ContestOrderByWithRelationInputObjectSchema).optional(),
+  user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamOrderByWithRelationInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestOrderByWithRelationInputObjectSchema).optional()
+}).strict();
+export const ContestantOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.ContestantOrderByWithRelationInput> = __makeSchema_ContestantOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.ContestantOrderByWithRelationInput>;
+export const ContestantOrderByWithRelationInputObjectZodSchema = __makeSchema_ContestantOrderByWithRelationInput_schema();
+
+
+// File: ContestantWhereUniqueInput.schema.ts
+const __makeSchema_ContestantWhereUniqueInput_schema = () => z.object({
+  id: z.string().optional(),
+  contestId_userId: z.lazy(() => ContestantContestIdUserIdCompoundUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestantWhereUniqueInputObjectSchema: z.ZodType<Prisma.ContestantWhereUniqueInput> = __makeSchema_ContestantWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.ContestantWhereUniqueInput>;
+export const ContestantWhereUniqueInputObjectZodSchema = __makeSchema_ContestantWhereUniqueInput_schema();
+
+
+// File: ContestantOrderByWithAggregationInput.schema.ts
+const __makeSchema_ContestantOrderByWithAggregationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  resultValue: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  contestId: SortOrderSchema.optional(),
+  userId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  _count: z.lazy(() => ContestantCountOrderByAggregateInputObjectSchema).optional(),
+  _avg: z.lazy(() => ContestantAvgOrderByAggregateInputObjectSchema).optional(),
+  _max: z.lazy(() => ContestantMaxOrderByAggregateInputObjectSchema).optional(),
+  _min: z.lazy(() => ContestantMinOrderByAggregateInputObjectSchema).optional(),
+  _sum: z.lazy(() => ContestantSumOrderByAggregateInputObjectSchema).optional()
+}).strict();
+export const ContestantOrderByWithAggregationInputObjectSchema: z.ZodType<Prisma.ContestantOrderByWithAggregationInput> = __makeSchema_ContestantOrderByWithAggregationInput_schema() as unknown as z.ZodType<Prisma.ContestantOrderByWithAggregationInput>;
+export const ContestantOrderByWithAggregationInputObjectZodSchema = __makeSchema_ContestantOrderByWithAggregationInput_schema();
+
+
+// File: ContestantScalarWhereWithAggregatesInput.schema.ts
+
+const contestantscalarwherewithaggregatesinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestantScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestantScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestantScalarWhereWithAggregatesInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestantScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestantScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  resultValue: z.union([z.lazy(() => IntNullableWithAggregatesFilterObjectSchema), z.number().int()]).optional().nullable(),
+  contestId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const ContestantScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.ContestantScalarWhereWithAggregatesInput> = contestantscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.ContestantScalarWhereWithAggregatesInput>;
+export const ContestantScalarWhereWithAggregatesInputObjectZodSchema = contestantscalarwherewithaggregatesinputSchema;
+
+
+// File: ContestTeamWhereInput.schema.ts
+
+const contestteamwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestTeamWhereInputObjectSchema), z.lazy(() => ContestTeamWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestTeamWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestTeamWhereInputObjectSchema), z.lazy(() => ContestTeamWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  contestantId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  contestant: z.union([z.lazy(() => ContestantScalarRelationFilterObjectSchema), z.lazy(() => ContestantWhereInputObjectSchema)]).optional(),
+  members: z.lazy(() => UserListRelationFilterObjectSchema).optional()
+}).strict();
+export const ContestTeamWhereInputObjectSchema: z.ZodType<Prisma.ContestTeamWhereInput> = contestteamwhereinputSchema as unknown as z.ZodType<Prisma.ContestTeamWhereInput>;
+export const ContestTeamWhereInputObjectZodSchema = contestteamwhereinputSchema;
+
+
+// File: ContestTeamOrderByWithRelationInput.schema.ts
+const __makeSchema_ContestTeamOrderByWithRelationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  contestantId: SortOrderSchema.optional(),
+  contestant: z.lazy(() => ContestantOrderByWithRelationInputObjectSchema).optional(),
+  members: z.lazy(() => UserOrderByRelationAggregateInputObjectSchema).optional()
+}).strict();
+export const ContestTeamOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.ContestTeamOrderByWithRelationInput> = __makeSchema_ContestTeamOrderByWithRelationInput_schema() as unknown as z.ZodType<Prisma.ContestTeamOrderByWithRelationInput>;
+export const ContestTeamOrderByWithRelationInputObjectZodSchema = __makeSchema_ContestTeamOrderByWithRelationInput_schema();
+
+
+// File: ContestTeamWhereUniqueInput.schema.ts
+const __makeSchema_ContestTeamWhereUniqueInput_schema = () => z.object({
+  id: z.string().optional(),
+  contestantId: z.string().optional()
+}).strict();
+export const ContestTeamWhereUniqueInputObjectSchema: z.ZodType<Prisma.ContestTeamWhereUniqueInput> = __makeSchema_ContestTeamWhereUniqueInput_schema() as unknown as z.ZodType<Prisma.ContestTeamWhereUniqueInput>;
+export const ContestTeamWhereUniqueInputObjectZodSchema = __makeSchema_ContestTeamWhereUniqueInput_schema();
+
+
+// File: ContestTeamOrderByWithAggregationInput.schema.ts
+const __makeSchema_ContestTeamOrderByWithAggregationInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  contestantId: SortOrderSchema.optional(),
+  _count: z.lazy(() => ContestTeamCountOrderByAggregateInputObjectSchema).optional(),
+  _max: z.lazy(() => ContestTeamMaxOrderByAggregateInputObjectSchema).optional(),
+  _min: z.lazy(() => ContestTeamMinOrderByAggregateInputObjectSchema).optional()
+}).strict();
+export const ContestTeamOrderByWithAggregationInputObjectSchema: z.ZodType<Prisma.ContestTeamOrderByWithAggregationInput> = __makeSchema_ContestTeamOrderByWithAggregationInput_schema() as unknown as z.ZodType<Prisma.ContestTeamOrderByWithAggregationInput>;
+export const ContestTeamOrderByWithAggregationInputObjectZodSchema = __makeSchema_ContestTeamOrderByWithAggregationInput_schema();
+
+
+// File: ContestTeamScalarWhereWithAggregatesInput.schema.ts
+
+const contestteamscalarwherewithaggregatesinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestTeamScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestTeamScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestTeamScalarWhereWithAggregatesInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestTeamScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => ContestTeamScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  contestantId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional()
+}).strict();
+export const ContestTeamScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.ContestTeamScalarWhereWithAggregatesInput> = contestteamscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.ContestTeamScalarWhereWithAggregatesInput>;
+export const ContestTeamScalarWhereWithAggregatesInputObjectZodSchema = contestteamscalarwherewithaggregatesinputSchema;
+
+
 // File: MembershipCreateInput.schema.ts
 const __makeSchema_MembershipCreateInput_schema = () => z.object({
   id: z.string().optional(),
@@ -3531,7 +3787,9 @@ const __makeSchema_UserCreateInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateInputObjectSchema: z.ZodType<Prisma.UserCreateInput> = __makeSchema_UserCreateInput_schema() as unknown as z.ZodType<Prisma.UserCreateInput>;
 export const UserCreateInputObjectZodSchema = __makeSchema_UserCreateInput_schema();
@@ -3566,7 +3824,9 @@ const __makeSchema_UserUncheckedCreateInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = __makeSchema_UserUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateInput>;
 export const UserUncheckedCreateInputObjectZodSchema = __makeSchema_UserUncheckedCreateInput_schema();
@@ -3602,7 +3862,9 @@ const __makeSchema_UserUpdateInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateInputObjectSchema: z.ZodType<Prisma.UserUpdateInput> = __makeSchema_UserUpdateInput_schema() as unknown as z.ZodType<Prisma.UserUpdateInput>;
 export const UserUpdateInputObjectZodSchema = __makeSchema_UserUpdateInput_schema();
@@ -3638,7 +3900,9 @@ const __makeSchema_UserUncheckedUpdateInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = __makeSchema_UserUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateInput>;
 export const UserUncheckedUpdateInputObjectZodSchema = __makeSchema_UserUncheckedUpdateInput_schema();
@@ -3864,6 +4128,7 @@ const __makeSchema_GroupCreateInput_schema = () => z.object({
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional(),
@@ -3892,6 +4157,7 @@ const __makeSchema_GroupUncheckedCreateInput_schema = () => z.object({
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
@@ -3920,6 +4186,7 @@ const __makeSchema_GroupUpdateInput_schema = () => z.object({
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
@@ -3948,6 +4215,7 @@ const __makeSchema_GroupUncheckedUpdateInput_schema = () => z.object({
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
@@ -7217,6 +7485,267 @@ export const NotificationUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.
 export const NotificationUncheckedUpdateManyInputObjectZodSchema = __makeSchema_NotificationUncheckedUpdateManyInput_schema();
 
 
+// File: ContestCreateInput.schema.ts
+const __makeSchema_ContestCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestant: z.lazy(() => ContestantCreateNestedOneWithoutWonContestInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutContestInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestCreateInputObjectSchema: z.ZodType<Prisma.ContestCreateInput> = __makeSchema_ContestCreateInput_schema() as unknown as z.ZodType<Prisma.ContestCreateInput>;
+export const ContestCreateInputObjectZodSchema = __makeSchema_ContestCreateInput_schema();
+
+
+// File: ContestUncheckedCreateInput.schema.ts
+const __makeSchema_ContestUncheckedCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().optional().nullable(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutContestInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUncheckedCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedCreateInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateInput> = __makeSchema_ContestUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateInput>;
+export const ContestUncheckedCreateInputObjectZodSchema = __makeSchema_ContestUncheckedCreateInput_schema();
+
+
+// File: ContestUpdateInput.schema.ts
+const __makeSchema_ContestUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestant: z.lazy(() => ContestantUpdateOneWithoutWonContestNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutContestNestedInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUpdateInputObjectSchema: z.ZodType<Prisma.ContestUpdateInput> = __makeSchema_ContestUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateInput>;
+export const ContestUpdateInputObjectZodSchema = __makeSchema_ContestUpdateInput_schema();
+
+
+// File: ContestUncheckedUpdateInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestantId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutContestNestedInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUncheckedUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateInput> = __makeSchema_ContestUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateInput>;
+export const ContestUncheckedUpdateInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateInput_schema();
+
+
+// File: ContestCreateManyInput.schema.ts
+const __makeSchema_ContestCreateManyInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().optional().nullable()
+}).strict();
+export const ContestCreateManyInputObjectSchema: z.ZodType<Prisma.ContestCreateManyInput> = __makeSchema_ContestCreateManyInput_schema() as unknown as z.ZodType<Prisma.ContestCreateManyInput>;
+export const ContestCreateManyInputObjectZodSchema = __makeSchema_ContestCreateManyInput_schema();
+
+
+// File: ContestUpdateManyMutationInput.schema.ts
+const __makeSchema_ContestUpdateManyMutationInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.ContestUpdateManyMutationInput> = __makeSchema_ContestUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateManyMutationInput>;
+export const ContestUpdateManyMutationInputObjectZodSchema = __makeSchema_ContestUpdateManyMutationInput_schema();
+
+
+// File: ContestUncheckedUpdateManyInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateManyInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestantId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const ContestUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateManyInput> = __makeSchema_ContestUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateManyInput>;
+export const ContestUncheckedUpdateManyInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateManyInput_schema();
+
+
+// File: ContestantCreateInput.schema.ts
+const __makeSchema_ContestantCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contest: z.lazy(() => ContestCreateNestedOneWithoutContestantsInputObjectSchema),
+  user: z.lazy(() => UserCreateNestedOneWithoutContestantsInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateInputObjectSchema: z.ZodType<Prisma.ContestantCreateInput> = __makeSchema_ContestantCreateInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateInput>;
+export const ContestantCreateInputObjectZodSchema = __makeSchema_ContestantCreateInput_schema();
+
+
+// File: ContestantUncheckedCreateInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string(),
+  userId: z.string().optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedCreateInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateInput> = __makeSchema_ContestantUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateInput>;
+export const ContestantUncheckedCreateInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateInput_schema();
+
+
+// File: ContestantUpdateInput.schema.ts
+const __makeSchema_ContestantUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contest: z.lazy(() => ContestUpdateOneRequiredWithoutContestantsNestedInputObjectSchema).optional(),
+  user: z.lazy(() => UserUpdateOneWithoutContestantsNestedInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUpdateInputObjectSchema: z.ZodType<Prisma.ContestantUpdateInput> = __makeSchema_ContestantUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateInput>;
+export const ContestantUpdateInputObjectZodSchema = __makeSchema_ContestantUpdateInput_schema();
+
+
+// File: ContestantUncheckedUpdateInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateInput> = __makeSchema_ContestantUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateInput>;
+export const ContestantUncheckedUpdateInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateInput_schema();
+
+
+// File: ContestantCreateManyInput.schema.ts
+const __makeSchema_ContestantCreateManyInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string(),
+  userId: z.string().optional().nullable()
+}).strict();
+export const ContestantCreateManyInputObjectSchema: z.ZodType<Prisma.ContestantCreateManyInput> = __makeSchema_ContestantCreateManyInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyInput>;
+export const ContestantCreateManyInputObjectZodSchema = __makeSchema_ContestantCreateManyInput_schema();
+
+
+// File: ContestantUpdateManyMutationInput.schema.ts
+const __makeSchema_ContestantUpdateManyMutationInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const ContestantUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.ContestantUpdateManyMutationInput> = __makeSchema_ContestantUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateManyMutationInput>;
+export const ContestantUpdateManyMutationInputObjectZodSchema = __makeSchema_ContestantUpdateManyMutationInput_schema();
+
+
+// File: ContestantUncheckedUpdateManyInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateManyInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const ContestantUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateManyInput> = __makeSchema_ContestantUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateManyInput>;
+export const ContestantUncheckedUpdateManyInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateManyInput_schema();
+
+
+// File: ContestTeamCreateInput.schema.ts
+const __makeSchema_ContestTeamCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  contestant: z.lazy(() => ContestantCreateNestedOneWithoutTeamInputObjectSchema),
+  members: z.lazy(() => UserCreateNestedManyWithoutContestTeamsInputObjectSchema).optional()
+}).strict();
+export const ContestTeamCreateInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateInput> = __makeSchema_ContestTeamCreateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateInput>;
+export const ContestTeamCreateInputObjectZodSchema = __makeSchema_ContestTeamCreateInput_schema();
+
+
+// File: ContestTeamUncheckedCreateInput.schema.ts
+const __makeSchema_ContestTeamUncheckedCreateInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  contestantId: z.string(),
+  members: z.lazy(() => UserUncheckedCreateNestedManyWithoutContestTeamsInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUncheckedCreateInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedCreateInput> = __makeSchema_ContestTeamUncheckedCreateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedCreateInput>;
+export const ContestTeamUncheckedCreateInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateInput_schema();
+
+
+// File: ContestTeamUpdateInput.schema.ts
+const __makeSchema_ContestTeamUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestant: z.lazy(() => ContestantUpdateOneRequiredWithoutTeamNestedInputObjectSchema).optional(),
+  members: z.lazy(() => UserUpdateManyWithoutContestTeamsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUpdateInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateInput> = __makeSchema_ContestTeamUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateInput>;
+export const ContestTeamUpdateInputObjectZodSchema = __makeSchema_ContestTeamUpdateInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestantId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  members: z.lazy(() => UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateInput> = __makeSchema_ContestTeamUncheckedUpdateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateInput>;
+export const ContestTeamUncheckedUpdateInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateInput_schema();
+
+
+// File: ContestTeamCreateManyInput.schema.ts
+const __makeSchema_ContestTeamCreateManyInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  contestantId: z.string()
+}).strict();
+export const ContestTeamCreateManyInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateManyInput> = __makeSchema_ContestTeamCreateManyInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateManyInput>;
+export const ContestTeamCreateManyInputObjectZodSchema = __makeSchema_ContestTeamCreateManyInput_schema();
+
+
+// File: ContestTeamUpdateManyMutationInput.schema.ts
+const __makeSchema_ContestTeamUpdateManyMutationInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateManyMutationInput> = __makeSchema_ContestTeamUpdateManyMutationInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateManyMutationInput>;
+export const ContestTeamUpdateManyMutationInputObjectZodSchema = __makeSchema_ContestTeamUpdateManyMutationInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateManyInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateManyInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestantId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateManyInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateManyInput> = __makeSchema_ContestTeamUncheckedUpdateManyInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateManyInput>;
+export const ContestTeamUncheckedUpdateManyInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyInput_schema();
+
+
 // File: StringFilter.schema.ts
 const __makeSchema_StringFilter_schema = () => z.object({
   equals: z.string().optional(),
@@ -7625,6 +8154,26 @@ export const NotificationListRelationFilterObjectSchema: z.ZodType<Prisma.Notifi
 export const NotificationListRelationFilterObjectZodSchema = __makeSchema_NotificationListRelationFilter_schema();
 
 
+// File: ContestantListRelationFilter.schema.ts
+const __makeSchema_ContestantListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => ContestantWhereInputObjectSchema).optional(),
+  some: z.lazy(() => ContestantWhereInputObjectSchema).optional(),
+  none: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const ContestantListRelationFilterObjectSchema: z.ZodType<Prisma.ContestantListRelationFilter> = __makeSchema_ContestantListRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestantListRelationFilter>;
+export const ContestantListRelationFilterObjectZodSchema = __makeSchema_ContestantListRelationFilter_schema();
+
+
+// File: ContestTeamListRelationFilter.schema.ts
+const __makeSchema_ContestTeamListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => ContestTeamWhereInputObjectSchema).optional(),
+  some: z.lazy(() => ContestTeamWhereInputObjectSchema).optional(),
+  none: z.lazy(() => ContestTeamWhereInputObjectSchema).optional()
+}).strict();
+export const ContestTeamListRelationFilterObjectSchema: z.ZodType<Prisma.ContestTeamListRelationFilter> = __makeSchema_ContestTeamListRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestTeamListRelationFilter>;
+export const ContestTeamListRelationFilterObjectZodSchema = __makeSchema_ContestTeamListRelationFilter_schema();
+
+
 // File: AttendeeOrderByRelationAggregateInput.schema.ts
 const __makeSchema_AttendeeOrderByRelationAggregateInput_schema = () => z.object({
   _count: SortOrderSchema.optional()
@@ -7687,6 +8236,22 @@ const __makeSchema_NotificationOrderByRelationAggregateInput_schema = () => z.ob
 }).strict();
 export const NotificationOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.NotificationOrderByRelationAggregateInput> = __makeSchema_NotificationOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.NotificationOrderByRelationAggregateInput>;
 export const NotificationOrderByRelationAggregateInputObjectZodSchema = __makeSchema_NotificationOrderByRelationAggregateInput_schema();
+
+
+// File: ContestantOrderByRelationAggregateInput.schema.ts
+const __makeSchema_ContestantOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const ContestantOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.ContestantOrderByRelationAggregateInput> = __makeSchema_ContestantOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantOrderByRelationAggregateInput>;
+export const ContestantOrderByRelationAggregateInputObjectZodSchema = __makeSchema_ContestantOrderByRelationAggregateInput_schema();
+
+
+// File: ContestTeamOrderByRelationAggregateInput.schema.ts
+const __makeSchema_ContestTeamOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const ContestTeamOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamOrderByRelationAggregateInput> = __makeSchema_ContestTeamOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamOrderByRelationAggregateInput>;
+export const ContestTeamOrderByRelationAggregateInputObjectZodSchema = __makeSchema_ContestTeamOrderByRelationAggregateInput_schema();
 
 
 // File: UserCountOrderByAggregateInput.schema.ts
@@ -7934,6 +8499,16 @@ export const EventHostingGroupListRelationFilterObjectSchema: z.ZodType<Prisma.E
 export const EventHostingGroupListRelationFilterObjectZodSchema = __makeSchema_EventHostingGroupListRelationFilter_schema();
 
 
+// File: ContestListRelationFilter.schema.ts
+const __makeSchema_ContestListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => ContestWhereInputObjectSchema).optional(),
+  some: z.lazy(() => ContestWhereInputObjectSchema).optional(),
+  none: z.lazy(() => ContestWhereInputObjectSchema).optional()
+}).strict();
+export const ContestListRelationFilterObjectSchema: z.ZodType<Prisma.ContestListRelationFilter> = __makeSchema_ContestListRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestListRelationFilter>;
+export const ContestListRelationFilterObjectZodSchema = __makeSchema_ContestListRelationFilter_schema();
+
+
 // File: MarkGroupListRelationFilter.schema.ts
 const __makeSchema_MarkGroupListRelationFilter_schema = () => z.object({
   every: z.lazy(() => MarkGroupWhereInputObjectSchema).optional(),
@@ -7960,6 +8535,14 @@ const __makeSchema_EventHostingGroupOrderByRelationAggregateInput_schema = () =>
 }).strict();
 export const EventHostingGroupOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.EventHostingGroupOrderByRelationAggregateInput> = __makeSchema_EventHostingGroupOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.EventHostingGroupOrderByRelationAggregateInput>;
 export const EventHostingGroupOrderByRelationAggregateInputObjectZodSchema = __makeSchema_EventHostingGroupOrderByRelationAggregateInput_schema();
+
+
+// File: ContestOrderByRelationAggregateInput.schema.ts
+const __makeSchema_ContestOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const ContestOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.ContestOrderByRelationAggregateInput> = __makeSchema_ContestOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestOrderByRelationAggregateInput>;
+export const ContestOrderByRelationAggregateInputObjectZodSchema = __makeSchema_ContestOrderByRelationAggregateInput_schema();
 
 
 // File: MarkGroupOrderByRelationAggregateInput.schema.ts
@@ -10526,6 +11109,267 @@ export const EnumNotificationPayloadTypeWithAggregatesFilterObjectSchema: z.ZodT
 export const EnumNotificationPayloadTypeWithAggregatesFilterObjectZodSchema = __makeSchema_EnumNotificationPayloadTypeWithAggregatesFilter_schema();
 
 
+// File: EnumContestResultTypeFilter.schema.ts
+const __makeSchema_EnumContestResultTypeFilter_schema = () => z.object({
+  equals: ContestResultTypeSchema.optional(),
+  in: ContestResultTypeSchema.array().optional(),
+  notIn: ContestResultTypeSchema.array().optional(),
+  not: z.union([ContestResultTypeSchema, z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema)]).optional()
+}).strict();
+export const EnumContestResultTypeFilterObjectSchema: z.ZodType<Prisma.EnumContestResultTypeFilter> = __makeSchema_EnumContestResultTypeFilter_schema() as unknown as z.ZodType<Prisma.EnumContestResultTypeFilter>;
+export const EnumContestResultTypeFilterObjectZodSchema = __makeSchema_EnumContestResultTypeFilter_schema();
+
+
+// File: EnumContestResultOrderFilter.schema.ts
+const __makeSchema_EnumContestResultOrderFilter_schema = () => z.object({
+  equals: ContestResultOrderSchema.optional(),
+  in: ContestResultOrderSchema.array().optional(),
+  notIn: ContestResultOrderSchema.array().optional(),
+  not: z.union([ContestResultOrderSchema, z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema)]).optional()
+}).strict();
+export const EnumContestResultOrderFilterObjectSchema: z.ZodType<Prisma.EnumContestResultOrderFilter> = __makeSchema_EnumContestResultOrderFilter_schema() as unknown as z.ZodType<Prisma.EnumContestResultOrderFilter>;
+export const EnumContestResultOrderFilterObjectZodSchema = __makeSchema_EnumContestResultOrderFilter_schema();
+
+
+// File: ContestantNullableScalarRelationFilter.schema.ts
+const __makeSchema_ContestantNullableScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => ContestantWhereInputObjectSchema).optional().nullable(),
+  isNot: z.lazy(() => ContestantWhereInputObjectSchema).optional().nullable()
+}).strict();
+export const ContestantNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.ContestantNullableScalarRelationFilter> = __makeSchema_ContestantNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestantNullableScalarRelationFilter>;
+export const ContestantNullableScalarRelationFilterObjectZodSchema = __makeSchema_ContestantNullableScalarRelationFilter_schema();
+
+
+// File: GroupListRelationFilter.schema.ts
+const __makeSchema_GroupListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => GroupWhereInputObjectSchema).optional(),
+  some: z.lazy(() => GroupWhereInputObjectSchema).optional(),
+  none: z.lazy(() => GroupWhereInputObjectSchema).optional()
+}).strict();
+export const GroupListRelationFilterObjectSchema: z.ZodType<Prisma.GroupListRelationFilter> = __makeSchema_GroupListRelationFilter_schema() as unknown as z.ZodType<Prisma.GroupListRelationFilter>;
+export const GroupListRelationFilterObjectZodSchema = __makeSchema_GroupListRelationFilter_schema();
+
+
+// File: GroupOrderByRelationAggregateInput.schema.ts
+const __makeSchema_GroupOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const GroupOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.GroupOrderByRelationAggregateInput> = __makeSchema_GroupOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupOrderByRelationAggregateInput>;
+export const GroupOrderByRelationAggregateInputObjectZodSchema = __makeSchema_GroupOrderByRelationAggregateInput_schema();
+
+
+// File: ContestCountOrderByAggregateInput.schema.ts
+const __makeSchema_ContestCountOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  startDate: SortOrderSchema.optional(),
+  resultType: SortOrderSchema.optional(),
+  resultOrder: SortOrderSchema.optional(),
+  winnerContestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestCountOrderByAggregateInput> = __makeSchema_ContestCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestCountOrderByAggregateInput>;
+export const ContestCountOrderByAggregateInputObjectZodSchema = __makeSchema_ContestCountOrderByAggregateInput_schema();
+
+
+// File: ContestMaxOrderByAggregateInput.schema.ts
+const __makeSchema_ContestMaxOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  startDate: SortOrderSchema.optional(),
+  resultType: SortOrderSchema.optional(),
+  resultOrder: SortOrderSchema.optional(),
+  winnerContestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestMaxOrderByAggregateInput> = __makeSchema_ContestMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestMaxOrderByAggregateInput>;
+export const ContestMaxOrderByAggregateInputObjectZodSchema = __makeSchema_ContestMaxOrderByAggregateInput_schema();
+
+
+// File: ContestMinOrderByAggregateInput.schema.ts
+const __makeSchema_ContestMinOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  description: SortOrderSchema.optional(),
+  startDate: SortOrderSchema.optional(),
+  resultType: SortOrderSchema.optional(),
+  resultOrder: SortOrderSchema.optional(),
+  winnerContestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestMinOrderByAggregateInput> = __makeSchema_ContestMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestMinOrderByAggregateInput>;
+export const ContestMinOrderByAggregateInputObjectZodSchema = __makeSchema_ContestMinOrderByAggregateInput_schema();
+
+
+// File: EnumContestResultTypeWithAggregatesFilter.schema.ts
+const __makeSchema_EnumContestResultTypeWithAggregatesFilter_schema = () => z.object({
+  equals: ContestResultTypeSchema.optional(),
+  in: ContestResultTypeSchema.array().optional(),
+  notIn: ContestResultTypeSchema.array().optional(),
+  not: z.union([ContestResultTypeSchema, z.lazy(() => NestedEnumContestResultTypeWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema).optional()
+}).strict();
+export const EnumContestResultTypeWithAggregatesFilterObjectSchema: z.ZodType<Prisma.EnumContestResultTypeWithAggregatesFilter> = __makeSchema_EnumContestResultTypeWithAggregatesFilter_schema() as unknown as z.ZodType<Prisma.EnumContestResultTypeWithAggregatesFilter>;
+export const EnumContestResultTypeWithAggregatesFilterObjectZodSchema = __makeSchema_EnumContestResultTypeWithAggregatesFilter_schema();
+
+
+// File: EnumContestResultOrderWithAggregatesFilter.schema.ts
+const __makeSchema_EnumContestResultOrderWithAggregatesFilter_schema = () => z.object({
+  equals: ContestResultOrderSchema.optional(),
+  in: ContestResultOrderSchema.array().optional(),
+  notIn: ContestResultOrderSchema.array().optional(),
+  not: z.union([ContestResultOrderSchema, z.lazy(() => NestedEnumContestResultOrderWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema).optional()
+}).strict();
+export const EnumContestResultOrderWithAggregatesFilterObjectSchema: z.ZodType<Prisma.EnumContestResultOrderWithAggregatesFilter> = __makeSchema_EnumContestResultOrderWithAggregatesFilter_schema() as unknown as z.ZodType<Prisma.EnumContestResultOrderWithAggregatesFilter>;
+export const EnumContestResultOrderWithAggregatesFilterObjectZodSchema = __makeSchema_EnumContestResultOrderWithAggregatesFilter_schema();
+
+
+// File: ContestScalarRelationFilter.schema.ts
+const __makeSchema_ContestScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => ContestWhereInputObjectSchema).optional(),
+  isNot: z.lazy(() => ContestWhereInputObjectSchema).optional()
+}).strict();
+export const ContestScalarRelationFilterObjectSchema: z.ZodType<Prisma.ContestScalarRelationFilter> = __makeSchema_ContestScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestScalarRelationFilter>;
+export const ContestScalarRelationFilterObjectZodSchema = __makeSchema_ContestScalarRelationFilter_schema();
+
+
+// File: ContestTeamNullableScalarRelationFilter.schema.ts
+const __makeSchema_ContestTeamNullableScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => ContestTeamWhereInputObjectSchema).optional().nullable(),
+  isNot: z.lazy(() => ContestTeamWhereInputObjectSchema).optional().nullable()
+}).strict();
+export const ContestTeamNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.ContestTeamNullableScalarRelationFilter> = __makeSchema_ContestTeamNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestTeamNullableScalarRelationFilter>;
+export const ContestTeamNullableScalarRelationFilterObjectZodSchema = __makeSchema_ContestTeamNullableScalarRelationFilter_schema();
+
+
+// File: ContestNullableScalarRelationFilter.schema.ts
+const __makeSchema_ContestNullableScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => ContestWhereInputObjectSchema).optional().nullable(),
+  isNot: z.lazy(() => ContestWhereInputObjectSchema).optional().nullable()
+}).strict();
+export const ContestNullableScalarRelationFilterObjectSchema: z.ZodType<Prisma.ContestNullableScalarRelationFilter> = __makeSchema_ContestNullableScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestNullableScalarRelationFilter>;
+export const ContestNullableScalarRelationFilterObjectZodSchema = __makeSchema_ContestNullableScalarRelationFilter_schema();
+
+
+// File: ContestantContestIdUserIdCompoundUniqueInput.schema.ts
+const __makeSchema_ContestantContestIdUserIdCompoundUniqueInput_schema = () => z.object({
+  contestId: z.string(),
+  userId: z.string()
+}).strict();
+export const ContestantContestIdUserIdCompoundUniqueInputObjectSchema: z.ZodType<Prisma.ContestantContestIdUserIdCompoundUniqueInput> = __makeSchema_ContestantContestIdUserIdCompoundUniqueInput_schema() as unknown as z.ZodType<Prisma.ContestantContestIdUserIdCompoundUniqueInput>;
+export const ContestantContestIdUserIdCompoundUniqueInputObjectZodSchema = __makeSchema_ContestantContestIdUserIdCompoundUniqueInput_schema();
+
+
+// File: ContestantCountOrderByAggregateInput.schema.ts
+const __makeSchema_ContestantCountOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  resultValue: SortOrderSchema.optional(),
+  contestId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
+}).strict();
+export const ContestantCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestantCountOrderByAggregateInput> = __makeSchema_ContestantCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantCountOrderByAggregateInput>;
+export const ContestantCountOrderByAggregateInputObjectZodSchema = __makeSchema_ContestantCountOrderByAggregateInput_schema();
+
+
+// File: ContestantAvgOrderByAggregateInput.schema.ts
+const __makeSchema_ContestantAvgOrderByAggregateInput_schema = () => z.object({
+  resultValue: SortOrderSchema.optional()
+}).strict();
+export const ContestantAvgOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestantAvgOrderByAggregateInput> = __makeSchema_ContestantAvgOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantAvgOrderByAggregateInput>;
+export const ContestantAvgOrderByAggregateInputObjectZodSchema = __makeSchema_ContestantAvgOrderByAggregateInput_schema();
+
+
+// File: ContestantMaxOrderByAggregateInput.schema.ts
+const __makeSchema_ContestantMaxOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  resultValue: SortOrderSchema.optional(),
+  contestId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
+}).strict();
+export const ContestantMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestantMaxOrderByAggregateInput> = __makeSchema_ContestantMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantMaxOrderByAggregateInput>;
+export const ContestantMaxOrderByAggregateInputObjectZodSchema = __makeSchema_ContestantMaxOrderByAggregateInput_schema();
+
+
+// File: ContestantMinOrderByAggregateInput.schema.ts
+const __makeSchema_ContestantMinOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  resultValue: SortOrderSchema.optional(),
+  contestId: SortOrderSchema.optional(),
+  userId: SortOrderSchema.optional()
+}).strict();
+export const ContestantMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestantMinOrderByAggregateInput> = __makeSchema_ContestantMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantMinOrderByAggregateInput>;
+export const ContestantMinOrderByAggregateInputObjectZodSchema = __makeSchema_ContestantMinOrderByAggregateInput_schema();
+
+
+// File: ContestantSumOrderByAggregateInput.schema.ts
+const __makeSchema_ContestantSumOrderByAggregateInput_schema = () => z.object({
+  resultValue: SortOrderSchema.optional()
+}).strict();
+export const ContestantSumOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestantSumOrderByAggregateInput> = __makeSchema_ContestantSumOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantSumOrderByAggregateInput>;
+export const ContestantSumOrderByAggregateInputObjectZodSchema = __makeSchema_ContestantSumOrderByAggregateInput_schema();
+
+
+// File: ContestantScalarRelationFilter.schema.ts
+const __makeSchema_ContestantScalarRelationFilter_schema = () => z.object({
+  is: z.lazy(() => ContestantWhereInputObjectSchema).optional(),
+  isNot: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const ContestantScalarRelationFilterObjectSchema: z.ZodType<Prisma.ContestantScalarRelationFilter> = __makeSchema_ContestantScalarRelationFilter_schema() as unknown as z.ZodType<Prisma.ContestantScalarRelationFilter>;
+export const ContestantScalarRelationFilterObjectZodSchema = __makeSchema_ContestantScalarRelationFilter_schema();
+
+
+// File: UserListRelationFilter.schema.ts
+const __makeSchema_UserListRelationFilter_schema = () => z.object({
+  every: z.lazy(() => UserWhereInputObjectSchema).optional(),
+  some: z.lazy(() => UserWhereInputObjectSchema).optional(),
+  none: z.lazy(() => UserWhereInputObjectSchema).optional()
+}).strict();
+export const UserListRelationFilterObjectSchema: z.ZodType<Prisma.UserListRelationFilter> = __makeSchema_UserListRelationFilter_schema() as unknown as z.ZodType<Prisma.UserListRelationFilter>;
+export const UserListRelationFilterObjectZodSchema = __makeSchema_UserListRelationFilter_schema();
+
+
+// File: UserOrderByRelationAggregateInput.schema.ts
+const __makeSchema_UserOrderByRelationAggregateInput_schema = () => z.object({
+  _count: SortOrderSchema.optional()
+}).strict();
+export const UserOrderByRelationAggregateInputObjectSchema: z.ZodType<Prisma.UserOrderByRelationAggregateInput> = __makeSchema_UserOrderByRelationAggregateInput_schema() as unknown as z.ZodType<Prisma.UserOrderByRelationAggregateInput>;
+export const UserOrderByRelationAggregateInputObjectZodSchema = __makeSchema_UserOrderByRelationAggregateInput_schema();
+
+
+// File: ContestTeamCountOrderByAggregateInput.schema.ts
+const __makeSchema_ContestTeamCountOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  contestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestTeamCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamCountOrderByAggregateInput> = __makeSchema_ContestTeamCountOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCountOrderByAggregateInput>;
+export const ContestTeamCountOrderByAggregateInputObjectZodSchema = __makeSchema_ContestTeamCountOrderByAggregateInput_schema();
+
+
+// File: ContestTeamMaxOrderByAggregateInput.schema.ts
+const __makeSchema_ContestTeamMaxOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  contestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestTeamMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamMaxOrderByAggregateInput> = __makeSchema_ContestTeamMaxOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamMaxOrderByAggregateInput>;
+export const ContestTeamMaxOrderByAggregateInputObjectZodSchema = __makeSchema_ContestTeamMaxOrderByAggregateInput_schema();
+
+
+// File: ContestTeamMinOrderByAggregateInput.schema.ts
+const __makeSchema_ContestTeamMinOrderByAggregateInput_schema = () => z.object({
+  id: SortOrderSchema.optional(),
+  name: SortOrderSchema.optional(),
+  contestantId: SortOrderSchema.optional()
+}).strict();
+export const ContestTeamMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamMinOrderByAggregateInput> = __makeSchema_ContestTeamMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamMinOrderByAggregateInput>;
+export const ContestTeamMinOrderByAggregateInputObjectZodSchema = __makeSchema_ContestTeamMinOrderByAggregateInput_schema();
+
+
 // File: UserCreateNestedOneWithoutMembershipsInput.schema.ts
 const __makeSchema_UserCreateNestedOneWithoutMembershipsInput_schema = () => z.object({
   create: z.union([z.lazy(() => UserCreateWithoutMembershipsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutMembershipsInputObjectSchema)]).optional(),
@@ -10749,6 +11593,27 @@ export const NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema: 
 export const NotificationCreateNestedManyWithoutLastUpdatedByInputObjectZodSchema = __makeSchema_NotificationCreateNestedManyWithoutLastUpdatedByInput_schema();
 
 
+// File: ContestantCreateNestedManyWithoutUserInput.schema.ts
+const __makeSchema_ContestantCreateNestedManyWithoutUserInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateWithoutUserInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyUserInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantCreateNestedManyWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantCreateNestedManyWithoutUserInput> = __makeSchema_ContestantCreateNestedManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateNestedManyWithoutUserInput>;
+export const ContestantCreateNestedManyWithoutUserInputObjectZodSchema = __makeSchema_ContestantCreateNestedManyWithoutUserInput_schema();
+
+
+// File: ContestTeamCreateNestedManyWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamCreateNestedManyWithoutMembersInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema).array(), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestTeamCreateNestedManyWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateNestedManyWithoutMembersInput> = __makeSchema_ContestTeamCreateNestedManyWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateNestedManyWithoutMembersInput>;
+export const ContestTeamCreateNestedManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamCreateNestedManyWithoutMembersInput_schema();
+
+
 // File: PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput.schema.ts
 const __makeSchema_PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput_schema = () => z.object({
   create: z.union([z.lazy(() => PrivacyPermissionsCreateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedCreateWithoutUserInputObjectSchema)]).optional(),
@@ -10888,6 +11753,27 @@ const __makeSchema_NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInpu
 }).strict();
 export const NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema: z.ZodType<Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput> = __makeSchema_NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput_schema() as unknown as z.ZodType<Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput>;
 export const NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectZodSchema = __makeSchema_NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput_schema();
+
+
+// File: ContestantUncheckedCreateNestedManyWithoutUserInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateNestedManyWithoutUserInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateWithoutUserInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyUserInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput> = __makeSchema_ContestantUncheckedCreateNestedManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput>;
+export const ContestantUncheckedCreateNestedManyWithoutUserInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateNestedManyWithoutUserInput_schema();
+
+
+// File: ContestTeamUncheckedCreateNestedManyWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUncheckedCreateNestedManyWithoutMembersInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema).array(), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput> = __makeSchema_ContestTeamUncheckedCreateNestedManyWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput>;
+export const ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateNestedManyWithoutMembersInput_schema();
 
 
 // File: NullableStringFieldUpdateOperationsInput.schema.ts
@@ -11141,6 +12027,41 @@ export const NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema: 
 export const NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectZodSchema = __makeSchema_NotificationUpdateManyWithoutLastUpdatedByNestedInput_schema();
 
 
+// File: ContestantUpdateManyWithoutUserNestedInput.schema.ts
+const __makeSchema_ContestantUpdateManyWithoutUserNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateWithoutUserInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestantUpsertWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => ContestantUpsertWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyUserInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => ContestantUpdateWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestantUpdateManyWithWhereWithoutUserInputObjectSchema), z.lazy(() => ContestantUpdateManyWithWhereWithoutUserInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUpdateManyWithoutUserNestedInputObjectSchema: z.ZodType<Prisma.ContestantUpdateManyWithoutUserNestedInput> = __makeSchema_ContestantUpdateManyWithoutUserNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateManyWithoutUserNestedInput>;
+export const ContestantUpdateManyWithoutUserNestedInputObjectZodSchema = __makeSchema_ContestantUpdateManyWithoutUserNestedInput_schema();
+
+
+// File: ContestTeamUpdateManyWithoutMembersNestedInput.schema.ts
+const __makeSchema_ContestTeamUpdateManyWithoutMembersNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema).array(), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestTeamUpdateManyWithWhereWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpdateManyWithWhereWithoutMembersInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestTeamScalarWhereInputObjectSchema), z.lazy(() => ContestTeamScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateManyWithoutMembersNestedInput> = __makeSchema_ContestTeamUpdateManyWithoutMembersNestedInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateManyWithoutMembersNestedInput>;
+export const ContestTeamUpdateManyWithoutMembersNestedInputObjectZodSchema = __makeSchema_ContestTeamUpdateManyWithoutMembersNestedInput_schema();
+
+
 // File: PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput.schema.ts
 const __makeSchema_PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput_schema = () => z.object({
   create: z.union([z.lazy(() => PrivacyPermissionsCreateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedCreateWithoutUserInputObjectSchema)]).optional(),
@@ -11367,6 +12288,41 @@ export const NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjec
 export const NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectZodSchema = __makeSchema_NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput_schema();
 
 
+// File: ContestantUncheckedUpdateManyWithoutUserNestedInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateManyWithoutUserNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateWithoutUserInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutUserInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestantUpsertWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => ContestantUpsertWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyUserInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateWithWhereUniqueWithoutUserInputObjectSchema), z.lazy(() => ContestantUpdateWithWhereUniqueWithoutUserInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestantUpdateManyWithWhereWithoutUserInputObjectSchema), z.lazy(() => ContestantUpdateManyWithWhereWithoutUserInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput> = __makeSchema_ContestantUncheckedUpdateManyWithoutUserNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput>;
+export const ContestantUncheckedUpdateManyWithoutUserNestedInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateManyWithoutUserNestedInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateManyWithoutMembersNestedInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema).array(), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamCreateOrConnectWithoutMembersInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestTeamWhereUniqueInputObjectSchema), z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestTeamUpdateManyWithWhereWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUpdateManyWithWhereWithoutMembersInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestTeamScalarWhereInputObjectSchema), z.lazy(() => ContestTeamScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput> = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput>;
+export const ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersNestedInput_schema();
+
+
 // File: EventCompanyCreateNestedManyWithoutCompanyInput.schema.ts
 const __makeSchema_EventCompanyCreateNestedManyWithoutCompanyInput_schema = () => z.object({
   create: z.union([z.lazy(() => EventCompanyCreateWithoutCompanyInputObjectSchema), z.lazy(() => EventCompanyCreateWithoutCompanyInputObjectSchema).array(), z.lazy(() => EventCompanyUncheckedCreateWithoutCompanyInputObjectSchema), z.lazy(() => EventCompanyUncheckedCreateWithoutCompanyInputObjectSchema).array()]).optional(),
@@ -11494,6 +12450,16 @@ export const EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema: z.Z
 export const EventHostingGroupCreateNestedManyWithoutGroupInputObjectZodSchema = __makeSchema_EventHostingGroupCreateNestedManyWithoutGroupInput_schema();
 
 
+// File: ContestCreateNestedManyWithoutGroupsInput.schema.ts
+const __makeSchema_ContestCreateNestedManyWithoutGroupsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema).array(), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestCreateNestedManyWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestCreateNestedManyWithoutGroupsInput> = __makeSchema_ContestCreateNestedManyWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateNestedManyWithoutGroupsInput>;
+export const ContestCreateNestedManyWithoutGroupsInputObjectZodSchema = __makeSchema_ContestCreateNestedManyWithoutGroupsInput_schema();
+
+
 // File: GroupMembershipCreateNestedManyWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipCreateNestedManyWithoutGroupInput_schema = () => z.object({
   create: z.union([z.lazy(() => GroupMembershipCreateWithoutGroupInputObjectSchema), z.lazy(() => GroupMembershipCreateWithoutGroupInputObjectSchema).array(), z.lazy(() => GroupMembershipUncheckedCreateWithoutGroupInputObjectSchema), z.lazy(() => GroupMembershipUncheckedCreateWithoutGroupInputObjectSchema).array()]).optional(),
@@ -11547,6 +12513,16 @@ const __makeSchema_EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput_s
 }).strict();
 export const EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema: z.ZodType<Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput> = __makeSchema_EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput_schema() as unknown as z.ZodType<Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput>;
 export const EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectZodSchema = __makeSchema_EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput_schema();
+
+
+// File: ContestUncheckedCreateNestedManyWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUncheckedCreateNestedManyWithoutGroupsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema).array(), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateNestedManyWithoutGroupsInput> = __makeSchema_ContestUncheckedCreateNestedManyWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateNestedManyWithoutGroupsInput>;
+export const ContestUncheckedCreateNestedManyWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUncheckedCreateNestedManyWithoutGroupsInput_schema();
 
 
 // File: GroupMembershipUncheckedCreateNestedManyWithoutGroupInput.schema.ts
@@ -11643,6 +12619,23 @@ export const EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema: z.Z
 export const EventHostingGroupUpdateManyWithoutGroupNestedInputObjectZodSchema = __makeSchema_EventHostingGroupUpdateManyWithoutGroupNestedInput_schema();
 
 
+// File: ContestUpdateManyWithoutGroupsNestedInput.schema.ts
+const __makeSchema_ContestUpdateManyWithoutGroupsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema).array(), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestUpsertWithWhereUniqueWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpsertWithWhereUniqueWithoutGroupsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestUpdateWithWhereUniqueWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpdateWithWhereUniqueWithoutGroupsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestUpdateManyWithWhereWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpdateManyWithWhereWithoutGroupsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestScalarWhereInputObjectSchema), z.lazy(() => ContestScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestUpdateManyWithoutGroupsNestedInputObjectSchema: z.ZodType<Prisma.ContestUpdateManyWithoutGroupsNestedInput> = __makeSchema_ContestUpdateManyWithoutGroupsNestedInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateManyWithoutGroupsNestedInput>;
+export const ContestUpdateManyWithoutGroupsNestedInputObjectZodSchema = __makeSchema_ContestUpdateManyWithoutGroupsNestedInput_schema();
+
+
 // File: GroupMembershipUpdateManyWithoutGroupNestedInput.schema.ts
 const __makeSchema_GroupMembershipUpdateManyWithoutGroupNestedInput_schema = () => z.object({
   create: z.union([z.lazy(() => GroupMembershipCreateWithoutGroupInputObjectSchema), z.lazy(() => GroupMembershipCreateWithoutGroupInputObjectSchema).array(), z.lazy(() => GroupMembershipUncheckedCreateWithoutGroupInputObjectSchema), z.lazy(() => GroupMembershipUncheckedCreateWithoutGroupInputObjectSchema).array()]).optional(),
@@ -11731,6 +12724,23 @@ const __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput_s
 }).strict();
 export const EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema: z.ZodType<Prisma.EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput> = __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput_schema() as unknown as z.ZodType<Prisma.EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput>;
 export const EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectZodSchema = __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput_schema();
+
+
+// File: ContestUncheckedUpdateManyWithoutGroupsNestedInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateManyWithoutGroupsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema).array(), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema), z.lazy(() => ContestCreateOrConnectWithoutGroupsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestUpsertWithWhereUniqueWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpsertWithWhereUniqueWithoutGroupsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestWhereUniqueInputObjectSchema), z.lazy(() => ContestWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestUpdateWithWhereUniqueWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpdateWithWhereUniqueWithoutGroupsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestUpdateManyWithWhereWithoutGroupsInputObjectSchema), z.lazy(() => ContestUpdateManyWithWhereWithoutGroupsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestScalarWhereInputObjectSchema), z.lazy(() => ContestScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateManyWithoutGroupsNestedInput> = __makeSchema_ContestUncheckedUpdateManyWithoutGroupsNestedInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateManyWithoutGroupsNestedInput>;
+export const ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateManyWithoutGroupsNestedInput_schema();
 
 
 // File: GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput.schema.ts
@@ -14575,6 +15585,376 @@ export const NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedIn
 export const NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedInputObjectZodSchema = __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedInput_schema();
 
 
+// File: ContestantCreateNestedOneWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantCreateNestedOneWithoutWonContestInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutWonContestInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestantCreateOrConnectWithoutWonContestInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestantWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateNestedOneWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateNestedOneWithoutWonContestInput> = __makeSchema_ContestantCreateNestedOneWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateNestedOneWithoutWonContestInput>;
+export const ContestantCreateNestedOneWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantCreateNestedOneWithoutWonContestInput_schema();
+
+
+// File: ContestantCreateNestedManyWithoutContestInput.schema.ts
+const __makeSchema_ContestantCreateNestedManyWithoutContestInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateWithoutContestInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyContestInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantCreateNestedManyWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateNestedManyWithoutContestInput> = __makeSchema_ContestantCreateNestedManyWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateNestedManyWithoutContestInput>;
+export const ContestantCreateNestedManyWithoutContestInputObjectZodSchema = __makeSchema_ContestantCreateNestedManyWithoutContestInput_schema();
+
+
+// File: GroupCreateNestedManyWithoutContestsInput.schema.ts
+const __makeSchema_GroupCreateNestedManyWithoutContestsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateWithoutContestsInputObjectSchema).array(), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const GroupCreateNestedManyWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupCreateNestedManyWithoutContestsInput> = __makeSchema_GroupCreateNestedManyWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupCreateNestedManyWithoutContestsInput>;
+export const GroupCreateNestedManyWithoutContestsInputObjectZodSchema = __makeSchema_GroupCreateNestedManyWithoutContestsInput_schema();
+
+
+// File: ContestantUncheckedCreateNestedManyWithoutContestInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateNestedManyWithoutContestInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateWithoutContestInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyContestInputEnvelopeObjectSchema).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUncheckedCreateNestedManyWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput> = __makeSchema_ContestantUncheckedCreateNestedManyWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput>;
+export const ContestantUncheckedCreateNestedManyWithoutContestInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateNestedManyWithoutContestInput_schema();
+
+
+// File: GroupUncheckedCreateNestedManyWithoutContestsInput.schema.ts
+const __makeSchema_GroupUncheckedCreateNestedManyWithoutContestsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateWithoutContestsInputObjectSchema).array(), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const GroupUncheckedCreateNestedManyWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput> = __makeSchema_GroupUncheckedCreateNestedManyWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput>;
+export const GroupUncheckedCreateNestedManyWithoutContestsInputObjectZodSchema = __makeSchema_GroupUncheckedCreateNestedManyWithoutContestsInput_schema();
+
+
+// File: EnumContestResultTypeFieldUpdateOperationsInput.schema.ts
+const __makeSchema_EnumContestResultTypeFieldUpdateOperationsInput_schema = () => z.object({
+  set: ContestResultTypeSchema.optional()
+}).strict();
+export const EnumContestResultTypeFieldUpdateOperationsInputObjectSchema: z.ZodType<Prisma.EnumContestResultTypeFieldUpdateOperationsInput> = __makeSchema_EnumContestResultTypeFieldUpdateOperationsInput_schema() as unknown as z.ZodType<Prisma.EnumContestResultTypeFieldUpdateOperationsInput>;
+export const EnumContestResultTypeFieldUpdateOperationsInputObjectZodSchema = __makeSchema_EnumContestResultTypeFieldUpdateOperationsInput_schema();
+
+
+// File: EnumContestResultOrderFieldUpdateOperationsInput.schema.ts
+const __makeSchema_EnumContestResultOrderFieldUpdateOperationsInput_schema = () => z.object({
+  set: ContestResultOrderSchema.optional()
+}).strict();
+export const EnumContestResultOrderFieldUpdateOperationsInputObjectSchema: z.ZodType<Prisma.EnumContestResultOrderFieldUpdateOperationsInput> = __makeSchema_EnumContestResultOrderFieldUpdateOperationsInput_schema() as unknown as z.ZodType<Prisma.EnumContestResultOrderFieldUpdateOperationsInput>;
+export const EnumContestResultOrderFieldUpdateOperationsInputObjectZodSchema = __makeSchema_EnumContestResultOrderFieldUpdateOperationsInput_schema();
+
+
+// File: ContestantUpdateOneWithoutWonContestNestedInput.schema.ts
+const __makeSchema_ContestantUpdateOneWithoutWonContestNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutWonContestInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestantCreateOrConnectWithoutWonContestInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestantUpsertWithoutWonContestInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => ContestantWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => ContestantWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => ContestantWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateToOneWithWhereWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUpdateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutWonContestInputObjectSchema)]).optional()
+}).strict();
+export const ContestantUpdateOneWithoutWonContestNestedInputObjectSchema: z.ZodType<Prisma.ContestantUpdateOneWithoutWonContestNestedInput> = __makeSchema_ContestantUpdateOneWithoutWonContestNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateOneWithoutWonContestNestedInput>;
+export const ContestantUpdateOneWithoutWonContestNestedInputObjectZodSchema = __makeSchema_ContestantUpdateOneWithoutWonContestNestedInput_schema();
+
+
+// File: ContestantUpdateManyWithoutContestNestedInput.schema.ts
+const __makeSchema_ContestantUpdateManyWithoutContestNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateWithoutContestInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestantUpsertWithWhereUniqueWithoutContestInputObjectSchema), z.lazy(() => ContestantUpsertWithWhereUniqueWithoutContestInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyContestInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateWithWhereUniqueWithoutContestInputObjectSchema), z.lazy(() => ContestantUpdateWithWhereUniqueWithoutContestInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestantUpdateManyWithWhereWithoutContestInputObjectSchema), z.lazy(() => ContestantUpdateManyWithWhereWithoutContestInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUpdateManyWithoutContestNestedInputObjectSchema: z.ZodType<Prisma.ContestantUpdateManyWithoutContestNestedInput> = __makeSchema_ContestantUpdateManyWithoutContestNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateManyWithoutContestNestedInput>;
+export const ContestantUpdateManyWithoutContestNestedInputObjectZodSchema = __makeSchema_ContestantUpdateManyWithoutContestNestedInput_schema();
+
+
+// File: GroupUpdateManyWithoutContestsNestedInput.schema.ts
+const __makeSchema_GroupUpdateManyWithoutContestsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateWithoutContestsInputObjectSchema).array(), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => GroupUpsertWithWhereUniqueWithoutContestsInputObjectSchema), z.lazy(() => GroupUpsertWithWhereUniqueWithoutContestsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => GroupUpdateWithWhereUniqueWithoutContestsInputObjectSchema), z.lazy(() => GroupUpdateWithWhereUniqueWithoutContestsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => GroupUpdateManyWithWhereWithoutContestsInputObjectSchema), z.lazy(() => GroupUpdateManyWithWhereWithoutContestsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => GroupScalarWhereInputObjectSchema), z.lazy(() => GroupScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const GroupUpdateManyWithoutContestsNestedInputObjectSchema: z.ZodType<Prisma.GroupUpdateManyWithoutContestsNestedInput> = __makeSchema_GroupUpdateManyWithoutContestsNestedInput_schema() as unknown as z.ZodType<Prisma.GroupUpdateManyWithoutContestsNestedInput>;
+export const GroupUpdateManyWithoutContestsNestedInputObjectZodSchema = __makeSchema_GroupUpdateManyWithoutContestsNestedInput_schema();
+
+
+// File: ContestantUncheckedUpdateManyWithoutContestNestedInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateManyWithoutContestNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateWithoutContestInputObjectSchema).array(), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema), z.lazy(() => ContestantCreateOrConnectWithoutContestInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => ContestantUpsertWithWhereUniqueWithoutContestInputObjectSchema), z.lazy(() => ContestantUpsertWithWhereUniqueWithoutContestInputObjectSchema).array()]).optional(),
+  createMany: z.lazy(() => ContestantCreateManyContestInputEnvelopeObjectSchema).optional(),
+  set: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => ContestantWhereUniqueInputObjectSchema), z.lazy(() => ContestantWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateWithWhereUniqueWithoutContestInputObjectSchema), z.lazy(() => ContestantUpdateWithWhereUniqueWithoutContestInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => ContestantUpdateManyWithWhereWithoutContestInputObjectSchema), z.lazy(() => ContestantUpdateManyWithWhereWithoutContestInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const ContestantUncheckedUpdateManyWithoutContestNestedInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput> = __makeSchema_ContestantUncheckedUpdateManyWithoutContestNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput>;
+export const ContestantUncheckedUpdateManyWithoutContestNestedInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateManyWithoutContestNestedInput_schema();
+
+
+// File: GroupUncheckedUpdateManyWithoutContestsNestedInput.schema.ts
+const __makeSchema_GroupUncheckedUpdateManyWithoutContestsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateWithoutContestsInputObjectSchema).array(), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema), z.lazy(() => GroupCreateOrConnectWithoutContestsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => GroupUpsertWithWhereUniqueWithoutContestsInputObjectSchema), z.lazy(() => GroupUpsertWithWhereUniqueWithoutContestsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => GroupWhereUniqueInputObjectSchema), z.lazy(() => GroupWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => GroupUpdateWithWhereUniqueWithoutContestsInputObjectSchema), z.lazy(() => GroupUpdateWithWhereUniqueWithoutContestsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => GroupUpdateManyWithWhereWithoutContestsInputObjectSchema), z.lazy(() => GroupUpdateManyWithWhereWithoutContestsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => GroupScalarWhereInputObjectSchema), z.lazy(() => GroupScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const GroupUncheckedUpdateManyWithoutContestsNestedInputObjectSchema: z.ZodType<Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput> = __makeSchema_GroupUncheckedUpdateManyWithoutContestsNestedInput_schema() as unknown as z.ZodType<Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput>;
+export const GroupUncheckedUpdateManyWithoutContestsNestedInputObjectZodSchema = __makeSchema_GroupUncheckedUpdateManyWithoutContestsNestedInput_schema();
+
+
+// File: ContestCreateNestedOneWithoutContestantsInput.schema.ts
+const __makeSchema_ContestCreateNestedOneWithoutContestantsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutContestantsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutContestantsInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestCreateNestedOneWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestCreateNestedOneWithoutContestantsInput> = __makeSchema_ContestCreateNestedOneWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateNestedOneWithoutContestantsInput>;
+export const ContestCreateNestedOneWithoutContestantsInputObjectZodSchema = __makeSchema_ContestCreateNestedOneWithoutContestantsInput_schema();
+
+
+// File: UserCreateNestedOneWithoutContestantsInput.schema.ts
+const __makeSchema_UserCreateNestedOneWithoutContestantsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestantsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutContestantsInputObjectSchema).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const UserCreateNestedOneWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserCreateNestedOneWithoutContestantsInput> = __makeSchema_UserCreateNestedOneWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserCreateNestedOneWithoutContestantsInput>;
+export const UserCreateNestedOneWithoutContestantsInputObjectZodSchema = __makeSchema_UserCreateNestedOneWithoutContestantsInput_schema();
+
+
+// File: ContestTeamCreateNestedOneWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamCreateNestedOneWithoutContestantInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestTeamCreateOrConnectWithoutContestantInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestTeamCreateNestedOneWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateNestedOneWithoutContestantInput> = __makeSchema_ContestTeamCreateNestedOneWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateNestedOneWithoutContestantInput>;
+export const ContestTeamCreateNestedOneWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamCreateNestedOneWithoutContestantInput_schema();
+
+
+// File: ContestCreateNestedOneWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestCreateNestedOneWithoutWinnerContestantInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutWinnerContestantInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestCreateNestedOneWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestCreateNestedOneWithoutWinnerContestantInput> = __makeSchema_ContestCreateNestedOneWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestCreateNestedOneWithoutWinnerContestantInput>;
+export const ContestCreateNestedOneWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestCreateNestedOneWithoutWinnerContestantInput_schema();
+
+
+// File: ContestTeamUncheckedCreateNestedOneWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUncheckedCreateNestedOneWithoutContestantInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestTeamCreateOrConnectWithoutContestantInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput> = __makeSchema_ContestTeamUncheckedCreateNestedOneWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput>;
+export const ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateNestedOneWithoutContestantInput_schema();
+
+
+// File: ContestUncheckedCreateNestedOneWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUncheckedCreateNestedOneWithoutWinnerContestantInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutWinnerContestantInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateNestedOneWithoutWinnerContestantInput> = __makeSchema_ContestUncheckedCreateNestedOneWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateNestedOneWithoutWinnerContestantInput>;
+export const ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUncheckedCreateNestedOneWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUpdateOneRequiredWithoutContestantsNestedInput.schema.ts
+const __makeSchema_ContestUpdateOneRequiredWithoutContestantsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutContestantsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutContestantsInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestUpsertWithoutContestantsInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestUpdateToOneWithWhereWithoutContestantsInputObjectSchema), z.lazy(() => ContestUpdateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutContestantsInputObjectSchema)]).optional()
+}).strict();
+export const ContestUpdateOneRequiredWithoutContestantsNestedInputObjectSchema: z.ZodType<Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput> = __makeSchema_ContestUpdateOneRequiredWithoutContestantsNestedInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput>;
+export const ContestUpdateOneRequiredWithoutContestantsNestedInputObjectZodSchema = __makeSchema_ContestUpdateOneRequiredWithoutContestantsNestedInput_schema();
+
+
+// File: UserUpdateOneWithoutContestantsNestedInput.schema.ts
+const __makeSchema_UserUpdateOneWithoutContestantsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestantsInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => UserCreateOrConnectWithoutContestantsInputObjectSchema).optional(),
+  upsert: z.lazy(() => UserUpsertWithoutContestantsInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => UserWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => UserUpdateToOneWithWhereWithoutContestantsInputObjectSchema), z.lazy(() => UserUpdateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutContestantsInputObjectSchema)]).optional()
+}).strict();
+export const UserUpdateOneWithoutContestantsNestedInputObjectSchema: z.ZodType<Prisma.UserUpdateOneWithoutContestantsNestedInput> = __makeSchema_UserUpdateOneWithoutContestantsNestedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateOneWithoutContestantsNestedInput>;
+export const UserUpdateOneWithoutContestantsNestedInputObjectZodSchema = __makeSchema_UserUpdateOneWithoutContestantsNestedInput_schema();
+
+
+// File: ContestTeamUpdateOneWithoutContestantNestedInput.schema.ts
+const __makeSchema_ContestTeamUpdateOneWithoutContestantNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestTeamCreateOrConnectWithoutContestantInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestTeamUpsertWithoutContestantInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => ContestTeamWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => ContestTeamWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestTeamUpdateToOneWithWhereWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUpdateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutContestantInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUpdateOneWithoutContestantNestedInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateOneWithoutContestantNestedInput> = __makeSchema_ContestTeamUpdateOneWithoutContestantNestedInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateOneWithoutContestantNestedInput>;
+export const ContestTeamUpdateOneWithoutContestantNestedInputObjectZodSchema = __makeSchema_ContestTeamUpdateOneWithoutContestantNestedInput_schema();
+
+
+// File: ContestUpdateOneWithoutWinnerContestantNestedInput.schema.ts
+const __makeSchema_ContestUpdateOneWithoutWinnerContestantNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutWinnerContestantInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestUpsertWithoutWinnerContestantInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => ContestWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => ContestWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestUpdateToOneWithWhereWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUpdateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutWinnerContestantInputObjectSchema)]).optional()
+}).strict();
+export const ContestUpdateOneWithoutWinnerContestantNestedInputObjectSchema: z.ZodType<Prisma.ContestUpdateOneWithoutWinnerContestantNestedInput> = __makeSchema_ContestUpdateOneWithoutWinnerContestantNestedInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateOneWithoutWinnerContestantNestedInput>;
+export const ContestUpdateOneWithoutWinnerContestantNestedInputObjectZodSchema = __makeSchema_ContestUpdateOneWithoutWinnerContestantNestedInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateOneWithoutContestantNestedInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateOneWithoutContestantNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestTeamCreateOrConnectWithoutContestantInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestTeamUpsertWithoutContestantInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => ContestTeamWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => ContestTeamWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestTeamUpdateToOneWithWhereWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUpdateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutContestantInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput> = __makeSchema_ContestTeamUncheckedUpdateOneWithoutContestantNestedInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput>;
+export const ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateOneWithoutContestantNestedInput_schema();
+
+
+// File: ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestCreateOrConnectWithoutWinnerContestantInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestUpsertWithoutWinnerContestantInputObjectSchema).optional(),
+  disconnect: z.union([z.boolean(), z.lazy(() => ContestWhereInputObjectSchema)]).optional(),
+  delete: z.union([z.boolean(), z.lazy(() => ContestWhereInputObjectSchema)]).optional(),
+  connect: z.lazy(() => ContestWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestUpdateToOneWithWhereWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUpdateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutWinnerContestantInputObjectSchema)]).optional()
+}).strict();
+export const ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput> = __makeSchema_ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput>;
+export const ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput_schema();
+
+
+// File: ContestantCreateNestedOneWithoutTeamInput.schema.ts
+const __makeSchema_ContestantCreateNestedOneWithoutTeamInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutTeamInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestantCreateOrConnectWithoutTeamInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestantWhereUniqueInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateNestedOneWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantCreateNestedOneWithoutTeamInput> = __makeSchema_ContestantCreateNestedOneWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateNestedOneWithoutTeamInput>;
+export const ContestantCreateNestedOneWithoutTeamInputObjectZodSchema = __makeSchema_ContestantCreateNestedOneWithoutTeamInput_schema();
+
+
+// File: UserCreateNestedManyWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserCreateNestedManyWithoutContestTeamsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema).array(), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserCreateNestedManyWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserCreateNestedManyWithoutContestTeamsInput> = __makeSchema_UserCreateNestedManyWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserCreateNestedManyWithoutContestTeamsInput>;
+export const UserCreateNestedManyWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserCreateNestedManyWithoutContestTeamsInput_schema();
+
+
+// File: UserUncheckedCreateNestedManyWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUncheckedCreateNestedManyWithoutContestTeamsInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema).array(), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional()
+}).strict();
+export const UserUncheckedCreateNestedManyWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateNestedManyWithoutContestTeamsInput> = __makeSchema_UserUncheckedCreateNestedManyWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateNestedManyWithoutContestTeamsInput>;
+export const UserUncheckedCreateNestedManyWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedCreateNestedManyWithoutContestTeamsInput_schema();
+
+
+// File: ContestantUpdateOneRequiredWithoutTeamNestedInput.schema.ts
+const __makeSchema_ContestantUpdateOneRequiredWithoutTeamNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => ContestantCreateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutTeamInputObjectSchema)]).optional(),
+  connectOrCreate: z.lazy(() => ContestantCreateOrConnectWithoutTeamInputObjectSchema).optional(),
+  upsert: z.lazy(() => ContestantUpsertWithoutTeamInputObjectSchema).optional(),
+  connect: z.lazy(() => ContestantWhereUniqueInputObjectSchema).optional(),
+  update: z.union([z.lazy(() => ContestantUpdateToOneWithWhereWithoutTeamInputObjectSchema), z.lazy(() => ContestantUpdateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutTeamInputObjectSchema)]).optional()
+}).strict();
+export const ContestantUpdateOneRequiredWithoutTeamNestedInputObjectSchema: z.ZodType<Prisma.ContestantUpdateOneRequiredWithoutTeamNestedInput> = __makeSchema_ContestantUpdateOneRequiredWithoutTeamNestedInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateOneRequiredWithoutTeamNestedInput>;
+export const ContestantUpdateOneRequiredWithoutTeamNestedInputObjectZodSchema = __makeSchema_ContestantUpdateOneRequiredWithoutTeamNestedInput_schema();
+
+
+// File: UserUpdateManyWithoutContestTeamsNestedInput.schema.ts
+const __makeSchema_UserUpdateManyWithoutContestTeamsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema).array(), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserUpdateManyWithWhereWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpdateManyWithWhereWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserScalarWhereInputObjectSchema), z.lazy(() => UserScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserUpdateManyWithoutContestTeamsNestedInputObjectSchema: z.ZodType<Prisma.UserUpdateManyWithoutContestTeamsNestedInput> = __makeSchema_UserUpdateManyWithoutContestTeamsNestedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateManyWithoutContestTeamsNestedInput>;
+export const UserUpdateManyWithoutContestTeamsNestedInputObjectZodSchema = __makeSchema_UserUpdateManyWithoutContestTeamsNestedInput_schema();
+
+
+// File: UserUncheckedUpdateManyWithoutContestTeamsNestedInput.schema.ts
+const __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsNestedInput_schema = () => z.object({
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema).array(), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  connectOrCreate: z.union([z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema), z.lazy(() => UserCreateOrConnectWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  upsert: z.union([z.lazy(() => UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  set: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  disconnect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  delete: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  connect: z.union([z.lazy(() => UserWhereUniqueInputObjectSchema), z.lazy(() => UserWhereUniqueInputObjectSchema).array()]).optional(),
+  update: z.union([z.lazy(() => UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  updateMany: z.union([z.lazy(() => UserUpdateManyWithWhereWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUpdateManyWithWhereWithoutContestTeamsInputObjectSchema).array()]).optional(),
+  deleteMany: z.union([z.lazy(() => UserScalarWhereInputObjectSchema), z.lazy(() => UserScalarWhereInputObjectSchema).array()]).optional()
+}).strict();
+export const UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsNestedInput> = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsNestedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsNestedInput>;
+export const UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsNestedInput_schema();
+
+
 // File: NestedStringFilter.schema.ts
 
 
@@ -15404,6 +16784,60 @@ export const NestedEnumNotificationPayloadTypeWithAggregatesFilterObjectSchema: 
 export const NestedEnumNotificationPayloadTypeWithAggregatesFilterObjectZodSchema = nestedenumnotificationpayloadtypewithaggregatesfilterSchema;
 
 
+// File: NestedEnumContestResultTypeFilter.schema.ts
+
+const nestedenumcontestresulttypefilterSchema = z.object({
+  equals: ContestResultTypeSchema.optional(),
+  in: ContestResultTypeSchema.array().optional(),
+  notIn: ContestResultTypeSchema.array().optional(),
+  not: z.union([ContestResultTypeSchema, z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema)]).optional()
+}).strict();
+export const NestedEnumContestResultTypeFilterObjectSchema: z.ZodType<Prisma.NestedEnumContestResultTypeFilter> = nestedenumcontestresulttypefilterSchema as unknown as z.ZodType<Prisma.NestedEnumContestResultTypeFilter>;
+export const NestedEnumContestResultTypeFilterObjectZodSchema = nestedenumcontestresulttypefilterSchema;
+
+
+// File: NestedEnumContestResultOrderFilter.schema.ts
+
+const nestedenumcontestresultorderfilterSchema = z.object({
+  equals: ContestResultOrderSchema.optional(),
+  in: ContestResultOrderSchema.array().optional(),
+  notIn: ContestResultOrderSchema.array().optional(),
+  not: z.union([ContestResultOrderSchema, z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema)]).optional()
+}).strict();
+export const NestedEnumContestResultOrderFilterObjectSchema: z.ZodType<Prisma.NestedEnumContestResultOrderFilter> = nestedenumcontestresultorderfilterSchema as unknown as z.ZodType<Prisma.NestedEnumContestResultOrderFilter>;
+export const NestedEnumContestResultOrderFilterObjectZodSchema = nestedenumcontestresultorderfilterSchema;
+
+
+// File: NestedEnumContestResultTypeWithAggregatesFilter.schema.ts
+
+const nestedenumcontestresulttypewithaggregatesfilterSchema = z.object({
+  equals: ContestResultTypeSchema.optional(),
+  in: ContestResultTypeSchema.array().optional(),
+  notIn: ContestResultTypeSchema.array().optional(),
+  not: z.union([ContestResultTypeSchema, z.lazy(() => NestedEnumContestResultTypeWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumContestResultTypeFilterObjectSchema).optional()
+}).strict();
+export const NestedEnumContestResultTypeWithAggregatesFilterObjectSchema: z.ZodType<Prisma.NestedEnumContestResultTypeWithAggregatesFilter> = nestedenumcontestresulttypewithaggregatesfilterSchema as unknown as z.ZodType<Prisma.NestedEnumContestResultTypeWithAggregatesFilter>;
+export const NestedEnumContestResultTypeWithAggregatesFilterObjectZodSchema = nestedenumcontestresulttypewithaggregatesfilterSchema;
+
+
+// File: NestedEnumContestResultOrderWithAggregatesFilter.schema.ts
+
+const nestedenumcontestresultorderwithaggregatesfilterSchema = z.object({
+  equals: ContestResultOrderSchema.optional(),
+  in: ContestResultOrderSchema.array().optional(),
+  notIn: ContestResultOrderSchema.array().optional(),
+  not: z.union([ContestResultOrderSchema, z.lazy(() => NestedEnumContestResultOrderWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumContestResultOrderFilterObjectSchema).optional()
+}).strict();
+export const NestedEnumContestResultOrderWithAggregatesFilterObjectSchema: z.ZodType<Prisma.NestedEnumContestResultOrderWithAggregatesFilter> = nestedenumcontestresultorderwithaggregatesfilterSchema as unknown as z.ZodType<Prisma.NestedEnumContestResultOrderWithAggregatesFilter>;
+export const NestedEnumContestResultOrderWithAggregatesFilterObjectZodSchema = nestedenumcontestresultorderwithaggregatesfilterSchema;
+
+
 // File: UserCreateWithoutMembershipsInput.schema.ts
 const __makeSchema_UserCreateWithoutMembershipsInput_schema = () => z.object({
   id: z.string(),
@@ -15433,7 +16867,9 @@ const __makeSchema_UserCreateWithoutMembershipsInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutMembershipsInput> = __makeSchema_UserCreateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutMembershipsInput>;
 export const UserCreateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserCreateWithoutMembershipsInput_schema();
@@ -15468,7 +16904,9 @@ const __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema = () => z.o
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutMembershipsInput> = __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutMembershipsInput>;
 export const UserUncheckedCreateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutMembershipsInput_schema();
@@ -15531,7 +16969,9 @@ const __makeSchema_UserUpdateWithoutMembershipsInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutMembershipsInput> = __makeSchema_UserUpdateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutMembershipsInput>;
 export const UserUpdateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUpdateWithoutMembershipsInput_schema();
@@ -15566,7 +17006,9 @@ const __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema = () => z.o
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutMembershipsInput> = __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutMembershipsInput>;
 export const UserUncheckedUpdateWithoutMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutMembershipsInput_schema();
@@ -16214,6 +17656,77 @@ export const NotificationCreateManyLastUpdatedByInputEnvelopeObjectSchema: z.Zod
 export const NotificationCreateManyLastUpdatedByInputEnvelopeObjectZodSchema = __makeSchema_NotificationCreateManyLastUpdatedByInputEnvelope_schema();
 
 
+// File: ContestantCreateWithoutUserInput.schema.ts
+const __makeSchema_ContestantCreateWithoutUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contest: z.lazy(() => ContestCreateNestedOneWithoutContestantsInputObjectSchema),
+  team: z.lazy(() => ContestTeamCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantCreateWithoutUserInput> = __makeSchema_ContestantCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateWithoutUserInput>;
+export const ContestantCreateWithoutUserInputObjectZodSchema = __makeSchema_ContestantCreateWithoutUserInput_schema();
+
+
+// File: ContestantUncheckedCreateWithoutUserInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateWithoutUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string(),
+  team: z.lazy(() => ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedCreateWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateWithoutUserInput> = __makeSchema_ContestantUncheckedCreateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateWithoutUserInput>;
+export const ContestantUncheckedCreateWithoutUserInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateWithoutUserInput_schema();
+
+
+// File: ContestantCreateOrConnectWithoutUserInput.schema.ts
+const __makeSchema_ContestantCreateOrConnectWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema)])
+}).strict();
+export const ContestantCreateOrConnectWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantCreateOrConnectWithoutUserInput> = __makeSchema_ContestantCreateOrConnectWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateOrConnectWithoutUserInput>;
+export const ContestantCreateOrConnectWithoutUserInputObjectZodSchema = __makeSchema_ContestantCreateOrConnectWithoutUserInput_schema();
+
+
+// File: ContestantCreateManyUserInputEnvelope.schema.ts
+const __makeSchema_ContestantCreateManyUserInputEnvelope_schema = () => z.object({
+  data: z.union([z.lazy(() => ContestantCreateManyUserInputObjectSchema), z.lazy(() => ContestantCreateManyUserInputObjectSchema).array()]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+export const ContestantCreateManyUserInputEnvelopeObjectSchema: z.ZodType<Prisma.ContestantCreateManyUserInputEnvelope> = __makeSchema_ContestantCreateManyUserInputEnvelope_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyUserInputEnvelope>;
+export const ContestantCreateManyUserInputEnvelopeObjectZodSchema = __makeSchema_ContestantCreateManyUserInputEnvelope_schema();
+
+
+// File: ContestTeamCreateWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamCreateWithoutMembersInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  contestant: z.lazy(() => ContestantCreateNestedOneWithoutTeamInputObjectSchema)
+}).strict();
+export const ContestTeamCreateWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateWithoutMembersInput> = __makeSchema_ContestTeamCreateWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateWithoutMembersInput>;
+export const ContestTeamCreateWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamCreateWithoutMembersInput_schema();
+
+
+// File: ContestTeamUncheckedCreateWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUncheckedCreateWithoutMembersInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  contestantId: z.string()
+}).strict();
+export const ContestTeamUncheckedCreateWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedCreateWithoutMembersInput> = __makeSchema_ContestTeamUncheckedCreateWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedCreateWithoutMembersInput>;
+export const ContestTeamUncheckedCreateWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateWithoutMembersInput_schema();
+
+
+// File: ContestTeamCreateOrConnectWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamCreateOrConnectWithoutMembersInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema)])
+}).strict();
+export const ContestTeamCreateOrConnectWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateOrConnectWithoutMembersInput> = __makeSchema_ContestTeamCreateOrConnectWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateOrConnectWithoutMembersInput>;
+export const ContestTeamCreateOrConnectWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamCreateOrConnectWithoutMembersInput_schema();
+
+
 // File: PrivacyPermissionsUpsertWithoutUserInput.schema.ts
 const __makeSchema_PrivacyPermissionsUpsertWithoutUserInput_schema = () => z.object({
   update: z.union([z.lazy(() => PrivacyPermissionsUpdateWithoutUserInputObjectSchema), z.lazy(() => PrivacyPermissionsUncheckedUpdateWithoutUserInputObjectSchema)]),
@@ -16787,6 +18300,91 @@ export const NotificationUpdateManyWithWhereWithoutLastUpdatedByInputObjectSchem
 export const NotificationUpdateManyWithWhereWithoutLastUpdatedByInputObjectZodSchema = __makeSchema_NotificationUpdateManyWithWhereWithoutLastUpdatedByInput_schema();
 
 
+// File: ContestantUpsertWithWhereUniqueWithoutUserInput.schema.ts
+const __makeSchema_ContestantUpsertWithWhereUniqueWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => ContestantUpdateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutUserInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestantCreateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutUserInputObjectSchema)])
+}).strict();
+export const ContestantUpsertWithWhereUniqueWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUpsertWithWhereUniqueWithoutUserInput> = __makeSchema_ContestantUpsertWithWhereUniqueWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUpsertWithWhereUniqueWithoutUserInput>;
+export const ContestantUpsertWithWhereUniqueWithoutUserInputObjectZodSchema = __makeSchema_ContestantUpsertWithWhereUniqueWithoutUserInput_schema();
+
+
+// File: ContestantUpdateWithWhereUniqueWithoutUserInput.schema.ts
+const __makeSchema_ContestantUpdateWithWhereUniqueWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => ContestantUpdateWithoutUserInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutUserInputObjectSchema)])
+}).strict();
+export const ContestantUpdateWithWhereUniqueWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithWhereUniqueWithoutUserInput> = __makeSchema_ContestantUpdateWithWhereUniqueWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithWhereUniqueWithoutUserInput>;
+export const ContestantUpdateWithWhereUniqueWithoutUserInputObjectZodSchema = __makeSchema_ContestantUpdateWithWhereUniqueWithoutUserInput_schema();
+
+
+// File: ContestantUpdateManyWithWhereWithoutUserInput.schema.ts
+const __makeSchema_ContestantUpdateManyWithWhereWithoutUserInput_schema = () => z.object({
+  where: z.lazy(() => ContestantScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => ContestantUpdateManyMutationInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateManyWithoutUserInputObjectSchema)])
+}).strict();
+export const ContestantUpdateManyWithWhereWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUpdateManyWithWhereWithoutUserInput> = __makeSchema_ContestantUpdateManyWithWhereWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateManyWithWhereWithoutUserInput>;
+export const ContestantUpdateManyWithWhereWithoutUserInputObjectZodSchema = __makeSchema_ContestantUpdateManyWithWhereWithoutUserInput_schema();
+
+
+// File: ContestantScalarWhereInput.schema.ts
+
+const contestantscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestantScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestantScalarWhereInputObjectSchema), z.lazy(() => ContestantScalarWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  resultValue: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
+  contestId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  userId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const ContestantScalarWhereInputObjectSchema: z.ZodType<Prisma.ContestantScalarWhereInput> = contestantscalarwhereinputSchema as unknown as z.ZodType<Prisma.ContestantScalarWhereInput>;
+export const ContestantScalarWhereInputObjectZodSchema = contestantscalarwhereinputSchema;
+
+
+// File: ContestTeamUpsertWithWhereUniqueWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUpsertWithWhereUniqueWithoutMembersInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => ContestTeamUpdateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutMembersInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutMembersInputObjectSchema)])
+}).strict();
+export const ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUpsertWithWhereUniqueWithoutMembersInput> = __makeSchema_ContestTeamUpsertWithWhereUniqueWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpsertWithWhereUniqueWithoutMembersInput>;
+export const ContestTeamUpsertWithWhereUniqueWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUpsertWithWhereUniqueWithoutMembersInput_schema();
+
+
+// File: ContestTeamUpdateWithWhereUniqueWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUpdateWithWhereUniqueWithoutMembersInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => ContestTeamUpdateWithoutMembersInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutMembersInputObjectSchema)])
+}).strict();
+export const ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateWithWhereUniqueWithoutMembersInput> = __makeSchema_ContestTeamUpdateWithWhereUniqueWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateWithWhereUniqueWithoutMembersInput>;
+export const ContestTeamUpdateWithWhereUniqueWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUpdateWithWhereUniqueWithoutMembersInput_schema();
+
+
+// File: ContestTeamUpdateManyWithWhereWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUpdateManyWithWhereWithoutMembersInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => ContestTeamUpdateManyMutationInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersInputObjectSchema)])
+}).strict();
+export const ContestTeamUpdateManyWithWhereWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateManyWithWhereWithoutMembersInput> = __makeSchema_ContestTeamUpdateManyWithWhereWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateManyWithWhereWithoutMembersInput>;
+export const ContestTeamUpdateManyWithWhereWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUpdateManyWithWhereWithoutMembersInput_schema();
+
+
+// File: ContestTeamScalarWhereInput.schema.ts
+
+const contestteamscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestTeamScalarWhereInputObjectSchema), z.lazy(() => ContestTeamScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestTeamScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestTeamScalarWhereInputObjectSchema), z.lazy(() => ContestTeamScalarWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  contestantId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
+}).strict();
+export const ContestTeamScalarWhereInputObjectSchema: z.ZodType<Prisma.ContestTeamScalarWhereInput> = contestteamscalarwhereinputSchema as unknown as z.ZodType<Prisma.ContestTeamScalarWhereInput>;
+export const ContestTeamScalarWhereInputObjectZodSchema = contestteamscalarwhereinputSchema;
+
+
 // File: EventCompanyCreateWithoutCompanyInput.schema.ts
 const __makeSchema_EventCompanyCreateWithoutCompanyInput_schema = () => z.object({
   event: z.lazy(() => EventCreateNestedOneWithoutCompaniesInputObjectSchema)
@@ -17015,6 +18613,45 @@ export const EventHostingGroupCreateManyGroupInputEnvelopeObjectSchema: z.ZodTyp
 export const EventHostingGroupCreateManyGroupInputEnvelopeObjectZodSchema = __makeSchema_EventHostingGroupCreateManyGroupInputEnvelope_schema();
 
 
+// File: ContestCreateWithoutGroupsInput.schema.ts
+const __makeSchema_ContestCreateWithoutGroupsInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestant: z.lazy(() => ContestantCreateNestedOneWithoutWonContestInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutContestInputObjectSchema).optional()
+}).strict();
+export const ContestCreateWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestCreateWithoutGroupsInput> = __makeSchema_ContestCreateWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateWithoutGroupsInput>;
+export const ContestCreateWithoutGroupsInputObjectZodSchema = __makeSchema_ContestCreateWithoutGroupsInput_schema();
+
+
+// File: ContestUncheckedCreateWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUncheckedCreateWithoutGroupsInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().optional().nullable(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutContestInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedCreateWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateWithoutGroupsInput> = __makeSchema_ContestUncheckedCreateWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateWithoutGroupsInput>;
+export const ContestUncheckedCreateWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUncheckedCreateWithoutGroupsInput_schema();
+
+
+// File: ContestCreateOrConnectWithoutGroupsInput.schema.ts
+const __makeSchema_ContestCreateOrConnectWithoutGroupsInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema)])
+}).strict();
+export const ContestCreateOrConnectWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestCreateOrConnectWithoutGroupsInput> = __makeSchema_ContestCreateOrConnectWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateOrConnectWithoutGroupsInput>;
+export const ContestCreateOrConnectWithoutGroupsInputObjectZodSchema = __makeSchema_ContestCreateOrConnectWithoutGroupsInput_schema();
+
+
 // File: GroupMembershipCreateWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipCreateWithoutGroupInput_schema = () => z.object({
   id: z.string().optional(),
@@ -17234,6 +18871,52 @@ export const EventHostingGroupScalarWhereInputObjectSchema: z.ZodType<Prisma.Eve
 export const EventHostingGroupScalarWhereInputObjectZodSchema = eventhostinggroupscalarwhereinputSchema;
 
 
+// File: ContestUpsertWithWhereUniqueWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUpsertWithWhereUniqueWithoutGroupsInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => ContestUpdateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutGroupsInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestCreateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutGroupsInputObjectSchema)])
+}).strict();
+export const ContestUpsertWithWhereUniqueWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUpsertWithWhereUniqueWithoutGroupsInput> = __makeSchema_ContestUpsertWithWhereUniqueWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUpsertWithWhereUniqueWithoutGroupsInput>;
+export const ContestUpsertWithWhereUniqueWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUpsertWithWhereUniqueWithoutGroupsInput_schema();
+
+
+// File: ContestUpdateWithWhereUniqueWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUpdateWithWhereUniqueWithoutGroupsInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => ContestUpdateWithoutGroupsInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutGroupsInputObjectSchema)])
+}).strict();
+export const ContestUpdateWithWhereUniqueWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUpdateWithWhereUniqueWithoutGroupsInput> = __makeSchema_ContestUpdateWithWhereUniqueWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateWithWhereUniqueWithoutGroupsInput>;
+export const ContestUpdateWithWhereUniqueWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUpdateWithWhereUniqueWithoutGroupsInput_schema();
+
+
+// File: ContestUpdateManyWithWhereWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUpdateManyWithWhereWithoutGroupsInput_schema = () => z.object({
+  where: z.lazy(() => ContestScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => ContestUpdateManyMutationInputObjectSchema), z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsInputObjectSchema)])
+}).strict();
+export const ContestUpdateManyWithWhereWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUpdateManyWithWhereWithoutGroupsInput> = __makeSchema_ContestUpdateManyWithWhereWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateManyWithWhereWithoutGroupsInput>;
+export const ContestUpdateManyWithWhereWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUpdateManyWithWhereWithoutGroupsInput_schema();
+
+
+// File: ContestScalarWhereInput.schema.ts
+
+const contestscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => ContestScalarWhereInputObjectSchema), z.lazy(() => ContestScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => ContestScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => ContestScalarWhereInputObjectSchema), z.lazy(() => ContestScalarWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  description: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  startDate: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  resultType: z.union([z.lazy(() => EnumContestResultTypeFilterObjectSchema), ContestResultTypeSchema]).optional(),
+  resultOrder: z.union([z.lazy(() => EnumContestResultOrderFilterObjectSchema), ContestResultOrderSchema]).optional(),
+  winnerContestantId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const ContestScalarWhereInputObjectSchema: z.ZodType<Prisma.ContestScalarWhereInput> = contestscalarwhereinputSchema as unknown as z.ZodType<Prisma.ContestScalarWhereInput>;
+export const ContestScalarWhereInputObjectZodSchema = contestscalarwhereinputSchema;
+
+
 // File: GroupMembershipUpsertWithWhereUniqueWithoutGroupInput.schema.ts
 const __makeSchema_GroupMembershipUpsertWithWhereUniqueWithoutGroupInput_schema = () => z.object({
   where: z.lazy(() => GroupMembershipWhereUniqueInputObjectSchema),
@@ -17393,6 +19076,7 @@ const __makeSchema_GroupCreateWithoutMembershipsInput_schema = () => z.object({
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -17420,6 +19104,7 @@ const __makeSchema_GroupUncheckedCreateWithoutMembershipsInput_schema = () => z.
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -17466,7 +19151,9 @@ const __makeSchema_UserCreateWithoutGroupMembershipsInput_schema = () => z.objec
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutGroupMembershipsInput> = __makeSchema_UserCreateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutGroupMembershipsInput>;
 export const UserCreateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserCreateWithoutGroupMembershipsInput_schema();
@@ -17501,7 +19188,9 @@ const __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema = () =
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutGroupMembershipsInput> = __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutGroupMembershipsInput>;
 export const UserUncheckedCreateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutGroupMembershipsInput_schema();
@@ -17588,6 +19277,7 @@ const __makeSchema_GroupUpdateWithoutMembershipsInput_schema = () => z.object({
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -17615,6 +19305,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutMembershipsInput_schema = () => z.
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -17671,7 +19362,9 @@ const __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema = () => z.objec
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutGroupMembershipsInput> = __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutGroupMembershipsInput>;
 export const UserUpdateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUpdateWithoutGroupMembershipsInput_schema();
@@ -17706,7 +19399,9 @@ const __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema = () =
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutGroupMembershipsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutGroupMembershipsInput> = __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutGroupMembershipsInput>;
 export const UserUncheckedUpdateWithoutGroupMembershipsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutGroupMembershipsInput_schema();
@@ -17928,6 +19623,7 @@ const __makeSchema_GroupCreateWithoutRolesInput_schema = () => z.object({
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -17955,6 +19651,7 @@ const __makeSchema_GroupUncheckedCreateWithoutRolesInput_schema = () => z.object
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -18044,6 +19741,7 @@ const __makeSchema_GroupUpdateWithoutRolesInput_schema = () => z.object({
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -18071,6 +19769,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutRolesInput_schema = () => z.object
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -18831,7 +20530,9 @@ const __makeSchema_UserCreateWithoutAttendeeInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAttendeeInput> = __makeSchema_UserCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAttendeeInput>;
 export const UserCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserCreateWithoutAttendeeInput_schema();
@@ -18866,7 +20567,9 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema = () => z.obje
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeeInput> = __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeeInput>;
 export const UserUncheckedCreateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAttendeeInput_schema();
@@ -18951,7 +20654,9 @@ const __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema = () => z.obje
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAttendeesRefundedInput> = __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAttendeesRefundedInput>;
 export const UserCreateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserCreateWithoutAttendeesRefundedInput_schema();
@@ -18986,7 +20691,9 @@ const __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema = () 
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeesRefundedInput> = __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAttendeesRefundedInput>;
 export const UserUncheckedCreateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAttendeesRefundedInput_schema();
@@ -19145,7 +20852,9 @@ const __makeSchema_UserUpdateWithoutAttendeeInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAttendeeInput> = __makeSchema_UserUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAttendeeInput>;
 export const UserUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUpdateWithoutAttendeeInput_schema();
@@ -19180,7 +20889,9 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema = () => z.obje
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAttendeeInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeeInput> = __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeeInput>;
 export const UserUncheckedUpdateWithoutAttendeeInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAttendeeInput_schema();
@@ -19285,7 +20996,9 @@ const __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema = () => z.obje
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAttendeesRefundedInput> = __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAttendeesRefundedInput>;
 export const UserUpdateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUpdateWithoutAttendeesRefundedInput_schema();
@@ -19320,7 +21033,9 @@ const __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema = () 
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeesRefundedInput> = __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAttendeesRefundedInput>;
 export const UserUncheckedUpdateWithoutAttendeesRefundedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAttendeesRefundedInput_schema();
@@ -20388,6 +22103,7 @@ const __makeSchema_GroupCreateWithoutMarksInput_schema = () => z.object({
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -20415,6 +22131,7 @@ const __makeSchema_GroupUncheckedCreateWithoutMarksInput_schema = () => z.object
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
@@ -20521,6 +22238,7 @@ const __makeSchema_GroupUpdateWithoutMarksInput_schema = () => z.object({
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -20548,6 +22266,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutMarksInput_schema = () => z.object
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   notifications: z.lazy(() => NotificationUncheckedUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
@@ -20626,7 +22345,9 @@ const __makeSchema_UserCreateWithoutPersonalMarkInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutPersonalMarkInput> = __makeSchema_UserCreateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutPersonalMarkInput>;
 export const UserCreateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserCreateWithoutPersonalMarkInput_schema();
@@ -20661,7 +22382,9 @@ const __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema = () => z.
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPersonalMarkInput> = __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutPersonalMarkInput>;
 export const UserUncheckedCreateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutPersonalMarkInput_schema();
@@ -20705,7 +22428,9 @@ const __makeSchema_UserCreateWithoutGivenMarksInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutGivenMarksInput> = __makeSchema_UserCreateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutGivenMarksInput>;
 export const UserCreateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserCreateWithoutGivenMarksInput_schema();
@@ -20740,7 +22465,9 @@ const __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema = () => z.ob
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutGivenMarksInput> = __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutGivenMarksInput>;
 export const UserUncheckedCreateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutGivenMarksInput_schema();
@@ -20854,7 +22581,9 @@ const __makeSchema_UserUpdateWithoutPersonalMarkInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutPersonalMarkInput> = __makeSchema_UserUpdateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutPersonalMarkInput>;
 export const UserUpdateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUpdateWithoutPersonalMarkInput_schema();
@@ -20889,7 +22618,9 @@ const __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema = () => z.
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutPersonalMarkInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPersonalMarkInput> = __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutPersonalMarkInput>;
 export const UserUncheckedUpdateWithoutPersonalMarkInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutPersonalMarkInput_schema();
@@ -20943,7 +22674,9 @@ const __makeSchema_UserUpdateWithoutGivenMarksInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutGivenMarksInput> = __makeSchema_UserUpdateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutGivenMarksInput>;
 export const UserUpdateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUpdateWithoutGivenMarksInput_schema();
@@ -20978,7 +22711,9 @@ const __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema = () => z.ob
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutGivenMarksInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutGivenMarksInput> = __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutGivenMarksInput>;
 export const UserUncheckedUpdateWithoutGivenMarksInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutGivenMarksInput_schema();
@@ -21013,7 +22748,9 @@ const __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema = () => z.obj
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutPrivacyPermissionsInput> = __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutPrivacyPermissionsInput>;
 export const UserCreateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserCreateWithoutPrivacyPermissionsInput_schema();
@@ -21048,7 +22785,9 @@ const __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema = ()
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutPrivacyPermissionsInput> = __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutPrivacyPermissionsInput>;
 export const UserUncheckedCreateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutPrivacyPermissionsInput_schema();
@@ -21111,7 +22850,9 @@ const __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema = () => z.obj
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutPrivacyPermissionsInput> = __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutPrivacyPermissionsInput>;
 export const UserUpdateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUpdateWithoutPrivacyPermissionsInput_schema();
@@ -21146,7 +22887,9 @@ const __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema = ()
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutPrivacyPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutPrivacyPermissionsInput> = __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutPrivacyPermissionsInput>;
 export const UserUncheckedUpdateWithoutPrivacyPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutPrivacyPermissionsInput_schema();
@@ -21181,7 +22924,9 @@ const __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema = () => 
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationPermissionsInput> = __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationPermissionsInput>;
 export const UserCreateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationPermissionsInput_schema();
@@ -21216,7 +22961,9 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput> = __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>;
 export const UserUncheckedCreateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationPermissionsInput_schema();
@@ -21279,7 +23026,9 @@ const __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema = () => 
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationPermissionsInput> = __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationPermissionsInput>;
 export const UserUpdateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationPermissionsInput_schema();
@@ -21314,7 +23063,9 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationPermissionsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput>;
 export const UserUncheckedUpdateWithoutNotificationPermissionsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationPermissionsInput_schema();
@@ -21338,6 +23089,7 @@ const __makeSchema_GroupCreateWithoutEventsInput_schema = () => z.object({
   memberVisibility: GroupMemberVisibilitySchema.optional(),
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional(),
@@ -21365,6 +23117,7 @@ const __makeSchema_GroupUncheckedCreateWithoutEventsInput_schema = () => z.objec
   memberVisibility: GroupMemberVisibilitySchema.optional(),
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
@@ -21487,6 +23240,7 @@ const __makeSchema_GroupUpdateWithoutEventsInput_schema = () => z.object({
   memberVisibility: z.union([GroupMemberVisibilitySchema, z.lazy(() => EnumGroupMemberVisibilityFieldUpdateOperationsInputObjectSchema)]).optional(),
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
@@ -21514,6 +23268,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutEventsInput_schema = () => z.objec
   memberVisibility: z.union([GroupMemberVisibilitySchema, z.lazy(() => EnumGroupMemberVisibilityFieldUpdateOperationsInputObjectSchema)]).optional(),
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
@@ -23987,7 +25742,9 @@ const __makeSchema_UserCreateWithoutAuditLogsInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutAuditLogsInput> = __makeSchema_UserCreateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutAuditLogsInput>;
 export const UserCreateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserCreateWithoutAuditLogsInput_schema();
@@ -24022,7 +25779,9 @@ const __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema = () => z.obj
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutAuditLogsInput> = __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutAuditLogsInput>;
 export const UserUncheckedCreateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutAuditLogsInput_schema();
@@ -24085,7 +25844,9 @@ const __makeSchema_UserUpdateWithoutAuditLogsInput_schema = () => z.object({
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutAuditLogsInput> = __makeSchema_UserUpdateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutAuditLogsInput>;
 export const UserUpdateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUpdateWithoutAuditLogsInput_schema();
@@ -24120,7 +25881,9 @@ const __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema = () => z.obj
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutAuditLogsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAuditLogsInput> = __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutAuditLogsInput>;
 export const UserUncheckedUpdateWithoutAuditLogsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutAuditLogsInput_schema();
@@ -24155,7 +25918,9 @@ const __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema = () => z.obje
   auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutDeregisterReasonsInput> = __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutDeregisterReasonsInput>;
 export const UserCreateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserCreateWithoutDeregisterReasonsInput_schema();
@@ -24190,7 +25955,9 @@ const __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema = () 
   auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutDeregisterReasonsInput> = __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutDeregisterReasonsInput>;
 export const UserUncheckedCreateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutDeregisterReasonsInput_schema();
@@ -24320,7 +26087,9 @@ const __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema = () => z.obje
   auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutDeregisterReasonsInput> = __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutDeregisterReasonsInput>;
 export const UserUpdateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUpdateWithoutDeregisterReasonsInput_schema();
@@ -24355,7 +26124,9 @@ const __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema = () 
   auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutDeregisterReasonsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutDeregisterReasonsInput> = __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutDeregisterReasonsInput>;
 export const UserUncheckedUpdateWithoutDeregisterReasonsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutDeregisterReasonsInput_schema();
@@ -24516,7 +26287,9 @@ const __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema = () => z.
   auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsReceivedInput> = __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsReceivedInput>;
 export const UserCreateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsReceivedInput_schema();
@@ -24551,7 +26324,9 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema =
   auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsReceivedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsReceivedInput>;
 export const UserUncheckedCreateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsReceivedInput_schema();
@@ -24673,7 +26448,9 @@ const __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema = () => z.
   auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsReceivedInput> = __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsReceivedInput>;
 export const UserUpdateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsReceivedInput_schema();
@@ -24708,7 +26485,9 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema =
   auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsReceivedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsReceivedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsReceivedInput>;
 export const UserUncheckedUpdateWithoutNotificationsReceivedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsReceivedInput_schema();
@@ -24733,6 +26512,7 @@ const __makeSchema_GroupCreateWithoutNotificationsInput_schema = () => z.object(
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional()
@@ -24760,6 +26540,7 @@ const __makeSchema_GroupUncheckedCreateWithoutNotificationsInput_schema = () => 
   recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
   type: GroupTypeSchema,
   events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedCreateNestedManyWithoutGroupsInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional()
@@ -24806,7 +26587,9 @@ const __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema = () => z.o
   auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsCreatedInput> = __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsCreatedInput>;
 export const UserCreateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsCreatedInput_schema();
@@ -24841,7 +26624,9 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema = 
   auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsCreatedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsCreatedInput>;
 export const UserUncheckedCreateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsCreatedInput_schema();
@@ -24885,7 +26670,9 @@ const __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema = () => z.o
   auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional()
+  notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserCreateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutNotificationsUpdatedInput> = __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutNotificationsUpdatedInput>;
 export const UserCreateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserCreateWithoutNotificationsUpdatedInput_schema();
@@ -24920,7 +26707,9 @@ const __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema = 
   auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
-  notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional()
+  notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedCreateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsUpdatedInput> = __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutNotificationsUpdatedInput>;
 export const UserUncheckedCreateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutNotificationsUpdatedInput_schema();
@@ -25052,6 +26841,7 @@ const __makeSchema_GroupUpdateWithoutNotificationsInput_schema = () => z.object(
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional()
@@ -25079,6 +26869,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutNotificationsInput_schema = () => 
   recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
   type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  contests: z.lazy(() => ContestUncheckedUpdateManyWithoutGroupsNestedInputObjectSchema).optional(),
   memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
   roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional()
@@ -25135,7 +26926,9 @@ const __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema = () => z.o
   auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsCreatedInput> = __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsCreatedInput>;
 export const UserUpdateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsCreatedInput_schema();
@@ -25170,7 +26963,9 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema = 
   auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional()
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsCreatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsCreatedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsCreatedInput>;
 export const UserUncheckedUpdateWithoutNotificationsCreatedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsCreatedInput_schema();
@@ -25224,7 +27019,9 @@ const __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema = () => z.o
   auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional()
+  notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUpdateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutNotificationsUpdatedInput> = __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutNotificationsUpdatedInput>;
 export const UserUpdateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUpdateWithoutNotificationsUpdatedInput_schema();
@@ -25259,7 +27056,9 @@ const __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema = 
   auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
-  notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional()
+  notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
 }).strict();
 export const UserUncheckedUpdateWithoutNotificationsUpdatedInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsUpdatedInput> = __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutNotificationsUpdatedInput>;
 export const UserUncheckedUpdateWithoutNotificationsUpdatedInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutNotificationsUpdatedInput_schema();
@@ -25342,6 +27141,906 @@ const __makeSchema_NotificationRecipientUpdateManyWithWhereWithoutNotificationIn
 }).strict();
 export const NotificationRecipientUpdateManyWithWhereWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUpdateManyWithWhereWithoutNotificationInput> = __makeSchema_NotificationRecipientUpdateManyWithWhereWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUpdateManyWithWhereWithoutNotificationInput>;
 export const NotificationRecipientUpdateManyWithWhereWithoutNotificationInputObjectZodSchema = __makeSchema_NotificationRecipientUpdateManyWithWhereWithoutNotificationInput_schema();
+
+
+// File: ContestantCreateWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantCreateWithoutWonContestInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contest: z.lazy(() => ContestCreateNestedOneWithoutContestantsInputObjectSchema),
+  user: z.lazy(() => UserCreateNestedOneWithoutContestantsInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamCreateNestedOneWithoutContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateWithoutWonContestInput> = __makeSchema_ContestantCreateWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateWithoutWonContestInput>;
+export const ContestantCreateWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantCreateWithoutWonContestInput_schema();
+
+
+// File: ContestantUncheckedCreateWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateWithoutWonContestInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string(),
+  userId: z.string().optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedCreateWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateWithoutWonContestInput> = __makeSchema_ContestantUncheckedCreateWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateWithoutWonContestInput>;
+export const ContestantUncheckedCreateWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateWithoutWonContestInput_schema();
+
+
+// File: ContestantCreateOrConnectWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantCreateOrConnectWithoutWonContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestantCreateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutWonContestInputObjectSchema)])
+}).strict();
+export const ContestantCreateOrConnectWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateOrConnectWithoutWonContestInput> = __makeSchema_ContestantCreateOrConnectWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateOrConnectWithoutWonContestInput>;
+export const ContestantCreateOrConnectWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantCreateOrConnectWithoutWonContestInput_schema();
+
+
+// File: ContestantCreateWithoutContestInput.schema.ts
+const __makeSchema_ContestantCreateWithoutContestInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  user: z.lazy(() => UserCreateNestedOneWithoutContestantsInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateWithoutContestInput> = __makeSchema_ContestantCreateWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateWithoutContestInput>;
+export const ContestantCreateWithoutContestInputObjectZodSchema = __makeSchema_ContestantCreateWithoutContestInput_schema();
+
+
+// File: ContestantUncheckedCreateWithoutContestInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateWithoutContestInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  userId: z.string().optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedCreateNestedOneWithoutContestantInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedCreateWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateWithoutContestInput> = __makeSchema_ContestantUncheckedCreateWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateWithoutContestInput>;
+export const ContestantUncheckedCreateWithoutContestInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateWithoutContestInput_schema();
+
+
+// File: ContestantCreateOrConnectWithoutContestInput.schema.ts
+const __makeSchema_ContestantCreateOrConnectWithoutContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema)])
+}).strict();
+export const ContestantCreateOrConnectWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateOrConnectWithoutContestInput> = __makeSchema_ContestantCreateOrConnectWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateOrConnectWithoutContestInput>;
+export const ContestantCreateOrConnectWithoutContestInputObjectZodSchema = __makeSchema_ContestantCreateOrConnectWithoutContestInput_schema();
+
+
+// File: ContestantCreateManyContestInputEnvelope.schema.ts
+const __makeSchema_ContestantCreateManyContestInputEnvelope_schema = () => z.object({
+  data: z.union([z.lazy(() => ContestantCreateManyContestInputObjectSchema), z.lazy(() => ContestantCreateManyContestInputObjectSchema).array()]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+export const ContestantCreateManyContestInputEnvelopeObjectSchema: z.ZodType<Prisma.ContestantCreateManyContestInputEnvelope> = __makeSchema_ContestantCreateManyContestInputEnvelope_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyContestInputEnvelope>;
+export const ContestantCreateManyContestInputEnvelopeObjectZodSchema = __makeSchema_ContestantCreateManyContestInputEnvelope_schema();
+
+
+// File: GroupCreateWithoutContestsInput.schema.ts
+const __makeSchema_GroupCreateWithoutContestsInput_schema = () => z.object({
+  slug: z.string(),
+  abbreviation: z.string(),
+  name: z.string().optional().nullable(),
+  shortDescription: z.string().optional().nullable(),
+  description: z.string(),
+  imageUrl: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  contactUrl: z.string().optional().nullable(),
+  slackUrl: z.string().optional().nullable(),
+  showLeaderAsContact: z.boolean().optional(),
+  createdAt: z.coerce.date().optional(),
+  deactivatedAt: z.coerce.date().optional().nullable(),
+  workspaceGroupId: z.string().optional().nullable(),
+  memberVisibility: GroupMemberVisibilitySchema.optional(),
+  recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
+  type: GroupTypeSchema,
+  events: z.lazy(() => EventHostingGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  memberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  marks: z.lazy(() => MarkGroupCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  roles: z.lazy(() => GroupRoleCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  notifications: z.lazy(() => NotificationCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
+}).strict();
+export const GroupCreateWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupCreateWithoutContestsInput> = __makeSchema_GroupCreateWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupCreateWithoutContestsInput>;
+export const GroupCreateWithoutContestsInputObjectZodSchema = __makeSchema_GroupCreateWithoutContestsInput_schema();
+
+
+// File: GroupUncheckedCreateWithoutContestsInput.schema.ts
+const __makeSchema_GroupUncheckedCreateWithoutContestsInput_schema = () => z.object({
+  slug: z.string(),
+  abbreviation: z.string(),
+  name: z.string().optional().nullable(),
+  shortDescription: z.string().optional().nullable(),
+  description: z.string(),
+  imageUrl: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  contactUrl: z.string().optional().nullable(),
+  slackUrl: z.string().optional().nullable(),
+  showLeaderAsContact: z.boolean().optional(),
+  createdAt: z.coerce.date().optional(),
+  deactivatedAt: z.coerce.date().optional().nullable(),
+  workspaceGroupId: z.string().optional().nullable(),
+  memberVisibility: GroupMemberVisibilitySchema.optional(),
+  recruitmentMethod: GroupRecruitmentMethodSchema.optional(),
+  type: GroupTypeSchema,
+  events: z.lazy(() => EventHostingGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  memberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  marks: z.lazy(() => MarkGroupUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  roles: z.lazy(() => GroupRoleUncheckedCreateNestedManyWithoutGroupInputObjectSchema).optional(),
+  notifications: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectSchema).optional()
+}).strict();
+export const GroupUncheckedCreateWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUncheckedCreateWithoutContestsInput> = __makeSchema_GroupUncheckedCreateWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUncheckedCreateWithoutContestsInput>;
+export const GroupUncheckedCreateWithoutContestsInputObjectZodSchema = __makeSchema_GroupUncheckedCreateWithoutContestsInput_schema();
+
+
+// File: GroupCreateOrConnectWithoutContestsInput.schema.ts
+const __makeSchema_GroupCreateOrConnectWithoutContestsInput_schema = () => z.object({
+  where: z.lazy(() => GroupWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema)])
+}).strict();
+export const GroupCreateOrConnectWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupCreateOrConnectWithoutContestsInput> = __makeSchema_GroupCreateOrConnectWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupCreateOrConnectWithoutContestsInput>;
+export const GroupCreateOrConnectWithoutContestsInputObjectZodSchema = __makeSchema_GroupCreateOrConnectWithoutContestsInput_schema();
+
+
+// File: ContestantUpsertWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantUpsertWithoutWonContestInput_schema = () => z.object({
+  update: z.union([z.lazy(() => ContestantUpdateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutWonContestInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestantCreateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutWonContestInputObjectSchema)]),
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const ContestantUpsertWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantUpsertWithoutWonContestInput> = __makeSchema_ContestantUpsertWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpsertWithoutWonContestInput>;
+export const ContestantUpsertWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantUpsertWithoutWonContestInput_schema();
+
+
+// File: ContestantUpdateToOneWithWhereWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantUpdateToOneWithWhereWithoutWonContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => ContestantUpdateWithoutWonContestInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutWonContestInputObjectSchema)])
+}).strict();
+export const ContestantUpdateToOneWithWhereWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantUpdateToOneWithWhereWithoutWonContestInput> = __makeSchema_ContestantUpdateToOneWithWhereWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateToOneWithWhereWithoutWonContestInput>;
+export const ContestantUpdateToOneWithWhereWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantUpdateToOneWithWhereWithoutWonContestInput_schema();
+
+
+// File: ContestantUpdateWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantUpdateWithoutWonContestInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contest: z.lazy(() => ContestUpdateOneRequiredWithoutContestantsNestedInputObjectSchema).optional(),
+  user: z.lazy(() => UserUpdateOneWithoutContestantsNestedInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamUpdateOneWithoutContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUpdateWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithoutWonContestInput> = __makeSchema_ContestantUpdateWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithoutWonContestInput>;
+export const ContestantUpdateWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantUpdateWithoutWonContestInput_schema();
+
+
+// File: ContestantUncheckedUpdateWithoutWonContestInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateWithoutWonContestInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedUpdateWithoutWonContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateWithoutWonContestInput> = __makeSchema_ContestantUncheckedUpdateWithoutWonContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateWithoutWonContestInput>;
+export const ContestantUncheckedUpdateWithoutWonContestInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateWithoutWonContestInput_schema();
+
+
+// File: ContestantUpsertWithWhereUniqueWithoutContestInput.schema.ts
+const __makeSchema_ContestantUpsertWithWhereUniqueWithoutContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => ContestantUpdateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutContestInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestantCreateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutContestInputObjectSchema)])
+}).strict();
+export const ContestantUpsertWithWhereUniqueWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUpsertWithWhereUniqueWithoutContestInput> = __makeSchema_ContestantUpsertWithWhereUniqueWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpsertWithWhereUniqueWithoutContestInput>;
+export const ContestantUpsertWithWhereUniqueWithoutContestInputObjectZodSchema = __makeSchema_ContestantUpsertWithWhereUniqueWithoutContestInput_schema();
+
+
+// File: ContestantUpdateWithWhereUniqueWithoutContestInput.schema.ts
+const __makeSchema_ContestantUpdateWithWhereUniqueWithoutContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => ContestantUpdateWithoutContestInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutContestInputObjectSchema)])
+}).strict();
+export const ContestantUpdateWithWhereUniqueWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithWhereUniqueWithoutContestInput> = __makeSchema_ContestantUpdateWithWhereUniqueWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithWhereUniqueWithoutContestInput>;
+export const ContestantUpdateWithWhereUniqueWithoutContestInputObjectZodSchema = __makeSchema_ContestantUpdateWithWhereUniqueWithoutContestInput_schema();
+
+
+// File: ContestantUpdateManyWithWhereWithoutContestInput.schema.ts
+const __makeSchema_ContestantUpdateManyWithWhereWithoutContestInput_schema = () => z.object({
+  where: z.lazy(() => ContestantScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => ContestantUpdateManyMutationInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateManyWithoutContestInputObjectSchema)])
+}).strict();
+export const ContestantUpdateManyWithWhereWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUpdateManyWithWhereWithoutContestInput> = __makeSchema_ContestantUpdateManyWithWhereWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateManyWithWhereWithoutContestInput>;
+export const ContestantUpdateManyWithWhereWithoutContestInputObjectZodSchema = __makeSchema_ContestantUpdateManyWithWhereWithoutContestInput_schema();
+
+
+// File: GroupUpsertWithWhereUniqueWithoutContestsInput.schema.ts
+const __makeSchema_GroupUpsertWithWhereUniqueWithoutContestsInput_schema = () => z.object({
+  where: z.lazy(() => GroupWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => GroupUpdateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedUpdateWithoutContestsInputObjectSchema)]),
+  create: z.union([z.lazy(() => GroupCreateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedCreateWithoutContestsInputObjectSchema)])
+}).strict();
+export const GroupUpsertWithWhereUniqueWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUpsertWithWhereUniqueWithoutContestsInput> = __makeSchema_GroupUpsertWithWhereUniqueWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUpsertWithWhereUniqueWithoutContestsInput>;
+export const GroupUpsertWithWhereUniqueWithoutContestsInputObjectZodSchema = __makeSchema_GroupUpsertWithWhereUniqueWithoutContestsInput_schema();
+
+
+// File: GroupUpdateWithWhereUniqueWithoutContestsInput.schema.ts
+const __makeSchema_GroupUpdateWithWhereUniqueWithoutContestsInput_schema = () => z.object({
+  where: z.lazy(() => GroupWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => GroupUpdateWithoutContestsInputObjectSchema), z.lazy(() => GroupUncheckedUpdateWithoutContestsInputObjectSchema)])
+}).strict();
+export const GroupUpdateWithWhereUniqueWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUpdateWithWhereUniqueWithoutContestsInput> = __makeSchema_GroupUpdateWithWhereUniqueWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUpdateWithWhereUniqueWithoutContestsInput>;
+export const GroupUpdateWithWhereUniqueWithoutContestsInputObjectZodSchema = __makeSchema_GroupUpdateWithWhereUniqueWithoutContestsInput_schema();
+
+
+// File: GroupUpdateManyWithWhereWithoutContestsInput.schema.ts
+const __makeSchema_GroupUpdateManyWithWhereWithoutContestsInput_schema = () => z.object({
+  where: z.lazy(() => GroupScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => GroupUpdateManyMutationInputObjectSchema), z.lazy(() => GroupUncheckedUpdateManyWithoutContestsInputObjectSchema)])
+}).strict();
+export const GroupUpdateManyWithWhereWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUpdateManyWithWhereWithoutContestsInput> = __makeSchema_GroupUpdateManyWithWhereWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUpdateManyWithWhereWithoutContestsInput>;
+export const GroupUpdateManyWithWhereWithoutContestsInputObjectZodSchema = __makeSchema_GroupUpdateManyWithWhereWithoutContestsInput_schema();
+
+
+// File: GroupScalarWhereInput.schema.ts
+
+const groupscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => GroupScalarWhereInputObjectSchema), z.lazy(() => GroupScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => GroupScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => GroupScalarWhereInputObjectSchema), z.lazy(() => GroupScalarWhereInputObjectSchema).array()]).optional(),
+  slug: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  abbreviation: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  shortDescription: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  description: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  imageUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  email: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  contactUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  slackUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  showLeaderAsContact: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  deactivatedAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  workspaceGroupId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  memberVisibility: z.union([z.lazy(() => EnumGroupMemberVisibilityFilterObjectSchema), GroupMemberVisibilitySchema]).optional(),
+  recruitmentMethod: z.union([z.lazy(() => EnumGroupRecruitmentMethodFilterObjectSchema), GroupRecruitmentMethodSchema]).optional(),
+  type: z.union([z.lazy(() => EnumGroupTypeFilterObjectSchema), GroupTypeSchema]).optional()
+}).strict();
+export const GroupScalarWhereInputObjectSchema: z.ZodType<Prisma.GroupScalarWhereInput> = groupscalarwhereinputSchema as unknown as z.ZodType<Prisma.GroupScalarWhereInput>;
+export const GroupScalarWhereInputObjectZodSchema = groupscalarwhereinputSchema;
+
+
+// File: ContestCreateWithoutContestantsInput.schema.ts
+const __makeSchema_ContestCreateWithoutContestantsInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestant: z.lazy(() => ContestantCreateNestedOneWithoutWonContestInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestCreateWithoutContestantsInput> = __makeSchema_ContestCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateWithoutContestantsInput>;
+export const ContestCreateWithoutContestantsInputObjectZodSchema = __makeSchema_ContestCreateWithoutContestantsInput_schema();
+
+
+// File: ContestUncheckedCreateWithoutContestantsInput.schema.ts
+const __makeSchema_ContestUncheckedCreateWithoutContestantsInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().optional().nullable(),
+  groups: z.lazy(() => GroupUncheckedCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateWithoutContestantsInput> = __makeSchema_ContestUncheckedCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateWithoutContestantsInput>;
+export const ContestUncheckedCreateWithoutContestantsInputObjectZodSchema = __makeSchema_ContestUncheckedCreateWithoutContestantsInput_schema();
+
+
+// File: ContestCreateOrConnectWithoutContestantsInput.schema.ts
+const __makeSchema_ContestCreateOrConnectWithoutContestantsInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestCreateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutContestantsInputObjectSchema)])
+}).strict();
+export const ContestCreateOrConnectWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestCreateOrConnectWithoutContestantsInput> = __makeSchema_ContestCreateOrConnectWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestCreateOrConnectWithoutContestantsInput>;
+export const ContestCreateOrConnectWithoutContestantsInputObjectZodSchema = __makeSchema_ContestCreateOrConnectWithoutContestantsInput_schema();
+
+
+// File: UserCreateWithoutContestantsInput.schema.ts
+const __makeSchema_UserCreateWithoutContestantsInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamCreateNestedManyWithoutMembersInputObjectSchema).optional()
+}).strict();
+export const UserCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutContestantsInput> = __makeSchema_UserCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutContestantsInput>;
+export const UserCreateWithoutContestantsInputObjectZodSchema = __makeSchema_UserCreateWithoutContestantsInput_schema();
+
+
+// File: UserUncheckedCreateWithoutContestantsInput.schema.ts
+const __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedCreateNestedManyWithoutMembersInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedCreateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutContestantsInput> = __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutContestantsInput>;
+export const UserUncheckedCreateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutContestantsInput_schema();
+
+
+// File: UserCreateOrConnectWithoutContestantsInput.schema.ts
+const __makeSchema_UserCreateOrConnectWithoutContestantsInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserCreateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestantsInputObjectSchema)])
+}).strict();
+export const UserCreateOrConnectWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutContestantsInput> = __makeSchema_UserCreateOrConnectWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserCreateOrConnectWithoutContestantsInput>;
+export const UserCreateOrConnectWithoutContestantsInputObjectZodSchema = __makeSchema_UserCreateOrConnectWithoutContestantsInput_schema();
+
+
+// File: ContestTeamCreateWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamCreateWithoutContestantInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  members: z.lazy(() => UserCreateNestedManyWithoutContestTeamsInputObjectSchema).optional()
+}).strict();
+export const ContestTeamCreateWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateWithoutContestantInput> = __makeSchema_ContestTeamCreateWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateWithoutContestantInput>;
+export const ContestTeamCreateWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamCreateWithoutContestantInput_schema();
+
+
+// File: ContestTeamUncheckedCreateWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUncheckedCreateWithoutContestantInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  members: z.lazy(() => UserUncheckedCreateNestedManyWithoutContestTeamsInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUncheckedCreateWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedCreateWithoutContestantInput> = __makeSchema_ContestTeamUncheckedCreateWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedCreateWithoutContestantInput>;
+export const ContestTeamUncheckedCreateWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUncheckedCreateWithoutContestantInput_schema();
+
+
+// File: ContestTeamCreateOrConnectWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamCreateOrConnectWithoutContestantInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)])
+}).strict();
+export const ContestTeamCreateOrConnectWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamCreateOrConnectWithoutContestantInput> = __makeSchema_ContestTeamCreateOrConnectWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCreateOrConnectWithoutContestantInput>;
+export const ContestTeamCreateOrConnectWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamCreateOrConnectWithoutContestantInput_schema();
+
+
+// File: ContestCreateWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestCreateWithoutWinnerContestantInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutContestInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestCreateWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestCreateWithoutWinnerContestantInput> = __makeSchema_ContestCreateWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestCreateWithoutWinnerContestantInput>;
+export const ContestCreateWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestCreateWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUncheckedCreateWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUncheckedCreateWithoutWinnerContestantInput_schema = () => z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  description: z.string().optional().nullable(),
+  startDate: z.coerce.date().optional().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutContestInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUncheckedCreateNestedManyWithoutContestsInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUncheckedCreateWithoutWinnerContestantInput> = __makeSchema_ContestUncheckedCreateWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedCreateWithoutWinnerContestantInput>;
+export const ContestUncheckedCreateWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUncheckedCreateWithoutWinnerContestantInput_schema();
+
+
+// File: ContestCreateOrConnectWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestCreateOrConnectWithoutWinnerContestantInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)])
+}).strict();
+export const ContestCreateOrConnectWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestCreateOrConnectWithoutWinnerContestantInput> = __makeSchema_ContestCreateOrConnectWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestCreateOrConnectWithoutWinnerContestantInput>;
+export const ContestCreateOrConnectWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestCreateOrConnectWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUpsertWithoutContestantsInput.schema.ts
+const __makeSchema_ContestUpsertWithoutContestantsInput_schema = () => z.object({
+  update: z.union([z.lazy(() => ContestUpdateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutContestantsInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestCreateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutContestantsInputObjectSchema)]),
+  where: z.lazy(() => ContestWhereInputObjectSchema).optional()
+}).strict();
+export const ContestUpsertWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestUpsertWithoutContestantsInput> = __makeSchema_ContestUpsertWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestUpsertWithoutContestantsInput>;
+export const ContestUpsertWithoutContestantsInputObjectZodSchema = __makeSchema_ContestUpsertWithoutContestantsInput_schema();
+
+
+// File: ContestUpdateToOneWithWhereWithoutContestantsInput.schema.ts
+const __makeSchema_ContestUpdateToOneWithWhereWithoutContestantsInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => ContestUpdateWithoutContestantsInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutContestantsInputObjectSchema)])
+}).strict();
+export const ContestUpdateToOneWithWhereWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestUpdateToOneWithWhereWithoutContestantsInput> = __makeSchema_ContestUpdateToOneWithWhereWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateToOneWithWhereWithoutContestantsInput>;
+export const ContestUpdateToOneWithWhereWithoutContestantsInputObjectZodSchema = __makeSchema_ContestUpdateToOneWithWhereWithoutContestantsInput_schema();
+
+
+// File: ContestUpdateWithoutContestantsInput.schema.ts
+const __makeSchema_ContestUpdateWithoutContestantsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestant: z.lazy(() => ContestantUpdateOneWithoutWonContestNestedInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestUpdateWithoutContestantsInput> = __makeSchema_ContestUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateWithoutContestantsInput>;
+export const ContestUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_ContestUpdateWithoutContestantsInput_schema();
+
+
+// File: ContestUncheckedUpdateWithoutContestantsInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateWithoutContestantsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestantId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  groups: z.lazy(() => GroupUncheckedUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateWithoutContestantsInput> = __makeSchema_ContestUncheckedUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateWithoutContestantsInput>;
+export const ContestUncheckedUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateWithoutContestantsInput_schema();
+
+
+// File: UserUpsertWithoutContestantsInput.schema.ts
+const __makeSchema_UserUpsertWithoutContestantsInput_schema = () => z.object({
+  update: z.union([z.lazy(() => UserUpdateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutContestantsInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserCreateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestantsInputObjectSchema)]),
+  where: z.lazy(() => UserWhereInputObjectSchema).optional()
+}).strict();
+export const UserUpsertWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUpsertWithoutContestantsInput> = __makeSchema_UserUpsertWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUpsertWithoutContestantsInput>;
+export const UserUpsertWithoutContestantsInputObjectZodSchema = __makeSchema_UserUpsertWithoutContestantsInput_schema();
+
+
+// File: UserUpdateToOneWithWhereWithoutContestantsInput.schema.ts
+const __makeSchema_UserUpdateToOneWithWhereWithoutContestantsInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => UserUpdateWithoutContestantsInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutContestantsInputObjectSchema)])
+}).strict();
+export const UserUpdateToOneWithWhereWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutContestantsInput> = __makeSchema_UserUpdateToOneWithWhereWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateToOneWithWhereWithoutContestantsInput>;
+export const UserUpdateToOneWithWhereWithoutContestantsInputObjectZodSchema = __makeSchema_UserUpdateToOneWithWhereWithoutContestantsInput_schema();
+
+
+// File: UserUpdateWithoutContestantsInput.schema.ts
+const __makeSchema_UserUpdateWithoutContestantsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+}).strict();
+export const UserUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutContestantsInput> = __makeSchema_UserUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutContestantsInput>;
+export const UserUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUpdateWithoutContestantsInput_schema();
+
+
+// File: UserUncheckedUpdateWithoutContestantsInput.schema.ts
+const __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestTeams: z.lazy(() => ContestTeamUncheckedUpdateManyWithoutMembersNestedInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedUpdateWithoutContestantsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutContestantsInput> = __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutContestantsInput>;
+export const UserUncheckedUpdateWithoutContestantsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutContestantsInput_schema();
+
+
+// File: ContestTeamUpsertWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUpsertWithoutContestantInput_schema = () => z.object({
+  update: z.union([z.lazy(() => ContestTeamUpdateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutContestantInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestTeamCreateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedCreateWithoutContestantInputObjectSchema)]),
+  where: z.lazy(() => ContestTeamWhereInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUpsertWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUpsertWithoutContestantInput> = __makeSchema_ContestTeamUpsertWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpsertWithoutContestantInput>;
+export const ContestTeamUpsertWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUpsertWithoutContestantInput_schema();
+
+
+// File: ContestTeamUpdateToOneWithWhereWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUpdateToOneWithWhereWithoutContestantInput_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => ContestTeamUpdateWithoutContestantInputObjectSchema), z.lazy(() => ContestTeamUncheckedUpdateWithoutContestantInputObjectSchema)])
+}).strict();
+export const ContestTeamUpdateToOneWithWhereWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateToOneWithWhereWithoutContestantInput> = __makeSchema_ContestTeamUpdateToOneWithWhereWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateToOneWithWhereWithoutContestantInput>;
+export const ContestTeamUpdateToOneWithWhereWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUpdateToOneWithWhereWithoutContestantInput_schema();
+
+
+// File: ContestTeamUpdateWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUpdateWithoutContestantInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  members: z.lazy(() => UserUpdateManyWithoutContestTeamsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUpdateWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateWithoutContestantInput> = __makeSchema_ContestTeamUpdateWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateWithoutContestantInput>;
+export const ContestTeamUpdateWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUpdateWithoutContestantInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateWithoutContestantInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateWithoutContestantInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  members: z.lazy(() => UserUncheckedUpdateManyWithoutContestTeamsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateWithoutContestantInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateWithoutContestantInput> = __makeSchema_ContestTeamUncheckedUpdateWithoutContestantInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateWithoutContestantInput>;
+export const ContestTeamUncheckedUpdateWithoutContestantInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateWithoutContestantInput_schema();
+
+
+// File: ContestUpsertWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUpsertWithoutWinnerContestantInput_schema = () => z.object({
+  update: z.union([z.lazy(() => ContestUpdateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutWinnerContestantInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestCreateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedCreateWithoutWinnerContestantInputObjectSchema)]),
+  where: z.lazy(() => ContestWhereInputObjectSchema).optional()
+}).strict();
+export const ContestUpsertWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUpsertWithoutWinnerContestantInput> = __makeSchema_ContestUpsertWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUpsertWithoutWinnerContestantInput>;
+export const ContestUpsertWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUpsertWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUpdateToOneWithWhereWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUpdateToOneWithWhereWithoutWinnerContestantInput_schema = () => z.object({
+  where: z.lazy(() => ContestWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => ContestUpdateWithoutWinnerContestantInputObjectSchema), z.lazy(() => ContestUncheckedUpdateWithoutWinnerContestantInputObjectSchema)])
+}).strict();
+export const ContestUpdateToOneWithWhereWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUpdateToOneWithWhereWithoutWinnerContestantInput> = __makeSchema_ContestUpdateToOneWithWhereWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateToOneWithWhereWithoutWinnerContestantInput>;
+export const ContestUpdateToOneWithWhereWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUpdateToOneWithWhereWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUpdateWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUpdateWithoutWinnerContestantInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutContestNestedInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUpdateWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUpdateWithoutWinnerContestantInput> = __makeSchema_ContestUpdateWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateWithoutWinnerContestantInput>;
+export const ContestUpdateWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUpdateWithoutWinnerContestantInput_schema();
+
+
+// File: ContestUncheckedUpdateWithoutWinnerContestantInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateWithoutWinnerContestantInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutContestNestedInputObjectSchema).optional(),
+  groups: z.lazy(() => GroupUncheckedUpdateManyWithoutContestsNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedUpdateWithoutWinnerContestantInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateWithoutWinnerContestantInput> = __makeSchema_ContestUncheckedUpdateWithoutWinnerContestantInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateWithoutWinnerContestantInput>;
+export const ContestUncheckedUpdateWithoutWinnerContestantInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateWithoutWinnerContestantInput_schema();
+
+
+// File: ContestantCreateWithoutTeamInput.schema.ts
+const __makeSchema_ContestantCreateWithoutTeamInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contest: z.lazy(() => ContestCreateNestedOneWithoutContestantsInputObjectSchema),
+  user: z.lazy(() => UserCreateNestedOneWithoutContestantsInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantCreateWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantCreateWithoutTeamInput> = __makeSchema_ContestantCreateWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateWithoutTeamInput>;
+export const ContestantCreateWithoutTeamInputObjectZodSchema = __makeSchema_ContestantCreateWithoutTeamInput_schema();
+
+
+// File: ContestantUncheckedCreateWithoutTeamInput.schema.ts
+const __makeSchema_ContestantUncheckedCreateWithoutTeamInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string(),
+  userId: z.string().optional().nullable(),
+  wonContest: z.lazy(() => ContestUncheckedCreateNestedOneWithoutWinnerContestantInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedCreateWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedCreateWithoutTeamInput> = __makeSchema_ContestantUncheckedCreateWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedCreateWithoutTeamInput>;
+export const ContestantUncheckedCreateWithoutTeamInputObjectZodSchema = __makeSchema_ContestantUncheckedCreateWithoutTeamInput_schema();
+
+
+// File: ContestantCreateOrConnectWithoutTeamInput.schema.ts
+const __makeSchema_ContestantCreateOrConnectWithoutTeamInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => ContestantCreateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutTeamInputObjectSchema)])
+}).strict();
+export const ContestantCreateOrConnectWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantCreateOrConnectWithoutTeamInput> = __makeSchema_ContestantCreateOrConnectWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateOrConnectWithoutTeamInput>;
+export const ContestantCreateOrConnectWithoutTeamInputObjectZodSchema = __makeSchema_ContestantCreateOrConnectWithoutTeamInput_schema();
+
+
+// File: UserCreateWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserCreateWithoutContestTeamsInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantCreateNestedManyWithoutUserInputObjectSchema).optional()
+}).strict();
+export const UserCreateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserCreateWithoutContestTeamsInput> = __makeSchema_UserCreateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserCreateWithoutContestTeamsInput>;
+export const UserCreateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserCreateWithoutContestTeamsInput_schema();
+
+
+// File: UserUncheckedCreateWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema = () => z.object({
+  id: z.string(),
+  username: z.string(),
+  name: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  biography: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  gender: GenderSchema.optional(),
+  dietaryRestrictions: z.string().optional().nullable(),
+  ntnuUsername: z.string().optional().nullable(),
+  flags: z.union([z.lazy(() => UserCreateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  privacyPermissionsId: z.string().optional().nullable(),
+  notificationPermissionsId: z.string().optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedCreateNestedManyWithoutGivenByInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedCreateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutContestTeamsInput> = __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedCreateWithoutContestTeamsInput>;
+export const UserUncheckedCreateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedCreateWithoutContestTeamsInput_schema();
+
+
+// File: UserCreateOrConnectWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserCreateOrConnectWithoutContestTeamsInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereUniqueInputObjectSchema),
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema)])
+}).strict();
+export const UserCreateOrConnectWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutContestTeamsInput> = __makeSchema_UserCreateOrConnectWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserCreateOrConnectWithoutContestTeamsInput>;
+export const UserCreateOrConnectWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserCreateOrConnectWithoutContestTeamsInput_schema();
+
+
+// File: ContestantUpsertWithoutTeamInput.schema.ts
+const __makeSchema_ContestantUpsertWithoutTeamInput_schema = () => z.object({
+  update: z.union([z.lazy(() => ContestantUpdateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutTeamInputObjectSchema)]),
+  create: z.union([z.lazy(() => ContestantCreateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedCreateWithoutTeamInputObjectSchema)]),
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const ContestantUpsertWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantUpsertWithoutTeamInput> = __makeSchema_ContestantUpsertWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantUpsertWithoutTeamInput>;
+export const ContestantUpsertWithoutTeamInputObjectZodSchema = __makeSchema_ContestantUpsertWithoutTeamInput_schema();
+
+
+// File: ContestantUpdateToOneWithWhereWithoutTeamInput.schema.ts
+const __makeSchema_ContestantUpdateToOneWithWhereWithoutTeamInput_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional(),
+  data: z.union([z.lazy(() => ContestantUpdateWithoutTeamInputObjectSchema), z.lazy(() => ContestantUncheckedUpdateWithoutTeamInputObjectSchema)])
+}).strict();
+export const ContestantUpdateToOneWithWhereWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantUpdateToOneWithWhereWithoutTeamInput> = __makeSchema_ContestantUpdateToOneWithWhereWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateToOneWithWhereWithoutTeamInput>;
+export const ContestantUpdateToOneWithWhereWithoutTeamInputObjectZodSchema = __makeSchema_ContestantUpdateToOneWithWhereWithoutTeamInput_schema();
+
+
+// File: ContestantUpdateWithoutTeamInput.schema.ts
+const __makeSchema_ContestantUpdateWithoutTeamInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contest: z.lazy(() => ContestUpdateOneRequiredWithoutContestantsNestedInputObjectSchema).optional(),
+  user: z.lazy(() => UserUpdateOneWithoutContestantsNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUpdateWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithoutTeamInput> = __makeSchema_ContestantUpdateWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithoutTeamInput>;
+export const ContestantUpdateWithoutTeamInputObjectZodSchema = __makeSchema_ContestantUpdateWithoutTeamInput_schema();
+
+
+// File: ContestantUncheckedUpdateWithoutTeamInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateWithoutTeamInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  wonContest: z.lazy(() => ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedUpdateWithoutTeamInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateWithoutTeamInput> = __makeSchema_ContestantUncheckedUpdateWithoutTeamInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateWithoutTeamInput>;
+export const ContestantUncheckedUpdateWithoutTeamInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateWithoutTeamInput_schema();
+
+
+// File: UserUpsertWithWhereUniqueWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUpsertWithWhereUniqueWithoutContestTeamsInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereUniqueInputObjectSchema),
+  update: z.union([z.lazy(() => UserUpdateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutContestTeamsInputObjectSchema)]),
+  create: z.union([z.lazy(() => UserCreateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedCreateWithoutContestTeamsInputObjectSchema)])
+}).strict();
+export const UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUpsertWithWhereUniqueWithoutContestTeamsInput> = __makeSchema_UserUpsertWithWhereUniqueWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUpsertWithWhereUniqueWithoutContestTeamsInput>;
+export const UserUpsertWithWhereUniqueWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUpsertWithWhereUniqueWithoutContestTeamsInput_schema();
+
+
+// File: UserUpdateWithWhereUniqueWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUpdateWithWhereUniqueWithoutContestTeamsInput_schema = () => z.object({
+  where: z.lazy(() => UserWhereUniqueInputObjectSchema),
+  data: z.union([z.lazy(() => UserUpdateWithoutContestTeamsInputObjectSchema), z.lazy(() => UserUncheckedUpdateWithoutContestTeamsInputObjectSchema)])
+}).strict();
+export const UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithWhereUniqueWithoutContestTeamsInput> = __makeSchema_UserUpdateWithWhereUniqueWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithWhereUniqueWithoutContestTeamsInput>;
+export const UserUpdateWithWhereUniqueWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUpdateWithWhereUniqueWithoutContestTeamsInput_schema();
+
+
+// File: UserUpdateManyWithWhereWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUpdateManyWithWhereWithoutContestTeamsInput_schema = () => z.object({
+  where: z.lazy(() => UserScalarWhereInputObjectSchema),
+  data: z.union([z.lazy(() => UserUpdateManyMutationInputObjectSchema), z.lazy(() => UserUncheckedUpdateManyWithoutContestTeamsInputObjectSchema)])
+}).strict();
+export const UserUpdateManyWithWhereWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUpdateManyWithWhereWithoutContestTeamsInput> = __makeSchema_UserUpdateManyWithWhereWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateManyWithWhereWithoutContestTeamsInput>;
+export const UserUpdateManyWithWhereWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUpdateManyWithWhereWithoutContestTeamsInput_schema();
+
+
+// File: UserScalarWhereInput.schema.ts
+
+const userscalarwhereinputSchema = z.object({
+  AND: z.union([z.lazy(() => UserScalarWhereInputObjectSchema), z.lazy(() => UserScalarWhereInputObjectSchema).array()]).optional(),
+  OR: z.lazy(() => UserScalarWhereInputObjectSchema).array().optional(),
+  NOT: z.union([z.lazy(() => UserScalarWhereInputObjectSchema), z.lazy(() => UserScalarWhereInputObjectSchema).array()]).optional(),
+  id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  username: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  name: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  email: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  imageUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  biography: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  phone: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  gender: z.union([z.lazy(() => EnumGenderFilterObjectSchema), GenderSchema]).optional(),
+  dietaryRestrictions: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  ntnuUsername: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  flags: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
+  workspaceUserId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+  privacyPermissionsId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  notificationPermissionsId: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable()
+}).strict();
+export const UserScalarWhereInputObjectSchema: z.ZodType<Prisma.UserScalarWhereInput> = userscalarwhereinputSchema as unknown as z.ZodType<Prisma.UserScalarWhereInput>;
+export const UserScalarWhereInputObjectZodSchema = userscalarwhereinputSchema;
 
 
 // File: AttendeeCreateManyUserInput.schema.ts
@@ -25516,6 +28215,16 @@ const __makeSchema_NotificationCreateManyLastUpdatedByInput_schema = () => z.obj
 }).strict();
 export const NotificationCreateManyLastUpdatedByInputObjectSchema: z.ZodType<Prisma.NotificationCreateManyLastUpdatedByInput> = __makeSchema_NotificationCreateManyLastUpdatedByInput_schema() as unknown as z.ZodType<Prisma.NotificationCreateManyLastUpdatedByInput>;
 export const NotificationCreateManyLastUpdatedByInputObjectZodSchema = __makeSchema_NotificationCreateManyLastUpdatedByInput_schema();
+
+
+// File: ContestantCreateManyUserInput.schema.ts
+const __makeSchema_ContestantCreateManyUserInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  contestId: z.string()
+}).strict();
+export const ContestantCreateManyUserInputObjectSchema: z.ZodType<Prisma.ContestantCreateManyUserInput> = __makeSchema_ContestantCreateManyUserInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyUserInput>;
+export const ContestantCreateManyUserInputObjectZodSchema = __makeSchema_ContestantCreateManyUserInput_schema();
 
 
 // File: AttendeeUpdateWithoutUserInput.schema.ts
@@ -26050,6 +28759,70 @@ export const NotificationUncheckedUpdateManyWithoutLastUpdatedByInputObjectSchem
 export const NotificationUncheckedUpdateManyWithoutLastUpdatedByInputObjectZodSchema = __makeSchema_NotificationUncheckedUpdateManyWithoutLastUpdatedByInput_schema();
 
 
+// File: ContestantUpdateWithoutUserInput.schema.ts
+const __makeSchema_ContestantUpdateWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contest: z.lazy(() => ContestUpdateOneRequiredWithoutContestantsNestedInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithoutUserInput> = __makeSchema_ContestantUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithoutUserInput>;
+export const ContestantUpdateWithoutUserInputObjectZodSchema = __makeSchema_ContestantUpdateWithoutUserInput_schema();
+
+
+// File: ContestantUncheckedUpdateWithoutUserInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  team: z.lazy(() => ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedUpdateWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateWithoutUserInput> = __makeSchema_ContestantUncheckedUpdateWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateWithoutUserInput>;
+export const ContestantUncheckedUpdateWithoutUserInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateWithoutUserInput_schema();
+
+
+// File: ContestantUncheckedUpdateManyWithoutUserInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateManyWithoutUserInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestantUncheckedUpdateManyWithoutUserInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutUserInput> = __makeSchema_ContestantUncheckedUpdateManyWithoutUserInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutUserInput>;
+export const ContestantUncheckedUpdateManyWithoutUserInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateManyWithoutUserInput_schema();
+
+
+// File: ContestTeamUpdateWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUpdateWithoutMembersInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestant: z.lazy(() => ContestantUpdateOneRequiredWithoutTeamNestedInputObjectSchema).optional()
+}).strict();
+export const ContestTeamUpdateWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUpdateWithoutMembersInput> = __makeSchema_ContestTeamUpdateWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUpdateWithoutMembersInput>;
+export const ContestTeamUpdateWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUpdateWithoutMembersInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateWithoutMembersInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestantId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateWithoutMembersInput> = __makeSchema_ContestTeamUncheckedUpdateWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateWithoutMembersInput>;
+export const ContestTeamUncheckedUpdateWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateWithoutMembersInput_schema();
+
+
+// File: ContestTeamUncheckedUpdateManyWithoutMembersInput.schema.ts
+const __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  contestantId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const ContestTeamUncheckedUpdateManyWithoutMembersInputObjectSchema: z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersInput> = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema() as unknown as z.ZodType<Prisma.ContestTeamUncheckedUpdateManyWithoutMembersInput>;
+export const ContestTeamUncheckedUpdateManyWithoutMembersInputObjectZodSchema = __makeSchema_ContestTeamUncheckedUpdateManyWithoutMembersInput_schema();
+
+
 // File: EventCompanyCreateManyCompanyInput.schema.ts
 const __makeSchema_EventCompanyCreateManyCompanyInput_schema = () => z.object({
   eventId: z.string()
@@ -26252,6 +29025,50 @@ const __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupInput_schema 
 }).strict();
 export const EventHostingGroupUncheckedUpdateManyWithoutGroupInputObjectSchema: z.ZodType<Prisma.EventHostingGroupUncheckedUpdateManyWithoutGroupInput> = __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupInput_schema() as unknown as z.ZodType<Prisma.EventHostingGroupUncheckedUpdateManyWithoutGroupInput>;
 export const EventHostingGroupUncheckedUpdateManyWithoutGroupInputObjectZodSchema = __makeSchema_EventHostingGroupUncheckedUpdateManyWithoutGroupInput_schema();
+
+
+// File: ContestUpdateWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUpdateWithoutGroupsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestant: z.lazy(() => ContestantUpdateOneWithoutWonContestNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutContestNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUpdateWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUpdateWithoutGroupsInput> = __makeSchema_ContestUpdateWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUpdateWithoutGroupsInput>;
+export const ContestUpdateWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUpdateWithoutGroupsInput_schema();
+
+
+// File: ContestUncheckedUpdateWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateWithoutGroupsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestantId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutContestNestedInputObjectSchema).optional()
+}).strict();
+export const ContestUncheckedUpdateWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateWithoutGroupsInput> = __makeSchema_ContestUncheckedUpdateWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateWithoutGroupsInput>;
+export const ContestUncheckedUpdateWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateWithoutGroupsInput_schema();
+
+
+// File: ContestUncheckedUpdateManyWithoutGroupsInput.schema.ts
+const __makeSchema_ContestUncheckedUpdateManyWithoutGroupsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  description: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  startDate: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  resultType: z.union([ContestResultTypeSchema, z.lazy(() => EnumContestResultTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultOrder: z.union([ContestResultOrderSchema, z.lazy(() => EnumContestResultOrderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  winnerContestantId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const ContestUncheckedUpdateManyWithoutGroupsInputObjectSchema: z.ZodType<Prisma.ContestUncheckedUpdateManyWithoutGroupsInput> = __makeSchema_ContestUncheckedUpdateManyWithoutGroupsInput_schema() as unknown as z.ZodType<Prisma.ContestUncheckedUpdateManyWithoutGroupsInput>;
+export const ContestUncheckedUpdateManyWithoutGroupsInputObjectZodSchema = __makeSchema_ContestUncheckedUpdateManyWithoutGroupsInput_schema();
 
 
 // File: GroupMembershipUpdateWithoutGroupInput.schema.ts
@@ -27786,6 +30603,226 @@ const __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationIn
 }).strict();
 export const NotificationRecipientUncheckedUpdateManyWithoutNotificationInputObjectSchema: z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationInput> = __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationInput_schema() as unknown as z.ZodType<Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationInput>;
 export const NotificationRecipientUncheckedUpdateManyWithoutNotificationInputObjectZodSchema = __makeSchema_NotificationRecipientUncheckedUpdateManyWithoutNotificationInput_schema();
+
+
+// File: ContestantCreateManyContestInput.schema.ts
+const __makeSchema_ContestantCreateManyContestInput_schema = () => z.object({
+  id: z.string().optional(),
+  resultValue: z.number().int().optional().nullable(),
+  userId: z.string().optional().nullable()
+}).strict();
+export const ContestantCreateManyContestInputObjectSchema: z.ZodType<Prisma.ContestantCreateManyContestInput> = __makeSchema_ContestantCreateManyContestInput_schema() as unknown as z.ZodType<Prisma.ContestantCreateManyContestInput>;
+export const ContestantCreateManyContestInputObjectZodSchema = __makeSchema_ContestantCreateManyContestInput_schema();
+
+
+// File: ContestantUpdateWithoutContestInput.schema.ts
+const __makeSchema_ContestantUpdateWithoutContestInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  user: z.lazy(() => UserUpdateOneWithoutContestantsNestedInputObjectSchema).optional(),
+  team: z.lazy(() => ContestTeamUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUpdateWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUpdateWithoutContestInput> = __makeSchema_ContestantUpdateWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUpdateWithoutContestInput>;
+export const ContestantUpdateWithoutContestInputObjectZodSchema = __makeSchema_ContestantUpdateWithoutContestInput_schema();
+
+
+// File: ContestantUncheckedUpdateWithoutContestInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateWithoutContestInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  team: z.lazy(() => ContestTeamUncheckedUpdateOneWithoutContestantNestedInputObjectSchema).optional(),
+  wonContest: z.lazy(() => ContestUncheckedUpdateOneWithoutWinnerContestantNestedInputObjectSchema).optional()
+}).strict();
+export const ContestantUncheckedUpdateWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateWithoutContestInput> = __makeSchema_ContestantUncheckedUpdateWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateWithoutContestInput>;
+export const ContestantUncheckedUpdateWithoutContestInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateWithoutContestInput_schema();
+
+
+// File: ContestantUncheckedUpdateManyWithoutContestInput.schema.ts
+const __makeSchema_ContestantUncheckedUpdateManyWithoutContestInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  resultValue: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  userId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const ContestantUncheckedUpdateManyWithoutContestInputObjectSchema: z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutContestInput> = __makeSchema_ContestantUncheckedUpdateManyWithoutContestInput_schema() as unknown as z.ZodType<Prisma.ContestantUncheckedUpdateManyWithoutContestInput>;
+export const ContestantUncheckedUpdateManyWithoutContestInputObjectZodSchema = __makeSchema_ContestantUncheckedUpdateManyWithoutContestInput_schema();
+
+
+// File: GroupUpdateWithoutContestsInput.schema.ts
+const __makeSchema_GroupUpdateWithoutContestsInput_schema = () => z.object({
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contactUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  slackUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  showLeaderAsContact: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  deactivatedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  workspaceGroupId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  memberVisibility: z.union([GroupMemberVisibilitySchema, z.lazy(() => EnumGroupMemberVisibilityFieldUpdateOperationsInputObjectSchema)]).optional(),
+  recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
+  type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  events: z.lazy(() => EventHostingGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => GroupMembershipUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  marks: z.lazy(() => MarkGroupUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  roles: z.lazy(() => GroupRoleUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  notifications: z.lazy(() => NotificationUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
+}).strict();
+export const GroupUpdateWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUpdateWithoutContestsInput> = __makeSchema_GroupUpdateWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUpdateWithoutContestsInput>;
+export const GroupUpdateWithoutContestsInputObjectZodSchema = __makeSchema_GroupUpdateWithoutContestsInput_schema();
+
+
+// File: GroupUncheckedUpdateWithoutContestsInput.schema.ts
+const __makeSchema_GroupUncheckedUpdateWithoutContestsInput_schema = () => z.object({
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contactUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  slackUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  showLeaderAsContact: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  deactivatedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  workspaceGroupId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  memberVisibility: z.union([GroupMemberVisibilitySchema, z.lazy(() => EnumGroupMemberVisibilityFieldUpdateOperationsInputObjectSchema)]).optional(),
+  recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
+  type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  events: z.lazy(() => EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  marks: z.lazy(() => MarkGroupUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  roles: z.lazy(() => GroupRoleUncheckedUpdateManyWithoutGroupNestedInputObjectSchema).optional(),
+  notifications: z.lazy(() => NotificationUncheckedUpdateManyWithoutActorGroupNestedInputObjectSchema).optional()
+}).strict();
+export const GroupUncheckedUpdateWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUncheckedUpdateWithoutContestsInput> = __makeSchema_GroupUncheckedUpdateWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUncheckedUpdateWithoutContestsInput>;
+export const GroupUncheckedUpdateWithoutContestsInputObjectZodSchema = __makeSchema_GroupUncheckedUpdateWithoutContestsInput_schema();
+
+
+// File: GroupUncheckedUpdateManyWithoutContestsInput.schema.ts
+const __makeSchema_GroupUncheckedUpdateManyWithoutContestsInput_schema = () => z.object({
+  slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  contactUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  slackUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  showLeaderAsContact: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  deactivatedAt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  workspaceGroupId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  memberVisibility: z.union([GroupMemberVisibilitySchema, z.lazy(() => EnumGroupMemberVisibilityFieldUpdateOperationsInputObjectSchema)]).optional(),
+  recruitmentMethod: z.union([GroupRecruitmentMethodSchema, z.lazy(() => EnumGroupRecruitmentMethodFieldUpdateOperationsInputObjectSchema)]).optional(),
+  type: z.union([GroupTypeSchema, z.lazy(() => EnumGroupTypeFieldUpdateOperationsInputObjectSchema)]).optional()
+}).strict();
+export const GroupUncheckedUpdateManyWithoutContestsInputObjectSchema: z.ZodType<Prisma.GroupUncheckedUpdateManyWithoutContestsInput> = __makeSchema_GroupUncheckedUpdateManyWithoutContestsInput_schema() as unknown as z.ZodType<Prisma.GroupUncheckedUpdateManyWithoutContestsInput>;
+export const GroupUncheckedUpdateManyWithoutContestsInputObjectZodSchema = __makeSchema_GroupUncheckedUpdateManyWithoutContestsInput_schema();
+
+
+// File: UserUpdateWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUpdateWithoutContestTeamsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUpdateManyWithoutUserNestedInputObjectSchema).optional()
+}).strict();
+export const UserUpdateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUpdateWithoutContestTeamsInput> = __makeSchema_UserUpdateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUpdateWithoutContestTeamsInput>;
+export const UserUpdateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUpdateWithoutContestTeamsInput_schema();
+
+
+// File: UserUncheckedUpdateWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  privacyPermissions: z.lazy(() => PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  notificationPermissions: z.lazy(() => NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
+  attendee: z.lazy(() => AttendeeUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  personalMark: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  groupMemberships: z.lazy(() => GroupMembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  memberships: z.lazy(() => MembershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  givenMarks: z.lazy(() => PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInputObjectSchema).optional(),
+  attendeesRefunded: z.lazy(() => AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInputObjectSchema).optional(),
+  auditLogs: z.lazy(() => AuditLogUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  deregisterReasons: z.lazy(() => DeregisterReasonUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsReceived: z.lazy(() => NotificationRecipientUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+  notificationsCreated: z.lazy(() => NotificationUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema).optional(),
+  notificationsUpdated: z.lazy(() => NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInputObjectSchema).optional(),
+  contestants: z.lazy(() => ContestantUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional()
+}).strict();
+export const UserUncheckedUpdateWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutContestTeamsInput> = __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateWithoutContestTeamsInput>;
+export const UserUncheckedUpdateWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateWithoutContestTeamsInput_schema();
+
+
+// File: UserUncheckedUpdateManyWithoutContestTeamsInput.schema.ts
+const __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  username: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  email: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  biography: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  phone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  gender: z.union([GenderSchema, z.lazy(() => EnumGenderFieldUpdateOperationsInputObjectSchema)]).optional(),
+  dietaryRestrictions: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  ntnuUsername: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  flags: z.union([z.lazy(() => UserUpdateflagsInputObjectSchema), z.string().array()]).optional(),
+  workspaceUserId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  privacyPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  notificationPermissionsId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+}).strict();
+export const UserUncheckedUpdateManyWithoutContestTeamsInputObjectSchema: z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsInput> = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema() as unknown as z.ZodType<Prisma.UserUncheckedUpdateManyWithoutContestTeamsInput>;
+export const UserUncheckedUpdateManyWithoutContestTeamsInputObjectZodSchema = __makeSchema_UserUncheckedUpdateManyWithoutContestTeamsInput_schema();
 
 
 // File: MembershipCountAggregateInput.schema.ts
@@ -29540,6 +32577,130 @@ export const NotificationMaxAggregateInputObjectSchema: z.ZodType<Prisma.Notific
 export const NotificationMaxAggregateInputObjectZodSchema = __makeSchema_NotificationMaxAggregateInput_schema();
 
 
+// File: ContestCountAggregateInput.schema.ts
+const __makeSchema_ContestCountAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  startDate: z.literal(true).optional(),
+  resultType: z.literal(true).optional(),
+  resultOrder: z.literal(true).optional(),
+  winnerContestantId: z.literal(true).optional(),
+  _all: z.literal(true).optional()
+}).strict();
+export const ContestCountAggregateInputObjectSchema: z.ZodType<Prisma.ContestCountAggregateInputType> = __makeSchema_ContestCountAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestCountAggregateInputType>;
+export const ContestCountAggregateInputObjectZodSchema = __makeSchema_ContestCountAggregateInput_schema();
+
+
+// File: ContestMinAggregateInput.schema.ts
+const __makeSchema_ContestMinAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  startDate: z.literal(true).optional(),
+  resultType: z.literal(true).optional(),
+  resultOrder: z.literal(true).optional(),
+  winnerContestantId: z.literal(true).optional()
+}).strict();
+export const ContestMinAggregateInputObjectSchema: z.ZodType<Prisma.ContestMinAggregateInputType> = __makeSchema_ContestMinAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestMinAggregateInputType>;
+export const ContestMinAggregateInputObjectZodSchema = __makeSchema_ContestMinAggregateInput_schema();
+
+
+// File: ContestMaxAggregateInput.schema.ts
+const __makeSchema_ContestMaxAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  description: z.literal(true).optional(),
+  startDate: z.literal(true).optional(),
+  resultType: z.literal(true).optional(),
+  resultOrder: z.literal(true).optional(),
+  winnerContestantId: z.literal(true).optional()
+}).strict();
+export const ContestMaxAggregateInputObjectSchema: z.ZodType<Prisma.ContestMaxAggregateInputType> = __makeSchema_ContestMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestMaxAggregateInputType>;
+export const ContestMaxAggregateInputObjectZodSchema = __makeSchema_ContestMaxAggregateInput_schema();
+
+
+// File: ContestantCountAggregateInput.schema.ts
+const __makeSchema_ContestantCountAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  resultValue: z.literal(true).optional(),
+  contestId: z.literal(true).optional(),
+  userId: z.literal(true).optional(),
+  _all: z.literal(true).optional()
+}).strict();
+export const ContestantCountAggregateInputObjectSchema: z.ZodType<Prisma.ContestantCountAggregateInputType> = __makeSchema_ContestantCountAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantCountAggregateInputType>;
+export const ContestantCountAggregateInputObjectZodSchema = __makeSchema_ContestantCountAggregateInput_schema();
+
+
+// File: ContestantAvgAggregateInput.schema.ts
+const __makeSchema_ContestantAvgAggregateInput_schema = () => z.object({
+  resultValue: z.literal(true).optional()
+}).strict();
+export const ContestantAvgAggregateInputObjectSchema: z.ZodType<Prisma.ContestantAvgAggregateInputType> = __makeSchema_ContestantAvgAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantAvgAggregateInputType>;
+export const ContestantAvgAggregateInputObjectZodSchema = __makeSchema_ContestantAvgAggregateInput_schema();
+
+
+// File: ContestantSumAggregateInput.schema.ts
+const __makeSchema_ContestantSumAggregateInput_schema = () => z.object({
+  resultValue: z.literal(true).optional()
+}).strict();
+export const ContestantSumAggregateInputObjectSchema: z.ZodType<Prisma.ContestantSumAggregateInputType> = __makeSchema_ContestantSumAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantSumAggregateInputType>;
+export const ContestantSumAggregateInputObjectZodSchema = __makeSchema_ContestantSumAggregateInput_schema();
+
+
+// File: ContestantMinAggregateInput.schema.ts
+const __makeSchema_ContestantMinAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  resultValue: z.literal(true).optional(),
+  contestId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
+}).strict();
+export const ContestantMinAggregateInputObjectSchema: z.ZodType<Prisma.ContestantMinAggregateInputType> = __makeSchema_ContestantMinAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantMinAggregateInputType>;
+export const ContestantMinAggregateInputObjectZodSchema = __makeSchema_ContestantMinAggregateInput_schema();
+
+
+// File: ContestantMaxAggregateInput.schema.ts
+const __makeSchema_ContestantMaxAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  resultValue: z.literal(true).optional(),
+  contestId: z.literal(true).optional(),
+  userId: z.literal(true).optional()
+}).strict();
+export const ContestantMaxAggregateInputObjectSchema: z.ZodType<Prisma.ContestantMaxAggregateInputType> = __makeSchema_ContestantMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestantMaxAggregateInputType>;
+export const ContestantMaxAggregateInputObjectZodSchema = __makeSchema_ContestantMaxAggregateInput_schema();
+
+
+// File: ContestTeamCountAggregateInput.schema.ts
+const __makeSchema_ContestTeamCountAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  contestantId: z.literal(true).optional(),
+  _all: z.literal(true).optional()
+}).strict();
+export const ContestTeamCountAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamCountAggregateInputType> = __makeSchema_ContestTeamCountAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamCountAggregateInputType>;
+export const ContestTeamCountAggregateInputObjectZodSchema = __makeSchema_ContestTeamCountAggregateInput_schema();
+
+
+// File: ContestTeamMinAggregateInput.schema.ts
+const __makeSchema_ContestTeamMinAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  contestantId: z.literal(true).optional()
+}).strict();
+export const ContestTeamMinAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamMinAggregateInputType> = __makeSchema_ContestTeamMinAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamMinAggregateInputType>;
+export const ContestTeamMinAggregateInputObjectZodSchema = __makeSchema_ContestTeamMinAggregateInput_schema();
+
+
+// File: ContestTeamMaxAggregateInput.schema.ts
+const __makeSchema_ContestTeamMaxAggregateInput_schema = () => z.object({
+  id: z.literal(true).optional(),
+  name: z.literal(true).optional(),
+  contestantId: z.literal(true).optional()
+}).strict();
+export const ContestTeamMaxAggregateInputObjectSchema: z.ZodType<Prisma.ContestTeamMaxAggregateInputType> = __makeSchema_ContestTeamMaxAggregateInput_schema() as unknown as z.ZodType<Prisma.ContestTeamMaxAggregateInputType>;
+export const ContestTeamMaxAggregateInputObjectZodSchema = __makeSchema_ContestTeamMaxAggregateInput_schema();
+
+
 // File: UserCountOutputTypeSelect.schema.ts
 const __makeSchema_UserCountOutputTypeSelect_schema = () => z.object({
   attendee: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountAttendeeArgsObjectSchema)]).optional(),
@@ -29552,7 +32713,9 @@ const __makeSchema_UserCountOutputTypeSelect_schema = () => z.object({
   deregisterReasons: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountDeregisterReasonsArgsObjectSchema)]).optional(),
   notificationsReceived: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsReceivedArgsObjectSchema)]).optional(),
   notificationsCreated: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsCreatedArgsObjectSchema)]).optional(),
-  notificationsUpdated: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsUpdatedArgsObjectSchema)]).optional()
+  notificationsUpdated: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountNotificationsUpdatedArgsObjectSchema)]).optional(),
+  contestants: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountContestantsArgsObjectSchema)]).optional(),
+  contestTeams: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeCountContestTeamsArgsObjectSchema)]).optional()
 }).strict();
 export const UserCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.UserCountOutputTypeSelect> = __makeSchema_UserCountOutputTypeSelect_schema() as unknown as z.ZodType<Prisma.UserCountOutputTypeSelect>;
 export const UserCountOutputTypeSelectObjectZodSchema = __makeSchema_UserCountOutputTypeSelect_schema();
@@ -29570,6 +32733,7 @@ export const CompanyCountOutputTypeSelectObjectZodSchema = __makeSchema_CompanyC
 // File: GroupCountOutputTypeSelect.schema.ts
 const __makeSchema_GroupCountOutputTypeSelect_schema = () => z.object({
   events: z.union([z.boolean(), z.lazy(() => GroupCountOutputTypeCountEventsArgsObjectSchema)]).optional(),
+  contests: z.union([z.boolean(), z.lazy(() => GroupCountOutputTypeCountContestsArgsObjectSchema)]).optional(),
   memberships: z.union([z.boolean(), z.lazy(() => GroupCountOutputTypeCountMembershipsArgsObjectSchema)]).optional(),
   marks: z.union([z.boolean(), z.lazy(() => GroupCountOutputTypeCountMarksArgsObjectSchema)]).optional(),
   roles: z.union([z.boolean(), z.lazy(() => GroupCountOutputTypeCountRolesArgsObjectSchema)]).optional(),
@@ -29724,6 +32888,23 @@ export const NotificationCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.Not
 export const NotificationCountOutputTypeSelectObjectZodSchema = __makeSchema_NotificationCountOutputTypeSelect_schema();
 
 
+// File: ContestCountOutputTypeSelect.schema.ts
+const __makeSchema_ContestCountOutputTypeSelect_schema = () => z.object({
+  contestants: z.union([z.boolean(), z.lazy(() => ContestCountOutputTypeCountContestantsArgsObjectSchema)]).optional(),
+  groups: z.union([z.boolean(), z.lazy(() => ContestCountOutputTypeCountGroupsArgsObjectSchema)]).optional()
+}).strict();
+export const ContestCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.ContestCountOutputTypeSelect> = __makeSchema_ContestCountOutputTypeSelect_schema() as unknown as z.ZodType<Prisma.ContestCountOutputTypeSelect>;
+export const ContestCountOutputTypeSelectObjectZodSchema = __makeSchema_ContestCountOutputTypeSelect_schema();
+
+
+// File: ContestTeamCountOutputTypeSelect.schema.ts
+const __makeSchema_ContestTeamCountOutputTypeSelect_schema = () => z.object({
+  members: z.union([z.boolean(), z.lazy(() => ContestTeamCountOutputTypeCountMembersArgsObjectSchema)]).optional()
+}).strict();
+export const ContestTeamCountOutputTypeSelectObjectSchema: z.ZodType<Prisma.ContestTeamCountOutputTypeSelect> = __makeSchema_ContestTeamCountOutputTypeSelect_schema() as unknown as z.ZodType<Prisma.ContestTeamCountOutputTypeSelect>;
+export const ContestTeamCountOutputTypeSelectObjectZodSchema = __makeSchema_ContestTeamCountOutputTypeSelect_schema();
+
+
 // File: UserCountOutputTypeArgs.schema.ts
 const __makeSchema_UserCountOutputTypeArgs_schema = () => z.object({
   select: z.lazy(() => UserCountOutputTypeSelectObjectSchema).optional()
@@ -29820,6 +33001,22 @@ export const UserCountOutputTypeCountNotificationsUpdatedArgsObjectSchema = __ma
 export const UserCountOutputTypeCountNotificationsUpdatedArgsObjectZodSchema = __makeSchema_UserCountOutputTypeCountNotificationsUpdatedArgs_schema();
 
 
+// File: UserCountOutputTypeCountContestantsArgs.schema.ts
+const __makeSchema_UserCountOutputTypeCountContestantsArgs_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const UserCountOutputTypeCountContestantsArgsObjectSchema = __makeSchema_UserCountOutputTypeCountContestantsArgs_schema();
+export const UserCountOutputTypeCountContestantsArgsObjectZodSchema = __makeSchema_UserCountOutputTypeCountContestantsArgs_schema();
+
+
+// File: UserCountOutputTypeCountContestTeamsArgs.schema.ts
+const __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema = () => z.object({
+  where: z.lazy(() => ContestTeamWhereInputObjectSchema).optional()
+}).strict();
+export const UserCountOutputTypeCountContestTeamsArgsObjectSchema = __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema();
+export const UserCountOutputTypeCountContestTeamsArgsObjectZodSchema = __makeSchema_UserCountOutputTypeCountContestTeamsArgs_schema();
+
+
 // File: CompanyCountOutputTypeArgs.schema.ts
 const __makeSchema_CompanyCountOutputTypeArgs_schema = () => z.object({
   select: z.lazy(() => CompanyCountOutputTypeSelectObjectSchema).optional()
@@ -29858,6 +33055,14 @@ const __makeSchema_GroupCountOutputTypeCountEventsArgs_schema = () => z.object({
 }).strict();
 export const GroupCountOutputTypeCountEventsArgsObjectSchema = __makeSchema_GroupCountOutputTypeCountEventsArgs_schema();
 export const GroupCountOutputTypeCountEventsArgsObjectZodSchema = __makeSchema_GroupCountOutputTypeCountEventsArgs_schema();
+
+
+// File: GroupCountOutputTypeCountContestsArgs.schema.ts
+const __makeSchema_GroupCountOutputTypeCountContestsArgs_schema = () => z.object({
+  where: z.lazy(() => ContestWhereInputObjectSchema).optional()
+}).strict();
+export const GroupCountOutputTypeCountContestsArgsObjectSchema = __makeSchema_GroupCountOutputTypeCountContestsArgs_schema();
+export const GroupCountOutputTypeCountContestsArgsObjectZodSchema = __makeSchema_GroupCountOutputTypeCountContestsArgs_schema();
 
 
 // File: GroupCountOutputTypeCountMembershipsArgs.schema.ts
@@ -30236,6 +33441,46 @@ export const NotificationCountOutputTypeCountRecipientsArgsObjectSchema = __make
 export const NotificationCountOutputTypeCountRecipientsArgsObjectZodSchema = __makeSchema_NotificationCountOutputTypeCountRecipientsArgs_schema();
 
 
+// File: ContestCountOutputTypeArgs.schema.ts
+const __makeSchema_ContestCountOutputTypeArgs_schema = () => z.object({
+  select: z.lazy(() => ContestCountOutputTypeSelectObjectSchema).optional()
+}).strict();
+export const ContestCountOutputTypeArgsObjectSchema = __makeSchema_ContestCountOutputTypeArgs_schema();
+export const ContestCountOutputTypeArgsObjectZodSchema = __makeSchema_ContestCountOutputTypeArgs_schema();
+
+
+// File: ContestCountOutputTypeCountContestantsArgs.schema.ts
+const __makeSchema_ContestCountOutputTypeCountContestantsArgs_schema = () => z.object({
+  where: z.lazy(() => ContestantWhereInputObjectSchema).optional()
+}).strict();
+export const ContestCountOutputTypeCountContestantsArgsObjectSchema = __makeSchema_ContestCountOutputTypeCountContestantsArgs_schema();
+export const ContestCountOutputTypeCountContestantsArgsObjectZodSchema = __makeSchema_ContestCountOutputTypeCountContestantsArgs_schema();
+
+
+// File: ContestCountOutputTypeCountGroupsArgs.schema.ts
+const __makeSchema_ContestCountOutputTypeCountGroupsArgs_schema = () => z.object({
+  where: z.lazy(() => GroupWhereInputObjectSchema).optional()
+}).strict();
+export const ContestCountOutputTypeCountGroupsArgsObjectSchema = __makeSchema_ContestCountOutputTypeCountGroupsArgs_schema();
+export const ContestCountOutputTypeCountGroupsArgsObjectZodSchema = __makeSchema_ContestCountOutputTypeCountGroupsArgs_schema();
+
+
+// File: ContestTeamCountOutputTypeArgs.schema.ts
+const __makeSchema_ContestTeamCountOutputTypeArgs_schema = () => z.object({
+  select: z.lazy(() => ContestTeamCountOutputTypeSelectObjectSchema).optional()
+}).strict();
+export const ContestTeamCountOutputTypeArgsObjectSchema = __makeSchema_ContestTeamCountOutputTypeArgs_schema();
+export const ContestTeamCountOutputTypeArgsObjectZodSchema = __makeSchema_ContestTeamCountOutputTypeArgs_schema();
+
+
+// File: ContestTeamCountOutputTypeCountMembersArgs.schema.ts
+const __makeSchema_ContestTeamCountOutputTypeCountMembersArgs_schema = () => z.object({
+  where: z.lazy(() => UserWhereInputObjectSchema).optional()
+}).strict();
+export const ContestTeamCountOutputTypeCountMembersArgsObjectSchema = __makeSchema_ContestTeamCountOutputTypeCountMembersArgs_schema();
+export const ContestTeamCountOutputTypeCountMembersArgsObjectZodSchema = __makeSchema_ContestTeamCountOutputTypeCountMembersArgs_schema();
+
+
 // File: MembershipSelect.schema.ts
 const __makeSchema_MembershipSelect_schema = () => z.object({
   id: z.boolean().optional(),
@@ -30282,6 +33527,8 @@ const __makeSchema_UserSelect_schema = () => z.object({
   notificationsReceived: z.union([z.boolean(), z.lazy(() => NotificationRecipientFindManySchema)]).optional(),
   notificationsCreated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
   notificationsUpdated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
+  contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
+  contestTeams: z.union([z.boolean(), z.lazy(() => ContestTeamFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const UserSelectObjectSchema: z.ZodType<Prisma.UserSelect> = __makeSchema_UserSelect_schema() as unknown as z.ZodType<Prisma.UserSelect>;
@@ -30328,6 +33575,7 @@ const __makeSchema_GroupSelect_schema = () => z.object({
   recruitmentMethod: z.boolean().optional(),
   type: z.boolean().optional(),
   events: z.union([z.boolean(), z.lazy(() => EventHostingGroupFindManySchema)]).optional(),
+  contests: z.union([z.boolean(), z.lazy(() => ContestFindManySchema)]).optional(),
   memberships: z.union([z.boolean(), z.lazy(() => GroupMembershipFindManySchema)]).optional(),
   marks: z.union([z.boolean(), z.lazy(() => MarkGroupFindManySchema)]).optional(),
   roles: z.union([z.boolean(), z.lazy(() => GroupRoleFindManySchema)]).optional(),
@@ -30880,6 +34128,52 @@ export const NotificationSelectObjectSchema: z.ZodType<Prisma.NotificationSelect
 export const NotificationSelectObjectZodSchema = __makeSchema_NotificationSelect_schema();
 
 
+// File: ContestSelect.schema.ts
+const __makeSchema_ContestSelect_schema = () => z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  description: z.boolean().optional(),
+  startDate: z.boolean().optional(),
+  resultType: z.boolean().optional(),
+  resultOrder: z.boolean().optional(),
+  winnerContestantId: z.boolean().optional(),
+  winnerContestant: z.union([z.boolean(), z.lazy(() => ContestantArgsObjectSchema)]).optional(),
+  contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
+  groups: z.union([z.boolean(), z.lazy(() => GroupFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => ContestCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const ContestSelectObjectSchema: z.ZodType<Prisma.ContestSelect> = __makeSchema_ContestSelect_schema() as unknown as z.ZodType<Prisma.ContestSelect>;
+export const ContestSelectObjectZodSchema = __makeSchema_ContestSelect_schema();
+
+
+// File: ContestantSelect.schema.ts
+const __makeSchema_ContestantSelect_schema = () => z.object({
+  id: z.boolean().optional(),
+  resultValue: z.boolean().optional(),
+  contestId: z.boolean().optional(),
+  userId: z.boolean().optional(),
+  contest: z.union([z.boolean(), z.lazy(() => ContestArgsObjectSchema)]).optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  team: z.union([z.boolean(), z.lazy(() => ContestTeamArgsObjectSchema)]).optional(),
+  wonContest: z.union([z.boolean(), z.lazy(() => ContestArgsObjectSchema)]).optional()
+}).strict();
+export const ContestantSelectObjectSchema: z.ZodType<Prisma.ContestantSelect> = __makeSchema_ContestantSelect_schema() as unknown as z.ZodType<Prisma.ContestantSelect>;
+export const ContestantSelectObjectZodSchema = __makeSchema_ContestantSelect_schema();
+
+
+// File: ContestTeamSelect.schema.ts
+const __makeSchema_ContestTeamSelect_schema = () => z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  contestantId: z.boolean().optional(),
+  contestant: z.union([z.boolean(), z.lazy(() => ContestantArgsObjectSchema)]).optional(),
+  members: z.union([z.boolean(), z.lazy(() => UserFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => ContestTeamCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const ContestTeamSelectObjectSchema: z.ZodType<Prisma.ContestTeamSelect> = __makeSchema_ContestTeamSelect_schema() as unknown as z.ZodType<Prisma.ContestTeamSelect>;
+export const ContestTeamSelectObjectZodSchema = __makeSchema_ContestTeamSelect_schema();
+
+
 // File: MembershipArgs.schema.ts
 const __makeSchema_MembershipArgs_schema = () => z.object({
   select: z.lazy(() => MembershipSelectObjectSchema).optional(),
@@ -31203,6 +34497,33 @@ export const NotificationArgsObjectSchema = __makeSchema_NotificationArgs_schema
 export const NotificationArgsObjectZodSchema = __makeSchema_NotificationArgs_schema();
 
 
+// File: ContestArgs.schema.ts
+const __makeSchema_ContestArgs_schema = () => z.object({
+  select: z.lazy(() => ContestSelectObjectSchema).optional(),
+  include: z.lazy(() => ContestIncludeObjectSchema).optional()
+}).strict();
+export const ContestArgsObjectSchema = __makeSchema_ContestArgs_schema();
+export const ContestArgsObjectZodSchema = __makeSchema_ContestArgs_schema();
+
+
+// File: ContestantArgs.schema.ts
+const __makeSchema_ContestantArgs_schema = () => z.object({
+  select: z.lazy(() => ContestantSelectObjectSchema).optional(),
+  include: z.lazy(() => ContestantIncludeObjectSchema).optional()
+}).strict();
+export const ContestantArgsObjectSchema = __makeSchema_ContestantArgs_schema();
+export const ContestantArgsObjectZodSchema = __makeSchema_ContestantArgs_schema();
+
+
+// File: ContestTeamArgs.schema.ts
+const __makeSchema_ContestTeamArgs_schema = () => z.object({
+  select: z.lazy(() => ContestTeamSelectObjectSchema).optional(),
+  include: z.lazy(() => ContestTeamIncludeObjectSchema).optional()
+}).strict();
+export const ContestTeamArgsObjectSchema = __makeSchema_ContestTeamArgs_schema();
+export const ContestTeamArgsObjectZodSchema = __makeSchema_ContestTeamArgs_schema();
+
+
 // File: MembershipInclude.schema.ts
 const __makeSchema_MembershipInclude_schema = () => z.object({
   user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional()
@@ -31226,6 +34547,8 @@ const __makeSchema_UserInclude_schema = () => z.object({
   notificationsReceived: z.union([z.boolean(), z.lazy(() => NotificationRecipientFindManySchema)]).optional(),
   notificationsCreated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
   notificationsUpdated: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
+  contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
+  contestTeams: z.union([z.boolean(), z.lazy(() => ContestTeamFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const UserIncludeObjectSchema: z.ZodType<Prisma.UserInclude> = __makeSchema_UserInclude_schema() as unknown as z.ZodType<Prisma.UserInclude>;
@@ -31245,6 +34568,7 @@ export const CompanyIncludeObjectZodSchema = __makeSchema_CompanyInclude_schema(
 // File: GroupInclude.schema.ts
 const __makeSchema_GroupInclude_schema = () => z.object({
   events: z.union([z.boolean(), z.lazy(() => EventHostingGroupFindManySchema)]).optional(),
+  contests: z.union([z.boolean(), z.lazy(() => ContestFindManySchema)]).optional(),
   memberships: z.union([z.boolean(), z.lazy(() => GroupMembershipFindManySchema)]).optional(),
   marks: z.union([z.boolean(), z.lazy(() => MarkGroupFindManySchema)]).optional(),
   roles: z.union([z.boolean(), z.lazy(() => GroupRoleFindManySchema)]).optional(),
@@ -31564,6 +34888,38 @@ export const NotificationIncludeObjectSchema: z.ZodType<Prisma.NotificationInclu
 export const NotificationIncludeObjectZodSchema = __makeSchema_NotificationInclude_schema();
 
 
+// File: ContestInclude.schema.ts
+const __makeSchema_ContestInclude_schema = () => z.object({
+  winnerContestant: z.union([z.boolean(), z.lazy(() => ContestantArgsObjectSchema)]).optional(),
+  contestants: z.union([z.boolean(), z.lazy(() => ContestantFindManySchema)]).optional(),
+  groups: z.union([z.boolean(), z.lazy(() => GroupFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => ContestCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const ContestIncludeObjectSchema: z.ZodType<Prisma.ContestInclude> = __makeSchema_ContestInclude_schema() as unknown as z.ZodType<Prisma.ContestInclude>;
+export const ContestIncludeObjectZodSchema = __makeSchema_ContestInclude_schema();
+
+
+// File: ContestantInclude.schema.ts
+const __makeSchema_ContestantInclude_schema = () => z.object({
+  contest: z.union([z.boolean(), z.lazy(() => ContestArgsObjectSchema)]).optional(),
+  user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+  team: z.union([z.boolean(), z.lazy(() => ContestTeamArgsObjectSchema)]).optional(),
+  wonContest: z.union([z.boolean(), z.lazy(() => ContestArgsObjectSchema)]).optional()
+}).strict();
+export const ContestantIncludeObjectSchema: z.ZodType<Prisma.ContestantInclude> = __makeSchema_ContestantInclude_schema() as unknown as z.ZodType<Prisma.ContestantInclude>;
+export const ContestantIncludeObjectZodSchema = __makeSchema_ContestantInclude_schema();
+
+
+// File: ContestTeamInclude.schema.ts
+const __makeSchema_ContestTeamInclude_schema = () => z.object({
+  contestant: z.union([z.boolean(), z.lazy(() => ContestantArgsObjectSchema)]).optional(),
+  members: z.union([z.boolean(), z.lazy(() => UserFindManySchema)]).optional(),
+  _count: z.union([z.boolean(), z.lazy(() => ContestTeamCountOutputTypeArgsObjectSchema)]).optional()
+}).strict();
+export const ContestTeamIncludeObjectSchema: z.ZodType<Prisma.ContestTeamInclude> = __makeSchema_ContestTeamInclude_schema() as unknown as z.ZodType<Prisma.ContestTeamInclude>;
+export const ContestTeamIncludeObjectZodSchema = __makeSchema_ContestTeamInclude_schema();
+
+
 // File: findUniqueMembership.schema.ts
 
 export const MembershipFindUniqueSchema: z.ZodType<Prisma.MembershipFindUniqueArgs> = z.object({ select: MembershipSelectObjectSchema.optional(), include: MembershipIncludeObjectSchema.optional(), where: MembershipWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.MembershipFindUniqueArgs>;
@@ -31788,6 +35144,8 @@ export const UserFindFirstSelectSchema__findFirstUser_schema: z.ZodType<Prisma.U
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -31821,6 +35179,8 @@ export const UserFindFirstSelectZodSchema__findFirstUser_schema = z.object({
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -31863,6 +35223,8 @@ export const UserFindFirstOrThrowSelectSchema__findFirstOrThrowUser_schema: z.Zo
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -31896,6 +35258,8 @@ export const UserFindFirstOrThrowSelectZodSchema__findFirstOrThrowUser_schema = 
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -31938,6 +35302,8 @@ export const UserFindManySelectSchema__findManyUser_schema: z.ZodType<Prisma.Use
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.UserSelect>;
 
@@ -31971,6 +35337,8 @@ export const UserFindManySelectZodSchema__findManyUser_schema = z.object({
     notificationsReceived: z.boolean().optional(),
     notificationsCreated: z.boolean().optional(),
     notificationsUpdated: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    contestTeams: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 
@@ -32298,6 +35666,7 @@ export const GroupFindFirstSelectSchema__findFirstGroup_schema: z.ZodType<Prisma
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -32323,6 +35692,7 @@ export const GroupFindFirstSelectZodSchema__findFirstGroup_schema = z.object({
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -32357,6 +35727,7 @@ export const GroupFindFirstOrThrowSelectSchema__findFirstOrThrowGroup_schema: z.
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -32382,6 +35753,7 @@ export const GroupFindFirstOrThrowSelectZodSchema__findFirstOrThrowGroup_schema 
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -32416,6 +35788,7 @@ export const GroupFindManySelectSchema__findManyGroup_schema: z.ZodType<Prisma.G
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -32441,6 +35814,7 @@ export const GroupFindManySelectZodSchema__findManyGroup_schema = z.object({
     recruitmentMethod: z.boolean().optional(),
     type: z.boolean().optional(),
     events: z.boolean().optional(),
+    contests: z.boolean().optional(),
     memberships: z.boolean().optional(),
     marks: z.boolean().optional(),
     roles: z.boolean().optional(),
@@ -38560,6 +41934,543 @@ export const NotificationGroupBySchema: z.ZodType<Prisma.NotificationGroupByArgs
 
 export const NotificationGroupByZodSchema = z.object({ where: NotificationWhereInputObjectSchema.optional(), orderBy: z.union([NotificationOrderByWithAggregationInputObjectSchema, NotificationOrderByWithAggregationInputObjectSchema.array()]).optional(), having: NotificationScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(NotificationScalarFieldEnumSchema), _count: z.union([ z.literal(true), NotificationCountAggregateInputObjectSchema ]).optional(), _min: NotificationMinAggregateInputObjectSchema.optional(), _max: NotificationMaxAggregateInputObjectSchema.optional() }).strict();
 
+// File: findUniqueContest.schema.ts
+
+export const ContestFindUniqueSchema: z.ZodType<Prisma.ContestFindUniqueArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestFindUniqueArgs>;
+
+export const ContestFindUniqueZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict();
+
+// File: findUniqueOrThrowContest.schema.ts
+
+export const ContestFindUniqueOrThrowSchema: z.ZodType<Prisma.ContestFindUniqueOrThrowArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestFindUniqueOrThrowArgs>;
+
+export const ContestFindUniqueOrThrowZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict();
+
+// File: findFirstContest.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestFindFirstSelectSchema__findFirstContest_schema: z.ZodType<Prisma.ContestSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestSelect>;
+
+export const ContestFindFirstSelectZodSchema__findFirstContest_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestFindFirstSchema: z.ZodType<Prisma.ContestFindFirstArgs> = z.object({ select: ContestFindFirstSelectSchema__findFirstContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestFindFirstArgs>;
+
+export const ContestFindFirstZodSchema = z.object({ select: ContestFindFirstSelectSchema__findFirstContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findFirstOrThrowContest.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestFindFirstOrThrowSelectSchema__findFirstOrThrowContest_schema: z.ZodType<Prisma.ContestSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestSelect>;
+
+export const ContestFindFirstOrThrowSelectZodSchema__findFirstOrThrowContest_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestFindFirstOrThrowSchema: z.ZodType<Prisma.ContestFindFirstOrThrowArgs> = z.object({ select: ContestFindFirstOrThrowSelectSchema__findFirstOrThrowContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestFindFirstOrThrowArgs>;
+
+export const ContestFindFirstOrThrowZodSchema = z.object({ select: ContestFindFirstOrThrowSelectSchema__findFirstOrThrowContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findManyContest.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestFindManySelectSchema__findManyContest_schema: z.ZodType<Prisma.ContestSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestSelect>;
+
+export const ContestFindManySelectZodSchema__findManyContest_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    description: z.boolean().optional(),
+    startDate: z.boolean().optional(),
+    resultType: z.boolean().optional(),
+    resultOrder: z.boolean().optional(),
+    winnerContestantId: z.boolean().optional(),
+    winnerContestant: z.boolean().optional(),
+    contestants: z.boolean().optional(),
+    groups: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestFindManySchema: z.ZodType<Prisma.ContestFindManyArgs> = z.object({ select: ContestFindManySelectSchema__findManyContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestFindManyArgs>;
+
+export const ContestFindManyZodSchema = z.object({ select: ContestFindManySelectSchema__findManyContest_schema.optional(), include: z.lazy(() => ContestIncludeObjectSchema.optional()), orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestScalarFieldEnumSchema, ContestScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: countContest.schema.ts
+
+export const ContestCountSchema: z.ZodType<Prisma.ContestCountArgs> = z.object({ orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestCountArgs>;
+
+export const ContestCountZodSchema = z.object({ orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional() }).strict();
+
+// File: createOneContest.schema.ts
+
+export const ContestCreateOneSchema: z.ZodType<Prisma.ContestCreateArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), data: z.union([ContestCreateInputObjectSchema, ContestUncheckedCreateInputObjectSchema]) }).strict() as unknown as z.ZodType<Prisma.ContestCreateArgs>;
+
+export const ContestCreateOneZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), data: z.union([ContestCreateInputObjectSchema, ContestUncheckedCreateInputObjectSchema]) }).strict();
+
+// File: createManyContest.schema.ts
+
+export const ContestCreateManySchema: z.ZodType<Prisma.ContestCreateManyArgs> = z.object({ data: z.union([ ContestCreateManyInputObjectSchema, z.array(ContestCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestCreateManyArgs>;
+
+export const ContestCreateManyZodSchema = z.object({ data: z.union([ ContestCreateManyInputObjectSchema, z.array(ContestCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: createManyAndReturnContest.schema.ts
+
+export const ContestCreateManyAndReturnSchema: z.ZodType<Prisma.ContestCreateManyAndReturnArgs> = z.object({ select: ContestSelectObjectSchema.optional(), data: z.union([ ContestCreateManyInputObjectSchema, z.array(ContestCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestCreateManyAndReturnArgs>;
+
+export const ContestCreateManyAndReturnZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), data: z.union([ ContestCreateManyInputObjectSchema, z.array(ContestCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: deleteOneContest.schema.ts
+
+export const ContestDeleteOneSchema: z.ZodType<Prisma.ContestDeleteArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestDeleteArgs>;
+
+export const ContestDeleteOneZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema }).strict();
+
+// File: deleteManyContest.schema.ts
+
+export const ContestDeleteManySchema: z.ZodType<Prisma.ContestDeleteManyArgs> = z.object({ where: ContestWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestDeleteManyArgs>;
+
+export const ContestDeleteManyZodSchema = z.object({ where: ContestWhereInputObjectSchema.optional() }).strict();
+
+// File: updateOneContest.schema.ts
+
+export const ContestUpdateOneSchema: z.ZodType<Prisma.ContestUpdateArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), data: z.union([ContestUpdateInputObjectSchema, ContestUncheckedUpdateInputObjectSchema]), where: ContestWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestUpdateArgs>;
+
+export const ContestUpdateOneZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), data: z.union([ContestUpdateInputObjectSchema, ContestUncheckedUpdateInputObjectSchema]), where: ContestWhereUniqueInputObjectSchema }).strict();
+
+// File: updateManyContest.schema.ts
+
+export const ContestUpdateManySchema: z.ZodType<Prisma.ContestUpdateManyArgs> = z.object({ data: ContestUpdateManyMutationInputObjectSchema, where: ContestWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestUpdateManyArgs>;
+
+export const ContestUpdateManyZodSchema = z.object({ data: ContestUpdateManyMutationInputObjectSchema, where: ContestWhereInputObjectSchema.optional() }).strict();
+
+// File: updateManyAndReturnContest.schema.ts
+
+export const ContestUpdateManyAndReturnSchema: z.ZodType<Prisma.ContestUpdateManyAndReturnArgs> = z.object({ select: ContestSelectObjectSchema.optional(), data: ContestUpdateManyMutationInputObjectSchema, where: ContestWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestUpdateManyAndReturnArgs>;
+
+export const ContestUpdateManyAndReturnZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), data: ContestUpdateManyMutationInputObjectSchema, where: ContestWhereInputObjectSchema.optional() }).strict();
+
+// File: upsertOneContest.schema.ts
+
+export const ContestUpsertOneSchema: z.ZodType<Prisma.ContestUpsertArgs> = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema, create: z.union([ ContestCreateInputObjectSchema, ContestUncheckedCreateInputObjectSchema ]), update: z.union([ ContestUpdateInputObjectSchema, ContestUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.ContestUpsertArgs>;
+
+export const ContestUpsertOneZodSchema = z.object({ select: ContestSelectObjectSchema.optional(), include: ContestIncludeObjectSchema.optional(), where: ContestWhereUniqueInputObjectSchema, create: z.union([ ContestCreateInputObjectSchema, ContestUncheckedCreateInputObjectSchema ]), update: z.union([ ContestUpdateInputObjectSchema, ContestUncheckedUpdateInputObjectSchema ]) }).strict();
+
+// File: aggregateContest.schema.ts
+
+export const ContestAggregateSchema: z.ZodType<Prisma.ContestAggregateArgs> = z.object({ orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional(), _min: ContestMinAggregateInputObjectSchema.optional(), _max: ContestMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestAggregateArgs>;
+
+export const ContestAggregateZodSchema = z.object({ orderBy: z.union([ContestOrderByWithRelationInputObjectSchema, ContestOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestWhereInputObjectSchema.optional(), cursor: ContestWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional(), _min: ContestMinAggregateInputObjectSchema.optional(), _max: ContestMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: groupByContest.schema.ts
+
+export const ContestGroupBySchema: z.ZodType<Prisma.ContestGroupByArgs> = z.object({ where: ContestWhereInputObjectSchema.optional(), orderBy: z.union([ContestOrderByWithAggregationInputObjectSchema, ContestOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional(), _min: ContestMinAggregateInputObjectSchema.optional(), _max: ContestMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestGroupByArgs>;
+
+export const ContestGroupByZodSchema = z.object({ where: ContestWhereInputObjectSchema.optional(), orderBy: z.union([ContestOrderByWithAggregationInputObjectSchema, ContestOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestCountAggregateInputObjectSchema ]).optional(), _min: ContestMinAggregateInputObjectSchema.optional(), _max: ContestMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: findUniqueContestant.schema.ts
+
+export const ContestantFindUniqueSchema: z.ZodType<Prisma.ContestantFindUniqueArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestantFindUniqueArgs>;
+
+export const ContestantFindUniqueZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict();
+
+// File: findUniqueOrThrowContestant.schema.ts
+
+export const ContestantFindUniqueOrThrowSchema: z.ZodType<Prisma.ContestantFindUniqueOrThrowArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestantFindUniqueOrThrowArgs>;
+
+export const ContestantFindUniqueOrThrowZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict();
+
+// File: findFirstContestant.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestantFindFirstSelectSchema__findFirstContestant_schema: z.ZodType<Prisma.ContestantSelect> = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestantSelect>;
+
+export const ContestantFindFirstSelectZodSchema__findFirstContestant_schema = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict();
+
+export const ContestantFindFirstSchema: z.ZodType<Prisma.ContestantFindFirstArgs> = z.object({ select: ContestantFindFirstSelectSchema__findFirstContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestantFindFirstArgs>;
+
+export const ContestantFindFirstZodSchema = z.object({ select: ContestantFindFirstSelectSchema__findFirstContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findFirstOrThrowContestant.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestantFindFirstOrThrowSelectSchema__findFirstOrThrowContestant_schema: z.ZodType<Prisma.ContestantSelect> = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestantSelect>;
+
+export const ContestantFindFirstOrThrowSelectZodSchema__findFirstOrThrowContestant_schema = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict();
+
+export const ContestantFindFirstOrThrowSchema: z.ZodType<Prisma.ContestantFindFirstOrThrowArgs> = z.object({ select: ContestantFindFirstOrThrowSelectSchema__findFirstOrThrowContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestantFindFirstOrThrowArgs>;
+
+export const ContestantFindFirstOrThrowZodSchema = z.object({ select: ContestantFindFirstOrThrowSelectSchema__findFirstOrThrowContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findManyContestant.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestantFindManySelectSchema__findManyContestant_schema: z.ZodType<Prisma.ContestantSelect> = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestantSelect>;
+
+export const ContestantFindManySelectZodSchema__findManyContestant_schema = z.object({
+    id: z.boolean().optional(),
+    resultValue: z.boolean().optional(),
+    contestId: z.boolean().optional(),
+    userId: z.boolean().optional(),
+    contest: z.boolean().optional(),
+    user: z.boolean().optional(),
+    team: z.boolean().optional(),
+    wonContest: z.boolean().optional()
+  }).strict();
+
+export const ContestantFindManySchema: z.ZodType<Prisma.ContestantFindManyArgs> = z.object({ select: ContestantFindManySelectSchema__findManyContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestantFindManyArgs>;
+
+export const ContestantFindManyZodSchema = z.object({ select: ContestantFindManySelectSchema__findManyContestant_schema.optional(), include: z.lazy(() => ContestantIncludeObjectSchema.optional()), orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestantScalarFieldEnumSchema, ContestantScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: countContestant.schema.ts
+
+export const ContestantCountSchema: z.ZodType<Prisma.ContestantCountArgs> = z.object({ orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestantCountArgs>;
+
+export const ContestantCountZodSchema = z.object({ orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional() }).strict();
+
+// File: createOneContestant.schema.ts
+
+export const ContestantCreateOneSchema: z.ZodType<Prisma.ContestantCreateArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), data: z.union([ContestantCreateInputObjectSchema, ContestantUncheckedCreateInputObjectSchema]) }).strict() as unknown as z.ZodType<Prisma.ContestantCreateArgs>;
+
+export const ContestantCreateOneZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), data: z.union([ContestantCreateInputObjectSchema, ContestantUncheckedCreateInputObjectSchema]) }).strict();
+
+// File: createManyContestant.schema.ts
+
+export const ContestantCreateManySchema: z.ZodType<Prisma.ContestantCreateManyArgs> = z.object({ data: z.union([ ContestantCreateManyInputObjectSchema, z.array(ContestantCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestantCreateManyArgs>;
+
+export const ContestantCreateManyZodSchema = z.object({ data: z.union([ ContestantCreateManyInputObjectSchema, z.array(ContestantCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: createManyAndReturnContestant.schema.ts
+
+export const ContestantCreateManyAndReturnSchema: z.ZodType<Prisma.ContestantCreateManyAndReturnArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), data: z.union([ ContestantCreateManyInputObjectSchema, z.array(ContestantCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestantCreateManyAndReturnArgs>;
+
+export const ContestantCreateManyAndReturnZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), data: z.union([ ContestantCreateManyInputObjectSchema, z.array(ContestantCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: deleteOneContestant.schema.ts
+
+export const ContestantDeleteOneSchema: z.ZodType<Prisma.ContestantDeleteArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestantDeleteArgs>;
+
+export const ContestantDeleteOneZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema }).strict();
+
+// File: deleteManyContestant.schema.ts
+
+export const ContestantDeleteManySchema: z.ZodType<Prisma.ContestantDeleteManyArgs> = z.object({ where: ContestantWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestantDeleteManyArgs>;
+
+export const ContestantDeleteManyZodSchema = z.object({ where: ContestantWhereInputObjectSchema.optional() }).strict();
+
+// File: updateOneContestant.schema.ts
+
+export const ContestantUpdateOneSchema: z.ZodType<Prisma.ContestantUpdateArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), data: z.union([ContestantUpdateInputObjectSchema, ContestantUncheckedUpdateInputObjectSchema]), where: ContestantWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestantUpdateArgs>;
+
+export const ContestantUpdateOneZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), data: z.union([ContestantUpdateInputObjectSchema, ContestantUncheckedUpdateInputObjectSchema]), where: ContestantWhereUniqueInputObjectSchema }).strict();
+
+// File: updateManyContestant.schema.ts
+
+export const ContestantUpdateManySchema: z.ZodType<Prisma.ContestantUpdateManyArgs> = z.object({ data: ContestantUpdateManyMutationInputObjectSchema, where: ContestantWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestantUpdateManyArgs>;
+
+export const ContestantUpdateManyZodSchema = z.object({ data: ContestantUpdateManyMutationInputObjectSchema, where: ContestantWhereInputObjectSchema.optional() }).strict();
+
+// File: updateManyAndReturnContestant.schema.ts
+
+export const ContestantUpdateManyAndReturnSchema: z.ZodType<Prisma.ContestantUpdateManyAndReturnArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), data: ContestantUpdateManyMutationInputObjectSchema, where: ContestantWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestantUpdateManyAndReturnArgs>;
+
+export const ContestantUpdateManyAndReturnZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), data: ContestantUpdateManyMutationInputObjectSchema, where: ContestantWhereInputObjectSchema.optional() }).strict();
+
+// File: upsertOneContestant.schema.ts
+
+export const ContestantUpsertOneSchema: z.ZodType<Prisma.ContestantUpsertArgs> = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema, create: z.union([ ContestantCreateInputObjectSchema, ContestantUncheckedCreateInputObjectSchema ]), update: z.union([ ContestantUpdateInputObjectSchema, ContestantUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.ContestantUpsertArgs>;
+
+export const ContestantUpsertOneZodSchema = z.object({ select: ContestantSelectObjectSchema.optional(), include: ContestantIncludeObjectSchema.optional(), where: ContestantWhereUniqueInputObjectSchema, create: z.union([ ContestantCreateInputObjectSchema, ContestantUncheckedCreateInputObjectSchema ]), update: z.union([ ContestantUpdateInputObjectSchema, ContestantUncheckedUpdateInputObjectSchema ]) }).strict();
+
+// File: aggregateContestant.schema.ts
+
+export const ContestantAggregateSchema: z.ZodType<Prisma.ContestantAggregateArgs> = z.object({ orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional(), _min: ContestantMinAggregateInputObjectSchema.optional(), _max: ContestantMaxAggregateInputObjectSchema.optional(), _avg: ContestantAvgAggregateInputObjectSchema.optional(), _sum: ContestantSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestantAggregateArgs>;
+
+export const ContestantAggregateZodSchema = z.object({ orderBy: z.union([ContestantOrderByWithRelationInputObjectSchema, ContestantOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestantWhereInputObjectSchema.optional(), cursor: ContestantWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional(), _min: ContestantMinAggregateInputObjectSchema.optional(), _max: ContestantMaxAggregateInputObjectSchema.optional(), _avg: ContestantAvgAggregateInputObjectSchema.optional(), _sum: ContestantSumAggregateInputObjectSchema.optional() }).strict();
+
+// File: groupByContestant.schema.ts
+
+export const ContestantGroupBySchema: z.ZodType<Prisma.ContestantGroupByArgs> = z.object({ where: ContestantWhereInputObjectSchema.optional(), orderBy: z.union([ContestantOrderByWithAggregationInputObjectSchema, ContestantOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestantScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestantScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional(), _min: ContestantMinAggregateInputObjectSchema.optional(), _max: ContestantMaxAggregateInputObjectSchema.optional(), _avg: ContestantAvgAggregateInputObjectSchema.optional(), _sum: ContestantSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestantGroupByArgs>;
+
+export const ContestantGroupByZodSchema = z.object({ where: ContestantWhereInputObjectSchema.optional(), orderBy: z.union([ContestantOrderByWithAggregationInputObjectSchema, ContestantOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestantScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestantScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestantCountAggregateInputObjectSchema ]).optional(), _min: ContestantMinAggregateInputObjectSchema.optional(), _max: ContestantMaxAggregateInputObjectSchema.optional(), _avg: ContestantAvgAggregateInputObjectSchema.optional(), _sum: ContestantSumAggregateInputObjectSchema.optional() }).strict();
+
+// File: findUniqueContestTeam.schema.ts
+
+export const ContestTeamFindUniqueSchema: z.ZodType<Prisma.ContestTeamFindUniqueArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestTeamFindUniqueArgs>;
+
+export const ContestTeamFindUniqueZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict();
+
+// File: findUniqueOrThrowContestTeam.schema.ts
+
+export const ContestTeamFindUniqueOrThrowSchema: z.ZodType<Prisma.ContestTeamFindUniqueOrThrowArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestTeamFindUniqueOrThrowArgs>;
+
+export const ContestTeamFindUniqueOrThrowZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict();
+
+// File: findFirstContestTeam.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestTeamFindFirstSelectSchema__findFirstContestTeam_schema: z.ZodType<Prisma.ContestTeamSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestTeamSelect>;
+
+export const ContestTeamFindFirstSelectZodSchema__findFirstContestTeam_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestTeamFindFirstSchema: z.ZodType<Prisma.ContestTeamFindFirstArgs> = z.object({ select: ContestTeamFindFirstSelectSchema__findFirstContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamFindFirstArgs>;
+
+export const ContestTeamFindFirstZodSchema = z.object({ select: ContestTeamFindFirstSelectSchema__findFirstContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findFirstOrThrowContestTeam.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestTeamFindFirstOrThrowSelectSchema__findFirstOrThrowContestTeam_schema: z.ZodType<Prisma.ContestTeamSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestTeamSelect>;
+
+export const ContestTeamFindFirstOrThrowSelectZodSchema__findFirstOrThrowContestTeam_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestTeamFindFirstOrThrowSchema: z.ZodType<Prisma.ContestTeamFindFirstOrThrowArgs> = z.object({ select: ContestTeamFindFirstOrThrowSelectSchema__findFirstOrThrowContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamFindFirstOrThrowArgs>;
+
+export const ContestTeamFindFirstOrThrowZodSchema = z.object({ select: ContestTeamFindFirstOrThrowSelectSchema__findFirstOrThrowContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: findManyContestTeam.schema.ts
+
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const ContestTeamFindManySelectSchema__findManyContestTeam_schema: z.ZodType<Prisma.ContestTeamSelect> = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict() as unknown as z.ZodType<Prisma.ContestTeamSelect>;
+
+export const ContestTeamFindManySelectZodSchema__findManyContestTeam_schema = z.object({
+    id: z.boolean().optional(),
+    name: z.boolean().optional(),
+    contestantId: z.boolean().optional(),
+    contestant: z.boolean().optional(),
+    members: z.boolean().optional(),
+    _count: z.boolean().optional()
+  }).strict();
+
+export const ContestTeamFindManySchema: z.ZodType<Prisma.ContestTeamFindManyArgs> = z.object({ select: ContestTeamFindManySelectSchema__findManyContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamFindManyArgs>;
+
+export const ContestTeamFindManyZodSchema = z.object({ select: ContestTeamFindManySelectSchema__findManyContestTeam_schema.optional(), include: z.lazy(() => ContestTeamIncludeObjectSchema.optional()), orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContestTeamScalarFieldEnumSchema, ContestTeamScalarFieldEnumSchema.array()]).optional() }).strict();
+
+// File: countContestTeam.schema.ts
+
+export const ContestTeamCountSchema: z.ZodType<Prisma.ContestTeamCountArgs> = z.object({ orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamCountArgs>;
+
+export const ContestTeamCountZodSchema = z.object({ orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional() }).strict();
+
+// File: createOneContestTeam.schema.ts
+
+export const ContestTeamCreateOneSchema: z.ZodType<Prisma.ContestTeamCreateArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), data: z.union([ContestTeamCreateInputObjectSchema, ContestTeamUncheckedCreateInputObjectSchema]) }).strict() as unknown as z.ZodType<Prisma.ContestTeamCreateArgs>;
+
+export const ContestTeamCreateOneZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), data: z.union([ContestTeamCreateInputObjectSchema, ContestTeamUncheckedCreateInputObjectSchema]) }).strict();
+
+// File: createManyContestTeam.schema.ts
+
+export const ContestTeamCreateManySchema: z.ZodType<Prisma.ContestTeamCreateManyArgs> = z.object({ data: z.union([ ContestTeamCreateManyInputObjectSchema, z.array(ContestTeamCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamCreateManyArgs>;
+
+export const ContestTeamCreateManyZodSchema = z.object({ data: z.union([ ContestTeamCreateManyInputObjectSchema, z.array(ContestTeamCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: createManyAndReturnContestTeam.schema.ts
+
+export const ContestTeamCreateManyAndReturnSchema: z.ZodType<Prisma.ContestTeamCreateManyAndReturnArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), data: z.union([ ContestTeamCreateManyInputObjectSchema, z.array(ContestTeamCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamCreateManyAndReturnArgs>;
+
+export const ContestTeamCreateManyAndReturnZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), data: z.union([ ContestTeamCreateManyInputObjectSchema, z.array(ContestTeamCreateManyInputObjectSchema) ]), skipDuplicates: z.boolean().optional() }).strict();
+
+// File: deleteOneContestTeam.schema.ts
+
+export const ContestTeamDeleteOneSchema: z.ZodType<Prisma.ContestTeamDeleteArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestTeamDeleteArgs>;
+
+export const ContestTeamDeleteOneZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema }).strict();
+
+// File: deleteManyContestTeam.schema.ts
+
+export const ContestTeamDeleteManySchema: z.ZodType<Prisma.ContestTeamDeleteManyArgs> = z.object({ where: ContestTeamWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamDeleteManyArgs>;
+
+export const ContestTeamDeleteManyZodSchema = z.object({ where: ContestTeamWhereInputObjectSchema.optional() }).strict();
+
+// File: updateOneContestTeam.schema.ts
+
+export const ContestTeamUpdateOneSchema: z.ZodType<Prisma.ContestTeamUpdateArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), data: z.union([ContestTeamUpdateInputObjectSchema, ContestTeamUncheckedUpdateInputObjectSchema]), where: ContestTeamWhereUniqueInputObjectSchema }).strict() as unknown as z.ZodType<Prisma.ContestTeamUpdateArgs>;
+
+export const ContestTeamUpdateOneZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), data: z.union([ContestTeamUpdateInputObjectSchema, ContestTeamUncheckedUpdateInputObjectSchema]), where: ContestTeamWhereUniqueInputObjectSchema }).strict();
+
+// File: updateManyContestTeam.schema.ts
+
+export const ContestTeamUpdateManySchema: z.ZodType<Prisma.ContestTeamUpdateManyArgs> = z.object({ data: ContestTeamUpdateManyMutationInputObjectSchema, where: ContestTeamWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamUpdateManyArgs>;
+
+export const ContestTeamUpdateManyZodSchema = z.object({ data: ContestTeamUpdateManyMutationInputObjectSchema, where: ContestTeamWhereInputObjectSchema.optional() }).strict();
+
+// File: updateManyAndReturnContestTeam.schema.ts
+
+export const ContestTeamUpdateManyAndReturnSchema: z.ZodType<Prisma.ContestTeamUpdateManyAndReturnArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), data: ContestTeamUpdateManyMutationInputObjectSchema, where: ContestTeamWhereInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamUpdateManyAndReturnArgs>;
+
+export const ContestTeamUpdateManyAndReturnZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), data: ContestTeamUpdateManyMutationInputObjectSchema, where: ContestTeamWhereInputObjectSchema.optional() }).strict();
+
+// File: upsertOneContestTeam.schema.ts
+
+export const ContestTeamUpsertOneSchema: z.ZodType<Prisma.ContestTeamUpsertArgs> = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema, create: z.union([ ContestTeamCreateInputObjectSchema, ContestTeamUncheckedCreateInputObjectSchema ]), update: z.union([ ContestTeamUpdateInputObjectSchema, ContestTeamUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.ContestTeamUpsertArgs>;
+
+export const ContestTeamUpsertOneZodSchema = z.object({ select: ContestTeamSelectObjectSchema.optional(), include: ContestTeamIncludeObjectSchema.optional(), where: ContestTeamWhereUniqueInputObjectSchema, create: z.union([ ContestTeamCreateInputObjectSchema, ContestTeamUncheckedCreateInputObjectSchema ]), update: z.union([ ContestTeamUpdateInputObjectSchema, ContestTeamUncheckedUpdateInputObjectSchema ]) }).strict();
+
+// File: aggregateContestTeam.schema.ts
+
+export const ContestTeamAggregateSchema: z.ZodType<Prisma.ContestTeamAggregateArgs> = z.object({ orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional(), _min: ContestTeamMinAggregateInputObjectSchema.optional(), _max: ContestTeamMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamAggregateArgs>;
+
+export const ContestTeamAggregateZodSchema = z.object({ orderBy: z.union([ContestTeamOrderByWithRelationInputObjectSchema, ContestTeamOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContestTeamWhereInputObjectSchema.optional(), cursor: ContestTeamWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional(), _min: ContestTeamMinAggregateInputObjectSchema.optional(), _max: ContestTeamMaxAggregateInputObjectSchema.optional() }).strict();
+
+// File: groupByContestTeam.schema.ts
+
+export const ContestTeamGroupBySchema: z.ZodType<Prisma.ContestTeamGroupByArgs> = z.object({ where: ContestTeamWhereInputObjectSchema.optional(), orderBy: z.union([ContestTeamOrderByWithAggregationInputObjectSchema, ContestTeamOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestTeamScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestTeamScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional(), _min: ContestTeamMinAggregateInputObjectSchema.optional(), _max: ContestTeamMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ContestTeamGroupByArgs>;
+
+export const ContestTeamGroupByZodSchema = z.object({ where: ContestTeamWhereInputObjectSchema.optional(), orderBy: z.union([ContestTeamOrderByWithAggregationInputObjectSchema, ContestTeamOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ContestTeamScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ContestTeamScalarFieldEnumSchema), _count: z.union([ z.literal(true), ContestTeamCountAggregateInputObjectSchema ]).optional(), _min: ContestTeamMinAggregateInputObjectSchema.optional(), _max: ContestTeamMaxAggregateInputObjectSchema.optional() }).strict();
+
 // File: MembershipFindUniqueResult.schema.ts
 export const MembershipFindUniqueResultSchema = z.nullable(z.object({
   id: z.string(),
@@ -38773,7 +42684,9 @@ export const UserFindUniqueResultSchema = z.nullable(z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 }));
 
 // File: UserFindFirstResult.schema.ts
@@ -38806,7 +42719,9 @@ export const UserFindFirstResultSchema = z.nullable(z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 }));
 
 // File: UserFindManyResult.schema.ts
@@ -38840,7 +42755,9 @@ export const UserFindManyResultSchema = z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 })),
   pagination: z.object({
   page: z.number().int().min(1),
@@ -38882,7 +42799,9 @@ export const UserCreateResultSchema = z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 });
 
 // File: UserCreateManyResult.schema.ts
@@ -38920,7 +42839,9 @@ export const UserUpdateResultSchema = z.nullable(z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 }));
 
 // File: UserUpdateManyResult.schema.ts
@@ -38958,7 +42879,9 @@ export const UserUpsertResultSchema = z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 });
 
 // File: UserDeleteResult.schema.ts
@@ -38991,7 +42914,9 @@ export const UserDeleteResultSchema = z.nullable(z.object({
   deregisterReasons: z.array(z.unknown()),
   notificationsReceived: z.array(z.unknown()),
   notificationsCreated: z.array(z.unknown()),
-  notificationsUpdated: z.array(z.unknown())
+  notificationsUpdated: z.array(z.unknown()),
+  contestants: z.array(z.unknown()),
+  contestTeams: z.array(z.unknown())
 }));
 
 // File: UserDeleteManyResult.schema.ts
@@ -39029,7 +42954,9 @@ export const UserAggregateResultSchema = z.object({  _count: z.object({
     deregisterReasons: z.number(),
     notificationsReceived: z.number(),
     notificationsCreated: z.number(),
-    notificationsUpdated: z.number()
+    notificationsUpdated: z.number(),
+    contestants: z.number(),
+    contestTeams: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -39112,7 +43039,9 @@ export const UserGroupByResultSchema = z.array(z.object({
     deregisterReasons: z.number(),
     notificationsReceived: z.number(),
     notificationsCreated: z.number(),
-    notificationsUpdated: z.number()
+    notificationsUpdated: z.number(),
+    contestants: z.number(),
+    contestTeams: z.number()
   }).optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -39418,6 +43347,7 @@ export const GroupFindUniqueResultSchema = z.nullable(z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39443,6 +43373,7 @@ export const GroupFindFirstResultSchema = z.nullable(z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39469,6 +43400,7 @@ export const GroupFindManyResultSchema = z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39503,6 +43435,7 @@ export const GroupCreateResultSchema = z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39533,6 +43466,7 @@ export const GroupUpdateResultSchema = z.nullable(z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39563,6 +43497,7 @@ export const GroupUpsertResultSchema = z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39588,6 +43523,7 @@ export const GroupDeleteResultSchema = z.nullable(z.object({
   recruitmentMethod: z.unknown(),
   type: z.unknown(),
   events: z.array(z.unknown()),
+  contests: z.array(z.unknown()),
   memberships: z.array(z.unknown()),
   marks: z.array(z.unknown()),
   roles: z.array(z.unknown()),
@@ -39618,6 +43554,7 @@ export const GroupAggregateResultSchema = z.object({  _count: z.object({
     recruitmentMethod: z.number(),
     type: z.number(),
     events: z.number(),
+    contests: z.number(),
     memberships: z.number(),
     marks: z.number(),
     roles: z.number(),
@@ -39685,6 +43622,7 @@ export const GroupGroupByResultSchema = z.array(z.object({
     recruitmentMethod: z.number(),
     type: z.number(),
     events: z.number(),
+    contests: z.number(),
     memberships: z.number(),
     marks: z.number(),
     roles: z.number(),
@@ -45858,6 +49796,507 @@ export const NotificationGroupByResultSchema = z.array(z.object({
 // File: NotificationCountResult.schema.ts
 export const NotificationCountResultSchema = z.number();
 
+// File: ContestFindUniqueResult.schema.ts
+export const ContestFindUniqueResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+}));
+
+// File: ContestFindFirstResult.schema.ts
+export const ContestFindFirstResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+}));
+
+// File: ContestFindManyResult.schema.ts
+export const ContestFindManyResultSchema = z.object({
+  data: z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+})),
+  pagination: z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+})
+});
+
+// File: ContestCreateResult.schema.ts
+export const ContestCreateResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+});
+
+// File: ContestCreateManyResult.schema.ts
+export const ContestCreateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestUpdateResult.schema.ts
+export const ContestUpdateResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+}));
+
+// File: ContestUpdateManyResult.schema.ts
+export const ContestUpdateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestUpsertResult.schema.ts
+export const ContestUpsertResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+});
+
+// File: ContestDeleteResult.schema.ts
+export const ContestDeleteResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  startDate: z.date().optional(),
+  resultType: z.unknown(),
+  resultOrder: z.unknown(),
+  winnerContestantId: z.string().optional(),
+  winnerContestant: z.unknown().optional(),
+  contestants: z.array(z.unknown()),
+  groups: z.array(z.unknown())
+}));
+
+// File: ContestDeleteManyResult.schema.ts
+export const ContestDeleteManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestAggregateResult.schema.ts
+export const ContestAggregateResultSchema = z.object({  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    description: z.number(),
+    startDate: z.number(),
+    resultType: z.number(),
+    resultOrder: z.number(),
+    winnerContestantId: z.number(),
+    winnerContestant: z.number(),
+    contestants: z.number(),
+    groups: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    description: z.string().nullable(),
+    startDate: z.date().nullable(),
+    winnerContestantId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    description: z.string().nullable(),
+    startDate: z.date().nullable(),
+    winnerContestantId: z.string().nullable()
+  }).nullable().optional()});
+
+// File: ContestGroupByResult.schema.ts
+export const ContestGroupByResultSchema = z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  startDate: z.date(),
+  winnerContestantId: z.string(),
+  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    description: z.number(),
+    startDate: z.number(),
+    resultType: z.number(),
+    resultOrder: z.number(),
+    winnerContestantId: z.number(),
+    winnerContestant: z.number(),
+    contestants: z.number(),
+    groups: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    description: z.string().nullable(),
+    startDate: z.date().nullable(),
+    winnerContestantId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    description: z.string().nullable(),
+    startDate: z.date().nullable(),
+    winnerContestantId: z.string().nullable()
+  }).nullable().optional()
+}));
+
+// File: ContestCountResult.schema.ts
+export const ContestCountResultSchema = z.number();
+
+// File: ContestantFindUniqueResult.schema.ts
+export const ContestantFindUniqueResultSchema = z.nullable(z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+}));
+
+// File: ContestantFindFirstResult.schema.ts
+export const ContestantFindFirstResultSchema = z.nullable(z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+}));
+
+// File: ContestantFindManyResult.schema.ts
+export const ContestantFindManyResultSchema = z.object({
+  data: z.array(z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+})),
+  pagination: z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+})
+});
+
+// File: ContestantCreateResult.schema.ts
+export const ContestantCreateResultSchema = z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+});
+
+// File: ContestantCreateManyResult.schema.ts
+export const ContestantCreateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestantUpdateResult.schema.ts
+export const ContestantUpdateResultSchema = z.nullable(z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+}));
+
+// File: ContestantUpdateManyResult.schema.ts
+export const ContestantUpdateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestantUpsertResult.schema.ts
+export const ContestantUpsertResultSchema = z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+});
+
+// File: ContestantDeleteResult.schema.ts
+export const ContestantDeleteResultSchema = z.nullable(z.object({
+  id: z.string(),
+  resultValue: z.number().int().optional(),
+  contestId: z.string(),
+  userId: z.string().optional(),
+  contest: z.unknown(),
+  user: z.unknown().optional(),
+  team: z.unknown().optional(),
+  wonContest: z.unknown().optional()
+}));
+
+// File: ContestantDeleteManyResult.schema.ts
+export const ContestantDeleteManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestantAggregateResult.schema.ts
+export const ContestantAggregateResultSchema = z.object({  _count: z.object({
+    id: z.number(),
+    resultValue: z.number(),
+    contestId: z.number(),
+    userId: z.number(),
+    contest: z.number(),
+    user: z.number(),
+    team: z.number(),
+    wonContest: z.number()
+  }).optional(),
+  _sum: z.object({
+    resultValue: z.number().nullable()
+  }).nullable().optional(),
+  _avg: z.object({
+    resultValue: z.number().nullable()
+  }).nullable().optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    resultValue: z.number().int().nullable(),
+    contestId: z.string().nullable(),
+    userId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    resultValue: z.number().int().nullable(),
+    contestId: z.string().nullable(),
+    userId: z.string().nullable()
+  }).nullable().optional()});
+
+// File: ContestantGroupByResult.schema.ts
+export const ContestantGroupByResultSchema = z.array(z.object({
+  id: z.string(),
+  resultValue: z.number().int(),
+  contestId: z.string(),
+  userId: z.string(),
+  _count: z.object({
+    id: z.number(),
+    resultValue: z.number(),
+    contestId: z.number(),
+    userId: z.number(),
+    contest: z.number(),
+    user: z.number(),
+    team: z.number(),
+    wonContest: z.number()
+  }).optional(),
+  _sum: z.object({
+    resultValue: z.number().nullable()
+  }).nullable().optional(),
+  _avg: z.object({
+    resultValue: z.number().nullable()
+  }).nullable().optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    resultValue: z.number().int().nullable(),
+    contestId: z.string().nullable(),
+    userId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    resultValue: z.number().int().nullable(),
+    contestId: z.string().nullable(),
+    userId: z.string().nullable()
+  }).nullable().optional()
+}));
+
+// File: ContestantCountResult.schema.ts
+export const ContestantCountResultSchema = z.number();
+
+// File: ContestTeamFindUniqueResult.schema.ts
+export const ContestTeamFindUniqueResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+}));
+
+// File: ContestTeamFindFirstResult.schema.ts
+export const ContestTeamFindFirstResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+}));
+
+// File: ContestTeamFindManyResult.schema.ts
+export const ContestTeamFindManyResultSchema = z.object({
+  data: z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+})),
+  pagination: z.object({
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+  totalPages: z.number().int().min(0),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+})
+});
+
+// File: ContestTeamCreateResult.schema.ts
+export const ContestTeamCreateResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+});
+
+// File: ContestTeamCreateManyResult.schema.ts
+export const ContestTeamCreateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestTeamUpdateResult.schema.ts
+export const ContestTeamUpdateResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+}));
+
+// File: ContestTeamUpdateManyResult.schema.ts
+export const ContestTeamUpdateManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestTeamUpsertResult.schema.ts
+export const ContestTeamUpsertResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+});
+
+// File: ContestTeamDeleteResult.schema.ts
+export const ContestTeamDeleteResultSchema = z.nullable(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  contestant: z.unknown(),
+  members: z.array(z.unknown())
+}));
+
+// File: ContestTeamDeleteManyResult.schema.ts
+export const ContestTeamDeleteManyResultSchema = z.object({
+  count: z.number()
+});
+
+// File: ContestTeamAggregateResult.schema.ts
+export const ContestTeamAggregateResultSchema = z.object({  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    contestantId: z.number(),
+    contestant: z.number(),
+    members: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    contestantId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    contestantId: z.string().nullable()
+  }).nullable().optional()});
+
+// File: ContestTeamGroupByResult.schema.ts
+export const ContestTeamGroupByResultSchema = z.array(z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+  _count: z.object({
+    id: z.number(),
+    name: z.number(),
+    contestantId: z.number(),
+    contestant: z.number(),
+    members: z.number()
+  }).optional(),
+  _min: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    contestantId: z.string().nullable()
+  }).nullable().optional(),
+  _max: z.object({
+    id: z.string().nullable(),
+    name: z.string().nullable(),
+    contestantId: z.string().nullable()
+  }).nullable().optional()
+}));
+
+// File: ContestTeamCountResult.schema.ts
+export const ContestTeamCountResultSchema = z.number();
+
 // File: index.ts
 
 
@@ -46535,3 +50974,50 @@ export type Notification = z.infer<typeof Notification>;
 // Legacy aliases
 export const NotificationSchema = Notification;
 export type NotificationModel = z.infer<typeof Notification>;
+
+// File: Contest.schema.ts
+
+export const Contest = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  startDate: z.date().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().nullable(),
+});
+
+export type Contest = z.infer<typeof Contest>;
+
+// Legacy aliases
+export const ContestSchema = Contest;
+export type ContestType = z.infer<typeof Contest>;
+
+// File: Contestant.schema.ts
+
+export const Contestant = z.object({
+  id: z.string(),
+  resultValue: z.number().int().nullable(),
+  contestId: z.string(),
+  userId: z.string().nullable(),
+});
+
+export type Contestant = z.infer<typeof Contestant>;
+
+// Legacy aliases
+export const ContestantSchema = Contestant;
+export type ContestantType = z.infer<typeof Contestant>;
+
+// File: ContestTeam.schema.ts
+
+export const ContestTeam = z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+});
+
+export type ContestTeam = z.infer<typeof ContestTeam>;
+
+// Legacy aliases
+export const ContestTeamSchema = ContestTeam;
+export type ContestTeamType = z.infer<typeof ContestTeam>;

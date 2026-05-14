@@ -212,3 +212,20 @@ export const NotificationType = {
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const ContestResultType = {
+  SCORE: 'SCORE',
+  DURATION: 'DURATION',
+  WINNER: 'WINNER'
+} as const
+
+export type ContestResultType = (typeof ContestResultType)[keyof typeof ContestResultType]
+
+
+export const ContestResultOrder = {
+  ASC: 'ASC',
+  DESC: 'DESC'
+} as const
+
+export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]

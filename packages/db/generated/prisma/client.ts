@@ -221,3 +221,18 @@ export type NotificationRecipient = Prisma.NotificationRecipientModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model Contest
+ * 
+ */
+export type Contest = Prisma.ContestModel
+/**
+ * Model Contestant
+ * 
+ */
+export type Contestant = Prisma.ContestantModel
+/**
+ * Model ContestTeam
+ * 
+ */
+export type ContestTeam = Prisma.ContestTeamModel

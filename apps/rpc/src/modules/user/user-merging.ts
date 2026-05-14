@@ -286,6 +286,54 @@ const CUSTOM_RELATION_MERGERS = {
     }
   },
 
+  contestants: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorContestants = await handle.contestant.findMany({
+      where: { userId: survivor.id },
+      select: { contestId: true },
+    })
+
+    const survivorContestIds = new Set(survivorContestants.map((c) => c.contestId))
+
+    await handle.contestant.deleteMany({
+      where: {
+        userId: consumed.id,
+        contestId: { in: [...survivorContestIds] },
+      },
+    })
+
+    await handle.contestant.updateMany({
+      where: { userId: consumed.id },
+      data: { userId: survivor.id },
+    })
+  },
+
+  contestTeams: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const consumedTeams = await handle.contestTeam.findMany({
+      where: { members: { some: { id: consumed.id } } },
+      select: {
+        id: true,
+        members: {
+          select: { id: true },
+        },
+      },
+    })
+
+    for (const team of consumedTeams) {
+      const survivorIsAlreadyMember = team.members.some((member) => member.id === survivor.id)
+
+      await handle.contestTeam.update({
+        where: { id: team.id },
+        data: {
+          members: {
+            disconnect: { id: consumed.id },
+            // We only connect the survivor if they are not already a member, to avoid duplicate connections.
+            connect: !survivorIsAlreadyMember ? { id: survivor.id } : undefined,
+          },
+        },
+      })
+    }
+  },
+
   // Handling FK constraint errors on personal marks.
   personalMark: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMarks = await handle.personalMark.findMany({
