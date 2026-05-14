@@ -2,6 +2,7 @@ import { useTRPC } from "@/lib/trpc-client"
 import type { GroupId, UserId } from "@dotkomonline/types"
 
 import { useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 export const useGroupAllQuery = () => {
   const trpc = useTRPC()
@@ -10,6 +11,14 @@ export const useGroupAllQuery = () => {
     initialData: [],
   })
   return { groups, ...query }
+}
+
+export const useGroupAbbreviationMap = () => {
+  const { groups, isLoading } = useGroupAllQuery()
+
+  const abbreviationBySlug = useMemo(() => new Map(groups.map((g) => [g.slug, g.abbreviation])), [groups])
+
+  return { abbreviationBySlug, isLoading }
 }
 
 export const useGroupGetQuery = (id: GroupId) => {

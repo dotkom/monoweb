@@ -19,6 +19,7 @@ import {
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
+  IconAward,
   IconBan,
   IconBriefcase,
   IconCampfire,
@@ -56,6 +57,11 @@ const navigations = [
     label: "Jobbutlysninger",
     icon: IconBriefcase,
     href: "/karriere",
+  },
+  {
+    label: "Konkurranser",
+    icon: IconAward,
+    href: "/konkurranser",
   },
   {
     label: "Artikler",
