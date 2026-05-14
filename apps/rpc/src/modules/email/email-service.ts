@@ -13,11 +13,11 @@ import { emails } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
 
 const EmailMessageSchema = z.object({
-  source: z.string().email(),
-  replyTo: z.string().email().array(),
-  to: z.string().email().array(),
-  cc: z.string().email().array(),
-  bcc: z.string().email().array(),
+  source: z.email(),
+  replyTo: z.email().array(),
+  to: z.email().array(),
+  cc: z.email().array(),
+  bcc: z.email().array(),
   subject: z.string(),
   type: z.custom<EmailType>(),
   data: z.any(),

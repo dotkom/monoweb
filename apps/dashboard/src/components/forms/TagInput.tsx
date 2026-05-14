@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { TagsInput, type TagsInputProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export function createTagInput<F extends FieldValues>({
   ...props
@@ -12,12 +11,7 @@ export function createTagInput<F extends FieldValues>({
         control={control}
         name={name}
         render={({ field }) => (
-          <TagsInput
-            {...props}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-            onChange={field.onChange}
-            value={field.value}
-          />
+          <TagsInput {...props} error={getErrorMessage(state, name)} onChange={field.onChange} value={field.value} />
         )}
       />
     )

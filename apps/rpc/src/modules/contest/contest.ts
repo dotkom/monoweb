@@ -55,7 +55,7 @@ export const ContestTeamDetailDbSchema = ContestTeamSchema.extend({
 export type ContestTeamDetailDb = z.infer<typeof ContestTeamDetailDbSchema>
 
 export const ContestTeamDetailSchema = ContestTeamDetailDbSchema.extend({
-  memberCount: z.number().int().nonnegative(),
+  memberCount: z.int().nonnegative(),
 })
 export type ContestTeamDetail = z.infer<typeof ContestTeamDetailSchema>
 
@@ -68,6 +68,6 @@ export type ContestantDetailDb = z.infer<typeof ContestantDetailDbSchema>
 export const ContestantDetailSchema = ContestantSchema.extend({
   team: ContestTeamDetailSchema.nullable(),
   user: ContestUserSummarySchema.nullable(),
-  participantCount: z.number().int().nonnegative(),
+  participantCount: z.int().nonnegative(),
 })
 export type ContestantDetail = z.infer<typeof ContestantDetailSchema>

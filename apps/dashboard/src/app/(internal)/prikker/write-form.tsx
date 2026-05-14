@@ -56,7 +56,7 @@ export const useMarkWriteForm = ({
 
   return useFormBuilder({
     schema: MarkFormSchema,
-    // @ts-expect-error: The default should be a string but is typed as a number
+    // @ts-expect-error: weight needs a string default for the text input but the schema output is number (handled by z.preprocess)
     defaultValues: { ...defaultValues, weight: defaultValues.weight?.toString() },
     onSubmit,
     label,

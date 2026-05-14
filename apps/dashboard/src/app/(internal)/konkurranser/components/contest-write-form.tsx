@@ -23,7 +23,7 @@ const RESULT_ORDER_OPTIONS = [
 const FormValidationSchema = ContestWriteSchema.superRefine((data, ctx) => {
   const issues = validateContestWrite(data)
   for (const issue of issues) {
-    ctx.addIssue(issue)
+    ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
   }
 })
 
