@@ -3,11 +3,6 @@
 
 name: Setup database
 description: Start a local Postgres database.
-inputs:
-  database-url:
-    description: Database URL used by Prisma while generating TypedSQL.
-    required: false
-    default: postgresql://ow:owpassword123@localhost:5432/ow
 runs:
   using: composite
   steps:
@@ -23,20 +18,25 @@ runs:
         sudo -u postgres psql -c "CREATE USER ow WITH PASSWORD 'owpassword123';"
         sudo -u postgres psql -c "CREATE DATABASE ow WITH OWNER ow;"
 
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 10.28.2
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: 22.21.1
+        cache: 'pnpm'
+    - name: Install dependencies from pnpm lockfile
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
     - name: Export database URL
       shell: bash
-      env:
-        DATABASE_URL: ${{ inputs.database-url }}
-      run: echo "DATABASE_URL=$DATABASE_URL" >> "$GITHUB_ENV"
+      run: echo "DATABASE_URL=postgresql://ow:owpassword123@localhost:5432/ow" >> "$GITHUB_ENV"
 
     - name: Apply Prisma migrations
       shell: bash
-      env:
-        DATABASE_URL: ${{ inputs.database-url }}
       run: pnpm -F @dotkomonline/db prisma migrate deploy
 
     - name: Generate Prisma Client and TypedSQL
       shell: bash
-      env:
-        DATABASE_URL: ${{ inputs.database-url }}
       run: pnpm -F @dotkomonline/db generate
