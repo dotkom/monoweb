@@ -26,9 +26,11 @@ import {
 } from "@tabler/icons-react"
 import {
   addDays,
+  addSeconds,
   formatDate,
   formatDistanceToNowStrict,
   interval,
+  isAfter,
   isFuture,
   isWithinInterval,
   roundToNearestHours,
@@ -129,7 +131,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
   const hasWaitlist = unreservedAttendeeCount > 0
 
-  const servingPunishment = attendee?.earliestReservationAt && isFuture(attendee.earliestReservationAt)
+  const servingPunishment =
+    attendee?.earliestReservationAt &&
+    isFuture(attendee.earliestReservationAt) &&
+    isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
   return (
     <div
