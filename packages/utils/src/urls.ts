@@ -1,13 +1,35 @@
 import slugify from "slugify"
 
-// Regular authentication flows
+// Regular authentication flows. Use plain anchor navigations (not Next.js <Link />) for these endpoints so Auth0/OIDC
+// redirects and Set-Cookie headers are handled as full page loads.
 const AUTHORIZE_ENDPOINT = "/api/auth/authorize"
 const LOGOUT_ENDPOINT = "/api/auth/logout"
 
 // This endpoint is for verifying your identity, and returning the JWT without replacing your session.
 // It is used by the "link identity" flow, where the user is already authenticated, but needs to verify their identity
-// to link the two accounts' identities and merge the two accounts into one.
+// to link the two accounts' identities and merge the two accounts into one. Use also regular anchor tags for this.
 const LINK_IDENTITY_AUTHORIZE_ENDPOINT = "/api/auth/link-identity/authorize"
+
+/**
+ * Resolves a relative path (e.g. `/innstillinger`) against an origin.
+ *
+ * @example
+ * const url = toAbsoluteUrl("https://example.com", "/innstillinger")
+ * // Returns "https://example.com/innstillinger"
+ *
+ * const url = toAbsoluteUrl("https://example.com", "https://example.com/innstillinger")
+ * // Returns "https://example.com/innstillinger"
+ *
+ * const url = toAbsoluteUrl("https://example.com", "https://example.com/innstillinger?foo=bar")
+ * // Returns "https://example.com/innstillinger?foo=bar"
+ */
+export function toAbsoluteUrl(origin: string, pathOrUrl: string): string {
+  if (pathOrUrl.startsWith("https://") || pathOrUrl.startsWith("http://")) {
+    return pathOrUrl
+  }
+
+  return new URL(pathOrUrl, origin).href
+}
 
 /**
  * Creates an authorize URL with the given search parameters.

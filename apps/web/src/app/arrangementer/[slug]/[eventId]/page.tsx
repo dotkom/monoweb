@@ -87,8 +87,17 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
     permanentRedirect(createEventPageUrl(eventId, event.title), RedirectType.replace)
   }
 
-  const [user, childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
-    session ? server.user.getMe.query() : null,
+  let user: User | null = null
+
+  if (session !== null) {
+    try {
+      user = await server.user.findMe.query()
+    } catch (error) {
+      console.error("[web:event] failed to load user for event page", error)
+    }
+  }
+
+  const [childEventWithAttendance, parentEventWithAttendance] = await Promise.all([
     server.event.findChildEvents.query({ eventId }),
     server.event.findParentEvent.query({ eventId }),
   ])

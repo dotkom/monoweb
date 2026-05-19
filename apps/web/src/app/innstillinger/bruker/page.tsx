@@ -1,12 +1,14 @@
 "use client"
 
 import { FeideIcon } from "@/components/icons/FeideIcon"
+import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
-import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl, resolveAuthErrorMessage } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconCheck, IconCopy, IconLink, IconMail, IconPassword, IconX } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { redirect, useSearchParams } from "next/navigation"
@@ -15,14 +17,20 @@ import { useEffect, useState } from "react"
 export default function MinBrukerPage() {
   const fullPathname = useFullPathname()
   const searchParams = useSearchParams()
-  const { user: sessionUser, isLoading: sessionLoading } = useUser()
-
-  const sessionIsAuthenticated = sessionUser != null
+  const {
+    sessionUser,
+    isLoading: authLoading,
+    isInvalid,
+    isSessionInvalid,
+    isMissingDbUser,
+    isDbUserFetchError,
+    dbUser,
+  } = useAuthenticatedUser()
 
   const [newEmail, setNewEmail] = useState("")
   const { icon: copyEmailIcon, copy: copyEmail } = useCopyToClipboard()
 
-  const linkErrorMessage = searchParams.get("error") ?? null
+  const linkErrorMessage = resolveAuthErrorMessage(searchParams.get("error"))
   const linkStatus = searchParams.get("link_status")
   const isLinkStatusOk = linkStatus === "ok"
   const isLinkStatusFailed = linkStatus === "failed"
@@ -33,13 +41,10 @@ export default function MinBrukerPage() {
 
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
     ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
-    enabled: sessionIsAuthenticated,
+    enabled: sessionUser != null && !isInvalid,
   })
 
-  const { data: user } = useQuery({
-    ...trpc.user.getMe.queryOptions(),
-    enabled: sessionIsAuthenticated,
-  })
+  const user = dbUser
 
   const { mutate: synchronizeEmail } = useMutation(
     trpc.user.syncEmailFromAuth0.mutationOptions({
@@ -60,18 +65,31 @@ export default function MinBrukerPage() {
   // We synchronize the email from Auth0 on mount, so that if the user returns here after clicking a verification link,
   // the DB user also gets updated.
   useEffect(() => {
-    if (!sessionIsAuthenticated) {
+    if (sessionUser === null || isInvalid) {
       return
     }
 
     synchronizeEmail()
-  }, [sessionIsAuthenticated, synchronizeEmail])
+  }, [sessionUser, isInvalid, synchronizeEmail])
 
-  if (!sessionLoading && !sessionIsAuthenticated) {
+  if (!authLoading && sessionUser === null) {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  if (sessionLoading || !sessionIsAuthenticated) {
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
+
+  if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
+    return (
+      <div className="flex flex-col gap-6">
+        <Title element="h1" size="xl">
+          Min bruker
+        </Title>
+        <SessionRecoveryNotice {...sessionRecoveryMessages} returnTo={fullPathname} />
+      </div>
+    )
+  }
+
+  if (authLoading || sessionUser === null || user === null) {
     return null
   }
 
@@ -108,9 +126,7 @@ export default function MinBrukerPage() {
               Koblingen feilet
             </Title>
             <Text className="text-xs">Kunne ikke koble sammen kontoene. Kontakt dotkom dersom problemet vedvarer.</Text>
-            {linkErrorMessage ? (
-              <Text className="text-xs">Feilmelding: {decodeURIComponent(linkErrorMessage)}</Text>
-            ) : null}
+            {linkErrorMessage !== null ? <Text className="text-xs">{linkErrorMessage}</Text> : null}
           </div>
         </div>
       ) : isLinkStatusOk ? (
@@ -221,7 +237,7 @@ export default function MinBrukerPage() {
       {requestEmailChange.isError && (
         <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
           <IconAlertTriangle className="size-4" />
-          <Text className="text-sm">Kunne ikke sende bekreftelse: {requestEmailChange.error?.message ?? "TEST"}</Text>
+          <Text className="text-sm">Kunne ikke sende bekreftelse. Prøv igjen senere.</Text>
         </div>
       )}
 

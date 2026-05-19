@@ -1,4 +1,5 @@
 import { auth0 } from "@/auth"
+import { getServerAccessToken } from "@/lib/server-access-token"
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
@@ -36,12 +37,16 @@ const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono",
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
+  const accessToken = await getServerAccessToken()
+  // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
+  const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
+
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
       <body className={cn(fontTitle.variable, fontBody.variable, fontMono.variable, "bg-white dark:bg-stone-900")}>
         <PlausibleProvider domain="online.ntnu.no">
-          <Auth0Provider user={session?.user}>
+          <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
                 <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">

@@ -2,9 +2,11 @@
 
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
+import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { findActiveMembership } from "@dotkomonline/types"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
@@ -36,37 +38,52 @@ function MembershipPageSkeleton() {
 export default function MedlemskapPage() {
   const fullPathname = useFullPathname()
   const searchParams = useSearchParams()
-  const { user: sessionUser, isLoading: sessionLoading } = useUser()
-  const sessionIsAuthenticated = sessionUser != null
+  const {
+    sessionUser,
+    isLoading: authLoading,
+    isInvalid,
+    isSessionInvalid,
+    isMissingDbUser,
+    isDbUserFetchError,
+    dbUser,
+  } = useAuthenticatedUser()
 
   const returnedFromFeide = searchParams.get("returnedFromFeide") === "true"
 
   const trpc = useTRPC()
 
-  const { data: user, isLoading: userIsLoading } = useQuery({
-    ...trpc.user.getMe.queryOptions(),
-    enabled: sessionIsAuthenticated,
-  })
-
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
     ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
-    enabled: sessionIsAuthenticated,
+    enabled: sessionUser != null && !isInvalid,
   })
 
-  if (!sessionLoading && !sessionIsAuthenticated) {
+  if (!authLoading && sessionUser === null) {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  if (sessionLoading || !sessionIsAuthenticated) {
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
+
+  if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
+    return (
+      <div className="flex flex-col gap-6">
+        <Title size="xl">Medlemskap</Title>
+        <SessionRecoveryNotice {...sessionRecoveryMessages} returnTo={fullPathname} />
+      </div>
+    )
+  }
+
+  if (authLoading || sessionUser === null || dbUser === null) {
     return <MembershipPageSkeleton />
   }
+
+  const user = dbUser
 
   const feideAuthorizeUrl = createAuthorizeUrl({
     connection: "FEIDE",
     returnTo: fullPathname,
   })
 
-  const isLoading = userIsLoading || auth0ConnectionsIsLoading || user === undefined || auth0Connections === undefined
+  const isLoading = auth0ConnectionsIsLoading || auth0Connections === undefined
   const hasFeideLinked = auth0Connections?.hasFeide === true
   const activeMembership = user ? findActiveMembership(user) : null
 
@@ -118,13 +135,7 @@ export default function MedlemskapPage() {
             </Text>
 
             <div className="flex flex-wrap gap-3">
-              <Button
-                element={Link}
-                href={feideAuthorizeUrl}
-                prefetch={false}
-                color="brand"
-                className="w-fit px-5 py-3.5 rounded-lg"
-              >
+              <Button element="a" href={feideAuthorizeUrl} color="brand" className="w-fit px-5 py-3.5 rounded-lg">
                 <FeideIcon size={16} variant="white" />
                 <Text className="text-sm">Logg inn med FEIDE</Text>
               </Button>

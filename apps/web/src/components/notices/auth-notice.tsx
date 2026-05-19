@@ -3,13 +3,15 @@
 import type { FC } from "react"
 import { useSearchParams } from "next/navigation"
 import { Title, Text, Button } from "@dotkomonline/ui"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, resolveAuthErrorMessage } from "@dotkomonline/utils"
 import { IconLogin2 } from "@tabler/icons-react"
 
 export const AuthNotice: FC = () => {
   const search = useSearchParams()
-  const error = search.get("error")
-  if (error === null) {
+  const errorCode = search.get("error")
+  const message = resolveAuthErrorMessage(errorCode)
+
+  if (message === null) {
     return null
   }
 
@@ -18,7 +20,7 @@ export const AuthNotice: FC = () => {
       <div className="flex flex-col gap-0.5">
         <Title className="text-sm md:text-base font-bold">Feil oppsto under innlogging!</Title>
         <div className="flex flex-row justify-between gap-1.5 items-center">
-          <Text>Detaljer: {error}</Text>
+          <Text>{message}</Text>
           <Button element="a" color="brand" href={createAuthorizeUrl()} size="lg">
             Logg inn
             <IconLogin2 className="size-5" />

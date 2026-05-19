@@ -20,7 +20,7 @@ import type { FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
-import { useUser } from "@auth0/nextjs-auth0/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
@@ -152,9 +152,10 @@ const links: MenuLink[] = [
 
 export const Navbar: FC = () => {
   const fullPathname = useFullPathname()
-  const { user } = useUser()
+  const { sessionUser, isInvalid } = useAuthenticatedUser()
 
-  const isLoggedIn = user != null
+  const isLoggedIn = sessionUser != null && !isInvalid
+  const showLoginButton = sessionUser === null
 
   return (
     <header className="sticky top-4 z-50 grid grid-cols-[1fr_auto] gap-1.5 items-center w-full max-w-7xl mt-4">
@@ -178,15 +179,14 @@ export const Navbar: FC = () => {
         </div>
       </div>
 
-      {!isLoggedIn && (
+      {showLoginButton && (
         <div className="h-full rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
           <Button
-            element={Link}
+            element="a"
             variant="solid"
             color="brand"
             className="font-medium min-w-19 pl-3 pr-4 xs:pl-6 xs:pr-8 py-4 rounded-l-lg rounded-r-4xl shrink-0 h-full"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
-            prefetch={false}
             icon={<IconLogin2 className="mr-1.5 size-6" />}
           >
             <span className="hidden min-[380px]:inline">Logg inn</span>

@@ -4,10 +4,15 @@ import { env } from "@/lib/env"
 import { TRPCProvider } from "@/lib/trpc-client"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
+import { createLogoutUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { type CreateTRPCClientOptions, createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client"
 import { type PropsWithChildren, useMemo, useState } from "react"
 import superjson from "superjson"
+
+// This lock is to prevent the logout redirect from being triggered multiple times. Next.js usually sends tons of
+// parallel requests, and we only want to redirect once.
+let logoutRedirectScheduled = false
 
 export const QueryProvider = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(
@@ -37,13 +42,25 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           async fetch(url, options) {
             try {
               const headers = new Headers(options?.headers)
+
               try {
                 const token = await getAccessToken()
+
                 if (typeof token === "string" && token !== "") {
                   headers.set("Authorization", `Bearer ${token}`)
                 }
-              } catch {
-                // not authenticated
+              } catch (error) {
+                if (isAccessTokenFetchFailure(error) && logoutRedirectScheduled === false) {
+                  logoutRedirectScheduled = true
+                  window.location.assign(
+                    createLogoutUrl({
+                      returnTo: toAbsoluteUrl(
+                        window.location.origin,
+                        `${window.location.pathname}${window.location.search}`
+                      ),
+                    })
+                  )
+                }
               }
 
               return fetch(url, {
@@ -51,11 +68,11 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
                 credentials: "include",
                 headers,
               })
-            } catch (e) {
+            } catch (error) {
               console.error(
                 "The fetch call to the TRPC api failed, the TRPC server may be down! Check if the TRPC server is up and running"
               )
-              throw e
+              throw error
             }
           },
         }),

@@ -111,10 +111,12 @@ const MembershipDisplayShell = ({
     return <div className={cn(shellClassName, className)}>{children}</div>
   }
 
+  // Regular anchors for logins
+  const Element = activeMembership === null && hasFeideConnection ? "a" : Link
+
   return (
-    <Link
+    <Element
       href={href}
-      prefetch={hasFeideConnection === true ? false : undefined}
       className={cn(
         shellClassName,
         "border-gray-300 transform transition-colors hover:bg-gray-50 dark:hover:bg-stone-700",
@@ -122,9 +124,8 @@ const MembershipDisplayShell = ({
       )}
     >
       {children}
-
       <IconArrowUpRight className="ml-auto size-5 text-gray-500 dark:text-stone-500" />
-    </Link>
+    </Element>
   )
 }
 

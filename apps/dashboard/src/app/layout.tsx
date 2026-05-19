@@ -6,6 +6,7 @@ import "@fontsource-variable/inter/wght.css"
 import "@fontsource-variable/inter-tight/wght.css"
 import "@fontsource-variable/google-sans-code/wght.css"
 import { auth0 } from "@/lib/auth"
+import { getServerAccessToken } from "@/lib/server-access-token"
 import { server } from "@/lib/trpc-server"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { Notifications } from "@mantine/notifications"
@@ -47,7 +48,10 @@ const theme = createTheme({
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
-  const isAdmin = await server.user.isAdmin.query()
+  const accessToken = await getServerAccessToken()
+  // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
+  const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
+  const isAdmin = accessToken !== null ? await server.user.isAdmin.query() : false
 
   return (
     <html lang="no" {...mantineHtmlProps}>
@@ -56,7 +60,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       </head>
       <body>
         <PlausibleProvider domain="dashboard.online.ntnu.no">
-          <Auth0Provider user={session?.user}>
+          <Auth0Provider user={auth0User}>
             <QueryProvider>
               <MantineProvider defaultColorScheme="auto" theme={theme}>
                 <Notifications />

@@ -1,7 +1,16 @@
 "use client"
 
-import { capitalizeFirstLetter } from "@dotkomonline/utils"
+import { env } from "@/lib/env"
+import { useAuthenticatedUser } from "@/lib/use-authenticated-user"
 import {
+  capitalizeFirstLetter,
+  createAuthorizeUrl,
+  createLogoutUrl,
+  getSessionRecoveryMessages,
+  toAbsoluteUrl,
+} from "@dotkomonline/utils"
+import {
+  Alert,
   Anchor,
   AppShell,
   AppShellHeader,
@@ -14,6 +23,8 @@ import {
   Group,
   NavLink,
   Space,
+  Stack,
+  Text,
   Title,
   useMantineColorScheme,
 } from "@mantine/core"
@@ -117,6 +128,17 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
   const { toggleColorScheme } = useMantineColorScheme()
+  const {
+    isLoading: authLoading,
+    isInvalid,
+    isSessionInvalid,
+    isMissingDbUser,
+    isDbUserFetchError,
+  } = useAuthenticatedUser()
+
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
+  const showSessionRecovery = !authLoading && isInvalid && sessionRecoveryMessages !== null
+  const returnTo = toAbsoluteUrl(env.NEXT_PUBLIC_ORIGIN, pathname)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: should only trigger on pathname change
   useEffect(() => {
@@ -144,12 +166,25 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
           </Flex>
 
           <Flex align="center" gap="sm">
-            <Button onClick={toggleColorScheme} variant="outline" visibleFrom="xs">
-              Bytt fargetema
-            </Button>
-            <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
-              Logg ut
-            </Button>
+            {showSessionRecovery ? (
+              <Group gap="xs" visibleFrom="sm">
+                <Button component="a" href={createAuthorizeUrl({ returnTo })}>
+                  Logg inn på nytt
+                </Button>
+                <Button component="a" variant="outline" href={createLogoutUrl({ returnTo })}>
+                  Logg ut
+                </Button>
+              </Group>
+            ) : (
+              <>
+                <Button onClick={toggleColorScheme} variant="outline" visibleFrom="xs">
+                  Bytt fargetema
+                </Button>
+                <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
+                  Logg ut
+                </Button>
+              </>
+            )}
           </Flex>
         </Group>
       </AppShellHeader>
@@ -169,11 +204,37 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ isAdmin, children 
               {...(navigation.openInNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             />
           ))}
-        <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
-          Logg ut
-        </Button>
+        {showSessionRecovery ? (
+          <Stack gap="xs" hiddenFrom="xs" mt="lg">
+            <Button component="a" href={createAuthorizeUrl({ returnTo })}>
+              Logg inn på nytt
+            </Button>
+            <Button component="a" variant="outline" href={createLogoutUrl({ returnTo })}>
+              Logg ut
+            </Button>
+          </Stack>
+        ) : (
+          <Button component="a" variant="outline" href="/api/auth/logout" hiddenFrom="xs" mt="lg">
+            Logg ut
+          </Button>
+        )}
       </AppShellNavbar>
       <AppShellMain>
+        {showSessionRecovery && sessionRecoveryMessages !== null ? (
+          <Alert color="red" mb="xl" title={sessionRecoveryMessages.title}>
+            <Stack gap="sm">
+              <Text size="sm">{sessionRecoveryMessages.description}</Text>
+              <Group gap="xs">
+                <Button component="a" size="sm" href={createAuthorizeUrl({ returnTo })}>
+                  Logg inn på nytt
+                </Button>
+                <Button component="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
+                  Logg ut
+                </Button>
+              </Group>
+            </Stack>
+          </Alert>
+        ) : null}
         <Breadcrumbs>
           <Anchor href="/" size="sm" key="0-home">
             Hjem
