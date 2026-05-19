@@ -194,13 +194,13 @@ export function getFeedbackFormService(
     async getFeedbackEligibility(handle, feedbackFormId, userId) {
       const feedbackForm = await formRepository.findById(handle, feedbackFormId)
 
-      if (!feedbackForm) {
+      if (feedbackForm === null) {
         return { cause: "NO_FEEDBACK_FORM", success: false }
       }
 
       const event = await eventService.findEventById(handle, feedbackForm.eventId)
 
-      if (!event?.attendanceId) {
+      if (event?.attendanceId == null || event.attendanceId === "") {
         return { cause: "NO_FEEDBACK_FORM", success: false }
       }
 
@@ -216,7 +216,7 @@ export function getFeedbackFormService(
 
       const attendee = attendance?.attendees.find((attendee) => attendee.userId === userId)
 
-      if (!attendee || !attendee.attendedAt) {
+      if (attendee?.attendedAt == null) {
         return { cause: "DID_NOT_ATTEND", success: false }
       }
 

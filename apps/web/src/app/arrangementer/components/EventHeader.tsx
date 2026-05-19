@@ -5,6 +5,7 @@ import { env } from "@/env"
 import type { Event } from "@dotkomonline/types"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
+import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 import { useState } from "react"
@@ -30,16 +31,18 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
-            <img
+            <Image
               src={event.imageUrl}
               alt={event.title}
+              fill
+              sizes="100vw"
               className={cn(
-                "w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out",
+                "rounded-xl will-change-transform transition-transform duration-500 ease-out",
                 showFullImage ? "object-contain" : "object-cover"
               )}
-              onLoad={(event) => {
-                const img = event.currentTarget
-                const ratio = img.naturalWidth / img.naturalHeight
+              onLoad={(loadEvent) => {
+                const image = loadEvent.currentTarget
+                const ratio = image.naturalWidth / image.naturalHeight
                 const target = 5 / 2
                 const epsilon = 0.05
                 setHasCorrectAspectRatio(Math.abs(ratio - target) < epsilon)

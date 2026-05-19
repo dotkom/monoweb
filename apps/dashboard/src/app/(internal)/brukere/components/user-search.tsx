@@ -29,7 +29,7 @@ export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, exclude
         setSearchQuery("")
         onSubmit(user)
       }}
-      items={users.filter((user) => !excludeUserIds || !excludeUserIds.includes(user.id))}
+      items={users.filter((user) => !excludeUserIds?.includes(user.id))}
       dataMapper={(item: User) => {
         if (item.name) {
           return `${item.name} (${item.email})`

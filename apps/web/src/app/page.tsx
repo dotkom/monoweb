@@ -11,6 +11,7 @@ import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDate, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
+import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -201,13 +202,17 @@ const BigEventCard: FC<BigEventCardProps> = ({ event, attendance, className }) =
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
-          />
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-100 dark:border-stone-700">
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              sizes="(min-width: 768px) 70vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 overflow-hidden aspect-video">
             <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
@@ -253,13 +258,17 @@ const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
     >
       <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
         {event.imageUrl ? (
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="rounded-lg border border-gray-100 dark:border-stone-700 object-cover aspect-video w-full"
-          />
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-100 dark:border-stone-700">
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              sizes="(max-width: 768px) 85vw, 30vw"
+              className="object-cover"
+            />
+          </div>
         ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 object-cover overflow-hidden aspect-video">
+          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 overflow-hidden aspect-video">
             <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
           </div>
         )}
