@@ -158,12 +158,13 @@ export const Navbar: FC = () => {
   const showLoginButton = sessionUser === null
 
   return (
-    <header className="sticky top-4 z-50 grid grid-cols-[1fr_auto] gap-1.5 items-center w-full max-w-7xl mt-4">
+    <header className={cn("sticky top-4 z-50 flex w-full max-w-7xl items-center mt-4", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
           // i have no idea why i need rounded-r-4xl and not rounded-r-full
           "p-3 rounded-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm border border-blue-100 dark:border-stone-700/30",
           "flex flex-row justify-between items-center w-full",
+          showLoginButton ? "min-w-0 grow" : "w-full",
           !isLoggedIn && "rounded-r-lg"
         )}
       >
@@ -180,7 +181,7 @@ export const Navbar: FC = () => {
       </div>
 
       {showLoginButton && (
-        <div className="h-full rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
+        <div className="h-full shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
           <Button
             element="a"
             variant="solid"
