@@ -1,5 +1,6 @@
 import type { EventType } from "@dotkomonline/types"
 import { Badge, Tilt, cn } from "@dotkomonline/ui"
+import Image from "next/image"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
 
@@ -49,11 +50,13 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, star
       <div className="relative w-max">
         <div className="relative aspect-[16/9] h-22 sm:h-28 bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt={alt}
+              fill
+              sizes="(min-width: 640px) 200px, 160px"
               className={cn(
-                "rounded-md object-cover w-full h-full absolute inset-0",
+                "rounded-md object-cover",
                 startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
               )}
             />
