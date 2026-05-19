@@ -21,6 +21,7 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Embed the Sentry release ID into the container.
+ARG SENTRY_RELEASE
 ENV SENTRY_RELEASE=${SENTRY_RELEASE}
 
 RUN addgroup --system --gid 1001 nodejs
@@ -29,4 +30,4 @@ USER rpc
 
 COPY --from=installer --chown=rpc:nodejs --chmod=755 /app .
 
-CMD node --loader ./apps/rpc/runtime.mjs --experimental-strip-types ./apps/rpc/src/bin/server.ts
+CMD ["node", "--loader", "./apps/rpc/runtime.mjs", "--experimental-strip-types", "./apps/rpc/src/bin/server.ts"]

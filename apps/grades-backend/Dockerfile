@@ -26,4 +26,4 @@ USER grades-backend
 
 COPY --from=installer --chown=grades-backend:nodejs --chmod=755 /app .
 
-CMD node --loader ./apps/grades-backend/runtime.mjs --experimental-strip-types ./apps/grades-backend/src/bin/server.ts
+CMD ["node", "--loader", "./apps/grades-backend/runtime.mjs", "--experimental-strip-types", "./apps/grades-backend/src/bin/server.ts"]
