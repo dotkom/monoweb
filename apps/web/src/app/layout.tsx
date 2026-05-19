@@ -38,6 +38,7 @@ const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono",
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
   const accessToken = await getServerAccessToken()
+  // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
 
   return (

@@ -2,7 +2,7 @@
 
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { getSessionRecoveryMessages } from "@/components/auth/session-recovery-messages"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
@@ -23,6 +23,7 @@ export default function MinBrukerPage() {
     isInvalid,
     isSessionInvalid,
     isMissingDbUser,
+    isDbUserFetchError,
     dbUser,
   } = useAuthenticatedUser()
 
@@ -75,7 +76,7 @@ export default function MinBrukerPage() {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser)
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
 
   if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
     return (

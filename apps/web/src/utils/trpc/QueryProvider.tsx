@@ -3,7 +3,7 @@
 import { env } from "@/env"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { createLogoutUrl, isAccessTokenFetchFailure } from "@dotkomonline/utils"
+import { createLogoutUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
@@ -82,7 +82,10 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
                   logoutRedirectScheduled = true
                   window.location.assign(
                     createLogoutUrl({
-                      returnTo: `${window.location.pathname}${window.location.search}`,
+                      returnTo: toAbsoluteUrl(
+                        window.location.origin,
+                        `${window.location.pathname}${window.location.search}`
+                      ),
                     })
                   )
                 }

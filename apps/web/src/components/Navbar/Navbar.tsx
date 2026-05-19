@@ -155,6 +155,7 @@ export const Navbar: FC = () => {
   const { sessionUser, isInvalid } = useAuthenticatedUser()
 
   const isLoggedIn = sessionUser != null && !isInvalid
+  const showLoginButton = sessionUser === null
 
   return (
     <header className="sticky top-4 z-50 grid grid-cols-[1fr_auto] gap-1.5 items-center w-full max-w-7xl mt-4">
@@ -178,7 +179,7 @@ export const Navbar: FC = () => {
         </div>
       </div>
 
-      {!isLoggedIn && (
+      {showLoginButton && (
         <div className="h-full rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
           <Button
             element="a"

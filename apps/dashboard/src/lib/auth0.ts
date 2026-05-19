@@ -1,12 +1,15 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { AuthErrorCode } from "@dotkomonline/utils"
+import { AUTH0_TOKEN_REFRESH_BUFFER_SECONDS, AuthErrorCode, createLogoutUrl, toAbsoluteUrl } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
-import { hoursToSeconds, minutesToSeconds } from "date-fns"
+import { hoursToSeconds } from "date-fns"
 import { NextResponse } from "next/server"
 import superjson from "superjson"
 import { env } from "@/lib/env"
 import { Auth0JwtService } from "@/lib/auth0-jwt"
+
+const REGISTER_MAX_ATTEMPTS = 2 as const
+const REGISTER_RETRY_DELAY_MS = 500 as const
 
 const jwtService = new Auth0JwtService(
   env.AUTH0_ISSUER,
@@ -21,6 +24,12 @@ const primaryApiAudience =
   env.AUTH0_AUDIENCES.split(",")
     .map((s) => s.trim())
     .filter(Boolean)[0] ?? ""
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds)
+  })
+}
 
 type RegisterUserResult = { ok: true } | { ok: false; code: typeof AuthErrorCode.REGISTER_FAILED }
 
@@ -37,7 +46,9 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
     ],
   })
 
-  for (let attempt = 0; attempt < 2; attempt++) {
+  // In case Auth0 Management API and RPC are briefly unavailable right after callback (cold start, propagation lag), we
+  // retry once.
+  for (let attempt = 0; attempt < REGISTER_MAX_ATTEMPTS; attempt++) {
     try {
       const jwt = await jwtService.verify(accessToken)
 
@@ -50,6 +61,10 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
       return { ok: true }
     } catch (error) {
       console.error(`[dashboard:auth0] register attempt ${attempt + 1} failed`, error)
+
+      if (attempt === 0) {
+        await wait(REGISTER_RETRY_DELAY_MS)
+      }
     }
   }
 
@@ -74,7 +89,7 @@ export const auth0 = new Auth0Client({
       name: "onlineweb_session_dashboard",
     },
   },
-  tokenRefreshBuffer: minutesToSeconds(1),
+  tokenRefreshBuffer: AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
   routes: {
     login: "/api/auth/authorize",
     logout: "/api/auth/logout",
@@ -97,10 +112,14 @@ export const auth0 = new Auth0Client({
       const registerResult = await registerUserAfterSignIn(session.tokenSet.accessToken)
 
       if (!registerResult.ok) {
-        const errorUrl = new URL(env.NEXT_PUBLIC_ORIGIN)
-        errorUrl.searchParams.set("error", registerResult.code)
+        const returnToUrl = new URL(env.NEXT_PUBLIC_ORIGIN)
+        returnToUrl.searchParams.set("error", registerResult.code)
 
-        return NextResponse.redirect(errorUrl)
+        const logoutPath = createLogoutUrl({
+          returnTo: toAbsoluteUrl(env.NEXT_PUBLIC_ORIGIN, `${returnToUrl.pathname}${returnToUrl.search}`),
+        })
+
+        return NextResponse.redirect(new URL(logoutPath, env.NEXT_PUBLIC_ORIGIN))
       }
     }
 

@@ -3,7 +3,7 @@
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { getSessionRecoveryMessages } from "@/components/auth/session-recovery-messages"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -44,6 +44,7 @@ export default function MedlemskapPage() {
     isInvalid,
     isSessionInvalid,
     isMissingDbUser,
+    isDbUserFetchError,
     dbUser,
   } = useAuthenticatedUser()
 
@@ -60,7 +61,7 @@ export default function MedlemskapPage() {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser)
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
 
   if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
     return (

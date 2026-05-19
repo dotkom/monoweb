@@ -1,7 +1,7 @@
 "use client"
 
-import { useTRPC } from "@/utils/trpc/client"
-import { isTrpcErrorCode } from "@/utils/trpc-errors"
+import { isTrpcErrorCode } from "@/lib/trpc-errors"
+import { useTRPC } from "@/lib/trpc-client"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import { useQuery } from "@tanstack/react-query"
 

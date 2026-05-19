@@ -5,7 +5,8 @@ export type SessionRecoveryMessages = {
 
 export function getSessionRecoveryMessages(
   isSessionInvalid: boolean,
-  isMissingDbUser: boolean
+  isMissingDbUser: boolean,
+  isDbUserFetchError: boolean
 ): SessionRecoveryMessages | null {
   if (isSessionInvalid) {
     return {
@@ -20,6 +21,13 @@ export function getSessionRecoveryMessages(
       title: "Brukerprofil mangler",
       description:
         "Vi fant ingen brukerprofil knyttet til innloggingen din. Logg inn på nytt for å fullføre registreringen.",
+    }
+  }
+
+  if (isDbUserFetchError) {
+    return {
+      title: "Kunne ikke laste brukerprofil",
+      description: "Noe gikk galt ved henting av profilen din. Logg inn på nytt, eller logg ut og prøv igjen senere.",
     }
   }
 

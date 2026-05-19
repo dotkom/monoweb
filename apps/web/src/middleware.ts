@@ -2,6 +2,7 @@ import {
   ACCESS_TOKEN_REQUEST_HEADER,
   createLogoutUrl,
   shouldPersistSessionTokensInMiddleware,
+  toAbsoluteUrl,
 } from "@dotkomonline/utils"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
@@ -10,6 +11,12 @@ import { auth0 } from "@/lib/auth0"
 
 function isRedirectResponse(response: NextResponse): boolean {
   return response.status >= 300 && response.status < 400
+}
+
+function copyResponseCookies(source: NextResponse, target: NextResponse): void {
+  for (const cookie of source.cookies.getAll()) {
+    target.cookies.set(cookie)
+  }
 }
 
 function forwardRefreshedAccessToken(
@@ -24,11 +31,21 @@ function forwardRefreshedAccessToken(
     request: { headers: requestHeaders },
   })
 
-  for (const cookie of authResponse.cookies.getAll()) {
-    downstreamResponse.cookies.set(cookie)
-  }
+  // Auth0 sets refreshed session cookies on `authResponse`. A bare `NextResponse.next()` would drop them.
+  copyResponseCookies(authResponse, downstreamResponse)
 
   return downstreamResponse
+}
+
+function redirectToLogout(request: NextRequest, authResponse: NextResponse): NextResponse {
+  const logoutPath = createLogoutUrl({
+    returnTo: toAbsoluteUrl(request.nextUrl.origin, `${request.nextUrl.pathname}${request.nextUrl.search}`),
+  })
+
+  const response = NextResponse.redirect(new URL(logoutPath, request.url))
+  copyResponseCookies(authResponse, response)
+
+  return response
 }
 
 export async function middleware(request: NextRequest) {
@@ -55,11 +72,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error("[web:middleware] failed to refresh session tokens", error)
 
-    const logoutPath = createLogoutUrl({
-      returnTo: `${request.nextUrl.pathname}${request.nextUrl.search}`,
-    })
-
-    return NextResponse.redirect(new URL(logoutPath, request.url))
+    return redirectToLogout(request, authResponse)
   }
 }
 

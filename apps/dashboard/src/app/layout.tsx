@@ -49,8 +49,9 @@ const theme = createTheme({
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
   const accessToken = await getServerAccessToken()
+  // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
-  const isAdmin = await server.user.isAdmin.query()
+  const isAdmin = accessToken !== null ? await server.user.isAdmin.query() : false
 
   return (
     <html lang="no" {...mantineHtmlProps}>

@@ -1,7 +1,7 @@
 "use client"
 
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { getSessionRecoveryMessages } from "@/components/auth/session-recovery-messages"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -24,6 +24,7 @@ const EditProfilePage = () => {
     isInvalid,
     isSessionInvalid,
     isMissingDbUser,
+    isDbUserFetchError,
     dbUser,
   } = useAuthenticatedUser()
 
@@ -44,7 +45,7 @@ const EditProfilePage = () => {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser)
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
 
   if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
     return (

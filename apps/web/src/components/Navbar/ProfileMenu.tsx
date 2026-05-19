@@ -1,8 +1,11 @@
 "use client"
 
 import { env } from "@/env"
+import { SessionRecoveryDropdown } from "@/components/auth/SessionRecoveryDropdown"
+import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import type { UserRouter } from "@dotkomonline/rpc"
 import {
   Avatar,
@@ -200,14 +203,35 @@ const linkGroups: LinkGroup[] = [
 ]
 
 export const ProfileMenu: FC = () => {
-  const { sessionUser, isLoading, isInvalid, dbUser, dbUserQuery } = useAuthenticatedUser()
+  const fullPathname = useFullPathname()
+  const {
+    sessionUser,
+    isLoading,
+    isInvalid,
+    isSessionInvalid,
+    isMissingDbUser,
+    isDbUserFetchError,
+    dbUser,
+    dbUserQuery,
+  } = useAuthenticatedUser()
 
   if (isLoading) {
     return null
   }
 
-  if (sessionUser === null || sessionUser === undefined || isInvalid) {
+  if (sessionUser === null || sessionUser === undefined) {
     return <UnauthenticatedActions />
+  }
+
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
+
+  if (isInvalid && sessionRecoveryMessages !== null) {
+    return (
+      <div className="flex gap-2 mr-2 lg:mr-0">
+        <ContactDebugDropdown />
+        <SessionRecoveryDropdown {...sessionRecoveryMessages} returnTo={fullPathname} />
+      </div>
+    )
   }
 
   return (
