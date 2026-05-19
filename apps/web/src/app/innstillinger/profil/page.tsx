@@ -1,12 +1,14 @@
 "use client"
 
+import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
+import { getSessionRecoveryMessages } from "@/components/auth/session-recovery-messages"
 import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { Button, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { type FormUserWrite, ProfileForm } from "./form"
@@ -15,14 +17,15 @@ import SkeletonProfileForm from "./loading"
 const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { user: sessionUser, isLoading: sessionLoading } = useUser()
-  const sessionIsAuthenticated = sessionUser != null
   const fullPathname = useFullPathname()
-
-  const { data: user, isLoading: userIsLoading } = useQuery({
-    ...trpc.user.getMe.queryOptions(),
-    enabled: sessionIsAuthenticated,
-  })
+  const {
+    sessionUser,
+    isLoading: authLoading,
+    isInvalid,
+    isSessionInvalid,
+    isMissingDbUser,
+    dbUser,
+  } = useAuthenticatedUser()
 
   const userEdit = useMutation(
     trpc.user.update.mutationOptions({
@@ -37,11 +40,24 @@ const EditProfilePage = () => {
     })
   )
 
-  if (!sessionLoading && !sessionIsAuthenticated) {
+  if (!authLoading && sessionUser === null) {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
-  if (sessionLoading || !sessionIsAuthenticated || userIsLoading || user === undefined) {
+  const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser)
+
+  if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
+    return (
+      <div className="flex flex-col gap-6">
+        <Title element="h1" size="xl">
+          Rediger profil
+        </Title>
+        <SessionRecoveryNotice {...sessionRecoveryMessages} returnTo={fullPathname} />
+      </div>
+    )
+  }
+
+  if (authLoading || sessionUser === null || dbUser === null) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-row justify-between">
@@ -58,7 +74,7 @@ const EditProfilePage = () => {
   }
 
   const onSubmit = (data: FormUserWrite) => {
-    userEdit.mutate({ id: user.id, input: data })
+    userEdit.mutate({ id: dbUser.id, input: data })
   }
 
   return (
@@ -70,7 +86,7 @@ const EditProfilePage = () => {
 
         <Button
           element={Link}
-          href={`/profil/${user.username}`}
+          href={`/profil/${dbUser.username}`}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
@@ -79,7 +95,7 @@ const EditProfilePage = () => {
       </div>
 
       <ProfileForm
-        user={user}
+        user={dbUser}
         onSubmit={onSubmit}
         isSaving={userEdit.isPending}
         saveError={userEdit.error?.message}

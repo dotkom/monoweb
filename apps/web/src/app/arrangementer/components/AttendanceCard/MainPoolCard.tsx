@@ -73,7 +73,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
 
   if (!user) {
     return (
-      <Link href={authorizeUrl} prefetch={false} className={cn("group", cardClassname)}>
+      <a href={authorizeUrl} className={cn("group", cardClassname)}>
         <div className="flex flex-col gap-2">
           <Text>Du er ikke innlogget</Text>
 
@@ -88,7 +88,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             </div>
           )}
         </div>
-      </Link>
+      </a>
     )
   }
 

@@ -1,5 +1,6 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server"
 import type { AppRouter } from "@dotkomonline/rpc"
+import { AuthErrorCode } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
 import { hoursToSeconds, minutesToSeconds } from "date-fns"
 import { NextResponse } from "next/server"
@@ -21,7 +22,9 @@ const primaryApiAudience =
     .map((s) => s.trim())
     .filter(Boolean)[0] ?? ""
 
-async function registerUserAfterSignIn(accessToken: string): Promise<void> {
+type RegisterUserResult = { ok: true } | { ok: false; code: typeof AuthErrorCode.REGISTER_FAILED }
+
+async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUserResult> {
   const client = trpc.createTRPCClient<AppRouter>({
     links: [
       trpc.httpLink({
@@ -33,17 +36,24 @@ async function registerUserAfterSignIn(accessToken: string): Promise<void> {
       }),
     ],
   })
-  try {
-    const jwt = await jwtService.verify(accessToken)
 
-    if (!jwt.payload.sub) {
-      throw new Error("No sub in JWT")
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const jwt = await jwtService.verify(accessToken)
+
+      if (!jwt.payload.sub) {
+        throw new Error("No sub in JWT")
+      }
+
+      await client.user.register.mutate(jwt.payload.sub)
+
+      return { ok: true }
+    } catch (error) {
+      console.error(`[dashboard:auth0] register attempt ${attempt + 1} failed`, error)
     }
-
-    await client.user.register.mutate(jwt.payload.sub)
-  } catch (err) {
-    console.error("[dashboard:auth0] failed to verify access token or register user", err)
   }
+
+  return { ok: false, code: AuthErrorCode.REGISTER_FAILED }
 }
 
 export const auth0 = new Auth0Client({
@@ -75,14 +85,23 @@ export const auth0 = new Auth0Client({
 
   async onCallback(error, ctx, session) {
     if (error !== null) {
+      console.error("[dashboard:auth0] login callback error", error)
+
       const url = new URL(env.NEXT_PUBLIC_ORIGIN)
-      url.searchParams.set("error", error.message)
+      url.searchParams.set("error", AuthErrorCode.LOGIN_FAILED)
 
       return NextResponse.redirect(url)
     }
 
     if (session?.tokenSet?.accessToken !== undefined && session.tokenSet.accessToken !== "") {
-      await registerUserAfterSignIn(session.tokenSet.accessToken)
+      const registerResult = await registerUserAfterSignIn(session.tokenSet.accessToken)
+
+      if (!registerResult.ok) {
+        const errorUrl = new URL(env.NEXT_PUBLIC_ORIGIN)
+        errorUrl.searchParams.set("error", registerResult.code)
+
+        return NextResponse.redirect(errorUrl)
+      }
     }
 
     const baseUrl = ctx.appBaseUrl ?? env.NEXT_PUBLIC_ORIGIN

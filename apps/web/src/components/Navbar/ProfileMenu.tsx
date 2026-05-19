@@ -2,7 +2,8 @@
 
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
-import { useUser } from "@auth0/nextjs-auth0/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import type { UserRouter } from "@dotkomonline/rpc"
 import {
   Avatar,
   AvatarFallback,
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
   Text,
   Title,
+  cn,
 } from "@dotkomonline/ui"
 import { createLogoutUrl } from "@dotkomonline/utils"
 import type { Icon } from "@tabler/icons-react"
@@ -34,7 +36,7 @@ import {
   IconSun,
   IconUser,
 } from "@tabler/icons-react"
-import { skipToken, useQueries, useQuery } from "@tanstack/react-query"
+import { skipToken, useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { type FC, Fragment, useEffect, useState } from "react"
@@ -198,37 +200,39 @@ const linkGroups: LinkGroup[] = [
 ]
 
 export const ProfileMenu: FC = () => {
-  const { user, isLoading } = useUser()
+  const { sessionUser, isLoading, isInvalid, dbUser, dbUserQuery } = useAuthenticatedUser()
 
   if (isLoading) {
     return null
   }
 
-  if (user === undefined || user === null) {
+  if (sessionUser === null || sessionUser === undefined || isInvalid) {
     return <UnauthenticatedActions />
   }
 
   return (
     <div className="flex gap-2 mr-2 lg:mr-0">
       <ContactDebugDropdown />
-      <AvatarDropdown />
+      <AvatarDropdown dbUser={dbUser} dbUserIsLoading={dbUserQuery.isLoading} />
     </div>
   )
 }
 
-export const AvatarDropdown: FC = () => {
+type AvatarDropdownProps = {
+  dbUser: UserRouter.GetMeOutput | null
+  dbUserIsLoading: boolean
+}
+
+export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoading: isDbUserLoading }) => {
   const [open, setOpen] = useState(false)
-  const { user: authUser, isLoading: authLoading } = useUser()
   const trpc = useTRPC()
 
-  const [userResponse, isStaffResponse] = useQueries({
-    queries: [
-      trpc.user.getMe.queryOptions(undefined, { enabled: Boolean(authUser) && !authLoading }),
-      trpc.user.isStaff.queryOptions(undefined, { enabled: Boolean(authUser) && !authLoading }),
-    ],
+  const isStaffResponse = useQuery({
+    ...trpc.user.isStaff.queryOptions(),
+    enabled: dbUser !== null,
   })
 
-  const user = userResponse.data
+  const user = dbUser
   const isStaff = isStaffResponse.data ?? false
 
   const { data: eventsMissingFeedback } = useQuery(
@@ -254,7 +258,12 @@ export const AvatarDropdown: FC = () => {
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
+            <AvatarFallback
+              className={cn(
+                "bg-gradient-to-br from-blue-400 to-blue-800 text-white",
+                isDbUserLoading && "animate-pulse"
+              )}
+            >
               <IconUser className="size-5" />
             </AvatarFallback>
           </Avatar>
@@ -340,11 +349,15 @@ export const AvatarDropdown: FC = () => {
 
         <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
 
-        <DropdownMenuItem className="rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors cursor-pointer">
-          <Link prefetch={false} href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm">
+        <DropdownMenuItem
+          asChild
+          onClick={() => setOpen(false)}
+          className="rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+        >
+          <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm">
             <IconLogout2 className="size-5 text-red-500" />
             <Text className="font-medium text-red-500">Logg ut</Text>
-          </Link>
+          </a>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

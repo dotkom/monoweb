@@ -19,7 +19,19 @@ export default async function LinkIdentityPage() {
     redirect("/innstillinger/bruker")
   })
 
-  const primaryUser = await server.user.getMe.query()
+  let primaryUser: User | null = null
+
+  try {
+    primaryUser = await server.user.findMe.query()
+  } catch (error) {
+    console.error("[web:link-identity] failed to load primary user", error)
+    redirect(createAuthorizeUrl({ returnTo: "/innstillinger/bruker/link" }))
+  }
+
+  if (primaryUser === null) {
+    redirect(createAuthorizeUrl({ returnTo: "/innstillinger/bruker/link" }))
+  }
+
   const secondaryUser = await server.user.get.query(secondaryUserId)
 
   return (

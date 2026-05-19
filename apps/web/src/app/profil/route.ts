@@ -15,7 +15,18 @@ export async function GET(req: NextRequest) {
     redirect(createAuthorizeUrl(params))
   }
 
-  const user = await server.user.getMe.query()
+  let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
+
+  try {
+    user = await server.user.findMe.query()
+  } catch (error) {
+    console.error("[web:profil] failed to load user", error)
+    redirect(createAuthorizeUrl({ returnTo: "/profil" }))
+  }
+
+  if (user === null) {
+    redirect(createAuthorizeUrl({ returnTo: "/profil" }))
+  }
 
   if (!user.username) {
     redirect("/")

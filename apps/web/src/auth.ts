@@ -1,5 +1,6 @@
 import type { User } from "@auth0/nextjs-auth0/types"
 
+import { getServerAccessToken } from "@/lib/server-access-token"
 import { auth0 } from "@/lib/auth0"
 
 export type AppSession = User & {
@@ -14,16 +15,16 @@ export async function getServerSession(): Promise<AppSession | null> {
     return null
   }
 
-  const accessToken = session.tokenSet?.accessToken
+  const accessToken = await getServerAccessToken()
 
-  if (accessToken === undefined || accessToken === "") {
+  if (accessToken === null) {
     return null
   }
 
   return {
     ...session.user,
     accessToken,
-    refreshToken: session.tokenSet.refreshToken,
+    refreshToken: session.tokenSet?.refreshToken,
   }
 }
 

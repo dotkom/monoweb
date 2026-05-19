@@ -3,6 +3,7 @@
 import { env } from "@/env"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
+import { createLogoutUrl, isAccessTokenFetchFailure } from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
@@ -35,6 +36,10 @@ export interface TRPCSSERegisterChangeConnectionStateContextType {
 
 const TRPCSSERegisterChangeConnectionStateContext =
   createContext<TRPCSSERegisterChangeConnectionStateContextType | null>(null)
+
+// This lock is to prevent the logout redirect from being triggered multiple times. Next.js usually sends tons of
+// parallel requests, and we only want to redirect once.
+let logoutRedirectScheduled = false
 
 export const useTRPCSSERegisterChangeConnectionState = () => {
   const context = useContext(TRPCSSERegisterChangeConnectionStateContext)
@@ -72,8 +77,15 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
                 if (typeof token === "string" && token !== "") {
                   headers.set("Authorization", `Bearer ${token}`)
                 }
-              } catch {
-                // not authenticated
+              } catch (error) {
+                if (isAccessTokenFetchFailure(error) && logoutRedirectScheduled === false) {
+                  logoutRedirectScheduled = true
+                  window.location.assign(
+                    createLogoutUrl({
+                      returnTo: `${window.location.pathname}${window.location.search}`,
+                    })
+                  )
+                }
               }
 
               return fetch(url, {

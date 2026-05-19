@@ -1,4 +1,4 @@
-import { auth0 } from "@/auth"
+import { getServerAccessToken } from "@/lib/server-access-token"
 import { env } from "@/env"
 import type { AppRouter } from "@dotkomonline/rpc"
 import * as trpc from "@trpc/client"
@@ -10,12 +10,13 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
       transformer: superjson,
       url: `${env.RPC_HOST}/api/trpc`,
       headers: async () => {
-        try {
-          const { token } = await auth0.getAccessToken()
-          return { Authorization: `Bearer ${token}` }
-        } catch {
+        const accessToken = await getServerAccessToken()
+
+        if (accessToken === null) {
           return {}
         }
+
+        return { Authorization: `Bearer ${accessToken}` }
       },
     }),
   ],
