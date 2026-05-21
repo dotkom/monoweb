@@ -41,6 +41,25 @@ const TRPCSSERegisterChangeConnectionStateContext =
 // parallel requests, and we only want to redirect once.
 let logoutRedirectScheduled = false
 
+// Deduplicate parallel client-side access token fetches into one in-flight request.
+let accessTokenRequest: Promise<string> | null = null
+
+async function fetchSharedAccessToken(): Promise<string | undefined> {
+  if (accessTokenRequest === null) {
+    accessTokenRequest = getAccessToken().finally(() => {
+      accessTokenRequest = null
+    })
+  }
+
+  const token = await accessTokenRequest
+
+  if (typeof token === "string" && token !== "") {
+    return token
+  }
+
+  return undefined
+}
+
 export const useTRPCSSERegisterChangeConnectionState = () => {
   const context = useContext(TRPCSSERegisterChangeConnectionStateContext)
   if (!context) {
@@ -72,9 +91,9 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
               const headers = new Headers(options?.headers)
 
               try {
-                const token = await getAccessToken()
+                const token = await fetchSharedAccessToken()
 
-                if (typeof token === "string" && token !== "") {
+                if (token !== undefined) {
                   headers.set("Authorization", `Bearer ${token}`)
                 }
               } catch (error) {

@@ -1,3 +1,6 @@
+import { addSeconds, isBefore, subSeconds } from "date-fns"
+import { decodeJwt } from "jose"
+
 const AUTH_API_PREFIX = "/api/auth/"
 
 /**
@@ -43,6 +46,28 @@ export function resolveAuthErrorMessage(code: string | null): string | null {
  */
 export function shouldPersistSessionTokensInMiddleware(pathname: string): boolean {
   return !pathname.startsWith(AUTH_API_PREFIX)
+}
+
+/**
+ * Returns true when the access token is still valid outside the refresh buffer. Matches `tokenRefreshBuffer` on
+ * {@link https://github.com/auth0/nextjs-auth0 Auth0Client}.
+ */
+export function isAccessTokenUsable(accessToken: string): boolean {
+  try {
+    const payload = decodeJwt(accessToken)
+
+    if (payload.exp === undefined) {
+      return true
+    }
+
+    const now = new Date()
+    const expiresAt = addSeconds(new Date(0), payload.exp)
+    const usableUntil = subSeconds(expiresAt, AUTH0_TOKEN_REFRESH_BUFFER_SECONDS)
+
+    return isBefore(now, usableUntil)
+  } catch {
+    return false
+  }
 }
 
 /**
