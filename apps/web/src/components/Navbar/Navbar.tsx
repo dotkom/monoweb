@@ -158,10 +158,10 @@ export const Navbar: FC = () => {
   const showLoginButton = sessionUser === null
 
   return (
-    <header className={cn("sticky top-4 z-50 flex w-full max-w-7xl items-center mt-4", showLoginButton && "gap-1.5")}>
+    <header className={cn("sticky top-4 z-50 flex w-full max-w-7xl items-stretch mt-4", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
-          // i have no idea why i need rounded-r-4xl and not rounded-r-full
+          // i have no idea why i need rounded-4xl and not rounded-full
           "p-3 rounded-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm border border-blue-100 dark:border-stone-700/30",
           "flex flex-row justify-between items-center w-full",
           showLoginButton ? "min-w-0 grow" : "w-full",
@@ -181,12 +181,12 @@ export const Navbar: FC = () => {
       </div>
 
       {showLoginButton && (
-        <div className="h-full shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
+        <div className="flex shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
           <Button
             element="a"
             variant="solid"
             color="brand"
-            className="font-medium min-w-19 pl-3 pr-4 xs:pl-6 xs:pr-8 py-4 rounded-l-lg rounded-r-4xl shrink-0 h-full"
+            className="font-medium min-w-19 h-full shrink-0 rounded-l-lg rounded-r-4xl py-0 pl-3 pr-4 xs:pl-6 xs:pr-8"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
             icon={<IconLogin2 className="mr-1.5 size-6" />}
           >
