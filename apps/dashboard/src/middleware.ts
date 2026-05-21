@@ -1,6 +1,8 @@
 import {
   ACCESS_TOKEN_REQUEST_HEADER,
   createLogoutUrl,
+  isAccessTokenFetchFailure,
+  isAccessTokenUsable,
   shouldPersistSessionTokensInMiddleware,
   toAbsoluteUrl,
 } from "@dotkomonline/utils"
@@ -65,6 +67,13 @@ export async function middleware(request: NextRequest) {
     return authResponse
   }
 
+  const sessionToken = session.tokenSet?.accessToken
+
+  // If we already have a valid access token, we use it
+  if (sessionToken !== undefined && sessionToken !== "" && isAccessTokenUsable(sessionToken)) {
+    return forwardRefreshedAccessToken(request, authResponse, sessionToken)
+  }
+
   try {
     const { token } = await auth0.getAccessToken(request, authResponse)
 
@@ -72,7 +81,11 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error("[dashboard:middleware] failed to refresh session tokens", error)
 
-    return redirectToLogout(request, authResponse)
+    if (isAccessTokenFetchFailure(error)) {
+      return redirectToLogout(request, authResponse)
+    }
+
+    return authResponse
   }
 }
 

@@ -1228,6 +1228,9 @@ importers:
       html-to-text:
         specifier: ^9.0.5
         version: 9.0.5
+      jose:
+        specifier: ^6.0.11
+        version: 6.2.3
       slugify:
         specifier: ^1.6.6
         version: 1.6.9
