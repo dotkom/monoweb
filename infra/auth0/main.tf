@@ -1,6 +1,6 @@
 resource "auth0_tenant" "tenant" {
   allow_organization_name_in_authentication_api = false
-  allowed_logout_urls                           = ["https://online.ntnu.no"]
+  allowed_logout_urls                           = ["https://online.ntnu.no","https://online.ntnu.no/*"]
   default_audience                              = "https://online.ntnu.no"
   default_directory                             = null
   default_redirection_uri                       = "https://online.ntnu.no"
@@ -145,8 +145,8 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   ]
   app_type = "spa"
   allowed_logout_urls = {
-    "dev" = ["http://localhost:3000"]
-    "prd" = ["https://vinstraff.no"]
+    "dev" = ["http://localhost:3000","http://localhost:3000/*"]
+    "prd" = ["https://vinstraff.no","https://vinstraff.no/*"]
   }[terraform.workspace]
   callbacks = {
     "dev" = [
@@ -444,8 +444,8 @@ resource "auth0_client" "monoweb_web" {
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
-      "dev" = ["http://localhost:3000"]
-      "prd" = ["https://online.ntnu.no"]
+      "dev" = ["http://localhost:3000","http://localhost:3000/*"]
+      "prd" = ["https://online.ntnu.no","https://online.ntnu.no/*"]
     }[terraform.workspace]
   )
 
@@ -455,7 +455,7 @@ resource "auth0_client" "monoweb_web" {
   oidc_conformant = true
 
   refresh_token {
-    rotation_type                = "rotating"
+    rotation_type                = "non-rotating"
     expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
@@ -489,8 +489,8 @@ resource "auth0_client" "monoweb_dashboard" {
   }[terraform.workspace])
   allowed_logout_urls = concat(
     {
-      "dev" = ["http://localhost:3002"]
-      "prd" = ["https://dashboard.online.ntnu.no"]
+      "dev" = ["http://localhost:3002","http://localhost:3002/*"]
+      "prd" = ["https://dashboard.online.ntnu.no","https://dashboard.online.ntnu.no/*"]
     }[terraform.workspace]
   )
   grant_types     = ["authorization_code", "refresh_token", "client_credentials"]
@@ -499,7 +499,7 @@ resource "auth0_client" "monoweb_dashboard" {
   is_first_party  = true
 
   refresh_token {
-    rotation_type                = "rotating"
+    rotation_type                = "non-rotating"
     expiration_type              = "expiring"
     infinite_token_lifetime      = false
     infinite_idle_token_lifetime = false
