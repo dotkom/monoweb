@@ -90,6 +90,7 @@ export const auth0 = new Auth0Client({
     },
   },
   tokenRefreshBuffer: AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
+  noContentProfileResponseWhenUnauthenticated: true,
   routes: {
     login: "/api/auth/authorize",
     logout: "/api/auth/logout",
