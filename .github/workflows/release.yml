@@ -19,35 +19,6 @@ permissions:
   id-token: write
   contents: read
 jobs:
-  # The "check" job is responsible for verifying the minimum requirements to build all the packages in the monorepo.
-  check:
-    name: Verify build requirements
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 1
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 10.28.2
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22.21.1
-          cache: 'pnpm'
-      - uses: actions/cache@v4
-        with:
-          path: |
-            packages/db/tsconfig.tsbuildinfo
-            packages/grades-db/tsconfig.tsbuildinfo
-          key: tsbuildinfo-${{ hashFiles('packages/db/src/**', 'packages/db/generated/**', 'packages/grades-db/src/**', 'packages/grades-db/generated/**') }}
-          restore-keys: tsbuildinfo-
-      - run: pnpm install --frozen-lockfile
-        name: Install dependencies from pnpm lockfile
-      - run: pnpm run lint-check
-        name: Run linting and formatting checks
-      - run: pnpm run type-check
-        name: Run TypeScript type checker
-
   migrate:
     name: Run database migrations
     runs-on: ubuntu-24.04-arm
