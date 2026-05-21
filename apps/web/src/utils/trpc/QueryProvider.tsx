@@ -3,7 +3,7 @@
 import { env } from "@/env"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { createLogoutUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
+import { createClearSessionUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
@@ -37,9 +37,9 @@ export interface TRPCSSERegisterChangeConnectionStateContextType {
 const TRPCSSERegisterChangeConnectionStateContext =
   createContext<TRPCSSERegisterChangeConnectionStateContextType | null>(null)
 
-// This lock is to prevent the logout redirect from being triggered multiple times. Next.js usually sends tons of
-// parallel requests, and we only want to redirect once.
-let logoutRedirectScheduled = false
+// This lock is to prevent the redirect from being triggered multiple times. Next.js usually sends tons of parallel
+// requests, and we only want to redirect once.
+let recoveryRedirectScheduled = false
 
 // Deduplicate parallel client-side access token fetches into one in-flight request.
 let accessTokenRequest: Promise<string> | null = null
@@ -97,10 +97,10 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
                   headers.set("Authorization", `Bearer ${token}`)
                 }
               } catch (error) {
-                if (isAccessTokenFetchFailure(error) && logoutRedirectScheduled === false) {
-                  logoutRedirectScheduled = true
+                if (isAccessTokenFetchFailure(error) && recoveryRedirectScheduled === false) {
+                  recoveryRedirectScheduled = true
                   window.location.assign(
-                    createLogoutUrl({
+                    createClearSessionUrl({
                       returnTo: toAbsoluteUrl(
                         window.location.origin,
                         `${window.location.pathname}${window.location.search}`

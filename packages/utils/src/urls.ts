@@ -10,6 +10,9 @@ const LOGOUT_ENDPOINT = "/api/auth/logout"
 // to link the two accounts' identities and merge the two accounts into one. Use also regular anchor tags for this.
 const LINK_IDENTITY_AUTHORIZE_ENDPOINT = "/api/auth/link-identity/authorize"
 
+// This endpoint is for clearing the local session cookies. Used for broken/zombie session recovery.
+export const CLEAR_SESSION_ENDPOINT = "/api/auth/clear-session"
+
 /**
  * Resolves a relative path (e.g. `/innstillinger`) against an origin.
  *
@@ -29,6 +32,31 @@ export function toAbsoluteUrl(origin: string, pathOrUrl: string): string {
   }
 
   return new URL(pathOrUrl, origin).href
+}
+
+/**
+ * Like {@link toAbsoluteUrl}, but rejects URLs whose origin differs from the given origin. Use for untrusted inputs
+ * such as `returnTo` query parameters.
+ *
+ * @example
+ * toSameOriginAbsoluteUrl("https://example.com", "/innstillinger")
+ * // Returns "https://example.com/innstillinger"
+ *
+ * toSameOriginAbsoluteUrl("https://example.com", "https://not-my-example.com")
+ * // Returns "https://example.com/"
+ */
+export function toSameOriginAbsoluteUrl(origin: string, pathOrUrl: string | null, fallbackPath = "/"): string {
+  if (pathOrUrl === null || pathOrUrl === "") {
+    return new URL(fallbackPath, origin).href
+  }
+
+  const resolved = new URL(pathOrUrl, origin)
+
+  if (resolved.origin !== origin) {
+    return new URL(fallbackPath, origin).href
+  }
+
+  return resolved.href
 }
 
 /**
@@ -58,6 +86,19 @@ export const createLogoutUrl = (...parameters: ConstructorParameters<typeof URLS
     return LOGOUT_ENDPOINT
   }
   return `${LOGOUT_ENDPOINT}?${searchParams}`
+}
+
+/**
+ * Creates a URL that clears the local session cookie and redirects back to the app. Unlike {@link createLogoutUrl},
+ * this does not call Auth0's logout endpoint and avoids leaving users stuck on Auth0 when the server-side session is
+ * already invalid.
+ */
+export const createClearSessionUrl = (...parameters: ConstructorParameters<typeof URLSearchParams>) => {
+  const searchParams = new URLSearchParams(...parameters).toString()
+  if (!searchParams) {
+    return CLEAR_SESSION_ENDPOINT
+  }
+  return `${CLEAR_SESSION_ENDPOINT}?${searchParams}`
 }
 
 /**

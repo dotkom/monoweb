@@ -1,12 +1,19 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { AUTH0_TOKEN_REFRESH_BUFFER_SECONDS, AuthErrorCode, createLogoutUrl, toAbsoluteUrl } from "@dotkomonline/utils"
+import {
+  AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
+  AuthErrorCode,
+  createClearSessionUrl,
+  toAbsoluteUrl,
+} from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
 import { hoursToSeconds } from "date-fns"
 import { NextResponse } from "next/server"
 import superjson from "superjson"
 import { env } from "@/env"
 import { Auth0JwtService } from "@/lib/auth0-jwt"
+
+export const AUTH0_SESSION_COOKIE_NAME = "onlineweb_session_web" as const
 
 const REGISTER_MAX_ATTEMPTS = 2 as const
 const REGISTER_RETRY_DELAY_MS = 500 as const
@@ -85,7 +92,7 @@ export const auth0 = new Auth0Client({
     absoluteDuration: hoursToSeconds(24 * 90),
     inactivityDuration: hoursToSeconds(24 * 30),
     cookie: {
-      name: "onlineweb_session_web",
+      name: AUTH0_SESSION_COOKIE_NAME,
     },
   },
   tokenRefreshBuffer: AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
@@ -115,11 +122,11 @@ export const auth0 = new Auth0Client({
         const returnToUrl = new URL(env.NEXT_PUBLIC_ORIGIN)
         returnToUrl.searchParams.set("error", registerResult.code)
 
-        const logoutPath = createLogoutUrl({
+        const clearSessionPath = createClearSessionUrl({
           returnTo: toAbsoluteUrl(env.NEXT_PUBLIC_ORIGIN, `${returnToUrl.pathname}${returnToUrl.search}`),
         })
 
-        return NextResponse.redirect(new URL(logoutPath, env.NEXT_PUBLIC_ORIGIN))
+        return NextResponse.redirect(new URL(clearSessionPath, env.NEXT_PUBLIC_ORIGIN))
       }
     }
 
