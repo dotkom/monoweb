@@ -103,7 +103,7 @@ function readAuth0AccessTokenErrorCode(error: unknown): string | undefined {
 
 /**
  * Returns true when `getAccessToken()` failed because the session cannot obtain a valid access token (missing refresh
- * token or Auth0 rejected refresh). Used to redirect the user through logout / re-login.
+ * token or Auth0 rejected refresh). Used to redirect through local session clearing / re-login.
  */
 export function isAccessTokenFetchFailure(error: unknown): boolean {
   const code = readAuth0AccessTokenErrorCode(error)
@@ -132,4 +132,34 @@ export function isAccessTokenFetchFailure(error: unknown): boolean {
   }
 
   return false
+}
+
+// Cookie names are retrieved from looking inside Auth0 SDK's source code
+function isAuth0SdkSessionCookie(cookieName: string, sessionCookieName: string): boolean {
+  // Encrypted app session from @auth0/nextjs-auth0, including chunked variants
+  if (cookieName === sessionCookieName || cookieName.startsWith(`${sessionCookieName}.`)) {
+    return true
+  }
+
+  // Legacy cookie name from before we switched to `onlineweb_session_*` in May 2026.
+  if (cookieName === "__session" || cookieName.startsWith("__session.")) {
+    return true
+  }
+
+  // Connection-scoped access tokens stored separately by the SDK
+  if (cookieName.startsWith("__FC")) {
+    return true
+  }
+
+  // In-flight OAuth transaction cookies (PKCE verifier, state, returnTo) from the login redirect flow
+  if (cookieName.startsWith("__txn_")) {
+    return true
+  }
+
+  return false
+}
+
+/** Returns Auth0 SDK session, legacy, connection, and transaction cookie names present on the request. */
+export function getAuthSessionCookieNamesToClear(cookieNames: string[], sessionCookieName: string): string[] {
+  return cookieNames.filter((cookieName) => isAuth0SdkSessionCookie(cookieName, sessionCookieName))
 }
