@@ -6,6 +6,22 @@
   :root {
     --color-brand: #0b5374;
     --color-accent: #fab759;
+
+    --content-max-width: var(--container-7xl);
+    --navbar-height: 4rem;
+    --page-padding-x: 1rem;
+    --navbar-overhang-max: calc(var(--navbar-height) / 2);
+    --navbar-overhang: clamp(
+      0px,
+      calc((100vw - var(--content-max-width)) / 2),
+      var(--navbar-overhang-max)
+    );
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --page-padding-x: 3rem;
+    }
   }
 
   button:not(:disabled),
@@ -15,6 +31,18 @@
 }
 
 @layer components {
+  .page-shell {
+    @apply flex min-h-screen w-full flex-col gap-8;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--page-padding-x);
+  }
+
+  .navbar-shell {
+    width: calc(100% + 2 * var(--navbar-overhang));
+    margin-inline: calc(-1 * var(--navbar-overhang));
+  }
+
   /* Top-left corner */
   .table-rounded-md table tbody tr:first-child > th:first-child,
   .table-rounded-md table tbody tr:first-child > td:first-child {
