@@ -4,6 +4,7 @@ import type { ComponentType } from "react"
 
 export type FadderukePageProps = {
   parentEventWithAttendance: EventWithAttendance | null
+  childEventsWithAttendance: EventWithAttendance[]
 }
 
 export type FadderukeEntry = {

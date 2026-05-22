@@ -6,7 +6,7 @@ import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { cn } from "@dotkomonline/ui"
 import { ThemeProvider } from "next-themes"
-import { Figtree, Inter, Google_Sans_Code } from "next/font/google"
+import { Figtree, Inter, Google_Sans_Code, Marcellus } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
@@ -34,6 +34,7 @@ export const metadata: Metadata = {
 const fontBody = Inter({ subsets: ["latin"], variable: "--font-body" })
 const fontTitle = Figtree({ subsets: ["latin"], variable: "--font-title" })
 const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono", fallback: ["monospace"] })
+const fontMarcellus = Marcellus({ subsets: ["latin"], variable: "--font-marcellus", weight: ["400"] })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
@@ -43,13 +44,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="no" suppressHydrationWarning>
+    <html lang="no" suppressHydrationWarning className="scroll-smooth">
       <body
         className={cn(
           fontTitle.variable,
           fontBody.variable,
           fontMono.variable,
-          "scrollbar-gutter-both bg-white dark:bg-stone-900"
+          fontMarcellus.variable,
+          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
         )}
       >
         <PlausibleProvider domain="online.ntnu.no">
