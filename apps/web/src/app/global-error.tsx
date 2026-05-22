@@ -25,7 +25,7 @@ export default function GlobalError({ error }: GlobalErrorProps) {
 
   return (
     <html lang="no">
-      <body className="scrollbar-gutter-both bg-white dark:bg-stone-900">
+      <body className="scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900">
         <PlausibleProvider domain="online.ntnu.no">
           <QueryProvider>
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">

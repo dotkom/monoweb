@@ -137,8 +137,10 @@
 }
 
 @theme {
-  --breakpoint-xs: 30rem;
   --font-glass: Glass, "sans-serif";
+  --font-marcellus: Marcellus, "serif";
+
+  --breakpoint-xs: 30rem;
   --animate-flicker: flicker 0.25s infinite;
   --animate-scan: scan 0.2s linear infinite;
 
