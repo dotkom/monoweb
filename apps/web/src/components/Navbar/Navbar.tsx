@@ -158,7 +158,7 @@ export const Navbar: FC = () => {
   const showLoginButton = sessionUser === null
 
   return (
-    <header className={cn("sticky top-4 z-50 flex w-full max-w-7xl items-center mt-4", showLoginButton && "gap-1.5")}>
+    <header className={cn("sticky top-4 z-50 flex w-full max-w-7xl items-stretch mt-4", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
           // i have no idea why i need rounded-r-4xl and not rounded-r-full
@@ -181,7 +181,7 @@ export const Navbar: FC = () => {
       </div>
 
       {showLoginButton && (
-        <div className="self-stretch shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
+        <div className="flex shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 dark:bg-stone-800/90 backdrop-blur-xl shadow-sm">
           <Button
             element="a"
             variant="solid"
