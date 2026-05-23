@@ -1175,7 +1175,7 @@ importers:
         version: 19.2.6(react@19.2.6)
       react-parallax-tilt:
         specifier: ^1.7.299
-        version: 1.7.327(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.7.328(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.1
@@ -7725,8 +7725,8 @@ packages:
       react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  react-parallax-tilt@1.7.327:
-    resolution: {integrity: sha512-JObROkpF/6To0ot/4S+oijBDwx2zWPkJ5ycV5xTsSEYobzEAhAaMaMkmTMlA34LQriUpz0K//mgS+ou1EErRcw==}
+  react-parallax-tilt@1.7.328:
+    resolution: {integrity: sha512-ZWkFNw+wNGeUhW14FaQ75IdmSYHkIq9f6jSKsyGh0MNgIthJNojw9rjOGFcXL1wxa5Vuuc5yOlsX5vwdfhQiDg==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -15607,7 +15607,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
-      styled-jsx: 5.1.6(@babel/core@7.28.6)(react@19.2.6)
+      styled-jsx: 5.1.6(react@19.2.6)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.18
       '@next/swc-darwin-x64': 15.5.18
@@ -16261,7 +16261,7 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  react-parallax-tilt@1.7.327(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-parallax-tilt@1.7.328(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
@@ -16878,6 +16878,11 @@ snapshots:
       react: 19.2.6
     optionalDependencies:
       '@babel/core': 7.28.6
+
+  styled-jsx@5.1.6(react@19.2.6):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.2.6
 
   sugarss@5.0.1(postcss@8.5.14):
     dependencies:
