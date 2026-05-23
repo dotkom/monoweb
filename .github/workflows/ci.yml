@@ -69,6 +69,20 @@ jobs:
   verify-monoweb-prisma-generate:
     name: Verify Prisma generate (Monoweb)
     runs-on: ubuntu-24.04-arm
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+        env:
+          POSTGRES_USER: ow
+          POSTGRES_PASSWORD: owpassword123
+          POSTGRES_DB: ow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ow -d ow"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
@@ -80,6 +94,20 @@ jobs:
   verify-grades-prisma-generate:
     name: Verify Prisma generate (Grades)
     runs-on: ubuntu-24.04-arm
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+        env:
+          POSTGRES_USER: grades
+          POSTGRES_PASSWORD: gradespassword123
+          POSTGRES_DB: grades
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U grades -d grades"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
