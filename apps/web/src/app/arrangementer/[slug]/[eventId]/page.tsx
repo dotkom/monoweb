@@ -14,14 +14,13 @@ import {
   getAttendanceCapacity,
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
-import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { cn, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
   createAbsoluteEventPageUrl,
   createEventPageUrl,
   createEventSlug,
   richTextToPlainText,
 } from "@dotkomonline/utils"
-import clsx from "clsx"
 import { isPast } from "date-fns"
 import type { Metadata } from "next"
 import Image from "next/image"
@@ -57,7 +56,7 @@ const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
         alt={"abbreviation" in item ? item.abbreviation : item.name}
         width={22}
         height={22}
-        className={clsx((type === "COMMITTEE" || type === "NODE_COMMITTEE") && "dark:invert")}
+        className={cn((type === "COMMITTEE" || type === "NODE_COMMITTEE") && "dark:invert")}
       />
     )}
     <Text>{"abbreviation" in item ? item.abbreviation : item.name}</Text>

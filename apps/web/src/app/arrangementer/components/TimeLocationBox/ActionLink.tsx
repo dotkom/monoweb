@@ -1,6 +1,5 @@
-import { Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { cn, Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
-import clsx from "clsx"
 import Link from "next/link.js"
 
 interface Props {
@@ -12,7 +11,7 @@ export const ActionLink = ({ href, label }: Props) => (
   <Tooltip delayDuration={150}>
     <TooltipTrigger>
       <Link
-        className={clsx(
+        className={cn(
           "border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-700 p-1.5 rounded-lg flex items-center"
         )}
         href={href}

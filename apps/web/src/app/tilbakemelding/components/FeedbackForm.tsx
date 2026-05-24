@@ -15,8 +15,8 @@ import {
   Text,
   TextInput,
   Textarea,
+  cn,
 } from "@dotkomonline/ui"
-import clsx from "clsx"
 import React, { type ReactNode, useRef, useState } from "react"
 import { type Control, Controller, type FieldErrors, useForm } from "react-hook-form"
 import { useCreateFeedbackAnswerMutation } from "../mutations"
@@ -142,7 +142,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, Props>(({ question, index,
   return (
     <div
       ref={ref}
-      className={clsx("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-600" : "border-gray-100")}
+      className={cn("shadow-md p-6 rounded-lg border-2", hasErrors ? "border-red-600" : "border-gray-100")}
     >
       <div className="mb-6">
         <Label htmlFor={question.id} className="text-lg inline dark:text-white break-words">
@@ -272,7 +272,7 @@ const RatingQuestion = ({ question, index, control }: QuestionProps) => (
             <Label
               key={`${question.id}.${n}`}
               htmlFor={`${question.id}.${n}`}
-              className={clsx(
+              className={cn(
                 "items-center justify-center w-10 h-10 hover:bg-gray-200 dark:hover:bg-stone-300 active:bg-gray-300 dark:active:bg-stone-400 rounded-full border border-gray-600 dark:border-stone-300 cursor-pointer",
                 Number(value) === n &&
                   "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-300 active:bg-gray-500 dark:active:bg-stone-400"
