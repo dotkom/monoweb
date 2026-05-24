@@ -1,6 +1,6 @@
 import type { Punishment } from "@dotkomonline/types"
-import { Button, Text } from "@dotkomonline/ui"
-import { IconAlertTriangle, IconArrowUpRight } from "@tabler/icons-react"
+import { cn, Text, Title } from "@dotkomonline/ui"
+import { IconAlertTriangleFilled, IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -11,57 +11,59 @@ interface PunishmentBoxProps {
 export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
   if (punishment.suspended) {
     return (
-      <div className="flex flex-col gap-3 p-4 rounded-lg bg-black dark:bg-white text-white dark:text-black text-sm">
-        <div className="flex flex-row gap-2 items-center text-base">
-          <IconAlertTriangle className="size-[1.25em]" />
-          <Text>Du er suspendert</Text>
-        </div>
+      <Link
+        href="/profil"
+        className={cn(
+          "grid grid-cols-[auto_1fr_auto] gap-2 items-center p-4 rounded-lg transition-colors",
+          "bg-black hover:bg-neutral-700 dark:bg-white dark:hover:bg-neutral-300 text-white dark:text-black"
+        )}
+      >
+        <IconAlertTriangleFilled className="shrink-0 size-[1.25em]" />
 
-        <Text>
-          Gå til{" "}
-          <Button
-            element={Link}
-            href="/profil"
-            variant="ghost"
-            color="dark"
-            className="-mx-0.5 -my-1 text-sm text-white dark:text-black"
-            iconRight={<IconArrowUpRight />}
-          >
-            profilen din
-          </Button>{" "}
-          for å se detaljer.
+        <Title element="p" className="text-base">
+          Du er suspendert
+        </Title>
+
+        <IconArrowUpRight className="shrink-0 size-[1.25em]" />
+
+        <Text className="text-sm col-start-2 col-span-2 text-gray-300 dark:text-stone-700">
+          Du er suspendert fra Online, og du kan derfor ikke melde deg på arrangementer.
         </Text>
-      </div>
+
+        <Text className="text-sm col-start-2 col-span-2 text-gray-300 dark:text-stone-700">
+          Gå til profilen din for å se detaljer.
+        </Text>
+      </Link>
     )
   }
 
   return (
-    <div className="flex flex-col gap-3 p-4 rounded-lg bg-red-200 dark:bg-red-900 text-sm">
-      <div className="flex flex-row gap-2 items-center text-base">
-        <IconAlertTriangle className="size-[1.25em]" />
-        <Text>{punishment.delay} timer utsatt påmelding pga. prikk</Text>
-      </div>
+    <Link
+      href="/profil"
+      className={cn(
+        "grid grid-cols-[auto_1fr_auto] gap-2 items-center p-4 rounded-lg transition-colors",
+        "bg-red-100 hover:bg-red-100/66 dark:bg-red-900/25 dark:hover:bg-red-800/25"
+      )}
+    >
+      <IconAlertTriangleFilled className="shrink-0 size-[1.25em] text-red-700 dark:text-red-400" />
 
-      <Text>
-        Du <strong>kan fortsatt melde deg på</strong> ved påmeldingsstart,
-        <br />
-        men du vil være i venteliste til utsettelsen er over.
+      <Title element="p" className="text-base">
+        {punishment.delay} timer utsatt påmelding pga. prikk
+      </Title>
+
+      <IconArrowUpRight className="shrink-0 size-[1.25em]" />
+
+      <Text className="text-sm text-pretty col-start-2 col-span-2 text-gray-600 dark:text-stone-400">
+        Du{" "}
+        <Text element="span" className="text-black dark:text-white">
+          kan fortsatt melde deg på
+        </Text>{" "}
+        ved påmeldingsstart, men du vil være i venteliste til utsettelsen er over.
       </Text>
 
-      <Text>
-        Gå til{" "}
-        <Button
-          element={Link}
-          href="/profil"
-          variant="ghost"
-          color="red"
-          className="-mx-0.5 -my-1 text-sm hover:bg-red-100 dark:hover:bg-red-950/50"
-          iconRight={<IconArrowUpRight />}
-        >
-          profilen din
-        </Button>{" "}
-        for å se detaljer.
+      <Text className="text-sm col-start-2 col-span-2 text-gray-600 dark:text-stone-400">
+        Gå til profilen din for å se detaljer.
       </Text>
-    </div>
+    </Link>
   )
 }
