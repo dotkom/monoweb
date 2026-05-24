@@ -1,8 +1,22 @@
 import { schemas } from "@dotkomonline/db/schemas"
-import { compareAsc } from "date-fns"
+import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
+import { PunishmentSchema } from "./mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "./user"
 import { getStudyGrade } from "@dotkomonline/utils"
+
+/**
+ * Grace period after registration during which deregistration requires no reason.
+ *
+ * This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour payment deadline.
+ * Frontends should account for a few seconds to account for clock skew to avoid errors near the grace period end.
+ */
+export const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
+
+/**
+ * Clock skew buffer subtracted from grace period end for UI eligibility display.
+ */
+export const DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS = secondsToMilliseconds(15)
 
 export type AttendanceStatus = "NOT_OPENED" | "OPEN" | "CLOSED"
 
@@ -106,6 +120,62 @@ export const AttendanceSummarySchema = schemas.AttendanceSchema.extend({
   reservedAttendeeCount: z.number(),
 })
 export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>
+
+export const RegistrationRejectionCauseSchema = z.enum([
+  "SUSPENDED",
+  "TOO_EARLY",
+  "TOO_LATE",
+  "ALREADY_REGISTERED",
+  "MISSING_PARENT_REGISTRATION",
+  "MISSING_PARENT_RESERVATION",
+  "MISSING_MEMBERSHIP",
+  "NO_MATCHING_POOL",
+  "INVALID_TURNSTILE_TOKEN",
+])
+export type RegistrationRejectionCause = z.infer<typeof RegistrationRejectionCauseSchema>
+
+export const RegistrationAvailabilityPoolViewSchema = z.object({
+  id: AttendancePoolSchema.shape.id,
+  mergeDelayHours: z.number().nullable(),
+  isPoolFull: z.boolean(),
+})
+export type RegistrationAvailabilityPoolView = z.infer<typeof RegistrationAvailabilityPoolViewSchema>
+
+export const DeregistrationRejectionCauseSchema = z.enum(["DEREGISTER_DEADLINE_PASSED", "PAYMENT_COMPLETED"])
+export type DeregistrationRejectionCause = z.infer<typeof DeregistrationRejectionCauseSchema>
+
+export const RegistrationAvailabilityDeregistrationViewSchema = z.object({
+  attendeeId: AttendeeSchema.shape.id,
+  canDeregister: z.boolean(),
+  rejectionCause: DeregistrationRejectionCauseSchema.nullable(),
+  isWithinGracePeriod: z.boolean(),
+  requiresDeregisterReason: z.boolean(),
+  actualDeregisterDeadline: z.date(),
+  isPastDeregisterDeadline: z.boolean(),
+  hasBeenCharged: z.boolean(),
+  chargeScheduleDate: z.date().nullable(),
+})
+export type RegistrationAvailabilityDeregistrationView = z.infer<
+  typeof RegistrationAvailabilityDeregistrationViewSchema
+>
+
+export const RegistrationAvailabilityRegistrationViewSchema = z.object({
+  canRegister: z.boolean(),
+  rejectionCause: RegistrationRejectionCauseSchema.nullable(),
+  reservationActiveAt: z.date().nullable(),
+  willBeUnreserved: z.boolean(),
+  hasMergeDelay: z.boolean(),
+})
+export type RegistrationAvailabilityRegistrationView = z.infer<typeof RegistrationAvailabilityRegistrationViewSchema>
+
+export const RegistrationAvailabilityViewSchema = z.object({
+  userId: UserSchema.shape.id,
+  punishment: PunishmentSchema.nullable(),
+  pool: RegistrationAvailabilityPoolViewSchema.nullable(),
+  registration: RegistrationAvailabilityRegistrationViewSchema.nullable(),
+  deregistration: RegistrationAvailabilityDeregistrationViewSchema.nullable(),
+})
+export type RegistrationAvailabilityView = z.infer<typeof RegistrationAvailabilityViewSchema>
 
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
   if (poolId) {

@@ -17,14 +17,20 @@ import {
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEFAULT_MARK_DURATION,
+  DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
+  DEREGISTER_GRACE_PERIOD_MS,
   type Event,
   type Membership,
+  type Punishment,
+  type RegistrationAvailabilityView,
+  type RegistrationRejectionCause,
   type TaskId,
   type User,
   type UserId,
   findActiveMembership,
-  hasAttendeePaid,
+  getReservedAttendeeCount,
   isAttendable,
+  isAttendeeChargedAndUnrefunded,
   findFirstHostingGroupEmail,
 } from "@dotkomonline/types"
 import {
@@ -38,6 +44,7 @@ import {
 import {
   addDays,
   addHours,
+  addMilliseconds,
   compareAsc,
   differenceInHours,
   endOfYesterday,
@@ -111,19 +118,7 @@ type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
 }
 
-/** Different types of problems that prevent a user from registering for an event */
-export type RegistrationRejectionCause = keyof typeof RegistrationRejectionCause
-export const RegistrationRejectionCause = {
-  SUSPENDED: "SUSPENDED",
-  TOO_EARLY: "TOO_EARLY",
-  TOO_LATE: "TOO_LATE",
-  ALREADY_REGISTERED: "ALREADY_REGISTERED",
-  MISSING_PARENT_REGISTRATION: "MISSING_PARENT_REGISTRATION",
-  MISSING_PARENT_RESERVATION: "MISSING_PARENT_RESERVATION",
-  MISSING_MEMBERSHIP: "MISSING_MEMBERSHIP",
-  NO_MATCHING_POOL: "NO_MATCHING_POOL",
-  INVALID_TURNSTILE_TOKEN: "INVALID_TURNSTILE_TOKEN",
-} as const
+export type { RegistrationRejectionCause } from "@dotkomonline/types"
 
 export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
 export const RegistrationBypassCause = {
@@ -854,12 +849,7 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice, {
-        excludePaymentReservation: true,
-      })
-
-      // If the attendee has paid and not been refunded, we cannot allow deregistration.
-      if (hasPaid && !attendee.paymentRefundedAt) {
+      if (isAttendeeChargedAndUnrefunded(attendee)) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) because payment has been completed`
         )
@@ -1811,5 +1801,101 @@ function emitRegistrationAvailabilityDiagnostics(
         )
         continue diag
     }
+  }
+}
+
+export function buildRegistrationAvailabilityView(
+  userId: UserId,
+  result: RegistrationAvailabilityResult,
+  punishment: Punishment | null,
+  attendance: Attendance
+): RegistrationAvailabilityView {
+  if (!result.success) {
+    return {
+      userId,
+      punishment,
+      pool: null,
+      registration: {
+        canRegister: false,
+        rejectionCause: result.cause,
+        reservationActiveAt: null,
+        willBeUnreserved: false,
+        hasMergeDelay: false,
+      },
+      deregistration: null,
+    }
+  }
+
+  const { pool, reservationActiveAt } = result
+  const reservedCount = getReservedAttendeeCount(attendance, pool.id)
+  const isPoolFull = pool.capacity !== 0 && reservedCount >= pool.capacity
+  const willBeUnreserved = isFuture(reservationActiveAt) || isPoolFull
+  const hasMergeDelay = pool.mergeDelayHours !== null && pool.mergeDelayHours > 0
+
+  return {
+    userId,
+    punishment,
+    pool: {
+      id: pool.id,
+      mergeDelayHours: pool.mergeDelayHours,
+      isPoolFull,
+    },
+    registration: {
+      canRegister: true,
+      rejectionCause: null,
+      reservationActiveAt,
+      willBeUnreserved,
+      hasMergeDelay,
+    },
+    deregistration: null,
+  }
+}
+
+export function buildDeregistrationAvailabilityView(
+  userId: UserId,
+  attendee: Attendee,
+  attendance: Attendance,
+  chargeScheduleDate: Date | null
+): RegistrationAvailabilityView {
+  const actualDeregisterDeadline = chargeScheduleDate
+    ? min([attendance.deregisterDeadline, chargeScheduleDate])
+    : attendance.deregisterDeadline
+
+  const isPastDeregisterDeadline = !isFuture(actualDeregisterDeadline)
+  const hasBeenCharged = isAttendeeChargedAndUnrefunded(attendee)
+
+  const gracePeriodEnd = addMilliseconds(
+    attendee.createdAt,
+    DEREGISTER_GRACE_PERIOD_MS - DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS
+  )
+  const isWithinGracePeriod = isFuture(gracePeriodEnd)
+  const requiresDeregisterReason = !isWithinGracePeriod
+
+  let rejectionCause: NonNullable<RegistrationAvailabilityView["deregistration"]>["rejectionCause"] = null
+
+  if (hasBeenCharged) {
+    rejectionCause = "PAYMENT_COMPLETED"
+  } else if (attendee.reserved && isPastDeregisterDeadline) {
+    rejectionCause = "DEREGISTER_DEADLINE_PASSED"
+  }
+
+  const canDeregister = rejectionCause === null
+
+  return {
+    userId,
+    punishment: null,
+    pool: null,
+    registration: null,
+    deregistration: {
+      attendeeId: attendee.id,
+      canDeregister,
+      rejectionCause,
+      isWithinGracePeriod,
+      requiresDeregisterReason,
+      actualDeregisterDeadline,
+      isPastDeregisterDeadline,
+      hasBeenCharged,
+      chargeScheduleDate,
+    },
   }
 }

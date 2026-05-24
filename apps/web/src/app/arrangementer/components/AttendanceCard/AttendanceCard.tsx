@@ -4,18 +4,18 @@ import { env } from "@/env"
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
+import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type Attendance,
   type AttendanceSelectionResponse,
   type Event,
-  type Punishment,
   type User,
   getAttendee,
 } from "@dotkomonline/types"
 import { Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
@@ -35,21 +35,21 @@ import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
+type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
+
 interface AttendanceCardProps {
   initialAttendance: Attendance
-  initialPunishment: Punishment | null
+  initialRegistrationAvailability: RegistrationAvailability | null
   user: User | null
   event: Event
   parentEvent: Event | null
-  parentAttendance: Attendance | null
 }
 
 export const AttendanceCard = ({
   user,
   event,
   initialAttendance,
-  initialPunishment,
-  parentAttendance,
+  initialRegistrationAvailability,
 }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -60,39 +60,39 @@ export const AttendanceCard = ({
 
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
-  const [_, setTurnstileHasLoaded] = useState(false) // can be used later if we want to be aware of when turnstile has loaded
+  const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [hideTurnstile, setHideTurnstile] = useState(false)
 
-  const [attendanceResponse, punishmentResponse] = useQueries({
-    queries: [
-      trpc.event.attendance.getAttendance.queryOptions(
-        {
-          id: initialAttendance.id,
-        },
-        {
-          initialData: initialAttendance,
-          enabled: Boolean(user),
-          refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
-        }
-      ),
-      trpc.personalMark.getExpiryDateForUser.queryOptions(
-        {
-          userId: user?.id ?? "",
-        },
-        {
-          initialData: initialPunishment,
-          enabled: Boolean(user),
-        }
-      ),
-    ],
-  })
+  const { data: attendance, isLoading: attendanceLoading } = useQuery(
+    trpc.event.attendance.getAttendance.queryOptions(
+      {
+        id: initialAttendance.id,
+      },
+      {
+        initialData: initialAttendance,
+        enabled: Boolean(user),
+        refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
+      }
+    )
+  )
 
-  const { data: attendance, isLoading: attendanceLoading } = attendanceResponse
-  const { data: punishment, isLoading: punishmentLoading } = punishmentResponse
+  const { data: registrationAvailability, isLoading: registrationAvailabilityLoading } = useQuery(
+    trpc.event.attendance.getRegistrationAvailability.queryOptions(
+      {
+        attendanceId: initialAttendance.id,
+      },
+      {
+        initialData: initialRegistrationAvailability ?? undefined,
+        enabled: Boolean(user),
+      }
+    )
+  )
 
   useEffect(() => {
-    setAttendanceStatus(getAttendanceStatus(attendance))
+    if (attendance) {
+      setAttendanceStatus(getAttendanceStatus(attendance))
+    }
   }, [attendance])
 
   useEffect(() => {
@@ -114,8 +114,7 @@ export const AttendanceCard = ({
         onConnectionStateChange: (state) => {
           setTRPCSSERegisterChangeConnectionState(state.state)
         },
-        onData: ({ status, attendee }) => {
-          // If the attendee is not the current user, we can update the state
+        onData: ({ status, attendee: updatedAttendee }) => {
           queryClient.setQueryData(
             trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
             (oldData) => {
@@ -126,52 +125,75 @@ export const AttendanceCard = ({
               if (status === "deregistered") {
                 return {
                   ...oldData,
-                  attendees: oldData.attendees.filter((oldAttendee) => oldAttendee.id !== attendee.id),
+                  attendees: oldData.attendees.filter((oldAttendee) => oldAttendee.id !== updatedAttendee.id),
                 }
               }
 
-              if (oldData.attendees.some((oldAttendee) => oldAttendee.id === attendee.id)) {
+              if (oldData.attendees.some((oldAttendee) => oldAttendee.id === updatedAttendee.id)) {
                 console.warn("Attendee already exists in the list, not updating state.")
                 return oldData
               }
 
               return {
                 ...oldData,
-                attendees: [...oldData.attendees, attendee],
+                attendees: [...oldData.attendees, updatedAttendee],
               }
             }
           )
+
+          if (user && updatedAttendee.userId === user.id) {
+            void queryClient.invalidateQueries(
+              trpc.event.attendance.getRegistrationAvailability.queryOptions({
+                attendanceId: attendance?.id ?? "",
+              })
+            )
+          }
         },
       }
     )
   )
 
   const attendee = getAttendee(attendance, user)
-
-  const { data: chargeScheduleDate } = useQuery(
-    trpc.event.attendance.findChargeAttendeeScheduleDate.queryOptions(
-      {
-        attendeeId: attendee?.id ?? "",
-      },
-      { enabled: Boolean(attendee?.id) && Boolean(attendance.attendancePrice) }
-    )
-  )
+  const punishment = registrationAvailability?.punishment ?? null
+  const chargeScheduleDate = registrationAvailability?.deregistration?.chargeScheduleDate ?? null
 
   useEffect(() => {
-    // This can maybe be enabled, but I don't trust it because it will create lots of spam calls to the server
-    // right before even open (as if we don't have enough already)
-    // const attendanceEventDateTimes = [attendance.registerStart, attendance.registerEnd, attendance.deregisterDeadline, attendee?.paymentDeadline]
     const attendanceEventDateTimes = [attendee?.paymentDeadline]
     setCloseToEvent(
       attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
     )
-    // }, [attendance, attendee])
   }, [attendee])
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
 
-  const registerMutation = useRegisterMutation()
-  const deregisterMutation = useDeregisterMutation()
+  const registerMutation = useRegisterMutation({
+    onSuccess: () => {
+      if (!user) {
+        return
+      }
+
+      void queryClient.invalidateQueries(
+        trpc.event.attendance.getRegistrationAvailability.queryOptions({
+          attendanceId: attendance.id,
+        })
+      )
+    },
+  })
+
+  const deregisterMutation = useDeregisterMutation({
+    onSuccess: () => {
+      if (!user) {
+        return
+      }
+
+      void queryClient.invalidateQueries(
+        trpc.event.attendance.getRegistrationAvailability.queryOptions({
+          attendanceId: attendance.id,
+        })
+      )
+    },
+  })
+
   const selectionsMutation = useSetSelectionsOptionsMutation()
 
   const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
@@ -209,9 +231,10 @@ export const AttendanceCard = ({
     setTurnstileToken(null)
   }
 
-  const isLoading = attendanceLoading || punishmentLoading || deregisterMutation.isPending || registerMutation.isPending
+  const isLoading =
+    attendanceLoading || registrationAvailabilityLoading || deregisterMutation.isPending || registerMutation.isPending
 
-  const hasPunishment = punishment && (punishment.delay > 0 || punishment.suspended)
+  const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
 
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {
     setTimeout(() => {
@@ -268,12 +291,11 @@ export const AttendanceCard = ({
         registerForAttendance={registerForAttendance}
         unregisterForAttendance={deregisterForAttendance}
         attendance={attendance}
-        parentAttendance={parentAttendance}
-        punishment={punishment}
+        registrationAvailability={registrationAvailability}
         user={user}
         event={event}
         isLoading={isLoading}
-        chargeScheduleDate={chargeScheduleDate ?? null}
+        turnstileHasLoaded={turnstileHasLoaded}
         hasTurnstileToken={Boolean(turnstileToken)}
       />
 
