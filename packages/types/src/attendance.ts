@@ -177,6 +177,35 @@ export const RegistrationAvailabilityViewSchema = z.object({
 })
 export type RegistrationAvailabilityView = z.infer<typeof RegistrationAvailabilityViewSchema>
 
+export const PoolOccupancySchema = z.object({
+  poolId: AttendancePoolSchema.shape.id,
+  reservedCount: z.number(),
+  capacity: z.number(),
+  isPoolFull: z.boolean(),
+})
+export type PoolOccupancy = z.infer<typeof PoolOccupancySchema>
+
+export const RegisterChangeEventSchema = z.object({
+  attendee: AttendeeSchema,
+  status: z.enum(["registered", "deregistered"]),
+  poolOccupancies: z.array(PoolOccupancySchema),
+})
+export type RegisterChangeEvent = z.infer<typeof RegisterChangeEventSchema>
+
+export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
+  return attendance.pools.map((pool) => {
+    const reservedCount = getReservedAttendeeCount(attendance, pool.id)
+    const isPoolFull = pool.capacity !== 0 && reservedCount >= pool.capacity
+
+    return {
+      poolId: pool.id,
+      reservedCount,
+      capacity: pool.capacity,
+      isPoolFull,
+    }
+  })
+}
+
 export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length

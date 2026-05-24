@@ -5,7 +5,6 @@ import {
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
-  type Attendee,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DeregisterReasonTypeSchema,
@@ -13,6 +12,7 @@ import {
   EventSchema,
   type GroupId,
   RegistrationAvailabilityViewSchema,
+  RegisterChangeEventSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -240,13 +240,13 @@ const onRegisterChangeProcedure = procedure
   .use(withDatabaseTransaction())
   .subscription(async function* ({ input, ctx, signal }) {
     for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
-      const attendeeUpdateData = data as { attendee: Attendee; status: "registered" | "deregistered" }
+      const registerChangeEvent = RegisterChangeEventSchema.parse(data)
 
-      if (attendeeUpdateData.attendee.attendanceId !== input.attendanceId) {
+      if (registerChangeEvent.attendee.attendanceId !== input.attendanceId) {
         continue
       }
 
-      yield attendeeUpdateData
+      yield registerChangeEvent
     }
   })
 

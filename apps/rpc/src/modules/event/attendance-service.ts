@@ -24,10 +24,12 @@ import {
   type Punishment,
   type RegistrationAvailabilityView,
   type RegistrationRejectionCause,
+  type RegisterChangeEvent,
   type TaskId,
   type User,
   type UserId,
   findActiveMembership,
+  buildPoolOccupancies,
   getReservedAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
@@ -731,10 +733,7 @@ export function getAttendanceService(
         )
       }
 
-      eventEmitter.emit("attendance:register-change", {
-        attendee,
-        status: "registered",
-      })
+      emitRegisterChange(eventEmitter, attendance, attendee, "registered")
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has registered (effective %s) for Event(ID=%s) named %s with options: %o",
         attendee.id,
@@ -869,10 +868,7 @@ export function getAttendanceService(
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
-      eventEmitter.emit("attendance:register-change", {
-        attendee,
-        status: "deregistered",
-      })
+      emitRegisterChange(eventEmitter, attendance, attendee, "deregistered")
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
         attendee.id,
@@ -1802,6 +1798,27 @@ function emitRegistrationAvailabilityDiagnostics(
         continue diag
     }
   }
+}
+
+function emitRegisterChange(
+  eventEmitter: EventEmitter,
+  attendance: Attendance,
+  attendee: Attendee,
+  status: RegisterChangeEvent["status"]
+) {
+  const attendees =
+    status === "registered"
+      ? [...attendance.attendees, attendee]
+      : attendance.attendees.filter((existingAttendee) => existingAttendee.id !== attendee.id)
+
+  eventEmitter.emit("attendance:register-change", {
+    attendee,
+    status,
+    poolOccupancies: buildPoolOccupancies({
+      ...attendance,
+      attendees,
+    }),
+  } satisfies RegisterChangeEvent)
 }
 
 export function buildRegistrationAvailabilityView(

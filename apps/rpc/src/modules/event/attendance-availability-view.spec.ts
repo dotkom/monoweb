@@ -1,5 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import type { Attendance, Attendee, Punishment } from "@dotkomonline/types"
+import { buildPoolOccupancies } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addDays, addHours, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"
@@ -228,5 +229,41 @@ describe("buildDeregistrationAvailabilityView", () => {
 
     expect(view.deregistration?.actualDeregisterDeadline).toEqual(chargeScheduleDate)
     expect(view.deregistration?.chargeScheduleDate).toEqual(chargeScheduleDate)
+  })
+})
+
+describe("buildPoolOccupancies", () => {
+  it("marks a pool as full when reserved count reaches capacity", () => {
+    const attendance = createAttendance({
+      attendees: [
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", reserved: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", reserved: true }),
+      ],
+    })
+
+    const poolOccupancies = buildPoolOccupancies(attendance)
+
+    expect(poolOccupancies).toEqual([
+      {
+        poolId: attendance.pools[0].id,
+        reservedCount: 2,
+        capacity: 2,
+        isPoolFull: true,
+      },
+    ])
+  })
+
+  it("ignores unreserved attendees when computing pool fullness", () => {
+    const attendance = createAttendance({
+      attendees: [
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", reserved: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", reserved: false }),
+      ],
+    })
+
+    const poolOccupancies = buildPoolOccupancies(attendance)
+
+    expect(poolOccupancies[0]?.isPoolFull).toBe(false)
+    expect(poolOccupancies[0]?.reservedCount).toBe(1)
   })
 })
