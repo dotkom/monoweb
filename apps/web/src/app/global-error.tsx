@@ -2,7 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
-import { cn, Title, Text } from "@dotkomonline/ui"
+import { Title, Text } from "@dotkomonline/ui"
 import PlausibleProvider from "next-plausible"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Footer } from "@/components/Footer/Footer"
@@ -25,7 +25,7 @@ export default function GlobalError({ error }: GlobalErrorProps) {
 
   return (
     <html lang="no">
-      <body className={cn("bg-white dark:bg-stone-900")}>
+      <body className="scrollbar-gutter-both bg-white dark:bg-stone-900">
         <PlausibleProvider domain="online.ntnu.no">
           <QueryProvider>
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">

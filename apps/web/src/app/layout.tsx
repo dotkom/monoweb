@@ -44,7 +44,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning>
-      <body className={cn(fontTitle.variable, fontBody.variable, fontMono.variable, "bg-white dark:bg-stone-900")}>
+      <body
+        className={cn(
+          fontTitle.variable,
+          fontBody.variable,
+          fontMono.variable,
+          "scrollbar-gutter-both bg-white dark:bg-stone-900"
+        )}
+      >
         <PlausibleProvider domain="online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
