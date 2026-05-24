@@ -68,22 +68,6 @@ const getDisabledText = (
 
   const isAttending = attendee !== null
 
-  if (status === "Closed") {
-    return "Påmeldingen er stengt"
-  }
-
-  if (!pool) {
-    return "Du har ingen påmeldingsgruppe"
-  }
-
-  if (registeredToParentEvent === false) {
-    return "Du er ikke påmeldt foreldrearrangementet"
-  }
-
-  if (reservedToParentEvent === false && registeredToParentEvent === true) {
-    return "Du er i kø på foreldrearrangementet"
-  }
-
   if (isAttending) {
     if (isPastDeregisterDeadline && attendee.reserved) {
       return "Avmeldingsfristen har utløpt"
@@ -96,10 +80,6 @@ const getDisabledText = (
     return null
   }
 
-  if (!hasTurnstileToken) {
-    return "Du må bekrefte at du ikke er en robot"
-  }
-
   if (isSuspended) {
     return "Du er suspendert fra Online"
   }
@@ -108,8 +88,28 @@ const getDisabledText = (
     return "Du må ha registrert medlemskap for å melde deg på"
   }
 
-  if (status === "NotOpened") {
+  if (status === "CLOSED") {
+    return "Påmeldingen er stengt"
+  }
+
+  if (!pool) {
+    return "Du har ingen påmeldingsgruppe"
+  }
+
+  if (status === "NOT_OPENED") {
     return "Påmeldinger har ikke åpnet"
+  }
+
+  if (registeredToParentEvent === false) {
+    return "Du er ikke påmeldt foreldrearrangementet"
+  }
+
+  if (reservedToParentEvent === false && registeredToParentEvent === true) {
+    return "Du er i kø på foreldrearrangementet"
+  }
+
+  if (!hasTurnstileToken) {
+    return "Du må bekrefte at du ikke er en robot"
   }
 
   return null

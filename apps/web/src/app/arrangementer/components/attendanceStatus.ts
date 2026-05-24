@@ -9,12 +9,12 @@ export const getAttendanceStatus = (
   const { registerStart, registerEnd } = registerStartAndEnd
 
   if (now < registerStart) {
-    return "NotOpened"
+    return "NOT_OPENED"
   }
 
   if (now > registerEnd) {
-    return "Closed"
+    return "CLOSED"
   }
 
-  return "Open"
+  return "OPEN"
 }
