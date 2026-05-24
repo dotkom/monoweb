@@ -1,6 +1,5 @@
 import type { Article } from "@dotkomonline/types"
-import { Text } from "@dotkomonline/ui"
-import clsx from "clsx"
+import { cn, Text } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
@@ -14,7 +13,7 @@ export interface ArticleListItemProps {
 export const ArticleListItem: FC<ArticleListItemProps> = ({ article, orientation }: ArticleListItemProps) => (
   <Link
     href={`/artikler/${article.slug}/${article.id}`}
-    className={clsx(
+    className={cn(
       "flex flex-1 rounded-lg overflow-hidden shadow-md duration-200 transition-transform hover:-translate-y-1 hover:shadow-lg dark:bg-stone-800",
       orientation === "horizontal" ? "sm:flex-row flex-col" : "flex-col max-w-md"
     )}
@@ -25,7 +24,7 @@ export const ArticleListItem: FC<ArticleListItemProps> = ({ article, orientation
       width={0}
       height={0}
       sizes="100%"
-      className={clsx("aspect-[16/9] object-cover w-full", orientation === "horizontal" && "sm:w-[40%]")}
+      className={cn("aspect-[16/9] object-cover w-full", orientation === "horizontal" && "sm:w-[40%]")}
     />
     <div className="p-4 justify-between flex flex-col flex-1">
       <div>

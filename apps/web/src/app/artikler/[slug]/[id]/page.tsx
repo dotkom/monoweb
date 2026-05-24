@@ -1,9 +1,8 @@
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types"
-import { Button, RichText, Text, Title, Video } from "@dotkomonline/ui"
+import { Button, cn, RichText, Text, Title, Video } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
-import clsx from "clsx"
 import { formatDate, isEqual } from "date-fns"
 import type { Metadata } from "next"
 import Image from "next/image"
@@ -113,7 +112,7 @@ interface BylineItemProps {
 }
 
 const BylineItem = ({ label, value, className }: BylineItemProps) => (
-  <Text className={clsx("whitespace-nowrap", className)}>
+  <Text className={cn("whitespace-nowrap", className)}>
     <span className="text-black dark:text-gray-100 font-medium">{label} </span>
     {value}
   </Text>
