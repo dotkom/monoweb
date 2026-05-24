@@ -29,7 +29,7 @@ export default function GlobalError({ error }: GlobalErrorProps) {
         <PlausibleProvider domain="online.ntnu.no">
           <QueryProvider>
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-              <div className="min-h-screen flex flex-col gap-8 w-full max-w-screen-xl mx-auto px-4 lg:px-12">
+              <div className="page-shell">
                 <Navbar />
                 <main className="grow flex flex-col gap-8">
                   <Title>En feil oppsto under innlasting av innhold.</Title>
