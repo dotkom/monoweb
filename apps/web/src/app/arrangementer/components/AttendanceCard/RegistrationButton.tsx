@@ -13,9 +13,9 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconLoader2, IconLock, IconUserMinus, IconUserPlus } from "@tabler/icons-react"
+import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
 import { addMilliseconds, hoursToMilliseconds, isFuture, min, secondsToMilliseconds } from "date-fns"
-import { type FC, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -25,6 +25,8 @@ import { getAttendanceStatus } from "../attendanceStatus"
 // to small differences in system time.
 const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2) - secondsToMilliseconds(15)
 
+const DEREGISTER_BUTTON_COLOR = "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800" as const
+
 const getButtonColor = (
   disabled: boolean,
   attendee: boolean,
@@ -32,10 +34,17 @@ const getButtonColor = (
   hasPunishment: boolean,
   hasMergeDelay: boolean
 ) => {
-  if (disabled) return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
-  if (attendee) return "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
-  if (isPoolFull || hasPunishment || hasMergeDelay)
+  if (disabled) {
+    return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
+  }
+
+  if (attendee) {
+    return DEREGISTER_BUTTON_COLOR
+  }
+
+  if (isPoolFull || hasPunishment || hasMergeDelay) {
     return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
+  }
 
   return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"
 }
@@ -125,6 +134,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   hasTurnstileToken,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
+  const [confirmGracePeriodDeregister, setConfirmDeregister] = useState(false)
 
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
@@ -134,6 +144,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const deregisterGracePeriodEnd =
     attendee !== null ? addMilliseconds(attendee.createdAt, DEREGISTER_GRACE_PERIOD_MS) : null
   const isWithinDeregisterGracePeriod = deregisterGracePeriodEnd !== null && isFuture(deregisterGracePeriodEnd)
+
+  useEffect(() => {
+    if (attendee === null || !isWithinDeregisterGracePeriod) {
+      setConfirmDeregister(false)
+    }
+  }, [attendee, isWithinDeregisterGracePeriod])
 
   // TODO: dont calculate this in frontend
   const actualDeregisterDeadline = chargeScheduleDate
@@ -177,10 +193,15 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     }
 
     if (isWithinDeregisterGracePeriod) {
-      unregisterForAttendance(null)
+      setConfirmDeregister(true)
     } else {
       setDeregisterModalOpen(true)
     }
+  }
+
+  const handleDeregisterConfirm = () => {
+    unregisterForAttendance(null)
+    setConfirmDeregister(false)
   }
 
   const buttonContent = isLoading ? (
@@ -216,6 +237,37 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     </Button>
   )
 
+  const deregisterConfirmButton = (
+    <div className="flex flex-row gap-2 items-stretch w-full">
+      <Button
+        onClick={handleDeregisterConfirm}
+        disabled={isLoading}
+        className={cn("rounded-lg grow min-h-16", DEREGISTER_BUTTON_COLOR)}
+      >
+        {isLoading ? (
+          <IconLoader2 className="shrink-0 size-6 animate-spin" />
+        ) : (
+          <Text element="span" className="font-medium">
+            Er du sikker?
+          </Text>
+        )}
+      </Button>
+      <Button
+        type="button"
+        onClick={() => setConfirmDeregister(false)}
+        disabled={isLoading}
+        className="rounded-lg aspect-square min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+      >
+        <IconX className="size-[1.25em]" />
+      </Button>
+    </div>
+  )
+
+  const showDeregisterConfirm =
+    attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !disabled
+
+  const actionButton = showDeregisterConfirm ? deregisterConfirmButton : registrationButton
+
   if (disabled) {
     return (
       <Tooltip delayDuration={100}>
@@ -229,7 +281,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
 
   return (
     <>
-      {registrationButton}
+      {actionButton}
       {attendee && !isWithinDeregisterGracePeriod && (
         <DeregisterModal
           open={deregisterModalOpen}
