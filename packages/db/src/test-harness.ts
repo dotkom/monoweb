@@ -3,8 +3,9 @@ import os from "node:os"
 import { PostgreSqlContainer } from "@testcontainers/postgresql"
 import { createPrisma } from "./index"
 
-const SCHEMA_FILE_PATH = `${import.meta.dirname}/../prisma/schema.prisma`
-const PRISMA_BIN_PATH = `${import.meta.dirname}/../node_modules/.bin/prisma`
+const PACKAGE_ROOT = `${import.meta.dirname}/..`
+const SCHEMA_FILE_PATH = `${PACKAGE_ROOT}/prisma/schema.prisma`
+const PRISMA_BIN_PATH = `${PACKAGE_ROOT}/node_modules/.bin/prisma`
 
 const POSTGRES_IMAGE = "postgres:16-alpine"
 const DB_USERNAME = "owuser"
@@ -26,17 +27,14 @@ function migrateTestDatabase(dbUrl: string) {
   return new Promise<void>((resolve, reject) => {
     const isWindows = os.platform() === "win32"
 
-    const proc = spawn(
-      PRISMA_BIN_PATH,
-      ["migrate", "reset", "--force", "--skip-generate", "--schema", SCHEMA_FILE_PATH],
-      {
-        env: {
-          DATABASE_URL: dbUrl,
-          NODE_ENV: "development",
-        },
-        shell: isWindows,
-      }
-    )
+    const proc = spawn(PRISMA_BIN_PATH, ["migrate", "reset", "--force", "--schema", SCHEMA_FILE_PATH], {
+      cwd: PACKAGE_ROOT,
+      env: {
+        DATABASE_URL: dbUrl,
+        NODE_ENV: "development",
+      },
+      shell: isWindows,
+    })
     // Only inherit stderr as stdout will be bloated by Prisma migration output
     proc.stderr.on("data", (data) => {
       console.error(data.toString())
