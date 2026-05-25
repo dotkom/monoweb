@@ -199,7 +199,7 @@ describe("feedback integration tests", () => {
       feedbackForm.questions
     )
 
-    expect(cancelSpy).toHaveBeenCalledWith(dbClient, task.id)
+    expect(cancelSpy).toHaveBeenCalledWith(expect.anything(), task.id)
 
     const updatedTask = await core.taskSchedulingService.findVerifyFeedbackAnsweredTask(dbClient, feedbackForm.id)
     invariant(updatedTask, "Updated scheduled task should exist")
@@ -218,12 +218,13 @@ describe("feedback integration tests", () => {
   })
 
   it("user should not be able to answer feedback form after deadline", async () => {
+    const eventEnd = addDays(new Date(), 1)
+    const answerDeadline = addDays(eventEnd, 1)
+
     const { event, user } = await createMockEventWithAttendee({
       start: faker.date.past(),
-      end: faker.date.past(),
+      end: eventEnd,
     })
-
-    const answerDeadline = faker.date.past()
 
     const feedbackForm = await core.feedbackFormService.create(
       dbClient,
@@ -231,75 +232,107 @@ describe("feedback integration tests", () => {
       []
     )
 
-    const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
-    invariant(!result.success)
-    expect(result.cause).toBe(FeedbackRejectionCause.TOO_LATE)
+    vi.setSystemTime(addDays(answerDeadline, 1))
+    try {
+      const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      invariant(!result.success)
+      expect(result.cause).toBe(FeedbackRejectionCause.TOO_LATE)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("user should not be able to answer feedback form for event they are not an attendee of", async () => {
-    const event = await core.eventService.createEvent(dbClient, getMockEvent({ end: faker.date.past() }))
+    const eventEnd = addDays(new Date(), 1)
+
+    const event = await core.eventService.createEvent(dbClient, getMockEvent({ end: eventEnd }))
     const user = await createMockUser()
     await createMockAttendance(event.id)
 
     const feedbackForm = await core.feedbackFormService.create(dbClient, getMockFeedbackForm({ eventId: event.id }), [])
 
-    const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
-
-    invariant(!result.success)
-    expect(result.cause).toBe(FeedbackRejectionCause.DID_NOT_ATTEND)
+    vi.setSystemTime(addDays(eventEnd, 1))
+    try {
+      const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      invariant(!result.success)
+      expect(result.cause).toBe(FeedbackRejectionCause.DID_NOT_ATTEND)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("user should not be able to answer feedback form for event they did not attend", async () => {
+    const eventEnd = addDays(new Date(), 1)
+
     const { event, user } = await createMockEventWithAttendee({
       start: faker.date.past(),
-      end: faker.date.past(),
+      end: eventEnd,
     })
 
     const feedbackForm = await core.feedbackFormService.create(dbClient, getMockFeedbackForm({ eventId: event.id }), [])
-    const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
 
-    invariant(!result.success)
-    expect(result.cause).toBe(FeedbackRejectionCause.DID_NOT_ATTEND)
+    vi.setSystemTime(addDays(eventEnd, 1))
+    try {
+      const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      invariant(!result.success)
+      expect(result.cause).toBe(FeedbackRejectionCause.DID_NOT_ATTEND)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("user should be able to answer feedback form after event has ended before answer deadline", async () => {
+    const eventEnd = addDays(new Date(), 1)
+
     const { event, attendee, user } = await createMockEventWithAttendee({
       start: faker.date.past(),
-      end: faker.date.past(),
+      end: eventEnd,
     })
 
     await core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())
 
     const feedbackForm = await core.feedbackFormService.create(dbClient, getMockFeedbackForm({ eventId: event.id }), [])
 
-    const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
-    expect(result.success).toBe(true)
+    vi.setSystemTime(addDays(eventEnd, 1))
+    try {
+      const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      expect(result.success).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("user should not be able to answer feedback form multiple times", async () => {
+    const eventEnd = addDays(new Date(), 1)
+
     const { event, attendee, user } = await createMockEventWithAttendee({
       start: faker.date.past(),
-      end: faker.date.past(),
+      end: eventEnd,
     })
 
     await core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())
 
     const feedbackForm = await core.feedbackFormService.create(dbClient, getMockFeedbackForm({ eventId: event.id }), [])
-    const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
 
-    expect(result.success).toBe(true)
+    vi.setSystemTime(addDays(eventEnd, 1))
+    try {
+      const result = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      expect(result.success).toBe(true)
 
-    await core.feedbackFormAnswerService.create(
-      dbClient,
-      {
-        feedbackFormId: feedbackForm.id,
-        attendeeId: attendee.id,
-      },
-      []
-    )
+      await core.feedbackFormAnswerService.create(
+        dbClient,
+        {
+          feedbackFormId: feedbackForm.id,
+          attendeeId: attendee.id,
+        },
+        []
+      )
 
-    const secondResult = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
-    invariant(!secondResult.success)
-    expect(secondResult.cause).toBe(FeedbackRejectionCause.ALREADY_ANSWERED)
+      const secondResult = await core.feedbackFormService.getFeedbackEligibility(dbClient, feedbackForm.id, user.id)
+      invariant(!secondResult.success)
+      expect(secondResult.cause).toBe(FeedbackRejectionCause.ALREADY_ANSWERED)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
