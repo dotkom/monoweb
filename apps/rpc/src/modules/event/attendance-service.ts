@@ -896,6 +896,11 @@ export function getAttendanceService(
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
+      // If the deregistered attendee wasn't reserved, no spot was freed up, so no waitlist promotion is needed.
+      if (!attendee.reserved) {
+        return
+      }
+
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
       const reservedAttendeesCount = remainingAttendees.filter(
         (a) => a.reserved && a.attendancePoolId === pool.id
