@@ -187,7 +187,7 @@ export type PoolOccupancy = z.infer<typeof PoolOccupancySchema>
 
 export const RegisterChangeEventSchema = z.object({
   attendee: AttendeeSchema,
-  status: z.enum(["registered", "deregistered"]),
+  status: z.enum(["registered", "deregistered", "reserved"]),
   poolOccupancies: z.array(PoolOccupancySchema),
 })
 export type RegisterChangeEvent = z.infer<typeof RegisterChangeEventSchema>

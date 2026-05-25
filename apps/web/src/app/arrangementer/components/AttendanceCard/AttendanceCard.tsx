@@ -130,6 +130,19 @@ export const AttendanceCard = ({
                 }
               }
 
+              if (status === "reserved") {
+                return {
+                  ...oldData,
+                  attendees: oldData.attendees.map((oldAttendee) => {
+                    if (oldAttendee.id === updatedAttendee.id) {
+                      return updatedAttendee
+                    }
+
+                    return oldAttendee
+                  }),
+                }
+              }
+
               if (oldData.attendees.some((oldAttendee) => oldAttendee.id === updatedAttendee.id)) {
                 console.warn("Attendee already exists in the list, not updating state.")
                 return oldData

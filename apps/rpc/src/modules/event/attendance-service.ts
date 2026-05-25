@@ -811,6 +811,7 @@ export function getAttendanceService(
       data.reserved = true
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
+      attendee.reserved = true
 
       const hasExistingPayment =
         attendee.paymentLink !== null ||
@@ -838,6 +839,7 @@ export function getAttendanceService(
       }
 
       sendEventRegistrationEmail(event, attendance, attendee)
+      emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -956,6 +958,13 @@ export function getAttendanceService(
       )
 
       sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
+
+      const promotedAttendee = {
+        ...firstUnreservedAdjacentAttendee,
+        reserved: true,
+      }
+
+      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "reserved")
 
       for (const [index, waitlistAttendee] of sortedWaitlist.slice(1, 4).entries()) {
         sendWaitlistNotificationEmail(event, index + 1, waitlistAttendee)
@@ -1806,10 +1815,21 @@ function emitRegisterChange(
   attendee: Attendee,
   status: RegisterChangeEvent["status"]
 ) {
-  const attendees =
-    status === "registered"
-      ? [...attendance.attendees, attendee]
-      : attendance.attendees.filter((existingAttendee) => existingAttendee.id !== attendee.id)
+  let attendees: Attendee[]
+
+  if (status === "registered") {
+    attendees = [...attendance.attendees, attendee]
+  } else if (status === "deregistered") {
+    attendees = attendance.attendees.filter((existingAttendee) => existingAttendee.id !== attendee.id)
+  } else {
+    attendees = attendance.attendees.map((existingAttendee) => {
+      if (existingAttendee.id === attendee.id) {
+        return attendee
+      }
+
+      return existingAttendee
+    })
+  }
 
   eventEmitter.emit("attendance:register-change", {
     attendee,
