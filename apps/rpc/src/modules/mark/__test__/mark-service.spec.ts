@@ -18,12 +18,11 @@ describe("MarkService", () => {
       updatedAt: new Date(),
       weight: 3,
       type: "MANUAL" as const,
-      groups: [],
     }
     const id = randomUUID()
-    vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark })
-    await expect(markService.create(db, mark, [])).resolves.toEqual({ id, ...mark })
-    expect(markRepository.create).toHaveBeenCalledWith(db, mark)
+    vi.spyOn(markRepository, "create").mockResolvedValueOnce({ id, ...mark, groups: [] })
+    await expect(markService.create(db, mark, [])).resolves.toEqual({ id, ...mark, groups: [] })
+    expect(markRepository.create).toHaveBeenCalledWith(db, mark, [])
   })
 
   it("fails on unknown id", async () => {
