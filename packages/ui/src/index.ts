@@ -32,6 +32,7 @@ export * from "./molecules/Card/Card"
 export * from "./molecules/ReadMore/ReadMore"
 export * from "./molecules/RichText/RichText"
 export * from "./molecules/Progress/RadialProgress"
+export * from "./molecules/Timeline/Timeline"
 
 export * from "./components/button-group"
 export * from "./components/toggle-group"
