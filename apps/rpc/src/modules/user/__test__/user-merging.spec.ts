@@ -58,6 +58,8 @@ describe("mergeUsers", () => {
     attendanceService.deregisterAttendee.mockResolvedValue(undefined)
     handle.attendee.findMany.mockResolvedValue([])
     handle.personalMark.findMany.mockResolvedValue([])
+    handle.contestant.findMany.mockResolvedValue([])
+    handle.contestTeam.findMany.mockResolvedValue([])
     deps = { groupRepository, attendanceService }
   })
 
