@@ -24,7 +24,7 @@ runs:
       with:
         script: core.setOutput('oidc_token', await core.getIDToken())
     - name: Install Doppler CLI
-      uses: dopplerhq/cli-action@014df23b1329b615816a38eb5f473bb9000700b1 # v3
+      uses: dopplerhq/cli-action@4819d808ab99e5cde19a0637a16536a4038fad73 # v4
     - name: Login to Doppler
       shell: bash
       run: |
