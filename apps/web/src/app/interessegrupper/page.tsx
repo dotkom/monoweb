@@ -23,7 +23,7 @@ export default async function InterestGroupPage() {
 
       <div className="flex flex-row gap-4">
         <Button
-          color="brand"
+          variant="default"
           element={Link}
           href="https://docs.google.com/forms/d/e/1FAIpQLSebaBslZ3nmh2wubQ_mPJYYU2XNIRlJZ1BooFuH7y6wxylaWA/viewform"
           icon={<IconUsersPlus className="size-5" />}

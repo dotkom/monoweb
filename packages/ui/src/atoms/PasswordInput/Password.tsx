@@ -1,6 +1,6 @@
 "use client"
 
-import { Label } from "@radix-ui/react-label"
+import { Label } from "#components/label"
 import { IconEyeCheck, IconEyeOff } from "@tabler/icons-react"
 import { cva } from "cva"
 import { type ComponentPropsWithRef, type FC, useState } from "react"

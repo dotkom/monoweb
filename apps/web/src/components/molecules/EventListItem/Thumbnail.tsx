@@ -1,5 +1,5 @@
 import type { EventType } from "@dotkomonline/types"
-import { Badge, Tilt, cn } from "@dotkomonline/ui"
+import { Badge, Tilt, cn, type BadgeColor } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
@@ -33,7 +33,7 @@ const EVENTS = {
     label: "Fadderuke",
     backgroundColor: "amber",
   },
-} as const satisfies Record<EventType, { label: string; backgroundColor: string }>
+} as const satisfies Record<EventType, { label: string; backgroundColor: BadgeColor }>
 
 interface EventListItemThumbnailProps {
   imageUrl?: string | null
@@ -71,16 +71,17 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, star
           )}
         </div>
 
-        <Badge
-          variant="light"
-          color={backgroundColor}
-          className={cn(
-            "absolute bottom-[3px] right-[3px] px-1 py-0.5 rounded-sm text-xs",
-            startInPast && "grayscale group-hover:grayscale-[50%] transition-all"
-          )}
-        >
-          {label}
-        </Badge>
+        <div className="absolute bottom-1 right-1 rounded-sm bg-background">
+          <Badge
+            color={backgroundColor}
+            className={cn(
+              "px-1 py-0.5 text-xs rounded-sm flex",
+              startInPast && "grayscale group-hover:grayscale-50 transition-all"
+            )}
+          >
+            {label}
+          </Badge>
+        </div>
       </div>
     </Tilt>
   )

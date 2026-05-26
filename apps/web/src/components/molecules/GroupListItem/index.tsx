@@ -34,11 +34,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         </div>
       )}
 
-      <Badge
-        color="slate"
-        variant="light"
-        className="absolute top-3 right-3 bg-gray-100 text-gray-500 dark:text-stone-400"
-      >
+      <Badge color="gray" className="absolute top-3 right-3">
         {getGroupTypeName(group.type)}
       </Badge>
 

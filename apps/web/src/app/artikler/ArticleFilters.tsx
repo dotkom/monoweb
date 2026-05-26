@@ -68,7 +68,7 @@ interface TagFilterItemProps {
 
 const TagFilterItem = ({ tag, selected, onClick }: TagFilterItemProps) => {
   return (
-    <Button type="button" onClick={() => onClick(tag)} color={selected ? "brand" : "light"}>
+    <Button type="button" onClick={() => onClick(tag)} variant={selected ? "default" : "secondary"}>
       {tag}
     </Button>
   )

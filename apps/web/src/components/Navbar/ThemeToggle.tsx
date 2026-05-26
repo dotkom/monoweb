@@ -1,86 +1,82 @@
-import { cn } from "@dotkomonline/ui"
+import { cn, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 
-interface ThemeToggleProps {
-  className?: string
-}
+type Theme = "light" | "dark" | "system"
 
-export const ThemeToggle = ({ className }: ThemeToggleProps) => {
+const DEFAULT_THEME = "system" satisfies Theme
+
+const THEME_OPTIONS = [
+  {
+    key: "light",
+    theme: "light",
+    label: "Lyst tema",
+    icon: IconSun,
+  },
+  {
+    key: "dark",
+    theme: "dark",
+    label: "Mørkt tema",
+    icon: IconMoon,
+  },
+  {
+    key: "system-desktop",
+    theme: "system",
+    label: "Systempreferanse",
+    icon: IconDeviceDesktop,
+    className: "hidden sm:flex",
+  },
+  {
+    key: "system-mobile",
+    theme: "system",
+    label: "Systempreferanse",
+    icon: IconDeviceMobile,
+    className: "sm:hidden",
+  },
+] satisfies Array<{
+  key: string
+  theme: Theme
+  label: string
+  icon: Icon
+  className?: string
+}>
+
+export const ThemeToggle = () => {
   const { setTheme, theme } = useTheme()
 
-  const THEME_OPTIONS: Array<{
-    key: string
-    theme: "light" | "dark" | "system"
-    label: string
-    icon: Icon
-    className?: string
-  }> = [
-    {
-      key: "light",
-      theme: "light",
-      label: "Lyst tema",
-      icon: IconSun,
-    },
-    {
-      key: "dark",
-      theme: "dark",
-      label: "Mørkt tema",
-      icon: IconMoon,
-    },
-    {
-      key: "system-desktop",
-      theme: "system",
-      label: "Systempreferanse",
-      icon: IconDeviceDesktop,
-      className: "hidden sm:flex",
-    },
-    {
-      key: "system-mobile",
-      theme: "system",
-      label: "Systempreferanse",
-      icon: IconDeviceMobile,
-      className: "sm:hidden",
-    },
-  ]
-
   return (
-    <div className={cn("relative h-fit flex gap-1 items-center rounded-lg p-1", className)}>
-      <div
-        className="absolute top-1 bottom-1 h-8 w-8 rounded-lg shadow-sm transition-transform duration-200 ease-out bg-white dark:bg-stone-700"
-        style={{
-          transform: `translateX(${THEME_OPTIONS.findIndex((option) => option.theme === theme) * 2.25}rem)`,
-        }}
-      />
-
+    <ToggleGroup
+      multiple={false}
+      spacing={0.5}
+      value={[theme ?? DEFAULT_THEME]}
+      onValueChange={(value) => setTheme(value.at(0) ?? DEFAULT_THEME)}
+    >
       {THEME_OPTIONS.map((item) => {
         const IconComponent = item.icon
         return (
           <Tooltip key={item.key}>
             <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => setTheme(item.theme)}
+              <ToggleGroupItem
+                value={item.theme}
+                size="lg"
+                variant="default"
                 className={cn(
-                  "relative flex items-center justify-center rounded-md transition-colors w-8 h-8",
+                  "p-0.5",
+                  "hover:bg-white dark:hover:bg-stone-700",
+                  "aria-pressed:bg-white data-[state=on]:bg-white",
+                  "aria-pressed:dark:bg-stone-700 data-[state=on]:dark:bg-stone-700",
                   item.className
                 )}
               >
-                <IconComponent
-                  width={20}
-                  height={20}
-                  className="transition-colors duration-200 text-black dark:text-stone-100 sm"
-                />
-              </button>
+                <IconComponent className="shrink-0 size-4.5 stroke-[2.3]" />
+              </ToggleGroupItem>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>{item.label}</p>
-            </TooltipContent>
+            <TooltipContent>{item.label}</TooltipContent>
           </Tooltip>
         )
       })}
-    </div>
+    </ToggleGroup>
   )
 }

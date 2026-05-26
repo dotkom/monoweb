@@ -131,7 +131,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 {group.abbreviation}
               </Title>
 
-              <Badge color="slate" variant="light" className="bg-gray-100 text-gray-500 dark:text-stone-400">
+              <Badge color="gray" className="bg-gray-100 text-gray-500 dark:text-stone-400">
                 {getGroupTypeName(group.type)}
               </Badge>
             </div>
@@ -186,7 +186,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               ))}
           </div>
           {group.type === "INTEREST_GROUP" && !activeMembers?.some((m) => m.id === session?.sub) && group.slackUrl && (
-            <Button element="a" color="brand" href={group.slackUrl} className="w-fit">
+            <Button element="a" variant="default" href={group.slackUrl} className="w-fit">
               Meld deg inn!
             </Button>
           )}

@@ -1,67 +1,30 @@
-"use client"
+import { Badge as ShadcnBadge, type badgeVariants } from "#components/badge"
+import { badgeColorClasses, type Color } from "#lib/colors"
+import { cn } from "#lib/utils"
+import type { VariantProps } from "class-variance-authority"
+import type { ComponentProps, PropsWithChildren } from "react"
 
-import { cva } from "cva"
-import type { FC, PropsWithChildren } from "react"
-import { cn } from "../../utils"
-import { Text } from "../Typography/Text"
+export type BadgeColor = Color
+export type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>
 
-// TODO: Do not abuse CVA like styles does below
-export type BadgeProps = {
-  color: "amber" | "blue" | "green" | "red" | "slate" | "gold"
-  variant: "light" | "outline" | "solid"
-  className?: string
-}
+type BadgeProps = PropsWithChildren<
+  ComponentProps<typeof ShadcnBadge> & {
+    color?: BadgeColor
+  }
+>
 
-export const Badge: FC<PropsWithChildren<BadgeProps>> = ({ children, color, variant, className }) => {
-  const style = cn(
-    styles[variant]({ color }),
-    "flex w-fit items-center rounded-sm px-1.5 py-0.5 font-medium",
-    className
-  )
+export function Badge({ variant = "secondary", color, className, children, ...props }: BadgeProps) {
+  const resolvedVariant = variant ?? "secondary"
+
   return (
-    <Text element="div" className={style}>
+    <ShadcnBadge
+      variant={resolvedVariant}
+      className={cn(color && badgeColorClasses(color, resolvedVariant), className)}
+      {...props}
+    >
       {children}
-    </Text>
+    </ShadcnBadge>
   )
 }
 
-const styles = {
-  solid: cva("text-sm text-black dark:text-white", {
-    variants: {
-      color: {
-        red: "bg-red-300 text-red-900 dark:bg-red-900 dark:text-red-200",
-        blue: "bg-blue-300 text-blue-900 dark:bg-blue-900 dark:text-blue-200",
-        gold: "bg-amber-400 text-yellow-900 dark:bg-amber-500 dark:text-black",
-        green: "bg-green-300 text-green-900 dark:bg-green-900 dark:text-green-200",
-        amber: "bg-amber-300 text-amber-900 dark:bg-amber-900 dark:text-amber-200",
-        slate: "bg-gray-300 text-gray-900 dark:bg-stone-600 dark:text-stone-100",
-      },
-    },
-  }),
-
-  light: cva("text-sm", {
-    variants: {
-      color: {
-        red: "bg-red-200 text-red-900 dark:bg-red-950 dark:text-red-300",
-        blue: "bg-blue-200 text-blue-900 dark:bg-blue-950 dark:text-blue-300",
-        gold: "bg-amber-400 text-yellow-900 dark:bg-amber-500 dark:text-black",
-        green: "bg-green-200 text-green-900 dark:bg-green-950 dark:text-green-300",
-        amber: "bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-300",
-        slate: "bg-gray-200 text-gray-900 dark:bg-stone-700 dark:text-stone-200",
-      },
-    },
-  }),
-
-  outline: cva("text-sm text-black dark:text-white border", {
-    variants: {
-      color: {
-        red: "border-red-400/75 dark:border-red-800",
-        blue: "border-blue-400/75 dark:border-blue-800",
-        gold: "border-amber-400/75 dark:border-amber-500",
-        green: "border-green-400/75 dark:border-green-800",
-        amber: "border-amber-400/75 dark:border-amber-800",
-        slate: "border-gray-500 dark:border-stone-600",
-      },
-    },
-  }),
-}
+export type { Color as BadgeColorName }

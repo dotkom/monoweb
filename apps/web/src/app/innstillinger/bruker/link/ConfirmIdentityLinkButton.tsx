@@ -27,7 +27,7 @@ export function ConfirmIdentityLinkButton() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-3">
-        <Button color="brand" onClick={onConfirm} disabled={isPending}>
+        <Button variant="default" onClick={onConfirm} disabled={isPending}>
           {isPending ? "Kobler brukere..." : "Bekreft og koble brukere"}
         </Button>
         <Button element="a" href="/innstillinger/bruker" variant="outline" disabled={isPending}>

@@ -1,57 +1,57 @@
 "use client"
 
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
-import type { ComponentPropsWithRef, ComponentPropsWithoutRef, FC } from "react"
+import {
+  AlertDialog as ShadcnAlertDialog,
+  AlertDialogAction as ShadcnAlertDialogAction,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle as ShadcnAlertDialogTitle,
+  AlertDialogTrigger as ShadcnAlertDialogTrigger,
+} from "#components/alert-dialog"
+import type { AlertDialogContent as ShadcnAlertDialogContent } from "#components/alert-dialog"
+import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
+import type { ComponentProps } from "react"
 import { Button, type ButtonProps } from "../../atoms/Button/Button"
+import { alertDialogSizeClasses } from "#lib/alert-dialog-extensions"
+import { resolveAsChildRender } from "../../lib/as-child"
 import { cn } from "../../utils"
 
-export const AlertDialog = AlertDialogPrimitive.Root
-export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+export const AlertDialog = ShadcnAlertDialog
+export { AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal }
 
-export const AlertDialogPortal: FC<ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Portal>> = ({
-  children,
-  ...props
-}) => {
+type TriggerProps = ComponentProps<typeof ShadcnAlertDialogTrigger> & {
+  asChild?: boolean
+}
+
+export function AlertDialogTrigger({ asChild, children, ...props }: TriggerProps) {
+  const resolved = resolveAsChildRender({ asChild, children })
+
   return (
-    <AlertDialogPrimitive.Portal {...props}>
-      <div className="fixed inset-0 z-50 flex items-center justify-center sm:items-center">{children}</div>
-    </AlertDialogPrimitive.Portal>
+    <ShadcnAlertDialogTrigger render={resolved.render} {...props}>
+      {resolved.children}
+    </ShadcnAlertDialogTrigger>
   )
 }
 
-export const AlertDialogOverlay: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Overlay>> = ({
-  className,
-  ref,
-  ...props
-}) => {
-  return (
-    <AlertDialogPrimitive.Overlay
-      className={cn(
-        "animate-in fade-in bg-gray-50/50 dark:bg-stone-950/50 fixed inset-0 z-50 backdrop-blur-xs transition-opacity",
-        className
-      )}
-      {...props}
-      ref={ref}
-    />
-  )
-}
-
-export type AlertDialogContentProps = ComponentPropsWithRef<typeof AlertDialogPrimitive.Content> & {
+type AlertDialogContentProps = Omit<ComponentProps<typeof ShadcnAlertDialogContent>, "size"> & {
+  size?: "default" | "sm" | "lg"
   onOutsideClick?: () => void
 }
 
-export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref, onOutsideClick, ...props }) => {
+export function AlertDialogContent({ size = "default", onOutsideClick, className, ...props }: AlertDialogContentProps) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay onClick={onOutsideClick} />
-      <AlertDialogPrimitive.Content
-        ref={ref}
+      <AlertDialogPrimitive.Popup
+        data-slot="alert-dialog-content"
+        data-size={size}
         className={cn(
-          "animate-in fade-in-90 slide-in-from-bottom-10 sm:zoom-in-90 sm:slide-in-from-bottom-0",
-          "bg-white dark:bg-stone-800 fixed z-50 drop-shadow-lg scale-100 opacity-100",
-          "flex flex-col gap-4 p-4 rounded-lg",
-          "w-full max-w-[95%] sm:max-w-2xl md:w-full",
-          "min-h-[25dvh] max-h-[75dvh] overflow-y-auto",
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-sm",
+          alertDialogSizeClasses.lg,
           className
         )}
         {...props}
@@ -60,59 +60,43 @@ export const AlertDialogContent: FC<AlertDialogContentProps> = ({ className, ref
   )
 }
 
-export const AlertDialogHeader: FC<ComponentPropsWithRef<"div">> = ({ className, ref, ...props }) => {
-  return <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
+type TitleProps = ComponentProps<typeof ShadcnAlertDialogTitle> & {
+  asChild?: boolean
 }
 
-export const AlertDialogFooter: FC<ComponentPropsWithRef<"div">> = ({ className, ref, ...props }) => {
-  return <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)} {...props} />
-}
+export function AlertDialogTitle({ asChild, children, className, ...props }: TitleProps) {
+  const resolved = resolveAsChildRender({ asChild, children })
 
-export const AlertDialogTitle: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Title>> = ({
-  className,
-  ref,
-  ...props
-}) => {
-  return <AlertDialogPrimitive.Title ref={ref} className={className} {...props} />
-}
+  if (resolved.render) {
+    return <AlertDialogPrimitive.Title className={className} render={resolved.render} {...props} />
+  }
 
-export const AlertDialogDescription: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Description>> = ({
-  className,
-  ref,
-  ...props
-}) => {
   return (
-    <AlertDialogPrimitive.Description
-      ref={ref}
-      className={cn("text-gray-900 dark:text-stone-100/80 text-md", className)}
-      {...props}
-    />
+    <ShadcnAlertDialogTitle className={className} {...props}>
+      {resolved.children}
+    </ShadcnAlertDialogTitle>
   )
 }
 
-export type AlertDialogActionProps = Omit<ComponentPropsWithRef<typeof AlertDialogPrimitive.Action>, "color"> & {
+export type AlertDialogActionProps = ComponentProps<typeof ShadcnAlertDialogAction> & {
   destructive?: boolean
 }
 
-export const AlertDialogAction: FC<AlertDialogActionProps> = ({ className, ref, destructive, ...props }) => {
-  return <Button element={AlertDialogPrimitive.Action} {...props} ref={ref} color={destructive ? "red" : undefined} />
+export function AlertDialogAction({ className, destructive, variant, ...props }: AlertDialogActionProps) {
+  return <ShadcnAlertDialogAction className={className} variant={destructive ? "destructive" : variant} {...props} />
 }
 
-export const AlertDialogCancel: FC<ComponentPropsWithRef<typeof AlertDialogPrimitive.Cancel> & ButtonProps> = ({
+export function AlertDialogCancel({
   className,
   color,
-  ref,
+  variant = "ghost",
+  size = "lg",
   ...props
-}) => {
+}: ComponentProps<typeof AlertDialogPrimitive.Close> & ButtonProps) {
   return (
-    <Button
-      element={AlertDialogPrimitive.Cancel}
-      className={cn("p-2", className)}
+    <AlertDialogPrimitive.Close
+      render={<Button className={cn("p-2", className)} variant={variant} size={size} color={color} />}
       {...props}
-      variant={props.variant ?? "text"}
-      size={props.size ?? "lg"}
-      color={color}
-      ref={ref}
     />
   )
 }

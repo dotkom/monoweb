@@ -181,8 +181,7 @@ const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
 
       <div className="flex flex-row gap-4 justify-end items-center">
         <Button
-          color="light"
-          variant="text"
+          variant="ghost"
           className="rounded-lg px-4 py-3 min-h-16"
           type="button"
           autoFocus

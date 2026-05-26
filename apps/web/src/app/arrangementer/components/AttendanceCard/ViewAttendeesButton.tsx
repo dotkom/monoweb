@@ -59,8 +59,7 @@ export const ViewAttendeesButton = ({
 
   const button = (
     <Button
-      color="light"
-      className="rounded-lg w-full h-fit min-h-[4rem] font-medium"
+      className="rounded-lg w-full h-fit min-h-[4rem] text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
       icon={<IconUsers className="size-[1.25em]" />}
       disabled={!user}
     >
@@ -82,7 +81,7 @@ export const ViewAttendeesButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
-      <AlertDialogContent className="p-0" onOutsideClick={() => setAttendeeListOpen(false)}>
+      <AlertDialogContent size="lg" className="p-0 w-full" onOutsideClick={() => setAttendeeListOpen(false)}>
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">
@@ -196,14 +195,14 @@ const GenericAttendeeListEntry = ({
       href={`/profil/${attendee.user.username}`}
       className={cn(
         "flex flex-1 min-w-0 items-center gap-4 p-1.5 rounded-lg w-full overflow-x-hidden transition-colors",
-        !isUser && "hover:bg-gray-100 dark:hover:bg-stone-700",
+        !isUser && "hover:bg-gray-100 dark:hover:bg-stone-800",
         isUser && "bg-blue-100 hover:bg-blue-200 dark:bg-sky-950 dark:hover:bg-sky-900"
       )}
     >
       <Avatar className={cn("size-10", isUser && "outline-2 outline-blue-500 dark:outline-sky-800")}>
         <AvatarImage src={attendee.user.imageUrl ?? undefined} />
-        <AvatarFallback className="bg-gray-500 dark:bg-stone-500">
-          <IconUser className="size-[1.25em]" />
+        <AvatarFallback className="bg-gray-300 dark:bg-stone-700">
+          <IconUser className="size-5 text-gray-400 dark:text-stone-500" />
         </AvatarFallback>
       </Avatar>
 

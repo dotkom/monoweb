@@ -84,15 +84,15 @@ export const OnlineHero: FC = () => {
           </div>
           <div className="flex gap-4 pt-4">
             <Button
-              variant="solid"
-              color="brand"
+              variant="default"
+              size="lg"
               element="a"
               href="/bedrift/interesse"
               iconRight={<IconArrowUpRight className="size-4" />}
             >
               Ta kontakt
             </Button>
-            <Button variant="solid" element={Link} href="/om-linjeforeningen">
+            <Button variant="default" size="lg" element={Link} href="/om-linjeforeningen">
               Les mer om oss
             </Button>
           </div>

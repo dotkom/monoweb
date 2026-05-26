@@ -24,7 +24,7 @@ export const PenaltyDialog = () => {
         <section className="overflow-y-auto max-h-[60vh] p-2">
           <PenaltyRules />
         </section>
-        <AlertDialogCancel variant={"solid"} color="brand" className="w-fit mx-auto">
+        <AlertDialogCancel variant="default" color="gray" className="w-fit mx-auto">
           Jeg er inneforstått med reglene
         </AlertDialogCancel>
       </AlertDialogContent>

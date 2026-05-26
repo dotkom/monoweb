@@ -1,14 +1,6 @@
 "use client"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectTrigger,
-  SelectValue,
-} from "@dotkomonline/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@dotkomonline/ui"
 import type { ComponentPropsWithoutRef } from "react"
 import { type Control, Controller, type FieldValue, type FieldValues } from "react-hook-form"
 
@@ -29,17 +21,15 @@ export function ControlledSelect<TFieldValues extends FieldValues>({
     <Controller
       render={({ field }) => (
         <Select value={field.value} onValueChange={field.onChange}>
-          <SelectTrigger>
+          <SelectTrigger className="min-w-25">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent>
-            <SelectScrollUpButton />
+          <SelectContent className="w-fit">
             {options.map((props) => (
               <SelectItem key={props.value} value={props.value} className="hover:bg-gray-100 focus:bg-gray-100">
                 {props.children}
               </SelectItem>
             ))}
-            <SelectScrollDownButton />
           </SelectContent>
         </Select>
       )}

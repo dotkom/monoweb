@@ -4,7 +4,7 @@ import { ProfileNavigationMenu } from "./components/navigation-menu"
 
 export default function SettingsPageLayout({ children }: PropsWithChildren) {
   return (
-    <div className="flex flex-row w-full gap-4">
+    <div className="flex flex-row w-full gap-8">
       <ProfileNavigationMenu />
       <div className="grow relative">
         <MobileProfileNavigationMenu />

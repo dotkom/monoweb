@@ -68,7 +68,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
       >
         <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="relative m-0.5">
-            <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
+            <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-muted-foreground" />
             <TextInput
               className="pl-10 text-base md:text-sm border-none dark:bg-transparent"
               value={search}
@@ -82,14 +82,13 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
               const isSelected = value.includes(group.slug)
               return (
                 <Button
-                  variant="unstyled"
+                  variant="ghost"
                   key={group.slug}
                   onClick={() => handleToggle(group.slug)}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors",
-                    isSelected
-                      ? "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100"
-                      : "hover:bg-gray-100 dark:hover:bg-stone-800"
+                    "justify-between font-normal text-muted-foreground",
+                    isSelected &&
+                      "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 hover:bg-blue-200 dark:hover:bg-sky-800"
                   )}
                 >
                   <Text element="span">{group.abbreviation}</Text>

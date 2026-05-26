@@ -21,7 +21,7 @@ export const AuthNotice: FC = () => {
         <Title className="text-sm md:text-base font-bold">Feil oppsto under innlogging!</Title>
         <div className="flex flex-row justify-between gap-1.5 items-center">
           <Text>{message}</Text>
-          <Button element="a" color="brand" href={createAuthorizeUrl()} size="lg">
+          <Button element="a" variant="default" href={createAuthorizeUrl()} size="lg">
             Logg inn
             <IconLogin2 className="size-5" />
           </Button>

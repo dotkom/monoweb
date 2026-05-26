@@ -16,7 +16,7 @@ export const CourseAutocompleteSuggestionItem = ({ course, onClick }: Props) => 
       element={Link}
       href={`/emner/${course.code}`}
       className="rounded-lg p-2 items-start flex flex-col gap-1 transition-colors hover:bg-neutral-50 dark:hover:bg-stone-600 focus:bg-neutral-50 dark:focus:bg-stone-600 group outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-stone-500 ring-inset"
-      variant="text"
+      variant="ghost"
       onClick={onClick}
     >
       <Title className="text-sm font-medium text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200">

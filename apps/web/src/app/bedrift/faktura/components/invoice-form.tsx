@@ -1,6 +1,6 @@
 "use client"
 
-import { Label, TextInput, Textarea, Title } from "@dotkomonline/ui"
+import { TextInput, Textarea, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
 import { type FC, useEffect } from "react"
 import { useFormContext } from "react-hook-form"
@@ -35,145 +35,133 @@ export const InvoiceForm: FC = () => {
   }, [organizationNumber, brregMutate])
 
   return (
-    <Section as="fieldset">
-      <legend>
-        <Title element="h3">Bedriftsinformasjon</Title>
-      </legend>
-
-      <Label>
-        Organisasjonsnummer, uten mellomrom
-        <TextInput placeholder="992548045" {...register("organizationNumber")} pattern="[0-9]{9}" />
+    <Section as="fieldset" className="gap-8">
+      <Section>
+        <Title element="legend">Bedriftsinformasjon</Title>
+        <TextInput
+          label="Organisasjonsnummer, uten mellomrom"
+          placeholder="992548045"
+          {...register("organizationNumber")}
+          pattern="[0-9]{9}"
+        />
         <ErrorMessage
           name="organizationNumber"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
 
-      <Label>
-        Bedriftsnavn
-        <TextInput placeholder="Bedrift AS" {...register("companyName")} />
+        <TextInput label="Bedriftsnavn" placeholder="Bedrift AS" {...register("companyName")} />
         <ErrorMessage
           name="companyName"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
+      </Section>
 
-      <legend>
-        <Title element="h3">Kontaktperson</Title>
-      </legend>
+      <Section>
+        <Title element="legend">Kontaktperson</Title>
 
-      <Label>
-        Navn
-        <TextInput placeholder="Ola Nordmann" {...register("contactName")} />
+        <TextInput label="Navn" placeholder="Ola Nordmann" {...register("contactName")} />
         <ErrorMessage
           name="contactName"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
 
-      <Label>
-        E-post adresse
-        <TextInput placeholder="ola.nordmann@bedrift.no" type="email" {...register("contactEmail")} />
+        <TextInput
+          label="E-post adresse"
+          placeholder="ola.nordmann@bedrift.no"
+          type="email"
+          {...register("contactEmail")}
+        />
         <ErrorMessage
           name="contactEmail"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
 
-      <Label>
-        Telefonnummer
-        <TextInput placeholder="+47 444 99 55" type="tel" {...register("contactTel")} />
+        <TextInput label="Telefonnummer" placeholder="+47 444 99 55" type="tel" {...register("contactTel")} />
         <ErrorMessage
           name="contactTel"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
+      </Section>
 
-      <legend>
-        <Title element="h3">Velg anledningen fakturaen skal sendes for</Title>
-      </legend>
+      <Section>
+        <Title element="legend">Velg anledningen fakturaen skal sendes for</Title>
 
-      <Label>
-        Anledning
-        <div>
-          <ControlledSelect
-            control={control}
-            name="invoiceRelation"
-            placeholder="Velg anledning"
-            options={Object.values(InvoiceRelation).map((value) => ({
-              value,
-              children: value,
-            }))}
-          />
-        </div>
+        <ControlledSelect
+          control={control}
+          name="invoiceRelation"
+          placeholder="Velg anledning"
+          options={Object.values(InvoiceRelation).map((value) => ({
+            value,
+            children: value,
+          }))}
+        />
         <ErrorMessage
           name="invoiceRelation"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
+      </Section>
 
-      <legend>
-        <Title element="h3">Fakturainformasjon</Title>
-      </legend>
+      <Section>
+        <Title element="legend">Fakturainformasjon</Title>
 
-      <Label>
-        Ønsket leveringsmetode
-        <div>
-          <ControlledSelect
-            control={control}
-            name="preferredDeliveryMethod"
-            placeholder="Velg leveringsmetode"
-            options={Object.entries(DeliveryMethod).map(([_key, value]) => ({
-              value,
-              children: value,
-            }))}
-          />
-        </div>
+        <ControlledSelect
+          control={control}
+          name="preferredDeliveryMethod"
+          placeholder="Velg leveringsmetode"
+          options={Object.entries(DeliveryMethod).map(([_key, value]) => ({
+            value,
+            children: value,
+          }))}
+        />
         <ErrorMessage
           name="preferredDeliveryMethod"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
 
-      <Label>
-        Ønsket PO-nummer
-        <TextInput placeholder="Ingen preferanse" {...register("preferredPurchaseOrderNumber")} />
+        <TextInput
+          label="Ønsket PO-nummer"
+          placeholder="Ingen preferanse"
+          {...register("preferredPurchaseOrderNumber")}
+        />
         <ErrorMessage
           name="preferredPurchaseOrderNumber"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
 
-      <Label>
-        Ønsket antall dager til forfallsdato
-        <TextInput type="number" placeholder="Ingen preferanse" {...register("preferredDueDateLength")} />
+        <TextInput
+          label="Ønsket antall dager til forfallsdato"
+          type="number"
+          placeholder="Ingen preferanse"
+          {...register("preferredDueDateLength")}
+        />
         <ErrorMessage
           name="preferredDueDateLength"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
+      </Section>
 
-      <legend>
-        <Title element="h3">Kommentarer</Title>
-      </legend>
-      <Label>
-        Ekstra informasjon, spørsmål eller kommentarer
-        <Textarea {...register("comment")} />
+      <Section>
+        <Title element="legend">Kommentarer</Title>
+        <Textarea
+          label="Ekstra informasjon, spørsmål eller kommentarer"
+          placeholder="Ingen kommentar"
+          {...register("comment")}
+        />
         <ErrorMessage
           name="comment"
           errors={formState.errors}
           render={({ message }) => <CustomErrorMessage message={message} />}
         />
-      </Label>
+      </Section>
     </Section>
   )
 }

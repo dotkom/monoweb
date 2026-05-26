@@ -16,12 +16,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Text,
   Title,
+  ToggleGroup,
+  ToggleGroupItem,
   cn,
 } from "@dotkomonline/ui"
 import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
@@ -108,187 +106,181 @@ const EventPage = () => {
         Arrangementer
       </Title>
 
-      <Tabs
-        value={tabValue}
-        onValueChange={(nextView) => {
-          if (nextView === "calendar") {
-            navigateToView("month")
-          } else {
-            navigateToView("list")
-          }
-        }}
-      >
-        <div className={cn("flex gap-2 justify-between w-full", isCalendar ? "flex-wrap" : "")}>
-          <div className={cn("flex gap-2", isList ? "w-full" : "")}>
-            <TabsList className="dark:border-none shrink-0">
-              <TabsTrigger value="list" className="px-3 w-fit min-w-0 min-h-0">
-                <IconLayoutList className="mr-2 size-5" />
-                Liste
-              </TabsTrigger>
-              <TabsTrigger value="calendar" className="px-3 w-fit min-w-0 min-h-0">
-                <IconCalendarMonth className="mr-2 size-5" />
-                Kalender
-              </TabsTrigger>
-            </TabsList>
+      <div className={cn("flex gap-2 justify-between", isCalendar ? "flex-wrap" : "")}>
+        <div className={cn("flex gap-2", isList ? "w-full" : "")}>
+          <ToggleGroup
+            className="shrink-0 h-10"
+            multiple={false}
+            spacing={0}
+            value={[tabValue]}
+            onValueChange={(value) => {
+              const nextView = value.at(0)
+              if (nextView === "calendar") {
+                navigateToView("month")
+              }
+              if (nextView === "list") {
+                navigateToView("list")
+              }
+            }}
+          >
+            <ToggleGroupItem value="list" className="h-full">
+              <IconLayoutList className="size-4.5 mr-1" />
+              Liste
+            </ToggleGroupItem>
+            <ToggleGroupItem value="calendar" className="h-full">
+              <IconCalendarMonth className="size-4.5 mr-1" />
+              Kalender
+            </ToggleGroupItem>
+          </ToggleGroup>
 
-            {isList && (
-              <div className="flex justify-end gap-2 w-full">
-                <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
-                  <DrawerTrigger asChild className="md:hidden">
-                    <Button
-                      variant="solid"
-                      className="relative sm:px-4 rounded-lg h-11.5 w-11.5 sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
-                    >
-                      <IconFilter2 className="size-5" />
-                      <span className="hidden sm:block text-sm pl-1">Filter</span>
-                      {activeFilterCount > 0 && (
-                        <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
-                          {activeFilterCount}
+          {isList && (
+            <div className="flex justify-end gap-2 w-full">
+              <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
+                <DrawerTrigger asChild className="md:hidden">
+                  <Button
+                    variant="default"
+                    className="relative rounded-lg h-full sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                  >
+                    <IconFilter2 className="size-5" />
+                    <span className="hidden sm:block text-sm pl-1">Filter</span>
+                    {activeFilterCount > 0 && (
+                      <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
+                        {activeFilterCount}
+                      </div>
+                    )}
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <div className="px-4 overflow-y-auto max-h-[80dvh]">
+                    <DrawerHeader>
+                      <DrawerTitle className="flex items-center gap-2">
+                        <IconFilter2 className="size-[1.25em]" />
+                        Filtrer arrangementer
+                      </DrawerTitle>
+                    </DrawerHeader>
+
+                    <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
+                      <div>
+                        <div className="flex flex-col gap-2">
+                          <Text element="span" className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
+                            Sorter
+                          </Text>
+                          <SortFilter
+                            value={filters.viewModeSort}
+                            onChange={(viewModeSort) => updateFilters({ viewModeSort })}
+                          />
                         </div>
-                      )}
-                    </Button>
-                  </DrawerTrigger>
-                  <DrawerContent>
-                    <div className="px-4 overflow-y-auto max-h-[80dvh]">
-                      <DrawerHeader>
-                        <DrawerTitle className="flex items-center gap-2">
-                          <IconFilter2 className="size-[1.25em]" />
-                          Filtrer arrangementer
-                        </DrawerTitle>
-                      </DrawerHeader>
-
-                      <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
-                        <div>
-                          <div className="flex flex-col gap-2">
-                            <Text
-                              element="span"
-                              className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm"
-                            >
-                              Sorter
-                            </Text>
-                            <SortFilter
-                              value={filters.viewModeSort}
-                              onChange={(viewModeSort) => updateFilters({ viewModeSort })}
-                            />
-                          </div>
-                          <div className="mt-6">
-                            <TypeFilter
-                              value={filters.types}
-                              onChange={(types) => updateFilters({ types })}
-                              isStaff={isStaff}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="mt-6 sm:mt-0">
-                          <GroupFilter
-                            value={filters.groups}
-                            onChange={(groups) => updateFilters({ groups })}
-                            groups={groups ?? []}
+                        <div className="mt-6">
+                          <TypeFilter
+                            value={filters.types}
+                            onChange={(types) => updateFilters({ types })}
+                            isStaff={isStaff}
                           />
                         </div>
                       </div>
+
+                      <div className="mt-6 sm:mt-0">
+                        <GroupFilter
+                          value={filters.groups}
+                          onChange={(groups) => updateFilters({ groups })}
+                          groups={groups ?? []}
+                        />
+                      </div>
                     </div>
-                  </DrawerContent>
-                </Drawer>
+                  </div>
+                </DrawerContent>
+              </Drawer>
 
-                <Button
-                  onClick={() => setSearchBarOpen((v) => !v)}
-                  className="sm:hidden w-11.5 rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
-                >
-                  {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
-                </Button>
+              <Button
+                onClick={() => setSearchBarOpen((v) => !v)}
+                className="sm:hidden aspect-square h-full rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+              >
+                {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
+              </Button>
 
-                <SearchInput
-                  initialValue={filters.search}
-                  onDebouncedChange={(value) => updateFilters({ search: value })}
-                  className="hidden sm:block w-full max-w-90"
-                />
+              <SearchInput
+                initialValue={filters.search}
+                onDebouncedChange={(value) => updateFilters({ search: value })}
+                className="max-sm:hidden w-full max-w-90"
+              />
 
-                <SortFilter
-                  value={filters.viewModeSort}
-                  onChange={(viewModeSort) => updateFilters({ viewModeSort })}
-                  className="hidden md:block"
-                />
-              </div>
-            )}
-
-            {isCalendar && (
-              <>
-                <div className="hidden xs:flex gap-1 p-1.5 border border-gray-200 dark:border-none dark:bg-stone-800 rounded-lg shrink-0">
-                  <Button
-                    variant="unstyled"
-                    onClick={() => navigateToView("month")}
-                    className={cn(
-                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
-                      view === "month"
-                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
-                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
-                    )}
-                  >
-                    Måned
-                  </Button>
-                  <Button
-                    variant="unstyled"
-                    onClick={() => navigateToView("week")}
-                    className={cn(
-                      "px-3 py-1.5 rounded text-sm font-medium transition-colors",
-                      view === "week"
-                        ? "bg-gray-200 dark:bg-stone-600 cursor-default"
-                        : "hover:bg-gray-100 dark:hover:bg-stone-700"
-                    )}
-                  >
-                    Uke
-                  </Button>
-                </div>
-                <div className="xs:hidden">
-                  <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
-                    <SelectTrigger className="h-11.5 rounded-lg min-w-26 font-medium dark:border-none">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
-                      <SelectItem value="month" className="h-8 rounded-md">
-                        <Text element="span">Måned</Text>
-                      </SelectItem>
-                      <SelectItem value="week" className="h-8 rounded-md">
-                        <Text element="span">Uke</Text>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-          </div>
-
-          {view === "week" && (
-            <CalendarWeekNavigation
-              year={calendarNavigation.year}
-              weekNumber={calendarNavigation.week}
-              onNavigate={calendarNavigation.navigateWeek}
-              className="flex justify-between w-full sm:max-w-max"
-            />
+              <SortFilter
+                value={filters.viewModeSort}
+                onChange={(viewModeSort) => updateFilters({ viewModeSort })}
+                className="max-md:hidden"
+              />
+            </div>
           )}
 
-          {view === "month" && (
-            <CalendarMonthNavigation
-              year={calendarNavigation.year}
-              month={calendarNavigation.month}
-              onNavigate={calendarNavigation.navigateMonth}
-              className="flex justify-between w-full sm:max-w-max"
-            />
+          {isCalendar && (
+            <>
+              <ToggleGroup
+                className="hidden xs:flex shrink-0 h-full"
+                multiple={false}
+                spacing={0}
+                value={[view]}
+                onValueChange={(value) => {
+                  const nextView = value.at(0)
+
+                  if (nextView === "month" || nextView === "week") {
+                    navigateToView(nextView)
+                  }
+                }}
+              >
+                <ToggleGroupItem value="month" className="h-full">
+                  Måned
+                </ToggleGroupItem>
+                <ToggleGroupItem value="week" className="h-full">
+                  Uke
+                </ToggleGroupItem>
+              </ToggleGroup>
+
+              <div className="xs:hidden">
+                <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
+                  <SelectTrigger className="h-11.5 rounded-lg min-w-26 font-medium dark:border-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
+                    <SelectItem value="month" className="h-8 rounded-md">
+                      <Text element="span">Måned</Text>
+                    </SelectItem>
+                    <SelectItem value="week" className="h-8 rounded-md">
+                      <Text element="span">Uke</Text>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
           )}
         </div>
 
-        {isList && searchBarOpen && (
-          <div className="sm:hidden mt-2">
-            <SearchInput
-              initialValue={filters.search}
-              onDebouncedChange={(value) => updateFilters({ search: value })}
-            />
-          </div>
+        {view === "week" && (
+          <CalendarWeekNavigation
+            year={calendarNavigation.year}
+            weekNumber={calendarNavigation.week}
+            onNavigate={calendarNavigation.navigateWeek}
+            className="flex justify-between w-full sm:max-w-max"
+          />
         )}
 
-        <TabsContent value="list" className="md:grid md:grid-cols-[15rem_auto] md:gap-12">
+        {view === "month" && (
+          <CalendarMonthNavigation
+            year={calendarNavigation.year}
+            month={calendarNavigation.month}
+            onNavigate={calendarNavigation.navigateMonth}
+            className="flex justify-between w-full sm:max-w-max"
+          />
+        )}
+      </div>
+
+      {isList && searchBarOpen && (
+        <div className="sm:hidden mt-2">
+          <SearchInput initialValue={filters.search} onDebouncedChange={(value) => updateFilters({ search: value })} />
+        </div>
+      )}
+
+      {isList && (
+        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-12">
           <div className="max-md:hidden mt-4">
             <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
             <div className="mt-6">
@@ -345,17 +337,15 @@ const EventPage = () => {
               {isLoading && <EventListSkeleton />}
             </div>
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="calendar">
-          <div className="mt-4">
-            {view === "week" && (
-              <EventWeekCalendar year={calendarNavigation.year} weekNumber={calendarNavigation.week} />
-            )}
-            {view === "month" && <EventMonthCalendar year={calendarNavigation.year} month={calendarNavigation.month} />}
-          </div>
-        </TabsContent>
-      </Tabs>
+      {isCalendar && (
+        <div className="mt-4">
+          {view === "week" && <EventWeekCalendar year={calendarNavigation.year} weekNumber={calendarNavigation.week} />}
+          {view === "month" && <EventMonthCalendar year={calendarNavigation.year} month={calendarNavigation.month} />}
+        </div>
+      )}
     </div>
   )
 }

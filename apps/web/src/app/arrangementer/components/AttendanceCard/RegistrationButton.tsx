@@ -228,7 +228,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       disabled={disabled}
       icon={buttonIcon}
       className={cn(
-        "rounded-lg h-fit min-h-16",
+        "text-base rounded-lg h-fit min-h-16",
         disabled && "text-gray-800 dark:text-stone-300",
         getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
       )}

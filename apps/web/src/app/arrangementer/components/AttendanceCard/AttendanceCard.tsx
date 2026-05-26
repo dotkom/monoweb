@@ -253,7 +253,7 @@ export const AttendanceCard = ({
 
       <NonAttendablePoolsBox attendance={attendance} user={user} />
 
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className={cn("grid grid-cols-1 gap-4", attendee?.reserved && "sm:grid-cols-2")}>
         {attendee?.reserved && <TicketButton attendee={attendee} />}
 
         <ViewAttendeesButton

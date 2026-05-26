@@ -237,6 +237,7 @@ export function ProfilePage() {
                 <Button
                   element={Link}
                   href="/innstillinger/profil"
+                  variant="default"
                   color="dark"
                   icon={<IconEdit width={20} height={20} />}
                   className="hidden gap-2 md:flex"

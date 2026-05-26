@@ -22,7 +22,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
           <Button
             element={Link}
             href="/profil"
-            variant="text"
+            variant="ghost"
             color="dark"
             className="-mx-0.5 -my-1 text-sm text-white dark:text-black"
             iconRight={<IconArrowUpRight />}
@@ -53,7 +53,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
         <Button
           element={Link}
           href="/profil"
-          variant="text"
+          variant="ghost"
           color="red"
           className="-mx-0.5 -my-1 text-sm hover:bg-red-100 dark:hover:bg-red-950/50"
           iconRight={<IconArrowUpRight />}

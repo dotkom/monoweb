@@ -1,6 +1,6 @@
 "use client"
 
-import { Checkbox, Label, Text, TextInput, Textarea, Title } from "@dotkomonline/ui"
+import { Checkbox, Text, TextInput, Textarea, Title } from "@dotkomonline/ui"
 import { ErrorMessage } from "@hookform/error-message"
 import type { FC } from "react"
 import { Controller, useFormContext } from "react-hook-form"
@@ -59,58 +59,49 @@ export const InterestForm: FC = () => {
   return (
     <>
       <Section as="fieldset">
-        <legend>
+        <legend className="mb-4">
           <Title element="h3">Bedriftsinformasjon</Title>
         </legend>
-        <Label>
-          Bedriftsnavn
-          <TextInput placeholder="Bedrift AS" {...register("companyName")} />
-          <ErrorMessage
-            name="companyName"
-            errors={formState.errors}
-            render={({ message }) => <CustomErrorMessage message={message} />}
-          />
-        </Label>
+        <TextInput label="Bedriftsnavn" placeholder="Bedrift AS" {...register("companyName")} />
+        <ErrorMessage
+          name="companyName"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Section>
 
       <Section as="fieldset">
-        <legend>
+        <legend className="mb-4">
           <Title element="h3">Kontaktperson</Title>
         </legend>
 
-        <Label>
-          Navn
-          <TextInput placeholder="Ola Nordmann" {...register("contactName")} />
-          <ErrorMessage
-            name="contactName"
-            errors={formState.errors}
-            render={({ message }) => <CustomErrorMessage message={message} />}
-          />
-        </Label>
-
-        <Label>
-          E-postadresse
-          <TextInput placeholder="ola.nordmann@bedrift.no" type="email" {...register("contactEmail")} />
-          <ErrorMessage
-            name="contactEmail"
-            errors={formState.errors}
-            render={({ message }) => <CustomErrorMessage message={message} />}
-          />
-        </Label>
-
-        <Label>
-          Telefonnummer
-          <TextInput placeholder="+47 444 99 555" type="tel" {...register("contactTel")} />
-          <ErrorMessage
-            name="contactTel"
-            errors={formState.errors}
-            render={({ message }) => <CustomErrorMessage message={message} />}
-          />
-        </Label>
+        <TextInput label="Navn" placeholder="Ola Nordmann" {...register("contactName")} />
+        <ErrorMessage
+          name="contactName"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
+        <TextInput
+          label="E-postadresse"
+          placeholder="ola.nordmann@bedrift.no"
+          type="email"
+          {...register("contactEmail")}
+        />
+        <ErrorMessage
+          name="contactEmail"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
+        <TextInput label="Telefonnummer" placeholder="+47 444 99 555" type="tel" {...register("contactTel")} />
+        <ErrorMessage
+          name="contactTel"
+          errors={formState.errors}
+          render={({ message }) => <CustomErrorMessage message={message} />}
+        />
       </Section>
 
       <Section as="fieldset">
-        <legend>
+        <legend className="mb-4">
           <Title element="h3">Hva er dere interessert i?</Title>
         </legend>
         <Text>
@@ -118,58 +109,64 @@ export const InterestForm: FC = () => {
           aktuelle.
         </Text>
 
-        <Controller
-          control={control}
-          name="requestsCompanyPresentation"
-          render={({ field }) => (
-            <Checkbox label="Bedriftsarrangement" onCheckedChange={field.onChange} checked={field.value} />
-          )}
-        />
+        <div className="flex flex-col gap-2">
+          <Controller
+            control={control}
+            name="requestsCompanyPresentation"
+            render={({ field }) => (
+              <Checkbox label="Bedriftsarrangement" onCheckedChange={field.onChange} checked={field.value} />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="requestsCourseEvent"
-          render={({ field }) => <Checkbox label="Kurs" onCheckedChange={field.onChange} checked={field.value} />}
-        />
-        <Controller
-          control={control}
-          name="requestsTwoInOneDeal"
-          render={({ field }) => (
-            <Checkbox
-              label="Bedriftspresentasjon + Kurs (pakkedeal)"
-              onCheckedChange={field.onChange}
-              checked={field.value}
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="requestsCourseEvent"
+            render={({ field }) => <Checkbox label="Kurs" onCheckedChange={field.onChange} checked={field.value} />}
+          />
+          <Controller
+            control={control}
+            name="requestsTwoInOneDeal"
+            render={({ field }) => (
+              <Checkbox
+                label="Bedriftspresentasjon + Kurs (pakkedeal)"
+                onCheckedChange={field.onChange}
+                checked={field.value}
+              />
+            )}
+          />
 
-        <CheckboxWithTooltip
-          name="requestsInstagramTakeover"
-          label="Instagram Takeover"
-          tooltip={instagramTakeoverTooltip}
-        />
-        <CheckboxWithTooltip name="requestsExcursionParticipation" label="IT-ekskursjonen" tooltip={excursionTooltip} />
-        <CheckboxWithTooltip
-          name="requestsFemalesInTechEvent"
-          label="Samarbeidsarrangement med FeminIT"
-          tooltip={femalesInTechTooltip}
-        />
+          <CheckboxWithTooltip
+            name="requestsInstagramTakeover"
+            label="Instagram Takeover"
+            tooltip={instagramTakeoverTooltip}
+          />
+          <CheckboxWithTooltip
+            name="requestsExcursionParticipation"
+            label="IT-ekskursjonen"
+            tooltip={excursionTooltip}
+          />
+          <CheckboxWithTooltip
+            name="requestsFemalesInTechEvent"
+            label="Samarbeidsarrangement med FeminIT"
+            tooltip={femalesInTechTooltip}
+          />
 
-        <Controller
-          control={control}
-          name="requestsCollaborationEvent"
-          render={({ field }) => (
-            <Checkbox
-              label="Samarbeidsarrangement med andre linjeforeninger"
-              onCheckedChange={field.onChange}
-              checked={field.value}
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="requestsCollaborationEvent"
+            render={({ field }) => (
+              <Checkbox
+                label="Samarbeidsarrangement med andre linjeforeninger"
+                onCheckedChange={field.onChange}
+                checked={field.value}
+              />
+            )}
+          />
+        </div>
       </Section>
 
       <Section as="fieldset">
-        <legend>
+        <legend className="mb-4">
           <Title element="h3">Kommentarer</Title>
         </legend>
         <Text>
@@ -178,7 +175,7 @@ export const InterestForm: FC = () => {
         </Text>
         <Text>Dersom dere er interessert i samarbeid med andre linjeforeninger, gjerne spesifiser hvilke(n).</Text>
 
-        <Textarea {...register("comment")} />
+        <Textarea placeholder="Ingen kommentar" {...register("comment")} />
       </Section>
     </>
   )
