@@ -333,7 +333,7 @@ importers:
         version: link:../../packages/utils
       '@next/env':
         specifier: ^15.3.5
-        version: 15.5.18
+        version: 15.5.19
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.44.0(react@19.2.6)
@@ -653,7 +653,7 @@ importers:
         version: 4.1.3(react-hook-form@7.71.2(react@19.2.6))
       '@next/env':
         specifier: ^15.3.5
-        version: 15.5.18
+        version: 15.5.19
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -2394,9 +2394,6 @@ packages:
   '@mswjs/interceptors@0.40.0':
     resolution: {integrity: sha512-EFd6cVbHsgLa6wa4RljGj6Wk75qoHxUSyc5asLyyPSyuhIcdS2Q3Phw6ImS1q+CkALthJRShiYfKANcQMuMqsQ==}
     engines: {node: '>=18'}
-
-  '@next/env@15.5.18':
-    resolution: {integrity: sha512-hAV85Ckd9QR6RvH04MEKwsfLTksvFpO47j9xwtoIuvuPnlwecpSi+uZTtm8HirVbtlI2Fnz//xpcSTjFdyJk+g==}
 
   '@next/env@15.5.19':
     resolution: {integrity: sha512-sWWluFvcv5v3Fxznmf2ZfjyoVQt/64oCnYqS90inQWGzMPK1VjvekPiz3OPHKmFT30EnHrjlbyaHLt3M0vWabw==}
@@ -10175,8 +10172,6 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
-
-  '@next/env@15.5.18': {}
 
   '@next/env@15.5.19': {}
 
