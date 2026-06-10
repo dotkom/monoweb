@@ -2,6 +2,9 @@
 
 import type { Group, GroupId } from "@dotkomonline/types"
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Collapsible,
   CollapsibleContent,
@@ -11,7 +14,7 @@ import {
   TextInput,
   cn,
 } from "@dotkomonline/ui"
-import { IconCheck, IconChevronDown, IconSearch } from "@tabler/icons-react"
+import { IconCheck, IconChevronDown, IconQuestionMark, IconSearch } from "@tabler/icons-react"
 import { useMemo, useState } from "react"
 
 interface GroupFilterProps {
@@ -68,35 +71,52 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
       >
         <div className="relative flex flex-col border border-field-border rounded-xl">
           <div className="relative m-px">
-            <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-muted-foreground" />
+            <IconSearch className="w-8 md:w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-muted-foreground" />
             <TextInput
-              className="pl-10 text-base md:text-sm border-none rounded-b-none dark:bg-transparent"
+              className="pl-10 max-md:h-12 max-md:text-base border-none rounded-b-none dark:bg-transparent"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Søk etter arrangør…"
             />
           </div>
 
-          <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-field-border">
-            {filtered.map((group) => {
-              const isSelected = value.includes(group.slug)
-              return (
-                <Button
-                  variant="ghost"
-                  key={group.slug}
-                  onClick={() => handleToggle(group.slug)}
-                  className={cn(
-                    "justify-between font-normal text-muted-foreground",
-                    isSelected &&
-                      "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 hover:bg-blue-200 dark:hover:bg-sky-800"
-                  )}
-                >
-                  <Text element="span">{group.abbreviation}</Text>
-                  {isSelected && <IconCheck className="size-4" />}
-                </Button>
-              )
-            })}
-            {filtered.length === 0 && (
+          <div className="flex flex-col gap-2 md:gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-field-border">
+            {filtered.length > 0 ? (
+              filtered.map((group) => {
+                const isSelected = value.includes(group.slug)
+
+                return (
+                  <Button
+                    variant="ghost"
+                    key={group.slug}
+                    title={group.abbreviation}
+                    onClick={() => handleToggle(group.slug)}
+                    className={cn(
+                      "group/group-item max-md:h-11 md:px-1.5 justify-between font-normal text-muted-foreground",
+                      isSelected &&
+                        "bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 hover:bg-blue-200 dark:hover:bg-sky-800"
+                    )}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar size="sm" className="bg-white p-0.5 -m-0.5">
+                        <AvatarImage
+                          src={group.imageUrl ?? undefined}
+                          alt={group.name ?? group.slug}
+                          className="saturate-50 opacity-75 group-hover/group-item:saturate-100 group-hover/group-item:opacity-100 transition-all"
+                        />
+                        <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+                          <IconQuestionMark className="size-4 text-muted-foreground" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <Text element="span" className="truncate max-md:text-base">
+                        {group.abbreviation}
+                      </Text>
+                    </div>
+                    {isSelected && <IconCheck className="size-4" />}
+                  </Button>
+                )
+              })
+            ) : (
               <Text element="span" className="text-sm text-muted-foreground px-3 py-2">
                 Ingen arrangører funnet
               </Text>
