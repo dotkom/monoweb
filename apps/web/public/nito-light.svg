@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220.3 50.2">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #003b01;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <g id="NITO_Logo_Primaer_Hvit">
+    <g id="b">
+      <g>
+        <path class="cls-1" d="m0,9v40.5h48.7V.8H0v8.2h0Zm21.3,0h19.2v32.3h0L18.1,9h3.2Zm-13.1,0h0l22.4,32.3H8.2V9h0Z"/>
+        <path class="cls-1" d="m195.2,0c-13.9,0-25.1,11.3-25.1,25.1s11.3,25.1,25.1,25.1,25.1-11.3,25.1-25.1S209,0,195.2,0Zm0,41.7c-9.1,0-16.5-7.4-16.5-16.5s7.4-16.5,16.5-16.5,16.5,7.4,16.5,16.5-7.4,16.5-16.5,16.5Z"/>
+        <polygon class="cls-1" points="98 34.7 72.2 .8 65.1 .8 65.1 49.6 73.3 49.6 73.3 15.8 99 49.6 106.2 49.6 106.2 .8 98 .8 98 34.7"/>
+        <rect class="cls-1" x="116.8" y=".8" width="8.2" height="48.7"/>
+        <polygon class="cls-1" points="131.2 8.6 146.2 8.6 146.2 49.6 154.5 49.6 154.5 8.6 170 8.6 170 .8 131.2 .8 131.2 8.6"/>
+      </g>
+    </g>
+  </g>
+</svg>
