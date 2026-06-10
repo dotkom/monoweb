@@ -27,7 +27,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         tiltMaxAngleX={0.25}
         tiltMaxAngleY={0.25}
         glareMaxOpacity={0.1}
-        className="rounded-xl bg-gray-100 dark:bg-stone-800"
+        className="rounded-xl bg-gray-100 dark:bg-stone-800/50"
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
@@ -62,7 +62,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
           {event.imageUrl && hasCorrectAspectRatio !== null && !hasCorrectAspectRatio && (
             <div className="absolute right-3 top-3 z-10 hidden opacity-0 transition-opacity duration-200 md:block md:group-hover:opacity-100">
               <Button
-                variant="solid"
+                variant="default"
                 className="p-2 rounded-md bg-black/40 text-white hover:bg-black/50 dark:bg-black/40 dark:hover:bg-black/50"
                 onClick={() => setShowFullImage((prev) => !prev)}
                 aria-label={showFullImage ? "Fyll rammen" : "Se hele bildet"}
@@ -88,9 +88,9 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             href={dashboardUrl}
             target="_blank"
             rel="noopener noreferrer"
-            variant="unstyled"
-            className="w-fit p-1.5 bg-blue-100 hover:bg-blue-50 rounded-md transition-colors dark:bg-stone-700 dark:hover:bg-stone-600 gap-1.5"
+            variant="secondary"
             title="Rediger arrangement"
+            className="w-fit p-1.5 text-stone-500 dark:text-stone-500"
           >
             <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
             <Text className="md:hidden">Rediger</Text>

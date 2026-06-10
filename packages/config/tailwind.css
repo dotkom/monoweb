@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --color-brand: #0b5374;
-    --color-accent: #fab759;
+    --color-brand-accent: #fab759;
 
     --content-max-width: var(--container-7xl);
     --navbar-height: 4rem;

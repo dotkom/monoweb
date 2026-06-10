@@ -66,6 +66,7 @@
     "superjson": "^2.0.0",
     "unified": "^11.0.5",
     "use-debounce": "^10.0.5",
+    "vaul": "^1.1.2",
     "zod": "^3.25.47"
   },
   "devDependencies": {

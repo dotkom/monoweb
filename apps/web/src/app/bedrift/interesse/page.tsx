@@ -28,7 +28,7 @@ export default function InterestFormPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
+    <div className="mx-auto flex max-w-2xl flex-col gap-12 px-3 py-12">
       <Section>
         <Title element="h1">Interesseskjema for bedrifter</Title>
         <Text>Dette skjemaet skal brukes til å melde interesse for samarbeid med Online.</Text>
@@ -53,14 +53,14 @@ export default function InterestFormPage() {
         </Text>
       </Section>
       <FormProvider {...form}>
-        <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
+        <Section as="form" onSubmit={form.handleSubmit(onSubmit)} className="gap-8">
           <InterestForm />
 
-          <Button type="submit" disabled={dispatch.isPending}>
+          <Button size="lg" variant="default" type="submit" disabled={dispatch.isPending} className="w-fit">
             {dispatch.isPending ? <IconLoader2 className="animate-spin" /> : "Meld interesse"}
           </Button>
         </Section>
       </FormProvider>
-    </main>
+    </div>
   )
 }

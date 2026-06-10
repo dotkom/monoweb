@@ -21,7 +21,7 @@ export const PaymentExplanationDialog = () => {
           <Text className="text-sm">Hvordan virker betaling?</Text>
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent onOutsideClick={() => setOpen(false)}>
+      <AlertDialogContent size="lg" onOutsideClick={() => setOpen(false)}>
         <div className="flex flex-row gap-4 justify-between">
           <AlertDialogTitle className="flex flex-row gap-2 items-center justify-between font-medium" asChild>
             <Title element="h1" size="lg">

@@ -1,8 +1,13 @@
 "use client"
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@dotkomonline/ui"
+import { cn, Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@dotkomonline/ui"
 import type { EventListViewMode } from "../EventList"
 import { IconArrowsSort } from "@tabler/icons-react"
+
+const sortOptions = [
+  { value: "ATTENDANCE", label: "Påmelding" },
+  { value: "CHRONOLOGICAL", label: "Kronologisk" },
+] as const
 
 interface SortFilterProps {
   value: EventListViewMode
@@ -12,23 +17,25 @@ interface SortFilterProps {
 
 export const SortFilter = ({ value, onChange, className }: SortFilterProps) => {
   return (
-    <div className={className}>
-      <Select value={value} onValueChange={(v) => onChange(v as EventListViewMode)}>
-        <SelectTrigger className="h-11.5 rounded-lg min-w-40 md:dark:border-none">
-          <div className="flex items-center gap-2">
-            <IconArrowsSort className="size-5" /> <SelectValue />
-          </div>
+    <div className={cn("h-full flex items-center gap-2", className)}>
+      <IconArrowsSort className="size-5" />
+
+      <Select
+        items={sortOptions}
+        value={value}
+        onValueChange={(selectedValue) => onChange(selectedValue as EventListViewMode)}
+      >
+        <SelectTrigger className="h-full min-w-40">
+          <SelectValue />
         </SelectTrigger>
-        <SelectContent
-          position="item-aligned"
-          className="rounded-lg -ml-[2px] pl-[4px] py-[2px] md:dark:border-none shadow-none md:w-40"
-        >
-          <SelectItem value="ATTENDANCE" className="h-10 md:h-8 rounded-md ">
-            Påmelding
-          </SelectItem>
-          <SelectItem value="CHRONOLOGICAL" className="h-10 md:h-8 rounded-md">
-            Kronologisk
-          </SelectItem>
+        <SelectContent position="item-aligned">
+          <SelectGroup>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

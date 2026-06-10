@@ -2,18 +2,24 @@ import type { GlobalProvider } from "@ladle/react"
 import { clsx } from "clsx"
 import "@fontsource-variable/figtree/wght.css"
 import "@fontsource-variable/inter/wght.css"
-import "../../config/tailwind.css"
+import "@fontsource-variable/google-sans-code/wght.css"
+import "../src/styles/globals.css"
 
-export const Provider: GlobalProvider = ({ children, globalState }) => (
-  <div className={clsx(globalState.theme === "dark" && "dark")} data-theme={globalState.theme}>
-    {children}
-  </div>
-)
+const LIGHT_BACKGROUND = "white"
+const DARK_BACKGROUND = "#1c1917"
 
-export const argTypes = {
-  background: {
-    control: { type: "background" },
-    options: ["white", "black", "#BDBDBD"],
-    defaultValue: "#BDBDBD",
-  },
+export const Provider: GlobalProvider = ({ children, globalState }) => {
+  const isDark = globalState.theme === "dark"
+
+  return (
+    <div
+      className={clsx("p-6 rounded-lg min-h-screen text-foreground", isDark && "dark")}
+      data-theme={globalState.theme}
+      style={{
+        backgroundColor: isDark ? DARK_BACKGROUND : LIGHT_BACKGROUND,
+      }}
+    >
+      {children}
+    </div>
+  )
 }

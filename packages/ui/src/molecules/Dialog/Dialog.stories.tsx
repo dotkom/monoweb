@@ -19,7 +19,7 @@ export function AlertDialogDemo() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="solid">Open</Button>
+        <Button variant="default">Open</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -42,7 +42,7 @@ export function Destructive() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="solid">Open</Button>
+        <Button variant="default">Open</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

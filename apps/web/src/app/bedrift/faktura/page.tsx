@@ -43,7 +43,7 @@ export default function InvoicificationPage() {
         <Section as="form" onSubmit={form.handleSubmit(onSubmit)}>
           <InvoiceForm />
 
-          <Button type="submit" disabled={dispatch.isPending}>
+          <Button size="lg" variant="default" type="submit" disabled={dispatch.isPending} className="w-fit">
             {dispatch.isPending ? <IconLoader2 className="animate-spin" /> : "Send inn fakturainformasjon"}
           </Button>
         </Section>

@@ -81,7 +81,21 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
   const isLoading = suggestions === undefined
 
   return (
-    <Popover open={shouldShowPopover} onOpenChange={setIsOpen} modal={false}>
+    <Popover
+      open={shouldShowPopover}
+      onOpenChange={(open, eventDetails) => {
+        if (!open && eventDetails.reason === "outside-press") {
+          const target = (eventDetails.event as Event | undefined)?.target
+
+          if (target instanceof Node && formRef.current?.contains(target)) {
+            return
+          }
+        }
+
+        setIsOpen(open)
+      }}
+      modal={false}
+    >
       <PopoverAnchor asChild>
         <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className={className}>
           <SearchInput
@@ -99,16 +113,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
         align="start"
         side="bottom"
         aria-busy={isLoading}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onFocusOutside={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => {
-          if (formRef.current?.contains(e.target as Node)) {
-            e.preventDefault()
-            return
-          }
-
-          setIsOpen(false)
-        }}
+        initialFocus={false}
       >
         {isLoading || suggestions === undefined ? (
           <CourseAutocompleteSkeleton />

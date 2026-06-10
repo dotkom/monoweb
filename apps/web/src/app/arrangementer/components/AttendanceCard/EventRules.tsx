@@ -26,7 +26,7 @@ export const EventRules = ({ className }: EventRulesProps) => {
           <Text className="text-sm">Arrangementregler</Text>
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent onOutsideClick={() => setOpen(false)}>
+      <AlertDialogContent size="lg" onOutsideClick={() => setOpen(false)}>
         <div className="flex flex-row gap-4 justify-between">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">

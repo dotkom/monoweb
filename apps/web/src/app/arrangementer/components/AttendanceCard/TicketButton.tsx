@@ -27,15 +27,15 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
       <AlertDialogTrigger asChild>
         <Button
           onClick={() => setOpen(true)}
-          className="w-full rounded-lg h-fit min-h-16 font-medium"
-          color="light"
+          className="w-full rounded-lg h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
           icon={<IconTicket className="size-[1.25em]" />}
         >
           Vis billett
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
-        className="flex flex-col gap-4 items-center w-full p-3 sm:p-6 bg-gray-100 dark:bg-stone-700 sm:max-w-2xl rounded-2xl"
+        size="lg"
+        className="flex flex-col gap-4 items-center w-full p-3 sm:p-6 bg-gray-100 dark:bg-stone-700"
         onOutsideClick={() => setOpen(false)}
       >
         <div className="flex flex-row w-full items-center justify-between">

@@ -91,8 +91,8 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
                     )}
                   />
                 </SelectTrigger>
-                <SelectGroup>
-                  <SelectContent>
+                <SelectContent>
+                  <SelectGroup>
                     <SelectLabel className="text-gray-800 dark:text-stone-300 text-xs">
                       {attendance.selections[index].name}
                     </SelectLabel>
@@ -102,8 +102,8 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
                         {name}
                       </SelectItem>
                     ))}
-                  </SelectContent>
-                </SelectGroup>
+                  </SelectGroup>
+                </SelectContent>
               </Select>
 
               {hasError(index) && (

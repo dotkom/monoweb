@@ -36,7 +36,7 @@ const JobListingPage = async ({ params }: JobListingProps) => {
   return (
     <div className="flex flex-col gap-4">
       <Button
-        variant="text"
+        variant="ghost"
         element={Link}
         href="/karriere"
         icon={<IconArrowLeft className="size-5" />}
@@ -176,7 +176,7 @@ const ApplyButton = ({ jobListing }: ApplyButtonProps) => {
     const text = applicationLink ? "Søk" : "Søk via e-post"
 
     return (
-      <Button color="brand" element={Link} href={href} className="min-h-[6rem]">
+      <Button variant="default" element={Link} href={href} className="min-h-[6rem]">
         {text} {<IconArrowUpRight />}
       </Button>
     )

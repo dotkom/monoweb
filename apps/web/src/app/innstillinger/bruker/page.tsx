@@ -218,7 +218,7 @@ export default function MinBrukerPage() {
 
           <Button
             type="submit"
-            className="w-fit sm:col-start-2 sm:row-start-2"
+            className="w-fit h-full sm:col-start-2 sm:row-start-2"
             disabled={requestEmailChange.isPending || !newEmail}
           >
             <IconMail className="size-4" />

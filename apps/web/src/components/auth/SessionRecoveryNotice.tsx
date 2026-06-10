@@ -23,7 +23,7 @@ export const SessionRecoveryNotice: FC<SessionRecoveryNoticeProps> = ({ title, d
         <Text className="text-sm text-gray-700 dark:text-stone-300">{description}</Text>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button element="a" color="brand" href={createAuthorizeUrl(authorizeParams)} size="lg">
+        <Button element="a" variant="default" href={createAuthorizeUrl(authorizeParams)} size="lg">
           Logg inn på nytt
           <IconLogin2 className="size-5" />
         </Button>

@@ -1,5 +1,17 @@
 {
   "root": false,
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": "//"
+  "extends": "//",
+  "overrides": [
+    {
+      "includes": ["src/**/*.ts", "src/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    }
+  ]
 }

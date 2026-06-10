@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@dotkomonline/ui"
+import { Button, cn, Title } from "@dotkomonline/ui"
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 import { setISOWeek, setISOWeekYear, addWeeks, subWeeks, getISOWeek, getISOWeekYear } from "date-fns"
 import type { FC } from "react"
@@ -42,26 +42,16 @@ export const CalendarWeekNavigation: FC<WeekNavigationProps> = ({ year, weekNumb
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
-      <h2 className="text-xl">
+      <Title className="text-lg font-medium">
         Uke {weekNumber}, {year}
-      </h2>
-      <div className="flex gap-2 sm:gap-0">
-        <button
-          type="button"
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
-          onClick={handlePreviousWeek}
-          aria-label="Forrige uke"
-        >
-          <IconChevronLeft width={24} height={24} />
-        </button>
-        <button
-          type="button"
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
-          onClick={handleNextWeek}
-          aria-label="Neste uke"
-        >
-          <IconChevronRight width={24} height={24} />
-        </button>
+      </Title>
+      <div className="flex gap-2 sm:gap-1">
+        <Button className="p-1 aspect-square" onClick={handlePreviousWeek} aria-label="Forrige uke">
+          <IconChevronLeft className="size-5" />
+        </Button>
+        <Button className="p-1 aspect-square" onClick={handleNextWeek} aria-label="Neste uke">
+          <IconChevronRight className="size-5" />
+        </Button>
       </div>
     </div>
   )

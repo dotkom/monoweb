@@ -1,4 +1,4 @@
-import { Button, cn } from "@dotkomonline/ui"
+import { Button, cn, Text } from "@dotkomonline/ui"
 import type { Icon } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -18,16 +18,17 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon:
     <Button
       element={Link}
       href={slug}
-      icon={<Icon width={20} height={20} />}
-      variant="text"
-      color="light"
+      icon={<Icon className="shrink-0 size-5" />}
+      variant="ghost"
       size="lg"
       className={cn(
-        "justify-start px-3 -ml-3 py-2 rounded-md gap-2",
-        isCurrent ? "bg-gray-50 dark:bg-stone-800 font-semibold" : "text-gray-700 dark:text-stone-200"
+        "justify-start px-3 -ml-3 py-2 rounded-md gap-2.5",
+        isCurrent ? "text-foreground font-semibold" : "text-muted-foreground font-normal"
       )}
     >
-      {title}
+      <Text element="span" className="text-base">
+        {title}
+      </Text>
     </Button>
   )
 }

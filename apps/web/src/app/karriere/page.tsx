@@ -142,7 +142,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             {jobListing.title}
           </Title>
           {jobListing.featured && (
-            <Badge className="mt-2" color="gold" variant="solid">
+            <Badge className="mt-2" color="brand-accent">
               Fremhevet
             </Badge>
           )}
@@ -160,7 +160,7 @@ const CompanyAdListItem: FC<CompanyAdListItemProps> = ({ jobListing }: CompanyAd
             </div>
             <div className="flex flex-col items-end gap-1">
               <div className="text-right">
-                <Badge color={color} variant="light">
+                <Badge color={color}>
                   <Text>{translationJobTypes[jobListing.employment]}</Text>
                 </Badge>
               </div>

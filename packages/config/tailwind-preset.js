@@ -22,7 +22,7 @@ module.exports = {
         background: "var(--color-background)",
         foreground: "var(--black)",
         brand: "var(--color-brand)",
-        accent: "var(--color-accent)",
+        "brand-accent": "var(--color-brand-accent)",
       },
       keyframes: {
         "accordion-down": {

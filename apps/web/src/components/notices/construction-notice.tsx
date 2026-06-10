@@ -33,7 +33,7 @@ export const ConstructionNotice = () => {
 
         <Button
           onClick={dismiss}
-          variant="text"
+          variant="ghost"
           className="-m-1 p-2 hover:bg-yellow-100 dark:hover:bg-amber-100 rounded-lg"
         >
           <IconX className="size-5 dark:text-black" />
@@ -59,7 +59,7 @@ export const ConstructionNotice = () => {
           <Text>
             Dersom du har tilbakemeldinger eller har funnet en feil, kan du sende en e-post til{" "}
             <Button
-              variant="text"
+              variant="ghost"
               element="a"
               href="mailto:dotkom@online.ntnu.no"
               iconRight={<IconArrowUpRight width={16} height={16} />}

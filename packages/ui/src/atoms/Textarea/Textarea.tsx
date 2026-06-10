@@ -1,49 +1,63 @@
 "use client"
-import type { ComponentPropsWithRef, FC } from "react"
-import { AlertIcon } from "../../molecules/Alert/AlertIcon"
+
+import { Textarea as ShadcnTextarea } from "#components/textarea"
+import type { ComponentProps, FC, ReactNode } from "react"
+import { Label } from "../Label/Label"
 import { cn } from "../../utils"
 import { Text } from "../Typography/Text"
 
-export type TextareaProps = ComponentPropsWithRef<"textarea"> & {
+export type TextareaProps = ComponentProps<typeof ShadcnTextarea> & {
   label?: string
-  error?: string
-  message?: string
+  description?: ReactNode
+  error?: boolean | string
 }
 
-export const Textarea: FC<TextareaProps> = ({ className, error, message, label, ref, ...props }) => {
+export const Textarea: FC<TextareaProps> = ({ label, description, error, ref, className, id, ...props }) => {
+  const hasError = Boolean(error)
+  const hasTextError = typeof error === "string"
+
   return (
-    <div className="grid w-full gap-2">
+    <div className="flex flex-col gap-3 transition-colors">
       {label && (
-        <Text
-          element="label"
-          htmlFor={props.id}
+        <Label
+          htmlFor={id}
           className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400")}
         >
-          {label}
-        </Text>
+          {label}{" "}
+          {props.required && (
+            <Text element="span" className="text-red-600 dark:text-red-400">
+              *
+            </Text>
+          )}
+        </Label>
       )}
-      <textarea
+
+      {description &&
+        (typeof description === "string" || typeof description === "number" ? (
+          <Text className="text-gray-500 dark:text-stone-400 text-xs">{description}</Text>
+        ) : (
+          description
+        ))}
+
+      <ShadcnTextarea
+        id={id}
+        {...props}
+        ref={ref}
+        aria-invalid={hasError || undefined}
         className={cn(
-          "font-body flex min-h-10 w-full",
-          "px-3 py-2 rounded-md text-sm",
-          "border border-gray-200 dark:border-stone-700 dark:bg-stone-800",
-          "placeholder:text-gray-500 dark:placeholder:text-stone-400",
-          "focus:riled:cursor-not-allowed focus:outline-hidden focus:ring-2",
-          "disabled:opacity-50",
+          "rounded-lg border-gray-200 dark:border-stone-700 dark:bg-stone-800",
+          hasError && [
+            "text-red-600 border-red-300 focus-visible:ring-red-400 focus-visible:border-red-400",
+            "dark:text-red-400 dark:border-red-700 dark:focus-visible:ring-red-600 dark:focus-visible:border-red-600",
+          ],
           className
         )}
-        ref={ref}
-        {...props}
       />
-      {message && <Text>{message}</Text>}
-      {error && (
-        <div>
-          <AlertIcon size={20} status="danger" className="mr-1" />
-          <p>
-            <span className="font-bold">Error:&nbsp;</span>
-            {error}
-          </p>
-        </div>
+
+      {hasTextError && (
+        <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
+          {error}
+        </Text>
       )}
     </div>
   )

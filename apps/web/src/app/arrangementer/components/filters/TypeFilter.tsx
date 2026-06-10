@@ -53,18 +53,28 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
         )}
       >
         <div className="flex flex-col gap-2 pt-2">
-          {EVENT_TYPE_OPTIONS.map((type) => (
-            <div key={type.value} className="flex items-center gap-3">
-              <Checkbox
-                id={`type-${type.value}`}
-                checked={value.includes(type.value)}
-                onCheckedChange={() => handleToggle(type.value)}
-              />
-              <Label htmlFor={`type-${type.value}`} className="cursor-pointer font-normal">
-                {type.label}
-              </Label>
-            </div>
-          ))}
+          {EVENT_TYPE_OPTIONS.map((type) => {
+            const isSelected = value.includes(type.value)
+
+            return (
+              <div key={type.value} className="flex items-center gap-3">
+                <Checkbox
+                  id={`type-${type.value}`}
+                  checked={isSelected}
+                  onCheckedChange={() => handleToggle(type.value)}
+                />
+                <Label
+                  htmlFor={`type-${type.value}`}
+                  className={cn(
+                    "cursor-pointer font-normal text-sm text-muted-foreground hover:text-foreground",
+                    isSelected && "text-foreground"
+                  )}
+                >
+                  {type.label}
+                </Label>
+              </div>
+            )
+          })}
         </div>
       </CollapsibleContent>
     </Collapsible>

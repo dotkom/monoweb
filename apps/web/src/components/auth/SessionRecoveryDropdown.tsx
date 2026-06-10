@@ -38,7 +38,7 @@ export const SessionRecoveryDropdown: FC<SessionRecoveryDropdownProps> = ({ titl
             <Text className="text-sm text-gray-500 dark:text-stone-500">{description}</Text>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button element="a" color="brand" href={createAuthorizeUrl(authorizeParams)}>
+            <Button element="a" variant="default" href={createAuthorizeUrl(authorizeParams)}>
               <IconLogin2 className="size-5" />
               Logg inn på nytt
             </Button>

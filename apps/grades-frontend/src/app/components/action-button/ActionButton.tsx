@@ -24,7 +24,7 @@ export const ActionButton = ({ isActive, surface = "default", className, childre
 
   return (
     <Button
-      variant="text"
+      variant="ghost"
       {...props}
       className={cn(
         "text-neutral-800 dark:text-white",

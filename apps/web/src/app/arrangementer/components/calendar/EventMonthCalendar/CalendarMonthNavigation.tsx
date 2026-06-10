@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@dotkomonline/ui"
+import { Button, cn, Title } from "@dotkomonline/ui"
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 import type { FC } from "react"
 
@@ -45,26 +45,16 @@ export const CalendarMonthNavigation: FC<CalendarNavigationProps> = ({ year, mon
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
-      <h2 className="text-xl">
+      <Title className="text-lg font-medium">
         {months[month]} {year}
-      </h2>
-      <div className="flex gap-2 sm:gap-0">
-        <button
-          type="button"
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
-          onClick={handlePreviousMonth}
-          aria-label="Forrige måned"
-        >
-          <IconChevronLeft width={24} height={24} />
-        </button>
-        <button
-          type="button"
-          className="rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 flex p-3 sm:p-2 duration-200"
-          onClick={handleNextMonth}
-          aria-label="Neste måned"
-        >
-          <IconChevronRight width={24} height={24} />
-        </button>
+      </Title>
+      <div className="flex gap-2 sm:gap-1">
+        <Button onClick={handlePreviousMonth} aria-label="Forrige måned" className="p-1 aspect-square">
+          <IconChevronLeft className="size-5" />
+        </Button>
+        <Button onClick={handleNextMonth} aria-label="Neste måned" className="p-1 aspect-square">
+          <IconChevronRight className="size-5" />
+        </Button>
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
-import type { ComponentPropsWithRef, FC } from "react"
-import type { ReactNode } from "react"
+import type { ComponentPropsWithRef, FC, ReactNode } from "react"
+import { Input } from "#components/input"
+import { Label } from "#components/label"
 import { cn } from "../../utils"
 import { Text } from "../Typography/Text"
 
@@ -11,16 +12,15 @@ export type TextInputProps = ComponentPropsWithRef<"input"> & {
   className?: string
 }
 
-export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, className, ...props }) => {
+export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, className, id, ...props }) => {
   const hasError = Boolean(error)
   const hasTextError = typeof error === "string"
 
   return (
     <div className="flex flex-col gap-3 transition-colors">
       {label && (
-        <Text
-          element="label"
-          htmlFor={props.id}
+        <Label
+          htmlFor={id}
           className={cn("text-black dark:text-white", props.disabled && "text-gray-500 dark:text-stone-400")}
         >
           {label}{" "}
@@ -29,7 +29,7 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
               *
             </Text>
           )}
-        </Text>
+        </Label>
       )}
 
       {description &&
@@ -39,22 +39,17 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
           description
         ))}
 
-      <Text
-        element="input"
+      <Input
+        id={id}
         type="text"
         {...props}
         ref={ref}
+        aria-invalid={hasError || undefined}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-lg border text-left",
-          "text-black dark:text-white",
-          "placeholder:text-gray-500 dark:placeholder:text-stone-400",
-          "border-gray-200 px-3 py-2 text-sm ring-offset-background",
-          "dark:border-stone-700 dark:bg-stone-800",
-          "focus:outline-hidden focus:ring-2",
-          "disabled:cursor-not-allowed disabled:opacity-50",
+          "h-10 rounded-lg border-gray-200 dark:border-stone-700 dark:bg-stone-800",
           hasError && [
-            "text-red-600 border-red-300 focus:ring-red-400 focus:border-red-400",
-            "dark:text-red-400 dark:border-red-700 dark:focus:ring-red-600 dark:focus:border-red-600",
+            "text-red-600 border-red-300 focus-visible:ring-red-400 focus-visible:border-red-400",
+            "dark:text-red-400 dark:border-red-700 dark:focus-visible:ring-red-600 dark:focus-visible:border-red-600",
           ],
           className
         )}

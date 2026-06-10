@@ -35,6 +35,11 @@ import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 
+const GENDER_OPTIONS = GenderSchema.options.map((option) => ({
+  label: getGenderName(option),
+  value: option,
+}))
+
 export type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name" | "email">
 
 interface FormProps {
@@ -254,7 +259,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 Kjønn
               </Label>
 
-              <Select value={value ?? undefined} onValueChange={onChange}>
+              <Select value={value ?? undefined} onValueChange={onChange} items={GENDER_OPTIONS}>
                 <SelectTrigger id="gender">
                   <SelectValue
                     placeholder={user.gender ?? "Velg kjønn"}

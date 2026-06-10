@@ -65,14 +65,10 @@ const ThemeDropdown: FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors">
+      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
         <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="-mr-1 lg:-mr-3 p-1 min-w-10 rounded-2xl bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
-        sideOffset={24}
-      >
+      <DropdownMenuContent align="end" sideOffset={24} className="min-w-10 w-fit rounded-xl">
         <ThemeToggle />
       </DropdownMenuContent>
     </DropdownMenu>
@@ -120,7 +116,7 @@ const ContactDebugDropdown: FC = () => (
           </Button>
           <Button
             element={Link}
-            variant="text"
+            variant="ghost"
             href="/grupper/debug"
             rel="noopener noreferrer"
             className="w-fit text-gray-600 dark:text-stone-300"
@@ -304,7 +300,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
             <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
               {user?.name || "Bruker"}
             </Text>
-            <Text className="text-xs text-gray-600 dark:text-gray-400 truncate">{user?.email || ""}</Text>
+            <Text className="text-xs text-gray-600 dark:text-stone-400 truncate">{user?.email || ""}</Text>
           </div>
         </DropdownMenuLabel>
 
@@ -316,24 +312,24 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
               <DropdownMenuGroup className="space-y-1">
                 {group.links.map((link) => {
                   const isProfile = link.href === "/profil"
+                  const IconComponent = link.icon
 
                   return (
                     <DropdownMenuItem
                       asChild
+                      variant="uncolored"
                       onClick={() => setOpen(false)}
                       key={link.label}
                       className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
                     >
                       <Link
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-3 min-h-9 px-3"
                         href={link.href ?? "#"}
                         target={link.openInNewTab ? "_blank" : undefined}
                         rel="noreferrer"
                       >
-                        {(() => {
-                          const IconComponent = link.icon
-                          return <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-                        })()}
+                        <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+
                         <div className="flex items-center justify-between w-full">
                           <div className="flex flex-row gap-2 items-center">
                             <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
@@ -341,6 +337,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
                               <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
+
                           {link.adminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
                               <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
@@ -348,6 +345,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
                             </div>
                           )}
                         </div>
+
                         {link.openInNewTab && (
                           <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                         )}
@@ -356,31 +354,35 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
                   )
                 })}
               </DropdownMenuGroup>
-              {notLast && <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />}
+
+              {notLast && <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />}
             </Fragment>
           )
         })}
 
-        <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
+        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
         <div className="flex items-center justify-between px-3">
           <div className="flex gap-3 items-center">
             <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
             <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
           </div>
-          <ThemeToggle />
+          <div>
+            <ThemeToggle />
+          </div>
         </div>
 
-        <DropdownMenuSeparator className="my-2 bg-gray-300 dark:bg-stone-700" />
+        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
         <DropdownMenuItem
           asChild
           onClick={() => setOpen(false)}
-          className="rounded-lg hover:bg-blue-100 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+          variant="destructive"
+          className="rounded-lg cursor-pointer px-3"
         >
-          <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm">
-            <IconLogout2 className="size-5 text-red-500" />
-            <Text className="font-medium text-red-500">Logg ut</Text>
+          <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
+            <IconLogout2 className="size-5" />
+            <Text className="font-medium">Logg ut</Text>
           </a>
         </DropdownMenuItem>
       </DropdownMenuContent>

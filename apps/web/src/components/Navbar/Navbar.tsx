@@ -162,7 +162,7 @@ export const Navbar: FC = () => {
       <div
         className={cn(
           // i have no idea why i need rounded-4xl and not rounded-full
-          "h-(--navbar-height) rounded-4xl border border-blue-100 bg-blue-100/80 p-3 shadow-sm backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
+          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] border border-blue-100 bg-blue-100/80 p-3 shadow-sm backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
           "flex flex-row items-center justify-between w-full",
           showLoginButton ? "min-w-0 grow" : "w-full",
           !isLoggedIn && "rounded-r-lg"
@@ -181,12 +181,12 @@ export const Navbar: FC = () => {
       </div>
 
       {showLoginButton && (
-        <div className="flex h-(--navbar-height) shrink-0 rounded-l-lg rounded-r-4xl bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
+        <div className="flex h-(--navbar-height) shrink-0 rounded-l-lg rounded-r-[calc(var(--navbar-height)/2)] bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
           <Button
             element="a"
-            variant="solid"
-            color="brand"
-            className="h-full min-w-19 shrink-0 rounded-l-lg rounded-r-4xl py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
+            variant="default"
+            size="lg"
+            className="h-full min-w-19 shrink-0 rounded-l-lg rounded-r-[calc(var(--navbar-height)/2)] py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
             icon={<IconLogin2 className="mr-1.5 size-6" />}
           >

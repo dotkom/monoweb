@@ -105,7 +105,7 @@ export function EventFeedbackForm({ feedbackForm, attendee, preview }: FormProps
           />
         )
       })}
-      <Button type="submit" color="brand" disabled={preview}>
+      <Button type="submit" variant="default" disabled={preview}>
         Send inn
       </Button>
     </form>

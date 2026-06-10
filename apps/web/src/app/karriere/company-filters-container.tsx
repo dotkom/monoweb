@@ -57,7 +57,7 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
           label={translationJobTypes[item.name]}
           checked={item.checked}
           onCheckedChange={(checked) => {
-            item.checked = checked === "indeterminate" ? false : checked
+            item.checked = checked
             props.setChosenEmployments([...props.chosenEmployments])
           }}
         />
@@ -65,7 +65,11 @@ export const CompanyFiltersContainer: FC<CompanyFiltersContainer> = (props: Comp
     </div>
     <p className="font-semibold">Sted</p>
 
-    <Select defaultValue={props.chosenLocation} onValueChange={(e) => props.setChosenLocation(e)} name="places">
+    <Select
+      defaultValue={props.chosenLocation}
+      onValueChange={(value) => props.setChosenLocation(value ?? "")}
+      name="places"
+    >
       <SelectTrigger>
         <SelectValue placeholder={props.chosenLocation} />
       </SelectTrigger>

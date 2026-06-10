@@ -135,7 +135,7 @@ export default function MedlemskapPage() {
             </Text>
 
             <div className="flex flex-wrap gap-3">
-              <Button element="a" href={feideAuthorizeUrl} color="brand" className="w-fit px-5 py-3.5 rounded-lg">
+              <Button element="a" href={feideAuthorizeUrl} variant="default" className="w-fit px-5 py-3.5 rounded-lg">
                 <FeideIcon size={16} variant="white" />
                 <Text className="text-sm">Logg inn med FEIDE</Text>
               </Button>
@@ -177,7 +177,7 @@ export default function MedlemskapPage() {
               <Button
                 element={Link}
                 href="/innstillinger/bruker"
-                color="brand"
+                variant="default"
                 className="w-fit p-4 rounded-lg font-medium"
               >
                 <Text className="text-sm">Gå til Min bruker</Text>
