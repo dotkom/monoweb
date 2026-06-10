@@ -8,47 +8,48 @@ export type Color = (typeof COLORS)[number]
 export type BadgeColorVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>
 
 const defaultColorClasses: Record<Color, string> = {
-  brand: "border-transparent bg-brand/10 text-brand dark:bg-brand/18 dark:text-brand",
-  "brand-accent": "border-transparent bg-brand-accent/30 text-brand-accent dark:bg-brand-accent/30",
-  blue: "border-transparent bg-blue-500/10 text-blue-700 dark:bg-blue-500/30 dark:text-blue-300",
-  green: "border-transparent bg-green-500/10 text-green-700 dark:bg-green-500/30 dark:text-green-300",
-  yellow: "border-transparent bg-yellow-500/10 text-yellow-800 dark:bg-yellow-500/30 dark:text-yellow-300",
-  amber: "border-transparent bg-amber-500/10 text-amber-800 dark:bg-amber-500/30 dark:text-amber-300",
-  red: "border-transparent bg-red-500/10 text-red-700 dark:bg-red-500/30 dark:text-red-300",
-  gray: "border-transparent bg-gray-500/10 text-gray-700 dark:bg-stone-500/30 dark:text-stone-300",
+  brand: "border-transparent bg-brand/10 text-brand dark:bg-brand/15 dark:text-brand",
+  "brand-accent":
+    "border-transparent bg-brand-accent/15 text-brand-accent dark:text-brand-accent dark:bg-brand-accent/18",
+  blue: "border-transparent bg-blue-500/10 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  green: "border-transparent bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300",
+  yellow: "border-transparent bg-yellow-500/10 text-yellow-800 dark:bg-yellow-500/15 dark:text-yellow-300",
+  amber: "border-transparent bg-amber-500/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
+  red: "border-transparent bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+  gray: "border-transparent bg-gray-500/10 text-gray-700 dark:bg-stone-500/15 dark:text-stone-300",
 }
 
 const secondaryColorClasses: Record<Color, string> = {
-  brand: "border-transparent bg-brand/8 text-brand dark:bg-brand/8 dark:text-brand",
-  "brand-accent": "border-transparent bg-brand-accent/15 text-brand-accent dark:bg-brand-accent/8",
-  blue: "border-transparent bg-blue-500/8 text-blue-700 dark:bg-blue-500/8 dark:text-blue-400",
-  green: "border-transparent bg-green-500/8 text-green-700 dark:bg-green-500/8 dark:text-green-400",
-  yellow: "border-transparent bg-yellow-500/8 text-yellow-800 dark:bg-yellow-500/8 dark:text-yellow-400",
-  amber: "border-transparent bg-amber-500/8 text-amber-800 dark:bg-amber-500/8 dark:text-amber-400",
-  red: "border-transparent bg-red-500/8 text-red-700 dark:bg-red-500/8 dark:text-red-400",
-  gray: "border-transparent bg-gray-500/8 text-gray-700 dark:bg-stone-500/8 dark:text-stone-400",
+  brand: "border-brand/20 bg-brand/6 text-brand dark:bg-brand/8 dark:text-brand",
+  "brand-accent": "border-brand-accent/25 bg-brand-accent/8 text-brand-accent dark:bg-brand-accent/10",
+  blue: "border-blue-500/20 bg-blue-500/6 text-blue-700 dark:bg-blue-500/8 dark:text-blue-400",
+  green: "border-green-500/20 bg-green-500/6 text-green-700 dark:bg-green-500/8 dark:text-green-400",
+  yellow: "border-yellow-500/20 bg-yellow-500/6 text-yellow-800 dark:bg-yellow-500/8 dark:text-yellow-400",
+  amber: "border-amber-500/20 bg-amber-500/6 text-amber-800 dark:bg-amber-500/8 dark:text-amber-400",
+  red: "border-red-500/20 bg-red-500/6 text-red-700 dark:bg-red-500/8 dark:text-red-400",
+  gray: "border-border/50 bg-gray-500/6 text-gray-700 dark:bg-stone-500/8 dark:text-stone-400",
 }
 
 const outlineColorClasses: Record<Color, string> = {
-  brand: "border-brand/30 bg-transparent text-brand",
-  "brand-accent": "border-brand-accent/40 bg-transparent text-brand-accent",
-  blue: "border-blue-600/30 bg-transparent text-blue-700 dark:text-blue-400",
-  green: "border-green-600/30 bg-transparent text-green-700 dark:text-green-400",
-  yellow: "border-yellow-600/30 bg-transparent text-yellow-800 dark:text-yellow-400",
-  amber: "border-amber-600/30 bg-transparent text-amber-800 dark:text-amber-400",
-  red: "border-destructive/30 bg-transparent text-destructive",
-  gray: "border-border bg-transparent text-muted-foreground",
+  brand: "border-brand/25 bg-transparent text-brand",
+  "brand-accent": "border-brand-accent/30 bg-transparent text-brand-accent",
+  blue: "border-blue-600/25 bg-transparent text-blue-700 dark:text-blue-400",
+  green: "border-green-600/25 bg-transparent text-green-700 dark:text-green-400",
+  yellow: "border-yellow-600/25 bg-transparent text-yellow-800 dark:text-yellow-400",
+  amber: "border-amber-600/25 bg-transparent text-amber-800 dark:text-amber-400",
+  red: "border-destructive/25 bg-transparent text-destructive",
+  gray: "border-border/60 bg-transparent text-muted-foreground",
 }
 
 const ghostColorClasses: Record<Color, string> = {
-  brand: "border-transparent bg-transparent text-brand dark:text-brand hover:bg-brand/10",
-  "brand-accent": "border-transparent bg-transparent text-brand-accent dark:text-brand-accent hover:bg-brand-accent/15",
-  blue: "border-transparent bg-transparent text-blue-700 hover:bg-blue-500/10 dark:text-blue-400",
-  green: "border-transparent bg-transparent text-green-700 hover:bg-green-500/10 dark:text-green-400",
-  yellow: "border-transparent bg-transparent text-yellow-800 hover:bg-yellow-500/10 dark:text-yellow-400",
-  amber: "border-transparent bg-transparent text-amber-800 hover:bg-amber-500/10 dark:text-amber-400",
-  red: "border-transparent bg-transparent text-destructive dark:text-destructive hover:bg-destructive/10",
-  gray: "border-transparent bg-transparent text-muted-foreground hover:bg-muted",
+  brand: "border-transparent bg-transparent text-brand dark:text-brand hover:bg-brand/8",
+  "brand-accent": "border-transparent bg-transparent text-brand-accent dark:text-brand-accent hover:bg-brand-accent/10",
+  blue: "border-transparent bg-transparent text-blue-700 hover:bg-blue-500/8 dark:text-blue-400",
+  green: "border-transparent bg-transparent text-green-700 hover:bg-green-500/8 dark:text-green-400",
+  yellow: "border-transparent bg-transparent text-yellow-800 hover:bg-yellow-500/8 dark:text-yellow-400",
+  amber: "border-transparent bg-transparent text-amber-800 hover:bg-amber-500/8 dark:text-amber-400",
+  red: "border-transparent bg-transparent text-destructive dark:text-destructive hover:bg-destructive/8",
+  gray: "border-transparent bg-transparent text-muted-foreground hover:bg-muted/60",
 }
 
 const alertStatusClassMap: Record<"info" | "success" | "warning" | "danger", string> = {

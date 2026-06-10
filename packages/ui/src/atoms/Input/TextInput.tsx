@@ -10,14 +10,24 @@ export type TextInputProps = ComponentPropsWithRef<"input"> & {
   description?: ReactNode
   error?: boolean | string
   className?: string
+  containerClassName?: string
 }
 
-export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, className, id, ...props }) => {
+export const TextInput: FC<TextInputProps> = ({
+  label,
+  description,
+  error,
+  ref,
+  className,
+  id,
+  containerClassName,
+  ...props
+}) => {
   const hasError = Boolean(error)
   const hasTextError = typeof error === "string"
 
   return (
-    <div className="flex flex-col gap-3 transition-colors">
+    <div className={cn("flex flex-col gap-3 transition-colors", containerClassName)}>
       {label && (
         <Label
           htmlFor={id}
@@ -46,7 +56,6 @@ export const TextInput: FC<TextInputProps> = ({ label, description, error, ref, 
         ref={ref}
         aria-invalid={hasError || undefined}
         className={cn(
-          "h-10 rounded-lg border-gray-200 dark:border-stone-700 dark:bg-stone-800",
           hasError && [
             "text-red-600 border-red-300 focus-visible:ring-red-400 focus-visible:border-red-400",
             "dark:text-red-400 dark:border-red-700 dark:focus-visible:ring-red-600 dark:focus-visible:border-red-600",

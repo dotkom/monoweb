@@ -33,7 +33,7 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
         )}
       >
         <div className="flex items-center gap-2 h-5.5">
-          <Label className="cursor-pointer">Kategori</Label>
+          <Label className="cursor-pointer text-foreground">Kategori</Label>
           {value.length > 0 && (
             <Text
               element="span"
@@ -52,7 +52,7 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
           "data-[state=closed]:animate-collapsible-up"
         )}
       >
-        <div className="flex flex-col gap-2 pt-2">
+        <div className="flex flex-col pt-2">
           {EVENT_TYPE_OPTIONS.map((type) => {
             const isSelected = value.includes(type.value)
 
@@ -66,7 +66,7 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
                 <Label
                   htmlFor={`type-${type.value}`}
                   className={cn(
-                    "cursor-pointer font-normal text-sm text-muted-foreground hover:text-foreground",
+                    "cursor-pointer font-normal text-sm text-muted-foreground hover:text-foreground w-full py-1",
                     isSelected && "text-foreground"
                   )}
                 >

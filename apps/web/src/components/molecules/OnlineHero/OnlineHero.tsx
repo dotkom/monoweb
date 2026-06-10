@@ -92,7 +92,7 @@ export const OnlineHero: FC = () => {
             >
               Ta kontakt
             </Button>
-            <Button variant="default" size="lg" element={Link} href="/om-linjeforeningen">
+            <Button color="gray" size="lg" element={Link} href="/om-linjeforeningen">
               Les mer om oss
             </Button>
           </div>

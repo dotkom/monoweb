@@ -123,24 +123,21 @@ const EventPage = () => {
               }
             }}
           >
-            <ToggleGroupItem value="list" className="h-full">
+            <ToggleGroupItem value="list" className="h-full border-field-border">
               <IconLayoutList className="size-4.5 mr-1" />
               Liste
             </ToggleGroupItem>
-            <ToggleGroupItem value="calendar" className="h-full">
+            <ToggleGroupItem value="calendar" className="h-full border-field-border">
               <IconCalendarMonth className="size-4.5 mr-1" />
               Kalender
             </ToggleGroupItem>
           </ToggleGroup>
 
           {isList && (
-            <div className="flex justify-end gap-2 w-full">
+            <div className="flex justify-end items-stretch gap-2 w-full">
               <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                 <DrawerTrigger asChild className="md:hidden">
-                  <Button
-                    variant="default"
-                    className="relative rounded-lg h-full sm:w-fit bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
-                  >
+                  <Button variant="outline" className="relative rounded-lg size-10 sm:w-fit sm:h-full">
                     <IconFilter2 className="size-5" />
                     <span className="hidden sm:block text-sm pl-1">Filter</span>
                     {activeFilterCount > 0 && (
@@ -192,8 +189,10 @@ const EventPage = () => {
               </Drawer>
 
               <Button
+                variant="outline"
+                size="icon-xl"
                 onClick={() => setSearchBarOpen((v) => !v)}
-                className="sm:hidden aspect-square h-full rounded-lg bg-white border border-gray-200 dark:border-none dark:bg-stone-800 dark:hover:bg-stone-700"
+                className="sm:hidden"
               >
                 {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
               </Button>
@@ -227,10 +226,10 @@ const EventPage = () => {
                   }
                 }}
               >
-                <ToggleGroupItem value="month" className="h-full">
+                <ToggleGroupItem value="month" className="h-full border-field-border">
                   Måned
                 </ToggleGroupItem>
-                <ToggleGroupItem value="week" className="h-full">
+                <ToggleGroupItem value="week" className="h-full border-field-border">
                   Uke
                 </ToggleGroupItem>
               </ToggleGroup>

@@ -42,7 +42,8 @@ export const SearchInput = ({
     <div className={cn("relative", className)}>
       <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
       <TextInput
-        className="pl-10 h-stretch py-2"
+        containerClassName="h-full"
+        className="pl-10 py-2 h-full"
         placeholder={placeholder}
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}

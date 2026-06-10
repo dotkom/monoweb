@@ -24,7 +24,7 @@ export function ControlledSelect<TFieldValues extends FieldValues>({
           <SelectTrigger className="min-w-25">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-          <SelectContent className="w-fit">
+          <SelectContent>
             {options.map((props) => (
               <SelectItem key={props.value} value={props.value} className="hover:bg-gray-100 focus:bg-gray-100">
                 {props.children}

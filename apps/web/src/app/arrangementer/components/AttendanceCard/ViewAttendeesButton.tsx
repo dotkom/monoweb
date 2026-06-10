@@ -70,7 +70,9 @@ export const ViewAttendeesButton = ({
   if (!user) {
     return (
       <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <span className="inline-flex w-full">{button}</span>
+        </TooltipTrigger>
         <TooltipContent sideOffset={-10}>
           <Text>Du må være innlogget for å se påmeldte</Text>
         </TooltipContent>
@@ -81,7 +83,7 @@ export const ViewAttendeesButton = ({
   return (
     <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
-      <AlertDialogContent size="lg" className="p-0 w-full" onOutsideClick={() => setAttendeeListOpen(false)}>
+      <AlertDialogContent size="lg" className="p-0!" onOutsideClick={() => setAttendeeListOpen(false)}>
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">

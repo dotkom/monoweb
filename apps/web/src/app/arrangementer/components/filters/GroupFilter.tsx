@@ -46,7 +46,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
         )}
       >
         <div className="flex items-center gap-2 h-5.5">
-          <Label className="cursor-pointer">Arrangør</Label>
+          <Label className="cursor-pointer text-foreground">Arrangør</Label>
           {value.length > 0 && (
             <Text
               element="span"
@@ -66,18 +66,18 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
           "data-[state=closed]:animate-collapsible-up"
         )}
       >
-        <div className="relative flex flex-col border border-gray-200 dark:border-stone-700 rounded-xl">
-          <div className="relative m-0.5">
+        <div className="relative flex flex-col border border-field-border rounded-xl">
+          <div className="relative m-px">
             <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-muted-foreground" />
             <TextInput
-              className="pl-10 text-base md:text-sm border-none dark:bg-transparent"
+              className="pl-10 text-base md:text-sm border-none rounded-b-none dark:bg-transparent"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Søk etter arrangør…"
             />
           </div>
 
-          <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-gray-200 dark:border-stone-700">
+          <div className="flex flex-col gap-1 md:max-h-60 overflow-y-auto p-2 border-t border-field-border">
             {filtered.map((group) => {
               const isSelected = value.includes(group.slug)
               return (
@@ -96,6 +96,11 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                 </Button>
               )
             })}
+            {filtered.length === 0 && (
+              <Text element="span" className="text-sm text-muted-foreground px-3 py-2">
+                Ingen arrangører funnet
+              </Text>
+            )}
           </div>
         </div>
       </CollapsibleContent>

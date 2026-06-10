@@ -111,7 +111,7 @@ export function RichText({
       // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
       dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       className={cn(
-        "prose dark:prose-stone dark:prose-invert overflow-hidden",
+        "prose text-base dark:prose-stone dark:prose-invert overflow-hidden",
         "prose-a:text-blue-600 dark:prose-a:text-blue-300",
         "[&_ul>li::marker]:text-black dark:[&_ul>li::marker]:text-white",
         "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",

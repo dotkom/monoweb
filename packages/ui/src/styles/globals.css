@@ -41,6 +41,13 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-field: var(--field-bg);
+  --color-field-border: var(--field-border);
+  --radius-field: var(--field-radius);
+  --shadow-field: var(--field-shadow);
+  --shadow-overlay: var(--overlay-shadow);
+  --shadow-popover: var(--popover-shadow);
+  --shadow-surface: var(--surface-shadow);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -77,6 +84,21 @@
   --chart-4: oklch(0.371 0.03 264);
   --chart-5: oklch(0.269 0.03 264);
   --radius: 0.625rem;
+  --field-radius: var(--radius);
+  --field-bg: var(--card);
+  --field-border: oklch(0.928 0.006 264.531 / 50%);
+  --focus-ring: var(--ring);
+  --backdrop: rgba(0, 0, 0, 0.5);
+  --field-shadow:
+    0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    0 0 1px 0 rgba(0, 0, 0, 0.06);
+  --overlay-shadow:
+    0 4px 16px 0 rgba(24, 24, 27, 0.08), 0 8px 24px 0 rgba(24, 24, 27, 0.09);
+  --popover-shadow:
+    0 2px 8px 0 rgba(24, 24, 27, 0.06), 0 4px 14px 0 rgba(24, 24, 27, 0.07);
+  --surface-shadow:
+    0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    0 0 1px 0 rgba(0, 0, 0, 0.06);
   --sidebar: oklch(0.985 0.002 247.839);
   --sidebar-foreground: oklch(0.13 0.028 261.692);
   --sidebar-primary: var(--color-brand, #0b5374);
@@ -114,6 +136,14 @@
   --chart-3: oklch(0.444 0.011 73.639);
   --chart-4: oklch(0.374 0.01 67.558);
   --chart-5: oklch(0.268 0.007 34.298);
+  --field-bg: var(--card);
+  --field-border: oklch(1 0 0 / 8%);
+  --field-shadow: 0 0 0 0 transparent;
+  --overlay-shadow:
+    0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 8px 24px 0 rgba(0, 0, 0, 0.2);
+  --popover-shadow:
+    0 2px 10px 0 rgba(0, 0, 0, 0.18), 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+  --surface-shadow: 0 0 0 0 transparent;
   --sidebar: oklch(0.216 0.006 56.043);
   --sidebar-foreground: oklch(0.985 0.001 106.423);
   --sidebar-primary: var(--color-brand, #0b5374);

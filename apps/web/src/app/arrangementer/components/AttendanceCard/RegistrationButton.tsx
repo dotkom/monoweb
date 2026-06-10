@@ -68,14 +68,27 @@ const getDisabledText = (
 
   const isAttending = attendee !== null
 
-  if (!hasTurnstileToken && !isAttending) {
-    return "Du må bekrefte at du ikke er en robot"
+  if (status === "Closed") {
+    return "Påmeldingen er stengt"
+  }
+
+  if (!pool) {
+    return "Du har ingen påmeldingsgruppe"
+  }
+
+  if (registeredToParentEvent === false) {
+    return "Du er ikke påmeldt foreldrearrangementet"
+  }
+
+  if (reservedToParentEvent === false && registeredToParentEvent === true) {
+    return "Du er i kø på foreldrearrangementet"
   }
 
   if (isAttending) {
     if (isPastDeregisterDeadline && attendee.reserved) {
       return "Avmeldingsfristen har utløpt"
     }
+
     if (hasBeenCharged) {
       return "Betaling er utført. Kontakt arrangør for avmelding og refusjon"
     }
@@ -83,26 +96,20 @@ const getDisabledText = (
     return null
   }
 
+  if (!hasTurnstileToken) {
+    return "Du må bekrefte at du ikke er en robot"
+  }
+
   if (isSuspended) {
     return "Du er suspendert fra Online"
   }
+
   if (!hasMembership) {
     return "Du må ha registrert medlemskap for å melde deg på"
   }
+
   if (status === "NotOpened") {
     return "Påmeldinger har ikke åpnet"
-  }
-  if (status === "Closed") {
-    return "Påmeldingen er stengt"
-  }
-  if (!pool) {
-    return "Du har ingen påmeldingsgruppe"
-  }
-  if (registeredToParentEvent === false) {
-    return "Du er ikke påmeldt foreldrearrangementet"
-  }
-  if (reservedToParentEvent === false && registeredToParentEvent === true) {
-    return "Du er i kø på foreldrearrangementet"
   }
 
   return null
@@ -228,7 +235,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       disabled={disabled}
       icon={buttonIcon}
       className={cn(
-        "text-base rounded-lg h-fit min-h-16",
+        "text-base rounded-lg h-fit min-h-16 w-full",
         disabled && "text-gray-800 dark:text-stone-300",
         getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
       )}
@@ -271,7 +278,9 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   if (disabled) {
     return (
       <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>{registrationButton}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <span className="inline-flex w-full">{registrationButton}</span>
+        </TooltipTrigger>
         <TooltipContent sideOffset={-10}>
           <Text>{disabledText}</Text>
         </TooltipContent>
