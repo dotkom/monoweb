@@ -45,7 +45,6 @@ export const Textarea: FC<TextareaProps> = ({ label, description, error, ref, cl
         ref={ref}
         aria-invalid={hasError || undefined}
         className={cn(
-          "rounded-lg border-gray-200 dark:border-stone-700 dark:bg-stone-800",
           hasError && [
             "text-red-600 border-red-300 focus-visible:ring-red-400 focus-visible:border-red-400",
             "dark:text-red-400 dark:border-red-700 dark:focus-visible:ring-red-600 dark:focus-visible:border-red-600",

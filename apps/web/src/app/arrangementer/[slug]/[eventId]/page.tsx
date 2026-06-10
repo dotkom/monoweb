@@ -124,7 +124,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
         {childEventWithAttendance.length > 0 ? (
           <Tabs defaultValue="description">
-            <TabsList className="w-full sm:w-fit">
+            <TabsList className="w-full sm:w-fit sm:min-w-95">
               <TabsTrigger className="w-full sm:w-fit" value="description">
                 Arrangement
               </TabsTrigger>
@@ -186,7 +186,7 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
   const organizers = [...companyList, ...hostingGroups]
 
   return (
-    <div className="flex w-full flex-col gap-8 md:flex-row">
+    <div className="flex w-full flex-col gap-8 md:flex-row text-base">
       <div className="w-full flex flex-col gap-4 md:w-[60%]">
         {parentEvent && (
           <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-800">

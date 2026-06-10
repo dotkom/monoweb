@@ -90,9 +90,9 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
             rel="noopener noreferrer"
             variant="secondary"
             title="Rediger arrangement"
-            className="w-fit p-1.5 text-stone-500 dark:text-stone-500"
+            className="text-stone-500 dark:text-stone-500 max-md:w-fit md:size-8"
           >
-            <IconEdit className="size-[1.25em] md:w-6 md:h-6" />
+            <IconEdit className="size-[1.25em] md:size-6" />
             <Text className="md:hidden">Rediger</Text>
           </Button>
         )}

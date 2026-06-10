@@ -204,15 +204,14 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 Profilbilde
               </Label>
               <Text className="text-xs text-gray-500 dark:text-stone-500">
-                Maksstørrelse er {USER_IMAGE_MAX_SIZE_KIB / 1024} MiB.
+                Maksstørrelse er {(USER_IMAGE_MAX_SIZE_KIB / 1024).toFixed(1).replace(".", ",")} MiB.
               </Text>
-              <input
+              <TextInput
                 id="pfp"
                 type="file"
                 accept="image/*"
                 onChange={(event) => onFileChange(event, onChange)}
                 placeholder="https://example.com/image.jpg"
-                className="text-body px-3 py-2 border border-gray-200 rounded-md text-sm text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               />
               {errors.imageUrl && (
                 <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">

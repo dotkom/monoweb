@@ -29,48 +29,50 @@ export const buttonVariantExtensions: Record<ProjectButtonVariant, string> = {
 }
 
 export const buttonVariantOverrides: Partial<Record<ShadcnButtonVariant, string>> = {
-  default: "[a]:hover:bg-brand/80",
+  default: "[a]:hover:bg-brand/85 shadow-surface",
   secondary:
-    "hover:bg-foreground/12 dark:hover:bg-foreground/12 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+    "hover:bg-foreground/8 dark:hover:bg-foreground/10 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
   link: "text-inherit underline-offset-3 hover:underline",
 }
 
 const solid: Record<ButtonColor, string> = {
-  brand: "bg-brand text-white hover:bg-brand/70 [a]:hover:bg-brand/70 aria-expanded:bg-brand aria-expanded:text-white",
+  brand:
+    "border-0 bg-brand text-white shadow-surface hover:bg-brand/85 [a]:hover:bg-brand/85 aria-expanded:bg-brand aria-expanded:text-white",
   "brand-accent":
-    "bg-brand-accent text-black hover:bg-brand-accent/70 [a]:hover:bg-brand-accent/70 aria-expanded:bg-brand-accent aria-expanded:text-black",
-  blue: "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600",
-  red: "bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600",
-  dark: "bg-foreground text-background hover:bg-foreground/72 [a]:hover:bg-foreground/72",
-  gray: "bg-foreground/10 text-foreground hover:bg-foreground/15 dark:bg-foreground/15 dark:hover:bg-foreground/22 aria-expanded:bg-foreground/15 aria-expanded:text-foreground",
+    "border-0 bg-brand-accent text-black shadow-surface hover:bg-brand-accent/85 [a]:hover:bg-brand-accent/85 aria-expanded:bg-brand-accent aria-expanded:text-black",
+  blue: "border-0 bg-blue-600 text-white shadow-surface hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600",
+  red: "border-0 bg-red-600 text-white shadow-surface hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600",
+  dark: "border-0 bg-foreground dark:bg-foreground text-background shadow-surface hover:bg-foreground/10 hover:text-foreground dark:hover:text-foreground [a]:hover:bg-foreground/10 dark:hover:bg-foreground/15 dark:[a]:hover:bg-foreground/15",
+  gray: "border-0 bg-foreground/10 text-foreground shadow-none hover:bg-foreground/15 dark:bg-foreground/15 dark:hover:bg-foreground/22 aria-expanded:bg-foreground/15 aria-expanded:text-foreground",
 }
 
 const secondary: Record<ButtonColor, string> = {
-  brand: "bg-brand/10 text-brand hover:bg-brand/18 dark:bg-brand/8 dark:hover:bg-brand/18",
+  brand: "bg-brand/8 text-brand hover:bg-brand/14 dark:bg-brand/10 dark:hover:bg-brand/16",
   "brand-accent":
-    "bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/20 dark:bg-brand-accent/8 dark:hover:bg-brand-accent/15",
-  blue: "bg-blue-500/10 text-blue-700 hover:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/25",
-  red: "bg-red-500/10 text-red-700 hover:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/25",
-  dark: "bg-foreground/25 text-foreground hover:bg-foreground hover:text-background dark:bg-foreground/18 dark:hover:bg-foreground dark:hover:text-background",
-  gray: "bg-gray-500/10 text-foreground hover:bg-gray-500/20 dark:bg-stone-600/18 dark:hover:bg-stone-600/28",
+    "bg-brand-accent/10 text-brand-accent hover:bg-brand-accent/18 dark:bg-brand-accent/10 dark:hover:bg-brand-accent/16",
+  blue: "bg-blue-500/8 text-blue-700 hover:bg-blue-500/14 dark:text-blue-400 dark:hover:bg-blue-500/18",
+  red: "bg-red-500/8 text-red-700 hover:bg-red-500/14 dark:text-red-400 dark:hover:bg-red-500/18",
+  dark: "bg-foreground/10 text-foreground hover:bg-foreground hover:text-background dark:bg-foreground/12 dark:hover:bg-foreground dark:hover:text-background",
+  gray: "bg-gray-500/8 text-foreground hover:bg-gray-500/14 dark:bg-stone-600/12 dark:hover:bg-stone-600/18",
 }
 
 const outline: Record<ButtonColor, string> = {
-  brand: "border-brand/30 text-brand hover:bg-brand/10",
-  "brand-accent": "border-brand-accent/40 text-foreground hover:bg-brand-accent/15",
-  blue: "border-blue-600/30 text-blue-700 hover:bg-blue-500/10 dark:text-blue-400",
-  red: "border-destructive/30 text-destructive hover:bg-destructive/10",
-  dark: "border-foreground/20 hover:bg-foreground hover:text-background",
-  gray: "border-border text-foreground hover:bg-muted hover:text-foreground",
+  brand: "border-brand/30 text-brand hover:bg-brand/8",
+  "brand-accent": "border-brand-accent/35 text-foreground dark:text-brand-accent hover:bg-brand-accent/10",
+  blue: "border-blue-600/25 text-blue-700 hover:bg-blue-500/8 dark:text-blue-400",
+  red: "border-destructive/25 text-destructive hover:bg-destructive/8",
+  dark: "border-foreground/15 hover:bg-foreground dark:hover:bg-foreground hover:text-background dark:hover:text-background",
+  gray: "border-border/50 text-foreground hover:bg-muted/60 hover:text-foreground",
 }
 
 const ghost: Record<ButtonColor, string> = {
-  brand: "text-brand dark:text-brand hover:bg-brand/10",
-  "brand-accent": "text-brand-accent dark:text-brand-accent hover:bg-brand-accent/15",
-  blue: "text-blue-700 hover:bg-blue-500/10 dark:text-blue-400",
-  red: "text-red-700 hover:bg-red-500/10 dark:text-red-400",
-  dark: "hover:bg-muted hover:text-foreground",
-  gray: "text-foreground hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
+  brand: "text-brand hover:text-brand dark:text-brand hover:bg-brand/8 dark:hover:text-brand dark:hover:bg-brand/16",
+  "brand-accent":
+    "text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent hover:bg-brand-accent/10 dark:hover:bg-brand-accent/16",
+  blue: "text-blue-700 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400 hover:bg-blue-500/8 dark:hover:bg-blue-500/12",
+  red: "text-red-700 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400 hover:bg-red-500/8 dark:hover:bg-red-500/12",
+  dark: "hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background",
+  gray: "text-foreground hover:bg-muted/70 hover:text-foreground dark:hover:text-foreground dark:hover:bg-muted/80",
 }
 
 export function resolveShadcnButtonVariant(variant: ButtonVariant): ShadcnButtonVariant | null {

@@ -382,7 +382,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
         >
           <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
             <IconLogout2 className="size-5" />
-            <Text className="font-medium">Logg ut</Text>
+            <Text className="text-sm font-medium">Logg ut</Text>
           </a>
         </DropdownMenuItem>
       </DropdownMenuContent>

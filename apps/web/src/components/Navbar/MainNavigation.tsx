@@ -34,7 +34,7 @@ const DesktopNavigationLink: FC<{ link: MenuLink }> = ({ link }) => {
     return (
       <>
         <NavigationMenuTrigger>
-          <Text>{link.title}</Text>
+          <Text className="text-sm">{link.title}</Text>
         </NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className="grid w-[700px] gap-2 p-4 md:grid-cols-2">

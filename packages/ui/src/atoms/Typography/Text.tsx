@@ -35,7 +35,7 @@ const text = cva("text-inherit font-body", {
   variants: {
     size: {
       sm: "text-sm",
-      md: "text-md",
+      md: "text-base",
       lg: "text-lg",
     },
     truncate: {
@@ -43,7 +43,6 @@ const text = cva("text-inherit font-body", {
     },
   },
   defaultVariants: {
-    size: "md",
     truncate: false,
   },
 })

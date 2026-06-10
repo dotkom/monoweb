@@ -23,9 +23,9 @@ export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: Ico
           "border border-blue-200 dark:border-stone-600"
         )}
       >
-        <div className="flex w-full items-start justify-between mb-2">
-          <IconComponent className="text-3xl text-gray-700 dark:text-stone-300" />
-          <IconChevronRight className="text-xl opacity-70 text-gray-700 dark:text-stone-300" />
+        <div className="flex w-full items-start justify-between mb-1">
+          <IconComponent className="shrink-0 size-6 text-gray-700 dark:text-stone-300" />
+          <IconChevronRight className="shrink-0 size-6 opacity-70 text-gray-700 dark:text-stone-300" />
         </div>
         <span className="text-base font-medium text-gray-800 dark:text-stone-100">{title}</span>
       </Link>

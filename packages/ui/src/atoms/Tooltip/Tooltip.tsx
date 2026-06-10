@@ -8,6 +8,7 @@ import {
 } from "#components/tooltip"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 import type { ComponentProps, ReactNode } from "react"
+import { tooltipArrowClass } from "#lib/tooltip-classes"
 import { resolveAsChildRender } from "../../lib/as-child"
 import { cn } from "../../utils"
 
@@ -48,12 +49,5 @@ export function TooltipContent({ className, ...props }: ComponentProps<typeof Sh
 }
 
 export function TooltipArrow({ className }: { className?: string }) {
-  return (
-    <TooltipPrimitive.Arrow
-      className={cn(
-        "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground",
-        className
-      )}
-    />
-  )
+  return <TooltipPrimitive.Arrow className={cn(tooltipArrowClass, className)} />
 }
