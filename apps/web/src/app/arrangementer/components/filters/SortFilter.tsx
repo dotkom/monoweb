@@ -32,7 +32,7 @@ export const SortFilter = ({ value, onChange, className }: SortFilterProps) => {
         value={value}
         onValueChange={(selectedValue) => onChange(selectedValue as EventListViewMode)}
       >
-        <SelectTrigger className="rounded-lg min-w-40 font-normal h-full!">
+        <SelectTrigger className="rounded-lg min-w-40 font-normal h-10 md:h-full!">
           <span className="flex items-center gap-1.5">
             <span className="text-muted-foreground max-md:hidden">Sorter:</span>
             <SelectValue className="font-medium text-foreground" />

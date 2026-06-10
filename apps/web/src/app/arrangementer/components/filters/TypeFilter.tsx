@@ -62,11 +62,12 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
                   id={`type-${type.value}`}
                   checked={isSelected}
                   onCheckedChange={() => handleToggle(type.value)}
+                  className="max-md:size-4.5"
                 />
                 <Label
                   htmlFor={`type-${type.value}`}
                   className={cn(
-                    "cursor-pointer font-normal text-sm text-muted-foreground hover:text-foreground w-full py-1",
+                    "cursor-pointer font-normal text-base md:text-sm text-muted-foreground hover:text-foreground w-full py-1",
                     isSelected && "text-foreground"
                   )}
                 >
