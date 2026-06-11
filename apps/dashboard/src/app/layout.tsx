@@ -15,9 +15,11 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import type { PropsWithChildren } from "react"
+import { AuthorizationProvider } from "@/auth/authorization-context"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
+import type { GroupId, GroupRoleType } from "@dotkomonline/types"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -51,7 +53,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const accessToken = await getServerAccessToken()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
-  const isAdmin = accessToken !== null ? await server.user.isAdmin.query() : false
+
+  const { isAdministrator, isCommitteeMember, affiliations } =
+    accessToken !== null
+      ? await server.user.getAuthorization.query()
+      : { isAdministrator: false, isCommitteeMember: false, affiliations: {} }
+
+  const affiliationsMap = new Map<GroupId, Set<GroupRoleType>>()
+  for (const [groupId, roles] of Object.entries(affiliations)) {
+    affiliationsMap.set(groupId, new Set(roles))
+  }
 
   return (
     <html lang="no" {...mantineHtmlProps}>
@@ -65,7 +76,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               <MantineProvider defaultColorScheme="auto" theme={theme}>
                 <Notifications />
                 <ModalProvider>
-                  <ApplicationShell isAdmin={isAdmin}>{children}</ApplicationShell>
+                  <AuthorizationProvider
+                    isAdministrator={isAdministrator}
+                    isCommitteeMember={isCommitteeMember}
+                    affiliations={affiliationsMap}
+                  >
+                    <ApplicationShell>{children}</ApplicationShell>
+                  </AuthorizationProvider>
                 </ModalProvider>
               </MantineProvider>
             </QueryProvider>

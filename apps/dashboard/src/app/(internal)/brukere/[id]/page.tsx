@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import type { FC } from "react"
-import { useIsAdminQuery } from "../queries"
+import { useAuthorization } from "@/auth/authorization-context"
 import { UserEditCard } from "./edit-card"
 import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
@@ -68,7 +68,7 @@ const SIDEBAR_LINKS = [
 
 export default function UserDetailsPage() {
   const { user } = useUserDetailsContext()
-  const { isAdmin } = useIsAdminQuery()
+  const { isAdministrator } = useAuthorization()
   const router = useRouter()
 
   const searchParams = useSearchParams()
@@ -89,13 +89,13 @@ export default function UserDetailsPage() {
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
-          {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdmin).map(({ label, icon: Icon, slug }) => (
+          {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdministrator).map(({ label, icon: Icon, slug }) => (
             <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
               {label}
             </Tabs.Tab>
           ))}
         </Tabs.List>
-        {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdmin).map(({ slug, component: Component }) => (
+        {SIDEBAR_LINKS.filter((link) => !link.isAdmin || isAdministrator).map(({ slug, component: Component }) => (
           <Tabs.Panel mt="md" key={slug} value={slug}>
             <Component />
           </Tabs.Panel>
