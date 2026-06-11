@@ -1,6 +1,7 @@
 "use client"
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { VinstraffIcon } from "@/components/atoms/VinstraffIcon"
 import { env } from "@/env"
 import { type Icon, IconBuildingBank, IconBulb, IconLogin2 } from "@tabler/icons-react"
 import {
@@ -106,6 +107,12 @@ const links: MenuLink[] = [
         href: "/artikler",
         icon: IconArticle,
         description: "Artikler skrevet for og av studenter.",
+      },
+      {
+        title: "Vinstraff",
+        href: "https://vinstraff.no/",
+        icon: VinstraffIcon,
+        description: "Er det en slask på PU-gruppa di? Gi dem en vinstraff.",
       },
       {
         title: "Onlinefondet",
