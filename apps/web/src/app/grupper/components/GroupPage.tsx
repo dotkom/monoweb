@@ -1,10 +1,17 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
+import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, GroupRoleTypeEnum, type UserId, getGroupTypeName } from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { IconArrowUpRight, IconRosetteDiscountCheckFilled, IconUser, IconUsers, IconWorld } from "@tabler/icons-react"
+import {
+  IconArrowUpRight,
+  IconQuestionMark,
+  IconRosetteDiscountCheckFilled,
+  IconUser,
+  IconWorld,
+} from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
 import { WanderingMascot } from "./WanderingMascot"
@@ -117,12 +124,16 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
-        <Avatar className={cn("w-24 h-24 md:w-32 md:h-32", easterEgg?.avatarClassName)}>
-          <AvatarImage src={group.imageUrl ?? undefined} alt={name} />
-          <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-            <IconUsers width={48} height={48} />
-          </AvatarFallback>
-        </Avatar>
+        <GroupLogoAvatar
+          src={group.imageUrl}
+          alt={name}
+          className={cn("p-1 w-24 h-24 md:w-32 md:h-32", easterEgg?.avatarClassName)}
+          fallback={
+            <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
+              <IconQuestionMark className="size-12 text-muted-foreground" />
+            </AvatarFallback>
+          }
+        />
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-0.5">

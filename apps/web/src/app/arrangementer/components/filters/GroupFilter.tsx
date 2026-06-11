@@ -1,10 +1,9 @@
 "use client"
 
+import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import type { Group, GroupId } from "@dotkomonline/types"
 import {
-  Avatar,
   AvatarFallback,
-  AvatarImage,
   Button,
   Collapsible,
   CollapsibleContent,
@@ -98,16 +97,18 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                     )}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <Avatar size="sm" className="bg-white p-0.5 -m-0.5">
-                        <AvatarImage
-                          src={group.imageUrl ?? undefined}
-                          alt={group.name ?? group.slug}
-                          className="saturate-50 opacity-75 group-hover/group-item:saturate-100 group-hover/group-item:opacity-100 transition-all"
-                        />
-                        <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
-                          <IconQuestionMark className="size-4 text-muted-foreground" />
-                        </AvatarFallback>
-                      </Avatar>
+                      <GroupLogoAvatar
+                        size="sm"
+                        src={group.imageUrl}
+                        alt={group.name ?? group.slug}
+                        className="p-0.5 -m-0.5"
+                        imageClassName="saturate-50 opacity-75 group-hover/group-item:saturate-100 group-hover/group-item:opacity-100 transition-all"
+                        fallback={
+                          <AvatarFallback className="bg-gray-200 dark:bg-stone-700">
+                            <IconQuestionMark className="size-4 text-muted-foreground" />
+                          </AvatarFallback>
+                        }
+                      />
                       <Text element="span" className="truncate max-md:text-base">
                         {group.abbreviation}
                       </Text>

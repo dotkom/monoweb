@@ -1,8 +1,8 @@
+import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { type Group, createGroupPageUrl, getGroupTypeName } from "@dotkomonline/types"
 import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { IconMoonFilled } from "@tabler/icons-react"
-import Image from "next/image"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -41,25 +41,22 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       <div className="flex flex-col items-center gap-4">
         <div
           className={cn(
-            "relative bg-gray-50 group-hover:bg-white transition-all p-3 rounded-full w-36 h-36",
+            "relative transition-all rounded-full w-36 h-36",
             inactive && "opacity-50 group-hover:opacity-100"
           )}
         >
           {group.imageUrl ? (
-            <Image
+            <GroupLogo
               src={group.imageUrl}
               alt={group.abbreviation}
               height={120}
               width={120}
-              className="object-contain rounded-full"
+              containerClassName="rounded-full size-36 p-3"
             />
           ) : (
-            <OnlineIcon
-              variant="light"
-              width={100}
-              height={100}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            />
+            <div className="flex items-center justify-center bg-gray-50 dark:bg-stone-700 rounded-full size-36">
+              <OnlineIcon variant="light" width={100} height={100} />
+            </div>
           )}
         </div>
 
@@ -80,12 +77,12 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       )}
     >
       {group.imageUrl ? (
-        <Image
+        <GroupLogo
           src={group.imageUrl}
           alt={group.abbreviation}
           height={82}
           width={82}
-          className="object-contain rounded-full"
+          containerClassName="rounded-full size-[82px]"
         />
       ) : (
         <OnlineIcon width={82} height={82} />
