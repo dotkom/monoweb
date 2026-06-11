@@ -213,6 +213,13 @@ export type EnumGenderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumGenderFilter<$PrismaModel>
 }
 
+export type EnumGroupPreferredDisplayNameFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupPreferredDisplayName | Prisma.EnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  in?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel> | $Enums.GroupPreferredDisplayName
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -237,6 +244,16 @@ export type EnumGroupTypeFilter<$PrismaModel = never> = {
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
   notIn?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
+}
+
+export type EnumGroupPreferredDisplayNameWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupPreferredDisplayName | Prisma.EnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  in?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGroupPreferredDisplayNameWithAggregatesFilter<$PrismaModel> | $Enums.GroupPreferredDisplayName
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -866,6 +883,13 @@ export type NestedEnumGenderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumGenderFilter<$PrismaModel>
 }
 
+export type NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupPreferredDisplayName | Prisma.EnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  in?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel> | $Enums.GroupPreferredDisplayName
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
@@ -890,6 +914,16 @@ export type NestedEnumGroupTypeFilter<$PrismaModel = never> = {
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
   notIn?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
+}
+
+export type NestedEnumGroupPreferredDisplayNameWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupPreferredDisplayName | Prisma.EnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  in?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GroupPreferredDisplayName[] | Prisma.ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGroupPreferredDisplayNameWithAggregatesFilter<$PrismaModel> | $Enums.GroupPreferredDisplayName
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGroupPreferredDisplayNameFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

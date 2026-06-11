@@ -34,6 +34,7 @@ import {
   isAttendable,
   isAttendeeChargedAndUnrefunded,
   findFirstHostingGroupEmail,
+  getGroupDisplayName,
 } from "@dotkomonline/types"
 import {
   createAbsoluteEventPageUrl,
@@ -1069,7 +1070,7 @@ export function getAttendanceService(
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
       const url = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
-      const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
+      const groupsText = ogJoin(event.hostingGroups.map((group) => getGroupDisplayName(group)))
 
       await paymentProductsService.createOrUpdate(attendance.id, {
         description:

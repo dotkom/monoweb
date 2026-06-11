@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import { PrismaClient } from "@dotkomonline/db"
-import type { Group } from "@dotkomonline/types"
+import { getGroupDisplayName, getGroupSecondaryName, type Group } from "@dotkomonline/types"
 import type { ManagementClient } from "auth0"
 import { randomUUID } from "node:crypto"
 import { getFeideGroupsRepository } from "../../feide/feide-groups-repository"
@@ -52,6 +52,7 @@ describe("GroupService", () => {
       workspaceGroupId: null,
       showLeaderAsContact: false,
       recruitmentMethod: "AUTUMN_APPLICATION",
+      preferredDisplayName: "ABBREVIATION",
     }
     vi.spyOn(groupRepository, "findBySlug")
       .mockResolvedValueOnce(null)
@@ -62,6 +63,28 @@ describe("GroupService", () => {
     const created = await groupService.create(db, group)
     expect(created).toEqual(group)
     expect(groupRepository.create).toHaveBeenCalledWith(db, CommitteeGroupSlug.DOTKOM, group)
+  })
+
+  it("resolves display name from preferred display name setting", () => {
+    const group = {
+      abbreviation: "Appkom",
+      name: "Applikasjonskomiteen",
+      preferredDisplayName: "ABBREVIATION",
+    } as const
+
+    expect(getGroupDisplayName(group)).toBe("Appkom")
+    expect(getGroupSecondaryName(group)).toBe("Applikasjonskomiteen")
+  })
+
+  it("prefers official name when configured", () => {
+    const group = {
+      abbreviation: "Backlog",
+      name: "Backlog",
+      preferredDisplayName: "NAME",
+    } as const
+
+    expect(getGroupDisplayName(group)).toBe("Backlog")
+    expect(getGroupSecondaryName(group)).toBeNull()
   })
 
   it("does not find non-existent committees", async () => {

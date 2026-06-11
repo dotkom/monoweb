@@ -14,6 +14,7 @@ import {
   Title,
   useComputedColorScheme,
 } from "@mantine/core"
+import { getGroupDisplayName } from "@dotkomonline/types"
 import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
@@ -66,13 +67,13 @@ export const GroupMemberEditCard: FC = () => {
           {group.imageUrl && (
             <Image
               src={group.imageUrl}
-              alt={group.name ?? "Gruppens logo"}
+              alt={getGroupDisplayName(group)}
               height={24}
               width={24}
               style={{ borderRadius: "var(--mantine-radius-sm)" }}
             />
           )}
-          <Link href={`/grupper/${group.slug}`}>{group.name || group.abbreviation || "Ukjent gruppe"}</Link>
+          <Link href={`/grupper/${group.slug}`}>{getGroupDisplayName(group)}</Link>
         </Group>
         <Group gap={6}>
           Bruker:

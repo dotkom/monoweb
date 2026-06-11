@@ -16,6 +16,7 @@ import {
   type EventStatus,
   EventTypeSchema,
   type Group,
+  getGroupDisplayName,
   mapEventTypeToLabel,
 } from "@dotkomonline/types"
 import { z } from "zod"
@@ -115,7 +116,7 @@ export const useEventEditForm = ({
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangører",
         placeholder: "Velg grupper",
-        data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        data: hostingGroups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
       }),
       companyIds: createMultipleSelectInput({

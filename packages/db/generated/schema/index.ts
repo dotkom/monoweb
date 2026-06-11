@@ -50,7 +50,7 @@ export type CompanyScalarFieldEnum = z.infer<typeof CompanyScalarFieldEnumSchema
 
 // File: GroupScalarFieldEnum.schema.ts
 
-export const GroupScalarFieldEnumSchema = z.enum(['slug', 'abbreviation', 'name', 'shortDescription', 'description', 'imageUrl', 'email', 'contactUrl', 'slackUrl', 'showLeaderAsContact', 'createdAt', 'deactivatedAt', 'workspaceGroupId', 'memberVisibility', 'recruitmentMethod', 'type'])
+export const GroupScalarFieldEnumSchema = z.enum(['slug', 'abbreviation', 'name', 'preferredDisplayName', 'shortDescription', 'description', 'imageUrl', 'email', 'contactUrl', 'slackUrl', 'showLeaderAsContact', 'createdAt', 'deactivatedAt', 'workspaceGroupId', 'memberVisibility', 'recruitmentMethod', 'type'])
 
 export type GroupScalarFieldEnum = z.infer<typeof GroupScalarFieldEnumSchema>;
 
@@ -323,6 +323,12 @@ export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSc
 export const GenderSchema = z.enum(['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'UNKNOWN'])
 
 export type Gender = z.infer<typeof GenderSchema>;
+
+// File: GroupPreferredDisplayName.schema.ts
+
+export const GroupPreferredDisplayNameSchema = z.enum(['ABBREVIATION', 'NAME'])
+
+export type GroupPreferredDisplayName = z.infer<typeof GroupPreferredDisplayNameSchema>;
 
 // File: GroupMemberVisibility.schema.ts
 
@@ -749,6 +755,7 @@ const groupwhereinputSchema = z.object({
   slug: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   abbreviation: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  preferredDisplayName: z.union([z.lazy(() => EnumGroupPreferredDisplayNameFilterObjectSchema), GroupPreferredDisplayNameSchema]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   description: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   imageUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
@@ -778,6 +785,7 @@ const __makeSchema_GroupOrderByWithRelationInput_schema = () => z.object({
   slug: SortOrderSchema.optional(),
   abbreviation: SortOrderSchema.optional(),
   name: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  preferredDisplayName: SortOrderSchema.optional(),
   shortDescription: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   description: SortOrderSchema.optional(),
   imageUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
@@ -816,6 +824,7 @@ const __makeSchema_GroupOrderByWithAggregationInput_schema = () => z.object({
   slug: SortOrderSchema.optional(),
   abbreviation: SortOrderSchema.optional(),
   name: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  preferredDisplayName: SortOrderSchema.optional(),
   shortDescription: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   description: SortOrderSchema.optional(),
   imageUrl: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
@@ -846,6 +855,7 @@ const groupscalarwherewithaggregatesinputSchema = z.object({
   slug: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   abbreviation: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  preferredDisplayName: z.union([z.lazy(() => EnumGroupPreferredDisplayNameWithAggregatesFilterObjectSchema), GroupPreferredDisplayNameSchema]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   description: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   imageUrl: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
@@ -4204,6 +4214,7 @@ const __makeSchema_GroupCreateInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -4233,6 +4244,7 @@ const __makeSchema_GroupUncheckedCreateInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -4262,6 +4274,7 @@ const __makeSchema_GroupUpdateInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -4291,6 +4304,7 @@ const __makeSchema_GroupUncheckedUpdateInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -4320,6 +4334,7 @@ const __makeSchema_GroupCreateManyInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -4343,6 +4358,7 @@ const __makeSchema_GroupUpdateManyMutationInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -4366,6 +4382,7 @@ const __makeSchema_GroupUncheckedUpdateManyInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -8632,6 +8649,17 @@ export const CompanyMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.Compa
 export const CompanyMinOrderByAggregateInputObjectZodSchema = __makeSchema_CompanyMinOrderByAggregateInput_schema();
 
 
+// File: EnumGroupPreferredDisplayNameFilter.schema.ts
+const __makeSchema_EnumGroupPreferredDisplayNameFilter_schema = () => z.object({
+  equals: GroupPreferredDisplayNameSchema.optional(),
+  in: GroupPreferredDisplayNameSchema.array().optional(),
+  notIn: GroupPreferredDisplayNameSchema.array().optional(),
+  not: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema)]).optional()
+}).strict();
+export const EnumGroupPreferredDisplayNameFilterObjectSchema: z.ZodType<Prisma.EnumGroupPreferredDisplayNameFilter> = __makeSchema_EnumGroupPreferredDisplayNameFilter_schema() as unknown as z.ZodType<Prisma.EnumGroupPreferredDisplayNameFilter>;
+export const EnumGroupPreferredDisplayNameFilterObjectZodSchema = __makeSchema_EnumGroupPreferredDisplayNameFilter_schema();
+
+
 // File: BoolFilter.schema.ts
 const __makeSchema_BoolFilter_schema = () => z.object({
   equals: z.boolean().optional(),
@@ -8751,6 +8779,7 @@ const __makeSchema_GroupCountOrderByAggregateInput_schema = () => z.object({
   slug: SortOrderSchema.optional(),
   abbreviation: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
+  preferredDisplayName: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
@@ -8774,6 +8803,7 @@ const __makeSchema_GroupMaxOrderByAggregateInput_schema = () => z.object({
   slug: SortOrderSchema.optional(),
   abbreviation: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
+  preferredDisplayName: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
@@ -8797,6 +8827,7 @@ const __makeSchema_GroupMinOrderByAggregateInput_schema = () => z.object({
   slug: SortOrderSchema.optional(),
   abbreviation: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
+  preferredDisplayName: SortOrderSchema.optional(),
   shortDescription: SortOrderSchema.optional(),
   description: SortOrderSchema.optional(),
   imageUrl: SortOrderSchema.optional(),
@@ -8813,6 +8844,20 @@ const __makeSchema_GroupMinOrderByAggregateInput_schema = () => z.object({
 }).strict();
 export const GroupMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.GroupMinOrderByAggregateInput> = __makeSchema_GroupMinOrderByAggregateInput_schema() as unknown as z.ZodType<Prisma.GroupMinOrderByAggregateInput>;
 export const GroupMinOrderByAggregateInputObjectZodSchema = __makeSchema_GroupMinOrderByAggregateInput_schema();
+
+
+// File: EnumGroupPreferredDisplayNameWithAggregatesFilter.schema.ts
+const __makeSchema_EnumGroupPreferredDisplayNameWithAggregatesFilter_schema = () => z.object({
+  equals: GroupPreferredDisplayNameSchema.optional(),
+  in: GroupPreferredDisplayNameSchema.array().optional(),
+  notIn: GroupPreferredDisplayNameSchema.array().optional(),
+  not: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => NestedEnumGroupPreferredDisplayNameWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema).optional()
+}).strict();
+export const EnumGroupPreferredDisplayNameWithAggregatesFilterObjectSchema: z.ZodType<Prisma.EnumGroupPreferredDisplayNameWithAggregatesFilter> = __makeSchema_EnumGroupPreferredDisplayNameWithAggregatesFilter_schema() as unknown as z.ZodType<Prisma.EnumGroupPreferredDisplayNameWithAggregatesFilter>;
+export const EnumGroupPreferredDisplayNameWithAggregatesFilterObjectZodSchema = __makeSchema_EnumGroupPreferredDisplayNameWithAggregatesFilter_schema();
 
 
 // File: BoolWithAggregatesFilter.schema.ts
@@ -12818,6 +12863,14 @@ export const NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectSc
 export const NotificationUncheckedCreateNestedManyWithoutActorGroupInputObjectZodSchema = __makeSchema_NotificationUncheckedCreateNestedManyWithoutActorGroupInput_schema();
 
 
+// File: EnumGroupPreferredDisplayNameFieldUpdateOperationsInput.schema.ts
+const __makeSchema_EnumGroupPreferredDisplayNameFieldUpdateOperationsInput_schema = () => z.object({
+  set: GroupPreferredDisplayNameSchema.optional()
+}).strict();
+export const EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema: z.ZodType<Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput> = __makeSchema_EnumGroupPreferredDisplayNameFieldUpdateOperationsInput_schema() as unknown as z.ZodType<Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput>;
+export const EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectZodSchema = __makeSchema_EnumGroupPreferredDisplayNameFieldUpdateOperationsInput_schema();
+
+
 // File: BoolFieldUpdateOperationsInput.schema.ts
 const __makeSchema_BoolFieldUpdateOperationsInput_schema = () => z.object({
   set: z.boolean().optional()
@@ -16665,6 +16718,18 @@ export const NestedEnumGenderWithAggregatesFilterObjectSchema: z.ZodType<Prisma.
 export const NestedEnumGenderWithAggregatesFilterObjectZodSchema = nestedenumgenderwithaggregatesfilterSchema;
 
 
+// File: NestedEnumGroupPreferredDisplayNameFilter.schema.ts
+
+const nestedenumgrouppreferreddisplaynamefilterSchema = z.object({
+  equals: GroupPreferredDisplayNameSchema.optional(),
+  in: GroupPreferredDisplayNameSchema.array().optional(),
+  notIn: GroupPreferredDisplayNameSchema.array().optional(),
+  not: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema)]).optional()
+}).strict();
+export const NestedEnumGroupPreferredDisplayNameFilterObjectSchema: z.ZodType<Prisma.NestedEnumGroupPreferredDisplayNameFilter> = nestedenumgrouppreferreddisplaynamefilterSchema as unknown as z.ZodType<Prisma.NestedEnumGroupPreferredDisplayNameFilter>;
+export const NestedEnumGroupPreferredDisplayNameFilterObjectZodSchema = nestedenumgrouppreferreddisplaynamefilterSchema;
+
+
 // File: NestedBoolFilter.schema.ts
 
 
@@ -16710,6 +16775,21 @@ const nestedenumgrouptypefilterSchema = z.object({
 }).strict();
 export const NestedEnumGroupTypeFilterObjectSchema: z.ZodType<Prisma.NestedEnumGroupTypeFilter> = nestedenumgrouptypefilterSchema as unknown as z.ZodType<Prisma.NestedEnumGroupTypeFilter>;
 export const NestedEnumGroupTypeFilterObjectZodSchema = nestedenumgrouptypefilterSchema;
+
+
+// File: NestedEnumGroupPreferredDisplayNameWithAggregatesFilter.schema.ts
+
+const nestedenumgrouppreferreddisplaynamewithaggregatesfilterSchema = z.object({
+  equals: GroupPreferredDisplayNameSchema.optional(),
+  in: GroupPreferredDisplayNameSchema.array().optional(),
+  notIn: GroupPreferredDisplayNameSchema.array().optional(),
+  not: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => NestedEnumGroupPreferredDisplayNameWithAggregatesFilterObjectSchema)]).optional(),
+  _count: z.lazy(() => NestedIntFilterObjectSchema).optional(),
+  _min: z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema).optional(),
+  _max: z.lazy(() => NestedEnumGroupPreferredDisplayNameFilterObjectSchema).optional()
+}).strict();
+export const NestedEnumGroupPreferredDisplayNameWithAggregatesFilterObjectSchema: z.ZodType<Prisma.NestedEnumGroupPreferredDisplayNameWithAggregatesFilter> = nestedenumgrouppreferreddisplaynamewithaggregatesfilterSchema as unknown as z.ZodType<Prisma.NestedEnumGroupPreferredDisplayNameWithAggregatesFilter>;
+export const NestedEnumGroupPreferredDisplayNameWithAggregatesFilterObjectZodSchema = nestedenumgrouppreferreddisplaynamewithaggregatesfilterSchema;
 
 
 // File: NestedBoolWithAggregatesFilter.schema.ts
@@ -19465,6 +19545,7 @@ const __makeSchema_GroupCreateWithoutMembershipsInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -19493,6 +19574,7 @@ const __makeSchema_GroupUncheckedCreateWithoutMembershipsInput_schema = () => z.
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -19666,6 +19748,7 @@ const __makeSchema_GroupUpdateWithoutMembershipsInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -19694,6 +19777,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutMembershipsInput_schema = () => z.
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -20012,6 +20096,7 @@ const __makeSchema_GroupCreateWithoutRolesInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -20040,6 +20125,7 @@ const __makeSchema_GroupUncheckedCreateWithoutRolesInput_schema = () => z.object
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -20130,6 +20216,7 @@ const __makeSchema_GroupUpdateWithoutRolesInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -20158,6 +20245,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutRolesInput_schema = () => z.object
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -22681,6 +22769,7 @@ const __makeSchema_GroupCreateWithoutMarksInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -22709,6 +22798,7 @@ const __makeSchema_GroupUncheckedCreateWithoutMarksInput_schema = () => z.object
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -22816,6 +22906,7 @@ const __makeSchema_GroupUpdateWithoutMarksInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -22844,6 +22935,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutMarksInput_schema = () => z.object
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -23668,6 +23760,7 @@ const __makeSchema_GroupCreateWithoutEventsInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -23696,6 +23789,7 @@ const __makeSchema_GroupUncheckedCreateWithoutEventsInput_schema = () => z.objec
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -23823,6 +23917,7 @@ const __makeSchema_GroupUpdateWithoutEventsInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -23851,6 +23946,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutEventsInput_schema = () => z.objec
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -27114,6 +27210,7 @@ const __makeSchema_GroupCreateWithoutNotificationsInput_schema = () => z.object(
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -27142,6 +27239,7 @@ const __makeSchema_GroupUncheckedCreateWithoutNotificationsInput_schema = () => 
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -27443,6 +27541,7 @@ const __makeSchema_GroupUpdateWithoutNotificationsInput_schema = () => z.object(
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -27471,6 +27570,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutNotificationsInput_schema = () => 
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -27839,6 +27939,7 @@ const __makeSchema_GroupCreateWithoutContestsInput_schema = () => z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -27867,6 +27968,7 @@ const __makeSchema_GroupUncheckedCreateWithoutContestsInput_schema = () => z.obj
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.optional(),
   shortDescription: z.string().optional().nullable(),
   description: z.string(),
   imageUrl: z.string().optional().nullable(),
@@ -28087,6 +28189,7 @@ const groupscalarwhereinputSchema = z.object({
   slug: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   abbreviation: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   name: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  preferredDisplayName: z.union([z.lazy(() => EnumGroupPreferredDisplayNameFilterObjectSchema), GroupPreferredDisplayNameSchema]).optional(),
   shortDescription: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   description: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   imageUrl: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
@@ -31577,6 +31680,7 @@ const __makeSchema_GroupUpdateWithoutContestsInput_schema = () => z.object({
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -31605,6 +31709,7 @@ const __makeSchema_GroupUncheckedUpdateWithoutContestsInput_schema = () => z.obj
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -31633,6 +31738,7 @@ const __makeSchema_GroupUncheckedUpdateManyWithoutContestsInput_schema = () => z
   slug: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   abbreviation: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   name: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  preferredDisplayName: z.union([GroupPreferredDisplayNameSchema, z.lazy(() => EnumGroupPreferredDisplayNameFieldUpdateOperationsInputObjectSchema)]).optional(),
   shortDescription: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   imageUrl: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
@@ -32022,6 +32128,7 @@ const __makeSchema_GroupCountAggregateInput_schema = () => z.object({
   slug: z.literal(true).optional(),
   abbreviation: z.literal(true).optional(),
   name: z.literal(true).optional(),
+  preferredDisplayName: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
   description: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
@@ -32046,6 +32153,7 @@ const __makeSchema_GroupMinAggregateInput_schema = () => z.object({
   slug: z.literal(true).optional(),
   abbreviation: z.literal(true).optional(),
   name: z.literal(true).optional(),
+  preferredDisplayName: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
   description: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
@@ -32069,6 +32177,7 @@ const __makeSchema_GroupMaxAggregateInput_schema = () => z.object({
   slug: z.literal(true).optional(),
   abbreviation: z.literal(true).optional(),
   name: z.literal(true).optional(),
+  preferredDisplayName: z.literal(true).optional(),
   shortDescription: z.literal(true).optional(),
   description: z.literal(true).optional(),
   imageUrl: z.literal(true).optional(),
@@ -34636,6 +34745,7 @@ const __makeSchema_GroupSelect_schema = () => z.object({
   slug: z.boolean().optional(),
   abbreviation: z.boolean().optional(),
   name: z.boolean().optional(),
+  preferredDisplayName: z.boolean().optional(),
   shortDescription: z.boolean().optional(),
   description: z.boolean().optional(),
   imageUrl: z.boolean().optional(),
@@ -36764,6 +36874,7 @@ export const GroupFindFirstSelectSchema__findFirstGroup_schema: z.ZodType<Prisma
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -36790,6 +36901,7 @@ export const GroupFindFirstSelectZodSchema__findFirstGroup_schema = z.object({
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -36825,6 +36937,7 @@ export const GroupFindFirstOrThrowSelectSchema__findFirstOrThrowGroup_schema: z.
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -36851,6 +36964,7 @@ export const GroupFindFirstOrThrowSelectZodSchema__findFirstOrThrowGroup_schema 
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -36886,6 +37000,7 @@ export const GroupFindManySelectSchema__findManyGroup_schema: z.ZodType<Prisma.G
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -36912,6 +37027,7 @@ export const GroupFindManySelectZodSchema__findManyGroup_schema = z.object({
     slug: z.boolean().optional(),
     abbreviation: z.boolean().optional(),
     name: z.boolean().optional(),
+    preferredDisplayName: z.boolean().optional(),
     shortDescription: z.boolean().optional(),
     description: z.boolean().optional(),
     imageUrl: z.boolean().optional(),
@@ -44634,6 +44750,7 @@ export const GroupFindUniqueResultSchema = z.nullable(z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44660,6 +44777,7 @@ export const GroupFindFirstResultSchema = z.nullable(z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44687,6 +44805,7 @@ export const GroupFindManyResultSchema = z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44722,6 +44841,7 @@ export const GroupCreateResultSchema = z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44753,6 +44873,7 @@ export const GroupUpdateResultSchema = z.nullable(z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44784,6 +44905,7 @@ export const GroupUpsertResultSchema = z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44810,6 +44932,7 @@ export const GroupDeleteResultSchema = z.nullable(z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().optional(),
+  preferredDisplayName: z.unknown(),
   shortDescription: z.string().optional(),
   description: z.string(),
   imageUrl: z.string().optional(),
@@ -44841,6 +44964,7 @@ export const GroupAggregateResultSchema = z.object({  _count: z.object({
     slug: z.number(),
     abbreviation: z.number(),
     name: z.number(),
+    preferredDisplayName: z.number(),
     shortDescription: z.number(),
     description: z.number(),
     imageUrl: z.number(),
@@ -44909,6 +45033,7 @@ export const GroupGroupByResultSchema = z.array(z.object({
     slug: z.number(),
     abbreviation: z.number(),
     name: z.number(),
+    preferredDisplayName: z.number(),
     shortDescription: z.number(),
     description: z.number(),
     imageUrl: z.number(),
@@ -51883,6 +52008,7 @@ export const Group = z.object({
   slug: z.string(),
   abbreviation: z.string(),
   name: z.string().nullable(),
+  preferredDisplayName: GroupPreferredDisplayNameSchema.default("ABBREVIATION"),
   shortDescription: z.string().nullable(),
   description: z.string(),
   imageUrl: z.string().nullable(),

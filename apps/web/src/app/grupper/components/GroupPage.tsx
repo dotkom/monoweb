@@ -2,7 +2,15 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { type GroupMember, type GroupRole, GroupRoleTypeEnum, type UserId, getGroupTypeName } from "@dotkomonline/types"
+import {
+  type GroupMember,
+  type GroupRole,
+  GroupRoleTypeEnum,
+  type UserId,
+  getGroupDisplayName,
+  getGroupSecondaryName,
+  getGroupTypeName,
+} from "@dotkomonline/types"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -118,15 +126,16 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       return membership?.roles.some((role) => role.type === GroupRoleTypeEnum.LEADER)
     })
 
-  const name = group.name ?? group.abbreviation
-  const easterEgg = getGroupEasterEgg(name)
+  const displayName = getGroupDisplayName(group)
+  const secondaryName = getGroupSecondaryName(group)
+  const easterEgg = getGroupEasterEgg(displayName)
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
         <GroupLogoAvatar
           src={group.imageUrl}
-          alt={name}
+          alt={displayName}
           className={cn("p-1 w-24 h-24 md:w-32 md:h-32", easterEgg?.avatarClassName)}
           fallback={
             <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
@@ -139,7 +148,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           <div className="flex flex-col gap-0.5">
             <div className="flex flex-row items-center gap-4">
               <Title element="h1" size="xl">
-                {group.abbreviation}
+                {displayName}
               </Title>
 
               <Badge color="gray" className="bg-gray-100 text-gray-500 dark:text-stone-400">
@@ -147,7 +156,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               </Badge>
             </div>
 
-            <Text className="text-gray-500 dark:text-stone-400">{name}</Text>
+            {secondaryName && <Text className="text-gray-500 dark:text-stone-400">{secondaryName}</Text>}
           </div>
 
           <RichText content={group.description || "Ingen beskrivelse"} />
@@ -228,7 +237,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       )}
 
       <div className="flex flex-col gap-4">
-        <Title>{group.abbreviation ? `${group.abbreviation}s` : "Gruppens"} arrangementer</Title>
+        <Title>{displayName ? `${displayName}s` : "Gruppens"} arrangementer</Title>
         <EventList
           futureEventWithAttendances={futureEventWithAttendances.items}
           pastEventWithAttendances={pastEventWithAttendances.items}

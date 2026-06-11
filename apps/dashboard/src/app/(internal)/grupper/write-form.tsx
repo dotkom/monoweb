@@ -9,11 +9,13 @@ import {
   GROUP_IMAGE_MAX_SIZE_KIB,
   type GroupId,
   GroupMemberVisibilitySchema,
+  GroupPreferredDisplayNameSchema,
   GroupRecruitmentMethodSchema,
   GroupTypeSchema,
   type GroupWrite,
   GroupWriteSchema,
   getGroupMemberVisibilityName,
+  getGroupPreferredDisplayNameLabel,
   getGroupRecruitmentMethodName,
   getGroupTypeName,
 } from "@dotkomonline/types"
@@ -34,6 +36,7 @@ type FormResult = z.infer<typeof FormSchema>
 const DEFAULT_VALUES: Partial<FormResult> = {
   imageUrl: null,
   recruitmentMethod: "NONE",
+  preferredDisplayName: "ABBREVIATION",
 }
 
 interface UseGroupWriteFormProps {
@@ -91,6 +94,17 @@ export const useGroupWriteForm = ({
         placeholder: "Dotkom",
         withAsterisk: true,
         required: true,
+      }),
+      preferredDisplayName: createSelectInput({
+        label: "Visningsnavn",
+        description: "Dette er navnet som vises på nettsiden.",
+        placeholder: "Velg en",
+        withAsterisk: true,
+        required: true,
+        data: Object.values(GroupPreferredDisplayNameSchema.Values).map((preferredDisplayName) => ({
+          value: preferredDisplayName,
+          label: getGroupPreferredDisplayNameLabel(preferredDisplayName),
+        })),
       }),
       description: createRichTextInput({
         label: "Beskrivelse",
@@ -182,6 +196,14 @@ const validateGroupWrite = (group: FormResult, existingGroupSlugs: GroupId[], in
       code: "custom",
       message: "Slug er opptatt",
       path: ["slug"],
+    })
+  }
+
+  if (group.preferredDisplayName === "NAME" && !group.name?.trim()) {
+    issues.push({
+      code: "custom",
+      message: "Offisielt navn må fylles ut når det er valgt som visningsnavn",
+      path: ["name"],
     })
   }
 

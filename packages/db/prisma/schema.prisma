@@ -167,23 +167,31 @@ enum GroupRecruitmentMethod {
   OTHER              @map("OTHER")
 }
 
+enum GroupPreferredDisplayName {
+  ABBREVIATION @map("ABBREVIATION")
+  NAME         @map("NAME")
+
+  @@map("group_preferred_display_name")
+}
+
 model Group {
-  slug                String                 @id @unique
-  abbreviation        String
-  name                String?
-  shortDescription    String?                @map("short_description")
-  description         String
-  imageUrl            String?                @map("image_url")
-  email               String?
-  contactUrl          String?                @map("contact_url")
-  slackUrl            String?                @map("slack_url")
-  showLeaderAsContact Boolean                @default(false) @map("show_leader_as_contact")
-  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
-  deactivatedAt       DateTime?              @map("deactivated_at")
-  workspaceGroupId    String?                @unique @map("workspace_group_id")
-  memberVisibility    GroupMemberVisibility  @default(ALL_MEMBERS) @map("member_visibility")
-  recruitmentMethod   GroupRecruitmentMethod @default(NONE) @map("recruitment_method")
-  type                GroupType
+  slug                 String                    @id @unique
+  abbreviation         String
+  name                 String?
+  preferredDisplayName GroupPreferredDisplayName @default(ABBREVIATION) @map("preferred_display_name")
+  shortDescription     String?                   @map("short_description")
+  description          String
+  imageUrl             String?                   @map("image_url")
+  email                String?
+  contactUrl           String?                   @map("contact_url")
+  slackUrl             String?                   @map("slack_url")
+  showLeaderAsContact  Boolean                   @default(false) @map("show_leader_as_contact")
+  createdAt            DateTime                  @default(now()) @map("created_at") @db.Timestamptz(3)
+  deactivatedAt        DateTime?                 @map("deactivated_at")
+  workspaceGroupId     String?                   @unique @map("workspace_group_id")
+  memberVisibility     GroupMemberVisibility     @default(ALL_MEMBERS) @map("member_visibility")
+  recruitmentMethod    GroupRecruitmentMethod    @default(NONE) @map("recruitment_method")
+  type                 GroupType
 
   events        EventHostingGroup[]
   contests      Contest[]           @relation("ContestOrganizerGroups")

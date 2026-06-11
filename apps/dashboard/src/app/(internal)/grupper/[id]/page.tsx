@@ -1,5 +1,6 @@
 "use client"
 
+import { getGroupDisplayName } from "@dotkomonline/types"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -53,7 +54,7 @@ export default function GroupDetailsPage() {
     <Box>
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>{group.name}</Title>
+        <Title>{getGroupDisplayName(group)}</Title>
       </Group>
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
