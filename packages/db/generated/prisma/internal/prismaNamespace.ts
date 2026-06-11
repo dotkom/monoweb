@@ -3435,6 +3435,7 @@ export const GroupScalarFieldEnum = {
   slug: 'slug',
   abbreviation: 'abbreviation',
   name: 'name',
+  preferredDisplayName: 'preferredDisplayName',
   shortDescription: 'shortDescription',
   description: 'description',
   imageUrl: 'imageUrl',
@@ -4038,6 +4039,20 @@ export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
  * Reference to a field of type 'Gender[]'
  */
 export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+    
+
+
+/**
+ * Reference to a field of type 'GroupPreferredDisplayName'
+ */
+export type EnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupPreferredDisplayName'>
+    
+
+
+/**
+ * Reference to a field of type 'GroupPreferredDisplayName[]'
+ */
+export type ListEnumGroupPreferredDisplayNameFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupPreferredDisplayName[]'>
     
 
 

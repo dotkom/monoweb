@@ -4,7 +4,7 @@ import { createNumberInput } from "@/components/forms/NumberInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { useTRPC } from "@/lib/trpc-client"
-import { DEFAULT_MARK_DURATION, GroupSchema } from "@dotkomonline/types"
+import { DEFAULT_MARK_DURATION, getGroupDisplayName, GroupSchema } from "@dotkomonline/types"
 import { useQuery } from "@tanstack/react-query"
 import z from "zod"
 
@@ -93,7 +93,7 @@ export const useMarkWriteForm = ({
         placeholder: "Velg grupper",
         data: (groups ?? []).map((group) => ({
           value: group.slug,
-          label: group.abbreviation,
+          label: getGroupDisplayName(group),
         })),
       }),
       duration: createNumberInput({
