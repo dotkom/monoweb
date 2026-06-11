@@ -2,6 +2,7 @@
 
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
@@ -39,8 +40,8 @@ import {
   IconLock,
   IconMail,
   IconPhone,
-  IconPhoto,
   IconPointFilled,
+  IconQuestionMark,
   IconUser,
 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
@@ -386,15 +387,24 @@ export function ProfilePage() {
                 href={group.pageUrl}
                 className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
               >
-                <Avatar className="w-14 h-14">
-                  <AvatarImage src={group.imageUrl ?? undefined} />
-                  <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
-                    <IconPhoto width={32} height={32} />
-                  </AvatarFallback>
-                </Avatar>
+                <GroupLogoAvatar
+                  src={group.imageUrl}
+                  alt={group.name ?? group.abbreviation}
+                  className="w-14 h-14 p-0.75"
+                  fallback={
+                    <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
+                      <IconQuestionMark className="size-8 text-muted-foreground" />
+                    </AvatarFallback>
+                  }
+                />
                 <div className="flex flex-col gap-0.5 grow min-w-0">
                   <Text className="text-lg">{group.name}</Text>
-                  <RichText maxLines={3} className="line-clamp-2" hideToggleButton={true} content={group.description} />
+                  <RichText
+                    maxLines={3}
+                    className="line-clamp-2 text-muted-foreground"
+                    hideToggleButton={true}
+                    content={group.description}
+                  />
                 </div>
               </Link>
             ))}

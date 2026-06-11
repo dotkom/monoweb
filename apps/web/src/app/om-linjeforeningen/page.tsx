@@ -1,3 +1,4 @@
+import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
 import type { Group } from "@dotkomonline/types"
@@ -109,23 +110,17 @@ type CardProps = {
 
 const Card: FC<CardProps> = ({ imageUrl, title, description }: CardProps) => {
   return (
-    <li className="flex items-center text-left">
-      <div className="w-[150px] mr-4 shrink-0">
+    <li className="flex gap-3 text-left">
+      <div className="shrink-0">
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={title}
-            className="object-contain h-auto rounded-full dark:invert"
-            width={150}
-            height={150}
-          />
+          <GroupLogo src={imageUrl} alt={title} width={112} height={112} containerClassName="rounded-full size-29.5" />
         ) : (
-          <OnlineIcon width={150} height={150} />
+          <OnlineIcon width={112} height={112} />
         )}
       </div>
       <div className="grow min-w-0">
         <Title>{title}</Title>
-        <RichText maxLines={5} className="line-clamp-4" content={description} hideToggleButton={true} />
+        <RichText maxLines={3} content={description} hideToggleButton={true} />
       </div>
     </li>
   )

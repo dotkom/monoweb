@@ -1,4 +1,5 @@
 import { getServerSession } from "@/auth"
+import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
@@ -7,14 +8,13 @@ import {
   type Company,
   type Event,
   type Group,
-  type GroupType,
   type Punishment,
   type User,
   createGroupPageUrl,
   getAttendanceCapacity,
   getReservedAttendeeCount,
 } from "@dotkomonline/types"
-import { cn, Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
   createAbsoluteEventPageUrl,
   createEventPageUrl,
@@ -23,7 +23,6 @@ import {
 } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import type { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
@@ -33,8 +32,6 @@ import { EventList } from "../../components/EventList"
 import { SixtySevenShake } from "../../components/SixtySevenShake"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
 
-type OrganizerType = GroupType | "COMPANY"
-
 const createOrganizerPageUrl = (item: Group | Company) => {
   if ("type" in item) {
     return createGroupPageUrl(item)
@@ -43,20 +40,19 @@ const createOrganizerPageUrl = (item: Group | Company) => {
   return `/bedrifter/${item.slug}`
 }
 
-const mapToImageAndName = (item: Group | Company, type: OrganizerType) => (
+const mapToImageAndName = (item: Group | Company) => (
   <Link
     href={createOrganizerPageUrl(item)}
     key={item.name}
     className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
   >
     {item.imageUrl && (
-      <Image
+      <GroupLogo
         src={item.imageUrl}
-        // TODO: Reconsider life once more
         alt={"abbreviation" in item ? item.abbreviation : item.name}
         width={22}
         height={22}
-        className={cn((type === "COMMITTEE" || type === "NODE_COMMITTEE") && "dark:invert")}
+        containerClassName="rounded-sm p-0.5 size-5.5"
       />
     )}
     <Text>{"abbreviation" in item ? item.abbreviation : item.name}</Text>
@@ -181,8 +177,8 @@ interface EventContentProps {
 }
 
 const EventContent = ({ event, attendance, parentEvent, parentAttendance, punishment, user }: EventContentProps) => {
-  const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group, group.type))
-  const companyList = event.companies.map((company) => mapToImageAndName(company, "COMPANY"))
+  const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group))
+  const companyList = event.companies.map((company) => mapToImageAndName(company))
   const organizers = [...companyList, ...hostingGroups]
 
   return (
