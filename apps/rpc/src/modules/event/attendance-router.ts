@@ -9,24 +9,22 @@ import {
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DeregisterReasonTypeSchema,
+  DEREGISTER_GRACE_PERIOD_MS,
   EventSchema,
   type GroupId,
+  RegistrationAvailabilityViewSchema,
   UserSchema,
 } from "@dotkomonline/types"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
-import { addHours, addMilliseconds, hoursToMilliseconds, isPast } from "date-fns"
+import { addHours, addMilliseconds, isPast } from "date-fns"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-
-// A grace period of 2 hours after registration to allow attendees to deregister in case of accidental registration or a
-// quick change of mind. This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour
-// payment deadline. Frontends should have a few seconds to account for clock skew to avoid errors near the grace end.
-const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
+import { buildDeregistrationAvailabilityView, buildRegistrationAvailabilityView } from "./attendance-service"
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -169,23 +167,41 @@ const getSelectionsResultsProcedure = procedure
 export type GetRegistrationAvailabilityInput = inferProcedureInput<typeof getRegistrationAvailabilityProcedure>
 export type GetRegistrationAvailabilityOutput = inferProcedureOutput<typeof getRegistrationAvailabilityProcedure>
 const getRegistrationAvailabilityProcedure = procedure
-  .input(z.object({ attendanceId: AttendanceSchema.shape.id, turnstileToken: z.string() }))
+  .input(
+    z.object({
+      attendanceId: AttendanceSchema.shape.id,
+    })
+  )
+  .output(RegistrationAvailabilityViewSchema)
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return await ctx.attendanceService.getRegistrationAvailability(
-      ctx.handle,
-      input.attendanceId,
-      input.turnstileToken,
-      ctx.principal.subject,
-      {
+    const userId = ctx.principal.subject
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
+    const attendee = attendance.attendees.find((attendee) => attendee.userId === userId)
+
+    if (attendee !== undefined) {
+      const chargeScheduleDate = await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
+
+      return RegistrationAvailabilityViewSchema.parse(
+        buildDeregistrationAvailabilityView(userId, attendee, attendance, chargeScheduleDate)
+      )
+    }
+
+    const [punishment, result] = await Promise.all([
+      ctx.personalMarkService.findPunishmentByUserId(ctx.handle, userId),
+      ctx.attendanceService.getRegistrationAvailability(ctx.handle, input.attendanceId, null, userId, {
         ignoreRegistrationWindow: false,
         immediateReservation: false,
         immediatePayment: true,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
-        overrideTurnstileCheck: false,
-      }
+        overrideTurnstileCheck: true,
+      }),
+    ])
+
+    return RegistrationAvailabilityViewSchema.parse(
+      buildRegistrationAvailabilityView(userId, result, punishment, attendance)
     )
   })
 

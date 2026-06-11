@@ -13,6 +13,7 @@ import invariant from "tiny-invariant"
 import { describe, expect, it } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { buildDeregistrationAvailabilityView, buildRegistrationAvailabilityView } from "./attendance-service"
 import { getMockEvent, getMockGroup } from "./event.e2e-spec"
 
 // biome-ignore lint/suspicious/noExportsInTest: used in another spec
@@ -799,6 +800,90 @@ describe("attendance integration tests", async () => {
   it("should fail if you attempt to registrer physical attendance for a non-registered user", async () => {
     await expect(core.attendanceService.registerAttendance(dbClient, randomUUID(), getCurrentUTC())).rejects.toThrow(
       NotFoundError
+    )
+  })
+
+  it("should build registration availability view without turnstile token", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+
+    const [punishment, result] = await Promise.all([
+      core.personalMarkService.findPunishmentByUserId(dbClient, user.id),
+      core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+        overrideTurnstileCheck: true,
+      }),
+    ])
+
+    invariant(result.success)
+
+    const view = buildRegistrationAvailabilityView(user.id, result, punishment, attendance)
+
+    expect(view.registration?.canRegister).toBe(true)
+    expect(view.deregistration).toBeNull()
+    expect(view.registration?.rejectionCause).toBeNull()
+  })
+
+  it("should build deregistration availability view for registered attendee", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
+      immediateReservation: true,
+      immediatePayment: false,
+      ignoreRegistrationWindow: false,
+      overriddenAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
+      overrideTurnstileCheck: true,
+    })
+    invariant(result.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
+    const updatedAttendance = await core.attendanceService.getAttendanceById(dbClient, attendance.id)
+    const registeredAttendee = updatedAttendance.attendees.find((entry) => entry.id === attendee.id)
+    invariant(registeredAttendee !== undefined)
+
+    const view = buildDeregistrationAvailabilityView(user.id, registeredAttendee, updatedAttendance, null)
+
+    expect(view.registration).toBeNull()
+    expect(view.deregistration).toEqual(
+      expect.objectContaining({
+        attendeeId: attendee.id,
+        canDeregister: true,
+        isWithinGracePeriod: true,
+        requiresDeregisterReason: false,
+      })
     )
   })
 })

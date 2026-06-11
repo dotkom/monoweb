@@ -8,7 +8,6 @@ import {
   type Company,
   type Event,
   type Group,
-  type Punishment,
   type User,
   createGroupPageUrl,
   getAttendanceCapacity,
@@ -26,6 +25,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
+import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
@@ -58,6 +58,8 @@ const mapToImageAndName = (item: Group | Company) => (
     <Text>{"abbreviation" in item ? item.abbreviation : item.name}</Text>
   </Link>
 )
+
+type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
 interface EventPageParams {
   slug: string
@@ -99,7 +101,12 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   const isOrganizer = user ? await server.event.isOrganizer.query({ eventId }) : false
   const isAdmin = user ? await server.user.isAdmin.query() : false
-  const punishment = attendance && user && (await server.personalMark.getExpiryDateForUser.query({ userId: user.id }))
+  const registrationAvailability =
+    attendance && user
+      ? await server.event.attendance.getRegistrationAvailability.query({
+          attendanceId: attendance.id,
+        })
+      : null
 
   const parentEvent = parentEventWithAttendance?.event ?? null
   const parentAttendance = parentEventWithAttendance?.attendance ?? null
@@ -135,7 +142,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
                 parentEvent={parentEvent}
                 attendance={attendance}
                 parentAttendance={parentAttendance}
-                punishment={punishment}
+                registrationAvailability={registrationAvailability}
                 user={user}
               />
             </TabsContent>
@@ -158,7 +165,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
             attendance={attendance}
             parentEvent={parentEvent}
             parentAttendance={parentAttendance}
-            punishment={punishment}
+            registrationAvailability={registrationAvailability}
             user={user}
           />
         )}
@@ -172,11 +179,18 @@ interface EventContentProps {
   attendance: Attendance | null
   parentEvent: Event | null
   parentAttendance: Attendance | null
-  punishment: Punishment | null
+  registrationAvailability: RegistrationAvailability | null
   user: User | null
 }
 
-const EventContent = ({ event, attendance, parentEvent, parentAttendance, punishment, user }: EventContentProps) => {
+const EventContent = ({
+  event,
+  attendance,
+  parentEvent,
+  parentAttendance,
+  registrationAvailability,
+  user,
+}: EventContentProps) => {
   const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group))
   const companyList = event.companies.map((company) => mapToImageAndName(company))
   const organizers = [...companyList, ...hostingGroups]
@@ -211,9 +225,8 @@ const EventContent = ({ event, attendance, parentEvent, parentAttendance, punish
 
             <AttendanceCard
               initialAttendance={attendance}
-              initialPunishment={punishment}
+              initialRegistrationAvailability={registrationAvailability}
               parentEvent={parentEvent}
-              parentAttendance={parentAttendance}
               user={user}
               event={event}
             />

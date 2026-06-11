@@ -1,31 +1,18 @@
 "use client"
 
-import {
-  type Attendance,
-  type AttendanceStatus,
-  type Attendee,
-  type Event,
-  type Punishment,
-  type User,
-  findActiveMembership,
-  getAttendablePool,
-  getAttendee,
-  getReservedAttendeeCount,
-} from "@dotkomonline/types"
+import type { AttendanceRouter } from "@dotkomonline/rpc"
+import { type Attendance, type Event, type User, getAttendee } from "@dotkomonline/types"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
-import { addMilliseconds, hoursToMilliseconds, isFuture, min, secondsToMilliseconds } from "date-fns"
 import { type FC, useEffect, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
-import { getAttendanceStatus } from "../attendanceStatus"
-
-// The backend requires a deregister reason 2 hours after registration. We subtract 15 seconds here to account for
-// potential clock skew between client and server, so users near the grace period boundary don't experience errors due
-// to small differences in system time.
-const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2) - secondsToMilliseconds(15)
+import { deregistrationRejectionMessages } from "./deregistrationRejectionMessages"
+import { registrationRejectionMessages } from "./registrationRejectionMessages"
 
 const DEREGISTER_BUTTON_COLOR = "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800" as const
+
+type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
 const getButtonColor = (
   disabled: boolean,
@@ -50,66 +37,41 @@ const getButtonColor = (
 }
 
 const getDisabledText = (
-  status: AttendanceStatus,
-  attendee: Attendee | null,
-  pool: boolean,
-  hasBeenCharged: boolean,
-  isPastDeregisterDeadline: boolean,
-  isLoggedIn: boolean,
-  hasMembership: boolean,
-  isSuspended: boolean,
-  registeredToParentEvent: boolean | null,
-  reservedToParentEvent: boolean | null,
-  hasTurnstileToken: boolean
-) => {
+  registrationAvailability: RegistrationAvailability | undefined,
+  hasTurnstileToken: boolean,
+  isLoggedIn: boolean
+): string | null => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
   }
 
-  const isAttending = attendee !== null
+  if (registrationAvailability === undefined) {
+    return null
+  }
 
-  if (isAttending) {
-    if (isPastDeregisterDeadline && attendee.reserved) {
-      return "Avmeldingsfristen har utløpt"
-    }
-
-    if (hasBeenCharged) {
-      return "Betaling er utført. Kontakt arrangør for avmelding og refusjon"
+  if (registrationAvailability.deregistration !== null) {
+    if (
+      !registrationAvailability.deregistration.canDeregister &&
+      registrationAvailability.deregistration.rejectionCause
+    ) {
+      return deregistrationRejectionMessages[registrationAvailability.deregistration.rejectionCause]
     }
 
     return null
   }
 
-  if (isSuspended) {
-    return "Du er suspendert fra Online"
-  }
+  const registration = registrationAvailability.registration
 
-  if (!hasMembership) {
-    return "Du må ha registrert medlemskap for å melde deg på"
-  }
-
-  if (status === "CLOSED") {
-    return "Påmeldingen er stengt"
-  }
-
-  if (!pool) {
-    return "Du har ingen påmeldingsgruppe"
-  }
-
-  if (status === "NOT_OPENED") {
-    return "Påmeldinger har ikke åpnet"
-  }
-
-  if (registeredToParentEvent === false) {
-    return "Du er ikke påmeldt foreldrearrangementet"
-  }
-
-  if (reservedToParentEvent === false && registeredToParentEvent === true) {
-    return "Du er i kø på foreldrearrangementet"
+  if (registration === null) {
+    return null
   }
 
   if (!hasTurnstileToken) {
-    return "Du må bekrefte at du ikke er en robot"
+    return registrationRejectionMessages.MISSING_TURNSTILE_TOKEN
+  }
+
+  if (!registration.canRegister && registration.rejectionCause) {
+    return registrationRejectionMessages[registration.rejectionCause]
   }
 
   return null
@@ -119,12 +81,11 @@ interface RegistrationButtonProps {
   registerForAttendance: () => void
   unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult | null) => void
   attendance: Attendance
-  parentAttendance: Attendance | null
-  punishment: Punishment | null
+  registrationAvailability: RegistrationAvailability | undefined
   user: User | null
   event: Event
   isLoading: boolean
-  chargeScheduleDate: Date | null
+  turnstileHasLoaded: boolean
   hasTurnstileToken: boolean
 }
 
@@ -132,25 +93,19 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   registerForAttendance,
   unregisterForAttendance,
   attendance,
-  parentAttendance,
-  punishment,
+  registrationAvailability,
   user,
   event,
   isLoading,
-  chargeScheduleDate,
+  turnstileHasLoaded,
   hasTurnstileToken,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
   const [confirmGracePeriodDeregister, setConfirmDeregister] = useState(false)
 
   const attendee = getAttendee(attendance, user)
-  const pool = getAttendablePool(attendance, user)
-  const attendanceStatus = getAttendanceStatus(attendance)
-  const hasMembership = user !== null && Boolean(findActiveMembership(user))
-
-  const deregisterGracePeriodEnd =
-    attendee !== null ? addMilliseconds(attendee.createdAt, DEREGISTER_GRACE_PERIOD_MS) : null
-  const isWithinDeregisterGracePeriod = deregisterGracePeriodEnd !== null && isFuture(deregisterGracePeriodEnd)
+  const deregistration = registrationAvailability?.deregistration ?? null
+  const isWithinDeregisterGracePeriod = deregistration?.isWithinGracePeriod ?? false
 
   useEffect(() => {
     if (attendee === null || !isWithinDeregisterGracePeriod) {
@@ -158,40 +113,17 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     }
   }, [attendee, isWithinDeregisterGracePeriod])
 
-  // TODO: dont calculate this in frontend
-  const actualDeregisterDeadline = chargeScheduleDate
-    ? min([attendance.deregisterDeadline, chargeScheduleDate])
-    : attendance.deregisterDeadline
-
-  const isPastDeregisterDeadline = !isFuture(actualDeregisterDeadline)
-  const hasMergeDelay = pool?.mergeDelayHours ? pool.mergeDelayHours > 0 : false
-  const isSuspended = punishment?.suspended ?? false
-  const hasPunishment = punishment ? punishment.delay > 0 || isSuspended : false
-  const isPoolFull = pool
-    ? pool.capacity !== 0 && getReservedAttendeeCount(attendance, pool?.id) >= pool.capacity
-    : false
-
-  const parentAttendanceAttendee = parentAttendance && getAttendee(parentAttendance, user)
-  const registeredToParentEvent = parentAttendance ? Boolean(parentAttendanceAttendee) : null
-  const reservedToParentEvent = parentAttendance && parentAttendanceAttendee ? parentAttendanceAttendee.reserved : null
+  const isPoolFull = registrationAvailability?.pool?.isPoolFull ?? false
+  const punishment = registrationAvailability?.punishment ?? null
+  const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
+  const hasMergeDelay = registrationAvailability?.registration?.hasMergeDelay ?? false
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
-  const disabledText = getDisabledText(
-    attendanceStatus,
-    attendee,
-    Boolean(pool),
-    Boolean(attendee?.paymentChargedAt && !attendee.paymentRefundedAt),
-    isPastDeregisterDeadline,
-    Boolean(user),
-    hasMembership,
-    isSuspended,
-    registeredToParentEvent,
-    reservedToParentEvent,
-    hasTurnstileToken
-  )
-  const disabled = Boolean(disabledText)
+  const disabledText = getDisabledText(registrationAvailability, hasTurnstileToken, Boolean(user))
+  const isAvailabilityPending = Boolean(user) && registrationAvailability === undefined
+  const isButtonDisabled = Boolean(disabledText) || isLoading || isAvailabilityPending
 
   const handleClick = () => {
     if (!attendee) {
@@ -215,7 +147,9 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
     <>
-      {disabled ? (
+      {!turnstileHasLoaded && registrationAvailability?.deregistration === null ? (
+        <IconLoader2 className="shrink-0 size-[1.25em] animate-spin" />
+      ) : isButtonDisabled ? (
         <IconLock className="shrink-0 size-[1.25em]" />
       ) : attendee ? (
         <IconUserMinus className="shrink-0 size-[1.25em]" />
@@ -232,12 +166,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const registrationButton = (
     <Button
       onClick={handleClick}
-      disabled={disabled}
+      disabled={isButtonDisabled}
       icon={buttonIcon}
       className={cn(
         "text-base rounded-lg h-fit min-h-16 w-full",
-        disabled && "text-gray-800 dark:text-stone-300",
-        getButtonColor(disabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
+        isButtonDisabled && "text-gray-800 dark:text-stone-300",
+        getButtonColor(isButtonDisabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
       )}
     >
       {buttonContent}
@@ -271,11 +205,11 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   )
 
   const showDeregisterConfirm =
-    attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !disabled
+    attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !isButtonDisabled
 
   const actionButton = showDeregisterConfirm ? deregisterConfirmButton : registrationButton
 
-  if (disabled) {
+  if (disabledText) {
     return (
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
@@ -291,7 +225,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   return (
     <>
       {actionButton}
-      {attendee && !isWithinDeregisterGracePeriod && (
+      {attendee && deregistration?.requiresDeregisterReason && (
         <DeregisterModal
           open={deregisterModalOpen}
           setOpen={setDeregisterModalOpen}

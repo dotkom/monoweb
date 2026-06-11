@@ -4,7 +4,7 @@ import { useUser } from "@auth0/nextjs-auth0/client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export const useDeregisterMutation = () => {
+export const useDeregisterMutation = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   const trpc = useTRPC()
   const { trpcSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
   const queryClient = useQueryClient()
@@ -17,14 +17,13 @@ export const useDeregisterMutation = () => {
           return
         }
 
-        // Check if the connection is not open (connecting or idle)
         if (trpcSSERegisterChangeConnectionState !== "pending") {
-          await Promise.all([
-            await queryClient.invalidateQueries(
-              trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
-            ),
-          ])
+          await queryClient.invalidateQueries(
+            trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
+          )
         }
+
+        onSuccess?.()
       },
     })
   )
