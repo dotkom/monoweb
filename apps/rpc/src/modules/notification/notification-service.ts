@@ -59,6 +59,10 @@ export interface NotificationService {
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
+  findRecipientsByNotificationId(
+    handle: DBHandle,
+    notificationId: NotificationId
+  ): Promise<Array<{ id: string; readAt: Date | null; userId: string; user: { id: string; name: string | null } }>>
 }
 
 export function getNotificationService(
@@ -144,6 +148,10 @@ export function getNotificationService(
 
     async markAllAsRead(handle, userId) {
       return await notificationRepository.markAllAsRead(handle, userId)
+    },
+
+    async findRecipientsByNotificationId(handle, notificationId) {
+      return await notificationRepository.findRecipientsByNotificationId(handle, notificationId)
     },
   }
 }
