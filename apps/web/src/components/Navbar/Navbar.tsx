@@ -3,7 +3,7 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { VinstraffIcon } from "@/components/atoms/VinstraffIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank, IconBulb, IconLogin2 } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconBulb, IconLogin2, IconSchool } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -113,6 +113,12 @@ const links: MenuLink[] = [
         href: "https://vinstraff.no/",
         icon: VinstraffIcon,
         description: "Er det en slask på PU-gruppa di? Gi dem en vinstraff.",
+      },
+      {
+        title: "Grades",
+        href: "https://grades.no/",
+        icon: IconSchool,
+        description: "Karakterstatistikk for emner ved NTNU, lagd og drevet av Linjeforeningen Online.",
       },
       {
         title: "Onlinefondet",
