@@ -1,5 +1,5 @@
-import { Company } from "@dotkomonline/rpc/company"
-import { GroupTypeSchema, type Group } from "@dotkomonline/rpc/group"
+import type { Company } from "@dotkomonline/rpc/company"
+import { getGroupDisplayName, GroupTypeSchema, type Group } from "@dotkomonline/rpc/group"
 import { Anchor, Group as MantineGroup, Text, Tooltip } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"
@@ -12,8 +12,16 @@ export type EventHostingGroupListProps = {
   companies: Company[]
 }
 
-const getName = (group: Group | Company) => {
-  return "abbreviation" in group ? group.abbreviation : group.name
+const getHref = (groupOrCompany: Group | Company) => {
+  const isGroup = "type" in groupOrCompany
+
+  return isGroup ? `/grupper/${groupOrCompany.slug}` : `/bedrifter/${groupOrCompany.slug}`
+}
+
+const getName = (groupOrCompany: Group | Company) => {
+  const isGroup = "type" in groupOrCompany
+
+  return isGroup ? getGroupDisplayName(groupOrCompany) : groupOrCompany.name
 }
 
 export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {
@@ -38,16 +46,14 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
 
   return (
     <MantineGroup gap="sm">
-      {groupsToDisplay.map((group) => {
-        return (
-          <Anchor key={group.slug} component={Link} size="sm" href={`/grupper/${group.slug}`}>
-            {getName(group)}
-          </Anchor>
-        )
-      })}
+      {groupsToDisplay.map((groupOrCompany) => (
+        <Anchor key={groupOrCompany.slug} component={Link} size="sm" href={getHref(groupOrCompany)}>
+          {getName(groupOrCompany)}
+        </Anchor>
+      ))}
 
       {organizers.length > MAX_GROUPS_TO_DISPLAY + LEEWAY && (
-        <Tooltip label={remainingGroups.map((group) => getName(group)).join(", ")}>
+        <Tooltip label={remainingGroups.map((groupOrCompany) => getName(groupOrCompany)).join(", ")}>
           <Text c="dimmed" size="sm">
             +{remainingGroups.length}
           </Text>

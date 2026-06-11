@@ -7,6 +7,7 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ContestUpdateSchema } from "@dotkomonline/rpc/contest"
+import { getGroupDisplayName } from "@dotkomonline/types"
 import { Stack } from "@mantine/core"
 import type { z } from "zod"
 import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
@@ -72,7 +73,7 @@ export const InfoPage = () => {
       groups: createMultipleSelectInput({
         label: "Arrangørkomiteer",
         placeholder: "Velg én eller flere komiteer",
-        data: groups.map((g) => ({ value: g.slug, label: g.abbreviation })),
+        data: groups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
         required: true,
         withAsterisk: true,
