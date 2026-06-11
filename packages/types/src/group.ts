@@ -33,11 +33,15 @@ export type GroupRecruitmentMethod = z.output<typeof GroupRecruitmentMethodSchem
 export const GroupMemberVisibilitySchema = schemas.GroupMemberVisibilitySchema
 export type GroupMemberVisibilityType = z.infer<typeof GroupMemberVisibilitySchema>
 
+export const GroupPreferredDisplayNameSchema = schemas.GroupPreferredDisplayNameSchema
+export type GroupPreferredDisplayName = z.infer<typeof GroupPreferredDisplayNameSchema>
+
 export const GroupWriteSchema = GroupSchema.pick({
   type: true,
   name: true,
   slug: true,
   abbreviation: true,
+  preferredDisplayName: true,
   description: true,
   imageUrl: true,
   email: true,
@@ -96,6 +100,35 @@ export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
     { groupId, type: GroupRoleTypeEnum.EMAIL_ONLY, name: "E-postbruker" },
     { groupId, type: GroupRoleTypeEnum.TEMPORARILY_LEAVE, name: "Permitert" },
   ] as const satisfies GroupRoleWrite[]
+
+export const getGroupDisplayName = (group: Pick<Group, "abbreviation" | "name" | "preferredDisplayName">) => {
+  if (group.preferredDisplayName === "NAME") {
+    return group.name ?? group.abbreviation
+  }
+  return group.abbreviation
+}
+
+export const getGroupSecondaryName = (group: Pick<Group, "abbreviation" | "name" | "preferredDisplayName">) => {
+  const displayName = getGroupDisplayName(group)
+  const otherName = group.preferredDisplayName === "NAME" ? group.abbreviation : group.name
+
+  if (!otherName || otherName === displayName) {
+    return null
+  }
+
+  return otherName
+}
+
+export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPreferredDisplayName) => {
+  switch (preferredDisplayName) {
+    case "ABBREVIATION":
+      return "Kort navn"
+    case "NAME":
+      return "Offisielt navn"
+    default:
+      return "Ukjent"
+  }
+}
 
 export const createGroupPageUrl = (group: Group) => {
   switch (group.type) {

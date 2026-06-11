@@ -22,6 +22,7 @@ export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
     slug: CommitteeGroupSlug.DOTKOM,
     showLeaderAsContact: false,
     recruitmentMethod: "AUTUMN_APPLICATION",
+    preferredDisplayName: "ABBREVIATION",
     ...input,
   }
 }

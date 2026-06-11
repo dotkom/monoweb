@@ -28,6 +28,7 @@ export type GroupMinAggregateOutputType = {
   slug: string | null
   abbreviation: string | null
   name: string | null
+  preferredDisplayName: $Enums.GroupPreferredDisplayName | null
   shortDescription: string | null
   description: string | null
   imageUrl: string | null
@@ -47,6 +48,7 @@ export type GroupMaxAggregateOutputType = {
   slug: string | null
   abbreviation: string | null
   name: string | null
+  preferredDisplayName: $Enums.GroupPreferredDisplayName | null
   shortDescription: string | null
   description: string | null
   imageUrl: string | null
@@ -66,6 +68,7 @@ export type GroupCountAggregateOutputType = {
   slug: number
   abbreviation: number
   name: number
+  preferredDisplayName: number
   shortDescription: number
   description: number
   imageUrl: number
@@ -87,6 +90,7 @@ export type GroupMinAggregateInputType = {
   slug?: true
   abbreviation?: true
   name?: true
+  preferredDisplayName?: true
   shortDescription?: true
   description?: true
   imageUrl?: true
@@ -106,6 +110,7 @@ export type GroupMaxAggregateInputType = {
   slug?: true
   abbreviation?: true
   name?: true
+  preferredDisplayName?: true
   shortDescription?: true
   description?: true
   imageUrl?: true
@@ -125,6 +130,7 @@ export type GroupCountAggregateInputType = {
   slug?: true
   abbreviation?: true
   name?: true
+  preferredDisplayName?: true
   shortDescription?: true
   description?: true
   imageUrl?: true
@@ -217,6 +223,7 @@ export type GroupGroupByOutputType = {
   slug: string
   abbreviation: string
   name: string | null
+  preferredDisplayName: $Enums.GroupPreferredDisplayName
   shortDescription: string | null
   description: string
   imageUrl: string | null
@@ -257,6 +264,7 @@ export type GroupWhereInput = {
   slug?: Prisma.StringFilter<"Group"> | string
   abbreviation?: Prisma.StringFilter<"Group"> | string
   name?: Prisma.StringNullableFilter<"Group"> | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFilter<"Group"> | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.StringNullableFilter<"Group"> | string | null
   description?: Prisma.StringFilter<"Group"> | string
   imageUrl?: Prisma.StringNullableFilter<"Group"> | string | null
@@ -282,6 +290,7 @@ export type GroupOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   abbreviation?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredDisplayName?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -311,6 +320,7 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[]
   abbreviation?: Prisma.StringFilter<"Group"> | string
   name?: Prisma.StringNullableFilter<"Group"> | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFilter<"Group"> | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.StringNullableFilter<"Group"> | string | null
   description?: Prisma.StringFilter<"Group"> | string
   imageUrl?: Prisma.StringNullableFilter<"Group"> | string | null
@@ -335,6 +345,7 @@ export type GroupOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   abbreviation?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredDisplayName?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -360,6 +371,7 @@ export type GroupScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Group"> | string
   abbreviation?: Prisma.StringWithAggregatesFilter<"Group"> | string
   name?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameWithAggregatesFilter<"Group"> | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   description?: Prisma.StringWithAggregatesFilter<"Group"> | string
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
@@ -379,6 +391,7 @@ export type GroupCreateInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -404,6 +417,7 @@ export type GroupUncheckedCreateInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -429,6 +443,7 @@ export type GroupUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -454,6 +469,7 @@ export type GroupUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -479,6 +495,7 @@ export type GroupCreateManyInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -498,6 +515,7 @@ export type GroupUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -517,6 +535,7 @@ export type GroupUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -536,6 +555,7 @@ export type GroupCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   abbreviation?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredDisplayName?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -555,6 +575,7 @@ export type GroupMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   abbreviation?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredDisplayName?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -574,6 +595,7 @@ export type GroupMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   abbreviation?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredDisplayName?: Prisma.SortOrder
   shortDescription?: Prisma.SortOrder
   description?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
@@ -602,6 +624,10 @@ export type GroupListRelationFilter = {
 
 export type GroupOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type EnumGroupPreferredDisplayNameFieldUpdateOperationsInput = {
+  set?: $Enums.GroupPreferredDisplayName
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -732,6 +758,7 @@ export type GroupCreateWithoutMembershipsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -756,6 +783,7 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -796,6 +824,7 @@ export type GroupUpdateWithoutMembershipsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -820,6 +849,7 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -844,6 +874,7 @@ export type GroupCreateWithoutRolesInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -868,6 +899,7 @@ export type GroupUncheckedCreateWithoutRolesInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -908,6 +940,7 @@ export type GroupUpdateWithoutRolesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -932,6 +965,7 @@ export type GroupUncheckedUpdateWithoutRolesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -956,6 +990,7 @@ export type GroupCreateWithoutMarksInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -980,6 +1015,7 @@ export type GroupUncheckedCreateWithoutMarksInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1020,6 +1056,7 @@ export type GroupUpdateWithoutMarksInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1044,6 +1081,7 @@ export type GroupUncheckedUpdateWithoutMarksInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1068,6 +1106,7 @@ export type GroupCreateWithoutEventsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1092,6 +1131,7 @@ export type GroupUncheckedCreateWithoutEventsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1132,6 +1172,7 @@ export type GroupUpdateWithoutEventsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1156,6 +1197,7 @@ export type GroupUncheckedUpdateWithoutEventsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1180,6 +1222,7 @@ export type GroupCreateWithoutNotificationsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1204,6 +1247,7 @@ export type GroupUncheckedCreateWithoutNotificationsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1244,6 +1288,7 @@ export type GroupUpdateWithoutNotificationsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1268,6 +1313,7 @@ export type GroupUncheckedUpdateWithoutNotificationsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1292,6 +1338,7 @@ export type GroupCreateWithoutContestsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1316,6 +1363,7 @@ export type GroupUncheckedCreateWithoutContestsInput = {
   slug: string
   abbreviation: string
   name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
   shortDescription?: string | null
   description: string
   imageUrl?: string | null
@@ -1364,6 +1412,7 @@ export type GroupScalarWhereInput = {
   slug?: Prisma.StringFilter<"Group"> | string
   abbreviation?: Prisma.StringFilter<"Group"> | string
   name?: Prisma.StringNullableFilter<"Group"> | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFilter<"Group"> | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.StringNullableFilter<"Group"> | string | null
   description?: Prisma.StringFilter<"Group"> | string
   imageUrl?: Prisma.StringNullableFilter<"Group"> | string | null
@@ -1383,6 +1432,7 @@ export type GroupUpdateWithoutContestsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1407,6 +1457,7 @@ export type GroupUncheckedUpdateWithoutContestsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1431,6 +1482,7 @@ export type GroupUncheckedUpdateManyWithoutContestsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
   shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1526,6 +1578,7 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   slug?: boolean
   abbreviation?: boolean
   name?: boolean
+  preferredDisplayName?: boolean
   shortDescription?: boolean
   description?: boolean
   imageUrl?: boolean
@@ -1552,6 +1605,7 @@ export type GroupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   abbreviation?: boolean
   name?: boolean
+  preferredDisplayName?: boolean
   shortDescription?: boolean
   description?: boolean
   imageUrl?: boolean
@@ -1571,6 +1625,7 @@ export type GroupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   abbreviation?: boolean
   name?: boolean
+  preferredDisplayName?: boolean
   shortDescription?: boolean
   description?: boolean
   imageUrl?: boolean
@@ -1590,6 +1645,7 @@ export type GroupSelectScalar = {
   slug?: boolean
   abbreviation?: boolean
   name?: boolean
+  preferredDisplayName?: boolean
   shortDescription?: boolean
   description?: boolean
   imageUrl?: boolean
@@ -1605,7 +1661,7 @@ export type GroupSelectScalar = {
   type?: boolean
 }
 
-export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"slug" | "abbreviation" | "name" | "shortDescription" | "description" | "imageUrl" | "email" | "contactUrl" | "slackUrl" | "showLeaderAsContact" | "createdAt" | "deactivatedAt" | "workspaceGroupId" | "memberVisibility" | "recruitmentMethod" | "type", ExtArgs["result"]["group"]>
+export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"slug" | "abbreviation" | "name" | "preferredDisplayName" | "shortDescription" | "description" | "imageUrl" | "email" | "contactUrl" | "slackUrl" | "showLeaderAsContact" | "createdAt" | "deactivatedAt" | "workspaceGroupId" | "memberVisibility" | "recruitmentMethod" | "type", ExtArgs["result"]["group"]>
 export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.Group$eventsArgs<ExtArgs>
   contests?: boolean | Prisma.Group$contestsArgs<ExtArgs>
@@ -1632,6 +1688,7 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     slug: string
     abbreviation: string
     name: string | null
+    preferredDisplayName: $Enums.GroupPreferredDisplayName
     shortDescription: string | null
     description: string
     imageUrl: string | null
@@ -2077,6 +2134,7 @@ export interface GroupFieldRefs {
   readonly slug: Prisma.FieldRef<"Group", 'String'>
   readonly abbreviation: Prisma.FieldRef<"Group", 'String'>
   readonly name: Prisma.FieldRef<"Group", 'String'>
+  readonly preferredDisplayName: Prisma.FieldRef<"Group", 'GroupPreferredDisplayName'>
   readonly shortDescription: Prisma.FieldRef<"Group", 'String'>
   readonly description: Prisma.FieldRef<"Group", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Group", 'String'>

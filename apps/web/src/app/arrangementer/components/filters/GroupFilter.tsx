@@ -1,7 +1,7 @@
 "use client"
 
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
-import type { Group, GroupId } from "@dotkomonline/types"
+import { getGroupDisplayName, type Group, type GroupId } from "@dotkomonline/types"
 import {
   AvatarFallback,
   Button,
@@ -34,8 +34,23 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
     const searchValue = search.trim().toLowerCase()
 
     return groups
-      .filter((group) => value.includes(group.slug) || group.abbreviation.toLowerCase().includes(searchValue))
-      .toSorted((a, b) => a.abbreviation.localeCompare(b.abbreviation, "nb-NO"))
+      .filter((group) => {
+        if (value.includes(group.slug)) {
+          return true
+        }
+
+        const displayName = getGroupDisplayName(group).toLowerCase()
+        const officialName = group.name?.toLowerCase() ?? ""
+        const shortName = group.abbreviation.toLowerCase()
+
+        return (
+          displayName.includes(searchValue) ||
+          officialName.includes(searchValue) ||
+          shortName.includes(searchValue) ||
+          group.slug.toLowerCase().includes(searchValue)
+        )
+      })
+      .toSorted((a, b) => getGroupDisplayName(a).localeCompare(getGroupDisplayName(b), "nb-NO"))
   }, [search, groups, value])
 
   return (
@@ -83,12 +98,13 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
             {filtered.length > 0 ? (
               filtered.map((group) => {
                 const isSelected = value.includes(group.slug)
+                const displayName = getGroupDisplayName(group)
 
                 return (
                   <Button
                     variant="ghost"
                     key={group.slug}
-                    title={group.abbreviation}
+                    title={displayName}
                     onClick={() => handleToggle(group.slug)}
                     className={cn(
                       "group/group-item max-md:h-11 md:px-1.5 justify-between font-normal text-muted-foreground",
@@ -100,7 +116,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                       <GroupLogoAvatar
                         size="sm"
                         src={group.imageUrl}
-                        alt={group.name ?? group.slug}
+                        alt={displayName}
                         className="p-0.5 -m-0.5"
                         imageClassName="saturate-50 opacity-75 group-hover/group-item:saturate-100 group-hover/group-item:opacity-100 transition-all"
                         fallback={
@@ -110,7 +126,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
                         }
                       />
                       <Text element="span" className="truncate max-md:text-base">
-                        {group.abbreviation}
+                        {displayName}
                       </Text>
                     </div>
                     {isSelected && <IconCheck className="size-4" />}
