@@ -31,6 +31,7 @@ import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton } from "./RegistrationButton"
+import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
@@ -114,7 +115,7 @@ export const AttendanceCard = ({
         onConnectionStateChange: (state) => {
           setTRPCSSERegisterChangeConnectionState(state.state)
         },
-        onData: ({ status, attendee: updatedAttendee }) => {
+        onData: ({ status, attendee: updatedAttendee, poolOccupancies }) => {
           queryClient.setQueryData(
             trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
             (oldData) => {
@@ -147,7 +148,21 @@ export const AttendanceCard = ({
                 attendanceId: attendance?.id ?? "",
               })
             )
+
+            return
           }
+
+          if (!user) {
+            return
+          }
+
+          const queryOptions = trpc.event.attendance.getRegistrationAvailability.queryOptions({
+            attendanceId: attendance?.id ?? "",
+          })
+
+          queryClient.setQueryData(queryOptions.queryKey, (oldData) =>
+            patchRegistrationAvailabilityFromPoolOccupancies(oldData, poolOccupancies)
+          )
         },
       }
     )
