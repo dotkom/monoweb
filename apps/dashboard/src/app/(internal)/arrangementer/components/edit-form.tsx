@@ -16,7 +16,7 @@ import {
   EventTypeSchema,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
-import type { Group } from "@dotkomonline/rpc/group"
+import { type Group, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { z } from "zod"
 import { validateEventOrganizers, validateEventWrite } from "../validation"
 
@@ -119,7 +119,7 @@ export const useEventEditForm = ({
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangører",
         placeholder: "Velg grupper",
-        data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        data: hostingGroups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
         required: true,
       }),

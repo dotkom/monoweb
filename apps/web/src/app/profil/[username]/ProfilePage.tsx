@@ -10,7 +10,7 @@ import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
-import { createGroupPageUrl } from "@dotkomonline/rpc/group"
+import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { findActiveMembership, getGenderName, getMembershipTypeName } from "@dotkomonline/rpc/user"
 import {
   Avatar,
@@ -126,7 +126,7 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
 
           <Text className={cn("text-xs text-gray-500 dark:text-stone-400")}>
             Gitt {formatDate(personalMark.createdAt, "dd. MMM yyyy")} av{" "}
-            {mark.groups.map((group) => group.abbreviation).join(", ")}
+            {mark.groups.map((group) => getGroupDisplayName(group)).join(", ")}
           </Text>
         </div>
       </div>
@@ -377,33 +377,37 @@ export function ProfilePage() {
           <Title>Grupper</Title>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {allGroups.map((group) => (
-              <Link
-                key={group.slug}
-                href={group.pageUrl}
-                className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
-              >
-                <GroupLogoAvatar
-                  src={group.imageUrl}
-                  alt={group.name ?? group.abbreviation}
-                  className="w-14 h-14 p-0.75"
-                  fallback={
-                    <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
-                      <IconQuestionMark className="size-8 text-muted-foreground" />
-                    </AvatarFallback>
-                  }
-                />
-                <div className="flex flex-col gap-0.5 grow min-w-0">
-                  <Text className="text-lg">{group.name}</Text>
-                  <RichText
-                    maxLines={3}
-                    className="line-clamp-2 text-muted-foreground"
-                    hideToggleButton={true}
-                    content={group.description}
+            {allGroups.map((group) => {
+              const displayName = getGroupDisplayName(group)
+
+              return (
+                <Link
+                  key={group.slug}
+                  href={group.pageUrl}
+                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
+                >
+                  <GroupLogoAvatar
+                    src={group.imageUrl}
+                    alt={displayName}
+                    className="w-14 h-14 p-0.75"
+                    fallback={
+                      <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
+                        <IconQuestionMark className="size-8 text-muted-foreground" />
+                      </AvatarFallback>
+                    }
                   />
-                </div>
-              </Link>
-            ))}
+                  <div className="flex flex-col gap-0.5 grow min-w-0">
+                    <Text className="text-lg">{displayName}</Text>
+                    <RichText
+                      maxLines={3}
+                      className="line-clamp-2 text-muted-foreground"
+                      hideToggleButton={true}
+                      content={group.description}
+                    />
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       )}

@@ -83,6 +83,7 @@ import type { UserService } from "../user/user-service"
 import type { AttendanceRepository } from "./attendance-repository"
 import type { EventService } from "./event-service"
 import { validateTurnstileToken } from "../../turnstile"
+import { getGroupDisplayName } from "../group/group"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -1064,7 +1065,7 @@ export function getAttendanceService(
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
       const url = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
-      const groupsText = ogJoin(event.hostingGroups.map((group) => group.abbreviation))
+      const groupsText = ogJoin(event.hostingGroups.map((group) => getGroupDisplayName(group)))
 
       await paymentProductsService.createOrUpdate(attendance.id, {
         description:

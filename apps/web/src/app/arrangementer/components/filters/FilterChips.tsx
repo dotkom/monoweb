@@ -1,7 +1,7 @@
 "use client"
 
 import type { EventType } from "@dotkomonline/rpc/event"
-import type { Group } from "@dotkomonline/rpc/group"
+import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Button, cn, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
@@ -30,7 +30,7 @@ export const FilterChips = ({
 }: FilterChipsProps) => {
   const getGroupName = (slug: string) => {
     const group = groups.find((g) => g.slug === slug)
-    return group?.abbreviation || slug
+    return group ? getGroupDisplayName(group) : slug
   }
 
   interface Chip {

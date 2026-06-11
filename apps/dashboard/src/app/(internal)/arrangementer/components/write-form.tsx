@@ -19,6 +19,7 @@ import {
   EventWriteSchema,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
+import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { addDays, addHours, setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns"
 import { z } from "zod"
 
@@ -134,7 +135,7 @@ export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangører",
         placeholder: "Velg grupper",
-        data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        data: groups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
         withAsterisk: true,
       }),
