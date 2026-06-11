@@ -4,7 +4,7 @@ import { cn } from "#lib/utils"
 export const fieldPrimarySurfaceClass = "shadow-none dark:bg-field/80"
 
 export const fieldControlClass = cn(
-  "rounded-field border border-field-border bg-field outline-none",
+  "rounded-field border border-field-border bg-field font-body outline-none",
   interactionTransition,
   interactionInvalid,
   "focus-visible:border-ring/40 focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-0",

@@ -5,7 +5,7 @@ import { interactionBase, interactionInvalid } from "#lib/interaction-classes"
 import { cn } from "#lib/utils"
 
 export const buttonBaseClass = cn(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-medium whitespace-nowrap outline-none select-none disabled:opacity-50",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent font-body text-sm font-medium whitespace-nowrap outline-none select-none disabled:opacity-50",
   interactionBase,
   interactionInvalid,
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
