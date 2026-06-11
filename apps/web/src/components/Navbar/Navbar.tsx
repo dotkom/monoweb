@@ -2,7 +2,7 @@
 
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank, IconBulb, IconCrown, IconLogin2 } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconBulb, IconLogin2 } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -16,7 +16,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 import Link from "next/link"
-import type { FC } from "react"
+import type { ComponentType, FC } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
 import { ProfileMenu } from "./ProfileMenu"
@@ -25,10 +25,12 @@ import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 
+export type MenuIcon = Icon | ComponentType<{ className?: string; width?: number; height?: number }>
+
 export type MenuItem = {
   title: string
   href: string
-  icon: Icon
+  icon: MenuIcon
   description?: string
   highlighted?: boolean
 }
@@ -79,7 +81,7 @@ const links: MenuLink[] = [
       {
         title: "Hovedstyret",
         href: "/grupper/hs",
-        icon: IconCrown,
+        icon: OnlineIcon,
         description: "Hovedstyret er linjeforeningens ansikt utad og står for daglig drift av linjeforeningen.",
       },
       {
@@ -115,13 +117,13 @@ const links: MenuLink[] = [
         title: "Foreslå arrangement",
         href: "https://docs.google.com/forms/d/e/1FAIpQLScbveu4vu-3JmZImLtfytnQKxCKfocwlcuUwuTOwssDUpt0_Q/viewform",
         icon: IconBulb,
-        description: "Har du et ønske om et arrangement? Foreslå det her.",
+        description: "Har du en idé til et arrangement du ønsker at linjeforeningen skal arrangere?",
       },
       {
         title: "Kvitteringskjema",
         href: "https://autobank.online.ntnu.no/",
         icon: IconReceipt,
-        description: "Har du lagt ut noe for linjeforeningen? Få refusjon her.",
+        description: "Få refusjon for utlegg du har gjort på vegne av linjeforeningen.",
       },
     ],
   },
