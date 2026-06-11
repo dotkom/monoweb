@@ -12,6 +12,7 @@ import { CommitteeGroupSlug } from "../../authorization-service"
 import { getGroupRepository } from "../group-repository"
 import { getGroupService } from "../group-service"
 import { describe, expect, it, vi } from "vitest"
+import { getGroupDisplayName, getGroupSecondaryName } from "../group"
 
 describe("GroupService", () => {
   const db = vi.mocked(PrismaClient.prototype)
@@ -52,6 +53,7 @@ describe("GroupService", () => {
       workspaceGroupId: null,
       showLeaderAsContact: false,
       recruitmentMethod: "AUTUMN_APPLICATION",
+      preferredDisplayName: "ABBREVIATION",
     }
     vi.spyOn(groupRepository, "findBySlug")
       .mockResolvedValueOnce(null)
@@ -62,6 +64,28 @@ describe("GroupService", () => {
     const created = await groupService.create(db, group)
     expect(created).toEqual(group)
     expect(groupRepository.create).toHaveBeenCalledWith(db, CommitteeGroupSlug.DOTKOM, group)
+  })
+
+  it("resolves display name from preferred display name setting", () => {
+    const group = {
+      abbreviation: "Appkom",
+      name: "Applikasjonskomiteen",
+      preferredDisplayName: "ABBREVIATION",
+    } as const
+
+    expect(getGroupDisplayName(group)).toBe("Appkom")
+    expect(getGroupSecondaryName(group)).toBe("Applikasjonskomiteen")
+  })
+
+  it("prefers official name when configured", () => {
+    const group = {
+      abbreviation: "Backlog",
+      name: "Backlog",
+      preferredDisplayName: "NAME",
+    } as const
+
+    expect(getGroupDisplayName(group)).toBe("Backlog")
+    expect(getGroupSecondaryName(group)).toBeNull()
   })
 
   it("does not find non-existent committees", async () => {
