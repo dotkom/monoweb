@@ -215,7 +215,7 @@ export const AttendanceCard = ({
 
   if (isBefore(getCurrentUTC(), attendance.registerStart)) {
     setTimeout(() => {
-      setAttendanceStatus("Open")
+      setAttendanceStatus("OPEN")
     }, attendance.registerStart.getTime() - Date.now())
   }
 
@@ -246,7 +246,7 @@ export const AttendanceCard = ({
             attendance={attendance}
             attendee={attendee}
             onSubmit={handleSelectionChange}
-            disabled={attendanceStatus === "Closed"}
+            disabled={attendanceStatus === "CLOSED"}
           />
         </div>
       )}

@@ -33,7 +33,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
 
   const showLock =
     !eventEndInPast &&
-    (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "Closed")
+    (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
 
   const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -50,7 +50,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
     <div
       className={cn(
         "flex flex-row items-center gap-2",
-        (eventEndInPast || attendanceStatus === "NotOpened") &&
+        (eventEndInPast || attendanceStatus === "NOT_OPENED") &&
           "text-gray-600 dark:text-stone-300 group-hover:text-gray-800 dark:group-hover:text-stone-400"
       )}
     >
@@ -60,7 +60,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
         <div
           className={cn(
             "flex flex-row gap-1 items-center",
-            attendanceStatus === "NotOpened" && "text-gray-500 dark:text-stone-400",
+            attendanceStatus === "NOT_OPENED" && "text-gray-500 dark:text-stone-400",
             (isReserved || isUnreserved) && "px-1 py-0-5 rounded-md bg-gray-100 dark:bg-stone-700",
             isReserved && "text-green-800 bg-green-100 dark:text-green-200 dark:bg-green-950",
             isUnreserved && "text-amber-800 bg-amber-100 dark:text-amber-200 dark:bg-amber-600/25"
@@ -108,7 +108,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({ atten
         )}
       </div>
 
-      {attendanceStatus === "NotOpened" && (
+      {attendanceStatus === "NOT_OPENED" && (
         <Text className="hidden md:block text-sm text-black dark:text-stone-300">
           Åpner {formatDistanceToNowStrict(attendance.registerStart, { addSuffix: true, locale: nb })}
         </Text>

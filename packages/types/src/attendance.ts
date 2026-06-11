@@ -4,8 +4,7 @@ import { z } from "zod"
 import { type User, type UserId, UserSchema, findActiveMembership } from "./user"
 import { getStudyGrade } from "@dotkomonline/utils"
 
-// TODO: Where on earth does this come from?
-export type AttendanceStatus = "NotOpened" | "Open" | "Closed"
+export type AttendanceStatus = "NOT_OPENED" | "OPEN" | "CLOSED"
 
 export type AttendanceSelection = z.infer<typeof AttendanceSelectionSchema>
 export const AttendanceSelectionSchema = z.object({
