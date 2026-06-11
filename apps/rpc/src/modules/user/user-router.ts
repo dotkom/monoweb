@@ -212,7 +212,7 @@ const updateUserProcedure = procedure
 export type RequestEmailChangeInput = inferProcedureInput<typeof requestEmailChangeProcedure>
 export type RequestEmailChangeOutput = inferProcedureOutput<typeof requestEmailChangeProcedure>
 const requestEmailChangeProcedure = procedure
-  .input(z.object({ newEmail: z.string().email() }))
+  .input(z.object({ newEmail: z.email() }))
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
@@ -300,8 +300,8 @@ const mergeUsersProcedure = procedure
         linkAuth0Identities: z.boolean().default(true),
       })
       .refine((input) => input.mergeInDatabase || input.linkAuth0Identities, {
-        message: "At least one of mergeInDatabase or linkAuth0Identities must be true",
         path: ["mergeInDatabase"],
+        error: "At least one of mergeInDatabase or linkAuth0Identities must be true",
       })
   )
   .use(withAuthentication())

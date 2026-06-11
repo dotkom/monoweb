@@ -41,7 +41,6 @@ export const PoolFormSchema = z.object({
     }
     return null
   }, z
-    .number()
     .int()
     .min(0, "Utsettelse må være mellom 0 og 96 timer (4 dager).")
     .max(96, "Utsettelse må være mellom 0 og 96 timer (4 dager).")

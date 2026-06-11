@@ -6,5 +6,6 @@
   "naming": {
     "preset": "zod-prisma-types"
   },
-  "pureModels": true
+  "pureModels": true,
+  "zodImportTarget": "v4"
 }

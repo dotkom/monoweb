@@ -164,8 +164,8 @@ async function migrateCourses(prisma: DBClient, faculties: Faculty[], department
 
     taught_in_spring: z.boolean(),
     taught_in_autumn: z.boolean(),
-    taught_from: z.number().int(),
-    last_year_taught: z.number().int(),
+    taught_from: z.int(),
+    last_year_taught: z.int(),
     taught_in_english: z.boolean(),
 
     content_no: z.string(),
@@ -175,7 +175,7 @@ async function migrateCourses(prisma: DBClient, faculties: Faculty[], department
     grade_type: z.string(),
     place: z.string(),
 
-    attendee_count: z.number().int(),
+    attendee_count: z.int(),
     average: z.number(),
     pass_rate: z.number(),
   })

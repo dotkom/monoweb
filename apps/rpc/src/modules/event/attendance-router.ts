@@ -124,7 +124,7 @@ const updateAttendancePaymentProcedure = procedure
   .input(
     z.object({
       id: AttendanceSchema.shape.id,
-      price: z.number().int().nullable(),
+      price: z.int().nullable(),
     })
   )
   .use(withAuthentication())

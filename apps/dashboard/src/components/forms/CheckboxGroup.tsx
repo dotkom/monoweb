@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { Checkbox } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 interface CheckboxGroupsProps {
   selected: number[]
@@ -45,7 +44,7 @@ export function createLabelledCheckboxGroupInput<F extends FieldValues>({
   return function LabelledCheckboxGroupInput({ name, state, control }) {
     return (
       <div>
-        {state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+        {getErrorMessage(state, name)}
         <Controller
           control={control}
           name={name}

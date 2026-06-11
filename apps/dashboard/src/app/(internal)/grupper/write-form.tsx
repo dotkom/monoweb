@@ -55,7 +55,7 @@ export const useGroupWriteForm = ({
       FormSchema.superRefine((data, ctx) => {
         const issues = validateGroupWrite(data, existingGroupSlugs, defaultValues.slug)
         for (const issue of issues) {
-          ctx.addIssue(issue)
+          ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
         }
       }),
     [existingGroupSlugs, defaultValues]
@@ -108,7 +108,7 @@ export const useGroupWriteForm = ({
       memberVisibility: createSelectInput({
         label: "Hvilke medlemmer skal vises",
         placeholder: "Velg en",
-        data: Object.values(GroupMemberVisibilitySchema.Values).map((groupMemberVisibilityType) => ({
+        data: Object.values(GroupMemberVisibilitySchema.enum).map((groupMemberVisibilityType) => ({
           value: groupMemberVisibilityType,
           label: getGroupMemberVisibilityName(groupMemberVisibilityType),
         })),
@@ -130,7 +130,7 @@ export const useGroupWriteForm = ({
         placeholder: "Velg en",
         withAsterisk: true,
         required: true,
-        data: Object.values(GroupTypeSchema.Values).map((groupType) => ({
+        data: Object.values(GroupTypeSchema.enum).map((groupType) => ({
           value: groupType,
           label: getGroupTypeName(groupType),
         })),
@@ -141,7 +141,7 @@ export const useGroupWriteForm = ({
         placeholder: "Velg en",
         withAsterisk: true,
         required: true,
-        data: Object.values(GroupRecruitmentMethodSchema.Values).map((recruitmentMethod) => ({
+        data: Object.values(GroupRecruitmentMethodSchema.enum).map((recruitmentMethod) => ({
           value: recruitmentMethod,
           label: getGroupRecruitmentMethodName(recruitmentMethod),
         })),
