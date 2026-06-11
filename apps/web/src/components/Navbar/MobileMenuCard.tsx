@@ -1,5 +1,5 @@
 import { DropdownMenuItem, cn } from "@dotkomonline/ui"
-import type { Icon } from "@tabler/icons-react"
+import type { MenuIcon } from "@/components/Navbar/Navbar"
 import { IconChevronRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
@@ -7,7 +7,7 @@ import type { FC } from "react"
 interface MobileMenuCardProps {
   title: string
   href: string
-  icon: Icon
+  icon: MenuIcon
   onClick?: () => void
 }
 
