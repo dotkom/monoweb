@@ -4,6 +4,7 @@ import { type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-quer
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
 import { useMemo } from "react"
+import type { NotificationPayloadType } from "@dotkomonline/rpc"
 
 interface UseEventAllQueryProps {
   filter: EventFilterQuery
@@ -89,4 +90,11 @@ export const useEventFeedbackPublicResultsTokenGetQuery = (formId: FeedbackFormI
 export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId | SkipToken) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.feedback.getAllAnswers.queryOptions(formId))
+}
+
+export const useNotificationsByPayloadQuery = (payloadType: NotificationPayloadType, payload: string) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.notification.findManyByPayload.queryOptions({ payloadType, payload }))
+
+  return { notifications: useMemo(() => data?.items ?? [], [data]), ...query }
 }
