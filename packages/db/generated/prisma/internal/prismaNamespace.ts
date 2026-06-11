@@ -422,7 +422,9 @@ export const ModelName = {
   Notification: 'Notification',
   Contest: 'Contest',
   Contestant: 'Contestant',
-  ContestTeam: 'ContestTeam'
+  ContestTeam: 'ContestTeam',
+  UserFlag: 'UserFlag',
+  UserFlagLink: 'UserFlagLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -438,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "contestant" | "contestTeam"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3328,6 +3330,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserFlag: {
+      payload: Prisma.$UserFlagPayload<ExtArgs>
+      fields: Prisma.UserFlagFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserFlagFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserFlagFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        findFirst: {
+          args: Prisma.UserFlagFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserFlagFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        findMany: {
+          args: Prisma.UserFlagFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>[]
+        }
+        create: {
+          args: Prisma.UserFlagCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        createMany: {
+          args: Prisma.UserFlagCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserFlagCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>[]
+        }
+        delete: {
+          args: Prisma.UserFlagDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        update: {
+          args: Prisma.UserFlagUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserFlagDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserFlagUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserFlagUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserFlagUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagPayload>
+        }
+        aggregate: {
+          args: Prisma.UserFlagAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserFlag>
+        }
+        groupBy: {
+          args: Prisma.UserFlagGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserFlagGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserFlagCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserFlagCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserFlagLink: {
+      payload: Prisma.$UserFlagLinkPayload<ExtArgs>
+      fields: Prisma.UserFlagLinkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserFlagLinkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserFlagLinkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        findFirst: {
+          args: Prisma.UserFlagLinkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserFlagLinkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        findMany: {
+          args: Prisma.UserFlagLinkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>[]
+        }
+        create: {
+          args: Prisma.UserFlagLinkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        createMany: {
+          args: Prisma.UserFlagLinkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserFlagLinkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>[]
+        }
+        delete: {
+          args: Prisma.UserFlagLinkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        update: {
+          args: Prisma.UserFlagLinkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserFlagLinkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserFlagLinkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserFlagLinkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserFlagLinkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserFlagLinkPayload>
+        }
+        aggregate: {
+          args: Prisma.UserFlagLinkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserFlagLink>
+        }
+        groupBy: {
+          args: Prisma.UserFlagLinkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserFlagLinkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserFlagLinkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserFlagLinkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3403,7 +3553,6 @@ export const UserScalarFieldEnum = {
   gender: 'gender',
   dietaryRestrictions: 'dietaryRestrictions',
   ntnuUsername: 'ntnuUsername',
-  flags: 'flags',
   workspaceUserId: 'workspaceUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -3901,6 +4050,29 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const UserFlagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  imageUrl: 'imageUrl'
+} as const
+
+export type UserFlagScalarFieldEnum = (typeof UserFlagScalarFieldEnum)[keyof typeof UserFlagScalarFieldEnum]
+
+
+export const UserFlagLinkScalarFieldEnum = {
+  id: 'id',
+  awardedAt: 'awardedAt',
+  reason: 'reason',
+  userId: 'userId',
+  userFlagId: 'userFlagId'
+} as const
+
+export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -4462,6 +4634,8 @@ export type GlobalOmitConfig = {
   contest?: Prisma.ContestOmit
   contestant?: Prisma.ContestantOmit
   contestTeam?: Prisma.ContestTeamOmit
+  userFlag?: Prisma.UserFlagOmit
+  userFlagLink?: Prisma.UserFlagLinkOmit
 }
 
 /* Types for Logging */
