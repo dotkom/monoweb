@@ -59,6 +59,7 @@ import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
 import { getNotificationRepository } from "./notification/notification-repository"
 import { getNotificationService } from "./notification/notification-service"
+import { getNotificationTaskService } from "./notification/notification-task-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -191,6 +192,7 @@ export async function createServiceLayer(
   const contestRepository = getContestRepository()
   const notificationRepository = getNotificationRepository()
 
+  const notificationService = getNotificationService(notificationRepository, userRepository, attendanceRepository, eventEmitter)
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
     ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
@@ -203,15 +205,35 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
-  const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const jobListingService = getJobListingService(jobListingRepository)
+  const notificationTaskService = getNotificationTaskService(notificationService, attendanceRepository, eventRepository)
+  const groupService = getGroupService(
+    groupRepository,
+    userService,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
+  const jobListingService = getJobListingService(jobListingRepository, taskSchedulingService, notificationService)
   const markService = getMarkService(markRepository)
-  const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
+  const personalMarkService = getPersonalMarkService(
+    personalMarkRepository,
+    markService,
+    userService,
+    emailService,
+    notificationService
+  )
   const paymentService = getPaymentService(clients.stripe)
   const paymentProductsService = getPaymentProductsService(clients.stripe)
   const paymentWebhookService = getPaymentWebhookService(clients.stripe)
   const auditLogService = getAuditLogService(auditLogRepository)
-  const eventService = getEventService(eventRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const eventService = getEventService(
+    eventRepository,
+    attendanceRepository,
+    taskSchedulingService,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
   const feedbackFormService = getFeedbackFormService(
     feedbackFormRepository,
     feedbackFormAnswerRepository,
@@ -220,7 +242,6 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
-  const notificationService = getNotificationService(notificationRepository, userRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -235,14 +256,21 @@ export async function createServiceLayer(
     feedbackFormService,
     feedbackFormAnswerService,
     configuration,
-    emailService
+    emailService,
+    notificationService
   )
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
-  const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const offlineService = getOfflineService(
+    offlineRepository,
+    notificationService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
   const articleService = getArticleService(
     articleRepository,
     articleTagRepository,
     articleTagLinkRepository,
+    notificationService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
@@ -261,6 +289,7 @@ export async function createServiceLayer(
     taskDiscoveryService,
     taskSchedulingService,
     attendanceService,
+    notificationTaskService,
     configuration
   )
 
