@@ -1,7 +1,10 @@
 {
   "name": "@dotkomonline/utils",
   "main": "./src/index.ts",
-  "exports": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./text": "./src/text.ts"
+  },
   "types": "./src/index.ts",
   "type": "module",
   "scripts": {
@@ -15,6 +18,7 @@
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:*",
     "@types/html-to-text": "9.0.4",
+    "@types/node": "22.19.7",
     "typescript": "5.9.3",
     "vitest": "3.2.6"
   },
