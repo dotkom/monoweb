@@ -2,23 +2,13 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { GenericFadderukenePage } from "./generic-fadderukene-page"
 import { server } from "@/utils/trpc/server"
 import { isWithinInterval } from "date-fns"
-import { type FadderukeEntry, type FadderukePageProps, getFadderukeActiveInterval } from "./lib"
+import { type FadderukeEntry, getFadderukeActiveInterval } from "./lib"
+import Fadderukene2026Page from "./(2026)/page"
 
-// TODO: Delete this component once a real fadderuke page is implemented
-const PlaceholderFadderukenePage = ({ parentEventWithAttendance }: FadderukePageProps) => {
-  return (
-    <div>
-      TemporaryFadderukenePage
-      {parentEventWithAttendance?.event.title}
-    </div>
-  )
-}
-
-// TODO: Remove the placeholder event once a real fadderuke page is implemented
 const EVENTS = {
-  "2000": {
-    parentEventId: "00000000-0000-0000-0000-000000000000",
-    page: PlaceholderFadderukenePage,
+  "2026": {
+    parentEventId: "bd67bc32-debd-46cb-bb06-1213e36be05d",
+    page: Fadderukene2026Page,
   },
 } satisfies Record<`${number}`, FadderukeEntry>
 
@@ -34,7 +24,10 @@ export default async function FadderukenePage() {
   const parentEventId = eventEntry.parentEventId
   const Event = eventEntry.page
 
-  const parentEvent = await server.event.find.query(parentEventId)
+  const [parentEvent, childEvents] = await Promise.all([
+    server.event.find.query(parentEventId),
+    server.event.findChildEvents.query({ eventId: parentEventId }),
+  ])
 
   if (parentEvent === null) {
     return <GenericFadderukenePage />
@@ -46,5 +39,5 @@ export default async function FadderukenePage() {
     return <GenericFadderukenePage />
   }
 
-  return <Event parentEventWithAttendance={parentEvent} />
+  return <Event parentEventWithAttendance={parentEvent} childEventsWithAttendance={childEvents} />
 }
