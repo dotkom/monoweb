@@ -3,7 +3,7 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { VinstraffIcon } from "@/components/atoms/VinstraffIcon"
 import { env } from "@/env"
-import { type Icon, IconBuildingBank, IconBulb, IconLogin2, IconSchool } from "@tabler/icons-react"
+import { type Icon, IconBuildingBank, IconBulb, IconConfetti, IconLogin2, IconSchool } from "@tabler/icons-react"
 import {
   IconArticle,
   IconBolt,
@@ -96,6 +96,12 @@ const links: MenuLink[] = [
   {
     title: "For studenter",
     items: [
+      {
+        title: "Fadderukene",
+        href: "/fadderukene",
+        icon: IconConfetti,
+        description: "Finn informasjon om Onlines fadderuker.",
+      },
       {
         title: "Offline",
         href: "/offline",
