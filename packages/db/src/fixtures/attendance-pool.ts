@@ -78,4 +78,53 @@ export const getPoolFixtures = (attendance_ids: string[]) =>
       capacity: 25,
       yearCriteria: [1, 2, 3, 4, 5],
     },
+    {
+      // 1.klasse eksamensfest
+      attendanceId: attendance_ids[6],
+      title: "1. klasse",
+      capacity: 75,
+      yearCriteria: [1],
+    },
+    {
+      // Utmatrikulering 5. klasse
+      attendanceId: attendance_ids[7],
+      title: "5. klasse",
+      capacity: 50,
+      yearCriteria: [5],
+    },
+    {
+      // FotballtrøyeFredag!
+      attendanceId: attendance_ids[8],
+      title: "Alle",
+      capacity: 0,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
+    {
+      // Eksamenskurs i Diskret matematikk
+      attendanceId: attendance_ids[9],
+      title: "Alle",
+      capacity: 0,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
+    {
+      // Volleyballturnering med NTNUI
+      attendanceId: attendance_ids[10],
+      title: "Alle",
+      capacity: 15,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
+    {
+      // Eksamenslesing for 1.klasse
+      attendanceId: attendance_ids[11],
+      title: "1. klasse",
+      capacity: 60,
+      yearCriteria: [1],
+    },
+    {
+      // 17. mai-frokost
+      attendanceId: attendance_ids[12],
+      title: "Alle",
+      capacity: 70,
+      yearCriteria: [1, 2, 3, 4, 5],
+    },
   ] as const satisfies Prisma.AttendancePoolCreateManyInput[]

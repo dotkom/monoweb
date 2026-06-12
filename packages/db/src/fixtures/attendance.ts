@@ -99,4 +99,53 @@ export const getAttendanceFixtures = () =>
         },
       ],
     },
+    // 1.klasse eksamensfest
+    {
+      registerStart: subDays(now, 7),
+      registerEnd: addDays(now, 13),
+      deregisterDeadline: addDays(now, 13),
+      selections: [],
+    },
+    // Utmatrikulering 5. klasse
+    {
+      registerStart: subDays(now, 35),
+      registerEnd: subDays(now, 14),
+      deregisterDeadline: subDays(now, 15),
+      selections: [],
+    },
+    // FotballtrøyeFredag!
+    {
+      registerStart: subDays(now, 3),
+      registerEnd: addDays(now, 4),
+      deregisterDeadline: addDays(now, 4),
+      selections: [],
+    },
+    // Eksamenskurs i Diskret matematikk
+    {
+      registerStart: subDays(now, 28),
+      registerEnd: subDays(now, 18),
+      deregisterDeadline: subDays(now, 19),
+      selections: [],
+    },
+    // Volleyballturnering med NTNUI
+    {
+      registerStart: subDays(now, 30),
+      registerEnd: subDays(now, 21),
+      deregisterDeadline: subDays(now, 22),
+      selections: [],
+    },
+    // Eksamenslesing for 1.klasse
+    {
+      registerStart: subDays(now, 5),
+      registerEnd: addDays(now, 9),
+      deregisterDeadline: addDays(now, 9),
+      selections: [],
+    },
+    // 17. mai-frokost
+    {
+      registerStart: subDays(now, 40),
+      registerEnd: subDays(now, 28),
+      deregisterDeadline: subDays(now, 29),
+      selections: [],
+    },
   ] as const satisfies Prisma.AttendanceCreateManyInput[]
