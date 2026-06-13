@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     services:
       postgres:
-        image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+        image: postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
         env:
           POSTGRES_USER: ow
           POSTGRES_PASSWORD: owpassword123
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     services:
       postgres:
-        image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+        image: postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
         env:
           POSTGRES_USER: grades
           POSTGRES_PASSWORD: gradespassword123
