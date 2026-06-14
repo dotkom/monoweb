@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@dotkomonline/ui"
-import { IconChevronDown, IconClock } from "@tabler/icons-react"
+import { IconChevronDown, IconHourglassEmpty } from "@tabler/icons-react"
 
 interface NonAttendablePoolsBoxProps {
   attendance: Attendance
@@ -103,7 +103,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
         <div className="flex items-center gap-1">
-          <IconClock className="size-3.5" />
+          <IconHourglassEmpty className="size-3.5" />
           <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
         </div>
       </TooltipTrigger>

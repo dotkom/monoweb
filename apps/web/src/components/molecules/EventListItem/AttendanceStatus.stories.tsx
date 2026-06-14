@@ -140,6 +140,58 @@ export const AllStates = () => {
           eventEndInPast={true}
         />
       </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Not opened without label</Text>
+
+        <AttendanceStatus
+          attendance={createMockAttendance({ status: "NOT_OPENED" })}
+          attendee={null}
+          eventEndInPast={false}
+          showNotOpenedLabel={false}
+        />
+      </div>
+    </div>
+  )
+}
+
+export const Sizes = () => {
+  const reservedAttendee = createMockAttendee({ user: createMockUser(), reserved: true })
+
+  return (
+    <div className="flex flex-col gap-8 max-w-2xl">
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Small</Text>
+
+        <AttendanceStatus
+          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
+          attendee={reservedAttendee}
+          eventEndInPast={false}
+          size="sm"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Default</Text>
+
+        <AttendanceStatus
+          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
+          attendee={reservedAttendee}
+          eventEndInPast={false}
+          size="default"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Large</Text>
+
+        <AttendanceStatus
+          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
+          attendee={reservedAttendee}
+          eventEndInPast={false}
+          size="lg"
+        />
+      </div>
     </div>
   )
 }

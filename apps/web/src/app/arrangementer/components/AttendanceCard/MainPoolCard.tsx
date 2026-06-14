@@ -19,8 +19,8 @@ import {
   IconArrowUpRight,
   IconCheck,
   IconClock,
-  IconClockHour2,
   IconCoins,
+  IconHourglassEmpty,
   IconUserX,
   IconX,
 } from "@tabler/icons-react"
@@ -39,6 +39,11 @@ import {
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC } from "react"
+
+// Stripe's refund processing time is maximum 10 business days, we therefore
+// add 2 days to the processing time to account for weekends
+// See https://support.stripe.com/questions/where-is-my-customers-refund
+const MAX_REFUND_PROCESSING_DAYS = 12
 
 interface MainPoolCardProps {
   attendance: Attendance
@@ -182,8 +187,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               {hasWaitlist && (
                 <Text
                   className={cn(
-                    "text-lg px-1 py-0.5",
-                    attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-lg"
+                    "text-lg px-2 py-0.5",
+                    attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-md"
                   )}
                 >
                   +<RollingNumber value={unreservedAttendeeCount} /> i kø
@@ -260,7 +265,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
         <div className="flex items-center gap-1">
-          <IconClock className="size-4" />
+          <IconHourglassEmpty className="size-4" />
           <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
         </div>
       </TooltipTrigger>
@@ -289,7 +294,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
   if (attendee.reserved === true) {
     return (
       <div className="flex flex-row items-center gap-2">
-        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
+        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-300" />
         <Text>Du er påmeldt</Text>
       </div>
     )
@@ -299,7 +304,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconClockHour2 className="size-[1.25em] dark:text-indigo-400" />
+      <IconClock className="size-[1.25em] dark:text-indigo-400" />
       <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
     </div>
   )
@@ -335,6 +340,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
       </div>
     )
   }
+
   if (attendee.paymentRefundedAt) {
     return (
       <>
@@ -388,17 +394,13 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
 interface PunishmentStatusProps {
   attendee: Attendee
 }
-// Stripe's refund processing time is maximum 10 business days, we therefore
-// add 2 days to the processing time to account for weekends
-// See https://support.stripe.com/questions/where-is-my-customers-refund
-const MAX_REFUND_PROCESSING_DAYS = 12
 
 const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
         <div className="flex flex-row gap-2 items-center">
-          <IconClockHour2 className="size-[1.25em]" />
+          <IconHourglassEmpty className="size-[1.25em] text-yellow-600 dark:text-indigo-300" />
           <Text>
             {formatDistanceToNowStrict(attendee.earliestReservationAt, {
               locale: nb,
