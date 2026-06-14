@@ -4,7 +4,9 @@ import type * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import {
   dropdownMenuCheckboxItemClass,
+  dropdownMenuContentAutoWidthClass,
   dropdownMenuContentClass,
+  dropdownMenuContentMatchTriggerWidthClass,
   dropdownMenuItemClass,
   dropdownMenuLabelClass,
   dropdownMenuRadioItemClass,
@@ -31,14 +33,20 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 }
 
+type DropdownMenuContentProps = MenuPrimitive.Popup.Props &
+  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+    matchTriggerWidth?: boolean
+  }
+
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  matchTriggerWidth = false,
   className,
   ...props
-}: MenuPrimitive.Popup.Props & Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+}: DropdownMenuContentProps) {
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner
@@ -50,7 +58,11 @@ function DropdownMenuContent({
       >
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
-          className={cn(dropdownMenuContentClass, className)}
+          className={cn(
+            dropdownMenuContentClass,
+            matchTriggerWidth ? dropdownMenuContentMatchTriggerWidthClass : dropdownMenuContentAutoWidthClass,
+            className
+          )}
           {...props}
         />
       </MenuPrimitive.Positioner>

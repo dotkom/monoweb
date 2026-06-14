@@ -29,7 +29,7 @@ export const SessionRecoveryDropdown: FC<SessionRecoveryDropdownProps> = ({ titl
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="p-4 rounded-2xl max-w-82 bg-red-50 border border-red-100 dark:bg-stone-800 dark:border-stone-700/30 shadow-sm"
+        className="p-4 rounded-2xl w-76 bg-red-50 border border-red-100 dark:bg-stone-800 dark:border-stone-700/30 shadow-sm"
         sideOffset={24}
       >
         <div className="flex flex-col gap-3">
