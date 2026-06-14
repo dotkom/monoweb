@@ -23,6 +23,7 @@
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
+    "dev:web-ladle": "pnpm -F @dotkomonline/web run ladle",
     "dev:grades": "pnpm -rc --parallel -F @dotkomonline/grades-backend -F @dotkomonline/grades-frontend exec doppler run --preserve-env pnpm run dev",
     "prisma": "doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db prisma",
     "generate": "doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db generate",
