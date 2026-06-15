@@ -1,4 +1,4 @@
-import { Label } from "@radix-ui/react-label"
+import { Label } from "../Label/Label"
 import { RadioGroup, RadioGroupItem } from "./RadioGroup"
 
 export default {

@@ -1,6 +1,8 @@
 import type { Story, StoryDefault } from "@ladle/react"
-import type { LabelProps } from "@radix-ui/react-label"
+import type { ComponentProps } from "react"
 import { Label } from "./Label"
+
+type LabelProps = ComponentProps<typeof Label>
 
 export default {
   title: "Label",
