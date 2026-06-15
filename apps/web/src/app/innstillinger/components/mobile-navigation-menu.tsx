@@ -62,7 +62,8 @@ export const MobileProfileNavigationMenu = () => {
           align="start"
           side="bottom"
           sideOffset={8}
-          className="w-(--anchor-width) space-y-2 p-2 rounded-xl border-gray-200 dark:border-stone-700 dark:bg-stone-800"
+          matchTriggerWidth
+          className="space-y-2 p-2 rounded-xl border-gray-200 dark:border-stone-700 dark:bg-stone-800"
         >
           {settingsNavigationItems.map((item) => {
             const isCurrent = pathname.startsWith(item.slug)
