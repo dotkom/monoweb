@@ -28,7 +28,7 @@ importers:
         version: 3.1061.0
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
@@ -221,7 +221,7 @@ importers:
     dependencies:
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
@@ -315,7 +315,7 @@ importers:
     dependencies:
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
@@ -478,7 +478,7 @@ importers:
         version: 3.1061.0
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -629,7 +629,7 @@ importers:
         version: 3.1061.0
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/environment':
         specifier: workspace:*
         version: link:../../packages/environment
@@ -1054,7 +1054,7 @@ importers:
     dependencies:
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       '@dotkomonline/db':
         specifier: workspace:*
         version: link:../db
@@ -1091,7 +1091,7 @@ importers:
     dependencies:
       '@base-ui/react':
         specifier: ^1.5.0
-        version: 1.5.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.2.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 1.5.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.2.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@floating-ui/react':
         specifier: ^0.27.16
         version: 0.27.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -1182,7 +1182,7 @@ importers:
         version: 3.1061.0
       '@date-fns/tz':
         specifier: ^1.2.0
-        version: 1.4.1
+        version: 1.5.0
       date-fns:
         specifier: ^4.1.0
         version: 4.2.1
@@ -1728,8 +1728,8 @@ packages:
   '@dabh/diagnostics@2.0.8':
     resolution: {integrity: sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q==}
 
-  '@date-fns/tz@1.4.1':
-    resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
+  '@date-fns/tz@1.5.0':
+    resolution: {integrity: sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg==}
 
   '@dotenvx/dotenvx@1.69.1':
     resolution: {integrity: sha512-kwQB5KcAegxw/+NGUgXAo5ovyOSjlMhoXSSnSEpDhoHJwzMcMO0HE1U0VCYZ7jbAeCMGamed9XdWzOA5ixtTNg==}
@@ -9912,7 +9912,7 @@ snapshots:
 
   '@balena/dockerignore@1.0.2': {}
 
-  '@base-ui/react@1.5.0(@date-fns/tz@1.4.1)(@types/react@19.2.17)(date-fns@4.2.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@base-ui/react@1.5.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.2.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@babel/runtime': 7.29.7
       '@base-ui/utils': 0.2.9(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -9922,7 +9922,7 @@ snapshots:
       react-dom: 19.2.7(react@19.2.7)
       use-sync-external-store: 1.6.0(react@19.2.7)
     optionalDependencies:
-      '@date-fns/tz': 1.4.1
+      '@date-fns/tz': 1.5.0
       '@types/react': 19.2.17
       date-fns: 4.2.1
 
@@ -10008,7 +10008,7 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@date-fns/tz@1.4.1': {}
+  '@date-fns/tz@1.5.0': {}
 
   '@dotenvx/dotenvx@1.69.1':
     dependencies:
