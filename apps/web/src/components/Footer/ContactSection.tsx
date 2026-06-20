@@ -9,7 +9,7 @@ export const ContactSection = () => {
   const { icon: copyOkonomiEmailIcon, copy: copyOkonomiEmail } = useCopyToClipboard()
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:flex md:flex-row md:gap-24">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:flex lg:flex-row lg:gap-24">
       <div className="flex flex-col gap-2">
         <Text element="h3" className="font-medium">
           Hjelp oss bli bedre!
