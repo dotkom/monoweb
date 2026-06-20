@@ -1,4 +1,5 @@
 import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutations"
+import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
@@ -58,6 +59,7 @@ export const useEventEditForm = ({
   defaultValues,
 }: UseEventEditFormProps) => {
   const uploadFile = useEventFileUploadMutation()
+  const { contests } = useContestFindManyQuery()
 
   return useFormBuilder({
     schema: FormValidationSchema,
@@ -140,6 +142,14 @@ export const useEventEditForm = ({
         clearable: true,
         excludeEventIds: defaultValues?.id ? [defaultValues.id] : [],
         excludeChildEvents: true,
+      }),
+      contestId: createSelectInput({
+        label: "Konkurranse",
+        placeholder: "Velg konkurranse",
+        description: "Knytt arrangementet til en konkurranse (valgfritt)",
+        data: contests.map((contest) => ({ value: contest.id, label: contest.name })),
+        searchable: true,
+        clearable: true,
       }),
       markForMissedAttendance: createCheckboxInput({
         label: "Gi prikk for fravær",

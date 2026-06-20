@@ -201,6 +201,7 @@ export type ContestWhereInput = {
   winnerContestant?: Prisma.XOR<Prisma.ContestantNullableScalarRelationFilter, Prisma.ContestantWhereInput> | null
   contestants?: Prisma.ContestantListRelationFilter
   groups?: Prisma.GroupListRelationFilter
+  events?: Prisma.EventListRelationFilter
 }
 
 export type ContestOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type ContestOrderByWithRelationInput = {
   winnerContestant?: Prisma.ContestantOrderByWithRelationInput
   contestants?: Prisma.ContestantOrderByRelationAggregateInput
   groups?: Prisma.GroupOrderByRelationAggregateInput
+  events?: Prisma.EventOrderByRelationAggregateInput
 }
 
 export type ContestWhereUniqueInput = Prisma.AtLeast<{
@@ -230,6 +232,7 @@ export type ContestWhereUniqueInput = Prisma.AtLeast<{
   winnerContestant?: Prisma.XOR<Prisma.ContestantNullableScalarRelationFilter, Prisma.ContestantWhereInput> | null
   contestants?: Prisma.ContestantListRelationFilter
   groups?: Prisma.GroupListRelationFilter
+  events?: Prisma.EventListRelationFilter
 }, "id" | "winnerContestantId">
 
 export type ContestOrderByWithAggregationInput = {
@@ -268,6 +271,7 @@ export type ContestCreateInput = {
   winnerContestant?: Prisma.ContestantCreateNestedOneWithoutWonContestInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutContestInput
   groups?: Prisma.GroupCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventCreateNestedManyWithoutContestInput
 }
 
 export type ContestUncheckedCreateInput = {
@@ -280,6 +284,7 @@ export type ContestUncheckedCreateInput = {
   winnerContestantId?: string | null
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput
   groups?: Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutContestInput
 }
 
 export type ContestUpdateInput = {
@@ -292,6 +297,7 @@ export type ContestUpdateInput = {
   winnerContestant?: Prisma.ContestantUpdateOneWithoutWonContestNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutContestNestedInput
   groups?: Prisma.GroupUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUncheckedUpdateInput = {
@@ -304,6 +310,7 @@ export type ContestUncheckedUpdateInput = {
   winnerContestantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput
   groups?: Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutContestNestedInput
 }
 
 export type ContestCreateManyInput = {
@@ -345,6 +352,11 @@ export type ContestOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ContestNullableScalarRelationFilter = {
+  is?: Prisma.ContestWhereInput | null
+  isNot?: Prisma.ContestWhereInput | null
+}
+
 export type ContestCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -378,11 +390,6 @@ export type ContestMinOrderByAggregateInput = {
 export type ContestScalarRelationFilter = {
   is?: Prisma.ContestWhereInput
   isNot?: Prisma.ContestWhereInput
-}
-
-export type ContestNullableScalarRelationFilter = {
-  is?: Prisma.ContestWhereInput | null
-  isNot?: Prisma.ContestWhereInput | null
 }
 
 export type ContestCreateNestedManyWithoutGroupsInput = {
@@ -421,6 +428,22 @@ export type ContestUncheckedUpdateManyWithoutGroupsNestedInput = {
   update?: Prisma.ContestUpdateWithWhereUniqueWithoutGroupsInput | Prisma.ContestUpdateWithWhereUniqueWithoutGroupsInput[]
   updateMany?: Prisma.ContestUpdateManyWithWhereWithoutGroupsInput | Prisma.ContestUpdateManyWithWhereWithoutGroupsInput[]
   deleteMany?: Prisma.ContestScalarWhereInput | Prisma.ContestScalarWhereInput[]
+}
+
+export type ContestCreateNestedOneWithoutEventsInput = {
+  create?: Prisma.XOR<Prisma.ContestCreateWithoutEventsInput, Prisma.ContestUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.ContestCreateOrConnectWithoutEventsInput
+  connect?: Prisma.ContestWhereUniqueInput
+}
+
+export type ContestUpdateOneWithoutEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.ContestCreateWithoutEventsInput, Prisma.ContestUncheckedCreateWithoutEventsInput>
+  connectOrCreate?: Prisma.ContestCreateOrConnectWithoutEventsInput
+  upsert?: Prisma.ContestUpsertWithoutEventsInput
+  disconnect?: Prisma.ContestWhereInput | boolean
+  delete?: Prisma.ContestWhereInput | boolean
+  connect?: Prisma.ContestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContestUpdateToOneWithWhereWithoutEventsInput, Prisma.ContestUpdateWithoutEventsInput>, Prisma.ContestUncheckedUpdateWithoutEventsInput>
 }
 
 export type EnumContestResultTypeFieldUpdateOperationsInput = {
@@ -486,6 +509,7 @@ export type ContestCreateWithoutGroupsInput = {
   resultOrder: $Enums.ContestResultOrder
   winnerContestant?: Prisma.ContestantCreateNestedOneWithoutWonContestInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutContestInput
+  events?: Prisma.EventCreateNestedManyWithoutContestInput
 }
 
 export type ContestUncheckedCreateWithoutGroupsInput = {
@@ -497,6 +521,7 @@ export type ContestUncheckedCreateWithoutGroupsInput = {
   resultOrder: $Enums.ContestResultOrder
   winnerContestantId?: string | null
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutContestInput
 }
 
 export type ContestCreateOrConnectWithoutGroupsInput = {
@@ -533,6 +558,70 @@ export type ContestScalarWhereInput = {
   winnerContestantId?: Prisma.StringNullableFilter<"Contest"> | string | null
 }
 
+export type ContestCreateWithoutEventsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  startDate?: Date | string | null
+  resultType: $Enums.ContestResultType
+  resultOrder: $Enums.ContestResultOrder
+  winnerContestant?: Prisma.ContestantCreateNestedOneWithoutWonContestInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutContestInput
+  groups?: Prisma.GroupCreateNestedManyWithoutContestsInput
+}
+
+export type ContestUncheckedCreateWithoutEventsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  startDate?: Date | string | null
+  resultType: $Enums.ContestResultType
+  resultOrder: $Enums.ContestResultOrder
+  winnerContestantId?: string | null
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput
+}
+
+export type ContestCreateOrConnectWithoutEventsInput = {
+  where: Prisma.ContestWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContestCreateWithoutEventsInput, Prisma.ContestUncheckedCreateWithoutEventsInput>
+}
+
+export type ContestUpsertWithoutEventsInput = {
+  update: Prisma.XOR<Prisma.ContestUpdateWithoutEventsInput, Prisma.ContestUncheckedUpdateWithoutEventsInput>
+  create: Prisma.XOR<Prisma.ContestCreateWithoutEventsInput, Prisma.ContestUncheckedCreateWithoutEventsInput>
+  where?: Prisma.ContestWhereInput
+}
+
+export type ContestUpdateToOneWithWhereWithoutEventsInput = {
+  where?: Prisma.ContestWhereInput
+  data: Prisma.XOR<Prisma.ContestUpdateWithoutEventsInput, Prisma.ContestUncheckedUpdateWithoutEventsInput>
+}
+
+export type ContestUpdateWithoutEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resultType?: Prisma.EnumContestResultTypeFieldUpdateOperationsInput | $Enums.ContestResultType
+  resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
+  winnerContestant?: Prisma.ContestantUpdateOneWithoutWonContestNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutContestNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutContestsNestedInput
+}
+
+export type ContestUncheckedUpdateWithoutEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resultType?: Prisma.EnumContestResultTypeFieldUpdateOperationsInput | $Enums.ContestResultType
+  resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
+  winnerContestantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput
+}
+
 export type ContestCreateWithoutContestantsInput = {
   id?: string
   name: string
@@ -542,6 +631,7 @@ export type ContestCreateWithoutContestantsInput = {
   resultOrder: $Enums.ContestResultOrder
   winnerContestant?: Prisma.ContestantCreateNestedOneWithoutWonContestInput
   groups?: Prisma.GroupCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventCreateNestedManyWithoutContestInput
 }
 
 export type ContestUncheckedCreateWithoutContestantsInput = {
@@ -553,6 +643,7 @@ export type ContestUncheckedCreateWithoutContestantsInput = {
   resultOrder: $Enums.ContestResultOrder
   winnerContestantId?: string | null
   groups?: Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutContestInput
 }
 
 export type ContestCreateOrConnectWithoutContestantsInput = {
@@ -569,6 +660,7 @@ export type ContestCreateWithoutWinnerContestantInput = {
   resultOrder: $Enums.ContestResultOrder
   contestants?: Prisma.ContestantCreateNestedManyWithoutContestInput
   groups?: Prisma.GroupCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventCreateNestedManyWithoutContestInput
 }
 
 export type ContestUncheckedCreateWithoutWinnerContestantInput = {
@@ -580,6 +672,7 @@ export type ContestUncheckedCreateWithoutWinnerContestantInput = {
   resultOrder: $Enums.ContestResultOrder
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutContestInput
   groups?: Prisma.GroupUncheckedCreateNestedManyWithoutContestsInput
+  events?: Prisma.EventUncheckedCreateNestedManyWithoutContestInput
 }
 
 export type ContestCreateOrConnectWithoutWinnerContestantInput = {
@@ -607,6 +700,7 @@ export type ContestUpdateWithoutContestantsInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   winnerContestant?: Prisma.ContestantUpdateOneWithoutWonContestNestedInput
   groups?: Prisma.GroupUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUncheckedUpdateWithoutContestantsInput = {
@@ -618,6 +712,7 @@ export type ContestUncheckedUpdateWithoutContestantsInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   winnerContestantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   groups?: Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUpsertWithoutWinnerContestantInput = {
@@ -640,6 +735,7 @@ export type ContestUpdateWithoutWinnerContestantInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   contestants?: Prisma.ContestantUpdateManyWithoutContestNestedInput
   groups?: Prisma.GroupUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUncheckedUpdateWithoutWinnerContestantInput = {
@@ -651,6 +747,7 @@ export type ContestUncheckedUpdateWithoutWinnerContestantInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput
   groups?: Prisma.GroupUncheckedUpdateManyWithoutContestsNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUpdateWithoutGroupsInput = {
@@ -662,6 +759,7 @@ export type ContestUpdateWithoutGroupsInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   winnerContestant?: Prisma.ContestantUpdateOneWithoutWonContestNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutContestNestedInput
+  events?: Prisma.EventUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUncheckedUpdateWithoutGroupsInput = {
@@ -673,6 +771,7 @@ export type ContestUncheckedUpdateWithoutGroupsInput = {
   resultOrder?: Prisma.EnumContestResultOrderFieldUpdateOperationsInput | $Enums.ContestResultOrder
   winnerContestantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutContestNestedInput
+  events?: Prisma.EventUncheckedUpdateManyWithoutContestNestedInput
 }
 
 export type ContestUncheckedUpdateManyWithoutGroupsInput = {
@@ -693,11 +792,13 @@ export type ContestUncheckedUpdateManyWithoutGroupsInput = {
 export type ContestCountOutputType = {
   contestants: number
   groups: number
+  events: number
 }
 
 export type ContestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contestants?: boolean | ContestCountOutputTypeCountContestantsArgs
   groups?: boolean | ContestCountOutputTypeCountGroupsArgs
+  events?: boolean | ContestCountOutputTypeCountEventsArgs
 }
 
 /**
@@ -724,6 +825,13 @@ export type ContestCountOutputTypeCountGroupsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.GroupWhereInput
 }
 
+/**
+ * ContestCountOutputType without action
+ */
+export type ContestCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EventWhereInput
+}
+
 
 export type ContestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -736,6 +844,7 @@ export type ContestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   winnerContestant?: boolean | Prisma.Contest$winnerContestantArgs<ExtArgs>
   contestants?: boolean | Prisma.Contest$contestantsArgs<ExtArgs>
   groups?: boolean | Prisma.Contest$groupsArgs<ExtArgs>
+  events?: boolean | Prisma.Contest$eventsArgs<ExtArgs>
   _count?: boolean | Prisma.ContestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contest"]>
 
@@ -776,6 +885,7 @@ export type ContestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   winnerContestant?: boolean | Prisma.Contest$winnerContestantArgs<ExtArgs>
   contestants?: boolean | Prisma.Contest$contestantsArgs<ExtArgs>
   groups?: boolean | Prisma.Contest$groupsArgs<ExtArgs>
+  events?: boolean | Prisma.Contest$eventsArgs<ExtArgs>
   _count?: boolean | Prisma.ContestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ContestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -791,6 +901,7 @@ export type $ContestPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     winnerContestant: Prisma.$ContestantPayload<ExtArgs> | null
     contestants: Prisma.$ContestantPayload<ExtArgs>[]
     groups: Prisma.$GroupPayload<ExtArgs>[]
+    events: Prisma.$EventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1197,6 +1308,7 @@ export interface Prisma__ContestClient<T, Null = never, ExtArgs extends runtime.
   winnerContestant<T extends Prisma.Contest$winnerContestantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contest$winnerContestantArgs<ExtArgs>>): Prisma.Prisma__ContestantClient<runtime.Types.Result.GetResult<Prisma.$ContestantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   contestants<T extends Prisma.Contest$contestantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contest$contestantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groups<T extends Prisma.Contest$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contest$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  events<T extends Prisma.Contest$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contest$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1707,6 +1819,30 @@ export type Contest$groupsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.GroupScalarFieldEnum | Prisma.GroupScalarFieldEnum[]
+}
+
+/**
+ * Contest.events
+ */
+export type Contest$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Event
+   */
+  select?: Prisma.EventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Event
+   */
+  omit?: Prisma.EventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventInclude<ExtArgs> | null
+  where?: Prisma.EventWhereInput
+  orderBy?: Prisma.EventOrderByWithRelationInput | Prisma.EventOrderByWithRelationInput[]
+  cursor?: Prisma.EventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EventScalarFieldEnum | Prisma.EventScalarFieldEnum[]
 }
 
 /**

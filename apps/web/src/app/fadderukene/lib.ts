@@ -1,15 +1,11 @@
-import type { EventId, EventWithAttendance } from "@dotkomonline/types"
+import type { ContestId } from "@dotkomonline/rpc/contest"
+import type { EventWithAttendance } from "@dotkomonline/types"
 import { addWeeks, interval, subMonths } from "date-fns"
-import type { ComponentType } from "react"
 
 export type FadderukePageProps = {
   parentEventWithAttendance: EventWithAttendance | null
   childEventsWithAttendance: EventWithAttendance[]
-}
-
-export type FadderukeEntry = {
-  parentEventId: EventId
-  page: ComponentType<FadderukePageProps>
+  contestId: ContestId | null
 }
 
 export const getFadderukeActiveInterval = (parentEventStart: Date, parentEventEnd: Date) => {

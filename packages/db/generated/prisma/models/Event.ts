@@ -52,6 +52,7 @@ export type EventMinAggregateOutputType = {
   updatedAt: Date | null
   attendanceId: string | null
   parentId: string | null
+  contestId: string | null
   metadataImportId: number | null
 }
 
@@ -73,6 +74,7 @@ export type EventMaxAggregateOutputType = {
   updatedAt: Date | null
   attendanceId: string | null
   parentId: string | null
+  contestId: string | null
   metadataImportId: number | null
 }
 
@@ -94,6 +96,7 @@ export type EventCountAggregateOutputType = {
   updatedAt: number
   attendanceId: number
   parentId: number
+  contestId: number
   metadataImportId: number
   _all: number
 }
@@ -125,6 +128,7 @@ export type EventMinAggregateInputType = {
   updatedAt?: true
   attendanceId?: true
   parentId?: true
+  contestId?: true
   metadataImportId?: true
 }
 
@@ -146,6 +150,7 @@ export type EventMaxAggregateInputType = {
   updatedAt?: true
   attendanceId?: true
   parentId?: true
+  contestId?: true
   metadataImportId?: true
 }
 
@@ -167,6 +172,7 @@ export type EventCountAggregateInputType = {
   updatedAt?: true
   attendanceId?: true
   parentId?: true
+  contestId?: true
   metadataImportId?: true
   _all?: true
 }
@@ -275,6 +281,7 @@ export type EventGroupByOutputType = {
   updatedAt: Date
   attendanceId: string | null
   parentId: string | null
+  contestId: string | null
   metadataImportId: number | null
   _count: EventCountAggregateOutputType | null
   _avg: EventAvgAggregateOutputType | null
@@ -319,11 +326,14 @@ export type EventWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
+  contestId?: Prisma.StringNullableFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableFilter<"Event"> | number | null
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormNullableScalarRelationFilter, Prisma.FeedbackFormWhereInput> | null
+  fadderuke?: Prisma.XOR<Prisma.FadderukeNullableScalarRelationFilter, Prisma.FadderukeWhereInput> | null
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
+  contest?: Prisma.XOR<Prisma.ContestNullableScalarRelationFilter, Prisma.ContestWhereInput> | null
   companies?: Prisma.EventCompanyListRelationFilter
   hostingGroups?: Prisma.EventHostingGroupListRelationFilter
   deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
@@ -347,11 +357,14 @@ export type EventOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contestId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadataImportId?: Prisma.SortOrderInput | Prisma.SortOrder
   feedbackForm?: Prisma.FeedbackFormOrderByWithRelationInput
+  fadderuke?: Prisma.FadderukeOrderByWithRelationInput
   attendance?: Prisma.AttendanceOrderByWithRelationInput
   parent?: Prisma.EventOrderByWithRelationInput
   children?: Prisma.EventOrderByRelationAggregateInput
+  contest?: Prisma.ContestOrderByWithRelationInput
   companies?: Prisma.EventCompanyOrderByRelationAggregateInput
   hostingGroups?: Prisma.EventHostingGroupOrderByRelationAggregateInput
   deregisterReasons?: Prisma.DeregisterReasonOrderByRelationAggregateInput
@@ -378,11 +391,14 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
+  contestId?: Prisma.StringNullableFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableFilter<"Event"> | number | null
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormNullableScalarRelationFilter, Prisma.FeedbackFormWhereInput> | null
+  fadderuke?: Prisma.XOR<Prisma.FadderukeNullableScalarRelationFilter, Prisma.FadderukeWhereInput> | null
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
+  contest?: Prisma.XOR<Prisma.ContestNullableScalarRelationFilter, Prisma.ContestWhereInput> | null
   companies?: Prisma.EventCompanyListRelationFilter
   hostingGroups?: Prisma.EventHostingGroupListRelationFilter
   deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
@@ -406,6 +422,7 @@ export type EventOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contestId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadataImportId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.EventCountOrderByAggregateInput
   _avg?: Prisma.EventAvgOrderByAggregateInput
@@ -435,6 +452,7 @@ export type EventScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   attendanceId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
+  contestId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableWithAggregatesFilter<"Event"> | number | null
 }
 
@@ -456,9 +474,11 @@ export type EventCreateInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
@@ -482,8 +502,10 @@ export type EventUncheckedCreateInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
@@ -508,9 +530,11 @@ export type EventUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
@@ -534,8 +558,10 @@ export type EventUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
@@ -560,6 +586,7 @@ export type EventCreateManyInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
 }
 
@@ -600,6 +627,7 @@ export type EventUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
@@ -636,6 +664,7 @@ export type EventCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  contestId?: Prisma.SortOrder
   metadataImportId?: Prisma.SortOrder
 }
 
@@ -661,6 +690,7 @@ export type EventMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  contestId?: Prisma.SortOrder
   metadataImportId?: Prisma.SortOrder
 }
 
@@ -682,6 +712,7 @@ export type EventMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  contestId?: Prisma.SortOrder
   metadataImportId?: Prisma.SortOrder
 }
 
@@ -858,6 +889,62 @@ export type EventUpdateOneRequiredWithoutDeregisterReasonsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutDeregisterReasonsInput, Prisma.EventUpdateWithoutDeregisterReasonsInput>, Prisma.EventUncheckedUpdateWithoutDeregisterReasonsInput>
 }
 
+export type EventCreateNestedManyWithoutContestInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput> | Prisma.EventCreateWithoutContestInput[] | Prisma.EventUncheckedCreateWithoutContestInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutContestInput | Prisma.EventCreateOrConnectWithoutContestInput[]
+  createMany?: Prisma.EventCreateManyContestInputEnvelope
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+}
+
+export type EventUncheckedCreateNestedManyWithoutContestInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput> | Prisma.EventCreateWithoutContestInput[] | Prisma.EventUncheckedCreateWithoutContestInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutContestInput | Prisma.EventCreateOrConnectWithoutContestInput[]
+  createMany?: Prisma.EventCreateManyContestInputEnvelope
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+}
+
+export type EventUpdateManyWithoutContestNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput> | Prisma.EventCreateWithoutContestInput[] | Prisma.EventUncheckedCreateWithoutContestInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutContestInput | Prisma.EventCreateOrConnectWithoutContestInput[]
+  upsert?: Prisma.EventUpsertWithWhereUniqueWithoutContestInput | Prisma.EventUpsertWithWhereUniqueWithoutContestInput[]
+  createMany?: Prisma.EventCreateManyContestInputEnvelope
+  set?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  disconnect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  delete?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  update?: Prisma.EventUpdateWithWhereUniqueWithoutContestInput | Prisma.EventUpdateWithWhereUniqueWithoutContestInput[]
+  updateMany?: Prisma.EventUpdateManyWithWhereWithoutContestInput | Prisma.EventUpdateManyWithWhereWithoutContestInput[]
+  deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
+}
+
+export type EventUncheckedUpdateManyWithoutContestNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput> | Prisma.EventCreateWithoutContestInput[] | Prisma.EventUncheckedCreateWithoutContestInput[]
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutContestInput | Prisma.EventCreateOrConnectWithoutContestInput[]
+  upsert?: Prisma.EventUpsertWithWhereUniqueWithoutContestInput | Prisma.EventUpsertWithWhereUniqueWithoutContestInput[]
+  createMany?: Prisma.EventCreateManyContestInputEnvelope
+  set?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  disconnect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  delete?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  connect?: Prisma.EventWhereUniqueInput | Prisma.EventWhereUniqueInput[]
+  update?: Prisma.EventUpdateWithWhereUniqueWithoutContestInput | Prisma.EventUpdateWithWhereUniqueWithoutContestInput[]
+  updateMany?: Prisma.EventUpdateManyWithWhereWithoutContestInput | Prisma.EventUpdateManyWithWhereWithoutContestInput[]
+  deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
+}
+
+export type EventCreateNestedOneWithoutFadderukeInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutFadderukeInput, Prisma.EventUncheckedCreateWithoutFadderukeInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutFadderukeInput
+  connect?: Prisma.EventWhereUniqueInput
+}
+
+export type EventUpdateOneRequiredWithoutFadderukeNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutFadderukeInput, Prisma.EventUncheckedCreateWithoutFadderukeInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutFadderukeInput
+  upsert?: Prisma.EventUpsertWithoutFadderukeInput
+  connect?: Prisma.EventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutFadderukeInput, Prisma.EventUpdateWithoutFadderukeInput>, Prisma.EventUncheckedUpdateWithoutFadderukeInput>
+}
+
 export type EventCreateWithoutAttendanceInput = {
   id?: string
   title: string
@@ -876,8 +963,10 @@ export type EventCreateWithoutAttendanceInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
@@ -900,8 +989,10 @@ export type EventUncheckedCreateWithoutAttendanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
@@ -955,6 +1046,7 @@ export type EventScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
+  contestId?: Prisma.StringNullableFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableFilter<"Event"> | number | null
 }
 
@@ -976,8 +1068,10 @@ export type EventCreateWithoutChildrenInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
@@ -1001,8 +1095,10 @@ export type EventUncheckedCreateWithoutChildrenInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
@@ -1031,8 +1127,10 @@ export type EventCreateWithoutParentInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
@@ -1055,8 +1153,10 @@ export type EventUncheckedCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attendanceId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
@@ -1102,8 +1202,10 @@ export type EventUpdateWithoutChildrenInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
@@ -1127,8 +1229,10 @@ export type EventUncheckedUpdateWithoutChildrenInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
@@ -1168,9 +1272,11 @@ export type EventCreateWithoutCompaniesInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
@@ -1193,8 +1299,10 @@ export type EventUncheckedCreateWithoutCompaniesInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
@@ -1234,9 +1342,11 @@ export type EventUpdateWithoutCompaniesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
@@ -1259,8 +1369,10 @@ export type EventUncheckedUpdateWithoutCompaniesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
@@ -1284,9 +1396,11 @@ export type EventCreateWithoutHostingGroupsInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
@@ -1309,8 +1423,10 @@ export type EventUncheckedCreateWithoutHostingGroupsInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
@@ -1350,9 +1466,11 @@ export type EventUpdateWithoutHostingGroupsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
@@ -1375,8 +1493,10 @@ export type EventUncheckedUpdateWithoutHostingGroupsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
@@ -1399,9 +1519,11 @@ export type EventCreateWithoutFeedbackFormInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   metadataImportId?: number | null
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
@@ -1425,7 +1547,9 @@ export type EventUncheckedCreateWithoutFeedbackFormInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
@@ -1465,9 +1589,11 @@ export type EventUpdateWithoutFeedbackFormInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
@@ -1491,7 +1617,9 @@ export type EventUncheckedUpdateWithoutFeedbackFormInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
@@ -1516,9 +1644,11 @@ export type EventCreateWithoutDeregisterReasonsInput = {
   updatedAt?: Date | string
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
 }
@@ -1541,8 +1671,10 @@ export type EventUncheckedCreateWithoutDeregisterReasonsInput = {
   updatedAt?: Date | string
   attendanceId?: string | null
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
@@ -1582,9 +1714,11 @@ export type EventUpdateWithoutDeregisterReasonsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
 }
@@ -1607,11 +1741,217 @@ export type EventUncheckedUpdateWithoutDeregisterReasonsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
+  companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
+}
+
+export type EventCreateWithoutContestInput = {
+  id?: string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  type: $Enums.EventType
+  markForMissedAttendance?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+}
+
+export type EventUncheckedCreateWithoutContestInput = {
+  id?: string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  type: $Enums.EventType
+  markForMissedAttendance?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attendanceId?: string | null
+  parentId?: string | null
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
+  companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+}
+
+export type EventCreateOrConnectWithoutContestInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput>
+}
+
+export type EventCreateManyContestInputEnvelope = {
+  data: Prisma.EventCreateManyContestInput | Prisma.EventCreateManyContestInput[]
+  skipDuplicates?: boolean
+}
+
+export type EventUpsertWithWhereUniqueWithoutContestInput = {
+  where: Prisma.EventWhereUniqueInput
+  update: Prisma.XOR<Prisma.EventUpdateWithoutContestInput, Prisma.EventUncheckedUpdateWithoutContestInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutContestInput, Prisma.EventUncheckedCreateWithoutContestInput>
+}
+
+export type EventUpdateWithWhereUniqueWithoutContestInput = {
+  where: Prisma.EventWhereUniqueInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutContestInput, Prisma.EventUncheckedUpdateWithoutContestInput>
+}
+
+export type EventUpdateManyWithWhereWithoutContestInput = {
+  where: Prisma.EventScalarWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateManyMutationInput, Prisma.EventUncheckedUpdateManyWithoutContestInput>
+}
+
+export type EventCreateWithoutFadderukeInput = {
+  id?: string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  type: $Enums.EventType
+  markForMissedAttendance?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+}
+
+export type EventUncheckedCreateWithoutFadderukeInput = {
+  id?: string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  type: $Enums.EventType
+  markForMissedAttendance?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attendanceId?: string | null
+  parentId?: string | null
+  contestId?: string | null
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
+  companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+}
+
+export type EventCreateOrConnectWithoutFadderukeInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutFadderukeInput, Prisma.EventUncheckedCreateWithoutFadderukeInput>
+}
+
+export type EventUpsertWithoutFadderukeInput = {
+  update: Prisma.XOR<Prisma.EventUpdateWithoutFadderukeInput, Prisma.EventUncheckedUpdateWithoutFadderukeInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutFadderukeInput, Prisma.EventUncheckedCreateWithoutFadderukeInput>
+  where?: Prisma.EventWhereInput
+}
+
+export type EventUpdateToOneWithWhereWithoutFadderukeInput = {
+  where?: Prisma.EventWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutFadderukeInput, Prisma.EventUncheckedUpdateWithoutFadderukeInput>
+}
+
+export type EventUpdateWithoutFadderukeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateWithoutFadderukeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
 }
 
 export type EventCreateManyAttendanceInput = {
@@ -1631,6 +1971,7 @@ export type EventCreateManyAttendanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   parentId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
 }
 
@@ -1652,8 +1993,10 @@ export type EventUpdateWithoutAttendanceInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
@@ -1676,8 +2019,10 @@ export type EventUncheckedUpdateWithoutAttendanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
@@ -1701,6 +2046,7 @@ export type EventUncheckedUpdateManyWithoutAttendanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
@@ -1721,6 +2067,7 @@ export type EventCreateManyParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   attendanceId?: string | null
+  contestId?: string | null
   metadataImportId?: number | null
 }
 
@@ -1742,8 +2089,10 @@ export type EventUpdateWithoutParentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
@@ -1766,8 +2115,10 @@ export type EventUncheckedUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
@@ -1791,6 +2142,103 @@ export type EventUncheckedUpdateManyWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type EventCreateManyContestInput = {
+  id?: string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  type: $Enums.EventType
+  markForMissedAttendance?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attendanceId?: string | null
+  parentId?: string | null
+  metadataImportId?: number | null
+}
+
+export type EventUpdateWithoutContestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateWithoutContestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
+  companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateManyWithoutContestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
@@ -1870,11 +2318,14 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   attendanceId?: boolean
   parentId?: boolean
+  contestId?: boolean
   metadataImportId?: boolean
   feedbackForm?: boolean | Prisma.Event$feedbackFormArgs<ExtArgs>
+  fadderuke?: boolean | Prisma.Event$fadderukeArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
   companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
   hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
   deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
@@ -1899,9 +2350,11 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   updatedAt?: boolean
   attendanceId?: boolean
   parentId?: boolean
+  contestId?: boolean
   metadataImportId?: boolean
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
 }, ExtArgs["result"]["event"]>
 
 export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1922,9 +2375,11 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   updatedAt?: boolean
   attendanceId?: boolean
   parentId?: boolean
+  contestId?: boolean
   metadataImportId?: boolean
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
 }, ExtArgs["result"]["event"]>
 
 export type EventSelectScalar = {
@@ -1945,15 +2400,18 @@ export type EventSelectScalar = {
   updatedAt?: boolean
   attendanceId?: boolean
   parentId?: boolean
+  contestId?: boolean
   metadataImportId?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "start" | "end" | "status" | "description" | "shortDescription" | "imageUrl" | "locationTitle" | "locationAddress" | "locationLink" | "type" | "markForMissedAttendance" | "createdAt" | "updatedAt" | "attendanceId" | "parentId" | "metadataImportId", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "start" | "end" | "status" | "description" | "shortDescription" | "imageUrl" | "locationTitle" | "locationAddress" | "locationLink" | "type" | "markForMissedAttendance" | "createdAt" | "updatedAt" | "attendanceId" | "parentId" | "contestId" | "metadataImportId", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feedbackForm?: boolean | Prisma.Event$feedbackFormArgs<ExtArgs>
+  fadderuke?: boolean | Prisma.Event$fadderukeArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
   companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
   hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
   deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
@@ -1962,19 +2420,23 @@ export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type EventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
 }
 export type EventIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
+  contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
 }
 
 export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Event"
   objects: {
     feedbackForm: Prisma.$FeedbackFormPayload<ExtArgs> | null
+    fadderuke: Prisma.$FadderukePayload<ExtArgs> | null
     attendance: Prisma.$AttendancePayload<ExtArgs> | null
     parent: Prisma.$EventPayload<ExtArgs> | null
     children: Prisma.$EventPayload<ExtArgs>[]
+    contest: Prisma.$ContestPayload<ExtArgs> | null
     companies: Prisma.$EventCompanyPayload<ExtArgs>[]
     hostingGroups: Prisma.$EventHostingGroupPayload<ExtArgs>[]
     deregisterReasons: Prisma.$DeregisterReasonPayload<ExtArgs>[]
@@ -1997,6 +2459,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     updatedAt: Date
     attendanceId: string | null
     parentId: string | null
+    contestId: string | null
     /**
      * Historical metadata -- This is the id of the event in the previous version of OnlineWeb, if it was imported from
      * the previous version
@@ -2397,9 +2860,11 @@ readonly fields: EventFieldRefs;
 export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   feedbackForm<T extends Prisma.Event$feedbackFormArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$feedbackFormArgs<ExtArgs>>): Prisma.Prisma__FeedbackFormClient<runtime.Types.Result.GetResult<Prisma.$FeedbackFormPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  fadderuke<T extends Prisma.Event$fadderukeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$fadderukeArgs<ExtArgs>>): Prisma.Prisma__FadderukeClient<runtime.Types.Result.GetResult<Prisma.$FadderukePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attendance<T extends Prisma.Event$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$attendanceArgs<ExtArgs>>): Prisma.Prisma__AttendanceClient<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Event$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$parentArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Event$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contest<T extends Prisma.Event$contestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$contestArgs<ExtArgs>>): Prisma.Prisma__ContestClient<runtime.Types.Result.GetResult<Prisma.$ContestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   companies<T extends Prisma.Event$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventCompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   hostingGroups<T extends Prisma.Event$hostingGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$hostingGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventHostingGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deregisterReasons<T extends Prisma.Event$deregisterReasonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$deregisterReasonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeregisterReasonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2449,6 +2914,7 @@ export interface EventFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly attendanceId: Prisma.FieldRef<"Event", 'String'>
   readonly parentId: Prisma.FieldRef<"Event", 'String'>
+  readonly contestId: Prisma.FieldRef<"Event", 'String'>
   readonly metadataImportId: Prisma.FieldRef<"Event", 'Int'>
 }
     
@@ -2879,6 +3345,25 @@ export type Event$feedbackFormArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * Event.fadderuke
+ */
+export type Event$fadderukeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Fadderuke
+   */
+  select?: Prisma.FadderukeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Fadderuke
+   */
+  omit?: Prisma.FadderukeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FadderukeInclude<ExtArgs> | null
+  where?: Prisma.FadderukeWhereInput
+}
+
+/**
  * Event.attendance
  */
 export type Event$attendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2938,6 +3423,25 @@ export type Event$childrenArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.EventScalarFieldEnum | Prisma.EventScalarFieldEnum[]
+}
+
+/**
+ * Event.contest
+ */
+export type Event$contestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Contest
+   */
+  select?: Prisma.ContestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Contest
+   */
+  omit?: Prisma.ContestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContestInclude<ExtArgs> | null
+  where?: Prisma.ContestWhereInput
 }
 
 /**

@@ -33,6 +33,7 @@ export namespace findFeaturedEvents {
     metadata_import_id: number | null
     parent_id: string | null
     mark_for_missed_attendance: boolean
+    contest_id: string | null
     total_capacity: bigint | null
     attendee_count: bigint | null
     type_rank: number | null

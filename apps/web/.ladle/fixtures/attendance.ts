@@ -181,6 +181,7 @@ export const createMockEvent = (overrides: Partial<Event> = {}): Event => ({
   updatedAt: now,
   attendanceId: MOCK_ATTENDANCE_ID,
   parentId: null,
+  contestId: null,
   metadataImportId: null,
   shortDescription: null,
   markForMissedAttendance: true,

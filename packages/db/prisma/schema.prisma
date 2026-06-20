@@ -369,14 +369,17 @@ model Event {
   type                    EventType
   feedbackForm            FeedbackForm?
   markForMissedAttendance Boolean       @default(true) @map("mark_for_missed_attendance")
+  fadderuke               Fadderuke?
   createdAt               DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt               DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
+  contestId    String?     @map("contest_id")
   attendance   Attendance? @relation(fields: [attendanceId], references: [id])
   parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children     Event[]     @relation("children")
+  contest      Contest?    @relation(fields: [contestId], references: [id], onDelete: SetNull)
 
   companies         EventCompany[]
   hostingGroups     EventHostingGroup[]
@@ -386,6 +389,7 @@ model Event {
   /// the previous version
   metadataImportId Int? @map("metadata_import_id")
 
+  @@index([contestId])
   @@map("event")
 }
 
@@ -876,8 +880,20 @@ model Contest {
 
   contestants Contestant[] @relation("ContestContestants")
   groups      Group[]      @relation("ContestOrganizerGroups")
+  events      Event[]
 
   @@map("contest")
+}
+
+model Fadderuke {
+  id        String   @id @default(uuid())
+  year      Int      @unique
+  eventId   String   @unique @map("event_id")
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("fadderuke")
 }
 
 enum ContestResultType {

@@ -35,6 +35,7 @@ import {
   IconBriefcase,
   IconCampfire,
   IconClipboardList,
+  IconConfetti,
   IconMoneybag,
   IconPhoto,
   IconPhotoShare,
@@ -73,6 +74,11 @@ const navigations = [
     label: "Konkurranser",
     icon: IconAward,
     href: "/konkurranser",
+  },
+  {
+    label: "Fadderuker",
+    icon: IconConfetti,
+    href: "/fadderuke",
   },
   {
     label: "Artikler",

@@ -88,6 +88,7 @@ export const ModelName = {
   NotificationRecipient: 'NotificationRecipient',
   Notification: 'Notification',
   Contest: 'Contest',
+  Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam'
 } as const
@@ -294,6 +295,7 @@ export const EventScalarFieldEnum = {
   updatedAt: 'updatedAt',
   attendanceId: 'attendanceId',
   parentId: 'parentId',
+  contestId: 'contestId',
   metadataImportId: 'metadataImportId'
 } as const
 
@@ -619,6 +621,17 @@ export const ContestScalarFieldEnum = {
 } as const
 
 export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeof ContestScalarFieldEnum]
+
+
+export const FadderukeScalarFieldEnum = {
+  id: 'id',
+  year: 'year',
+  eventId: 'eventId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FadderukeScalarFieldEnum = (typeof FadderukeScalarFieldEnum)[keyof typeof FadderukeScalarFieldEnum]
 
 
 export const ContestantScalarFieldEnum = {

@@ -13,7 +13,7 @@ import {
 } from "@tabler/icons-react"
 import { OnlineLogo } from "@/components/atoms/OnlineLogo"
 
-export function Fadderukene2026Page({ childEventsWithAttendance }: FadderukePageProps) {
+export function Fadderukene2026Page({ childEventsWithAttendance, contestId }: FadderukePageProps) {
   return (
     <div className="relative left-1/2 w-dvw -translate-x-1/2 overflow-x-clip bg-[#EDE3D4] dark:bg-taupe-800 p-2 pb-16">
       <div aria-hidden className="absolute -top-44 left-0 h-44 w-full bg-[#D5E3EA] dark:bg-stone-900" />
@@ -274,9 +274,11 @@ export function Fadderukene2026Page({ childEventsWithAttendance }: FadderukePage
           </div>
         </div>
 
-        <section id="pallen" className="max-w-3xl mx-auto w-full scroll-mt-28">
-          <Leaderboard />
-        </section>
+        {contestId !== null && (
+          <section id="pallen" className="max-w-3xl mx-auto w-full scroll-mt-28">
+            <Leaderboard contestId={contestId} />
+          </section>
+        )}
 
         <section id="program" className="max-w-3xl mx-auto flex w-full flex-col gap-4 scroll-mt-28">
           <Title element="h3">Program</Title>
