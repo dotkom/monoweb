@@ -15,30 +15,29 @@ import { OnlineLogo } from "@/components/atoms/OnlineLogo"
 
 export function Fadderukene2026Page({ childEventsWithAttendance, contestId }: FadderukePageProps) {
   return (
-    <div className="relative left-1/2 w-dvw -translate-x-1/2 overflow-x-clip bg-[#EDE3D4] dark:bg-taupe-800 p-2 pb-16">
+    <div className="relative left-1/2 min-h-full w-dvw -translate-x-1/2 overflow-x-clip bg-[#EDE3D4] dark:bg-taupe-800 p-2 pb-16">
       <div aria-hidden className="absolute -top-44 left-0 h-44 w-full bg-[#D5E3EA] dark:bg-stone-900" />
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 flex justify-center overflow-hidden bg-[#D5E3EA] dark:bg-stone-900 pt-110"
-      >
-        <Image
-          src="/fadderuke-2026-background.svg"
-          alt=""
-          width={1022}
-          height={1025}
-          priority
-          draggable={false}
-          className="w-[max(100%,64rem)] max-w-none h-auto shrink-0 select-none dark:hidden"
-        />
-        <Image
-          src="/fadderuke-2026-background-dark.svg"
-          alt=""
-          width={1022}
-          height={1025}
-          priority
-          draggable={false}
-          className="w-[max(100%,64rem)] max-w-none h-auto shrink-0 select-none not-dark:hidden"
-        />
+      <div aria-hidden className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 flex justify-center bg-[#D5E3EA] dark:bg-stone-900 pt-110">
+          <Image
+            src="/fadderuke-2026-background.svg"
+            alt=""
+            width={1022}
+            height={1025}
+            priority
+            draggable={false}
+            className="w-[max(100%,64rem)] max-w-none h-auto shrink-0 select-none dark:hidden"
+          />
+          <Image
+            src="/fadderuke-2026-background-dark.svg"
+            alt=""
+            width={1022}
+            height={1025}
+            priority
+            draggable={false}
+            className="w-[max(100%,64rem)] max-w-none h-auto shrink-0 select-none not-dark:hidden"
+          />
+        </div>
       </div>
       <div
         aria-hidden
@@ -282,7 +281,9 @@ export function Fadderukene2026Page({ childEventsWithAttendance, contestId }: Fa
 
         <section id="program" className="max-w-3xl mx-auto flex w-full flex-col gap-4 scroll-mt-28">
           <Title element="h3">Program</Title>
-          <Text className="text-sm text-muted-foreground">Trykk på et arrangement for å se mer informasjon.</Text>
+          {childEventsWithAttendance.length > 0 && (
+            <Text className="text-sm text-muted-foreground">Trykk på et arrangement for å se mer informasjon.</Text>
+          )}
           <EventTimeline eventsWithAttendance={childEventsWithAttendance} />
         </section>
       </div>
