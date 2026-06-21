@@ -25,7 +25,7 @@ export const useCreateFadderukeMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.fadderuke.findMany.queryKey() })
 
-        router.replace("/fadderuke")
+        router.replace("/fadderukene")
       },
       onError: (err) => {
         notification.fail({
@@ -90,7 +90,7 @@ export const useDeleteFadderukeMutation = () => {
 
         await queryClient.invalidateQueries({ queryKey: trpc.fadderuke.findMany.queryKey() })
 
-        router.replace("/fadderuke")
+        router.replace("/fadderukene")
       },
       onError: (err) => {
         notification.fail({

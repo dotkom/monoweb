@@ -16,7 +16,7 @@ export const FadderukerTable = ({ fadderuker }: Props) => {
       columnHelper.accessor("year", {
         header: () => "År",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/fadderuke/${info.row.original.id}`}>
+          <Anchor component={Link} size="sm" href={`/fadderukene/${info.row.original.id}`}>
             Fadderukene {info.getValue()}
           </Anchor>
         ),
