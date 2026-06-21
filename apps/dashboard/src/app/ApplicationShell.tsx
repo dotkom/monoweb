@@ -76,11 +76,6 @@ const navigations = [
     href: "/konkurranser",
   },
   {
-    label: "Fadderuker",
-    icon: IconConfetti,
-    href: "/fadderuke",
-  },
-  {
     label: "Artikler",
     icon: IconPhoto,
     href: "/artikler",
@@ -94,6 +89,11 @@ const navigations = [
     label: "Bedrifter",
     icon: IconMoneybag,
     href: "/bedrifter",
+  },
+  {
+    label: "Fadderukene",
+    icon: IconConfetti,
+    href: "/fadderukene",
   },
   {
     label: "Avmeldingsgrunner",
