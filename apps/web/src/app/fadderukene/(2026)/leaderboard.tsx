@@ -210,17 +210,58 @@ function LeaderboardRow({ rankedContestant, onSelect, userId }: LeaderboardRowPr
   )
 }
 
+type PodiumCardSkeletonProps = {
+  rank: number
+  className?: string
+}
+
+function PodiumCardSkeleton({ rank, className }: PodiumCardSkeletonProps) {
+  return (
+    <div aria-hidden className={cn("mt-3 flex flex-col items-center gap-3 p-2", rank === 1 && "pt-4", className)}>
+      <div
+        className={cn("size-36 animate-pulse rounded-2xl bg-white/50 dark:bg-white/8", rank === 1 && "sm:size-44")}
+      />
+
+      <div
+        className={cn("h-6 w-32 animate-pulse rounded-md bg-white/50 dark:bg-white/8", rank === 1 && "sm:h-7 sm:w-40")}
+      />
+
+      <div className="h-4 w-16 animate-pulse rounded-md bg-white/50 dark:bg-white/8" />
+
+      <div className="h-8 w-20 animate-pulse rounded-full bg-white/50 dark:bg-white/8" />
+    </div>
+  )
+}
+
 function LeaderboardSkeleton() {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <div className="h-36 animate-pulse rounded-xl bg-white/40" />
-        <div className="h-36 animate-pulse rounded-xl bg-white/40" />
-        <div className="h-36 animate-pulse rounded-xl bg-white/40" />
+    <div aria-hidden className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:items-end sm:pt-3">
+        <PodiumCardSkeleton rank={1} className="sm:hidden" />
+        <PodiumCardSkeleton rank={2} />
+        <PodiumCardSkeleton rank={1} className="max-sm:hidden" />
+        <PodiumCardSkeleton rank={3} />
       </div>
-      <div className="h-14 animate-pulse rounded-lg bg-white/40" />
-      <div className="h-14 animate-pulse rounded-lg bg-white/40" />
-      <div className="h-14 animate-pulse rounded-lg bg-white/40" />
+
+      <ul className={leaderboardListClassName}>
+        {Array.from({ length: 4 }, (_, index) => (
+          <li
+            // biome-ignore lint/suspicious/noArrayIndexKey: placeholders have no identity
+            key={index}
+            className={leaderboardRowClassName}
+          >
+            <div className="col-span-full grid grid-cols-subgrid w-full items-center gap-x-3 rounded-lg p-3 backdrop-blur-2xl bg-white/40 dark:bg-white/5">
+              <div className="h-4 w-4 animate-pulse rounded bg-white/50 dark:bg-white/10" />
+
+              <div className="h-4 w-40 max-w-full animate-pulse rounded bg-white/50 dark:bg-white/10" />
+
+              <div className="ml-auto hidden h-6 w-16 animate-pulse rounded-full bg-white/50 dark:bg-white/10 xs:block" />
+
+              <div className="h-4 w-12 animate-pulse rounded bg-white/50 dark:bg-white/10 justify-self-end" />
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
