@@ -1,1 +1,1 @@
-export { Avatar, AvatarFallback, AvatarImage } from "#components/avatar"
+export { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "#components/avatar"

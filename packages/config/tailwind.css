@@ -104,6 +104,19 @@
   );
 }
 
+@utility animate-left-to-right {
+  animation: left-to-right var(--left-to-right-duration, 20s) linear infinite;
+}
+
+@keyframes left-to-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @utility animate-stripes {
   animation: move-stripes-x var(--speed, 1.2s) linear infinite;
 }
@@ -116,6 +129,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-left-to-right {
+    animation: none;
+  }
   .animate-stripes {
     animation: none;
   }
@@ -137,8 +153,10 @@
 }
 
 @theme {
-  --breakpoint-xs: 30rem;
   --font-glass: Glass, "sans-serif";
+  --font-marcellus: Marcellus, "serif";
+
+  --breakpoint-xs: 30rem;
   --animate-flicker: flicker 0.25s infinite;
   --animate-scan: scan 0.2s linear infinite;
 
