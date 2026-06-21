@@ -1,5 +1,18 @@
 import { stripIndents } from "common-tags"
-import { addDays, addHours, addMonths, roundToNearestHours, setHours, subDays, subMonths, subWeeks } from "date-fns"
+import {
+  addDays,
+  addHours,
+  addMonths,
+  addWeeks,
+  isMonday,
+  nextMonday,
+  roundToNearestHours,
+  set,
+  setHours,
+  subDays,
+  subMonths,
+  subWeeks,
+} from "date-fns"
 import type { Prisma } from "../"
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
@@ -7,6 +20,20 @@ const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
 const lastMonth = subMonths(now, 1)
 const tomorrow = addDays(now, 1)
 const nextMonth = addMonths(now, 1)
+
+export const FADDERUKE_EVENT_ID = "bd67bc32-debd-46cb-bb06-1213e36be05d"
+
+export function getFadderukeInterval() {
+  const augustFirst = new Date(now.getFullYear(), 7, 1)
+  const firstMonday = isMonday(augustFirst) ? augustFirst : nextMonday(augustFirst)
+
+  const start = set(addWeeks(firstMonday, 1), { hours: 8, minutes: 0, seconds: 0, milliseconds: 0 })
+  const end = set(addDays(start, 13), { hours: 21, minutes: 59, seconds: 0, milliseconds: 0 })
+
+  return { start, end }
+}
+
+const fadderukeInterval = getFadderukeInterval()
 
 export const getEventFixtures = (attendanceIds: string[]) =>
   [
@@ -407,5 +434,80 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       shortDescription: "17. mai-frokost.",
       locationTitle: "A4, Realfagbygget",
       locationAddress: "Høgskoleringen 1, Trondheim",
+    },
+    {
+      id: FADDERUKE_EVENT_ID,
+      attendanceId: null,
+      createdAt: subMonths(fadderukeInterval.start, 3),
+      updatedAt: subMonths(fadderukeInterval.start, 3),
+      title: `Fadderuke ${now.getFullYear()}`,
+      start: fadderukeInterval.start,
+      end: fadderukeInterval.end,
+      status: "PUBLIC",
+      type: "WELCOME",
+      description: "<p>Onlines fadderuker for nye studenter.</p>",
+      shortDescription: "Onlines fadderuker.",
+      locationTitle: "Trondheim",
+    },
+    {
+      attendanceId: null,
+      createdAt: subMonths(fadderukeInterval.start, 3),
+      updatedAt: subMonths(fadderukeInterval.start, 3),
+      title: "Oppstart og immatrikulering",
+      start: set(fadderukeInterval.start, { hours: 10 }),
+      end: set(fadderukeInterval.start, { hours: 12 }),
+      status: "PUBLIC",
+      type: "WELCOME",
+      description: "<p>Felles oppstart og immatrikulering for alle nye studenter.</p>",
+      shortDescription: "Oppstart og immatrikulering.",
+      locationTitle: "Tapirbygget",
+      locationAddress: "Gløshaugen, Trondheim",
+      parentId: FADDERUKE_EVENT_ID,
+    },
+    {
+      attendanceId: null,
+      createdAt: subMonths(fadderukeInterval.start, 3),
+      updatedAt: subMonths(fadderukeInterval.start, 3),
+      title: "Speeddating",
+      start: set(addDays(fadderukeInterval.start, 3), { hours: 12 }),
+      end: set(addDays(fadderukeInterval.start, 3), { hours: 14 }),
+      status: "PUBLIC",
+      type: "WELCOME",
+      description: "<p>Bli kjent med medstudenter gjennom speeddating.</p>",
+      shortDescription: "Speeddating med medstudenter.",
+      locationTitle: "A4, Realfagbygget",
+      locationAddress: "Høgskoleringen 1, Trondheim",
+      parentId: FADDERUKE_EVENT_ID,
+    },
+    {
+      attendanceId: null,
+      createdAt: subMonths(fadderukeInterval.start, 3),
+      updatedAt: subMonths(fadderukeInterval.start, 3),
+      title: "Silent Disco",
+      start: set(addDays(fadderukeInterval.start, 3), { hours: 19 }),
+      end: set(addDays(fadderukeInterval.start, 3), { hours: 23 }),
+      status: "PUBLIC",
+      type: "WELCOME",
+      description: "<p>Dans til din egen musikk på silent disco.</p>",
+      shortDescription: "Silent disco på Havet.",
+      locationTitle: "Havet",
+      locationAddress: "Strandveien 104, 7067 Trondheim",
+      locationLink: "https://maps.app.goo.gl/8dA2NN9YWDp7XyuV6",
+      parentId: FADDERUKE_EVENT_ID,
+    },
+    {
+      attendanceId: null,
+      createdAt: subMonths(fadderukeInterval.start, 3),
+      updatedAt: subMonths(fadderukeInterval.start, 3),
+      title: "Beer olympics",
+      start: set(addDays(fadderukeInterval.start, 7), { hours: 17 }),
+      end: set(addDays(fadderukeInterval.start, 7), { hours: 20 }),
+      status: "PUBLIC",
+      type: "WELCOME",
+      description: "<p>Lagkonkurranse med leker og god stemning.</p>",
+      shortDescription: "Lagkonkurranse med leker.",
+      locationTitle: "Festningsparken",
+      locationAddress: "Festningsparken, Rosenborg, Trondheim",
+      parentId: FADDERUKE_EVENT_ID,
     },
   ] as const satisfies Prisma.EventCreateManyInput[]

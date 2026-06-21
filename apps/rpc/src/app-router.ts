@@ -3,6 +3,7 @@ import { auditLogRouter } from "./modules/audit-log/audit-log-router"
 import { companyRouter } from "./modules/company/company-router"
 import { contestRouter } from "./modules/contest/contest-router"
 import { eventRouter } from "./modules/event/event-router"
+import { fadderukeRouter } from "./modules/fadderuke/fadderuke-router"
 import { groupRouter } from "./modules/group/group-router"
 import { invoicificationRouter } from "./modules/invoicification/invoicification-router"
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
@@ -20,6 +21,7 @@ export const appRouter = t.router({
   user: userRouter,
   company: companyRouter,
   contest: contestRouter,
+  fadderuke: fadderukeRouter,
   mark: markRouter,
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,

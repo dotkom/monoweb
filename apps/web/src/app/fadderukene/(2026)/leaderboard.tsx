@@ -2,15 +2,13 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import type { ContestResultOrder, ContestUserSummary, ContestantDetail } from "@dotkomonline/rpc/contest"
+import type { ContestId, ContestResultOrder, ContestUserSummary, ContestantDetail } from "@dotkomonline/rpc/contest"
 import { Avatar, AvatarFallback, AvatarImage, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { IconUserFilled } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { TeamModal } from "./team-modal"
 import Image from "next/image"
-
-const CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
 
 const MAX_VISIBLE_AVATARS = 5
 
@@ -227,7 +225,11 @@ function LeaderboardSkeleton() {
   )
 }
 
-export function Leaderboard() {
+type LeaderboardProps = {
+  contestId: ContestId
+}
+
+export function Leaderboard({ contestId }: LeaderboardProps) {
   const trpc = useTRPC()
   const { user } = useUser()
   const isAuthenticated = user != null
@@ -235,7 +237,7 @@ export function Leaderboard() {
   const [selected, setSelected] = useState<RankedContestant | null>(null)
 
   const { data, isLoading } = useQuery({
-    ...trpc.contest.getWithContestants.queryOptions({ contestId: CONTEST_ID }),
+    ...trpc.contest.getWithContestants.queryOptions({ contestId }),
   })
 
   const rankedContestants = data ? rankContestants(data.contestants, data.contest.resultOrder) : []

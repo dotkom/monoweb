@@ -203,6 +203,11 @@ export type Notification = Prisma.NotificationModel
  */
 export type Contest = Prisma.ContestModel
 /**
+ * Model Fadderuke
+ * 
+ */
+export type Fadderuke = Prisma.FadderukeModel
+/**
  * Model Contestant
  * 
  */

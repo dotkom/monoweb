@@ -13,7 +13,9 @@ import { getOfflineFixtures } from "./fixtures/offline"
 import { getUserFixtures } from "./fixtures/user"
 import { getGroupMembershipFixtures } from "./fixtures/group-membership"
 import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
-import { FADDERUKE_2026_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
+import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
+import { FADDERUKE_EVENT_ID } from "./fixtures/event"
+import { getFadderukeFixture } from "./fixtures/fadderuke"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -89,9 +91,15 @@ for (const { team } of contestTeamFixtures) {
   })
 }
 await db.contest.update({
-  where: { id: FADDERUKE_2026_CONTEST_ID },
+  where: { id: FADDERUKE_CONTEST_ID },
   data: { winnerContestantId: contestTeamFixtures[0].contestant.id },
 })
+
+await db.event.update({
+  where: { id: FADDERUKE_EVENT_ID },
+  data: { contestId: FADDERUKE_CONTEST_ID },
+})
+await db.fadderuke.create({ data: getFadderukeFixture() })
 
 const offlineInput = getOfflineFixtures()
 await db.offline.createMany({ data: offlineInput })

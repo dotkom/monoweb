@@ -43,6 +43,7 @@ export const EventWriteSchema = EventSchema.pick({
   locationAddress: true,
   locationLink: true,
   markForMissedAttendance: true,
+  contestId: true,
 })
 
 export type EventFilterQuery = z.infer<typeof EventFilterQuerySchema>

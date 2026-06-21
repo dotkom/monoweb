@@ -57,6 +57,8 @@ import { getWorkspaceService } from "./workspace-sync/workspace-service"
 import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
+import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
+import { getFadderukeService } from "./fadderuke/fadderuke-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -187,6 +189,7 @@ export async function createServiceLayer(
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
   const contestRepository = getContestRepository()
+  const fadderukeRepository = getFadderukeRepository()
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
@@ -243,6 +246,7 @@ export async function createServiceLayer(
     configuration.AWS_S3_BUCKET
   )
   const contestService = getContestService(contestRepository)
+  const fadderukeService = getFadderukeService(fadderukeRepository)
   const userMergeService = getUserMergingService(
     userService,
     groupRepository,
@@ -290,6 +294,7 @@ export async function createServiceLayer(
     authorizationService,
     paymentWebhookService,
     contestService,
+    fadderukeService,
     recurringTaskService,
     workspaceService,
 

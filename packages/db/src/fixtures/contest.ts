@@ -1,14 +1,15 @@
 import type { Prisma } from "../"
 import { ContestResultOrderSchema, ContestResultTypeSchema } from "../../generated/schema/index"
+import { getFadderukeInterval } from "./event"
 
-export const FADDERUKE_2026_CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
+export const FADDERUKE_CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
 
 export const getContestFixture = (): Prisma.ContestCreateInput => ({
-  id: FADDERUKE_2026_CONTEST_ID,
-  name: "Onlinelekene 2026",
+  id: FADDERUKE_CONTEST_ID,
+  name: "Onlinelekene",
   description:
     "Konkurransen under fadderukene. Samle poeng på arrangementer og aktiviteter gjennom uken, og se hvem som topper pallen!",
-  startDate: new Date("2026-08-11"),
+  startDate: getFadderukeInterval().start,
   resultType: ContestResultTypeSchema.enum.SCORE,
   resultOrder: ContestResultOrderSchema.enum.DESC,
   groups: {
@@ -30,7 +31,7 @@ export const getContestTeamFixtures = (userIds: string[]): ContestTeamFixture[] 
   {
     contestant: {
       id: "a8f3c2d1-4e5b-6a7c-8d9e-0f1a2b3c4d5e",
-      contestId: FADDERUKE_2026_CONTEST_ID,
+      contestId: FADDERUKE_CONTEST_ID,
       userId: null,
       resultValue: 420,
     },
@@ -44,7 +45,7 @@ export const getContestTeamFixtures = (userIds: string[]): ContestTeamFixture[] 
   {
     contestant: {
       id: "c2d3e4f5-a6b7-8c9d-0e1f-2a3b4c5d6e7f",
-      contestId: FADDERUKE_2026_CONTEST_ID,
+      contestId: FADDERUKE_CONTEST_ID,
       userId: null,
       resultValue: 385,
     },
@@ -58,7 +59,7 @@ export const getContestTeamFixtures = (userIds: string[]): ContestTeamFixture[] 
   {
     contestant: {
       id: "e4f5a6b7-c8d9-0e1f-2a3b-4c5d6e7f8a9b",
-      contestId: FADDERUKE_2026_CONTEST_ID,
+      contestId: FADDERUKE_CONTEST_ID,
       userId: null,
       resultValue: 360,
     },
@@ -72,7 +73,7 @@ export const getContestTeamFixtures = (userIds: string[]): ContestTeamFixture[] 
   {
     contestant: {
       id: "a6b7c8d9-e0f1-2a3b-4c5d-6e7f8a9b0c1d",
-      contestId: FADDERUKE_2026_CONTEST_ID,
+      contestId: FADDERUKE_CONTEST_ID,
       userId: null,
       resultValue: 325,
     },
@@ -86,7 +87,7 @@ export const getContestTeamFixtures = (userIds: string[]): ContestTeamFixture[] 
   {
     contestant: {
       id: "c8d9e0f1-a2b3-4c5d-6e7f-8a9b0c1d2e3f",
-      contestId: FADDERUKE_2026_CONTEST_ID,
+      contestId: FADDERUKE_CONTEST_ID,
       userId: null,
       resultValue: 290,
     },

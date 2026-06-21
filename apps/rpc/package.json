@@ -11,6 +11,10 @@
     "./contest": {
       "import": "./src/modules/contest/contest.ts",
       "types": "./src/modules/contest/contest.ts"
+    },
+    "./fadderuke": {
+      "import": "./src/modules/fadderuke/fadderuke.ts",
+      "types": "./src/modules/fadderuke/fadderuke.ts"
     }
   },
   "scripts": {

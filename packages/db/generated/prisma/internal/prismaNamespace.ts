@@ -421,6 +421,7 @@ export const ModelName = {
   NotificationRecipient: 'NotificationRecipient',
   Notification: 'Notification',
   Contest: 'Contest',
+  Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam'
 } as const
@@ -438,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "contestant" | "contestTeam"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3180,6 +3181,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Fadderuke: {
+      payload: Prisma.$FadderukePayload<ExtArgs>
+      fields: Prisma.FadderukeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FadderukeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FadderukeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        findFirst: {
+          args: Prisma.FadderukeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FadderukeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        findMany: {
+          args: Prisma.FadderukeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>[]
+        }
+        create: {
+          args: Prisma.FadderukeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        createMany: {
+          args: Prisma.FadderukeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FadderukeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>[]
+        }
+        delete: {
+          args: Prisma.FadderukeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        update: {
+          args: Prisma.FadderukeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        deleteMany: {
+          args: Prisma.FadderukeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FadderukeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FadderukeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>[]
+        }
+        upsert: {
+          args: Prisma.FadderukeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukePayload>
+        }
+        aggregate: {
+          args: Prisma.FadderukeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFadderuke>
+        }
+        groupBy: {
+          args: Prisma.FadderukeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FadderukeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FadderukeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FadderukeCountAggregateOutputType> | number
+        }
+      }
+    }
     Contestant: {
       payload: Prisma.$ContestantPayload<ExtArgs>
       fields: Prisma.ContestantFieldRefs
@@ -3557,6 +3632,7 @@ export const EventScalarFieldEnum = {
   updatedAt: 'updatedAt',
   attendanceId: 'attendanceId',
   parentId: 'parentId',
+  contestId: 'contestId',
   metadataImportId: 'metadataImportId'
 } as const
 
@@ -3882,6 +3958,17 @@ export const ContestScalarFieldEnum = {
 } as const
 
 export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeof ContestScalarFieldEnum]
+
+
+export const FadderukeScalarFieldEnum = {
+  id: 'id',
+  year: 'year',
+  eventId: 'eventId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FadderukeScalarFieldEnum = (typeof FadderukeScalarFieldEnum)[keyof typeof FadderukeScalarFieldEnum]
 
 
 export const ContestantScalarFieldEnum = {
@@ -4460,6 +4547,7 @@ export type GlobalOmitConfig = {
   notificationRecipient?: Prisma.NotificationRecipientOmit
   notification?: Prisma.NotificationOmit
   contest?: Prisma.ContestOmit
+  fadderuke?: Prisma.FadderukeOmit
   contestant?: Prisma.ContestantOmit
   contestTeam?: Prisma.ContestTeamOmit
 }

@@ -2,6 +2,7 @@ import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutat
 import { validateEventWrite } from "@/app/(internal)/arrangementer/validation"
 import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
+import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
@@ -62,6 +63,7 @@ const DEFAULT_VALUES = {
   hostingGroupIds: [],
   companyIds: [],
   parentId: null,
+  contestId: null,
   markForMissedAttendance: true,
 } as const satisfies FormValidationResult
 
@@ -72,6 +74,7 @@ interface UseEventWriteFormProps {
 export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
   const { companies } = useCompanyAllQuery()
+  const { contests } = useContestFindManyQuery()
 
   const uploadFile = useEventFileUploadMutation()
 
@@ -154,6 +157,14 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         placeholder: "Søk etter arrangement...",
         clearable: true,
         excludeChildEvents: true,
+      }),
+      contestId: createSelectInput({
+        label: "Konkurranse",
+        placeholder: "Velg konkurranse",
+        description: "Knytt arrangementet til en konkurranse (valgfritt)",
+        data: contests.map((contest) => ({ value: contest.id, label: contest.name })),
+        searchable: true,
+        clearable: true,
       }),
       markForMissedAttendance: createCheckboxInput({
         label: "Gi prikk for fravær",
