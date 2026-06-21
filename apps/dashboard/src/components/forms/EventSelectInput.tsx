@@ -8,10 +8,12 @@ import { Controller, type FieldValues, useController } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 
 interface Props extends Omit<SelectProps, "error"> {
+  excludeChildEvents?: boolean
   excludeEventIds?: EventId[]
 }
 
 export function createEventSelectInput<F extends FieldValues>({
+  excludeChildEvents = false,
   excludeEventIds,
   ...props
 }: Props): InputProducerResult<F> {
@@ -22,6 +24,7 @@ export function createEventSelectInput<F extends FieldValues>({
     const { events: data } = useEventAllQuery({
       filter: {
         bySearchTerm: debouncedSearchQuery,
+        excludingChildEvents: excludeChildEvents,
       },
     })
 

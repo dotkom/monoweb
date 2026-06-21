@@ -172,6 +172,11 @@ export function getEventRepository(): EventRepository {
                       in: query.byType,
                     }
                   : undefined,
+              parentId: query.excludingChildEvents
+                ? {
+                    equals: null,
+                  }
+                : undefined,
             },
             {
               OR: [
