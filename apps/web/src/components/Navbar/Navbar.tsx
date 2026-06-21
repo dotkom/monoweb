@@ -182,7 +182,6 @@ export const Navbar: FC = () => {
     <header className={cn("navbar-shell sticky top-4 z-50 mt-4 flex items-stretch", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
-          // i have no idea why i need rounded-4xl and not rounded-full
           "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] border border-blue-100 bg-blue-100/80 p-3 shadow-sm backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
           "flex flex-row items-center justify-between w-full",
           showLoginButton ? "min-w-0 grow" : "w-full",

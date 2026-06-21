@@ -36,32 +36,28 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const highlightedLinks = linksWithHome.filter((link) => link.highlighted)
   const regularLinks = linksWithHome.filter((link) => !link.highlighted)
 
-  // Lock body scroll when menu is open
+  // Close the menu when the viewport grows to desktop size
   useEffect(() => {
-    if (open) {
-      const originalStyle = window.getComputedStyle(document.body).overflow
-      document.body.style.overflow = "hidden"
+    if (!open) {
+      return
+    }
 
-      const mediaQuery = window.matchMedia("(min-width: 64rem)")
+    const desktopMediaQuery = window.matchMedia("(min-width: 64rem)")
 
-      const handleMediaChange = (e: MediaQueryListEvent) => {
-        if (e.matches) {
-          document.body.style.overflow = originalStyle
-          setOpen(false)
-        }
-      }
-
-      mediaQuery.addEventListener("change", handleMediaChange)
-
-      if (mediaQuery.matches) {
-        document.body.style.overflow = originalStyle
+    const closeMenuOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) {
         setOpen(false)
       }
+    }
 
-      return () => {
-        document.body.style.overflow = originalStyle
-        mediaQuery.removeEventListener("change", handleMediaChange)
-      }
+    if (desktopMediaQuery.matches) {
+      setOpen(false)
+    }
+
+    desktopMediaQuery.addEventListener("change", closeMenuOnDesktop)
+
+    return () => {
+      desktopMediaQuery.removeEventListener("change", closeMenuOnDesktop)
     }
   }, [open])
 
@@ -80,6 +76,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           align="start"
           side="bottom"
           sideOffset={8}
+          positionMethod="fixed"
           className="w-[calc(100vw-2rem)] mx-4 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-blue-100 dark:border-stone-700 shadow-sm rounded-3xl"
         >
           <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
@@ -88,7 +85,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                 <div className="p-4">
                   <div className="flex flex-col gap-2">
                     {highlightedLinks.length > 0 && (
-                      <div className="flex gap-3 w-full pb-4">
+                      <div className="flex flex-wrap gap-x-3 gap-y-2 w-full pb-4">
                         {highlightedLinks.map((link) => {
                           const item = link as MenuItem
                           return (

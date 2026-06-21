@@ -68,7 +68,7 @@ const ThemeDropdown: FC = () => {
       <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
         <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={24} className="min-w-10 w-fit rounded-xl">
+      <DropdownMenuContent align="end" sideOffset={24} positionMethod="fixed" className="min-w-10 w-fit rounded-xl">
         <ThemeToggle />
       </DropdownMenuContent>
     </DropdownMenu>
@@ -90,6 +90,7 @@ const ContactDebugDropdown: FC = () => (
       align="end"
       className="w-[calc(100vw-2rem)] mx-4 xs:w-80 xs:ml-4 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 rounded-3xl shadow-sm"
       sideOffset={24}
+      positionMethod="fixed"
     >
       <div className="space-y-4">
         <div className="flex items-center gap-3">
@@ -294,6 +295,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
         align="end"
         className="w-[calc(100vw-2rem)] mx-4 xs:ml-4 xs:w-72 xs:-mr-16 lg:-mr-4 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
         sideOffset={24}
+        positionMethod="fixed"
       >
         <DropdownMenuLabel className="font-normal p-3 mb-2">
           <div className="flex flex-col min-w-0 flex-1">
