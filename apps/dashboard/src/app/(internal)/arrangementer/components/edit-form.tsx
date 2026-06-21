@@ -139,6 +139,7 @@ export const useEventEditForm = ({
         placeholder: "Søk etter arrangement...",
         clearable: true,
         excludeEventIds: defaultValues?.id ? [defaultValues.id] : [],
+        excludeChildEvents: true,
       }),
       markForMissedAttendance: createCheckboxInput({
         label: "Gi prikk for fravær",

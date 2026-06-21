@@ -153,6 +153,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
         label: "Forelderarrangement",
         placeholder: "Søk etter arrangement...",
         clearable: true,
+        excludeChildEvents: true,
       }),
       markForMissedAttendance: createCheckboxInput({
         label: "Gi prikk for fravær",

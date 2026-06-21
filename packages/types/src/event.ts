@@ -60,6 +60,7 @@ export const EventFilterQuerySchema = z
     byType: buildAnyOfFilter(EventTypeSchema),
     excludingType: buildAnyOfFilter(EventTypeSchema).default(["INTERNAL"]),
     byHasFeedbackForm: z.boolean(),
+    excludingChildEvents: z.boolean().default(false),
   })
   .partial()
 
