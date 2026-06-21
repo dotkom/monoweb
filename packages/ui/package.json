@@ -24,7 +24,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@base-ui/react": "^1.5.0",
+    "@base-ui/react": "^1.6.0",
     "@dotkomonline/utils": "workspace:*",
     "@floating-ui/react": "^0.27.16",
     "@fontsource-variable/figtree": "^5.2.10",
