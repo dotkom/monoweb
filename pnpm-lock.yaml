@@ -1078,8 +1078,8 @@ importers:
         specifier: workspace:*
         version: link:../config
       '@googleapis/admin':
-        specifier: 30.3.0
-        version: 30.3.0
+        specifier: 30.4.0
+        version: 30.4.0
       '@types/node':
         specifier: 22.19.7
         version: 22.19.7
@@ -2156,6 +2156,10 @@ packages:
 
   '@googleapis/admin@30.3.0':
     resolution: {integrity: sha512-9vBP163vUDGb7BZuGat0Hzajf010t4HuXrR13MWDF/2pCNcg65gAAOzu3PSTIcqiuxL7nsjhkzj+oxg/t7s3vA==}
+    engines: {node: '>=12.0.0'}
+
+  '@googleapis/admin@30.4.0':
+    resolution: {integrity: sha512-4WVnSoDFFCv2esiLnRCkUwiyxPxwM+JgSfBS1Mrr8CuipyFrGSdRoGOUC/7mC1viTWfi8z5788y0CTx34/hIxw==}
     engines: {node: '>=12.0.0'}
 
   '@googleapis/sheets@13.0.2':
@@ -10278,6 +10282,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@googleapis/admin@30.4.0':
+    dependencies:
+      googleapis-common: 8.0.2
+    transitivePeerDependencies:
+      - supports-color
+
   '@googleapis/sheets@13.0.2':
     dependencies:
       googleapis-common: 8.0.2
@@ -16014,7 +16024,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-      styled-jsx: 5.1.6(react@19.2.7)
+      styled-jsx: 5.1.6(@babel/core@7.28.6)(react@19.2.7)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.19
       '@next/swc-darwin-x64': 15.5.19
@@ -17427,11 +17437,6 @@ snapshots:
       react: 19.2.7
     optionalDependencies:
       '@babel/core': 7.28.6
-
-  styled-jsx@5.1.6(react@19.2.7):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.2.7
 
   sugarss@5.0.1(postcss@8.5.15):
     dependencies:
