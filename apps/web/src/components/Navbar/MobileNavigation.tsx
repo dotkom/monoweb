@@ -88,7 +88,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                 <div className="p-4">
                   <div className="flex flex-col gap-2">
                     {highlightedLinks.length > 0 && (
-                      <div className="flex gap-3 w-full pb-4">
+                      <div className="flex flex-wrap gap-x-3 gap-y-2 w-full pb-4">
                         {highlightedLinks.map((link) => {
                           const item = link as MenuItem
                           return (

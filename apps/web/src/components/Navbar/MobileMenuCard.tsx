@@ -1,4 +1,4 @@
-import { DropdownMenuItem, cn } from "@dotkomonline/ui"
+import { DropdownMenuItem, Text, cn } from "@dotkomonline/ui"
 import type { MenuIcon } from "@/components/Navbar/Navbar"
 import { IconChevronRight } from "@tabler/icons-react"
 import Link from "next/link"
@@ -13,12 +13,12 @@ interface MobileMenuCardProps {
 
 export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: IconComponent, onClick }) => {
   return (
-    <DropdownMenuItem asChild className="flex-1 cursor-pointer p-0">
+    <DropdownMenuItem asChild className="flex-[1_1_auto] cursor-pointer p-0">
       <Link
         href={href}
         onClick={onClick}
         className={cn(
-          "relative flex flex-col items-start justify-start w-full p-4 rounded-xl transition-colors",
+          "relative flex flex-col items-start justify-start p-4 rounded-xl transition-colors",
           "bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600",
           "border border-blue-200 dark:border-stone-600"
         )}
@@ -27,7 +27,9 @@ export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: Ico
           <IconComponent className="shrink-0 size-6 text-gray-700 dark:text-stone-300" />
           <IconChevronRight className="shrink-0 size-6 opacity-70 text-gray-700 dark:text-stone-300" />
         </div>
-        <span className="text-base font-medium text-gray-800 dark:text-stone-100">{title}</span>
+        <Text element="span" className="text-base font-medium text-gray-800 dark:text-stone-100">
+          {title}
+        </Text>
       </Link>
     </DropdownMenuItem>
   )
