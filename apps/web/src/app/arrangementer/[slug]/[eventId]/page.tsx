@@ -10,8 +10,6 @@ import {
   type Group,
   type User,
   createGroupPageUrl,
-  getAttendanceCapacity,
-  getReservedAttendeeCount,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
@@ -29,7 +27,6 @@ import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
-import { SixtySevenShake } from "../../components/SixtySevenShake"
 import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
 
 const createOrganizerPageUrl = (item: Group | Company) => {
@@ -114,63 +111,55 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
   const futureChildEventWithAttendances = childEventWithAttendance.filter(({ event }) => !isPast(event.end))
   const pastChildEventsWithAttendances = childEventWithAttendance.filter(({ event }) => isPast(event.end))
 
-  const has67 =
-    attendance !== null &&
-    (getReservedAttendeeCount(attendance) === 67 ||
-      attendance.attendees.length === 67 ||
-      getAttendanceCapacity(attendance) === 67)
-
   return (
-    <SixtySevenShake active={has67}>
-      <div className="flex flex-col gap-8">
-        <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
+    <div className="flex flex-col gap-8">
+      <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
 
-        {childEventWithAttendance.length > 0 ? (
-          <Tabs defaultValue="description">
-            <TabsList className="w-full sm:w-fit sm:min-w-95">
-              <TabsTrigger className="w-full sm:w-fit" value="description">
-                Arrangement
-              </TabsTrigger>
-              <TabsTrigger className="w-full sm:w-fit" value="child-events">
-                Underarrangementer
-              </TabsTrigger>
-            </TabsList>
+      {childEventWithAttendance.length > 0 ? (
+        <Tabs defaultValue="description">
+          <TabsList className="w-full sm:w-fit sm:min-w-95">
+            <TabsTrigger className="w-full sm:w-fit" value="description">
+              Arrangement
+            </TabsTrigger>
+            <TabsTrigger className="w-full sm:w-fit" value="child-events">
+              Underarrangementer
+            </TabsTrigger>
+          </TabsList>
 
-            <TabsContent value="description" className="p-0 border-none mt-4">
-              <EventContent
-                event={event}
-                parentEvent={parentEvent}
-                attendance={attendance}
-                parentAttendance={parentAttendance}
-                registrationAvailability={registrationAvailability}
-                user={user}
+          <TabsContent value="description" className="p-0 border-none mt-4">
+            <EventContent
+              event={event}
+              parentEvent={parentEvent}
+              attendance={attendance}
+              parentAttendance={parentAttendance}
+              registrationAvailability={registrationAvailability}
+              user={user}
+            />
+          </TabsContent>
+
+          <TabsContent value="child-events" className="p-0 border-none mt-4">
+            <div>
+              <EventList
+                futureEventWithAttendances={futureChildEventWithAttendances}
+                pastEventWithAttendances={pastChildEventsWithAttendances}
+                alwaysShowChildEvents
+                viewMode="CHRONOLOGICAL"
+                userId={user?.id}
               />
-            </TabsContent>
-
-            <TabsContent value="child-events" className="p-0 border-none mt-4">
-              <div>
-                <EventList
-                  futureEventWithAttendances={futureChildEventWithAttendances}
-                  pastEventWithAttendances={pastChildEventsWithAttendances}
-                  alwaysShowChildEvents
-                  viewMode="CHRONOLOGICAL"
-                  userId={user?.id}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <EventContent
-            event={event}
-            attendance={attendance}
-            parentEvent={parentEvent}
-            parentAttendance={parentAttendance}
-            registrationAvailability={registrationAvailability}
-            user={user}
-          />
-        )}
-      </div>
-    </SixtySevenShake>
+            </div>
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <EventContent
+          event={event}
+          attendance={attendance}
+          parentEvent={parentEvent}
+          parentAttendance={parentAttendance}
+          registrationAvailability={registrationAvailability}
+          user={user}
+        />
+      )}
+    </div>
   )
 }
 
