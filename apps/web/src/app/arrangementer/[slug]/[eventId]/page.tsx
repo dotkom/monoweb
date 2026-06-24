@@ -10,6 +10,7 @@ import {
   type Group,
   type User,
   createGroupPageUrl,
+  getGroupDisplayName,
 } from "@dotkomonline/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
@@ -37,24 +38,28 @@ const createOrganizerPageUrl = (item: Group | Company) => {
   return `/bedrifter/${item.slug}`
 }
 
-const mapToImageAndName = (item: Group | Company) => (
-  <Link
-    href={createOrganizerPageUrl(item)}
-    key={item.name}
-    className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
-  >
-    {item.imageUrl && (
-      <GroupLogo
-        src={item.imageUrl}
-        alt={"abbreviation" in item ? item.abbreviation : item.name}
-        width={22}
-        height={22}
-        containerClassName="rounded-sm p-0.5 size-5.5"
-      />
-    )}
-    <Text>{"abbreviation" in item ? item.abbreviation : item.name}</Text>
-  </Link>
-)
+const mapToImageAndName = (item: Group | Company) => {
+  const displayName = "type" in item ? getGroupDisplayName(item) : item.name
+
+  return (
+    <Link
+      href={createOrganizerPageUrl(item)}
+      key={item.name}
+      className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
+    >
+      {item.imageUrl && (
+        <GroupLogo
+          src={item.imageUrl}
+          alt={displayName}
+          width={22}
+          height={22}
+          containerClassName="rounded-sm p-0.5 size-5.5"
+        />
+      )}
+      <Text>{displayName}</Text>
+    </Link>
+  )
+}
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 

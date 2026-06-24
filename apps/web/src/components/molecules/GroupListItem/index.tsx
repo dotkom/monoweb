@@ -1,6 +1,6 @@
 import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { type Group, createGroupPageUrl, getGroupTypeName } from "@dotkomonline/types"
+import { type Group, createGroupPageUrl, getGroupDisplayName, getGroupTypeName } from "@dotkomonline/types"
 import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { IconMoonFilled } from "@tabler/icons-react"
 import Link from "next/link"
@@ -13,6 +13,7 @@ export interface GroupListItemProps {
 export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemProps) => {
   const inactive = Boolean(group.deactivatedAt)
   const link = createGroupPageUrl(group)
+  const displayName = getGroupDisplayName(group)
 
   const card = (
     <div
@@ -48,7 +49,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
           {group.imageUrl ? (
             <GroupLogo
               src={group.imageUrl}
-              alt={group.abbreviation}
+              alt={displayName}
               height={120}
               width={120}
               containerClassName="rounded-full size-36 p-3"
@@ -60,7 +61,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
           )}
         </div>
 
-        <Title className="text-3xl break-words">{group.abbreviation}</Title>
+        <Title className="text-3xl break-words">{displayName}</Title>
       </div>
 
       <RichText content={group.description} maxLines={4} hideToggleButton />
@@ -79,7 +80,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       {group.imageUrl ? (
         <GroupLogo
           src={group.imageUrl}
-          alt={group.abbreviation}
+          alt={displayName}
           height={82}
           width={82}
           containerClassName="rounded-full size-[82px]"
@@ -89,7 +90,7 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
       )}
 
       <div className="flex flex-col grow min-w-0">
-        <Title className="text-xl">{group.abbreviation}</Title>
+        <Title className="text-xl">{displayName}</Title>
         <RichText content={group.description} maxLines={2} hideToggleButton />
       </div>
     </div>

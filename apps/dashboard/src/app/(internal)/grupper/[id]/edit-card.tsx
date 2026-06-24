@@ -1,5 +1,5 @@
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import type { WorkspaceGroup } from "@dotkomonline/types"
+import { getGroupDisplayName, type WorkspaceGroup } from "@dotkomonline/types"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconTrash, IconUsersGroup, IconX } from "@tabler/icons-react"
@@ -23,7 +23,7 @@ export const GroupEditCard: FC = () => {
 
   const open = useConfirmDeleteModal({
     title: "Slett gruppe",
-    text: `Er du sikker på at du vil slette ${group.name}?`,
+    text: `Er du sikker på at du vil slette ${getGroupDisplayName(group)}?`,
     onConfirm: () => {
       remove.mutate(group.slug)
       router.push("/grupper/")
