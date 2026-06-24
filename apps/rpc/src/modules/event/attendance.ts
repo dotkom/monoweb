@@ -1,9 +1,8 @@
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildLimitedDepthJsonSchema, getStudyGrade } from "@dotkomonline/utils"
 import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
-import { PunishmentSchema } from "./mark"
-import { type User, type UserId, UserSchema, findActiveMembership } from "./user"
-import { getStudyGrade } from "@dotkomonline/utils"
+import { PunishmentSchema } from "../mark/mark"
+import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
 
 /**
  * Grace period after registration during which deregistration requires no reason.
@@ -43,6 +42,29 @@ export const AttendanceSelectionResponseSchema = z.object({
 export type AttendeeSelectionResponse = z.infer<typeof AttendeeSelectionResponseSchema>
 export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 
+const AttendeeBaseSchema = z.object({
+  id: z.string(),
+  userGrade: z.number().int().nullable(),
+  selections: buildLimitedDepthJsonSchema().default("[]"),
+  reserved: z.boolean(),
+  earliestReservationAt: z.date(),
+  attendedAt: z.date().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  paymentDeadline: z.date().nullable(),
+  paymentLink: z.string().nullable(),
+  paymentId: z.string().nullable(),
+  paymentReservedAt: z.date().nullable(),
+  paymentChargeDeadline: z.date().nullable(),
+  paymentChargedAt: z.date().nullable(),
+  paymentRefundedAt: z.date().nullable(),
+  paymentCheckoutUrl: z.string().nullable(),
+  attendanceId: z.string(),
+  userId: z.string(),
+  attendancePoolId: z.string(),
+  paymentRefundedById: z.string().nullable(),
+})
+
 export type AttendeeId = Attendee["id"]
 export type Attendee = z.infer<typeof AttendeeSchema>
 /**
@@ -50,7 +72,7 @@ export type Attendee = z.infer<typeof AttendeeSchema>
  *
  * The attendee's User object is included, but without memberships.
  */
-export const AttendeeSchema = schemas.AttendeeSchema.extend({
+export const AttendeeSchema = AttendeeBaseSchema.extend({
   user: UserSchema,
   selections: z.array(AttendanceSelectionResponseSchema),
 })
@@ -78,9 +100,21 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentCheckoutUrl: true,
 })
 
+const AttendancePoolBaseSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  mergeDelayHours: z.number().int().nullable(),
+  yearCriteria: buildLimitedDepthJsonSchema(),
+  capacity: z.number().int(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  attendanceId: z.string(),
+  taskId: z.string().nullable(),
+})
+
 export type AttendancePoolId = AttendancePool["id"]
 export type AttendancePool = z.infer<typeof AttendancePoolSchema>
-export const AttendancePoolSchema = schemas.AttendancePoolSchema.extend({
+export const AttendancePoolSchema = AttendancePoolBaseSchema.extend({
   yearCriteria: z.array(z.number()),
 })
 
@@ -98,9 +132,20 @@ export const AttendancePoolWriteSchema = AttendancePoolSchema.pick({
  * The attendance type itself, with both pool and selection joins ALWAYS present.
  */
 
+const AttendanceBaseSchema = z.object({
+  id: z.string(),
+  registerStart: z.date(),
+  registerEnd: z.date(),
+  deregisterDeadline: z.date(),
+  selections: buildLimitedDepthJsonSchema().default("[]"),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  attendancePrice: z.number().int().nullable(),
+})
+
 export type Attendance = z.infer<typeof AttendanceSchema>
 export type AttendanceId = Attendance["id"]
-export const AttendanceSchema = schemas.AttendanceSchema.extend({
+export const AttendanceSchema = AttendanceBaseSchema.extend({
   pools: z.array(AttendancePoolSchema),
   attendees: z.array(AttendeeSchema),
   selections: z.array(AttendanceSelectionSchema),
@@ -114,7 +159,7 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
   selections: true,
 })
 
-export const AttendanceSummarySchema = schemas.AttendanceSchema.extend({
+export const AttendanceSummarySchema = AttendanceBaseSchema.extend({
   currentUserAttendee: AttendeeSchema.nullable(),
   pools: z.array(AttendancePoolSchema),
   reservedAttendeeCount: z.number(),

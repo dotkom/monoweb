@@ -1,4 +1,4 @@
-import type { Offline } from "@dotkomonline/types"
+import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text, cn } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"

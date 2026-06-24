@@ -1,5 +1,5 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import type { PoolOccupancy } from "@dotkomonline/types"
+import type { PoolOccupancy } from "@dotkomonline/rpc/attendance"
 import { isFuture } from "date-fns"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput

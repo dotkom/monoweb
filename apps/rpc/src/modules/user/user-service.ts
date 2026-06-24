@@ -2,22 +2,6 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import {
-  isMembershipActive,
-  type Membership,
-  type MembershipId,
-  type MembershipSpecialization,
-  type MembershipWrite,
-  USER_IMAGE_MAX_SIZE_KIB,
-  type User,
-  type UserFilterQuery,
-  type UserId,
-  type Username,
-  type UserWrite,
-  UserWriteSchema,
-  findActiveMembership,
-  GenderSchema,
-} from "@dotkomonline/types"
 import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
@@ -40,6 +24,20 @@ import {
   Auth0UserProfileUserMetadataSchema,
   type Auth0Connection,
   type Auth0UserProfile,
+  isMembershipActive,
+  type Membership,
+  type MembershipId,
+  type MembershipSpecialization,
+  type MembershipWrite,
+  USER_IMAGE_MAX_SIZE_KIB,
+  type User,
+  type UserFilterQuery,
+  type UserId,
+  type Username,
+  type UserWrite,
+  UserWriteSchema,
+  findActiveMembership,
+  GenderSchema,
 } from "./user"
 
 export interface UserService {

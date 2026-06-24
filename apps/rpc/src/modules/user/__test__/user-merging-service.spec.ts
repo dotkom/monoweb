@@ -1,6 +1,6 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { DBHandle } from "@dotkomonline/db"
-import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
+import { GenderSchema, type Membership, type User } from "../user"
 import type { ManagementClient } from "auth0"
 import { mockDeep } from "vitest-mock-extended"
 import { afterEach, describe, expect, it, vi } from "vitest"

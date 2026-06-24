@@ -1,4 +1,4 @@
-import type { User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/rpc/user"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 

@@ -7,8 +7,8 @@ import {
   type Offline,
   type OfflineId,
   type OfflineWrite,
-  type UserId,
-} from "@dotkomonline/types"
+} from "./offline"
+import type { UserId } from "../user/user"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"

@@ -16,25 +16,20 @@ import {
   type AttendeePaymentWrite,
   type AttendeeWrite,
   AttendeeWriteSchema,
-  DEFAULT_MARK_DURATION,
   DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
   DEREGISTER_GRACE_PERIOD_MS,
-  type Event,
-  type Membership,
-  type Punishment,
   type RegistrationAvailabilityView,
   type RegistrationRejectionCause,
   type RegisterChangeEvent,
-  type TaskId,
-  type User,
-  type UserId,
-  findActiveMembership,
   buildPoolOccupancies,
   getReservedAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
-  findFirstHostingGroupEmail,
-} from "@dotkomonline/types"
+} from "./attendance"
+import { type Event, findFirstHostingGroupEmail } from "./event"
+import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
+import { type Membership, type User, type UserId, findActiveMembership } from "../user/user"
+import type { TaskId } from "../task/task"
 import {
   createAbsoluteEventPageUrl,
   createPoolName,
@@ -120,7 +115,7 @@ type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
 }
 
-export type { RegistrationRejectionCause } from "@dotkomonline/types"
+export type { RegistrationRejectionCause } from "./attendance"
 
 export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
 export const RegistrationBypassCause = {

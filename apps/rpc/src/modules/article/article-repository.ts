@@ -9,7 +9,7 @@ import {
   type ArticleTagName,
   ArticleTagSchema,
   type ArticleWrite,
-} from "@dotkomonline/types"
+} from "./article"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
 

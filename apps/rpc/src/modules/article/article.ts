@@ -1,8 +1,9 @@
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildAnyOfFilter, buildSearchFilter } from "@dotkomonline/utils"
 import { z } from "zod"
-import { buildAnyOfFilter, buildSearchFilter } from "./filters"
 
-export const ArticleTagSchema = schemas.ArticleTagSchema.extend({})
+export const ArticleTagSchema = z.object({
+  name: z.string(),
+})
 
 export type ArticleTagName = ArticleTag["name"]
 export type ArticleTag = z.infer<typeof ArticleTagSchema>
@@ -10,7 +11,19 @@ export type ArticleTag = z.infer<typeof ArticleTagSchema>
 export const ArticleTagWrite = ArticleTagSchema
 export type ArticleTagWrite = z.infer<typeof ArticleTagWrite>
 
-export const ArticleSchema = schemas.ArticleSchema.extend({
+export const ArticleSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  author: z.string(),
+  photographer: z.string(),
+  imageUrl: z.string(),
+  excerpt: z.string(),
+  content: z.string(),
+  isFeatured: z.boolean(),
+  vimeoId: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
   tags: z.array(ArticleTagSchema),
 })
 

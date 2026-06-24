@@ -1,5 +1,8 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import type { Attendance, AttendanceSummary, Attendee, Event, Punishment, User } from "@dotkomonline/types"
+import type { Attendance, AttendanceSummary, Attendee } from "@dotkomonline/rpc/attendance"
+import type { Event } from "@dotkomonline/rpc/event"
+import type { Punishment } from "@dotkomonline/rpc/mark"
+import type { User } from "@dotkomonline/rpc/user"
 import { getCurrentSemesterStart, getCurrentUTC, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 import { addDays, addHours, addMinutes, subHours, subMinutes } from "date-fns"
 

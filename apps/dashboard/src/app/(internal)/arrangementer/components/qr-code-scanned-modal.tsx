@@ -2,13 +2,10 @@
 import {
   type Attendance,
   type AttendeeId,
-  type User,
-  findActiveMembership,
   getAttendeeQueuePosition,
   getUnreservedAttendeeCount,
-  getMembershipTypeName,
-  getGenderName,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
+import { type User, findActiveMembership, getMembershipTypeName, getGenderName } from "@dotkomonline/rpc/user"
 import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
 import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"

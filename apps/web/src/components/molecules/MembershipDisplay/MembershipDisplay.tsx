@@ -1,5 +1,5 @@
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
-import { type Membership, getMembershipTypeName, getSpecializationName } from "@dotkomonline/types"
+import { type Membership, getMembershipTypeName, getSpecializationName } from "@dotkomonline/rpc/user"
 import { cn, Text } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getStudyGrade, isMembershipActiveUntilNextSemesterStart } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconIdOff } from "@tabler/icons-react"

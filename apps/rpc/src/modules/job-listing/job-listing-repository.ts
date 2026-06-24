@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
+import type { CompanyId } from "../company/company"
 import {
-  type CompanyId,
   type JobListing,
   type JobListingFilterQuery,
   type JobListingId,
@@ -9,7 +9,7 @@ import {
   JobListingLocationSchema,
   JobListingSchema,
   type JobListingWrite,
-} from "@dotkomonline/types"
+} from "./job-listing"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
 

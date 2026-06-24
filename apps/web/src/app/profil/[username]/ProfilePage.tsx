@@ -9,13 +9,9 @@ import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/Memb
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import {
-  type VisiblePersonalMarkDetails,
-  createGroupPageUrl,
-  findActiveMembership,
-  getGenderName,
-  getMembershipTypeName,
-} from "@dotkomonline/types"
+import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
+import { createGroupPageUrl } from "@dotkomonline/rpc/group"
+import { findActiveMembership, getGenderName, getMembershipTypeName } from "@dotkomonline/rpc/user"
 import {
   Avatar,
   AvatarFallback,

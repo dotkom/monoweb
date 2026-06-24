@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { ConfirmIdentityLinkButton } from "./ConfirmIdentityLinkButton"
 import { getIdentityLinkCookies } from "./actions"
 import { server } from "@/utils/trpc/server"
-import { findActiveMembership, getMembershipTypeName, type User } from "@dotkomonline/types"
+import { findActiveMembership, getMembershipTypeName, type User } from "@dotkomonline/rpc/user"
 import { IconArrowNarrowLeft, IconUser, IconUserFilled } from "@tabler/icons-react"
 
 export default async function LinkIdentityPage() {

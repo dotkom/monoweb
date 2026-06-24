@@ -1,6 +1,7 @@
 "use client"
 
-import type { Attendee, FeedbackForm, FeedbackQuestion, FeedbackQuestionAnswer } from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import type { FeedbackForm, FeedbackQuestion, FeedbackQuestionAnswer } from "@dotkomonline/rpc/feedback-form"
 import {
   Button,
   Checkbox,

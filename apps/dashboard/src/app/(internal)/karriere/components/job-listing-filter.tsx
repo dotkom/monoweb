@@ -1,4 +1,4 @@
-import type { JobListingFilterQuery } from "@dotkomonline/types"
+import type { JobListingFilterQuery } from "@dotkomonline/rpc/job-listing"
 import { ActionIcon, Group, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconX } from "@tabler/icons-react"

@@ -1,12 +1,11 @@
 import { TZDate } from "@date-fns/tz"
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/utils"
 import { addWeeks, set } from "date-fns"
 import { z } from "zod"
+import { CompanySchema } from "../company/company"
+import { FeedbackFormSchema } from "../feedback-form/feedback-form"
+import { GroupSchema, type GroupType } from "../group/group"
 import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
-import { CompanySchema } from "./company"
-import { FeedbackFormSchema } from "./feedback-form"
-import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
-import { GroupSchema, type GroupType } from "./group"
 
 /**
  * @packageDocumentation
@@ -15,8 +14,39 @@ import { GroupSchema, type GroupType } from "./group"
  * companies, attendance pools, and attendees.
  */
 
+export const EventTypeSchema = z.enum([
+  "GENERAL_ASSEMBLY",
+  "COMPANY",
+  "ACADEMIC",
+  "SOCIAL",
+  "INTERNAL",
+  "OTHER",
+  "WELCOME",
+])
+export const EventStatusSchema = z.enum(["DRAFT", "PUBLIC", "DELETED"])
+
 export type BaseEvent = z.infer<typeof BaseEventSchema>
-export const BaseEventSchema = schemas.EventSchema.extend({})
+export const BaseEventSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  start: z.date(),
+  end: z.date(),
+  status: EventStatusSchema,
+  description: z.string(),
+  shortDescription: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+  locationTitle: z.string().nullable(),
+  locationAddress: z.string().nullable(),
+  locationLink: z.string().nullable(),
+  type: EventTypeSchema,
+  markForMissedAttendance: z.boolean().default(true),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  attendanceId: z.string().nullable(),
+  parentId: z.string().nullable(),
+  contestId: z.string().nullable(),
+  metadataImportId: z.number().int().nullable(),
+})
 
 export type Event = z.infer<typeof EventSchema>
 export const EventSchema = BaseEventSchema.extend({
@@ -26,9 +56,6 @@ export const EventSchema = BaseEventSchema.extend({
 export type EventId = Event["id"]
 export type EventType = Event["type"]
 export type EventStatus = Event["status"]
-
-export const EventTypeSchema = schemas.EventTypeSchema
-export const EventStatusSchema = schemas.EventStatusSchema
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 export const EventWriteSchema = EventSchema.pick({
@@ -130,8 +157,28 @@ export const mapEventStatusToLabel = (status: EventStatus) => {
   }
 }
 
+export const DeregisterReasonTypeSchema = z.enum([
+  "SCHOOL",
+  "WORK",
+  "ECONOMY",
+  "TIME",
+  "SICK",
+  "NO_FAMILIAR_FACES",
+  "OTHER",
+])
+export type DeregisterReasonType = z.infer<typeof DeregisterReasonTypeSchema>
+
 export type DeregisterReason = z.infer<typeof DeregisterReasonSchema>
-export const DeregisterReasonSchema = schemas.DeregisterReasonSchema
+export const DeregisterReasonSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  registeredAt: z.date(),
+  type: DeregisterReasonTypeSchema,
+  details: z.string().nullable(),
+  userGrade: z.number().int().nullable(),
+  userId: z.string(),
+  eventId: z.string(),
+})
 
 export type DeregisterReasonWithEvent = z.infer<typeof DeregisterReasonWithEventSchema>
 export const DeregisterReasonWithEventSchema = DeregisterReasonSchema.extend({
@@ -147,9 +194,6 @@ export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
   registeredAt: true,
   userGrade: true,
 })
-
-export const DeregisterReasonTypeSchema = schemas.DeregisterReasonTypeSchema
-export type DeregisterReasonType = z.infer<typeof DeregisterReasonTypeSchema>
 
 export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   switch (type) {

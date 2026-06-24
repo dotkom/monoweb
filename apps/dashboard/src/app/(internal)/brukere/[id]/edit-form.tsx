@@ -9,7 +9,7 @@ import {
   USER_IMAGE_MAX_SIZE_KIB,
   type UserWrite,
   UserWriteSchema,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/user"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
 import { useIsAdminQuery } from "../queries"
 

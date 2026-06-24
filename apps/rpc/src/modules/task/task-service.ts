@@ -1,6 +1,6 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task, TaskId, TaskStatus, TaskWrite } from "@dotkomonline/types"
+import type { Task, TaskId, TaskStatus, TaskWrite } from "./task"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"

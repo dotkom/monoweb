@@ -1,4 +1,5 @@
-import type { Company, Group } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/rpc/company"
+import type { Group } from "@dotkomonline/rpc/group"
 import { Anchor, Group as MantineGroup, Text } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"

@@ -1,12 +1,31 @@
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildAnyOfFilter } from "@dotkomonline/utils"
 import { z } from "zod"
-import { buildAnyOfFilter } from "./filters"
-import { GroupSchema } from "./group"
-import { PublicUserSchema, UserSchema } from "./user"
+import { GroupSchema } from "../group/group"
+import { PublicUserSchema, UserSchema } from "../user/user"
 
-export const MarkSchema = schemas.MarkSchema.extend({
-  groups: z.array(GroupSchema),
-})
+export const MarkTypeSchema = z.enum([
+  "MANUAL",
+  "LATE_ATTENDANCE",
+  "MISSED_ATTENDANCE",
+  "MISSING_FEEDBACK",
+  "MISSING_PAYMENT",
+])
+export type MarkType = z.infer<typeof MarkTypeSchema>
+
+export const MarkSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    details: z.string().nullable(),
+    duration: z.number().int(),
+    weight: z.number().int(),
+    type: MarkTypeSchema.default("MANUAL"),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+  })
+  .extend({
+    groups: z.array(GroupSchema),
+  })
 
 export type MarkId = Mark["id"]
 export type Mark = z.infer<typeof MarkSchema>
@@ -21,7 +40,12 @@ export const MarkWriteSchema = MarkSchema.partial({
 
 export type MarkWrite = z.infer<typeof MarkWriteSchema>
 
-export const PersonalMarkSchema = schemas.PersonalMarkSchema
+export const PersonalMarkSchema = z.object({
+  createdAt: z.date(),
+  markId: z.string(),
+  userId: z.string(),
+  givenById: z.string().nullable(),
+})
 
 export const CreatePersonalMarkSchema = PersonalMarkSchema.pick({
   markId: true,

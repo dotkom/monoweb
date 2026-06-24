@@ -1,11 +1,7 @@
 "use client"
 
-import {
-  type Attendee,
-  DeregisterReasonTypeSchema,
-  type Event,
-  mapDeregisterReasonTypeToLabel,
-} from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import { DeregisterReasonTypeSchema, type Event, mapDeregisterReasonTypeToLabel } from "@dotkomonline/rpc/event"
 import {
   AlertDialog,
   AlertDialogCancel,

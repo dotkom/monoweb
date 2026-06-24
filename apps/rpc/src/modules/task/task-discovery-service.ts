@@ -1,6 +1,6 @@
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { RecurringTask, Task } from "@dotkomonline/types"
+import type { RecurringTask, Task } from "./task"
 import type { RecurringTaskService } from "./recurring-task-service"
 import type { TaskService } from "./task-service"
 

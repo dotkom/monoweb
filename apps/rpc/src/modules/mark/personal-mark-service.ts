@@ -1,14 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type {
-  Mark,
-  MarkId,
-  PersonalMark,
-  PersonalMarkDetails,
-  Punishment,
-  UserId,
-  VisiblePersonalMarkDetails,
-} from "@dotkomonline/types"
+import type { Mark, MarkId, PersonalMark, PersonalMarkDetails, Punishment, VisiblePersonalMarkDetails } from "./mark"
+import type { UserId } from "../user/user"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"

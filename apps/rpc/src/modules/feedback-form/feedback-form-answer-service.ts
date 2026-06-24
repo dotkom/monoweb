@@ -1,13 +1,13 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type {
-  AttendeeId,
   FeedbackFormAnswer,
   FeedbackFormAnswerWrite,
   FeedbackFormId,
   FeedbackPublicResultsToken,
   FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerWrite,
-} from "@dotkomonline/types"
+} from "./feedback-form"
+import type { AttendeeId } from "../event/attendance"
 import { NotFoundError } from "../../error"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 import type { FeedbackFormService } from "./feedback-form-service"

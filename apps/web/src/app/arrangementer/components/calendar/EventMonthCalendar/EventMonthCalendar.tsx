@@ -3,7 +3,7 @@
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { endOfMonth, endOfWeek, getISOWeek, isThisISOWeek } from "date-fns"

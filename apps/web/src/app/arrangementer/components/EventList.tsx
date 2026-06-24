@@ -1,12 +1,9 @@
 "use client"
 
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
-import {
-  getAttendee,
-  type EventWithAttendance,
-  type EventWithAttendanceSummary,
-  type UserId,
-} from "@dotkomonline/types"
+import { getAttendee } from "@dotkomonline/rpc/attendance"
+import type { EventWithAttendance, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import type { UserId } from "@dotkomonline/rpc/user"
 import { Text } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"

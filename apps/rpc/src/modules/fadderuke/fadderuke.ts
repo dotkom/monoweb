@@ -1,7 +1,12 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import type { z } from "zod"
+import { z } from "zod"
 
-export const FadderukeSchema = schemas.FadderukeSchema
+export const FadderukeSchema = z.object({
+  id: z.string(),
+  year: z.number().int(),
+  eventId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
 export type Fadderuke = z.infer<typeof FadderukeSchema>
 export type FadderukeId = Fadderuke["id"]
 

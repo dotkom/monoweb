@@ -15,10 +15,10 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
-  type EventId,
-  type TaskId,
-  type UserId,
-} from "@dotkomonline/types"
+} from "./attendance"
+import type { EventId } from "./event"
+import type { TaskId } from "../task/task"
+import type { UserId } from "../user/user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 

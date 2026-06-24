@@ -1,6 +1,6 @@
 "use client"
 
-import type { Attendee } from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
 import {
   AlertDialog,
   AlertDialogCancel,

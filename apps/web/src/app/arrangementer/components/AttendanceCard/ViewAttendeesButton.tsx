@@ -1,4 +1,5 @@
-import type { Attendance, Attendee, User } from "@dotkomonline/types"
+import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
+import type { User } from "@dotkomonline/rpc/user"
 import {
   AlertDialog,
   AlertDialogCancel,

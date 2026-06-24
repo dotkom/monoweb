@@ -1,6 +1,6 @@
 "use client"
 
-import type { FeedbackFormAnswer, FeedbackQuestion, FeedbackQuestionAnswer } from "@dotkomonline/types"
+import type { FeedbackFormAnswer, FeedbackQuestion, FeedbackQuestionAnswer } from "@dotkomonline/rpc/feedback-form"
 import {
   Bar,
   BarChart,

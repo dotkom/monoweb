@@ -1,5 +1,5 @@
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import type { WorkspaceGroup } from "@dotkomonline/types"
+import type { WorkspaceGroup } from "@dotkomonline/rpc/workspace"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconTrash, IconUsersGroup, IconX } from "@tabler/icons-react"

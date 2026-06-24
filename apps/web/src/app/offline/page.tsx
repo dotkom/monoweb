@@ -1,6 +1,6 @@
 import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
-import type { Offline } from "@dotkomonline/types"
+import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text, Title } from "@dotkomonline/ui"
 
 const OfflinePage = async () => {

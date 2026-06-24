@@ -2,13 +2,8 @@
 
 import { DateTooltip } from "@/components/DateTooltip"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import {
-  type GroupId,
-  type GroupMembership,
-  type WorkspaceMemberLink,
-  type WorkspaceMemberSyncState,
-  getActiveGroupMembership,
-} from "@dotkomonline/types"
+import { type GroupId, type GroupMembership, getActiveGroupMembership } from "@dotkomonline/rpc/group"
+import type { WorkspaceMemberLink, WorkspaceMemberSyncState } from "@dotkomonline/rpc/workspace"
 import { Anchor, Group, Stack, Text, Tooltip } from "@mantine/core"
 import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

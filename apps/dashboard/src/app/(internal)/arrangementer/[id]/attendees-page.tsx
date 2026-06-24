@@ -1,5 +1,7 @@
 import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
-import type { Attendance, Event, FeedbackFormAnswer } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
+import type { Event } from "@dotkomonline/rpc/event"
+import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
 import { Anchor, Button, Group, List, ListItem, Space, Stack, Text, Title } from "@mantine/core"
 import { skipToken } from "@tanstack/react-query"
 import type { FC } from "react"

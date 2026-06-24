@@ -9,9 +9,9 @@ import {
   type ArticleTag,
   type ArticleTagName,
   type ArticleWrite,
-  type UserId,
   ARTICLE_IMAGE_MAX_SIZE_KIB,
-} from "@dotkomonline/types"
+} from "./article"
+import type { UserId } from "../user/user"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"

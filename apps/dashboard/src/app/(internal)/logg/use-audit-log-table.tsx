@@ -1,5 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
-import type { AuditLog } from "@dotkomonline/types"
+import type { AuditLog } from "@dotkomonline/rpc/audit-log"
 import { Anchor, Text } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"

@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto"
 import {
-  type EventWrite,
   type FeedbackFormWrite,
   type FeedbackQuestionOptionWrite,
   type FeedbackQuestionWrite,
   FeedbackRejectionCause,
-} from "@dotkomonline/types"
-import type { AttendanceId, EventId, UserId } from "@dotkomonline/types"
+} from "./feedback-form"
+import type { EventId, EventWrite } from "../event/event"
+import type { AttendanceId } from "../event/attendance"
+import type { UserId } from "../user/user"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import { addDays } from "date-fns"

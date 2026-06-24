@@ -1,4 +1,4 @@
-import { EventStatusSchema, EventTypeSchema, type EventWrite } from "@dotkomonline/types"
+import { EventStatusSchema, EventTypeSchema, type EventWrite } from "@dotkomonline/rpc/event"
 import { isAfter } from "date-fns"
 import type { z } from "zod"
 

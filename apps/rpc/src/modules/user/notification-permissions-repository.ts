@@ -4,7 +4,7 @@ import {
   NotificationPermissionsSchema,
   type NotificationPermissionsWrite,
   type UserId,
-} from "@dotkomonline/types"
+} from "./user"
 import { parseOrReport } from "../../invariant"
 
 export interface NotificationPermissionsRepository {

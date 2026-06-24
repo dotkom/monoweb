@@ -1,7 +1,18 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import type { z } from "zod"
+import { z } from "zod"
 
-export const CompanySchema = schemas.CompanySchema.extend({})
+export const CompanySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  phone: z.string().nullable(),
+  email: z.string().nullable(),
+  website: z.string(),
+  location: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
 
 export type CompanyId = Company["id"]
 export type CompanySlug = Company["slug"]

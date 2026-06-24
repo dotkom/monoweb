@@ -1,6 +1,6 @@
 "use client"
 
-import type { EventFilterQuery } from "@dotkomonline/types"
+import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import { Button, Group, Skeleton, Stack, Title } from "@mantine/core"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"

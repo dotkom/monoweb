@@ -1,5 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
-import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/types"
+import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/rpc/group"
 import { Box, Button, Stack, Title } from "@mantine/core"
 import { IconEdit } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

@@ -1,4 +1,4 @@
-import type { OfflineWrite } from "@dotkomonline/types"
+import type { OfflineWrite } from "@dotkomonline/rpc/offline"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"

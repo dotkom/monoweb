@@ -1,5 +1,5 @@
 import { env } from "@/env"
-import type { Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/rpc/event"
 import { slugify } from "@dotkomonline/utils"
 import type { ICalEventData } from "ical-generator"
 

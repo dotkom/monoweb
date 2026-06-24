@@ -1,4 +1,4 @@
-import type { JobListing } from "@dotkomonline/types"
+import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import type { EmploymentCheckbox, SortOption } from "./company-filters-container"
 
 export function filterJobListings(

@@ -1,7 +1,7 @@
 "use client"
 
 import { FilterableTable } from "@/components/molecules/FilterableTable/FilterableTable"
-import { type Group, GroupTypeSchema, getGroupTypeName } from "@dotkomonline/types"
+import { type Group, GroupTypeSchema, getGroupTypeName } from "@dotkomonline/rpc/group"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"

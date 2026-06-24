@@ -1,6 +1,6 @@
 "use client"
 
-import type { AuditLog } from "@dotkomonline/types"
+import type { AuditLog } from "@dotkomonline/rpc/audit-log"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

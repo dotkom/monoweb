@@ -1,7 +1,7 @@
 "use client"
 
 import { useUserAllQuery } from "@/app/(internal)/brukere/queries"
-import type { User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/rpc/user"
 import { MultiSelect, type MultiSelectProps, Select } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useMemo, useState } from "react"

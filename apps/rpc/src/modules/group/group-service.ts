@@ -13,13 +13,13 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
-  type UserId,
   GroupRoleTypeEnum,
   getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
   areGroupRolesEqual,
   type GroupMembershipWriteWithRoles,
-} from "@dotkomonline/types"
+} from "./group"
+import type { UserId } from "../user/user"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
 import { maxTime } from "date-fns/constants"

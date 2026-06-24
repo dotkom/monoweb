@@ -1,6 +1,5 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
-  type EventId,
   type FeedbackForm,
   type FeedbackFormId,
   FeedbackFormSchema,
@@ -8,7 +7,8 @@ import {
   FeedbackFromPublicResultsTokenSchema,
   type FeedbackPublicResultsToken,
   type FeedbackQuestionWrite,
-} from "@dotkomonline/types"
+} from "./feedback-form"
+import type { EventId } from "../event/event"
 import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormRepository {

@@ -1,5 +1,5 @@
 import { FilterableTable, arrayOrEqualsFilter } from "@/components/molecules/FilterableTable/FilterableTable"
-import type { Article } from "@dotkomonline/types"
+import type { Article } from "@dotkomonline/rpc/article"
 import { Anchor, Group } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import Link from "next/link"

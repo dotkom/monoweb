@@ -1,6 +1,5 @@
 import { type DBHandle, type FeedbackQuestionAnswer, type FeedbackQuestionOption, Prisma } from "@dotkomonline/db"
 import {
-  type AttendeeId,
   type FeedbackFormAnswer,
   FeedbackFormAnswerSchema,
   type FeedbackFormAnswerWrite,
@@ -9,7 +8,8 @@ import {
   type FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
-} from "@dotkomonline/types"
+} from "./feedback-form"
+import type { AttendeeId } from "../event/attendance"
 import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormAnswerRepository {

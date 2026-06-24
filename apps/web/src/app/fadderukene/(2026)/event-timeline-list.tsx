@@ -2,7 +2,8 @@
 
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import { type Attendance, type Event, type EventWithAttendance, getAttendee } from "@dotkomonline/types"
+import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
+import type { Event, EventWithAttendance } from "@dotkomonline/rpc/event"
 import {
   Button,
   Label,

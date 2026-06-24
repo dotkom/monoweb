@@ -1,4 +1,5 @@
-import { GroupRoleTypeEnum, OfflineSchema, OfflineWriteSchema } from "@dotkomonline/types"
+import { GroupRoleTypeEnum } from "../group/group"
+import { OfflineSchema, OfflineWriteSchema } from "./offline"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../authorization"
