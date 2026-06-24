@@ -128,7 +128,11 @@ export function getEventService(
           afterEvent.attendanceId !== null &&
           afterEvent.hostingGroups.length > 0
         ) {
-          const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "EVENT_UPDATE", afterEvent.id)
+          const recipients = await notificationService.retrieveIntendedRecipientIds(
+            handle,
+            "EVENT_UPDATE",
+            afterEvent.id
+          )
           await notificationService.create(
             handle,
             recipients,
