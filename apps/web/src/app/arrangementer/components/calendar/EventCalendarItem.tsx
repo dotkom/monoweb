@@ -1,5 +1,7 @@
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import { type EventWithAttendanceSummary, type UserId, getAttendee } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import type { UserId } from "@dotkomonline/rpc/user"
+import { getAttendee } from "@dotkomonline/rpc/attendance"
 import { HoverCard, HoverCardContent, HoverCardTrigger, Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconClock, IconMapPin } from "@tabler/icons-react"

@@ -7,7 +7,7 @@ import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { OFFLINE_FILE_MAX_SIZE_KIB, OFFLINE_IMAGE_MAX_SIZE_KIB, OfflineWriteSchema } from "@dotkomonline/types"
+import { OFFLINE_FILE_MAX_SIZE_KIB, OFFLINE_IMAGE_MAX_SIZE_KIB, OfflineWriteSchema } from "@dotkomonline/rpc/offline"
 import type { z } from "zod"
 
 export const FormValidationSchema = OfflineWriteSchema

@@ -19,7 +19,7 @@ import {
   EventTypeSchema,
   EventWriteSchema,
   mapEventTypeToLabel,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/event"
 import { addHours, roundToNearestHours } from "date-fns"
 import { z } from "zod"
 

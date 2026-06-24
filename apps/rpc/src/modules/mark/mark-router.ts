@@ -1,4 +1,5 @@
-import { GroupSchema, MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "@dotkomonline/types"
+import { GroupSchema } from "../group/group"
+import { MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "./mark"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { isCommitteeMember } from "../../authorization"

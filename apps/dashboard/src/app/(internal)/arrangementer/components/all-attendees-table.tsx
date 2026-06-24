@@ -4,9 +4,9 @@ import type {
   AttendeePaymentStatus,
   Attendee,
   AttendeeSelectionResponse,
-  FeedbackFormAnswer,
-} from "@dotkomonline/types"
-import { getAttendeePaymentStatus } from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
+import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
+import { getAttendeePaymentStatus } from "@dotkomonline/rpc/attendance"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   ActionIcon,

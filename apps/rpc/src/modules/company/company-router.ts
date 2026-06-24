@@ -1,5 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { CompanySchema, CompanyWriteSchema } from "@dotkomonline/types"
+import { CompanySchema, CompanyWriteSchema } from "./company"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"

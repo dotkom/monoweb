@@ -2,7 +2,7 @@
 
 import { DateTooltip } from "@/components/DateTooltip"
 import { GenericTable } from "@/components/GenericTable"
-import type { Mark } from "@dotkomonline/types"
+import type { Mark } from "@dotkomonline/rpc/mark"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

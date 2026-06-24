@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { MarkId } from "@dotkomonline/types"
+import type { MarkId } from "@dotkomonline/rpc/mark"
 import { useQuery } from "@tanstack/react-query"
 
 export const usePersonalMarkGetByMarkId = (markId: MarkId) => {

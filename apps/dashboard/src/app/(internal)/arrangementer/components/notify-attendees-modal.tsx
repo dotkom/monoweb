@@ -1,6 +1,7 @@
 import { ErrorMessage } from "@hookform/error-message"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { Attendee, EventId } from "@dotkomonline/types"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import type { EventId } from "@dotkomonline/rpc/event"
 import { Button, ScrollArea, Stack, Table, Textarea } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"

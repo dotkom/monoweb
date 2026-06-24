@@ -1,10 +1,5 @@
-import {
-  getAttendee,
-  type Attendance,
-  type AttendanceSummary,
-  type Event,
-  type EventSummary,
-} from "@dotkomonline/types"
+import { getAttendee, type Attendance, type AttendanceSummary } from "@dotkomonline/rpc/attendance"
+import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import { Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { isPast } from "date-fns"

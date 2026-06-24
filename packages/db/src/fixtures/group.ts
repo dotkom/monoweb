@@ -1,5 +1,4 @@
-import type { Prisma } from "../"
-import { GroupRoleTypeSchema } from "../../generated/schema/index"
+import { GroupRoleType, type Prisma } from "../"
 
 export const getGroupFixtures = () =>
   [
@@ -333,41 +332,41 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
     {
       groupId: groupInput.slug,
       name: "Leder",
-      type: GroupRoleTypeSchema.enum.LEADER,
+      type: GroupRoleType.LEADER,
     },
     {
       groupId: groupInput.slug,
       name: "Vinstraffansvarlig",
-      type: GroupRoleTypeSchema.enum.PUNISHER,
+      type: GroupRoleType.PUNISHER,
     },
     {
       groupId: groupInput.slug,
       name: "Nestleder",
-      type: GroupRoleTypeSchema.enum.DEPUTY_LEADER,
+      type: GroupRoleType.DEPUTY_LEADER,
     },
     {
       groupId: groupInput.slug,
       name: "Tillitsvalgt",
-      type: GroupRoleTypeSchema.enum.TRUSTEE,
+      type: GroupRoleType.TRUSTEE,
     },
     {
       groupId: groupInput.slug,
       name: "Økonomiansvarlig",
-      type: GroupRoleTypeSchema.enum.TREASURER,
+      type: GroupRoleType.TREASURER,
     },
     {
       groupId: groupInput.slug,
       name: "Medlem",
-      type: GroupRoleTypeSchema.enum.COSMETIC,
+      type: GroupRoleType.COSMETIC,
     },
     {
       groupId: groupInput.slug,
       name: "E-postbruker",
-      type: GroupRoleTypeSchema.enum.EMAIL_ONLY,
+      type: GroupRoleType.EMAIL_ONLY,
     },
     {
       groupId: groupInput.slug,
       name: "Permitert",
-      type: GroupRoleTypeSchema.enum.TEMPORARILY_LEAVE,
+      type: GroupRoleType.TEMPORARILY_LEAVE,
     },
   ] as const satisfies Prisma.GroupRoleCreateManyInput[]

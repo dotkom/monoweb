@@ -15,8 +15,8 @@ import {
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
-  type UserId,
-} from "@dotkomonline/types"
+} from "./group"
+import type { UserId } from "../user/user"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
 

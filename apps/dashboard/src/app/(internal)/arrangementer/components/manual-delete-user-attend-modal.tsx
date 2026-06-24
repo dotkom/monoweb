@@ -1,4 +1,4 @@
-import type { AttendeeId } from "@dotkomonline/types"
+import type { AttendeeId } from "@dotkomonline/rpc/attendance"
 import { Button } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"

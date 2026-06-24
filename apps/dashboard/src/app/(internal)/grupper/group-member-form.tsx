@@ -1,6 +1,6 @@
 import { useFormBuilder } from "@/components/forms/Form"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
-import { type GroupId, GroupRoleSchema } from "@dotkomonline/types"
+import { type GroupId, GroupRoleSchema } from "@dotkomonline/rpc/group"
 import z from "zod"
 import { useGroupGetQuery } from "./queries"
 

@@ -1,7 +1,8 @@
 "use client"
 
-import type { EventType, Group } from "@dotkomonline/types"
-import { mapEventTypeToLabel } from "@dotkomonline/types"
+import type { EventType } from "@dotkomonline/rpc/event"
+import type { Group } from "@dotkomonline/rpc/group"
+import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Button, cn, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import type { EventListViewMode } from "../EventList"

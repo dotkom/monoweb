@@ -1,4 +1,4 @@
-import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { compareAsc, setISOWeek, setISOWeekYear, startOfISOWeek } from "date-fns"
 import type { EventDisplayProps, WeekData } from "../types"
 

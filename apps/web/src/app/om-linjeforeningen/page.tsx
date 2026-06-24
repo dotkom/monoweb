@@ -1,7 +1,7 @@
 import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { server } from "@/utils/trpc/server"
-import type { Group } from "@dotkomonline/types"
+import type { Group } from "@dotkomonline/rpc/group"
 import { RichText, Text, Title } from "@dotkomonline/ui"
 import Image from "next/image"
 import Link from "next/link"

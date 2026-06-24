@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { Company, CompanyId, CompanySlug } from "@dotkomonline/types"
+import type { Company, CompanyId, CompanySlug } from "@dotkomonline/rpc/company"
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 

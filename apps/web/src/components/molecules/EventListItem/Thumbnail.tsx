@@ -1,4 +1,4 @@
-import type { EventType } from "@dotkomonline/types"
+import type { EventType } from "@dotkomonline/rpc/event"
 import { Badge, Tilt, cn, type BadgeColor } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"

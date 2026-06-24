@@ -1,4 +1,4 @@
-import type { Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/rpc/event"
 import { Title } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { LocationBox } from "./LocationBox"

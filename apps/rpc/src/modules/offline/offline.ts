@@ -1,7 +1,14 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import type { z } from "zod"
+import { z } from "zod"
 
-export const OfflineSchema = schemas.OfflineSchema.extend({})
+export const OfflineSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  fileUrl: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+  publishedAt: z.date(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
 
 export const OfflineWriteSchema = OfflineSchema.partial({
   id: true,

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
-import { GenderSchema, type Membership, type User } from "@dotkomonline/types"
+import { GenderSchema, type Membership, type User } from "../user"
 import { beforeEach, describe, expect, it, type vi } from "vitest"
 import { mockDeep } from "vitest-mock-extended"
 import type { AttendanceService } from "../../event/attendance-service"

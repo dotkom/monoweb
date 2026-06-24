@@ -5,13 +5,13 @@ import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextIn
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
+import { CompanySchema } from "@dotkomonline/rpc/company"
 import {
-  CompanySchema,
   JobListingLocationSchema,
   JobListingSchema,
   JobListingWriteSchema,
   getJobListingEmploymentName,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/job-listing"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addWeeks, roundToNearestHours } from "date-fns"
 import type { z } from "zod"

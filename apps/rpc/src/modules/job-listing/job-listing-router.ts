@@ -1,10 +1,10 @@
+import { CompanySchema } from "../company/company"
 import {
-  CompanySchema,
   JobListingFilterQuerySchema,
   JobListingLocationSchema,
   JobListingSchema,
   JobListingWriteSchema,
-} from "@dotkomonline/types"
+} from "./job-listing"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"

@@ -5,13 +5,9 @@ import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvi
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import {
-  type Attendance,
-  type AttendanceSelectionResponse,
-  type Event,
-  type User,
-  getAttendee,
-} from "@dotkomonline/types"
+import { type Attendance, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
+import type { Event } from "@dotkomonline/rpc/event"
+import type { User } from "@dotkomonline/rpc/user"
 import { Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"

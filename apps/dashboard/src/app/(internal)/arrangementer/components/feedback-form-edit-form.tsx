@@ -1,5 +1,5 @@
+import type { EventId } from "@dotkomonline/rpc/event"
 import {
-  type EventId,
   type FeedbackFormId,
   type FeedbackFormWrite,
   FeedbackFormWriteSchema,
@@ -7,7 +7,7 @@ import {
   type FeedbackQuestionWrite,
   FeedbackQuestionWriteSchema,
   getFeedbackQuestionTypeName,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/feedback-form"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {

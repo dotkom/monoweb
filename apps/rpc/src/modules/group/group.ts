@@ -1,10 +1,43 @@
-import { z } from "zod"
-
-import { schemas } from "@dotkomonline/db/schemas"
 import { compareDesc } from "date-fns"
-import { UserSchema } from "./user"
+import { z } from "zod"
+import { UserSchema } from "../user/user"
 
-export const GroupRoleSchema = schemas.GroupRoleSchema.extend({})
+export const GroupTypeSchema = z.enum(["COMMITTEE", "NODE_COMMITTEE", "ASSOCIATED", "INTEREST_GROUP", "EMAIL_ONLY"])
+export type GroupType = z.infer<typeof GroupTypeSchema>
+
+export const GroupRecruitmentMethodSchema = z.enum([
+  "NONE",
+  "SPRING_APPLICATION",
+  "AUTUMN_APPLICATION",
+  "GENERAL_ASSEMBLY",
+  "NOMINATION",
+  "OTHER",
+])
+export type GroupRecruitmentMethod = z.output<typeof GroupRecruitmentMethodSchema>
+
+export const GroupMemberVisibilitySchema = z.enum(["ALL_MEMBERS", "WITH_ROLES", "LEADER", "NONE"])
+export type GroupMemberVisibilityType = z.infer<typeof GroupMemberVisibilitySchema>
+
+export const GroupRoleTypeSchema = z.enum([
+  "LEADER",
+  "PUNISHER",
+  "TREASURER",
+  "COSMETIC",
+  "DEPUTY_LEADER",
+  "TRUSTEE",
+  "EMAIL_ONLY",
+  "TEMPORARILY_LEAVE",
+  "EDITOR_IN_CHIEF",
+])
+export const GroupRoleTypeEnum = GroupRoleTypeSchema.enum
+export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
+
+export const GroupRoleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: GroupRoleTypeSchema.default("COSMETIC"),
+  groupId: z.string(),
+})
 export type GroupRole = z.infer<typeof GroupRoleSchema>
 export type GroupRoleId = GroupRole["id"]
 
@@ -13,25 +46,31 @@ export const GroupRoleWriteSchema = GroupRoleSchema.pick({
   name: true,
   type: true,
 })
-
 export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
 
-export const GroupSchema = schemas.GroupSchema.extend({
+export const GroupSchema = z.object({
+  slug: z.string(),
+  abbreviation: z.string(),
+  name: z.string().nullable(),
+  shortDescription: z.string().nullable(),
+  description: z.string(),
+  imageUrl: z.string().nullable(),
+  email: z.string().nullable(),
+  contactUrl: z.string().nullable(),
+  slackUrl: z.string().nullable(),
+  showLeaderAsContact: z.boolean(),
+  createdAt: z.date(),
+  deactivatedAt: z.date().nullable(),
+  workspaceGroupId: z.string().nullable(),
+  memberVisibility: GroupMemberVisibilitySchema.default("ALL_MEMBERS"),
+  recruitmentMethod: GroupRecruitmentMethodSchema.default("NONE"),
+  type: GroupTypeSchema,
   roles: GroupRoleSchema.array(),
   eventCount: z.number().optional(),
 })
-export const GroupTypeSchema = schemas.GroupTypeSchema
 
 export type GroupId = Group["slug"]
 export type Group = z.infer<typeof GroupSchema>
-
-export type GroupType = z.infer<typeof GroupTypeSchema>
-
-export const GroupRecruitmentMethodSchema = schemas.GroupRecruitmentMethodSchema
-export type GroupRecruitmentMethod = z.output<typeof GroupRecruitmentMethodSchema>
-
-export const GroupMemberVisibilitySchema = schemas.GroupMemberVisibilitySchema
-export type GroupMemberVisibilityType = z.infer<typeof GroupMemberVisibilitySchema>
 
 export const GroupWriteSchema = GroupSchema.pick({
   type: true,
@@ -54,13 +93,19 @@ export const GroupWriteSchema = GroupSchema.pick({
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
 
-export const GroupRoleTypeSchema = schemas.GroupRoleTypeSchema
-export const GroupRoleTypeEnum = GroupRoleTypeSchema.enum
-export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
-
-export const GroupMembershipSchema = schemas.GroupMembershipSchema.extend({
-  roles: GroupRoleSchema.array(),
-})
+export const GroupMembershipSchema = z
+  .object({
+    id: z.string(),
+    start: z.date(),
+    end: z.date().nullable(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    groupId: z.string(),
+    userId: z.string(),
+  })
+  .extend({
+    roles: GroupRoleSchema.array(),
+  })
 
 export const GroupMemberSchema = UserSchema.extend({
   groupMemberships: GroupMembershipSchema.array(),

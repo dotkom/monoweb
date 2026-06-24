@@ -1,5 +1,5 @@
 import { getServerSession } from "@/auth"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/rpc/event"
 import { Text } from "@dotkomonline/ui"
 import { EventTimelineList } from "./event-timeline-list"
 

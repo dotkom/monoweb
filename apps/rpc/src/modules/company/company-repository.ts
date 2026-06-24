@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type Company, type CompanyId, CompanySchema, type CompanySlug, type CompanyWrite } from "@dotkomonline/types"
+import { type Company, type CompanyId, CompanySchema, type CompanySlug, type CompanyWrite } from "./company"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
 

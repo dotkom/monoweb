@@ -10,7 +10,7 @@ import {
   getAttendanceCapacity,
   hasAttendeePaid,
   getReservedAttendeeCount,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, interval, isFuture, isWithinInterval } from "date-fns"

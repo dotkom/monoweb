@@ -1,5 +1,5 @@
 import { GenericSearch } from "@/components/GenericSearch"
-import type { User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/rpc/user"
 import { type FC, useState } from "react"
 import { useUserAllQuery } from "../queries"
 

@@ -1,5 +1,5 @@
 import { GenericTable } from "@/components/GenericTable"
-import { type DeregisterReasonWithEvent, mapDeregisterReasonTypeToLabel } from "@dotkomonline/types"
+import { type DeregisterReasonWithEvent, mapDeregisterReasonTypeToLabel } from "@dotkomonline/rpc/event"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"

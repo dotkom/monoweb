@@ -1,4 +1,5 @@
-import type { UserId, EventWithAttendance } from "@dotkomonline/types"
+import type { UserId } from "@dotkomonline/rpc/user"
+import type { EventWithAttendance } from "@dotkomonline/rpc/event"
 import { Text } from "@dotkomonline/ui"
 import { EventListItem } from "../molecules/EventListItem/EventListItem"
 

@@ -1,4 +1,4 @@
-import type { Attendance, AttendanceSelection } from "@dotkomonline/types"
+import type { Attendance, AttendanceSelection } from "@dotkomonline/rpc/attendance"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useUpdateAttendanceMutation } from "../mutations"

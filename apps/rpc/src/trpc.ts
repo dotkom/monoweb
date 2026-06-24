@@ -1,5 +1,6 @@
 import { getLogger } from "@dotkomonline/logger"
-import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
+import type { GroupId, GroupRoleType } from "./modules/group/group"
+import type { UserId } from "./modules/user/user"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { TRPCError, type TRPC_ERROR_CODE_KEY, initTRPC } from "@trpc/server"

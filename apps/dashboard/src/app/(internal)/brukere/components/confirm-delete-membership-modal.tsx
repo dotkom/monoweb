@@ -1,5 +1,5 @@
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
-import type { Membership } from "@dotkomonline/types"
+import type { Membership } from "@dotkomonline/rpc/user"
 import { useDeleteMembershipMutation } from "../mutations"
 
 export const useConfirmDeleteMembershipModal = () => {

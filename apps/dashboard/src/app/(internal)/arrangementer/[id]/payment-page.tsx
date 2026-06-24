@@ -4,7 +4,7 @@ import {
   type Attendee,
   getAttendeePaymentStatus,
   isAttendeeChargedAndUnrefunded,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
 import { Badge, type BadgeProps, Box, Button, Group, Input, Stack, Title } from "@mantine/core"
 import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

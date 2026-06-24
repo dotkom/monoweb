@@ -1,4 +1,4 @@
-import type { AttendancePool } from "@dotkomonline/types"
+import type { AttendancePool } from "@dotkomonline/rpc/attendance"
 import { Box, Table } from "@mantine/core"
 import type { FC } from "react"
 import { formatPoolYearCriterias } from "./utils"

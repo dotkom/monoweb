@@ -1,18 +1,16 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type Attendee,
-  type Event,
-  type EventId,
-  type FeedbackForm,
-  type FeedbackFormId,
-  type FeedbackFormWrite,
-  type FeedbackPublicResultsToken,
-  type FeedbackQuestionWrite,
-  type FeedbackRejectionCause,
-  type UserId,
-  getDefaultFeedbackAnswerDeadline,
-} from "@dotkomonline/types"
+import type {
+  FeedbackForm,
+  FeedbackFormId,
+  FeedbackFormWrite,
+  FeedbackPublicResultsToken,
+  FeedbackQuestionWrite,
+  FeedbackRejectionCause,
+} from "./feedback-form"
+import { type Event, type EventId, getDefaultFeedbackAnswerDeadline } from "../event/event"
+import type { Attendee } from "../event/attendance"
+import type { UserId } from "../user/user"
 import { isEqual, isFuture, isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { AttendanceRepository } from "../event/attendance-repository"

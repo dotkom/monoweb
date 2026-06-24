@@ -1,4 +1,6 @@
-import { AttendanceSchema, AttendeeSchema, FeedbackFormSchema, type TaskType } from "@dotkomonline/types"
+import { AttendanceSchema, AttendeeSchema } from "../event/attendance"
+import { FeedbackFormSchema } from "../feedback-form/feedback-form"
+import type { TaskType } from "./task"
 import { z } from "zod"
 import { NotFoundError } from "../../error"
 

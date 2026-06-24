@@ -1,4 +1,4 @@
-import { AuditLogTable, type AuditLogFilterQuery, AuditLogOperation } from "@dotkomonline/types"
+import { AuditLogTable, type AuditLogFilterQuery, AuditLogOperation } from "@dotkomonline/rpc/audit-log"
 import { Group, MultiSelect, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useEffect } from "react"
