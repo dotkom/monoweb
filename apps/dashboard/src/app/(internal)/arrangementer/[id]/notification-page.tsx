@@ -5,6 +5,7 @@ import { DateTooltip } from "@/components/DateTooltip"
 import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, type Notification } from "@dotkomonline/rpc"
 import { Anchor, Box, Button, Skeleton, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { slugify } from "@dotkomonline/utils"
 import Link from "next/link"
 import { type FC, useMemo } from "react"
 import { useNotificationsByPayloadQuery } from "../queries"
@@ -13,7 +14,9 @@ import { openCreateEventNotificationModal } from "../components/create-event-not
 
 export const NotificationsPage: FC = () => {
   const { event } = useEventContext()
-  const { notifications, isLoading } = useNotificationsByPayloadQuery("EVENT", event.id)
+  const attendanceId = event.attendanceId ?? undefined
+  const eventPath = `${slugify(event.title)}/${event.id}`
+  const { notifications, isLoading } = useNotificationsByPayloadQuery("EVENT", eventPath)
 
   const columnHelper = createColumnHelper<Notification>()
 
@@ -73,7 +76,10 @@ export const NotificationsPage: FC = () => {
       <Stack gap="lg">
         <Box>
           <Title order={3}>Opprett varsling</Title>
-          <Button mt="md" onClick={openCreateEventNotificationModal({ eventId: event.id })}>
+          <Button
+            mt="md"
+            onClick={openCreateEventNotificationModal({ eventId: event.id, eventPath, attendanceId })}
+          >
             Legg til ny varsling
           </Button>
         </Box>
