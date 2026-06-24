@@ -35,6 +35,22 @@ export const UserFlagWriteSchema = UserFlagSchema.pick({
 })
 export type UserFlagWrite = z.infer<typeof UserFlagWriteSchema>
 
+export const FlagName = {
+  VANITY_VERIFIED: "VANITY_VERIFIED",
+  EXCEPTIONALLY_DISTINGUISHED: "EXCEPTIONALLY_DISTINGUISHED",
+} as const
+
+export type FlagName = (typeof FlagName)[keyof typeof FlagName]
+
+export function getFlagLabel(name: FlagName) {
+  switch (name) {
+    case FlagName.VANITY_VERIFIED:
+      return "OW Verified"
+    case FlagName.EXCEPTIONALLY_DISTINGUISHED:
+      return "Særskilt utmerket"
+  }
+}
+
 export const UserSchema = schemas.UserSchema.extend({
   memberships: z.array(MembershipSchema),
   flags: z.array(UserFlagSchema),
@@ -206,6 +222,14 @@ export function getGenderName(gender: Gender) {
     case "UNKNOWN":
       return "Ikke oppgitt"
   }
+}
+
+export function isKnight(user: User) {
+  return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
+}
+
+export function isVanityVerified(user: User) {
+  return user.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
 }
 
 export const USER_IMAGE_MAX_SIZE_KIB = 512
