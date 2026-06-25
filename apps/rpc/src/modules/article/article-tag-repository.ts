@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema } from "@dotkomonline/types"
+import { type ArticleId, type ArticleTag, type ArticleTagName, ArticleTagSchema } from "./article"
 import { parseOrReport } from "../../invariant"
 
 export interface ArticleTagRepository {

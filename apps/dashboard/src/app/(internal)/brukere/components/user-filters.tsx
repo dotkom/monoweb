@@ -1,4 +1,4 @@
-import type { UserFilterQuery } from "@dotkomonline/types"
+import type { UserFilterQuery } from "@dotkomonline/rpc/user"
 import { TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { type FormEvent, useEffect } from "react"

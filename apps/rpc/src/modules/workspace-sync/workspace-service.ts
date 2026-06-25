@@ -2,20 +2,16 @@ import { randomBytes } from "node:crypto"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import {
-  type Group,
-  type GroupId,
-  type GroupMember,
-  type User,
-  type UserId,
-  type WorkspaceGroup,
-  type WorkspaceGroupLink,
-  type WorkspaceMember,
-  type WorkspaceMemberLink,
-  type WorkspaceMemberSyncState,
-  type WorkspaceUser,
-  getActiveGroupMembership,
-} from "@dotkomonline/types"
+import { type Group, type GroupId, type GroupMember, getActiveGroupMembership } from "../group/group"
+import type { User, UserId } from "../user/user"
+import type {
+  WorkspaceGroup,
+  WorkspaceGroupLink,
+  WorkspaceMember,
+  WorkspaceMemberLink,
+  WorkspaceMemberSyncState,
+  WorkspaceUser,
+} from "./workspace"
 import { slugify } from "@dotkomonline/utils"
 import { isAfter } from "date-fns"
 import type { admin_directory_v1 } from "@googleapis/admin"

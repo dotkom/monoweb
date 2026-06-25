@@ -1,6 +1,6 @@
 "use client"
 
-import type { GroupMember } from "@dotkomonline/types"
+import type { GroupMember } from "@dotkomonline/rpc/group"
 import { createContext, useContext } from "react"
 
 export const GroupMemberDetailsContext = createContext<{

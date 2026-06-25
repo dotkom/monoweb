@@ -2,10 +2,9 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
+import type { AttendanceId } from "./attendance"
 import {
-  type AttendanceId,
   type BaseEvent,
-  type CompanyId,
   type DeregisterReason,
   type DeregisterReasonWithEvent,
   type DeregisterReasonWrite,
@@ -15,10 +14,11 @@ import {
   type EventSummary,
   type EventWithFeedbackFormSchema,
   type EventWrite,
-  type GroupId,
-  type UserId,
   EVENT_IMAGE_MAX_SIZE_KIB,
-} from "@dotkomonline/types"
+} from "./event"
+import type { CompanyId } from "../company/company"
+import type { GroupId } from "../group/group"
+import type { UserId } from "../user/user"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"

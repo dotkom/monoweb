@@ -10,7 +10,7 @@ import {
   type Username,
   UserSchema,
   type UserWrite,
-} from "@dotkomonline/types"
+} from "./user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"

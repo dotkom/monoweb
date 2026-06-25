@@ -1,4 +1,4 @@
-import type { Article } from "@dotkomonline/types"
+import type { Article } from "@dotkomonline/rpc/article"
 import { cn, Text } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
 import Image from "next/image"

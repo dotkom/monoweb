@@ -6,9 +6,9 @@ import {
   type CompanyId,
   type CompanySlug,
   type CompanyWrite,
-  type UserId,
   COMPANY_IMAGE_MAX_SIZE_KIB,
-} from "@dotkomonline/types"
+} from "./company"
+import type { UserId } from "../user/user"
 import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"

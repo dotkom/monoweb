@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { Attendance } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"

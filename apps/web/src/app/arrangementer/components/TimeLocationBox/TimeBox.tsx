@@ -1,6 +1,6 @@
 "use client"
 
-import type { Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/rpc/event"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowRight, IconClock } from "@tabler/icons-react"
 import { format as formatDate, isSameDay } from "date-fns"

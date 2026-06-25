@@ -1,6 +1,6 @@
 "use client"
 
-import { type EventType, EventTypeSchema, mapEventTypeToLabel } from "@dotkomonline/types"
+import { type EventType, EventTypeSchema, mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Label, Text, cn } from "@dotkomonline/ui"
 import { IconChevronDown } from "@tabler/icons-react"
 

@@ -1,4 +1,4 @@
-import type { Group } from "@dotkomonline/types"
+import type { Group } from "@dotkomonline/rpc/group"
 import type { FC } from "react"
 
 interface Props {

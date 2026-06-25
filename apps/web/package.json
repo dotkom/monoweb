@@ -20,7 +20,7 @@
     "@date-fns/tz": "^1.2.0",
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
+    "@dotkomonline/rpc": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@hookform/error-message": "^2.0.1",
@@ -73,7 +73,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:*",
-    "@dotkomonline/rpc": "workspace:*",
     "@fontsource-variable/figtree": "^5.2.10",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/google-sans-code": "^5.2.4",

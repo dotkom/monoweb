@@ -1,6 +1,6 @@
 import { DateTooltip } from "@/components/DateTooltip"
 import { GenericTable } from "@/components/GenericTable"
-import { type EventWithAttendance, mapEventStatusToLabel, mapEventTypeToLabel } from "@dotkomonline/types"
+import { type EventWithAttendance, mapEventStatusToLabel, mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

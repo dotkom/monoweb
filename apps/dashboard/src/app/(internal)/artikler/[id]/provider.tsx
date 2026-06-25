@@ -1,6 +1,6 @@
 "use client"
 
-import type { Article } from "@dotkomonline/types"
+import type { Article } from "@dotkomonline/rpc/article"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

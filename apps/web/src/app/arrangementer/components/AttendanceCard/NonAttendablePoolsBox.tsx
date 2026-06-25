@@ -2,12 +2,12 @@ import { RollingNumber } from "@/components/RollingNumber"
 import {
   type Attendance,
   type AttendancePool,
-  type User,
   getAttendablePool,
   getNonAttendablePools,
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
+import type { User } from "@dotkomonline/rpc/user"
 import {
   Collapsible,
   CollapsibleContent,

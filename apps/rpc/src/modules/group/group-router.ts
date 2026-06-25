@@ -7,7 +7,7 @@ import {
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
-} from "@dotkomonline/types"
+} from "./group"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"

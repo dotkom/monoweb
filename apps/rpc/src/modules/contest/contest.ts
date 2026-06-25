@@ -1,14 +1,20 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import { GroupSchema } from "@dotkomonline/types"
 import { z } from "zod"
+import { GroupSchema } from "../group/group"
 
-export const ContestResultTypeSchema = schemas.ContestResultTypeSchema
+export const ContestResultTypeSchema = z.enum(["SCORE", "DURATION", "WINNER"])
 export type ContestResultType = z.infer<typeof ContestResultTypeSchema>
 
-export const ContestResultOrderSchema = schemas.ContestResultOrderSchema
+export const ContestResultOrderSchema = z.enum(["ASC", "DESC"])
 export type ContestResultOrder = z.infer<typeof ContestResultOrderSchema>
 
-export const ContestSchema = schemas.ContestSchema.extend({
+export const ContestSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  startDate: z.date().nullable(),
+  resultType: ContestResultTypeSchema,
+  resultOrder: ContestResultOrderSchema,
+  winnerContestantId: z.string().nullable(),
   groups: GroupSchema.shape.slug.array().min(1),
 })
 export type Contest = z.infer<typeof ContestSchema>
@@ -27,7 +33,12 @@ export type ContestWrite = z.infer<typeof ContestWriteSchema>
 export const ContestUpdateSchema = ContestWriteSchema.partial()
 export type ContestUpdate = z.infer<typeof ContestUpdateSchema>
 
-export const ContestantSchema = schemas.ContestantSchema.extend({})
+export const ContestantSchema = z.object({
+  id: z.string(),
+  resultValue: z.number().int().nullable(),
+  contestId: z.string(),
+  userId: z.string().nullable(),
+})
 export type Contestant = z.infer<typeof ContestantSchema>
 export type ContestantId = Contestant["id"]
 
@@ -46,7 +57,11 @@ export const ContestUserSummarySchema = z.object({
 })
 export type ContestUserSummary = z.infer<typeof ContestUserSummarySchema>
 
-export const ContestTeamSchema = schemas.ContestTeamSchema.extend({})
+export const ContestTeamSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  contestantId: z.string(),
+})
 export type ContestTeam = z.infer<typeof ContestTeamSchema>
 
 export const ContestTeamDetailDbSchema = ContestTeamSchema.extend({

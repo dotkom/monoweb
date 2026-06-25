@@ -1,15 +1,8 @@
 import type { DBHandle, TaskStatus } from "@dotkomonline/db"
 import { Prisma } from "@dotkomonline/db"
-import {
-  type AttendanceId,
-  type AttendeeId,
-  type FeedbackFormId,
-  type Task,
-  type TaskId,
-  TaskSchema,
-  type TaskType,
-  type TaskWrite,
-} from "@dotkomonline/types"
+import type { AttendanceId, AttendeeId } from "../event/attendance"
+import type { FeedbackFormId } from "../feedback-form/feedback-form"
+import { type Task, type TaskId, TaskSchema, type TaskType, type TaskWrite } from "./task"
 import { parseOrReport } from "../../invariant"
 import { tasks } from "./task-definition"
 

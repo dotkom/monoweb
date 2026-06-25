@@ -38,9 +38,6 @@ importers:
       '@dotkomonline/rpc':
         specifier: workspace:*
         version: link:../rpc
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -231,9 +228,6 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -322,9 +316,6 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -488,9 +479,6 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
-      '@dotkomonline/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -636,9 +624,9 @@ importers:
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../../packages/logger
-      '@dotkomonline/types':
+      '@dotkomonline/rpc':
         specifier: workspace:*
-        version: link:../../packages/types
+        version: link:../rpc
       '@dotkomonline/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -790,9 +778,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@dotkomonline/rpc':
-        specifier: workspace:*
-        version: link:../rpc
       '@fontsource-variable/figtree':
         specifier: ^5.2.10
         version: 5.2.10
@@ -892,9 +877,6 @@ importers:
       pg:
         specifier: ^8.16.0
         version: 8.17.2
-      prisma-zod-generator:
-        specifier: ^2.1.4
-        version: 2.1.4(magicast@0.3.5)(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(magicast@0.3.5)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(typescript@5.9.3)(zod@4.4.3)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -1061,43 +1043,6 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-
-  packages/types:
-    dependencies:
-      '@date-fns/tz':
-        specifier: ^1.2.0
-        version: 1.5.0
-      '@dotkomonline/db':
-        specifier: workspace:*
-        version: link:../db
-      '@dotkomonline/utils':
-        specifier: workspace:*
-        version: link:../utils
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.2.1
-      tiny-invariant:
-        specifier: ^1.3.3
-        version: 1.3.3
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 2.4.16
-        version: 2.4.16
-      '@dotkomonline/config':
-        specifier: workspace:*
-        version: link:../config
-      '@googleapis/admin':
-        specifier: 30.4.0
-        version: 30.4.0
-      '@types/node':
-        specifier: 22.19.7
-        version: 22.19.7
       typescript:
         specifier: 5.9.3
         version: 5.9.3

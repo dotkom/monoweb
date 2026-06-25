@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { RecurringTask, RecurringTaskId, RecurringTaskWrite } from "@dotkomonline/types"
+import type { RecurringTask, RecurringTaskId, RecurringTaskWrite } from "./task"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { CronExpressionParser } from "cron-parser"
 import { InvalidArgumentError, NotFoundError } from "../../error"

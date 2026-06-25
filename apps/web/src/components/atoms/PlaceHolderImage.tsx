@@ -1,4 +1,4 @@
-import type { EventType } from "@dotkomonline/types"
+import type { EventType } from "@dotkomonline/rpc/event"
 import { cn } from "@dotkomonline/ui"
 import type { ImageProps } from "next/image"
 import type { FC } from "react"

@@ -1,5 +1,5 @@
 import { schemas } from "@dotkomonline/grades-db/schemas"
-import { buildAnyOfFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/types"
+import { buildAnyOfFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/utils"
 import z from "zod"
 
 export const CourseSchema = schemas.CourseSchema.extend({})

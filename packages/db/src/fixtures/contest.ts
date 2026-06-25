@@ -1,5 +1,4 @@
-import type { Prisma } from "../"
-import { ContestResultOrderSchema, ContestResultTypeSchema } from "../../generated/schema/index"
+import { ContestResultOrder, ContestResultType, type Prisma } from "../"
 import { getFadderukeInterval } from "./event"
 
 export const FADDERUKE_CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
@@ -10,8 +9,8 @@ export const getContestFixture = (): Prisma.ContestCreateInput => ({
   description:
     "Konkurransen under fadderukene. Samle poeng på arrangementer og aktiviteter gjennom uken, og se hvem som topper pallen!",
   startDate: getFadderukeInterval().start,
-  resultType: ContestResultTypeSchema.enum.SCORE,
-  resultOrder: ContestResultOrderSchema.enum.DESC,
+  resultType: ContestResultType.SCORE,
+  resultOrder: ContestResultOrder.DESC,
   groups: {
     connect: [{ slug: "velkom" }],
   },

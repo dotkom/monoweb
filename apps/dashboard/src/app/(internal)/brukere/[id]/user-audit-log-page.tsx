@@ -1,7 +1,7 @@
 import { AuditLogFilters } from "@/app/(internal)/logg/components/audit-log-filters"
 import { useAuditLogSearchQuery } from "@/app/(internal)/logg/queries"
 import { AuditLogsTable } from "@/app/(internal)/logg/use-audit-log-table"
-import type { AuditLogFilterQuery } from "@dotkomonline/types"
+import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { Skeleton, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useState } from "react"

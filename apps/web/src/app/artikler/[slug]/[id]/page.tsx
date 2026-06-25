@@ -1,6 +1,6 @@
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/types"
+import type { Article, ArticleTagName, ArticleTag as ArticleTagType } from "@dotkomonline/rpc/article"
 import { Button, cn, RichText, Text, Title, Video } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import { formatDate, isEqual } from "date-fns"

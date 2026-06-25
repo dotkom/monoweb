@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import { type GroupMembership, type GroupRole, GroupRoleTypeEnum } from "@dotkomonline/types"
+import { type GroupMembership, type GroupRole, GroupRoleTypeEnum } from "../group"
 import { describe, expect, it } from "vitest"
 import { simplifyGroupMemberships } from "../group-service"
 

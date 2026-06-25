@@ -1,10 +1,5 @@
-import {
-  type EventId,
-  type FeedbackFormId,
-  type FeedbackFormWrite,
-  type FeedbackQuestionWrite,
-  getDefaultFeedbackAnswerDeadline,
-} from "@dotkomonline/types"
+import { type EventId, getDefaultFeedbackAnswerDeadline } from "@dotkomonline/rpc/event"
+import type { FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/rpc/feedback-form"
 import { Box, Button, Group, Select, Stack, Title, Text } from "@mantine/core"
 import type { FC } from "react"
 import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"

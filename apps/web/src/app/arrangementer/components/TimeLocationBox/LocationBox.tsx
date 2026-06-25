@@ -1,4 +1,4 @@
-import type { Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/rpc/event"
 import { cn, Text } from "@dotkomonline/ui"
 import { IconMapPin } from "@tabler/icons-react"
 import type { FC } from "react"

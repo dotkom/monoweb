@@ -1,6 +1,6 @@
 "use client"
 
-import { type Membership, type UserId, getMembershipTypeName, getSpecializationName } from "@dotkomonline/types"
+import { type Membership, type UserId, getMembershipTypeName, getSpecializationName } from "@dotkomonline/rpc/user"
 import { Button } from "@mantine/core"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

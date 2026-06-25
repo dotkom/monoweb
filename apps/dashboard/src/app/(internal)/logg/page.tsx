@@ -1,6 +1,6 @@
 "use client"
 
-import type { AuditLogFilterQuery } from "@dotkomonline/types"
+import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { Card, Skeleton, Stack, Title } from "@mantine/core"
 import { useState } from "react"
 import { AuditLogFilters } from "./components/audit-log-filters"

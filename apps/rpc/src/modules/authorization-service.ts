@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
+import type { GroupId, GroupRoleType } from "./group/group"
+import type { UserId } from "./user/user"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
 

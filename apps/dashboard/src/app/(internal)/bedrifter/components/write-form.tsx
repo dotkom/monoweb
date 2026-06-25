@@ -3,7 +3,7 @@ import { useFormBuilder } from "@/components/forms/Form"
 import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/types"
+import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/rpc/company"
 import { z } from "zod"
 
 const COMPANY_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {

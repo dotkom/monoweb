@@ -1,6 +1,7 @@
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import type { Company, JobListing, JobListingEmployment } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/rpc/company"
+import type { JobListing, JobListingEmployment } from "@dotkomonline/rpc/job-listing"
 import { Button, RichText, Text, Title } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import {

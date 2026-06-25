@@ -1,7 +1,9 @@
 "use client"
 
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type Attendance, type Event, type User, getAttendee } from "@dotkomonline/types"
+import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
+import type { Event } from "@dotkomonline/rpc/event"
+import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"

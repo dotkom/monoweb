@@ -1,5 +1,5 @@
-import type { User, Membership } from "@dotkomonline/types"
-import { isAttendeeChargedAndUnrefunded } from "@dotkomonline/types"
+import { isAttendeeChargedAndUnrefunded } from "../event/attendance"
+import type { User, Membership } from "./user"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
 import type { AttendanceService } from "../event/attendance-service"

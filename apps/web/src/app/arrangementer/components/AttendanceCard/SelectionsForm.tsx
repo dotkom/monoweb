@@ -1,4 +1,4 @@
-import type { Attendance, AttendanceSelectionResponse, Attendee } from "@dotkomonline/types"
+import type { Attendance, AttendanceSelectionResponse, Attendee } from "@dotkomonline/rpc/attendance"
 import {
   Select,
   SelectContent,

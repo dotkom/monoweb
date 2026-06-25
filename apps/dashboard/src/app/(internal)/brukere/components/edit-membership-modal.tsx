@@ -1,4 +1,4 @@
-import type { Membership } from "@dotkomonline/types"
+import type { Membership } from "@dotkomonline/rpc/user"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useUpdateMembershipMutation } from "../mutations"

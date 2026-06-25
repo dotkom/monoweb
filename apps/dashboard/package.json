@@ -19,7 +19,6 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@fontsource-variable/google-sans-code": "^5.2.4",

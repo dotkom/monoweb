@@ -1,4 +1,4 @@
-import { AuditLogFilterQuerySchema, AuditLogSchema } from "@dotkomonline/types"
+import { AuditLogFilterQuerySchema, AuditLogSchema } from "./audit-log"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { isAdministrator } from "../../authorization"

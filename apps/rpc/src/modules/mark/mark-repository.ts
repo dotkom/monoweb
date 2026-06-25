@@ -1,13 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type Group,
-  type GroupId,
-  type Mark,
-  type MarkFilterQuery,
-  type MarkId,
-  MarkSchema,
-  type MarkWrite,
-} from "@dotkomonline/types"
+import type { Group, GroupId } from "../group/group"
+import { type Mark, type MarkFilterQuery, type MarkId, MarkSchema, type MarkWrite } from "./mark"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
 

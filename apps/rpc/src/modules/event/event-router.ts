@@ -1,18 +1,17 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
 import {
-  AttendanceSummarySchema,
-  AttendanceWriteSchema,
   BaseEventSchema,
-  CompanySchema,
   EventFilterQuerySchema,
   EventSchema,
   EventWithAttendanceSchema,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
   EventWriteSchema,
-  GroupSchema,
-  UserSchema,
-} from "@dotkomonline/types"
+} from "./event"
+import { CompanySchema } from "../company/company"
+import { GroupSchema } from "../group/group"
+import { UserSchema } from "../user/user"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"

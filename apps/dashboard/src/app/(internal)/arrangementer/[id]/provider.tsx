@@ -1,6 +1,6 @@
 "use client"
 
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/rpc/event"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

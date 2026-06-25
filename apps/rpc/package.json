@@ -15,6 +15,58 @@
     "./fadderuke": {
       "import": "./src/modules/fadderuke/fadderuke.ts",
       "types": "./src/modules/fadderuke/fadderuke.ts"
+    },
+    "./user": {
+      "import": "./src/modules/user/user.ts",
+      "types": "./src/modules/user/user.ts"
+    },
+    "./company": {
+      "import": "./src/modules/company/company.ts",
+      "types": "./src/modules/company/company.ts"
+    },
+    "./offline": {
+      "import": "./src/modules/offline/offline.ts",
+      "types": "./src/modules/offline/offline.ts"
+    },
+    "./article": {
+      "import": "./src/modules/article/article.ts",
+      "types": "./src/modules/article/article.ts"
+    },
+    "./task": {
+      "import": "./src/modules/task/task.ts",
+      "types": "./src/modules/task/task.ts"
+    },
+    "./job-listing": {
+      "import": "./src/modules/job-listing/job-listing.ts",
+      "types": "./src/modules/job-listing/job-listing.ts"
+    },
+    "./group": {
+      "import": "./src/modules/group/group.ts",
+      "types": "./src/modules/group/group.ts"
+    },
+    "./mark": {
+      "import": "./src/modules/mark/mark.ts",
+      "types": "./src/modules/mark/mark.ts"
+    },
+    "./workspace": {
+      "import": "./src/modules/workspace-sync/workspace.ts",
+      "types": "./src/modules/workspace-sync/workspace.ts"
+    },
+    "./event": {
+      "import": "./src/modules/event/event.ts",
+      "types": "./src/modules/event/event.ts"
+    },
+    "./attendance": {
+      "import": "./src/modules/event/attendance.ts",
+      "types": "./src/modules/event/attendance.ts"
+    },
+    "./feedback-form": {
+      "import": "./src/modules/feedback-form/feedback-form.ts",
+      "types": "./src/modules/feedback-form/feedback-form.ts"
+    },
+    "./audit-log": {
+      "import": "./src/modules/audit-log/audit-log.ts",
+      "types": "./src/modules/audit-log/audit-log.ts"
     }
   },
   "scripts": {
@@ -42,7 +94,6 @@
     "@dotkomonline/db": "workspace:*",
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@fastify/cors": "^11.0.0",
     "@googleapis/admin": "^30.3.0",

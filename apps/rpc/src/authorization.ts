@@ -33,7 +33,8 @@
  * @packageDocumentation
  */
 
-import type { GroupId, GroupRoleType, UserId } from "@dotkomonline/types"
+import type { GroupId, GroupRoleType } from "./modules/group/group"
+import type { UserId } from "./modules/user/user"
 import { ADMIN_AFFILIATIONS, COMMITTEE_AFFILIATIONS } from "./modules/authorization-service"
 import type { Principal, TRPCContext } from "./trpc"
 

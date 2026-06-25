@@ -1,5 +1,6 @@
 import { useTRPC } from "@/utils/trpc/client"
-import type { EventFilterQuery, UserId } from "@dotkomonline/types"
+import type { EventFilterQuery } from "@dotkomonline/rpc/event"
+import type { UserId } from "@dotkomonline/rpc/user"
 import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { useQuery } from "@tanstack/react-query"

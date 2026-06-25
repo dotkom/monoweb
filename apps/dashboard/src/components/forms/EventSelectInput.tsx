@@ -1,5 +1,5 @@
 import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
-import type { EventId } from "@dotkomonline/types"
+import type { EventId } from "@dotkomonline/rpc/event"
 import { Select, type SelectProps } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useState } from "react"

@@ -1,4 +1,4 @@
-import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { EventCategoryKey } from "./eventTypeConfig"
 
 export interface EventDisplayProps {

@@ -1,4 +1,4 @@
-import type { Attendance } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { ActionIcon, AspectRatio, Button, Group, Loader, Skeleton, Stack, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconFlipVertical, IconQrcode, IconQrcodeOff } from "@tabler/icons-react"

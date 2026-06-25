@@ -1,7 +1,6 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
-import type { MarkFilterQuery } from "@dotkomonline/types"
-
+import type { MarkFilterQuery } from "@dotkomonline/rpc/mark"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 

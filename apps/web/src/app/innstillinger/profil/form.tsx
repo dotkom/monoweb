@@ -9,7 +9,7 @@ import {
   type UserWrite,
   UserWriteSchema,
   getGenderName,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/user"
 import {
   Button,
   Label,

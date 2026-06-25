@@ -1,6 +1,6 @@
 import { TZDate } from "@date-fns/tz"
-import type { Attendance, Attendee, Punishment } from "@dotkomonline/types"
-import { buildPoolOccupancies } from "@dotkomonline/types"
+import { type Attendance, type Attendee, buildPoolOccupancies } from "./attendance"
+import type { Punishment } from "../mark/mark"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addDays, addHours, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"

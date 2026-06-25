@@ -1,13 +1,8 @@
 "use client"
 
-import type {
-  AttendancePool,
-  Attendee,
-  Event,
-  FeedbackFormAnswer,
-  FeedbackPublicResultsToken,
-  FeedbackQuestion,
-} from "@dotkomonline/types"
+import type { AttendancePool, Attendee } from "@dotkomonline/rpc/attendance"
+import type { Event } from "@dotkomonline/rpc/event"
+import type { FeedbackFormAnswer, FeedbackPublicResultsToken, FeedbackQuestion } from "@dotkomonline/rpc/feedback-form"
 import { Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
 import { IconCalendarEvent, IconSchool } from "@tabler/icons-react"
 import { formatDate, isSameDay } from "date-fns"

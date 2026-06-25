@@ -1,7 +1,6 @@
-import { schemas } from "@dotkomonline/db/schemas"
-import z from "zod"
-import { buildSearchFilter } from "./filters"
-import { UserSchema } from "./user"
+import { buildLimitedDepthJsonSchema, buildSearchFilter } from "@dotkomonline/utils"
+import { z } from "zod"
+import { UserSchema } from "../user/user"
 
 export const AuditLogTable = z.enum([
   "article",
@@ -39,8 +38,16 @@ export const AuditLogTable = z.enum([
 
 export const AuditLogOperation = z.enum(["INSERT", "UPDATE", "DELETE"])
 
-export const AuditLogSchema = schemas.AuditLogSchema.extend({
-  user: schemas.UserSchema.nullable(),
+export const AuditLogSchema = z.object({
+  id: z.string(),
+  tableName: z.string(),
+  rowId: z.string().nullable(),
+  createdAt: z.date(),
+  operation: z.string(),
+  rowData: buildLimitedDepthJsonSchema(),
+  transactionId: z.bigint(),
+  userId: z.string().nullable(),
+  user: UserSchema.omit({ memberships: true }).nullable(),
 })
 
 export type AuditLog = z.infer<typeof AuditLogSchema>

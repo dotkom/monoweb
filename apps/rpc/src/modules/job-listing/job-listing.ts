@@ -1,9 +1,14 @@
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/utils"
 import { z } from "zod"
-import { CompanySchema } from "./company"
-import { buildAnyOfFilter, buildDateRangeFilter, buildSearchFilter, createSortOrder } from "./filters"
+import { CompanySchema } from "../company/company"
 
-export const JobListingLocationSchema = schemas.JobListingLocationSchema.extend({})
+export const EmploymentTypeSchema = z.enum(["PARTTIME", "FULLTIME", "SUMMER_INTERNSHIP", "OTHER"])
+
+export const JobListingLocationSchema = z.object({
+  name: z.string(),
+  createdAt: z.date(),
+  jobListingId: z.string(),
+})
 export const JobListingLocationWriteSchema = JobListingLocationSchema.omit({
   createdAt: true,
 })
@@ -12,10 +17,22 @@ export type JobListingLocation = z.infer<typeof JobListingLocationSchema>
 export type JobListingLocationId = JobListingLocation["name"]
 export type JobListingLocationWrite = z.infer<typeof JobListingLocationWriteSchema>
 
-export const JobListingSchema = schemas.JobListingSchema.omit({
-  companyId: true,
-}).extend({
+export const JobListingSchema = z.object({
   id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  shortDescription: z.string().nullable(),
+  start: z.date(),
+  end: z.date(),
+  featured: z.boolean(),
+  hidden: z.boolean(),
+  deadline: z.date().nullable(),
+  employment: EmploymentTypeSchema,
+  applicationLink: z.string().nullable(),
+  applicationEmail: z.string().nullable(),
+  rollingAdmission: z.boolean(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
   company: CompanySchema,
   locations: z.array(
     z.object({

@@ -1,6 +1,7 @@
 import { env } from "@/lib/env"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import { UserWriteSchema, type WorkspaceUser, findActiveMembership, getMembershipTypeName } from "@dotkomonline/types"
+import { UserWriteSchema, findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
+import type { WorkspaceUser } from "@dotkomonline/rpc/workspace"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconUsersGroup, IconX, IconArrowUpRight } from "@tabler/icons-react"

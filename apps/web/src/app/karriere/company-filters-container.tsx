@@ -1,4 +1,4 @@
-import type { JobListingEmployment } from "@dotkomonline/types"
+import type { JobListingEmployment } from "@dotkomonline/rpc/job-listing"
 import {
   Checkbox,
   Select,

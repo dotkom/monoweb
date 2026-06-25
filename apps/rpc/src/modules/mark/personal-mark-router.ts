@@ -1,4 +1,5 @@
-import { CreatePersonalMarkSchema, PersonalMarkSchema, UserSchema } from "@dotkomonline/types"
+import { UserSchema } from "../user/user"
+import { CreatePersonalMarkSchema, PersonalMarkSchema } from "./mark"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"

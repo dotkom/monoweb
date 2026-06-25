@@ -1,6 +1,6 @@
 import type { admin_directory_v1 } from "@googleapis/admin"
 import { z } from "zod"
-import { GroupMemberSchema, GroupSchema } from "./group"
+import { GroupMemberSchema, GroupSchema } from "../group/group"
 
 export type WorkspaceUser = admin_directory_v1.Schema$User
 export type WorkspaceGroup = admin_directory_v1.Schema$Group

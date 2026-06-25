@@ -1,5 +1,5 @@
 import { GroupListItem } from "@/components/molecules/GroupListItem"
-import type { Group } from "@dotkomonline/types"
+import type { Group } from "@dotkomonline/rpc/group"
 import { compareAsc } from "date-fns"
 import type { FC } from "react"
 

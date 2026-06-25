@@ -1,4 +1,4 @@
-import type { ArticleFilterQuery, ArticleTagName } from "@dotkomonline/types"
+import type { ArticleFilterQuery, ArticleTagName } from "@dotkomonline/rpc/article"
 import { Button, Label, Text, TextInput } from "@dotkomonline/ui"
 import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"

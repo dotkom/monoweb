@@ -7,14 +7,13 @@ import {
   AttendanceWriteSchema,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
-  DeregisterReasonTypeSchema,
   DEREGISTER_GRACE_PERIOD_MS,
-  EventSchema,
-  type GroupId,
   RegistrationAvailabilityViewSchema,
   RegisterChangeEventSchema,
-  UserSchema,
-} from "@dotkomonline/types"
+} from "./attendance"
+import { DeregisterReasonTypeSchema, EventSchema } from "./event"
+import type { GroupId } from "../group/group"
+import { UserSchema } from "../user/user"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"

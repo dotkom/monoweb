@@ -1,7 +1,7 @@
 import { FeedbackResults } from "@/app/tilbakemelding/components/FeedbackResults"
 import { server } from "@/utils/trpc/server"
-import type { EventId, FeedbackPublicResultsToken } from "@dotkomonline/types"
-
+import type { EventId } from "@dotkomonline/rpc/event"
+import type { FeedbackPublicResultsToken } from "@dotkomonline/rpc/feedback-form"
 interface Props {
   eventId: EventId
   publicResultsToken?: FeedbackPublicResultsToken

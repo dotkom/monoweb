@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "@dotkomonline/types"
+import { type Offline, type OfflineId, OfflineSchema, type OfflineWrite } from "./offline"
 import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
