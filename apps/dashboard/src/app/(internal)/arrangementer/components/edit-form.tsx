@@ -21,7 +21,7 @@ import {
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 
-const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.Values).map((type) => ({
+const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
 }))
@@ -37,7 +37,7 @@ const FormValidationSchema = EventSchema.extend({
 }).superRefine((data, ctx) => {
   const issues = validateEventWrite(data)
   for (const issue of issues) {
-    ctx.addIssue(issue)
+    ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
   }
 })
 

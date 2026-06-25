@@ -11,7 +11,7 @@ interface TypeFilterProps {
 }
 
 export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
-  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.Values)
+  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.enum)
     .filter((type) => isStaff || type !== "INTERNAL")
     .map((type) => ({
       value: type,

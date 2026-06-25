@@ -23,7 +23,7 @@
     "type-check": "tsc --noEmit",
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
-    "generate": "prisma generate --sql && node -e \"const fs=require('fs'),f='generated/schema/index.ts';fs.writeFileSync(f,'// @ts-nocheck\\n'+fs.readFileSync(f,'utf8'))\"",
+    "generate": "prisma generate --sql && node ../../scripts/fix-generated-zod-schema.mjs",
     "apply-fixtures": "tsx src/fixtures.ts",
     "vinstraff:user-db-sync": "tsx src/vinstraff-user-db-sync.ts"
   },
@@ -36,7 +36,7 @@
     "date-fns": "^4.1.0",
     "pg": "^8.16.0",
     "prisma-zod-generator": "^2.1.4",
-    "zod": "^3.25.47"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",

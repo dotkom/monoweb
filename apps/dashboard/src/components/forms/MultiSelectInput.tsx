@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { MultiSelect, type MultiSelectProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export function createMultipleSelectInput<F extends FieldValues>({
   ...props
@@ -12,12 +11,7 @@ export function createMultipleSelectInput<F extends FieldValues>({
         control={control}
         name={name}
         render={({ field }) => (
-          <MultiSelect
-            {...props}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
-            onChange={field.onChange}
-            value={field.value}
-          />
+          <MultiSelect {...props} error={getErrorMessage(state, name)} onChange={field.onChange} value={field.value} />
         )}
       />
     )

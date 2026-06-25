@@ -14,7 +14,7 @@ export const filterFilter = {
 export const filterSchema = z.object({
   variabel: z.string(),
   selection: z.object({
-    filter: z.nativeEnum(filterFilter),
+    filter: z.enum(filterFilter),
     values: z.array(z.coerce.string()),
     exclude: z.array(z.coerce.string()).default([""]),
   }),

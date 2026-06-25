@@ -10,8 +10,8 @@ const findCoursesProcedure = procedure
   .input(
     z.object({
       filter: CourseFilterQuerySchema.optional(),
-      offset: z.number().int().min(0).default(0),
-      limit: z.number().int().min(1).max(100).default(20),
+      offset: z.int().min(0).default(0),
+      limit: z.int().min(1).max(100).default(20),
     })
   )
   .use(withDatabaseTransaction())
