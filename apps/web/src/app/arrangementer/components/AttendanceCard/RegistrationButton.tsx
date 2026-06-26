@@ -183,7 +183,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
       <Button
         onClick={handleDeregisterConfirm}
         disabled={isLoading}
-        className={cn("rounded-lg grow min-h-16", DEREGISTER_BUTTON_COLOR)}
+        className={cn("text-base rounded-lg grow min-h-16", DEREGISTER_BUTTON_COLOR)}
       >
         {isLoading ? (
           <IconLoader2 className="shrink-0 size-6 animate-spin" />
@@ -197,7 +197,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
         type="button"
         onClick={() => setConfirmDeregister(false)}
         disabled={isLoading}
-        className="rounded-lg aspect-square min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+        className="rounded-lg aspect-square h-full min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
       >
         <IconX className="size-[1.25em]" />
       </Button>
