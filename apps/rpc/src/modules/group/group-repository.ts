@@ -16,6 +16,7 @@ import {
   GroupSchema,
   type GroupWrite,
   type UserId,
+  normalizeDbUser,
 } from "@dotkomonline/types"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
@@ -288,6 +289,11 @@ export function getGroupRepository(): GroupRepository {
         },
         include: {
           memberships: true,
+          userFlagLinks: {
+            include: {
+              userFlag: true,
+            },
+          },
           groupMemberships: {
             where: {
               groupId: groupSlug,
@@ -311,7 +317,7 @@ export function getGroupRepository(): GroupRepository {
       })
 
       const groupMembers = users.map(({ groupMemberships, ...user }) => ({
-        ...user,
+        ...normalizeDbUser(user),
         groupMemberships: groupMemberships.map(({ roles, ...membership }) => ({
           ...membership,
           roles: roles.map((role) => role.role),

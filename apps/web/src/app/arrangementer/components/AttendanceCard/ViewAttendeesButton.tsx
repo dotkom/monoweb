@@ -152,7 +152,7 @@ const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: AttendeeListPro
 }
 
 const getAttendeeListEntryComponent = (attendee: Attendee) => {
-  if (attendee.user.flags.includes("VANITY_VERIFIED")) {
+  if (attendee.user.flags.some((flag) => flag.name === "VANITY_VERIFIED")) {
     return VerifiedAttendeeListUser
   }
 
