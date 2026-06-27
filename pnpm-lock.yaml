@@ -353,8 +353,8 @@ importers:
         specifier: 11.8.1
         version: 11.8.1(@tanstack/react-query@5.100.11(react@19.2.7))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.18.1
+        version: 1.18.1
       core-js:
         specifier: ^3.45.1
         version: 3.49.0
@@ -703,8 +703,8 @@ importers:
         specifier: 11.8.1
         version: 11.8.1(@tanstack/react-query@5.100.11(react@19.2.7))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.18.1
+        version: 1.18.1
       core-js:
         specifier: ^3.45.1
         version: 3.49.0
@@ -5099,8 +5099,8 @@ packages:
     resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
     engines: {node: '>=4'}
 
-  axios@1.18.0:
-    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
+  axios@1.18.1:
+    resolution: {integrity: sha512-3nTvFlvpn9Zu/RkHUqtc7/+al4UpRW5az71ap5zccp6e8RAYEzhMTecX8Dz1wWDYrPpUoB1HAQEGEAEvUr7S9g==}
 
   b4a@1.8.0:
     resolution: {integrity: sha512-qRuSmNSkGQaHwNbM7J78Wwy+ghLEYF1zNrSeMxj4Kgw6y33O3mXcQ6Ie9fRvfU/YnxWkOchPXbaLb73TkIsfdg==}
@@ -13438,7 +13438,7 @@ snapshots:
 
   axe-core@4.11.1: {}
 
-  axios@1.18.0:
+  axios@1.18.1:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.5
