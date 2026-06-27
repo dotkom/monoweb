@@ -19,7 +19,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.22.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 4.23.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1075.0
@@ -620,7 +620,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.22.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 4.23.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1075.0
@@ -1265,8 +1265,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@auth0/nextjs-auth0@4.22.0':
-    resolution: {integrity: sha512-RzoKWkdw/ND2+7R/OY3M7x5k45LjOxc3XlzE3fDL67gG24ux1eHTEf28FJwDcOXtWUOPUjpzPTIldAhu49Jepg==}
+  '@auth0/nextjs-auth0@4.23.0':
+    resolution: {integrity: sha512-pn8TQxak1fyqbpd3ACr2/1JUz2Gt8UsN8KVcewbcwpMxfQq/014nqKN4pc+1pG2dPPEBSak4qB1aXpsXQCjh9w==}
     peerDependencies:
       next: ^14.2.35 || ~15.0.7 || ~15.1.11 || ~15.2.8 || ~15.3.8 || ~15.4.10 || ~15.5.9 || ^16.0.10
       react: ^18.0.0 || ~19.0.1 ||  ~19.1.2 || ^19.2.1
@@ -8535,8 +8535,8 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
-  swr@2.4.1:
-    resolution: {integrity: sha512-2CC6CiKQtEwaEeNiqWTAw9PGykW8SR5zZX8MZk6TeAvEAnVS7Visz8WzphqgtQ8v2xz/4Q5K+j+SeMaKXeeQIA==}
+  swr@2.4.2:
+    resolution: {integrity: sha512-ej644Y2bvkIajfR32KGeSSdBXQW+ScjGjkybZgSE7kFpk9eGnV44XY9FJylXi+W75pavSX1PVNB57W5EbhGIYw==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -9307,7 +9307,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@auth0/nextjs-auth0@4.22.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@auth0/nextjs-auth0@4.23.0(next@15.5.19(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
@@ -9317,7 +9317,7 @@ snapshots:
       openid-client: 6.8.4
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-      swr: 2.4.1(react@19.2.7)
+      swr: 2.4.2(react@19.2.7)
 
   '@aws-crypto/crc32@5.2.0':
     dependencies:
@@ -17482,7 +17482,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  swr@2.4.1(react@19.2.7):
+  swr@2.4.2(react@19.2.7):
     dependencies:
       dequal: 2.0.3
       react: 19.2.7
