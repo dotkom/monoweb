@@ -16,8 +16,6 @@ const AttendanceFormSchema = AttendanceWriteSchema.superRefine((val, ctx) => {
     const code = "custom"
     ctx.addIssue({ message, code, path: ["deregisterDeadline"] })
   }
-
-  return true
 })
 
 interface AttendanceFormProps {

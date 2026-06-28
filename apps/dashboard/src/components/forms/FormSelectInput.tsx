@@ -1,7 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { Select, type SelectProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export function createIntegerSelectInput<F extends FieldValues>({
   ...props
@@ -22,7 +21,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
             }))}
             value={field.value?.toString() ?? ""}
             onChange={(value) => field.onChange(value !== null ? Number.parseInt(value, 10) : null)}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={getErrorMessage(state, name)}
           />
         )}
       />

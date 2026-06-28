@@ -183,7 +183,7 @@ const deleteEventProcedure = procedure
 export type AllEventsInput = inferProcedureInput<typeof allEventsProcedure>
 export type AllEventsOutput = inferProcedureOutput<typeof allEventsProcedure>
 const allEventsProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
+  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
   .output(
     z.object({
       items: EventWithAttendanceSchema.array(),
@@ -223,7 +223,7 @@ const allEventsProcedure = procedure
 export type AllEventSummariesInput = inferProcedureInput<typeof allEventSummariesProcedure>
 export type AllEventSummariesOutput = inferProcedureOutput<typeof allEventSummariesProcedure>
 const allEventSummariesProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).default({}))
+  .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
   .output(
     z.object({
       items: EventWithAttendanceSummarySchema.array(),

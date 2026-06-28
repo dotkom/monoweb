@@ -31,8 +31,9 @@ const config = {
     "@sentry/node",
     "@sentry/node-core",
   ],
-  // Explicitly ensure the transpiled packages are not treated as external
-  serverExternalPackages: [],
+  // Explicitly ensure the transpiled packages are not treated as external.
+  // zod must be external because zod v4 has internal ESM circular imports that webpack cannot linearize safely.
+  serverExternalPackages: ["zod"],
 }
 
 export default withSentryConfig(config, {

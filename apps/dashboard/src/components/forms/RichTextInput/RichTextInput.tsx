@@ -14,7 +14,6 @@ import {
   ToggleHeaderColumn,
   ToggleHeaderRow,
 } from "@/components/forms/RichTextInput/TableActionButtons"
-import { ErrorMessage } from "@hookform/error-message"
 import { Divider, Input } from "@mantine/core"
 import { RichTextEditor, type RichTextEditorProps } from "@mantine/tiptap"
 import Image from "@tiptap/extension-image"
@@ -28,7 +27,7 @@ import { type Editor, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { useRef } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
-import type { InputProducerResult } from "../types"
+import { getErrorMessage, type InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
 import "./tiptap-table-styling.css"
 import "./tiptap-image-styling.css"
@@ -69,7 +68,7 @@ export function createRichTextInput<F extends FieldValues>({
     })
 
     return (
-      <Input.Wrapper error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}>
+      <Input.Wrapper error={getErrorMessage(state, name)}>
         <Input.Label required={required}>{label}</Input.Label>
         <Controller
           control={control}

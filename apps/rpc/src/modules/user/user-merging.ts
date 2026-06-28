@@ -4,6 +4,7 @@ import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
 import type { AttendanceService } from "../event/attendance-service"
 import { simplifyGroupMemberships } from "../group/group-service"
+import { z } from "zod"
 
 interface MergeUsersDependencies {
   groupRepository: GroupRepository
@@ -61,11 +62,7 @@ type AllUserKeys = keyof Prisma.$UserPayload["objects"] | keyof Prisma.$UserPayl
 
 // HELPERS
 
-// TODO: When we update to zod 4, uncomment this and remove the GUID_REGEX. We cannot use .uuid() because we do not
-// strictly enforce the UUID format in the database. Some users have GUIDs that are not valid UUIDs.
-// const isUuid = (value: string) => z.guid().safeParse(value).success
-const GUID_REGEX = /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/
-const isUuid = (value: string) => GUID_REGEX.test(value)
+const isGuid = (value: string) => z.guid().safeParse(value).success
 
 const buildMembershipDeduplicationKey = (membership: Membership) =>
   `${membership.type}:${membership.specialization ?? "null"}:${membership.semester ?? "null"}`
@@ -123,10 +120,10 @@ const BACKFILL_ONE_TO_ONE_RELATIONS = [
  * Scalar fields with custom merge logic.
  */
 const CUSTOM_SCALAR_MERGERS = {
-  // We take the consumed user's username only if the survivor's is a UUID and the consumed's is not a UUID (meaning
+  // We take the consumed user's username only if the survivor's is a GUID and the consumed's is not a GUID (meaning
   // it's a custom username).
   username: (survivor: User, consumed: User): string =>
-    isUuid(survivor.username) && !isUuid(consumed.username) ? consumed.username : survivor.username,
+    isGuid(survivor.username) && !isGuid(consumed.username) ? consumed.username : survivor.username,
 
   // Concatenate and deduplicate
   flags: (survivor: User, consumed: User): string[] => [...new Set([...survivor.flags, ...consumed.flags])],

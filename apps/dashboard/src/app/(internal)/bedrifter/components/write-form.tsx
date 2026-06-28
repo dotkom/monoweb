@@ -25,7 +25,7 @@ export const useCompanyWriteForm = ({
 
   return useFormBuilder({
     schema: CompanyWriteSchema.extend({
-      website: z.string().url(),
+      website: z.url(),
     }),
     defaultValues,
     onSubmit,

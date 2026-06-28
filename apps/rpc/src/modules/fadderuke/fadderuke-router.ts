@@ -9,7 +9,7 @@ import { CommitteeGroupSlug } from "../authorization-service"
 export type FindFadderukeByYearInput = inferProcedureInput<typeof findByYearProcedure>
 export type FindFadderukeByYearOutput = inferProcedureOutput<typeof findByYearProcedure>
 const findByYearProcedure = procedure
-  .input(z.number().int())
+  .input(z.int())
   .output(FadderukeSchema.nullable())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
