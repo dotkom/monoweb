@@ -8,10 +8,6 @@
       "import": "./src/index.ts",
       "types": "./src/index.ts"
     },
-    "./schemas": {
-      "import": "./src/schemas.ts",
-      "types": "./src/schemas.ts"
-    },
     "./test-harness": {
       "import": "./src/test-harness.ts",
       "types": "./src/test-harness.ts"
@@ -23,7 +19,7 @@
     "type-check": "tsc --noEmit",
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
-    "generate": "prisma generate --sql && node ../../scripts/fix-generated-zod-schema.mjs",
+    "generate": "prisma generate --sql",
     "apply-fixtures": "tsx src/fixtures.ts"
   },
   "dependencies": {
@@ -34,7 +30,6 @@
     "@testcontainers/postgresql": "^11.5.1",
     "date-fns": "^4.1.0",
     "pg": "^8.16.0",
-    "prisma-zod-generator": "^2.1.4",
     "zod": "^4.4.3"
   },
   "devDependencies": {

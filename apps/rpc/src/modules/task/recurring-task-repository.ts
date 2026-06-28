@@ -1,10 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type RecurringTask,
-  type RecurringTaskId,
-  RecurringTaskSchema,
-  type RecurringTaskWrite,
-} from "@dotkomonline/types"
+import { type RecurringTask, type RecurringTaskId, RecurringTaskSchema, type RecurringTaskWrite } from "./task"
 import { parseOrReport } from "../../invariant"
 
 export interface RecurringTaskRepository {

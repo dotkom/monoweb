@@ -1,4 +1,4 @@
-import type { Group } from "@dotkomonline/types"
+import type { Group } from "@dotkomonline/rpc/group"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useGroupRoleForm } from "../group-role-form"

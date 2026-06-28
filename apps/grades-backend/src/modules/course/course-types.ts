@@ -1,8 +1,76 @@
-import { schemas } from "@dotkomonline/grades-db/schemas"
-import { buildAnyOfFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/types"
+import { buildAnyOfFilter, buildSearchFilter, createSortOrder } from "@dotkomonline/utils"
 import z from "zod"
 
-export const CourseSchema = schemas.CourseSchema.extend({})
+export const SemesterSchema = z.enum(["SPRING", "SUMMER", "AUTUMN"])
+export type Semester = z.infer<typeof SemesterSchema>
+
+export const StudyLevelSchema = z.enum([
+  "FOUNDATION",
+  "INTERMEDIATE",
+  "BACHELOR_ADVANCED",
+  "MASTER",
+  "PHD",
+  "CONTINUING_EDUCATION",
+  "UNKNOWN",
+])
+export type StudyLevel = z.infer<typeof StudyLevelSchema>
+
+export const GradeTypeSchema = z.enum(["PASS_FAIL", "LETTER"])
+export type GradeType = z.infer<typeof GradeTypeSchema>
+
+export const TeachingLanguageSchema = z.enum(["NORWEGIAN", "ENGLISH"])
+export type TeachingLanguage = z.infer<typeof TeachingLanguageSchema>
+
+export const CourseCampusSchema = z.enum(["TRONDHEIM", "GJOVIK", "ALESUND"])
+export type CourseCampus = z.infer<typeof CourseCampusSchema>
+
+export const FacultySchema = z.object({
+  id: z.string(),
+  nameNo: z.string(),
+  nameEn: z.string(),
+  code: z.number().int(),
+})
+export type Faculty = z.infer<typeof FacultySchema>
+
+export const DepartmentSchema = z.object({
+  id: z.string(),
+  nameNo: z.string(),
+  nameEn: z.string(),
+  code: z.number().int(),
+  facultyId: z.string(),
+})
+export type Department = z.infer<typeof DepartmentSchema>
+
+export const CourseSchema = z.object({
+  id: z.string(),
+  code: z.string(),
+  nameNo: z.string(),
+  nameEn: z.string().nullable(),
+  credits: z.number().nullable(),
+  studyLevel: StudyLevelSchema,
+  gradeType: GradeTypeSchema,
+  firstYearTaught: z.number().int(),
+  lastYearTaught: z.number().int().nullable(),
+  contentNo: z.string().nullable(),
+  contentEn: z.string().nullable(),
+  teachingMethodsNo: z.string().nullable(),
+  teachingMethodsEn: z.string().nullable(),
+  learningOutcomesNo: z.string().nullable(),
+  learningOutcomesEn: z.string().nullable(),
+  examTypeNo: z.string().nullable(),
+  examTypeEn: z.string().nullable(),
+  candidateCount: z.number().int(),
+  averageGrade: z.number(),
+  passRate: z.number(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  taughtSemesters: z.array(SemesterSchema),
+  teachingLanguages: z.array(TeachingLanguageSchema),
+  campuses: z.array(CourseCampusSchema),
+  facultyId: z.string().nullable(),
+  departmentId: z.string().nullable(),
+  latestYearCheckedForNtnuData: z.number().int().nullable(),
+})
 
 export type CourseId = Course["id"]
 export type CourseCode = Course["code"]
@@ -35,8 +103,8 @@ export const CourseWriteSchema = CourseSchema.pick({
   nameEn: true,
   latestYearCheckedForNtnuData: true,
 }).extend({
-  facultyId: schemas.FacultySchema.shape.id.optional(),
-  departmentId: schemas.DepartmentSchema.shape.id.optional(),
+  facultyId: FacultySchema.shape.id.optional(),
+  departmentId: DepartmentSchema.shape.id.optional(),
 })
 export type CourseWrite = z.infer<typeof CourseWriteSchema>
 
@@ -52,33 +120,12 @@ export const CourseFilterQuerySchema = z
     bySearch: buildSearchFilter(),
     orderBy: createSortOrder(),
     sortBy: buildAnyOfFilter(CourseFilterSortSchema),
-    bySemester: buildAnyOfFilter(schemas.SemesterSchema),
-    byTeachingLanguage: buildAnyOfFilter(schemas.TeachingLanguageSchema),
-    byCampus: buildAnyOfFilter(schemas.CampusSchema),
+    bySemester: buildAnyOfFilter(SemesterSchema),
+    byTeachingLanguage: buildAnyOfFilter(TeachingLanguageSchema),
+    byCampus: buildAnyOfFilter(CourseCampusSchema),
     byMinGrade: MinLetterGradeFilterSchema.nullish(),
   })
   .partial()
-
-export const SemesterSchema = schemas.SemesterSchema
-export type Semester = z.infer<typeof SemesterSchema>
-
-export const FacultySchema = schemas.FacultySchema.extend({})
-export type Faculty = z.infer<typeof FacultySchema>
-
-export const DepartmentSchema = schemas.DepartmentSchema.extend({})
-export type Department = z.infer<typeof DepartmentSchema>
-
-export const StudyLevelSchema = schemas.StudyLevelSchema
-export type StudyLevel = z.infer<typeof StudyLevelSchema>
-
-export const GradeTypeSchema = schemas.GradeTypeSchema
-export type GradeType = z.infer<typeof GradeTypeSchema>
-
-export const CourseCampusSchema = schemas.CampusSchema
-export type CourseCampus = z.infer<typeof CourseCampusSchema>
-
-export const TeachingLanguageSchema = schemas.TeachingLanguageSchema
-export type TeachingLanguage = z.infer<typeof TeachingLanguageSchema>
 
 export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"]) => {
   const roundedAverage = Math.round(averageGrade)

@@ -1,4 +1,4 @@
-import type { User } from "@dotkomonline/types"
+import type { User } from "../user/user"
 import type Stripe from "stripe"
 import invariant from "tiny-invariant"
 import { FailedPreconditionError, IllegalStateError, ResourceExhaustedError } from "../../error"

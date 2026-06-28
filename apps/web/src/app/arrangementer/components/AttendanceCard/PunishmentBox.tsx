@@ -1,4 +1,4 @@
-import type { Punishment } from "@dotkomonline/types"
+import type { Punishment } from "@dotkomonline/rpc/mark"
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { IconAlertTriangleFilled, IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"

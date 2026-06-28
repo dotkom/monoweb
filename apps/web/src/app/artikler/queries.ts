@@ -1,6 +1,5 @@
 import { useTRPC } from "@/utils/trpc/client"
-import type { ArticleFilterQuery } from "@dotkomonline/types"
-
+import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 

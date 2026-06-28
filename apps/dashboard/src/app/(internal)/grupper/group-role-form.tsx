@@ -1,7 +1,7 @@
 import { useFormBuilder } from "@/components/forms/Form"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { GroupRoleWriteSchema, getGroupRoleTypeName, GroupRoleTypeEnum } from "@dotkomonline/types"
+import { GroupRoleWriteSchema, getGroupRoleTypeName, GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import type z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({

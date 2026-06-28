@@ -1,5 +1,5 @@
 import { server } from "@/utils/trpc/server"
-import { createGroupPageUrl } from "@dotkomonline/types"
+import { createGroupPageUrl } from "@dotkomonline/rpc/group"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import type { Metadata } from "next"
 import { GroupPage } from "../components/GroupPage"

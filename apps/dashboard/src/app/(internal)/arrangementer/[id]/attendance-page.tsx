@@ -1,4 +1,4 @@
-import type { Attendance } from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { Box, Divider, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"

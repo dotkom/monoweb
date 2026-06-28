@@ -1,7 +1,7 @@
 "use client"
 
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
-import type { Group, GroupId } from "@dotkomonline/types"
+import type { Group, GroupId } from "@dotkomonline/rpc/group"
 import {
   AvatarFallback,
   Button,

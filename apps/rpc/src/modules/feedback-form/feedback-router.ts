@@ -1,6 +1,4 @@
 import {
-  AttendeeSchema,
-  EventSchema,
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
   FeedbackFormWriteSchema,
@@ -8,7 +6,9 @@ import {
   FeedbackQuestionAnswerSchema,
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionWriteSchema,
-} from "@dotkomonline/types"
+} from "./feedback-form"
+import { AttendeeSchema } from "../event/attendance"
+import { EventSchema } from "../event/event"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember, isSameSubject } from "../../authorization"

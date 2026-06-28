@@ -6,8 +6,8 @@ import {
   type PersonalMarkDetails,
   PersonalMarkDetailsSchema,
   PersonalMarkSchema,
-  type UserId,
-} from "@dotkomonline/types"
+} from "./mark"
+import type { UserId } from "../user/user"
 import { parseOrReport } from "../../invariant"
 import { mapMark } from "./mark-repository"
 

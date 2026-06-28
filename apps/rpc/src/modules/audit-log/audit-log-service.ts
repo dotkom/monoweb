@@ -1,5 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { AuditLog, AuditLogFilterQuery, AuditLogId, UserId } from "@dotkomonline/types"
+import type { AuditLog, AuditLogFilterQuery, AuditLogId } from "./audit-log"
+import type { UserId } from "../user/user"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { AuditLogRepository } from "./audit-log-repository"

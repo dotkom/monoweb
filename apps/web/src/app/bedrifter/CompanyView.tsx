@@ -3,7 +3,7 @@
 import { EventList, EventListSkeleton } from "@/app/arrangementer/components/EventList"
 import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { EntryDetailLayout } from "@/components/layout/EntryDetailLayout"
-import type { Company } from "@dotkomonline/types"
+import type { Company } from "@dotkomonline/rpc/company"
 import { RichText, Text, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMail, IconMapPin, IconPhone, IconWorld } from "@tabler/icons-react"

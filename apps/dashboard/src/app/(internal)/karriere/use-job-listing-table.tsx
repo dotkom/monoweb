@@ -1,7 +1,7 @@
 "use client"
 
 import { DateTooltip } from "@/components/DateTooltip"
-import { type JobListing, getJobListingEmploymentName } from "@dotkomonline/types"
+import { type JobListing, getJobListingEmploymentName } from "@dotkomonline/rpc/job-listing"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

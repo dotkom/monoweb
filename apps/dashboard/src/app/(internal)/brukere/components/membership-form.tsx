@@ -7,7 +7,7 @@ import {
   MembershipWriteSchema,
   getMembershipTypeName,
   getSpecializationName,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/user"
 import {
   getCurrentSemesterStart,
   getNextSemesterStart,

@@ -1,5 +1,5 @@
 import type { ContestId } from "@dotkomonline/rpc/contest"
-import type { EventWithAttendance } from "@dotkomonline/types"
+import type { EventWithAttendance } from "@dotkomonline/rpc/event"
 import { addWeeks, interval, subMonths } from "date-fns"
 
 export type FadderukePageProps = {

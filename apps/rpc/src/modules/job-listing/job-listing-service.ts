@@ -1,13 +1,13 @@
 import type { DBHandle } from "@dotkomonline/db"
+import type { CompanyId } from "../company/company"
 import type {
-  CompanyId,
   JobListing,
   JobListingFilterQuery,
   JobListingId,
   JobListingLocation,
   JobListingLocationId,
   JobListingWrite,
-} from "@dotkomonline/types"
+} from "./job-listing"
 import { isAfter } from "date-fns"
 import { assert, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"

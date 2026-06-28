@@ -3,14 +3,11 @@ import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import {
-  type Attendance,
-  type Company,
-  type Event,
-  type Group,
-  type User,
-  createGroupPageUrl,
-} from "@dotkomonline/types"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
+import type { Company } from "@dotkomonline/rpc/company"
+import type { Event } from "@dotkomonline/rpc/event"
+import { type Group, createGroupPageUrl } from "@dotkomonline/rpc/group"
+import type { User } from "@dotkomonline/rpc/user"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
   createAbsoluteEventPageUrl,

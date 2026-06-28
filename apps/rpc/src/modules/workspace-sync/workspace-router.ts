@@ -1,12 +1,11 @@
+import { GroupRoleTypeEnum, GroupSchema } from "../group/group"
+import { UserSchema } from "../user/user"
 import {
-  GroupRoleTypeEnum,
-  GroupSchema,
-  UserSchema,
   WorkspaceGroupLinkSchema,
   WorkspaceGroupSchema,
   WorkspaceMemberLinkSchema,
   WorkspaceUserSchema,
-} from "@dotkomonline/types"
+} from "./workspace"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"

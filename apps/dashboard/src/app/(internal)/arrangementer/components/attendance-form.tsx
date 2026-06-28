@@ -1,6 +1,6 @@
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { AttendanceWriteSchema } from "@dotkomonline/types"
+import { AttendanceWriteSchema } from "@dotkomonline/rpc/attendance"
 import type { z } from "zod"
 
 // Define the schema without the omitted fields

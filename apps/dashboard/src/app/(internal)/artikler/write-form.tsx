@@ -6,7 +6,7 @@ import { createImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import { ARTICLE_IMAGE_MAX_SIZE_KIB, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/types"
+import { ARTICLE_IMAGE_MAX_SIZE_KIB, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/rpc/article"
 import type { z } from "zod"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWriteFormSchema> = {}

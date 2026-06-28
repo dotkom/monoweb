@@ -1,7 +1,7 @@
 "use client"
 
 import { DateTooltip } from "@/components/DateTooltip"
-import type { Offline } from "@dotkomonline/types"
+import type { Offline } from "@dotkomonline/rpc/offline"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

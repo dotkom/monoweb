@@ -1,4 +1,4 @@
-import type { GroupMembership } from "@dotkomonline/types"
+import type { GroupMembership } from "@dotkomonline/rpc/group"
 import { Stack, Text } from "@mantine/core"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"

@@ -1,10 +1,16 @@
-import { schemas } from "@dotkomonline/db/schemas"
+import { buildLimitedDepthJsonSchema } from "@dotkomonline/utils"
 import { z } from "zod"
 
-export const FeedbackQuestionOptionSchema = schemas.FeedbackQuestionOptionSchema
+export const FeedbackQuestionTypeSchema = z.enum(["TEXT", "LONGTEXT", "RATING", "CHECKBOX", "SELECT", "MULTISELECT"])
+
+export const FeedbackQuestionOptionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  questionId: z.string(),
+})
 export type FeedbackQuestionOption = z.infer<typeof FeedbackQuestionOptionSchema>
 
-export const FeedbackQuestionOptionWriteSchema = schemas.FeedbackQuestionOptionSchema.omit({
+export const FeedbackQuestionOptionWriteSchema = FeedbackQuestionOptionSchema.omit({
   id: true,
   questionId: true,
 }).extend({
@@ -12,9 +18,21 @@ export const FeedbackQuestionOptionWriteSchema = schemas.FeedbackQuestionOptionS
 })
 export type FeedbackQuestionOptionWrite = z.infer<typeof FeedbackQuestionOptionWriteSchema>
 
-export const FeedbackQuestionSchema = schemas.FeedbackQuestionSchema.extend({
-  options: FeedbackQuestionOptionSchema.array(),
-})
+export const FeedbackQuestionSchema = z
+  .object({
+    id: z.string(),
+    label: z.string(),
+    required: z.boolean(),
+    showInPublicResults: z.boolean().default(true),
+    type: FeedbackQuestionTypeSchema,
+    order: z.number().int(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    feedbackFormId: z.string(),
+  })
+  .extend({
+    options: FeedbackQuestionOptionSchema.array(),
+  })
 export type FeedbackQuestion = z.infer<typeof FeedbackQuestionSchema>
 
 export const FeedbackQuestionWriteSchema = FeedbackQuestionSchema.omit({
@@ -29,21 +47,38 @@ export const FeedbackQuestionWriteSchema = FeedbackQuestionSchema.omit({
 })
 export type FeedbackQuestionWrite = z.infer<typeof FeedbackQuestionWriteSchema>
 
-export const FeedbackFormSchema = schemas.FeedbackFormSchema.extend({
+const FeedbackFormBaseSchema = z.object({
+  id: z.string(),
+  publicResultsToken: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  answerDeadline: z.date(),
+  eventId: z.string(),
+})
+
+export const FeedbackFormSchema = FeedbackFormBaseSchema.extend({
   questions: FeedbackQuestionSchema.array(),
 }).omit({
   publicResultsToken: true,
 })
 export type FeedbackForm = z.infer<typeof FeedbackFormSchema>
 
-export const FeedbackFromPublicResultsTokenSchema = schemas.FeedbackFormSchema.pick({ publicResultsToken: true })
+export const FeedbackFromPublicResultsTokenSchema = FeedbackFormBaseSchema.pick({ publicResultsToken: true })
 
-export const FeedbackQuestionAnswerSchema = schemas.FeedbackQuestionAnswerSchema.omit({
-  value: true,
-}).extend({
-  value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
-  selectedOptions: FeedbackQuestionOptionSchema.array(),
-})
+export const FeedbackQuestionAnswerSchema = z
+  .object({
+    id: z.string(),
+    value: buildLimitedDepthJsonSchema().nullable(),
+    questionId: z.string(),
+    formAnswerId: z.string(),
+  })
+  .omit({
+    value: true,
+  })
+  .extend({
+    value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
+    selectedOptions: FeedbackQuestionOptionSchema.array(),
+  })
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswerSchema>
 export type FeedbackQuestionAnswerId = FeedbackQuestionAnswer["id"]
 
@@ -53,9 +88,17 @@ export const FeedbackQuestionAnswerWriteSchema = FeedbackQuestionAnswerSchema.om
 })
 export type FeedbackQuestionAnswerWrite = z.infer<typeof FeedbackQuestionAnswerWriteSchema>
 
-export const FeedbackFormAnswerSchema = schemas.FeedbackFormAnswerSchema.extend({
-  questionAnswers: FeedbackQuestionAnswerSchema.array(),
-})
+export const FeedbackFormAnswerSchema = z
+  .object({
+    id: z.string(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    feedbackFormId: z.string(),
+    attendeeId: z.string(),
+  })
+  .extend({
+    questionAnswers: FeedbackQuestionAnswerSchema.array(),
+  })
 export type FeedbackFormAnswer = z.infer<typeof FeedbackFormAnswerSchema>
 
 export const FeedbackFormAnswerWriteSchema = FeedbackFormAnswerSchema.omit({
@@ -72,7 +115,7 @@ export const FeedbackFormIdSchema = FeedbackFormSchema.shape.id
 
 export type FeedbackFormId = z.infer<typeof FeedbackFormIdSchema>
 
-export const FeedbackPublicResultsTokenSchema = schemas.FeedbackFormSchema.shape.publicResultsToken
+export const FeedbackPublicResultsTokenSchema = FeedbackFormBaseSchema.shape.publicResultsToken
 
 export type FeedbackPublicResultsToken = z.infer<typeof FeedbackPublicResultsTokenSchema>
 

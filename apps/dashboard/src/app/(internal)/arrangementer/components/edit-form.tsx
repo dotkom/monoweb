@@ -9,15 +9,15 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
+import type { Company } from "@dotkomonline/rpc/company"
 import {
-  type Company,
   EVENT_IMAGE_MAX_SIZE_KIB,
   EventSchema,
   type EventStatus,
   EventTypeSchema,
-  type Group,
   mapEventTypeToLabel,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/event"
+import type { Group } from "@dotkomonline/rpc/group"
 import { z } from "zod"
 import { validateEventWrite } from "../validation"
 

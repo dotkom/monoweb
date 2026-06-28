@@ -2,7 +2,7 @@
 
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
-import type { EventWithAttendanceSummary } from "@dotkomonline/types"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { endOfISOWeek, setISOWeek, setISOWeekYear, startOfISOWeek, subDays } from "date-fns"

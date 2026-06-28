@@ -1,5 +1,5 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { JobListingFilterQuery } from "@dotkomonline/types"
+import type { JobListingFilterQuery } from "@dotkomonline/rpc/job-listing"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import type { Pageable } from "@dotkomonline/utils"
 import { useMemo } from "react"

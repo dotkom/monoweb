@@ -2,7 +2,7 @@
 
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { env } from "@/env"
-import type { Event } from "@dotkomonline/types"
+import type { Event } from "@dotkomonline/rpc/event"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
 import Image from "next/image"

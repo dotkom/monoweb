@@ -1,4 +1,6 @@
-import { GenderSchema, type CompanyWrite, type JobListingWrite, type UserWrite } from "@dotkomonline/types"
+import { GenderSchema, type UserWrite } from "./modules/user/user"
+import type { CompanyWrite } from "./modules/company/company"
+import type { JobListingWrite } from "./modules/job-listing/job-listing"
 import { addWeeks, addYears } from "date-fns"
 
 export const getUserMock = (defaults?: Partial<UserWrite>): UserWrite => ({

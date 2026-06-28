@@ -1,6 +1,6 @@
 "use client"
 
-import type { User } from "@dotkomonline/types"
+import type { User } from "@dotkomonline/rpc/user"
 import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

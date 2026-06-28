@@ -1,7 +1,7 @@
 "use client"
 import { filterJobListings, sortDates } from "@/app/karriere/filter-functions"
 import { useTRPC } from "@/utils/trpc/client"
-import type { JobListing } from "@dotkomonline/types"
+import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { Badge, Text, Title, cn } from "@dotkomonline/ui"
 import { IconCalendarDown, IconClockHour3, IconMapPin } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"

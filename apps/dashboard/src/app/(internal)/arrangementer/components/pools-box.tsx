@@ -4,7 +4,7 @@ import {
   type AttendancePool,
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
 import { Box, Button, Card, Flex, Group, Space, Text, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useDeletePoolMutation } from "../mutations"

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3002 --turbopack",
+    "dev": "next dev -p 3002",
     "build": "next build",
     "docker:build": "docker build -t dashboard:latest -f Dockerfile --progress plain ../..",
     "start": "next start",
@@ -19,7 +19,6 @@
     "@dotkomonline/environment": "workspace:*",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/rpc": "workspace:*",
-    "@dotkomonline/types": "workspace:*",
     "@dotkomonline/ui": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@fontsource-variable/google-sans-code": "^5.2.4",

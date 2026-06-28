@@ -5,12 +5,6 @@ generator client {
   previewFeatures = ["relationJoins", "typedSql"]
 }
 
-generator zod {
-  provider = "prisma-zod-generator"
-  output   = "../generated/schema"
-  config   = "../zod-generator.config.json"
-}
-
 datasource db {
   provider = "postgresql"
 }

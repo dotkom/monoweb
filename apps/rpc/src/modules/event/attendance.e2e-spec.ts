@@ -1,10 +1,6 @@
 import { randomUUID } from "node:crypto"
-import {
-  type AttendancePoolWrite,
-  type AttendanceWrite,
-  type MembershipWrite,
-  findActiveMembership,
-} from "@dotkomonline/types"
+import type { AttendancePoolWrite, AttendanceWrite } from "./attendance"
+import { type MembershipWrite, findActiveMembership } from "../user/user"
 import { getCurrentUTC, getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"

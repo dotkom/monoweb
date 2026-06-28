@@ -4,15 +4,14 @@ import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
   type Attendance,
   type Attendee,
-  type User,
-  findActiveMembership,
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
   hasAttendeePaid,
-} from "@dotkomonline/types"
+} from "@dotkomonline/rpc/attendance"
+import { type User, findActiveMembership } from "@dotkomonline/rpc/user"
 import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
   IconArrowForward,

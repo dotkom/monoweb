@@ -1,6 +1,6 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { GroupId, UserId } from "@dotkomonline/types"
-
+import type { GroupId } from "@dotkomonline/rpc/group"
+import type { UserId } from "@dotkomonline/rpc/user"
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useMemo, useState } from "react"
-import type { EventFilterQuery } from "@dotkomonline/types"
+import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import {
   Button,
   Drawer,

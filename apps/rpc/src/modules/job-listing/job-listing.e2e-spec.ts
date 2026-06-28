@@ -1,4 +1,4 @@
-import type { Company } from "@dotkomonline/types"
+import type { Company } from "../company/company"
 import { addDays } from "date-fns"
 import { beforeEach, describe, expect, it } from "vitest"
 import { core, dbClient } from "../../../vitest-integration.setup"

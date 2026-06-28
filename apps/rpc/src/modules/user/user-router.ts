@@ -1,11 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import {
-  MembershipSchema,
-  MembershipWriteSchema,
-  UserFilterQuerySchema,
-  UserSchema,
-  UserWriteSchema,
-} from "@dotkomonline/types"
+import { MembershipSchema, MembershipWriteSchema, UserFilterQuerySchema, UserSchema, UserWriteSchema } from "./user"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"

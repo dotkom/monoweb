@@ -1,4 +1,5 @@
-import type { EventWrite, GroupWrite } from "@dotkomonline/types"
+import type { EventWrite } from "./event"
+import type { GroupWrite } from "../group/group"
 import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
 import { CommitteeGroupSlug } from "../authorization-service"

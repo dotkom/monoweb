@@ -1,10 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import {
-  type PrivacyPermissions,
-  PrivacyPermissionsSchema,
-  type PrivacyPermissionsWrite,
-  type UserId,
-} from "@dotkomonline/types"
+import { type PrivacyPermissions, PrivacyPermissionsSchema, type PrivacyPermissionsWrite, type UserId } from "./user"
 import { parseOrReport } from "../../invariant"
 
 export interface PrivacyPermissionsRepository {

@@ -1,4 +1,4 @@
-import type { EventFilterQuery } from "@dotkomonline/types"
+import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import { ActionIcon, Group, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconX } from "@tabler/icons-react"

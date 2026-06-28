@@ -1,5 +1,4 @@
-import type { EventType } from "@dotkomonline/types"
-
+import type { EventType } from "@dotkomonline/rpc/event"
 interface EventCategoryConfig {
   displayName: string
   classes: {

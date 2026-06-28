@@ -2,7 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useMemo } from "react"
-import { EventTypeSchema, GroupSchema } from "@dotkomonline/types"
+import { EventTypeSchema } from "@dotkomonline/rpc/event"
+import { GroupSchema } from "@dotkomonline/rpc/group"
 import { EventListViewModeSchema } from "../components/EventList"
 import { z } from "zod"
 

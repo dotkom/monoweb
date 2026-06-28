@@ -1,5 +1,4 @@
-import type { Attendance, AttendanceStatus } from "@dotkomonline/types"
-
+import type { Attendance, AttendanceStatus } from "@dotkomonline/rpc/attendance"
 type AttendanceRegisterStartAndEnd = Pick<Attendance, "registerStart" | "registerEnd">
 
 export const getAttendanceStatus = (

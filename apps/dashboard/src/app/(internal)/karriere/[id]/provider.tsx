@@ -1,6 +1,6 @@
 "use client"
 
-import type { JobListing } from "@dotkomonline/types"
+import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { createContext, useContext } from "react"
 
 /** Context consisting of everything required to use and render the form */

@@ -1,4 +1,4 @@
-import type { AttendanceId } from "@dotkomonline/types"
+import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreatePoolMutation } from "../mutations"

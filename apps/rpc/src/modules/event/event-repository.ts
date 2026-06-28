@@ -1,9 +1,8 @@
 import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
+import type { AttendanceId } from "./attendance"
 import {
-  type AttendanceId,
   type BaseEvent,
   BaseEventSchema,
-  type CompanyId,
   type DeregisterReason,
   DeregisterReasonSchema,
   type DeregisterReasonWithEvent,
@@ -17,9 +16,10 @@ import {
   EventSummarySchema,
   EventWithFeedbackFormSchema,
   type EventWrite,
-  type GroupId,
-  type UserId,
-} from "@dotkomonline/types"
+} from "./event"
+import type { CompanyId } from "../company/company"
+import type { GroupId } from "../group/group"
+import type { UserId } from "../user/user"
 import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
 import invariant from "tiny-invariant"
 import z from "zod"

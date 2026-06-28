@@ -1,4 +1,4 @@
-import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/types"
+import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
 import { Text, cn } from "@dotkomonline/ui"
 import { IconLock, IconLockOpen2, IconSquareX } from "@tabler/icons-react"
 import { format as formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
