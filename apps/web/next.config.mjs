@@ -34,6 +34,20 @@ const config = {
   // Explicitly ensure the transpiled packages are not treated as external.
   // zod must be external because zod v4 has internal ESM circular imports that webpack cannot linearize safely.
   serverExternalPackages: ["zod"],
+
+  // @auth0/nextjs-auth0 v4 intentionally constructs the "crypto" import path at runtime ("cry" + "pto") so bundlers
+  // don't bundle Node's crypto. webpack still flags the dynamic import() expression as a "Critical dependency" warning,
+  // which is safe to ignore here.
+  webpack: (webpackConfig) => {
+    webpackConfig.ignoreWarnings = [
+      ...(webpackConfig.ignoreWarnings ?? []),
+      {
+        module: /@auth0[\\/]nextjs-auth0[\\/]dist[\\/]utils[\\/]dpopUtils\.js/,
+        message: /Critical dependency: the request of a dependency is an expression/,
+      },
+    ]
+    return webpackConfig
+  },
 }
 
 export default withSentryConfig(config, {
