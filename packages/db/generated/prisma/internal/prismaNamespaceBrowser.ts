@@ -90,7 +90,9 @@ export const ModelName = {
   Contest: 'Contest',
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
-  ContestTeam: 'ContestTeam'
+  ContestTeam: 'ContestTeam',
+  UserFlag: 'UserFlag',
+  UserFlagLink: 'UserFlagLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -141,7 +143,6 @@ export const UserScalarFieldEnum = {
   gender: 'gender',
   dietaryRestrictions: 'dietaryRestrictions',
   ntnuUsername: 'ntnuUsername',
-  flags: 'flags',
   workspaceUserId: 'workspaceUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -651,6 +652,29 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const UserFlagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  imageUrl: 'imageUrl'
+} as const
+
+export type UserFlagScalarFieldEnum = (typeof UserFlagScalarFieldEnum)[keyof typeof UserFlagScalarFieldEnum]
+
+
+export const UserFlagLinkScalarFieldEnum = {
+  id: 'id',
+  awardedAt: 'awardedAt',
+  reason: 'reason',
+  userId: 'userId',
+  userFlagId: 'userFlagId'
+} as const
+
+export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
 export const SortOrder = {
