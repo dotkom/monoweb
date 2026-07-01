@@ -11,7 +11,7 @@ import {
   UserWriteSchema,
 } from "@dotkomonline/rpc/user"
 import { createTextareaInput } from "@/components/forms/TextareaInput"
-import { useIsAdminQuery } from "../queries"
+import { useAuthorization } from "@/auth/authorization-context"
 
 interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void
@@ -20,7 +20,7 @@ interface UseUserProfileWriteFormProps {
 }
 
 export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) => {
-  const { isAdmin } = useIsAdminQuery()
+  const { isAdministrator } = useAuthorization()
   const fileUpload = useUserFileUploadMutation()
 
   return useFormBuilder({
@@ -36,12 +36,12 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       name: createTextInput({
         label: "Navn",
         placeholder: "Ola Nordmann",
-        disabled: isAdmin !== true,
+        disabled: !isAdministrator,
       }),
       email: createTextInput({
         label: "E-post",
         placeholder: "ola.nordmann@gmail.com",
-        disabled: isAdmin !== true,
+        disabled: !isAdministrator,
       }),
       phone: createTextInput({
         label: "Telefon",

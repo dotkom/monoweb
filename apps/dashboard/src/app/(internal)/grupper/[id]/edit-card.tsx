@@ -5,7 +5,7 @@ import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconTrash, IconUsersGroup, IconX } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { type FC, useEffect, useState } from "react"
-import { useIsAdminQuery } from "@/app/(internal)/brukere/queries"
+import { useAuthorization } from "@/auth/authorization-context"
 import { useDeleteGroupMutation, useLinkGroupMutation, useUpdateGroupMutation } from "../mutations"
 import { useFindWorkspaceGroupQuery } from "../queries"
 import { useGroupWriteForm } from "../write-form"
@@ -30,12 +30,12 @@ export const GroupEditCard: FC = () => {
     },
   })
 
-  const { isAdmin } = useIsAdminQuery()
+  const { isAdministrator } = useAuthorization()
 
   const isWorkspaceLinked = Boolean(group.workspaceGroupId)
   const showWorkspaceLink =
     isWorkspaceLinked || group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE" || group.type === "EMAIL_ONLY"
-  const isWorkspaceFetchEnabled = (isAdmin ?? false) && showWorkspaceLink
+  const isWorkspaceFetchEnabled = isAdministrator && showWorkspaceLink
   const { workspaceGroup, isLoading: isLoadingWorkspaceGroup } = useFindWorkspaceGroupQuery(
     group.slug,
     customKey || undefined,
@@ -57,7 +57,7 @@ export const GroupEditCard: FC = () => {
     <Stack>
       <LinkGroup
         showWorkspaceLink={showWorkspaceLink}
-        isAdmin={isAdmin ?? false}
+        isAdministrator={isAdministrator}
         isWorkspaceLinked={isWorkspaceLinked}
         isWorkspaceFetchEnabled={isWorkspaceFetchEnabled}
         isLoadingWorkspaceGroup={isLoadingWorkspaceGroup}
@@ -77,7 +77,7 @@ export const GroupEditCard: FC = () => {
 
 interface LinkGroupProps {
   showWorkspaceLink: boolean
-  isAdmin: boolean
+  isAdministrator: boolean
   isWorkspaceLinked: boolean
   isWorkspaceFetchEnabled: boolean
   isLoadingWorkspaceGroup: boolean
@@ -88,7 +88,7 @@ interface LinkGroupProps {
 
 const LinkGroup: FC<LinkGroupProps> = ({
   showWorkspaceLink,
-  isAdmin,
+  isAdministrator,
   isWorkspaceLinked,
   isWorkspaceFetchEnabled,
   isLoadingWorkspaceGroup,
@@ -152,14 +152,14 @@ const LinkGroup: FC<LinkGroupProps> = ({
         )}
       </Stack>
 
-      {!isWorkspaceLinked && !isAdmin && (
+      {!isWorkspaceLinked && !isAdministrator && (
         <Text size="xs">
           Kontakt HS for å tilknytte gruppen til en e-postliste. Gruppen må tilknyttes for å kunne legge medlemmer til i
           e-postlisten.
         </Text>
       )}
 
-      {!isWorkspaceLinked && isAdmin && (
+      {!isWorkspaceLinked && isAdministrator && (
         <TextInput
           description="Egendefinert nøkkel. Bruk denne om den ikke finner automatisk. Må være en komplett e-postadresse eller lokaldelen til e-postadressen (det før @)."
           placeholder="dotkom@online.ntnu.no eller dotkom"
@@ -215,7 +215,7 @@ const LinkGroup: FC<LinkGroupProps> = ({
           <Button
             color="green"
             w="fit-content"
-            disabled={!isAdmin || !workspaceGroup}
+            disabled={!isAdministrator || !workspaceGroup}
             leftSection={<IconLink size={16} />}
             onClick={onClick}
           >
