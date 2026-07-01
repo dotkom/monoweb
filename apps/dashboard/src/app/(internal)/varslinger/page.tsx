@@ -3,11 +3,10 @@
 import { Box, Button, Skeleton, Stack } from "@mantine/core"
 import { AllNotificationsTable } from "./all-notification-table"
 import { useCreateNotificationModal } from "./modals/create-notification"
-import { useNotificationAllQuery } from "./queries"
-
+import { useNotificationAllInfiniteQuery } from "./queries"
 
 export default function NotificationPage() {
-  const { notifications, isLoading: isNotificationsLoading } = useNotificationAllQuery()
+  const { notifications, isLoading: isNotificationsLoading } = useNotificationAllInfiniteQuery()
   const open = useCreateNotificationModal()
 
   return (
