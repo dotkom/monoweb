@@ -10,6 +10,7 @@ import { useDeleteGroupMutation, useLinkGroupMutation, useUpdateGroupMutation } 
 import { useFindWorkspaceGroupQuery } from "../queries"
 import { useGroupWriteForm } from "../write-form"
 import { useGroupDetailsContext } from "./provider"
+import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 
 export const GroupEditCard: FC = () => {
   const router = useRouter()
@@ -23,7 +24,7 @@ export const GroupEditCard: FC = () => {
 
   const open = useConfirmDeleteModal({
     title: "Slett gruppe",
-    text: `Er du sikker på at du vil slette ${group.name}?`,
+    text: `Er du sikker på at du vil slette ${getGroupDisplayName(group)}?`,
     onConfirm: () => {
       remove.mutate(group.slug)
       router.push("/grupper/")

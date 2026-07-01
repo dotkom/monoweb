@@ -1,5 +1,5 @@
 import type { Company } from "@dotkomonline/rpc/company"
-import type { Group } from "@dotkomonline/rpc/group"
+import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { Anchor, Group as MantineGroup, Text } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"
@@ -34,7 +34,7 @@ export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, 
       ))}
       {groups.map((group) => (
         <Anchor key={group.slug} component={Link} size="sm" href={`/grupper/${group.slug}`}>
-          {group.abbreviation}
+          {getGroupDisplayName(group)}
         </Anchor>
       ))}
     </MantineGroup>

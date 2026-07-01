@@ -18,6 +18,7 @@ import {
   type EventStatus,
   EventTypeSchema,
   EventWriteSchema,
+  getGroupDisplayName,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
 import { addHours, roundToNearestHours } from "date-fns"
@@ -131,7 +132,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
       hostingGroupIds: createMultipleSelectInput({
         label: "Arrangører",
         placeholder: "Velg grupper",
-        data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
+        data: groups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
       }),
       companyIds: createMultipleSelectInput({

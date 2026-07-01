@@ -74,6 +74,14 @@ export const GroupRecruitmentMethod = {
 export type GroupRecruitmentMethod = (typeof GroupRecruitmentMethod)[keyof typeof GroupRecruitmentMethod]
 
 
+export const GroupPreferredDisplayName = {
+  ABBREVIATION: 'ABBREVIATION',
+  NAME: 'NAME'
+} as const
+
+export type GroupPreferredDisplayName = (typeof GroupPreferredDisplayName)[keyof typeof GroupPreferredDisplayName]
+
+
 export const GroupRoleType = {
   LEADER: 'LEADER',
   PUNISHER: 'PUNISHER',
