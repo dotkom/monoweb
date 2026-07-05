@@ -6,7 +6,8 @@ export const interactionTransition =
 export const interactionFocusRing =
   "focus-visible:border-ring/40 focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-0"
 
-export const interactionPress = "scale-100 active:scale-[0.98] motion-reduce:scale-100 motion-reduce:active:scale-100"
+export const interactionPress =
+  "scale-100 enabled:active:scale-[0.98] motion-reduce:scale-100 motion-reduce:enabled:active:scale-100"
 
 export const interactionBase = cn(interactionTransition, interactionFocusRing, interactionPress)
 
