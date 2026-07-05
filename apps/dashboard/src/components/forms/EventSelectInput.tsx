@@ -16,7 +16,7 @@ export function createEventSelectInput<F extends FieldValues>({
   excludeEventIds,
   ...props
 }: Props): InputProducerResult<F> {
-  return function FormSelectInput({ name, state, control }) {
+  return function FormSelectInput({ name, state, control, disabled }) {
     const [searchQuery, setSearchQuery] = useState("")
     const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300)
 
@@ -58,6 +58,7 @@ export function createEventSelectInput<F extends FieldValues>({
             searchValue={searchQuery}
             onSearchChange={handleEventSearch}
             searchable={true}
+            disabled={disabled ?? props.disabled}
             error={getErrorMessage(state, name)}
             data={options}
           />

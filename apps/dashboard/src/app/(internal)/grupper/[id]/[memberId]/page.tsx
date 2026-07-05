@@ -1,6 +1,8 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
+import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
 import { IconListDetails } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useGroupDetailsContext } from "../provider"
@@ -20,6 +22,7 @@ export default function GroupMemberDetailsPage() {
   const router = useRouter()
   const { group } = useGroupDetailsContext()
   const { groupMember } = useGroupMemberDetailsContext()
+  const { canManageMembership } = useGroupPermissions()
 
   const searchParams = useSearchParams()
   const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
@@ -31,11 +34,18 @@ export default function GroupMemberDetailsPage() {
   }
 
   return (
-    <Box>
+    <Stack>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>Oppdater medlemskap</Title>
       </Group>
+
+      {!canManageMembership && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere gruppemedlemskapet."
+          message="Dette er fordi du ikke er leder eller nestleder av gruppen. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
@@ -51,6 +61,6 @@ export default function GroupMemberDetailsPage() {
           </Tabs.Panel>
         ))}
       </Tabs>
-    </Box>
+    </Stack>
   )
 }

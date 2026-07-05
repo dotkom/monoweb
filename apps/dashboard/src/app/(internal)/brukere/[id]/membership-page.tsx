@@ -1,3 +1,5 @@
+import { useAuthorization } from "@/auth/authorization-context"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { GenericTable } from "@/components/GenericTable"
 import { Box, Button, Stack, Text, Title } from "@mantine/core"
 import { compareDesc } from "date-fns"
@@ -8,6 +10,8 @@ import { useUserDetailsContext } from "./provider"
 
 export const MembershipPage: FC = () => {
   const { user } = useUserDetailsContext()
+  const { canManageUserMemberships } = useAuthorization()
+  const canManage = canManageUserMemberships()
   const open = useCreateMembershipModal({ user })
 
   const memberships = useMemo(
@@ -24,7 +28,11 @@ export const MembershipPage: FC = () => {
         i eksisterende informasjon.
       </Text>
       <Box>
-        <Button onClick={open}>Opprett medlemskap</Button>
+        <PermissionTooltip allowed={canManage}>
+          <Button onClick={open} disabled={!canManage}>
+            Opprett medlemskap
+          </Button>
+        </PermissionTooltip>
       </Box>
       <GenericTable table={table} />
     </Stack>

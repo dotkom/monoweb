@@ -85,6 +85,7 @@ const navigations = [
     label: "Offline",
     icon: IconSkull,
     href: "/offline",
+    canAccess: (authorization) => authorization.canEditOffline(),
   },
   {
     label: "Bedrifter",
@@ -95,6 +96,7 @@ const navigations = [
     label: "Fadderukene",
     icon: IconConfetti,
     href: "/fadderukene",
+    canAccess: (authorization) => authorization.canEditFadderuke(),
   },
   {
     label: "Avmeldingsgrunner",
@@ -116,21 +118,22 @@ const navigations = [
     label: "Hendelseslogg",
     icon: IconClipboardList,
     href: "/logg",
-    isAdministrator: true,
+    canAccess: (authorization) => authorization.canAccessAuditLog(),
   },
 ] satisfies {
   label: string
   icon: FC
   href: string
   openInNewTab?: boolean
-  isAdministrator?: boolean
+  canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
 }[]
+
 interface ApplicationShellProps {
   children: React.ReactNode
 }
 
 export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
@@ -197,7 +200,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
       </AppShellHeader>
       <AppShellNavbar p="md">
         {navigations
-          .filter((navigation) => isAdministrator || !navigation.isAdministrator)
+          .filter((navigation) => navigation.canAccess?.(authorization) ?? true)
           .map((navigation) => (
             <NavLink
               component={Link}

@@ -40,9 +40,10 @@ const DEFAULT_VALUES: FormValidationResult = {
 
 interface UseContestWriteFormProps {
   onSubmit(data: FormValidationResult): void
+  disabled?: boolean
 }
 
-export const useContestWriteForm = ({ onSubmit }: UseContestWriteFormProps) => {
+export const useContestWriteForm = ({ onSubmit, disabled }: UseContestWriteFormProps) => {
   const { groups } = useGroupAllQuery()
 
   return useFormBuilder({
@@ -50,6 +51,7 @@ export const useContestWriteForm = ({ onSubmit }: UseContestWriteFormProps) => {
     defaultValues: DEFAULT_VALUES,
     onSubmit,
     label: "Opprett konkurranse",
+    disabled,
     fields: {
       name: createTextInput({
         label: "Navn",

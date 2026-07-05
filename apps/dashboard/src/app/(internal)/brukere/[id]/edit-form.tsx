@@ -17,9 +17,15 @@ interface UseUserProfileWriteFormProps {
   onSubmit(data: UserWrite): void
   defaultValues?: Partial<UserWrite>
   label?: string
+  disabled?: boolean
 }
 
-export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruker" }: UseUserProfileWriteFormProps) => {
+export const useUserProfileEditForm = ({
+  defaultValues,
+  onSubmit,
+  label = "Bruker",
+  disabled,
+}: UseUserProfileWriteFormProps) => {
   const { isAdministrator } = useAuthorization()
   const fileUpload = useUserFileUploadMutation()
 
@@ -28,6 +34,7 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
     onSubmit,
     defaultValues,
     label,
+    disabled,
     fields: {
       username: createTextInput({
         label: "Brukernavn",
@@ -36,12 +43,12 @@ export const useUserProfileEditForm = ({ defaultValues, onSubmit, label = "Bruke
       name: createTextInput({
         label: "Navn",
         placeholder: "Ola Nordmann",
-        disabled: !isAdministrator,
+        disabled: disabled || !isAdministrator,
       }),
       email: createTextInput({
         label: "E-post",
         placeholder: "ola.nordmann@gmail.com",
-        disabled: !isAdministrator,
+        disabled: disabled || !isAdministrator,
       }),
       phone: createTextInput({
         label: "Telefon",

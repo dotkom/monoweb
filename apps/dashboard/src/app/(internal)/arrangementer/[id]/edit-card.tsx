@@ -1,13 +1,15 @@
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import type { FC } from "react"
+import { Stack } from "@mantine/core"
 import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useEventEditForm } from "../components/edit-form"
-
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { useUpdateEventMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const EventEditCard: FC = () => {
   const { event } = useEventContext()
+  const { canEdit } = useEventEditPermission()
   const edit = useUpdateEventMutation()
   const { groups } = useGroupAllQuery()
   const { companies } = useCompanyAllQuery()
@@ -22,6 +24,7 @@ export const EventEditCard: FC = () => {
     label: "Oppdater arrangement",
     hostingGroups: groups,
     companies: companies,
+    disabled: !canEdit,
     onSubmit: (data) => {
       const { hostingGroupIds, companyIds, ...event } = data
 
@@ -35,5 +38,10 @@ export const EventEditCard: FC = () => {
     },
     defaultValues,
   })
-  return <FormComponent />
+
+  return (
+    <Stack>
+      <FormComponent />
+    </Stack>
+  )
 }

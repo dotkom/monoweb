@@ -17,7 +17,8 @@ interface Props {
 }
 
 export const useMembershipTable = ({ data }: Props) => {
-  const { isAdministrator } = useAuthorization()
+  const { canManageUserMemberships } = useAuthorization()
+  const canManage = canManageUserMemberships()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()
   const openDeleteMembershipModal = useConfirmDeleteMembershipModal()
@@ -67,21 +68,21 @@ export const useMembershipTable = ({ data }: Props) => {
           return formatDate(endDate, "dd.MM.yyyy")
         },
       }),
-      columnHelper.accessor((role) => role, {
-        id: "actions",
-        header: () => "Detaljer",
-        cell: (info) => (
-          <Button
-            size="sm"
-            leftSection={<IconEdit size="1rem" />}
-            onClick={() => openEditMembershipModal({ membership: info.getValue() })}
-          >
-            Oppdater
-          </Button>
-        ),
-      }),
-      ...(isAdministrator
+      ...(canManage
         ? [
+            columnHelper.accessor((role) => role, {
+              id: "actions",
+              header: () => "Detaljer",
+              cell: (info) => (
+                <Button
+                  size="sm"
+                  leftSection={<IconEdit size="1rem" />}
+                  onClick={() => openEditMembershipModal({ membership: info.getValue() })}
+                >
+                  Oppdater
+                </Button>
+              ),
+            }),
             columnHelper.accessor((role) => role, {
               id: "delete",
               header: () => "Slett medlemskap",
@@ -100,7 +101,7 @@ export const useMembershipTable = ({ data }: Props) => {
           ]
         : []),
     ],
-    [columnHelper, openEditMembershipModal, openDeleteMembershipModal, isAdministrator]
+    [columnHelper, openEditMembershipModal, openDeleteMembershipModal, canManage]
   )
 
   return useReactTable({

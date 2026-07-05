@@ -49,6 +49,7 @@ interface UseEventEditFormProps {
   label?: string
   hostingGroups: Group[]
   companies: Company[]
+  disabled?: boolean
 }
 
 export const useEventEditForm = ({
@@ -57,6 +58,7 @@ export const useEventEditForm = ({
   onSubmit,
   label = "Oppdater arrangement",
   defaultValues,
+  disabled,
 }: UseEventEditFormProps) => {
   const uploadFile = useEventFileUploadMutation()
   const { contests } = useContestFindManyQuery()
@@ -66,6 +68,7 @@ export const useEventEditForm = ({
     defaultValues,
     onSubmit,
     label,
+    disabled,
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",

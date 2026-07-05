@@ -7,9 +7,10 @@ interface UserSearchProps {
   onSubmit(data: User): void
   excludeUserIds?: string[]
   placeholder?: string
+  disabled?: boolean
 }
 
-export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, excludeUserIds }) => {
+export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, excludeUserIds, disabled }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const { users } = useUserAllQuery({
     filter: {
@@ -38,6 +39,7 @@ export const UserSearch: FC<UserSearchProps> = ({ placeholder, onSubmit, exclude
       }}
       placeholder={placeholder ?? "Søk etter bruker..."}
       resetOnClick
+      disabled={disabled}
     />
   )
 }

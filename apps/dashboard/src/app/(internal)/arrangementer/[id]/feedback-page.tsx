@@ -10,10 +10,12 @@ import {
 } from "../mutations"
 import { useEventAllQuery, useEventFeedbackFormGetQuery } from "../queries"
 import { useEventContext } from "./provider"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { getCurrentUTC } from "@dotkomonline/utils"
 
 export const FeedbackPage: FC = () => {
   const { event } = useEventContext()
+  const { canEdit } = useEventEditPermission()
   const feedbackFormQuery = useEventFeedbackFormGetQuery(event.id)
   const createMutation = useCreateFeedbackFormMutation()
   const createCopyMutation = useCreateFeedbackFormCopyMutation()
@@ -74,6 +76,7 @@ export const FeedbackPage: FC = () => {
             defaultValues={defaultValues}
             feedbackFormId={feedbackFormQuery.data?.id}
             eventId={event.id}
+            readOnly={!canEdit}
           />
         ) : (
           <Stack>
@@ -89,14 +92,14 @@ export const FeedbackPage: FC = () => {
 
             <Title order={5}>Opprett blankt tilbakemeldingsskjema</Title>
             <Group>
-              <Button onClick={createEmptyFeedbackForm} disabled={!canCreateFeedbackForm}>
+              <Button onClick={createEmptyFeedbackForm} disabled={!canCreateFeedbackForm || !canEdit}>
                 Opprett
               </Button>
             </Group>
             <Title order={5}>Opprett kopi av tilbakemeldingsskjema fra annet arrangement</Title>
             <Group>
               <Select
-                disabled={!canCreateFeedbackForm}
+                disabled={!canCreateFeedbackForm || !canEdit}
                 searchable={true}
                 onChange={(data) => data && createFeedbackFormCopy(data)}
                 placeholder="Velg et arrangement..."

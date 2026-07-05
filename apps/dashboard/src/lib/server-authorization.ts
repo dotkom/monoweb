@@ -1,6 +1,7 @@
 import { getServerAccessToken } from "@/lib/server-access-token"
 import { server } from "@/lib/trpc-server"
 import { cache } from "react"
+import { createAuthorizationState } from "@/auth/permissions"
 
 const EMPTY_AUTHORIZATION_VALUE = {
   isAdministrator: false,
@@ -16,4 +17,10 @@ export const getServerAuthorization = cache(async () => {
   }
 
   return server.user.getAuthorization.query()
+})
+
+export const getServerAuthorizationState = cache(async () => {
+  const authorization = await getServerAuthorization()
+
+  return createAuthorizationState(authorization)
 })

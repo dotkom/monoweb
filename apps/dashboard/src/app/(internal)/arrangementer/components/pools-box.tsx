@@ -15,9 +15,10 @@ interface NormalPoolBoxProps {
   pool: AttendancePool
   attendance: Attendance
   deleteGroup: (id: string, numAttendees: number) => void
+  canEdit: boolean
 }
 
-const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGroup }) => {
+const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGroup, canEdit }) => {
   const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
   const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
 
@@ -53,10 +54,11 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
             })}
             color="yellow"
             mr={16}
+            disabled={!canEdit}
           >
             Rediger
           </Button>
-          <Button onClick={() => deleteGroup(pool.id, reservedAttendeeCount)} color="red">
+          <Button onClick={() => deleteGroup(pool.id, reservedAttendeeCount)} color="red" disabled={!canEdit}>
             Slett
           </Button>
         </Box>
@@ -67,9 +69,10 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
 
 interface PoolsBoxProps {
   attendance: Attendance
+  canEdit?: boolean
 }
 
-export const PoolBox: FC<PoolsBoxProps> = ({ attendance }) => {
+export const PoolBox: FC<PoolsBoxProps> = ({ attendance, canEdit = true }) => {
   const deleteGroupMut = useDeletePoolMutation()
   const deleteGroup = (id: string, numAttendees: number) => {
     if (numAttendees > 0) {
@@ -88,7 +91,13 @@ export const PoolBox: FC<PoolsBoxProps> = ({ attendance }) => {
   return (
     <Group gap="md">
       {attendance.pools?.map((pool) => (
-        <AttendancePoolCard key={pool.id} pool={pool} deleteGroup={deleteGroup} attendance={attendance} />
+        <AttendancePoolCard
+          key={pool.id}
+          pool={pool}
+          deleteGroup={deleteGroup}
+          attendance={attendance}
+          canEdit={canEdit}
+        />
       ))}
       {attendance.pools?.length === 0 && <Text fs="italic">Ingen påmeldingsgrupper</Text>}
     </Group>

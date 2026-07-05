@@ -9,7 +9,7 @@ import { ActionIcon } from "@mantine/core"
 export function createDateTimeInput<F extends FieldValues>({
   ...props
 }: Omit<DateTimePickerProps, "error">): InputProducerResult<F> {
-  return function FormDateTimeInput({ name, state, control, defaultValue }) {
+  return function FormDateTimeInput({ name, state, control, defaultValue, disabled }) {
     return (
       <Controller
         control={control}
@@ -23,10 +23,17 @@ export function createDateTimeInput<F extends FieldValues>({
             defaultValue={defaultValue ?? roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })}
             value={field.value}
             onChange={field.onChange}
+            disabled={disabled ?? props.disabled}
             error={getErrorMessage(state, name)}
             rightSection={
               props.required !== true && (
-                <ActionIcon w="fit-content" color="gray" variant="subtle" onClick={() => field.onChange(null)}>
+                <ActionIcon
+                  w="fit-content"
+                  color="gray"
+                  variant="subtle"
+                  disabled={disabled ?? props.disabled}
+                  onClick={() => field.onChange(null)}
+                >
                   <IconX size="0.85rem" />
                 </ActionIcon>
               )

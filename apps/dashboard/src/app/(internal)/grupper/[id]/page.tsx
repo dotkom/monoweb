@@ -1,6 +1,8 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
+import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
 import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { GroupEditCard } from "./edit-card"
@@ -39,6 +41,7 @@ const SIDEBAR_LINKS = [
 export default function GroupDetailsPage() {
   const router = useRouter()
   const { group } = useGroupDetailsContext()
+  const { canEdit } = useGroupPermissions()
 
   const searchParams = useSearchParams()
   const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
@@ -50,11 +53,18 @@ export default function GroupDetailsPage() {
   }
 
   return (
-    <Box>
+    <Stack>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{group.name}</Title>
       </Group>
+
+      {!canEdit && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere gruppen."
+          message="Dette er fordi du ikke er medlem av gruppen. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
@@ -70,6 +80,6 @@ export default function GroupDetailsPage() {
           </Tabs.Panel>
         ))}
       </Tabs>
-    </Box>
+    </Stack>
   )
 }

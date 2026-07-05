@@ -5,13 +5,19 @@ import { getErrorMessage, type InputProducerResult } from "./types"
 export function createSelectInput<F extends FieldValues>({
   ...props
 }: Omit<SelectProps, "error">): InputProducerResult<F> {
-  return function FormSelectInput({ name, state, control }) {
+  return function FormSelectInput({ name, state, control, disabled }) {
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
-          <Select {...props} value={field.value} onChange={field.onChange} error={getErrorMessage(state, name)} />
+          <Select
+            {...props}
+            value={field.value}
+            onChange={field.onChange}
+            disabled={disabled ?? props.disabled}
+            error={getErrorMessage(state, name)}
+          />
         )}
       />
     )

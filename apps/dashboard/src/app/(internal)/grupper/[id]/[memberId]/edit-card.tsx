@@ -1,5 +1,7 @@
 import { GenericTable } from "@/components/GenericTable"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import {
   Button,
   Divider,
@@ -27,6 +29,7 @@ import { useGroupMembershipTable } from "./use-group-membership-table"
 export const GroupMemberEditCard: FC = () => {
   const isDarkMode = useComputedColorScheme() === "dark"
   const { groupMember } = useGroupMemberDetailsContext()
+  const { canManageMembership } = useGroupPermissions()
 
   const startMembership = useStartGroupMembershipMutation()
   const endMembership = useEndGroupMembershipMutation()
@@ -39,6 +42,7 @@ export const GroupMemberEditCard: FC = () => {
   const FormComponent = useGroupMemberForm({
     label: activeMemberships.length ? "Avslutt nåværende og lag nytt medlemskap" : "Legg til medlemskap",
     groupId: group.slug,
+    disabled: !canManageMembership,
     onSubmit: (data) => {
       startMembership.mutate({
         userId: groupMember.id,
@@ -144,9 +148,17 @@ export const GroupMemberEditCard: FC = () => {
               </Stack>
             ))}
             <Group>
-              <Button color="red" variant="light" size="sm" onClick={() => openEndMembershipModal()}>
-                Avslutt medlemskapet
-              </Button>
+              <PermissionTooltip allowed={canManageMembership}>
+                <Button
+                  color="red"
+                  variant="light"
+                  size="sm"
+                  onClick={() => openEndMembershipModal()}
+                  disabled={!canManageMembership}
+                >
+                  Avslutt medlemskapet
+                </Button>
+              </PermissionTooltip>
             </Group>
           </Stack>
           <Divider />

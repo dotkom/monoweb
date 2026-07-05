@@ -8,6 +8,7 @@ import { IconCheck, IconLink, IconUsersGroup, IconX, IconArrowUpRight } from "@t
 import { type FC, useEffect, useState } from "react"
 import { useLinkOwUserToWorkspaceUserMutation, useUpdateUserMutation } from "../mutations"
 import { useAuthorization } from "@/auth/authorization-context"
+import { useUserEditPermission } from "@/hooks/use-user-edit-permission"
 import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery } from "../queries"
 import { useUserProfileEditForm } from "./edit-form"
 import { useUserDetailsContext } from "./provider"
@@ -20,6 +21,7 @@ export const UserEditCard: FC = () => {
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
 
   const { isAdministrator } = useAuthorization()
+  const { canEdit } = useUserEditPermission()
   const { groups } = useGroupAllByMemberQuery(user.id)
 
   const update = useUpdateUserMutation()
@@ -38,6 +40,7 @@ export const UserEditCard: FC = () => {
 
   const EditUserProfileComponent = useUserProfileEditForm({
     label: "Oppdater profil",
+    disabled: !canEdit,
     onSubmit: (data) => {
       const result = UserWriteSchema.parse(data)
 

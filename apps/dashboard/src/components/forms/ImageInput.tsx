@@ -13,7 +13,7 @@ export function createImageInput<F extends FieldValues>({
 }): InputProducerResult<F> {
   const { onFileUpload, existingImageUrl, acceptGif, maxSizeKiB, ...fileInputProps } = props
 
-  return function FormImageInput({ name, control, setError, clearErrors }) {
+  return function FormImageInput({ name, control, setError, clearErrors, disabled }) {
     let accept = "image/png,image/jpeg,image/jpg"
 
     if (acceptGif) {
@@ -41,6 +41,7 @@ export function createImageInput<F extends FieldValues>({
                   {...fileInputProps}
                   description={description}
                   accept={accept}
+                  disabled={disabled ?? fileInputProps.disabled}
                   error={fieldState.error?.message}
                   placeholder={field.value || existingImageUrl || "Klikk for å velge fil"}
                   onChange={async (file) => {
@@ -67,6 +68,7 @@ export function createImageInput<F extends FieldValues>({
                   // Margin is eyeballed to align with the FileInput height
                   mt="1.5rem"
                   placeholder="Legg inn URL direkte"
+                  disabled={disabled ?? fileInputProps.disabled}
                   onChange={async (event) => field.onChange(event.target.value)}
                   value={field.value ?? ""}
                   flex="1"
@@ -77,6 +79,7 @@ export function createImageInput<F extends FieldValues>({
                 color="gray"
                 size="compact-xs"
                 variant="subtle"
+                disabled={disabled ?? fileInputProps.disabled}
                 onClick={() => field.onChange(null)}
                 leftSection={<IconX size="1rem" />}
                 styles={{ section: { marginRight: "0.35rem" } }}

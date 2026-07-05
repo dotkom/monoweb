@@ -8,6 +8,7 @@ export interface GenericSearchProps<T> {
   dataMapper(item: T): string
   placeholder?: string | null
   resetOnClick?: boolean
+  disabled?: boolean
 }
 
 export const GenericSearch = <T,>({
@@ -17,6 +18,7 @@ export const GenericSearch = <T,>({
   dataMapper,
   placeholder,
   resetOnClick,
+  disabled,
 }: GenericSearchProps<T>) => {
   const [value, setValue] = useState<string>("")
 
@@ -59,6 +61,7 @@ export const GenericSearch = <T,>({
       placeholder={placeholderText}
       className="grow"
       value={value}
+      disabled={disabled}
     />
   )
 }

@@ -4,6 +4,7 @@ import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
@@ -20,10 +21,12 @@ export const SelectionsPage: FC = () => {
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
+  const { canEdit } = useEventEditPermission()
   const mutation = useAddAttendanceMutation()
 
   const AttendanceForm = useAttendanceForm({
     label: "Opprett",
+    disabled: !canEdit,
     defaultValues: {
       registerStart: new Date(),
       registerEnd: new Date(),
@@ -46,6 +49,7 @@ interface Props {
   attendance: Attendance
 }
 export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
+  const { canEdit } = useEventEditPermission()
   const trpc = useTRPC()
   const openCreate = useCreateAttendanceSelectionsModal({
     attendance,
@@ -114,10 +118,10 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
         <Box>
           {attendance.selections?.map((selection) => (
             <Paper key={selection.id} withBorder p={"md"} mt={"md"}>
-              <ActionIcon variant="outline" onClick={() => openEdit(selection)} mr="md">
+              <ActionIcon variant="outline" onClick={() => openEdit(selection)} mr="md" disabled={!canEdit}>
                 <IconEdit />
               </ActionIcon>
-              <ActionIcon variant="outline" onClick={() => onDelete(selection.id)} color="red">
+              <ActionIcon variant="outline" onClick={() => onDelete(selection.id)} color="red" disabled={!canEdit}>
                 <IconTrash />
               </ActionIcon>
               <h3>{selection.name}</h3>
@@ -130,7 +134,7 @@ export const SelectionsPageDetail: FC<Props> = ({ attendance }) => {
           ))}
         </Box>
 
-        <Button mt="md" onClick={openCreate}>
+        <Button mt="md" onClick={openCreate} disabled={!canEdit}>
           Legg til nytt valg
         </Button>
       </Box>

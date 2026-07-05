@@ -1,11 +1,13 @@
+import { useAuthorization } from "@/auth/authorization-context"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import type { WorkspaceGroup } from "@dotkomonline/rpc/workspace"
 import { Button, Group, Loader, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconCheck, IconLink, IconTrash, IconUsersGroup, IconX } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { type FC, useEffect, useState } from "react"
-import { useAuthorization } from "@/auth/authorization-context"
 import { useDeleteGroupMutation, useLinkGroupMutation, useUpdateGroupMutation } from "../mutations"
 import { useFindWorkspaceGroupQuery } from "../queries"
 import { useGroupWriteForm } from "../write-form"
@@ -30,6 +32,8 @@ export const GroupEditCard: FC = () => {
     },
   })
 
+  const { canUpdate, canDelete } = useGroupPermissions()
+
   const { isAdministrator } = useAuthorization()
 
   const isWorkspaceLinked = Boolean(group.workspaceGroupId)
@@ -44,6 +48,7 @@ export const GroupEditCard: FC = () => {
 
   const FormComponent = useGroupWriteForm({
     label: "Oppdater gruppe",
+    disabled: !canUpdate,
     onSubmit: (data) => {
       edit.mutate({
         id: group.slug,
@@ -68,9 +73,18 @@ export const GroupEditCard: FC = () => {
 
       <FormComponent />
 
-      <Button variant="outline" color="red" w="fit-content" onClick={open} leftSection={<IconTrash size={16} />}>
-        Slett gruppe
-      </Button>
+      <PermissionTooltip allowed={canDelete}>
+        <Button
+          variant="outline"
+          color="red"
+          w="fit-content"
+          onClick={open}
+          disabled={!canDelete}
+          leftSection={<IconTrash size={16} />}
+        >
+          Slett gruppe
+        </Button>
+      </PermissionTooltip>
     </Stack>
   )
 }

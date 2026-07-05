@@ -69,9 +69,10 @@ const DEFAULT_VALUES = {
 
 interface UseEventWriteFormProps {
   onSubmit(data: FormValidationResult): void
+  disabled?: boolean
 }
 
-export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
+export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
   const { companies } = useCompanyAllQuery()
   const { contests } = useContestFindManyQuery()
@@ -83,6 +84,7 @@ export const useEventWriteForm = ({ onSubmit }: UseEventWriteFormProps) => {
     defaultValues: DEFAULT_VALUES,
     onSubmit,
     label: "Opprett arrangement",
+    disabled,
     fields: {
       title: createTextInput({
         label: "Arrangementnavn",

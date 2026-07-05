@@ -5,7 +5,14 @@ import { getErrorMessage, type InputProducerResult } from "./types"
 export function createCheckboxInput<F extends FieldValues>({
   ...props
 }: Omit<CheckboxProps, "error">): InputProducerResult<F> {
-  return function FormCheckboxInput({ name, state, register }) {
-    return <Checkbox {...register(name)} {...props} error={getErrorMessage(state, name)} />
+  return function FormCheckboxInput({ name, state, register, disabled }) {
+    return (
+      <Checkbox
+        {...register(name)}
+        {...props}
+        disabled={disabled ?? props.disabled}
+        error={getErrorMessage(state, name)}
+      />
+    )
   }
 }

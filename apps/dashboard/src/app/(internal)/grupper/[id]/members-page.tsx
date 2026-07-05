@@ -27,6 +27,8 @@ import { IconAlertTriangleFilled } from "@tabler/icons-react"
 import { flexRender } from "@tanstack/react-table"
 import { compareDesc } from "date-fns"
 import { type FC, useMemo } from "react"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import { useCreateGroupMemberModal } from "../modals/create-group-member-modal"
 import { useSyncWorkspaceGroupMutation } from "../mutations"
 import { useGroupMembersAllQuery, useWorkspaceMembersAllQuery } from "../queries"
@@ -59,6 +61,7 @@ const sortByStartDate = (a: GroupMember | null, b: GroupMember | null) => {
 
 export const GroupMembersPage: FC = () => {
   const { group } = useGroupDetailsContext()
+  const { canManageMembership } = useGroupPermissions()
   const syncGroupMutation = useSyncWorkspaceGroupMutation()
 
   // We only want to fetch workspace members if the group is linked to a workspace group
@@ -140,7 +143,11 @@ export const GroupMembersPage: FC = () => {
         <Title order={3} mb={10}>
           Legg til bruker
         </Title>
-        <UserSearch onSubmit={(values) => openCreate({ userId: values.id })} excludeUserIds={activeMemberIds} />
+        <UserSearch
+          onSubmit={(values) => openCreate({ userId: values.id })}
+          excludeUserIds={activeMemberIds}
+          disabled={!canManageMembership}
+        />
         <Divider />
         <Title order={3}>Medlemmer</Title>
 
@@ -211,7 +218,14 @@ export const GroupMembersPage: FC = () => {
                   )}
                 </List>
                 <Group>
-                  <Button onClick={() => syncGroupMutation.mutate({ groupSlug: group.slug })}>Synkroniser nå</Button>
+                  <PermissionTooltip allowed={canManageMembership}>
+                    <Button
+                      onClick={() => syncGroupMutation.mutate({ groupSlug: group.slug })}
+                      disabled={!canManageMembership}
+                    >
+                      Synkroniser nå
+                    </Button>
+                  </PermissionTooltip>
                 </Group>
               </Stack>
             </Stack>

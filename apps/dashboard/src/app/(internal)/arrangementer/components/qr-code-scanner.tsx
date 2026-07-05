@@ -9,9 +9,10 @@ import { openQRCodeScannedModal } from "./qr-code-scanned-modal"
 
 interface QrCodeScannerProps {
   attendance: Attendance
+  disabled?: boolean
 }
 
-export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
+export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) => {
   const [scannerOpen, { toggle: toggleScanner }] = useDisclosure(false)
   const [videoReady, setVideoReady] = useState(false)
   const paused = useRef(false)
@@ -66,6 +67,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance }) => {
       <Group>
         <Button
           onClick={handleToggle}
+          disabled={disabled}
           leftSection={scannerOpen ? <IconQrcodeOff size={20} /> : <IconQrcode size={20} />}
         >
           {scannerOpen ? "Lukk scanner" : "Scan QR-koder"}
