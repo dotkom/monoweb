@@ -18,6 +18,7 @@ import {
   SelectValue,
   Text,
   Textarea,
+  Title,
   cn,
 } from "@dotkomonline/ui"
 import { IconInfoCircle, IconUserMinus, IconX } from "@tabler/icons-react"
@@ -43,41 +44,40 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent
-        className="relative flex flex-col overflow-hidden bg-white"
-        onOutsideClick={() => setOpen(false)}
-      >
+      <AlertDialogContent size="lg" initialFocus={false} onOutsideClick={() => setOpen(false)}>
         <div className="flex flex-row gap-4 justify-between">
-          <AlertDialogTitle className="text-2xl font-bold">Avmelding</AlertDialogTitle>
+          <AlertDialogTitle asChild>
+            <Title element="h1" size="lg">
+              Avmelding
+            </Title>
+          </AlertDialogTitle>
           <AlertDialogCancel>
             <IconX className="size-[1.25em]" />
           </AlertDialogCancel>
         </div>
-        <AlertDialogDescription className="mb-4">
-          <div className="flex flex-col gap-3">
-            <Text className="text-sm">Er du sikker på at du vil melde deg av arrangementet?</Text>
-            {hasCompanyOrganizer && (
-              <div className="flex flex-col gap-3 rounded-lg border bg-yellow-50 border-yellow-200 dark:border-yellow-700 dark:bg-yellow-900/20 p-2 -mx-2">
-                <div className="flex flex-row gap-1 items-center">
-                  <IconInfoCircle className="size-3.5 text-yellow-700 dark:text-yellow-500" />
-                  <Text className="text-xs text-yellow-700 dark:text-yellow-500">
-                    Dette arrangementet er i samarbeid med en bedrift.
-                  </Text>
-                </div>
+        <div className="mb-4 flex flex-col gap-3">
+          <AlertDialogDescription>Er du sikker på at du vil melde deg av arrangementet?</AlertDialogDescription>
 
-                <Text className="text-sm">
-                  Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
-                  hovedinntektskildene til linjeforeningen.
-                </Text>
-
-                <Text className="text-sm">
-                  Avmelding like før arrangementstart kan føre til at det blir vanskeligere å finne samarbeid i
-                  fremtiden.
+          {hasCompanyOrganizer && (
+            <div className="flex flex-col gap-3 rounded-lg border bg-yellow-50 border-yellow-200 dark:border-yellow-700 dark:bg-yellow-900/20 p-2 -mx-2">
+              <div className="flex flex-row gap-1 items-center">
+                <IconInfoCircle className="size-3.5 text-yellow-700 dark:text-yellow-500" />
+                <Text element="span" className="text-xs text-yellow-700 dark:text-yellow-500">
+                  Dette arrangementet er i samarbeid med en bedrift.
                 </Text>
               </div>
-            )}
-          </div>
-        </AlertDialogDescription>
+
+              <Text element="span" className="text-sm">
+                Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
+                hovedinntektskildene til linjeforeningen.
+              </Text>
+
+              <Text element="span" className="text-sm">
+                Avmelding like før arrangementstart kan føre til at det blir vanskeligere å finne samarbeid i fremtiden.
+              </Text>
+            </div>
+          )}
+        </div>
 
         <DeregisterForm
           unregisterForAttendance={unregisterForAttendance}
@@ -133,7 +133,11 @@ const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
                 *
               </Text>
             </Label>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              value={field.value ?? null}
+              onValueChange={(selectedValue) => field.onChange(selectedValue ?? undefined)}
+              items={DEREGISTER_REASON_TYPE_OPTIONS}
+            >
               <SelectTrigger
                 id="type"
                 className={cn(
@@ -176,23 +180,15 @@ const DeregisterForm = ({ unregisterForAttendance, setOpen, open }: Props) => {
       </div>
 
       <div className="flex flex-row gap-4 justify-end items-center">
-        <Button
-          variant="ghost"
-          className="rounded-lg px-4 py-3 min-h-16"
-          type="button"
-          autoFocus
-          onClick={() => setOpen(false)}
-        >
+        <Button variant="ghost" size="lg" type="button" onClick={() => setOpen(false)}>
           Avbryt
         </Button>
 
         <Button
-          className={cn(
-            "rounded-lg h-fit min-h-16 flex-row gap-1",
-            form.formState.isValid
-              ? "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800"
-              : "bg-gray-200 dark:bg-stone-700"
-          )}
+          type="submit"
+          variant={form.formState.isValid ? "default" : "outline"}
+          color={form.formState.isValid ? "red" : "gray"}
+          size="lg"
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           <IconUserMinus className="size-[1.25em]" />

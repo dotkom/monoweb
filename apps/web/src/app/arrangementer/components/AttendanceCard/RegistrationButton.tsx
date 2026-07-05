@@ -2,12 +2,11 @@
 
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
-import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
-import { DeregisterModal, type DeregisterReasonFormResult } from "../DeregisterModal"
+import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { deregistrationRejectionMessages } from "./deregistrationRejectionMessages"
 import { registrationRejectionMessages } from "./registrationRejectionMessages"
 
@@ -124,9 +123,9 @@ interface RegistrationButtonProps {
   attendance: Attendance
   registrationAvailability: RegistrationAvailability | undefined
   user: User | null
-  event: Event
   isLoading: boolean
   turnstileStatus: TurnstileStatus
+  setDeregisterModalOpen: (open: boolean) => void
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -135,11 +134,10 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   attendance,
   registrationAvailability,
   user,
-  event,
   isLoading,
   turnstileStatus,
+  setDeregisterModalOpen,
 }) => {
-  const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
   const [confirmGracePeriodDeregister, setConfirmDeregister] = useState(false)
 
   const attendee = getAttendee(attendance, user)
@@ -259,18 +257,5 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     )
   }
 
-  return (
-    <>
-      {actionButton}
-      {attendee && deregistration?.requiresDeregisterReason && (
-        <DeregisterModal
-          open={deregisterModalOpen}
-          setOpen={setDeregisterModalOpen}
-          event={event}
-          unregisterForAttendance={unregisterForAttendance}
-          attendee={attendee}
-        />
-      )}
-    </>
-  )
+  return actionButton
 }

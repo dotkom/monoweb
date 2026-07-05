@@ -366,9 +366,9 @@ export const AttendanceCard = ({
         attendance={attendance}
         registrationAvailability={registrationAvailability}
         user={user}
-        event={event}
         isLoading={isRegisterActionPending}
         turnstileStatus={turnstileStatus}
+        setDeregisterModalOpen={setDeregisterModalOpen}
       />
 
       {requiresTurnstile && (

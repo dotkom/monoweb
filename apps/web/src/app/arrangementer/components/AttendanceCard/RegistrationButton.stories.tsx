@@ -2,7 +2,6 @@ import {
   createAttendanceWithReservedUser,
   createMockAttendance,
   createMockDeregistrationAvailability,
-  createMockEvent,
   createMockPunishment,
   createMockRegistrationAvailability,
   createMockUser,
@@ -15,7 +14,6 @@ const noop = () => {}
 const baseProps = {
   registerForAttendance: noop,
   unregisterForAttendance: noop,
-  event: createMockEvent(),
   isLoading: false,
   turnstileStatus: "verified" as const,
   setDeregisterModalOpen: noop,
