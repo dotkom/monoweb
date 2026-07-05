@@ -24,7 +24,7 @@ const getButtonColor = (
   hasMergeDelay: boolean
 ) => {
   if (disabled) {
-    return "bg-gray-200 dark:bg-stone-700 disabled:hover:bg-gray-200 dark:disabled:hover:bg-stone-700"
+    return "bg-gray-200 dark:bg-stone-700"
   }
 
   if (attendee) {
