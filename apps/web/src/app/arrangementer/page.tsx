@@ -42,6 +42,11 @@ import { useEventsView } from "./hooks/useEventsView"
 import type { EventsView } from "./hooks/useEventsViewNavigation"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
 
+const calendarViewOptions = [
+  { value: "month", label: "Måned" },
+  { value: "week", label: "Uke" },
+] as const
+
 const EventPage = () => {
   const { view, isList, isCalendar } = useEventsView()
   const { navigateToView } = useEventsViewNavigation()
@@ -235,7 +240,11 @@ const EventPage = () => {
               </ToggleGroup>
 
               <div className="xs:hidden">
-                <Select value={view} onValueChange={(v) => navigateToView(v as EventsView)}>
+                <Select
+                  value={view}
+                  onValueChange={(selectedView) => navigateToView(selectedView as EventsView)}
+                  items={calendarViewOptions}
+                >
                   <SelectTrigger className="h-11.5 rounded-lg min-w-26 font-medium dark:border-none">
                     <SelectValue />
                   </SelectTrigger>
