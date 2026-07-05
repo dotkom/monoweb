@@ -222,41 +222,49 @@ const CheckboxQuestion = ({ question, index, control }: QuestionProps) => (
   />
 )
 
-const SelectQuestion = ({ question, index, control }: QuestionProps) => (
-  <Controller
-    control={control}
-    name={`answers.${index}.selectedOptions`}
-    rules={{
-      validate: (val) => (!question.required || val?.length > 0 ? true : "Du må velge et alternativ"),
-    }}
-    render={({ field: { onChange, value }, fieldState }) => (
-      <InputWrapper error={fieldState.error?.message}>
-        <Select
-          value={value?.[0]?.id ?? ""}
-          name={question.id}
-          onValueChange={(id) => onChange([question.options.find((o) => o.id === id)])}
-          required={question.required}
-        >
-          <SelectTrigger className="w-full transition-all bg-gray-50 dark:bg-stone-500" id={question.id}>
-            <SelectValue placeholder="Velg et alternativ" className="transition-all" />
-          </SelectTrigger>
-          <SelectContent>
-            {!question.required && (
-              <SelectItem value="0">
-                <Text className="text-gray-500 text-xs font-medium">Fjern valg</Text>
-              </SelectItem>
-            )}
-            {question.options.map((option) => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </InputWrapper>
-    )}
-  />
-)
+const SelectQuestion = ({ question, index, control }: QuestionProps) => {
+  const selectItems = [
+    ...(!question.required ? [{ value: "0", label: "Fjern valg" }] : []),
+    ...question.options.map((option) => ({ value: option.id, label: option.name })),
+  ]
+
+  return (
+    <Controller
+      control={control}
+      name={`answers.${index}.selectedOptions`}
+      rules={{
+        validate: (val) => (!question.required || val?.length > 0 ? true : "Du må velge et alternativ"),
+      }}
+      render={({ field: { onChange, value }, fieldState }) => (
+        <InputWrapper error={fieldState.error?.message}>
+          <Select
+            value={value?.[0]?.id ?? ""}
+            name={question.id}
+            onValueChange={(id) => onChange([question.options.find((o) => o.id === id)])}
+            required={question.required}
+            items={selectItems}
+          >
+            <SelectTrigger className="w-full transition-all bg-gray-50 dark:bg-stone-500" id={question.id}>
+              <SelectValue placeholder="Velg et alternativ" className="transition-all" />
+            </SelectTrigger>
+            <SelectContent>
+              {!question.required && (
+                <SelectItem value="0">
+                  <Text className="text-gray-500 text-xs font-medium">Fjern valg</Text>
+                </SelectItem>
+              )}
+              {question.options.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </InputWrapper>
+      )}
+    />
+  )
+}
 
 const RatingQuestion = ({ question, index, control }: QuestionProps) => (
   <Controller

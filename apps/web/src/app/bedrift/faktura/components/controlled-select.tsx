@@ -20,7 +20,14 @@ export function ControlledSelect<TFieldValues extends FieldValues>({
   return (
     <Controller
       render={({ field }) => (
-        <Select value={field.value} onValueChange={field.onChange}>
+        <Select
+          value={field.value}
+          onValueChange={field.onChange}
+          items={options.map((option) => ({
+            value: option.value,
+            label: option.children,
+          }))}
+        >
           <SelectTrigger className="min-w-25">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>

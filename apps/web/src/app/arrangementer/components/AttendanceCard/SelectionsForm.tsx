@@ -75,6 +75,10 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
                   onChange(newValue)
                   onSubmit(getValues("attendeeOptions"))
                 }}
+                items={attendance.selections[index].options.map(({ id, name }) => ({
+                  value: id,
+                  label: name,
+                }))}
               >
                 <SelectTrigger
                   className={cn(
