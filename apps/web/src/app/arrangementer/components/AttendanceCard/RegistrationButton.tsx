@@ -7,14 +7,45 @@ import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
-import { DeregisterModal } from "../DeregisterModal"
-import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { DeregisterModal, type DeregisterReasonFormResult } from "../DeregisterModal"
 import { deregistrationRejectionMessages } from "./deregistrationRejectionMessages"
 import { registrationRejectionMessages } from "./registrationRejectionMessages"
 
 const DEREGISTER_BUTTON_COLOR = "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800" as const
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
+
+export type TurnstileStatus = "loading" | "ready" | "verified" | "failed" | "not-required"
+
+export const getTurnstileStatus = ({
+  requiresTurnstile,
+  turnstileToken,
+  turnstileHasFailed,
+  turnstileHasLoaded,
+}: {
+  requiresTurnstile: boolean
+  turnstileToken: string | null
+  turnstileHasFailed: boolean
+  turnstileHasLoaded: boolean
+}): TurnstileStatus => {
+  if (!requiresTurnstile) {
+    return "not-required"
+  }
+
+  if (turnstileToken) {
+    return "verified"
+  }
+
+  if (turnstileHasFailed) {
+    return "failed"
+  }
+
+  if (turnstileHasLoaded) {
+    return "ready"
+  }
+
+  return "loading"
+}
 
 const getButtonColor = (
   disabled: boolean,
@@ -40,7 +71,7 @@ const getButtonColor = (
 
 const getDisabledText = (
   registrationAvailability: RegistrationAvailability | undefined,
-  hasTurnstileToken: boolean,
+  turnstileStatus: TurnstileStatus,
   isLoggedIn: boolean
 ): string | null => {
   if (!isLoggedIn) {
@@ -68,7 +99,15 @@ const getDisabledText = (
     return null
   }
 
-  if (!hasTurnstileToken) {
+  if (turnstileStatus === "loading") {
+    return registrationRejectionMessages.TURNSTILE_LOADING
+  }
+
+  if (turnstileStatus === "failed") {
+    return registrationRejectionMessages.TURNSTILE_FAILED
+  }
+
+  if (turnstileStatus === "ready") {
     return registrationRejectionMessages.MISSING_TURNSTILE_TOKEN
   }
 
@@ -87,8 +126,7 @@ interface RegistrationButtonProps {
   user: User | null
   event: Event
   isLoading: boolean
-  turnstileHasLoaded: boolean
-  hasTurnstileToken: boolean
+  turnstileStatus: TurnstileStatus
 }
 
 export const RegistrationButton: FC<RegistrationButtonProps> = ({
@@ -99,8 +137,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   user,
   event,
   isLoading,
-  turnstileHasLoaded,
-  hasTurnstileToken,
+  turnstileStatus,
 }) => {
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
   const [confirmGracePeriodDeregister, setConfirmDeregister] = useState(false)
@@ -123,7 +160,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
-  const disabledText = getDisabledText(registrationAvailability, hasTurnstileToken, Boolean(user))
+  const disabledText = getDisabledText(registrationAvailability, turnstileStatus, Boolean(user))
   const isAvailabilityPending = Boolean(user) && registrationAvailability === undefined
   const isButtonDisabled = Boolean(disabledText) || isLoading || isAvailabilityPending
 
@@ -149,9 +186,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
     <>
-      {!turnstileHasLoaded && registrationAvailability?.deregistration === null ? (
-        <IconLoader2 className="shrink-0 size-[1.25em] animate-spin" />
-      ) : isButtonDisabled ? (
+      {isButtonDisabled ? (
         <IconLock className="shrink-0 size-[1.25em]" />
       ) : attendee ? (
         <IconUserMinus className="shrink-0 size-[1.25em]" />

@@ -17,8 +17,8 @@ const baseProps = {
   unregisterForAttendance: noop,
   event: createMockEvent(),
   isLoading: false,
-  turnstileHasLoaded: true,
-  hasTurnstileToken: true,
+  turnstileStatus: "verified" as const,
+  setDeregisterModalOpen: noop,
 }
 
 export default {
@@ -117,7 +117,29 @@ export const AllStates = () => {
           attendance={createMockAttendance()}
           registrationAvailability={createMockRegistrationAvailability()}
           user={user}
-          hasTurnstileToken={false}
+          turnstileStatus="ready"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Turnstile loading</Text>
+        <RegistrationButton
+          {...baseProps}
+          attendance={createMockAttendance()}
+          registrationAvailability={createMockRegistrationAvailability()}
+          user={user}
+          turnstileStatus="loading"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Turnstile failed</Text>
+        <RegistrationButton
+          {...baseProps}
+          attendance={createMockAttendance()}
+          registrationAvailability={createMockRegistrationAvailability()}
+          user={user}
+          turnstileStatus="failed"
         />
       </div>
 

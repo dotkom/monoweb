@@ -18,6 +18,7 @@ import Link from "next/link"
 import Turnstile from "react-turnstile"
 import { useEffect, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { DeregisterModal } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
@@ -26,13 +27,15 @@ import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
-import { RegistrationButton } from "./RegistrationButton"
+import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
+
+const TURNSTILE_LOAD_TIMEOUT_MS = secondsToMilliseconds(15)
 
 interface AttendanceCardProps {
   initialAttendance: Attendance
@@ -58,10 +61,11 @@ export const AttendanceCard = ({
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
+  const [turnstileHasFailed, setTurnstileHasFailed] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [hideTurnstile, setHideTurnstile] = useState(false)
 
-  const { data: attendance, isLoading: attendanceLoading } = useQuery(
+  const { data: attendance } = useQuery(
     trpc.event.attendance.getAttendance.queryOptions(
       {
         id: initialAttendance.id,
@@ -74,7 +78,7 @@ export const AttendanceCard = ({
     )
   )
 
-  const { data: registrationAvailability, isLoading: registrationAvailabilityLoading } = useQuery(
+  const { data: registrationAvailability } = useQuery(
     trpc.event.attendance.getRegistrationAvailability.queryOptions(
       {
         attendanceId: initialAttendance.id,
@@ -101,6 +105,28 @@ export const AttendanceCard = ({
       setHideTurnstile(false)
     }
   }, [turnstileToken])
+
+  const attendee = getAttendee(attendance, user)
+  const deregistration = registrationAvailability?.deregistration ?? null
+  const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
+
+  useEffect(() => {
+    if (!requiresTurnstile) {
+      return
+    }
+
+    if (turnstileHasLoaded || turnstileHasFailed || turnstileToken) {
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      setTurnstileHasFailed(true)
+    }, TURNSTILE_LOAD_TIMEOUT_MS)
+
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [requiresTurnstile, turnstileHasLoaded, turnstileHasFailed, turnstileToken])
 
   useSubscription(
     trpc.event.attendance.onRegisterChange.subscriptionOptions(
@@ -177,7 +203,6 @@ export const AttendanceCard = ({
     )
   )
 
-  const attendee = getAttendee(attendance, user)
   const punishment = registrationAvailability?.punishment ?? null
   const chargeScheduleDate = registrationAvailability?.deregistration?.chargeScheduleDate ?? null
 
@@ -189,6 +214,7 @@ export const AttendanceCard = ({
   }, [attendee])
 
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
+  const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
 
   const registerMutation = useRegisterMutation({
     onSuccess: () => {
@@ -247,16 +273,29 @@ export const AttendanceCard = ({
   }
 
   const handleTurnstileVerify = (token: string) => {
+    setTurnstileHasFailed(false)
     setTurnstileToken(token)
   }
 
   const handleTurnstileError = (error: string) => {
     console.error("Turnstile error:", error)
+    setTurnstileHasFailed(true)
     setTurnstileToken(null)
   }
 
-  const isLoading =
-    attendanceLoading || registrationAvailabilityLoading || deregisterMutation.isPending || registerMutation.isPending
+  const handleTurnstileLoad = () => {
+    setTurnstileHasFailed(false)
+    setTurnstileHasLoaded(true)
+  }
+
+  const turnstileStatus = getTurnstileStatus({
+    requiresTurnstile,
+    turnstileToken,
+    turnstileHasFailed,
+    turnstileHasLoaded,
+  })
+
+  const isRegisterActionPending = registerMutation.isPending || deregisterMutation.isPending
 
   const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
 
@@ -271,6 +310,16 @@ export const AttendanceCard = ({
       <Title element="h2" size="lg">
         Påmelding
       </Title>
+
+      {attendee && deregistration?.requiresDeregisterReason && (
+        <DeregisterModal
+          open={deregisterModalOpen}
+          setOpen={setDeregisterModalOpen}
+          event={event}
+          unregisterForAttendance={deregisterForAttendance}
+          attendee={attendee}
+        />
+      )}
 
       <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
 
@@ -318,12 +367,11 @@ export const AttendanceCard = ({
         registrationAvailability={registrationAvailability}
         user={user}
         event={event}
-        isLoading={isLoading}
-        turnstileHasLoaded={turnstileHasLoaded}
-        hasTurnstileToken={Boolean(turnstileToken)}
+        isLoading={isRegisterActionPending}
+        turnstileStatus={turnstileStatus}
       />
 
-      {user !== null && !attendee && !isPast(attendance.registerEnd) && (
+      {requiresTurnstile && (
         <div className={cn({ hidden: hideTurnstile }, "relative rounded-md bg-gray-200 dark:bg-stone-700")}>
           <Turnstile
             sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
@@ -332,7 +380,7 @@ export const AttendanceCard = ({
             onError={handleTurnstileError}
             onVerify={handleTurnstileVerify}
             onExpire={() => setTurnstileToken(null)}
-            onLoad={() => setTurnstileHasLoaded(true)}
+            onLoad={handleTurnstileLoad}
             size="flexible"
             className="h-[4.05rem]" // Without this a padding occurs below the widget
           />
