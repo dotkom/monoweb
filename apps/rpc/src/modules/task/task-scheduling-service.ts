@@ -7,6 +7,7 @@ import type { RecurringTaskId, Task, TaskId } from "./task"
 import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 import type { TaskService } from "./task-service"
+import type { EventId } from "../event/event"
 
 export interface TaskSchedulingService {
   /**
@@ -29,6 +30,8 @@ export interface TaskSchedulingService {
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
+  findEventRegistrationNotificationTask(handle: DBHandle, attendanceId: AttendanceId): Promise<Task | null>
+  findEventReminderNotificationTask(handle: DBHandle, eventId: EventId): Promise<Task | null>
 }
 
 export function getLocalTaskSchedulingService(
@@ -79,6 +82,14 @@ export function getLocalTaskSchedulingService(
 
     async findVerifyFeedbackAnsweredTask(handle, feedbackFormId) {
       return await taskRepository.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
+    },
+
+    async findEventRegistrationNotificationTask(handle, attendanceId) {
+      return await taskRepository.findEventRegistrationNotificationTask(handle, attendanceId)
+    },
+
+    async findEventReminderNotificationTask(handle, eventId) {
+      return await taskRepository.findEventReminderNotificationTask(handle, eventId)
     },
   }
 }
