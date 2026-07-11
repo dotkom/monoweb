@@ -13,13 +13,18 @@ export const NotificationEditCard: FC = () => {
   const FormComponent = useNotificationWriteForm({
     label: "Oppdater varsling",
     disabled: !canManage,
-    onSubmit: (data) => {
+    onSubmit: ({ recipientIds: _recipientIds, ...data }) => {
       edit.mutate({ id: notification.id, input: data })
     },
     defaultValues: {
-      ...notification,
+      title: notification.title,
       shortDescription: notification.shortDescription ?? "",
+      content: notification.content,
+      type: notification.type,
       payload: notification.payload ?? "",
+      payloadType: notification.payloadType,
+      actorGroupId: notification.actorGroupId,
+      taskId: notification.taskId,
       recipientIds: [],
     },
   })

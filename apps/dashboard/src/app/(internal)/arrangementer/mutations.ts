@@ -567,7 +567,7 @@ export const useUpdateAttendeeReservedMutation = () => {
   )
 }
 
-export const useCreateEventNotificationMutation = (eventId: string) => {
+export const useCreateEventNotificationMutation = (eventPath: string) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
@@ -581,7 +581,7 @@ export const useCreateEventNotificationMutation = (eventId: string) => {
       },
       onSuccess: async (data) => {
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findManyByPayload.queryKey({ payloadType: "EVENT", payload: eventId }),
+          queryKey: trpc.notification.findManyByPayload.queryKey({ payloadType: "EVENT", payload: eventPath }),
         })
         notification.complete({
           title: "Varsling opprettet",

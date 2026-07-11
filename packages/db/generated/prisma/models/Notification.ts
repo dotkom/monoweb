@@ -1435,7 +1435,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     content: string
     type: $Enums.NotificationType
     /**
-     * Can be an ID or a URL depending on the payload type.
+     * Can be an id or a URL depending on the payload type.
      */
     payload: string | null
     payloadType: $Enums.NotificationPayloadType

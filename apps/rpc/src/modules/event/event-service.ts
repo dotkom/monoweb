@@ -103,12 +103,14 @@ export function getEventService(
       const createdEvent = await eventRepository.create(handle, data)
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_EVENT")
+      const shortDescription = `Et nytt arrangement "${createdEvent.title}" har blitt publisert.`
       await notificationService.create(
         handle,
         recipients,
         "NEW_EVENT",
         `Nytt arrangement: ${createdEvent.title}`,
-        `Et nytt arrangement "${createdEvent.title}" har blitt publisert.`,
+        shortDescription,
+        shortDescription,
         createdEvent.hostingGroups[0]?.slug ?? null,
         "EVENT",
         `${createEventSlug(createdEvent.title)}/${createdEvent.id}`
@@ -142,12 +144,14 @@ export function getEventService(
             "EVENT_UPDATE",
             afterEvent.id
           )
+          const shortDescription = `Arrangementet "${afterEvent.title}" har blitt oppdatert.`
           await notificationService.create(
             handle,
             recipients,
             "EVENT_UPDATE",
             `Arrangement oppdatert: ${afterEvent.title}`,
-            `Arrangementet "${afterEvent.title}" har blitt oppdatert.`,
+            shortDescription,
+            shortDescription,
             afterEvent.hostingGroups[0]?.slug ?? null,
             "EVENT",
             `${createEventSlug(afterEvent.title)}/${afterEvent.id}`

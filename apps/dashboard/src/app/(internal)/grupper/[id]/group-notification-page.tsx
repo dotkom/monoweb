@@ -12,12 +12,14 @@ import Link from "next/link"
 import { type FC, useMemo } from "react"
 import { useNotificationsByPayloadQuery } from "../../arrangementer/queries"
 import { openCreateGroupNotificationModal } from "../modals/create-group-notification-modal"
+import { useGroupMembersAllQuery } from "../queries"
 import { useGroupDetailsContext } from "./provider"
 
 export const GroupNotificationPage: FC = () => {
   const { group } = useGroupDetailsContext()
   const { canEdit } = useGroupPermissions()
   const { notifications, isLoading } = useNotificationsByPayloadQuery("GROUP", group.slug)
+  const { members } = useGroupMembersAllQuery(group.slug)
 
   const columnHelper = createColumnHelper<Notification>()
 
@@ -84,13 +86,16 @@ export const GroupNotificationPage: FC = () => {
 
         <Box>
           <Title order={3}>Opprett varsling</Title>
-          <PermissionTooltip
-            allowed={canEdit}
-            label="Du kan ikke opprette varslinger for denne gruppen"
-          >
+          <PermissionTooltip allowed={canEdit} label="Du kan ikke opprette varslinger for denne gruppen">
             <Button
               mt="md"
-              onClick={openCreateGroupNotificationModal({ groupSlug: group.slug })}
+              onClick={() =>
+                openCreateGroupNotificationModal({
+                  groupSlug: group.slug,
+                  groupLabel: group.abbreviation,
+                  members,
+                })
+              }
               disabled={!canEdit}
             >
               Legg til ny varsling
