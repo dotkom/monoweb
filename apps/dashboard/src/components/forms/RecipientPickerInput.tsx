@@ -14,9 +14,10 @@ import type { InputFieldContext, InputProducerResult } from "./types"
 interface RecipientPickerProps {
   value: string[]
   onChange: (ids: string[]) => void
+  disabled?: boolean
 }
 
-export function RecipientPickerInput({ value, onChange }: RecipientPickerProps) {
+export function RecipientPickerInput({ value, onChange, disabled }: RecipientPickerProps) {
   const [userSearch, setUserSearch] = useState("")
   const [debouncedSearch] = useDebouncedValue(userSearch, 300)
   const [selectedGroupSlug, setSelectedGroupSlug] = useState<string | null>(null)
@@ -67,6 +68,7 @@ export function RecipientPickerInput({ value, onChange }: RecipientPickerProps) 
         placeholder="Søk etter navn eller e-post"
         rightSection={usersLoading ? <Loader size="xs" /> : undefined}
         nothingFoundMessage={debouncedSearch.length > 0 ? "Ingen brukere funnet" : "Søk for å finne brukere"}
+        disabled={disabled}
       />
 
       <Group align="flex-end" gap="xs">
@@ -79,10 +81,11 @@ export function RecipientPickerInput({ value, onChange }: RecipientPickerProps) 
           onChange={setSelectedGroupSlug}
           searchable
           clearable
+          disabled={disabled}
         />
         <Button
           variant="light"
-          disabled={selectedGroupSlug === null || groupUserIdsLoading}
+          disabled={disabled || selectedGroupSlug === null || groupUserIdsLoading}
           onClick={() => append(groupUserIds ?? [])}
         >
           {groupUserIdsLoading ? <Loader size="xs" /> : "Legg til aktive"}
@@ -101,10 +104,11 @@ export function RecipientPickerInput({ value, onChange }: RecipientPickerProps) 
           searchable
           clearable
           rightSection={eventsLoading ? <Loader size="xs" /> : undefined}
+          disabled={disabled}
         />
         <Button
           variant="light"
-          disabled={attendanceId === null || attendeeUserIdsLoading}
+          disabled={disabled || attendanceId === null || attendeeUserIdsLoading}
           onClick={() => append(attendeeUserIds ?? [])}
         >
           {attendeeUserIdsLoading ? <Loader size="xs" /> : "Legg til påmeldte"}
@@ -116,7 +120,13 @@ export function RecipientPickerInput({ value, onChange }: RecipientPickerProps) 
           <Text size="sm" c="dimmed">
             {value.length} mottaker(e) valgt
           </Text>
-          <ActionIcon variant="subtle" color="red" size="sm" onClick={() => onChange([])}>
+          <ActionIcon
+            variant="subtle"
+            color="red"
+            size="sm"
+            onClick={() => onChange([])}
+            disabled={disabled}
+          >
             <IconX size={14} />
           </ActionIcon>
         </Group>
