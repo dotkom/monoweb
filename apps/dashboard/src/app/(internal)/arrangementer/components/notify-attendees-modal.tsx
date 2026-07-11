@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@hookform/error-message"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@/lib/zod-resolver"
 import type { Attendee } from "@dotkomonline/rpc/attendance"
 import type { EventId } from "@dotkomonline/rpc/event"
 import { Button, ScrollArea, Stack, Table, Textarea } from "@mantine/core"

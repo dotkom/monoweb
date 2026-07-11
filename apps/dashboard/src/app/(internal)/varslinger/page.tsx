@@ -8,7 +8,7 @@ import { useCreateNotificationModal } from "./modals/create-notification"
 import { useNotificationAllInfiniteQuery } from "./queries"
 
 export default function NotificationPage() {
-  const { notifications, isLoading: isNotificationsLoading } = useNotificationAllInfiniteQuery()
+  const { notifications, isLoading: isNotificationsLoading, fetchNextPage } = useNotificationAllInfiniteQuery()
   const open = useCreateNotificationModal()
   const { canManageNotifications } = useAuthorization()
   const canManage = canManageNotifications()
@@ -17,16 +17,13 @@ export default function NotificationPage() {
     <Skeleton visible={isNotificationsLoading}>
       <Stack>
         <Box>
-          <PermissionTooltip
-            allowed={canManage}
-            label="Du har ikke tilgang til å opprette varslinger"
-          >
+          <PermissionTooltip allowed={canManage} label="Du har ikke tilgang til å opprette varslinger">
             <Button onClick={open} disabled={!canManage}>
               Opprett varsling
             </Button>
           </PermissionTooltip>
         </Box>
-        <AllNotificationsTable notifications={notifications} />
+        <AllNotificationsTable notifications={notifications} onLoadMore={fetchNextPage} />
       </Stack>
     </Skeleton>
   )
