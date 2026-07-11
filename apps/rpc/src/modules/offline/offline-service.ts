@@ -53,12 +53,14 @@ export function getOfflineService(
       const createdOffline = await offlineRepository.create(handle, data)
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_OFFLINE")
+      const shortDescription = `En ny offline "${createdOffline.title}" har blitt publisert.`
       await notificationService.create(
         handle,
         recipients,
         "NEW_OFFLINE",
         `Ny offline: ${createdOffline.title}`,
-        `En ny offline "${createdOffline.title}" har blitt publisert.`,
+        shortDescription,
+        shortDescription,
         null,
         "OFFLINE",
         createdOffline.id
