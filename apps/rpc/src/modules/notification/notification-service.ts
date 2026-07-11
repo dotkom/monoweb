@@ -1,16 +1,18 @@
 import type EventEmitter from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import type { UserId } from "../user/user"
+import type { NotificationPermissionsRepository } from "../user/notification-permissions-repository"
 import type { NotificationRepository } from "./notification-repository"
 import type { Pageable } from "@dotkomonline/utils"
-import type { UserRepository } from "../user/user-repository"
 import type { AttendanceRepository } from "../event/attendance-repository"
+import { getNotificationPermissionField, shouldBypassNotificationPreferences } from "./notification-preferences"
 import type {
   Notification,
   NotificationId,
   NotificationPayloadType,
   NotificationRecipient,
   NotificationRecipientId,
+  NotificationRecipients,
   NotificationType,
   NotificationWrite,
   UserNotification,
@@ -30,9 +32,11 @@ export interface NotificationService {
     notificationType: NotificationType,
     title: string,
     shortDescription: string,
+    content: string,
     actorGroupId?: string | null,
     payloadType?: NotificationPayloadType,
-    payload?: string | null
+    payload?: string | null,
+    createdById?: UserId | null
   ): Promise<Notification>
   findManyByPayload(
     handle: DBHandle,
@@ -59,16 +63,13 @@ export interface NotificationService {
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<boolean>
-  findRecipientsByNotificationId(
-    handle: DBHandle,
-    notificationId: NotificationId
-  ): Promise<Array<{ id: string; readAt: Date | null; userId: string; user: { id: string; name: string | null } }>>
+  findRecipientsByNotificationId(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipients>
 }
 
 export function getNotificationService(
   notificationRepository: NotificationRepository,
-  userRepository: UserRepository,
   attendanceRepository: AttendanceRepository,
+  notificationPermissionsRepository: NotificationPermissionsRepository,
   eventEmitter: EventEmitter
 ): NotificationService {
   return {
@@ -80,17 +81,29 @@ export function getNotificationService(
       return await notificationRepository.findMany(handle, page)
     },
 
-    async create(handle, recipientIds, notificationType, title, shortDescription, actorGroupId, payloadType, payload) {
+    async create(
+      handle,
+      recipientIds,
+      notificationType,
+      title,
+      shortDescription,
+      content,
+      actorGroupId,
+      payloadType,
+      payload,
+      createdById
+    ) {
       const notification = await notificationRepository.createWithRecipients(handle, {
         title,
         shortDescription,
-        content: shortDescription ?? title,
+        content: content || shortDescription || title,
         type: notificationType,
         payload: payload ?? null,
         payloadType: payloadType ?? "NONE",
         actorGroupId: actorGroupId ?? null,
         taskId: null,
         recipientIds,
+        createdById: createdById ?? null,
       })
       for (const userId of recipientIds) {
         eventEmitter.emit("notification:new", { userId, notification })
@@ -99,15 +112,21 @@ export function getNotificationService(
     },
 
     async retrieveIntendedRecipientIds(handle, notificationType, eventId) {
-      const eventAttendeeTypes: NotificationType[] = ["EVENT_REGISTRATION", "EVENT_REMINDER", "EVENT_UPDATE"]
+      if (shouldBypassNotificationPreferences(notificationType)) {
+        return notificationPermissionsRepository.findAllUserIds(handle)
+      }
+
+      const permissionField = getNotificationPermissionField(notificationType)
+      const eventAttendeeTypes: NotificationType[] = ["EVENT_REMINDER", "EVENT_UPDATE"]
 
       if (eventAttendeeTypes.includes(notificationType) && eventId) {
         const attendance = await attendanceRepository.findAttendanceByEventId(handle, eventId)
-        return attendance?.attendees.map((a) => a.userId) ?? []
+        const candidateIds = attendance?.attendees.map((attendee) => attendee.userId) ?? []
+
+        return notificationPermissionsRepository.filterUserIdsByPreference(handle, candidateIds, permissionField)
       }
 
-      const users = await userRepository.findMany(handle, {}, { take: 10000 })
-      return users.map((u) => u.id)
+      return notificationPermissionsRepository.findUserIdsWithPreferenceEnabled(handle, permissionField)
     },
 
     async findManyByPayload(handle, payloadType, payload, page) {
@@ -123,7 +142,21 @@ export function getNotificationService(
     },
 
     async addRecipients(handle, notificationId, recipientIds) {
-      await notificationRepository.addRecipients(handle, notificationId, recipientIds)
+      const addedRecipients = await notificationRepository.addRecipients(handle, notificationId, recipientIds)
+
+      if (addedRecipients.length === 0) {
+        return
+      }
+
+      const notification = await notificationRepository.findById(handle, notificationId)
+
+      if (notification === null) {
+        return
+      }
+
+      for (const recipient of addedRecipients) {
+        eventEmitter.emit("notification:new", { userId: recipient.userId, notification })
+      }
     },
 
     async removeRecipients(handle, notificationId, recipientIds) {
@@ -151,7 +184,17 @@ export function getNotificationService(
     },
 
     async findRecipientsByNotificationId(handle, notificationId) {
-      return await notificationRepository.findRecipientsByNotificationId(handle, notificationId)
+      const [recipients, readCount, totalCount] = await Promise.all([
+        notificationRepository.findRecipientsByNotificationId(handle, notificationId),
+        notificationRepository.countReadRecipients(handle, notificationId),
+        notificationRepository.countRecipients(handle, notificationId),
+      ])
+
+      return {
+        recipients,
+        readCount,
+        unreadCount: totalCount - readCount,
+      }
     },
   }
 }
