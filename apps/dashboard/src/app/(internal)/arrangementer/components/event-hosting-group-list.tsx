@@ -1,42 +1,58 @@
-import type { Company } from "@dotkomonline/rpc/company"
-import type { Group } from "@dotkomonline/rpc/group"
-import { Anchor, Group as MantineGroup, Text } from "@mantine/core"
+import { Company } from "@dotkomonline/rpc/company"
+import { GroupTypeSchema, type Group } from "@dotkomonline/rpc/group"
+import { Anchor, Group as MantineGroup, Text, Tooltip } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"
+
+const MAX_GROUPS_TO_DISPLAY = 4 as const
+const LEEWAY = 1 as const
 
 export type EventHostingGroupListProps = {
   groups: Group[]
   companies: Company[]
 }
 
-/**
- * Component for displaying a list of groups that are hosting an event
- *
- * This list is strictly ordered based on the highest interest priority. The
- * order is companies then groups.
- */
+const getName = (group: Group | Company) => {
+  return "abbreviation" in group ? group.abbreviation : group.name
+}
+
 export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {
-  // Nobody is set as organizer yet
-  if (groups.length === 0 && companies.length === 0) {
+  const organizers = groups.filter((group) => group.type !== GroupTypeSchema.enum.INTEREST_GROUP)
+  const otherGroups = [...groups.filter((group) => group.type === GroupTypeSchema.enum.INTEREST_GROUP), ...companies]
+
+  if (organizers.length === 0) {
     return (
-      <Text c="dark" size="sm">
-        Ingen arrangører
+      <Text c="red" size="sm">
+        Ingen arrangører. Kontakt HS.
       </Text>
     )
   }
 
+  const maxSize =
+    organizers.length + otherGroups.length > MAX_GROUPS_TO_DISPLAY + LEEWAY
+      ? MAX_GROUPS_TO_DISPLAY
+      : MAX_GROUPS_TO_DISPLAY + LEEWAY
+
+  const groupsToDisplay = [...organizers, ...otherGroups].slice(0, maxSize)
+  const remainingGroups = [...organizers, ...otherGroups].slice(maxSize)
+
   return (
-    <MantineGroup gap="xs">
-      {companies.map((company) => (
-        <Anchor key={company.id} component={Link} size="sm" href={`/bedrifter/${company.slug}`}>
-          {company.name}
-        </Anchor>
-      ))}
-      {groups.map((group) => (
-        <Anchor key={group.slug} component={Link} size="sm" href={`/grupper/${group.slug}`}>
-          {group.abbreviation}
-        </Anchor>
-      ))}
+    <MantineGroup gap="sm">
+      {groupsToDisplay.map((group) => {
+        return (
+          <Anchor key={group.slug} component={Link} size="sm" href={`/grupper/${group.slug}`}>
+            {getName(group)}
+          </Anchor>
+        )
+      })}
+
+      {organizers.length > MAX_GROUPS_TO_DISPLAY + LEEWAY && (
+        <Tooltip label={remainingGroups.map((group) => getName(group)).join(", ")}>
+          <Text c="dimmed" size="sm">
+            +{remainingGroups.length}
+          </Text>
+        </Tooltip>
+      )}
     </MantineGroup>
   )
 }
