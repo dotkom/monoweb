@@ -173,6 +173,7 @@ export const GroupScalarFieldEnum = {
   slug: 'slug',
   abbreviation: 'abbreviation',
   name: 'name',
+  preferredDisplayName: 'preferredDisplayName',
   shortDescription: 'shortDescription',
   description: 'description',
   imageUrl: 'imageUrl',

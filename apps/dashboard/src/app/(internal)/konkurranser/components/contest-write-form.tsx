@@ -5,6 +5,7 @@ import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ContestWriteSchema } from "@dotkomonline/rpc/contest"
+import { getGroupDisplayName } from "@dotkomonline/types"
 import type { z } from "zod"
 import { validateContestWrite } from "../validation"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
@@ -65,7 +66,7 @@ export const useContestWriteForm = ({ onSubmit, disabled }: UseContestWriteFormP
       groups: createMultipleSelectInput({
         label: "Arrangørkomiteer",
         placeholder: "Velg én eller flere komiteer",
-        data: groups.map((g) => ({ value: g.slug, label: g.abbreviation })),
+        data: groups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) })),
         searchable: true,
         required: true,
         withAsterisk: true,
