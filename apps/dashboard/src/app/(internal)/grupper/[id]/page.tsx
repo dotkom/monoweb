@@ -3,10 +3,11 @@
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
-import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
+import { IconBell, IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { GroupEditCard } from "./edit-card"
 import { GroupEventPage } from "./group-event-page"
+import { GroupNotificationPage } from "./group-notification-page"
 import { GroupMembersPage } from "./members-page"
 import { useGroupDetailsContext } from "./provider"
 import { GroupRolesPage } from "./roles-page"
@@ -35,6 +36,12 @@ const SIDEBAR_LINKS = [
     label: "Arrangementer",
     slug: "arrangementer",
     component: GroupEventPage,
+  },
+  {
+    icon: IconBell,
+    label: "Varslinger",
+    slug: "varslinger",
+    component: GroupNotificationPage,
   },
 ] as const
 
