@@ -9,7 +9,7 @@ import {
   getFeedbackQuestionTypeName,
 } from "@dotkomonline/rpc/feedback-form"
 import { DragDropContext, Draggable, type DropResult, Droppable } from "@hello-pangea/dnd"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@/lib/zod-resolver"
 import {
   ActionIcon,
   Anchor,

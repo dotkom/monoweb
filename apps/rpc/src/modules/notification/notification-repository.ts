@@ -18,7 +18,10 @@ import { type Pageable, pageQuery } from "@dotkomonline/utils"
 export interface NotificationRepository {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
   findMany(handle: DBHandle, page: Pageable): Promise<Notification[]>
-  createWithRecipients(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
+  createWithRecipients(
+    handle: DBHandle,
+    notificationData: NotificationWrite & { createdById?: string | null }
+  ): Promise<Notification>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
@@ -71,10 +74,11 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async createWithRecipients(handle, data) {
-      const { recipientIds, ...notificationData } = data
+      const { recipientIds, createdById, ...notificationData } = data
       const notification = await handle.notification.create({
         data: {
           ...notificationData,
+          ...(createdById !== undefined ? { createdById } : {}),
           recipients: {
             createMany: {
               data: recipientIds.map((userId) => ({

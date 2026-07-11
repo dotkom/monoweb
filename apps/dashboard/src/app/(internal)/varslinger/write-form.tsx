@@ -1,8 +1,9 @@
 import { useFormBuilder } from "@/components/forms/Form"
+import { createRecipientPickerInput } from "@/components/forms/RecipientPickerInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
-import type { z } from "zod"
+import { z } from "zod"
 import {
   mapNotificationTypeToLabel,
   NotificationTypeSchema,
@@ -13,6 +14,7 @@ const NOTIFICATION_FORM_DEFAULT_VALUES: Partial<NotificationWriteFormSchema> = {
   recipientIds: [],
   taskId: null,
   payloadType: "NONE",
+  payload: null,
   actorGroupId: null,
 }
 
@@ -23,6 +25,7 @@ interface UseNotificationWriteFormProps {
   defaultValues?: Partial<NotificationWriteFormSchema>
   label?: string
   disabled?: boolean
+  includeRecipientPicker?: boolean
 }
 
 export const useNotificationWriteForm = ({
@@ -30,37 +33,51 @@ export const useNotificationWriteForm = ({
   label = "Legg inn ny varsling",
   defaultValues = NOTIFICATION_FORM_DEFAULT_VALUES,
   disabled,
+  includeRecipientPicker = false,
 }: UseNotificationWriteFormProps) => {
+  const schema = includeRecipientPicker
+    ? NotificationWriteSchema.extend({
+        recipientIds: z.array(z.string()).min(1, "Velg minst én mottaker"),
+      })
+    : NotificationWriteSchema
+
+  const fields = {
+    title: createTextInput<NotificationWriteFormSchema>({
+      label: "Tittel",
+      placeholder: "Nytt oppmøtested!",
+      required: true,
+    }),
+    shortDescription: createTextInput<NotificationWriteFormSchema>({
+      label: "Kort beskrivelse",
+      placeholder: "En kort beskrivelse av varslingen",
+      required: true,
+    }),
+    content: createRichTextInput<NotificationWriteFormSchema>({
+      label: "Innhold",
+      required: true,
+    }),
+    type: createSelectInput<NotificationWriteFormSchema>({
+      data: Object.values(NotificationTypeSchema.enum).map((type) => ({
+        value: type,
+        label: mapNotificationTypeToLabel(type),
+      })),
+      label: "Type",
+      placeholder: "Velg type",
+      required: true,
+    }),
+    ...(includeRecipientPicker
+      ? {
+          recipientIds: createRecipientPickerInput<NotificationWriteFormSchema>(),
+        }
+      : {}),
+  }
+
   return useFormBuilder({
-    schema: NotificationWriteSchema,
+    schema,
     defaultValues,
     onSubmit,
     label,
     disabled,
-    fields: {
-      title: createTextInput({
-        label: "Tittel",
-        placeholder: "Nytt oppmøtested!",
-        required: true,
-      }),
-      shortDescription: createTextInput({
-        label: "Kort beskrivelse",
-        placeholder: "En kort beskrivelse av varslingen",
-        required: true,
-      }),
-      content: createRichTextInput({
-        label: "Innhold",
-        required: true,
-      }),
-      type: createSelectInput({
-        data: Object.values(NotificationTypeSchema.Values).map((type) => ({
-          value: type,
-          label: mapNotificationTypeToLabel(type),
-        })),
-        label: "Type",
-        placeholder: "Velg type",
-        required: true,
-      }),
-    },
+    fields,
   })
 }

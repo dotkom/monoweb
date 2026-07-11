@@ -590,16 +590,16 @@ model ArticleTagLink {
 }
 
 enum TaskType {
-  RESERVE_ATTENDEE                        @map("RESERVE_ATTENDEE")
-  CHARGE_ATTENDEE                         @map("CHARGE_ATTENDEE")
-  MERGE_ATTENDANCE_POOLS                  @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT                          @map("VERIFY_PAYMENT")
-  VERIFY_FEEDBACK_ANSWERED                @map("VERIFY_FEEDBACK_ANSWERED")
-  SEND_FEEDBACK_FORM_EMAILS               @map("SEND_FEEDBACK_FORM_EMAILS")
-  VERIFY_ATTENDEE_ATTENDED                @map("VERIFY_ATTENDEE_ATTENDED")
-  SEND_NOTIFICATION_EVENT_REGISTRATION    @map("SEND_NOTIFICATION_EVENT_REGISTRATION")
-  SEND_NOTIFICATION_EVENT_REMINDER        @map("SEND_NOTIFICATION_EVENT_REMINDER")
-  SEND_NOTIFICATION_JOB_LISTING_REMINDER  @map("SEND_NOTIFICATION_JOB_LISTING_REMINDER")
+  RESERVE_ATTENDEE                       @map("RESERVE_ATTENDEE")
+  CHARGE_ATTENDEE                        @map("CHARGE_ATTENDEE")
+  MERGE_ATTENDANCE_POOLS                 @map("MERGE_ATTENDANCE_POOLS")
+  VERIFY_PAYMENT                         @map("VERIFY_PAYMENT")
+  VERIFY_FEEDBACK_ANSWERED               @map("VERIFY_FEEDBACK_ANSWERED")
+  SEND_FEEDBACK_FORM_EMAILS              @map("SEND_FEEDBACK_FORM_EMAILS")
+  VERIFY_ATTENDEE_ATTENDED               @map("VERIFY_ATTENDEE_ATTENDED")
+  SEND_NOTIFICATION_EVENT_REGISTRATION   @map("SEND_NOTIFICATION_EVENT_REGISTRATION")
+  SEND_NOTIFICATION_EVENT_REMINDER       @map("SEND_NOTIFICATION_EVENT_REMINDER")
+  SEND_NOTIFICATION_JOB_LISTING_REMINDER @map("SEND_NOTIFICATION_JOB_LISTING_REMINDER")
 
   @@map("task_type")
 }
@@ -793,7 +793,7 @@ model DeregisterReason {
 }
 
 model NotificationRecipient {
-  id     String   @id @default(uuid())
+  id     String    @id @default(uuid())
   readAt DateTime? @map("read_at") @db.Timestamptz(3)
 
   notificationId String       @map("notification_id")
@@ -822,13 +822,14 @@ enum NotificationType {
   EVENT_REMINDER       @map("EVENT_REMINDER")
   EVENT_UPDATE         @map("EVENT_UPDATE")
   JOB_LISTING_REMINDER @map("JOB_LISTING_REMINDER")
+  MARK_UPDATE          @map("MARK_UPDATE")
   NEW_ARTICLE          @map("NEW_ARTICLE")
   NEW_EVENT            @map("NEW_EVENT")
+  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
   NEW_INTEREST_GROUP   @map("NEW_INTEREST_GROUP")
   NEW_JOB_LISTING      @map("NEW_JOB_LISTING")
-  NEW_OFFLINE          @map("NEW_OFFLINE")
   NEW_MARK             @map("NEW_MARK")
-  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
+  NEW_OFFLINE          @map("NEW_OFFLINE")
 }
 
 model Notification {
@@ -841,7 +842,7 @@ model Notification {
   /// The full rich text content of the notification.
   content          String
   type             NotificationType
-  /// Can be an ID or a URL depending on the payload type.
+  /// Can be an id or a URL depending on the payload type.
   payload          String?
   payloadType      NotificationPayloadType @map("payload_type")
 

@@ -12,6 +12,7 @@ import {
   NotificationWriteSchema,
   UserNotificationDTOSchema,
   UserNotificationSchema,
+  type Notification,
 } from "./notification"
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
@@ -42,7 +43,8 @@ const createNotificationProcedure = procedure
       input.shortDescription ?? input.title,
       input.actorGroupId,
       input.payloadType,
-      input.payload
+      input.payload,
+      ctx.principal.subject
     )
   })
 
@@ -136,7 +138,7 @@ const findNotificationsProcedure = procedure
 
     return {
       items,
-      nextCursor: items.at(-1)?.id,
+      nextCursor: items.length === input.take ? items.at(-1)?.id : undefined,
     }
   })
 
@@ -170,7 +172,7 @@ const findNotificationsByPayloadProcedure = procedure
     const items = await ctx.notificationService.findManyByPayload(ctx.handle, payloadType, payload, page)
     return {
       items,
-      nextCursor: items.at(-1)?.id,
+      nextCursor: items.length === page.take ? items.at(-1)?.id : undefined,
     }
   })
 

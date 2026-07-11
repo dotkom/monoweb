@@ -8,7 +8,7 @@ import { useCreateNotificationModal } from "./modals/create-notification"
 import { useNotificationAllInfiniteQuery } from "./queries"
 
 export default function NotificationPage() {
-  const { notifications, isLoading: isNotificationsLoading } = useNotificationAllInfiniteQuery()
+  const { notifications, isLoading: isNotificationsLoading, fetchNextPage } = useNotificationAllInfiniteQuery()
   const open = useCreateNotificationModal()
   const { canManageNotifications } = useAuthorization()
   const canManage = canManageNotifications()
@@ -26,7 +26,7 @@ export default function NotificationPage() {
             </Button>
           </PermissionTooltip>
         </Box>
-        <AllNotificationsTable notifications={notifications} />
+        <AllNotificationsTable notifications={notifications} onLoadMore={fetchNextPage} />
       </Stack>
     </Skeleton>
   )

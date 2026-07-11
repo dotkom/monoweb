@@ -84,6 +84,7 @@ export function RecipientPickerInput({ value, onChange, disabled }: RecipientPic
           disabled={disabled}
         />
         <Button
+          type="button"
           variant="light"
           disabled={disabled || selectedGroupSlug === null || groupUserIdsLoading}
           onClick={() => append(groupUserIds ?? [])}
@@ -107,6 +108,7 @@ export function RecipientPickerInput({ value, onChange, disabled }: RecipientPic
           disabled={disabled}
         />
         <Button
+          type="button"
           variant="light"
           disabled={disabled || attendanceId === null || attendeeUserIdsLoading}
           onClick={() => append(attendeeUserIds ?? [])}
