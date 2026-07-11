@@ -241,6 +241,13 @@ export function canCreateEvents(state: AuthorizationState): boolean {
   return state.isAdministrator || state.affiliations.size > 0
 }
 
+/**
+ * `notification` create/edit/delete and related procedures
+ */
+export function canManageNotifications(state: AuthorizationState): boolean {
+  return state.isCommitteeMember
+}
+
 export function createAuthorizationState(
   authorization: Omit<AuthorizationState, "affiliations"> & {
     affiliations: Record<GroupId, GroupRoleType[]> | Map<GroupId, Set<GroupRoleType>>

@@ -8,6 +8,7 @@ import type { AuthorizationState } from "./permissions"
 import {
   canAccessAuditLog,
   canCreateEvents,
+  canManageNotifications,
   canCreateGroup,
   canDeleteGroup,
   canEditContest,
@@ -95,6 +96,7 @@ export function useAuthorization() {
       canManageGroupRoles: (groupId: GroupId, isInterestGroup: boolean) =>
         canManageGroupRoles(state, groupId, isInterestGroup),
       canCreateEvents: () => canCreateEvents(state),
+      canManageNotifications: () => canManageNotifications(state),
     }
   }, [context])
 }

@@ -1,5 +1,7 @@
 "use client"
 
+import { useAuthorization } from "@/auth/authorization-context"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
 import { IconListDetails, IconUsers } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -25,6 +27,8 @@ const SIDEBAR_LINKS = [
 export default function NotificationDetailsPage() {
   const { notification } = useNotificationDetailsContext()
   const router = useRouter()
+  const { canManageNotifications } = useAuthorization()
+  const canManage = canManageNotifications()
 
   const searchParams = useSearchParams()
   const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
@@ -41,6 +45,13 @@ export default function NotificationDetailsPage() {
         <CloseButton onClick={() => router.back()} />
         <Title>{notification.title}</Title>
       </Group>
+
+      {!canManage && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere varslingen."
+          message="Dette er fordi du ikke har tilgang til å administrere varslinger."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>

@@ -1,7 +1,10 @@
 "use client"
 
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { GenericTable } from "@/components/GenericTable"
 import { DateTooltip } from "@/components/DateTooltip"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, type Notification } from "@dotkomonline/rpc"
 import { Anchor, Box, Button, Skeleton, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -14,6 +17,7 @@ import { openCreateEventNotificationModal } from "../components/create-event-not
 
 export const NotificationsPage: FC = () => {
   const { event } = useEventContext()
+  const { canEdit } = useEventEditPermission()
   const attendanceId = event.attendanceId ?? undefined
   const eventPath = `${slugify(event.title)}/${event.id}`
   const { notifications, isLoading } = useNotificationsByPayloadQuery("EVENT", eventPath)
@@ -74,14 +78,27 @@ export const NotificationsPage: FC = () => {
   return (
     <Skeleton visible={isLoading}>
       <Stack gap="lg">
+        {!canEdit && (
+          <ReadOnlyNotice
+            title="Du kan ikke opprette varslinger for dette arrangementet."
+            message="Dette er fordi du ikke er arrangør. Kontakt dotkom dersom du mener dette er en feil."
+          />
+        )}
+
         <Box>
           <Title order={3}>Opprett varsling</Title>
-          <Button
-            mt="md"
-            onClick={openCreateEventNotificationModal({ eventId: event.id, eventPath, attendanceId })}
+          <PermissionTooltip
+            allowed={canEdit}
+            label="Du kan ikke opprette varslinger for dette arrangementet"
           >
-            Legg til ny varsling
-          </Button>
+            <Button
+              mt="md"
+              onClick={openCreateEventNotificationModal({ eventId: event.id, eventPath, attendanceId })}
+              disabled={!canEdit}
+            >
+              Legg til ny varsling
+            </Button>
+          </PermissionTooltip>
         </Box>
 
         <Box>

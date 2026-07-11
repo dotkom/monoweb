@@ -22,18 +22,21 @@ interface UseNotificationWriteFormProps {
   onSubmit(data: z.infer<typeof NotificationWriteSchema>): void
   defaultValues?: Partial<NotificationWriteFormSchema>
   label?: string
+  disabled?: boolean
 }
 
 export const useNotificationWriteForm = ({
   onSubmit,
   label = "Legg inn ny varsling",
   defaultValues = NOTIFICATION_FORM_DEFAULT_VALUES,
+  disabled,
 }: UseNotificationWriteFormProps) => {
   return useFormBuilder({
     schema: NotificationWriteSchema,
     defaultValues,
     onSubmit,
     label,
+    disabled,
     fields: {
       title: createTextInput({
         label: "Tittel",
