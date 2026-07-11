@@ -9,6 +9,7 @@ import {
   canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
+  canManageNotifications,
   createAuthorizationState,
   hasAnyGroupAffiliation,
 } from "../permissions"
@@ -130,5 +131,29 @@ describe("canCreateEvents", () => {
     expect(canCreateEvents(createState({}))).toBe(false)
     expect(canCreateEvents(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
     expect(canCreateEvents(createState({}, { isAdministrator: true }))).toBe(true)
+  })
+})
+
+describe("canManageNotifications", () => {
+  it("requires committee membership", () => {
+    expect(
+      canManageNotifications(
+        createAuthorizationState({
+          isAdministrator: false,
+          isCommitteeMember: false,
+          affiliations: { arrkom: [GroupRoleTypeEnum.COSMETIC] },
+        })
+      )
+    ).toBe(false)
+
+    expect(
+      canManageNotifications(
+        createAuthorizationState({
+          isAdministrator: false,
+          isCommitteeMember: true,
+          affiliations: { arrkom: [GroupRoleTypeEnum.COSMETIC] },
+        })
+      )
+    ).toBe(true)
   })
 })
