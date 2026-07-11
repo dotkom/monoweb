@@ -1,5 +1,7 @@
 "use client"
 
+import { useAuthorization } from "@/auth/authorization-context"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { GenericTable } from "@/components/GenericTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { RecipientPickerInput } from "@/components/forms/RecipientPickerInput"
@@ -22,6 +24,8 @@ export const NotificationRecipientsPage: FC = () => {
   const { recipients, isLoading } = useNotificationRecipientsQuery(notification.id)
   const addRecipients = useAddNotificationRecipientsMutation(notification.id)
   const [recipientIds, setRecipientIds] = useState<string[]>([])
+  const { canManageNotifications } = useAuthorization()
+  const canManage = canManageNotifications()
 
   const columnHelper = createColumnHelper<Recipient>()
 
@@ -58,19 +62,24 @@ export const NotificationRecipientsPage: FC = () => {
         <Title order={3} mb="sm">
           Legg til mottakere
         </Title>
-        <RecipientPickerInput value={recipientIds} onChange={setRecipientIds} />
-        <Button
-          mt="md"
-          disabled={recipientIds.length === 0 || addRecipients.isPending}
-          onClick={() => {
-            addRecipients.mutate(
-              { notificationId: notification.id, recipientIds },
-              { onSuccess: () => setRecipientIds([]) }
-            )
-          }}
+        <RecipientPickerInput value={recipientIds} onChange={setRecipientIds} disabled={!canManage} />
+        <PermissionTooltip
+          allowed={canManage}
+          label="Du har ikke tilgang til å legge til mottakere"
         >
-          Legg til {recipientIds.length > 0 ? `${recipientIds.length} mottaker(e)` : "mottakere"}
-        </Button>
+          <Button
+            mt="md"
+            disabled={!canManage || recipientIds.length === 0 || addRecipients.isPending}
+            onClick={() => {
+              addRecipients.mutate(
+                { notificationId: notification.id, recipientIds },
+                { onSuccess: () => setRecipientIds([]) }
+              )
+            }}
+          >
+            Legg til {recipientIds.length > 0 ? `${recipientIds.length} mottaker(e)` : "mottakere"}
+          </Button>
+        </PermissionTooltip>
       </Box>
 
       <Box>
