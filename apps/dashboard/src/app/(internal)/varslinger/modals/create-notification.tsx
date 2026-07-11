@@ -1,23 +1,15 @@
-import { type ContextModalProps, modals } from "@mantine/modals"
-import type { FC } from "react"
-import { useCreateNotificationMutation } from "../mutations"
-import { useNotificationWriteForm } from "../write-form"
+"use client"
 
-export const CreateNotificationModal: FC<ContextModalProps> = ({ context, id }) => {
-  const close = () => context.closeModal(id)
-  const create = useCreateNotificationMutation()
-  const FormComponent = useNotificationWriteForm({
-    onSubmit: (data) => {
-      create.mutate(data), close()
-    },
-  })
-  return <FormComponent />
+import type { ContextModalProps } from "@mantine/modals"
+import type { FC } from "react"
+import {
+  CreateNotificationModal as CreateNotificationModalContent,
+  openCreateNotificationModal,
+} from "../create-modal/CreateNotificationModal"
+import { createGlobalLaunchContext, type CreateNotificationLaunchContext } from "../create-modal/types"
+
+export const CreateNotificationModal: FC<ContextModalProps<CreateNotificationLaunchContext>> = (props) => {
+  return <CreateNotificationModalContent {...props} />
 }
 
-export const useCreateNotificationModal = () => () =>
-  modals.openContextModal({
-    modal: "notification/create",
-    title: "Legg inn ny varsling",
-    size: "lg",
-    innerProps: {},
-  })
+export const useCreateNotificationModal = () => () => openCreateNotificationModal(createGlobalLaunchContext())

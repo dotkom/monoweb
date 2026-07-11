@@ -43,7 +43,7 @@ interface RichTextEditorFieldProps {
   editorProps: Omit<RichTextEditorProps, "error" | "children" | "editor">
 }
 
-function RichTextEditorField({
+export function RichTextEditorField({
   disabled,
   value,
   onChange,

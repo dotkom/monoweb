@@ -48,12 +48,14 @@ export function getJobListingService(
       const createdJobListing = await jobListingRepository.create(handle, companyId, jobListingData, locationIdsData)
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_JOB_LISTING")
+      const shortDescription = `En ny stillingsutlysning "${createdJobListing.title}" har blitt publisert.`
       await notificationService.create(
         handle,
         recipients,
         "NEW_JOB_LISTING",
         `Ny stillingsutlysning: ${createdJobListing.title}`,
-        `En ny stillingsutlysning "${createdJobListing.title}" har blitt publisert.`,
+        shortDescription,
+        shortDescription,
         null,
         "JOB_LISTING",
         createdJobListing.id

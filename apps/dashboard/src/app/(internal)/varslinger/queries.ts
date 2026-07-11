@@ -6,7 +6,12 @@ import { useMemo } from "react"
 export const useNotificationRecipientsQuery = (notificationId: string) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery(trpc.notification.getRecipients.queryOptions(notificationId))
-  return { recipients: data ?? [], ...query }
+  return {
+    recipients: data?.recipients ?? [],
+    readCount: data?.readCount ?? 0,
+    unreadCount: data?.unreadCount ?? 0,
+    ...query,
+  }
 }
 
 export const useNotificationAllInfiniteQuery = (page?: Pageable) => {

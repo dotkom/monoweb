@@ -8,9 +8,10 @@ import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, type Not
 
 interface AllNotificationsTableProps {
   notifications: Notification[]
+  onLoadMore?: () => void
 }
 
-export const AllNotificationsTable = ({ notifications }: AllNotificationsTableProps) => {
+export const AllNotificationsTable = ({ notifications, onLoadMore }: AllNotificationsTableProps) => {
   const columnHelper = createColumnHelper<Notification>()
   const columns = useMemo(
     () => [
@@ -64,5 +65,5 @@ export const AllNotificationsTable = ({ notifications }: AllNotificationsTablePr
   )
 
   const table = useReactTable(tableOptions)
-  return <GenericTable table={table} />
+  return <GenericTable table={table} onLoadMore={onLoadMore} />
 }

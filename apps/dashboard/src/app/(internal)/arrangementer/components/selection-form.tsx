@@ -1,5 +1,5 @@
 import { ActionSelect } from "@/components/molecules/ActionSelect/ActionSelect"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@/lib/zod-resolver"
 import { Box, Button, Flex, InputLabel, Text, TextInput } from "@mantine/core"
 import { IconPlus, IconTrash } from "@tabler/icons-react"
 import type { FC } from "react"

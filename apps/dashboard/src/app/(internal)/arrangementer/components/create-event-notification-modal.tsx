@@ -1,55 +1,34 @@
 "use client"
 
-import { useNotificationWriteForm } from "@/app/(internal)/varslinger/write-form"
-import { useTRPC } from "@/lib/trpc-client"
-import type { AttendanceId } from "@dotkomonline/types"
-import { type ContextModalProps, modals } from "@mantine/modals"
-import { useQuery } from "@tanstack/react-query"
-import { skipToken } from "@tanstack/react-query"
-import type { FC } from "react"
-import { useCreateEventNotificationMutation } from "../mutations"
+import type { NotificationType } from "@dotkomonline/rpc"
+import type { AttendanceId } from "@dotkomonline/rpc/attendance"
+import { openCreateNotificationModal } from "@/app/(internal)/varslinger/create-modal/CreateNotificationModal"
+import {
+  createEventLaunchContext,
+  type ActorGroupOption,
+} from "@/app/(internal)/varslinger/create-modal/types"
 
-interface CreateEventNotificationModalProps {
+interface OpenCreateEventNotificationModalInput {
   eventId: string
+  eventTitle: string
   eventPath: string
-  attendanceId: AttendanceId | undefined
+  attendanceId?: AttendanceId
+  type: NotificationType
+  hostingGroups: ActorGroupOption[]
+  eligibleGroupSlugs: string[]
+  attendanceMembers?: Array<{ userId: string; name: string | null; reserved: boolean }>
 }
 
-export const CreateEventNotificationModal: FC<ContextModalProps<CreateEventNotificationModalProps>> = ({
-  context,
-  id,
-  innerProps: { eventId, eventPath, attendanceId },
-}) => {
-  const close = () => context.closeModal(id)
-  const create = useCreateEventNotificationMutation(eventId)
-  const trpc = useTRPC()
-
-  const { data: attendeeUserIds = [] } = useQuery(
-    trpc.event.attendance.getAttendeeUserIds.queryOptions(attendanceId ?? skipToken)
-  )
-  const FormComponent = useNotificationWriteForm({
-    defaultValues: {
-      recipientIds: [],
-      taskId: null,
-      payloadType: "EVENT",
-      payload: eventPath,
-      actorGroupId: null,
-    },
-    onSubmit: (data) => {
-      create.mutate({ ...data, recipientIds: attendeeUserIds })
-      close()
-    },
-  })
-
-  return <FormComponent />
-}
-
-export const openCreateEventNotificationModal =
-  ({ eventId, eventPath, attendanceId }: CreateEventNotificationModalProps) =>
-  () =>
-    modals.openContextModal({
-      modal: "event/notification/create",
-      title: "Legg inn ny varsling",
-      size: "lg",
-      innerProps: { eventId, eventPath, attendanceId },
+export function openCreateEventNotificationModal(input: OpenCreateEventNotificationModalInput) {
+  openCreateNotificationModal(
+    createEventLaunchContext({
+      eventId: input.eventId,
+      eventTitle: input.eventTitle,
+      eventPath: input.eventPath,
+      type: input.type,
+      hostingGroups: input.hostingGroups,
+      eligibleGroupSlugs: input.eligibleGroupSlugs,
+      attendanceMembers: input.attendanceMembers,
     })
+  )
+}
