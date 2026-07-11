@@ -1,4 +1,3 @@
-import { env } from "@/lib/env"
 import { useQueryNotification } from "@/lib/notifications"
 import { useTRPC } from "@/lib/trpc-client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -16,8 +15,7 @@ export const useCreateNotificationMutation = () => {
         })
       },
       onSuccess: async (data) => {
-        await queryClient.invalidateQueries({ queryKey: trpc.notification.findMany.queryKey() });
-
+        await queryClient.invalidateQueries({ queryKey: trpc.notification.findMany.queryKey() })
 
         notification.complete({
           title: "Varsling opprettet",
@@ -64,4 +62,3 @@ export const useEditNotificationMutation = () => {
     })
   )
 }
-
