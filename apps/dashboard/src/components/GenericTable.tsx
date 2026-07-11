@@ -1,16 +1,19 @@
 import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
 import { useInViewport } from "@mantine/hooks"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
-import { type Table as ReactTable, flexRender } from "@tanstack/react-table"
-import { useEffect } from "react"
+import { type Row, type Table as ReactTable, flexRender } from "@tanstack/react-table"
+import { type CSSProperties, useEffect } from "react"
+import { getTableColumnStyle } from "@/components/table-column-meta"
 
 export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
   filterable?: boolean
   onLoadMore?(): void
+  getRowStyle?: (row: Row<T>) => CSSProperties | undefined
+  getCellStyle?: (row: Row<T>, columnIndex: number) => CSSProperties | undefined
 }
 
-export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableProps<T>) {
+export function GenericTable<T>({ table, filterable, onLoadMore, getRowStyle, getCellStyle }: GenericTableProps<T>) {
   const { ref, inViewport } = useInViewport()
 
   useEffect(() => {
@@ -31,6 +34,7 @@ export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableP
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     style={{
+                      ...getTableColumnStyle(header.column.columnDef.meta),
                       cursor: filterable && header.column.getCanSort() ? "pointer" : undefined,
                       userSelect: filterable && header.column.getCanSort() ? "none" : undefined,
                       backgroundColor: "var(--mantine-color-default)",
@@ -62,9 +66,17 @@ export function GenericTable<T>({ table, filterable, onLoadMore }: GenericTableP
               </TableTr>
             )}
             {table.getRowModel().rows.map((row) => (
-              <TableTr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableTd key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableTd>
+              <TableTr key={row.id} style={getRowStyle?.(row)}>
+                {row.getVisibleCells().map((cell, columnIndex) => (
+                  <TableTd
+                    key={cell.id}
+                    style={{
+                      ...getTableColumnStyle(cell.column.columnDef.meta, true),
+                      ...getCellStyle?.(row, columnIndex),
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableTd>
                 ))}
               </TableTr>
             ))}
