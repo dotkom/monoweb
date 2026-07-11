@@ -3,7 +3,7 @@ import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
 import { type GroupMember, type GroupRole, GroupRoleTypeEnum, getGroupTypeName } from "@dotkomonline/rpc/group"
-import type { UserId } from "@dotkomonline/rpc/user"
+import { type UserId, FlagName } from "@dotkomonline/rpc/user"
 import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -247,7 +247,7 @@ interface GroupMemberEntryProps {
 }
 
 const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
-  const isVerified = member.flags.some((flag) => flag.name === "VANITY_VERIFIED")
+  const isVerified = member.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
   const isUser = userId === member.id
 
   // This requires periods to be sorted by startedAt in descending order
