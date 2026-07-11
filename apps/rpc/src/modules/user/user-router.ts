@@ -7,6 +7,7 @@ import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../aut
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { InvalidArgumentError, UnauthorizedError } from "../../error"
+import { GroupRoleTypeSchema } from "../group/group"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -243,6 +244,40 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
+export type GetAuthorizationInput = inferProcedureInput<typeof getAuthorizationProcedure>
+export type GetAuthorizationOutput = inferProcedureOutput<typeof getAuthorizationProcedure>
+const getAuthorizationProcedure = procedure
+  .output(
+    z.object({
+      isAdministrator: z.boolean(),
+      isCommitteeMember: z.boolean(),
+      affiliations: z.record(z.string(), z.array(GroupRoleTypeSchema)),
+    })
+  )
+  .query(async ({ ctx }) => {
+    const principal = ctx.principal
+
+    if (principal === null) {
+      return {
+        isAdministrator: false,
+        isCommitteeMember: false,
+        affiliations: {},
+      }
+    }
+
+    const affiliations: Record<string, z.infer<typeof GroupRoleTypeSchema>[]> = {}
+
+    for (const [groupId, roles] of principal.affiliations.entries()) {
+      affiliations[groupId] = Array.from(roles)
+    }
+
+    return {
+      isAdministrator: ctx.authorizationService.isAdministrator(principal.affiliations),
+      isCommitteeMember: ctx.authorizationService.isCommitteeMember(principal.affiliations),
+      affiliations,
+    }
+  })
+
 export type ConfirmIdentityLinkInput = inferProcedureInput<typeof confirmIdentityLinkProcedure>
 export type ConfirmIdentityLinkOutput = inferProcedureOutput<typeof confirmIdentityLinkProcedure>
 const confirmIdentityLinkProcedure = procedure
@@ -356,6 +391,7 @@ export const userRouter = t.router({
   syncEmailFromAuth0: syncEmailFromAuth0Procedure,
   isStaff: isStaffProcedure,
   isAdmin: isAdminProcedure,
+  getAuthorization: getAuthorizationProcedure,
   confirmIdentityLink: confirmIdentityLinkProcedure,
   mergeUsers: mergeUsersProcedure,
   getAuth0Connections: getAuth0ConnectionsProcedure,

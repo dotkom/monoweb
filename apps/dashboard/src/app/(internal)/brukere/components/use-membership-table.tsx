@@ -6,7 +6,7 @@ import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 import { useMemo } from "react"
-import { useIsAdminQuery } from "../queries"
+import { useAuthorization } from "@/auth/authorization-context"
 import { useConfirmDeleteMembershipModal } from "./confirm-delete-membership-modal"
 import { useEditMembershipModal } from "./edit-membership-modal"
 import { getStudyGrade, isSpringSemester } from "@dotkomonline/utils"
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export const useMembershipTable = ({ data }: Props) => {
-  const { isAdmin } = useIsAdminQuery()
+  const { isAdministrator } = useAuthorization()
   const columnHelper = createColumnHelper<Membership>()
   const openEditMembershipModal = useEditMembershipModal()
   const openDeleteMembershipModal = useConfirmDeleteMembershipModal()
@@ -80,7 +80,7 @@ export const useMembershipTable = ({ data }: Props) => {
           </Button>
         ),
       }),
-      ...(isAdmin
+      ...(isAdministrator
         ? [
             columnHelper.accessor((role) => role, {
               id: "delete",
@@ -100,7 +100,7 @@ export const useMembershipTable = ({ data }: Props) => {
           ]
         : []),
     ],
-    [columnHelper, openEditMembershipModal, openDeleteMembershipModal, isAdmin]
+    [columnHelper, openEditMembershipModal, openDeleteMembershipModal, isAdministrator]
   )
 
   return useReactTable({
