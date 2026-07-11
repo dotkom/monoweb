@@ -14,12 +14,14 @@ interface UseFadderukeWriteFormProps {
   onSubmit(data: FormValidationResult): void
   defaultValues?: Partial<FormValidationResult>
   label?: string
+  disabled?: boolean
 }
 
 export const useFadderukeWriteForm = ({
   onSubmit,
   defaultValues,
   label = "Opprett fadderuke",
+  disabled,
 }: UseFadderukeWriteFormProps) => {
   return useFormBuilder({
     schema: FormValidationSchema,
@@ -30,6 +32,7 @@ export const useFadderukeWriteForm = ({
     },
     onSubmit,
     label,
+    disabled,
     fields: {
       year: createNumberInput({
         label: "År",

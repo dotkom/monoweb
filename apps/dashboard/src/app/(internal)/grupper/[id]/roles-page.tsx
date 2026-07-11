@@ -1,15 +1,18 @@
 import { GenericTable } from "@/components/GenericTable"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/rpc/group"
 import { Box, Button, Stack, Title } from "@mantine/core"
 import { IconEdit } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { type FC, useMemo } from "react"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import { useCreateGroupRoleModal } from "../modals/create-group-role-modal"
 import { useEditGroupRoleModal } from "../modals/edit-group-role-modal"
 import { useGroupDetailsContext } from "./provider"
 
 export const GroupRolesPage: FC = () => {
   const { group } = useGroupDetailsContext()
+  const { canManageRoles } = useGroupPermissions()
   const openCreate = useCreateGroupRoleModal({ group })
   const openUpdate = useEditGroupRoleModal()
 
@@ -29,13 +32,18 @@ export const GroupRolesPage: FC = () => {
         id: "actions",
         header: () => "Detaljer",
         cell: (info) => (
-          <Button variant="outline" leftSection={<IconEdit />} onClick={() => openUpdate({ role: info.getValue() })}>
+          <Button
+            variant="outline"
+            leftSection={<IconEdit />}
+            disabled={!canManageRoles}
+            onClick={() => openUpdate({ role: info.getValue() })}
+          >
             Rediger
           </Button>
         ),
       }),
     ],
-    [columnHelper, openUpdate]
+    [columnHelper, openUpdate, canManageRoles]
   )
   const table = useReactTable<GroupRole>({
     data: group.roles,
@@ -48,7 +56,11 @@ export const GroupRolesPage: FC = () => {
       <Stack>
         <Title order={3}>Roller</Title>
         <Box>
-          <Button onClick={openCreate}>Opprett rolle</Button>
+          <PermissionTooltip allowed={canManageRoles}>
+            <Button onClick={openCreate} disabled={!canManageRoles}>
+              Opprett rolle
+            </Button>
+          </PermissionTooltip>
         </Box>
         <GenericTable table={table} />
       </Stack>

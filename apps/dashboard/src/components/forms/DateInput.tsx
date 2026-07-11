@@ -9,7 +9,7 @@ import { IconX } from "@tabler/icons-react"
 export function createDateInput<F extends FieldValues>({
   ...props
 }: Omit<DatePickerInputProps, "error">): InputProducerResult<F> {
-  return function FormDateInput({ name, state, control, defaultValue }) {
+  return function FormDateInput({ name, state, control, defaultValue, disabled }) {
     return (
       <Controller
         control={control}
@@ -23,10 +23,17 @@ export function createDateInput<F extends FieldValues>({
               defaultValue={defaultValue ?? roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })}
               value={field.value}
               onChange={field.onChange}
+              disabled={disabled ?? props.disabled}
               error={getErrorMessage(state, name)}
               rightSection={
                 props.required !== true && (
-                  <ActionIcon w="fit-content" color="gray" variant="subtle" onClick={() => field.onChange(null)}>
+                  <ActionIcon
+                    w="fit-content"
+                    color="gray"
+                    variant="subtle"
+                    disabled={disabled ?? props.disabled}
+                    onClick={() => field.onChange(null)}
+                  >
                     <IconX size="0.85rem" />
                   </ActionIcon>
                 )

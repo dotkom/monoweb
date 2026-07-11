@@ -1,5 +1,6 @@
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { Box, Divider, Title } from "@mantine/core"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { PoolBox } from "../components/pools-box"
@@ -17,6 +18,7 @@ export const AttendancePage: FC = () => {
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
+  const { canEdit } = useEventEditPermission()
   const mutation = useAddAttendanceMutation()
   const AttendanceForm = useAttendanceForm({
     defaultValues: {
@@ -26,6 +28,7 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
       selections: [],
     },
     label: "Opprett",
+    disabled: !canEdit,
     onSubmit: (values) => {
       mutation.mutate({ eventId, values })
     },
@@ -43,11 +46,13 @@ interface EventAttendanceProps {
   attendance: Attendance
 }
 const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
+  const { canEdit } = useEventEditPermission()
   const updateAttendanceMut = useUpdateAttendanceMutation()
 
   const AttendanceForm = useAttendanceForm({
     defaultValues: attendance,
     label: "Oppdater",
+    disabled: !canEdit,
     onSubmit: (values) => {
       updateAttendanceMut.mutate({
         id: attendance.id,
@@ -62,6 +67,7 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
 
   const PoolsForm = usePoolsForm({
     attendanceId: attendance.id,
+    disabled: !canEdit,
   })
 
   return (
@@ -75,7 +81,7 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
       <Divider my={32} />
       <Box>
         <Title order={3}>Påmeldingsgrupper</Title>
-        <PoolBox attendance={attendance} />
+        <PoolBox attendance={attendance} canEdit={canEdit} />
         <PoolsForm />
       </Box>
     </Box>

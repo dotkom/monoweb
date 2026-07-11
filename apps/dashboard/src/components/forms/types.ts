@@ -9,6 +9,7 @@ export interface InputFieldContext<T extends FieldValues> {
   defaultValue: FieldValue<T>
   setError(name: FieldPath<T>, error: { type: string; message: string }): void
   clearErrors(name?: FieldPath<T>): void
+  disabled?: boolean
 }
 export type InputProducerResult<F extends FieldValues> = FC<InputFieldContext<F>>
 

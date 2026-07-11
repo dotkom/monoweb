@@ -17,9 +17,15 @@ interface UseOfflineWriteFormProps {
   onSubmit(data: FormValidationSchema): Promise<void>
   defaultValues?: Partial<FormValidationSchema>
   label?: string
+  disabled?: boolean
 }
 
-export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValues }: UseOfflineWriteFormProps) => {
+export const useOfflineWriteForm = ({
+  onSubmit,
+  label = "Registrer",
+  defaultValues,
+  disabled,
+}: UseOfflineWriteFormProps) => {
   const fileUpload = useOfflineFileUploadMutation()
   const imageUpload = useOfflineImageUploadMutation()
 
@@ -28,6 +34,7 @@ export const useOfflineWriteForm = ({ onSubmit, label = "Registrer", defaultValu
     defaultValues,
     onSubmit,
     label,
+    disabled,
     fields: {
       title: createTextInput({
         label: "Tittel",

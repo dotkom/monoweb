@@ -62,9 +62,15 @@ interface AllAttendeesTableProps {
   attendees: Attendee[]
   attendance: Attendance
   feedbackAnswers?: FeedbackFormAnswer[]
+  canEdit?: boolean
 }
 
-export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: AllAttendeesTableProps) => {
+export const AllAttendeesTable = ({
+  attendees,
+  attendance,
+  feedbackAnswers,
+  canEdit = true,
+}: AllAttendeesTableProps) => {
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
   const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
 
@@ -173,6 +179,7 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
                   updateAttendanceMut.mutate({ id: row.id, at: event.target.checked ? getCurrentUTC() : null })
                 }}
                 checked={date !== null}
+                disabled={!canEdit}
               />
               <Text style={{ fontSize: "10px" }}>{date !== null ? formatDate(date, "dd.MM.yyyy") : "Ikke møtt"}</Text>
               {date !== null && <Text style={{ fontSize: "10px" }}>{formatDate(date, "'kl.' HH:mm")}</Text>}
@@ -240,6 +247,7 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
                 variant="subtle"
                 size="compact-xs"
                 p={2}
+                disabled={!canEdit}
                 onClick={() =>
                   updateAttendeeReservedMut.mutate({ attendeeId: attendee.id, reserved: queuePosition !== null })
                 }
@@ -289,6 +297,7 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
           <ActionIcon
             size="sm"
             color="red"
+            disabled={!canEdit}
             onClick={() => {
               openDeleteManualUserAttendModal({
                 attendeeId: info.getValue().id,
@@ -302,7 +311,16 @@ export const AllAttendeesTable = ({ attendees, attendance, feedbackAnswers }: Al
         ),
       }),
     ],
-    [columnHelper, updateAttendanceMut, pools, waitlists, updateAttendeeReservedMut, attendance, feedbackAnswers]
+    [
+      columnHelper,
+      updateAttendanceMut,
+      pools,
+      waitlists,
+      updateAttendeeReservedMut,
+      attendance,
+      feedbackAnswers,
+      canEdit,
+    ]
   )
 
   const tableOptions = useMemo(

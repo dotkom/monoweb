@@ -7,7 +7,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
 }: Omit<SelectProps, "data" | "error"> & {
   data: { value: number; label: string }[]
 }): InputProducerResult<F> {
-  return function FormSelectInput({ name, state, control }) {
+  return function FormSelectInput({ name, state, control, disabled }) {
     return (
       <Controller
         control={control}
@@ -21,6 +21,7 @@ export function createIntegerSelectInput<F extends FieldValues>({
             }))}
             value={field.value?.toString() ?? ""}
             onChange={(value) => field.onChange(value !== null ? Number.parseInt(value, 10) : null)}
+            disabled={disabled ?? props.disabled}
             error={getErrorMessage(state, name)}
           />
         )}

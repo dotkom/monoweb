@@ -18,6 +18,8 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { useDeleteEventMutation } from "../mutations"
 import { useEventFeedbackFormGetQuery } from "../queries"
 import { AttendancePage } from "./attendance-page"
@@ -27,6 +29,7 @@ import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 
 const SIDEBAR_LINKS = [
   {
@@ -69,6 +72,7 @@ const SIDEBAR_LINKS = [
 
 export default function EventWithAttendancesPage() {
   const { event, attendance } = useEventContext()
+  const { canEdit } = useEventEditPermission()
   const router = useRouter()
 
   const deleteEvent = useDeleteEventMutation()
@@ -140,15 +144,30 @@ export default function EventWithAttendancesPage() {
             </Group>
           </Modal>
 
-          <Button color="red" variant="light" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
-            Slett
-          </Button>
+          <PermissionTooltip allowed={canEdit}>
+            <Button
+              color="red"
+              variant="light"
+              onClick={open}
+              disabled={!canEdit}
+              leftSection={<IconTrash height={14} width={14} />}
+            >
+              Slett
+            </Button>
+          </PermissionTooltip>
         </Group>
       </Group>
 
       <Group>
         <Title>{event.title}</Title>
       </Group>
+
+      {!canEdit && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere arrangementet."
+          message="Dette er fordi du ikke er arrangør. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>

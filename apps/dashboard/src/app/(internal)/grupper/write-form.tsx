@@ -40,12 +40,14 @@ interface UseGroupWriteFormProps {
   onSubmit(data: GroupWrite): void
   defaultValues?: Partial<GroupWrite>
   label?: string
+  disabled?: boolean
 }
 
 export const useGroupWriteForm = ({
   onSubmit,
   label = "Lag ny gruppe",
   defaultValues = DEFAULT_VALUES,
+  disabled,
 }: UseGroupWriteFormProps) => {
   const { groups } = useGroupAllQuery()
   const existingGroupSlugs = groups.map((group) => group.slug)
@@ -76,6 +78,7 @@ export const useGroupWriteForm = ({
       })
     },
     label,
+    disabled,
     fields: {
       name: createTextInput({
         label: "Navn",

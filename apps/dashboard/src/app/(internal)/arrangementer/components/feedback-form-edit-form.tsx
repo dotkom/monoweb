@@ -72,9 +72,10 @@ interface Props {
   defaultValues?: FormValues
   feedbackFormId: FeedbackFormId
   eventId: EventId
+  readOnly?: boolean
 }
 
-export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId, eventId }) => {
+export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedbackFormId, eventId, readOnly }) => {
   const publicResultsTokenQuery = useEventFeedbackPublicResultsTokenGetQuery(feedbackFormId)
 
   defaultValues?.questions.sort((a, b) => a.order - b.order)
@@ -163,7 +164,9 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
             <Controller
               name={"feedbackForm.answerDeadline"}
               control={form.control}
-              render={({ field }) => <DateTimePicker value={field.value} onChange={field.onChange} label="Svarfrist" />}
+              render={({ field }) => (
+                <DateTimePicker value={field.value} onChange={field.onChange} label="Svarfrist" disabled={readOnly} />
+              )}
             />
             {form.formState.errors.feedbackForm?.answerDeadline?.message && (
               <Text size="sm" c="red">
@@ -172,7 +175,9 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
             )}
 
             <Group mt={16}>
-              <Button onClick={addQuestion}>Legg til spørsmål</Button>
+              <Button onClick={addQuestion} disabled={readOnly}>
+                Legg til spørsmål
+              </Button>
             </Group>
             <Divider />
             <Card withBorder>
@@ -188,6 +193,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
                           index={index}
                           onRemove={remove}
                           hasAnswers={!!field.id && answeredQuestionIds.has(field.id)}
+                          readOnly={readOnly}
                         />
                       ))}
                       {fields.length === 0 && <Text c="red">Ingen spørsmål lagt til</Text>}
@@ -198,12 +204,14 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
               </DragDropContext>
             </Card>
             <Group>
-              <Button type="submit">Lagre skjema</Button>
+              <Button type="submit" disabled={readOnly}>
+                Lagre skjema
+              </Button>
               <Tooltip disabled={!hasFormAnswers} label="Skjemaet har mottatt svar og kan ikke slettes">
                 <Button
                   bg="red"
                   onClick={openDeleteFormModal}
-                  disabled={hasFormAnswers}
+                  disabled={hasFormAnswers || readOnly}
                   leftSection={<IconTrash height={14} width={14} />}
                 >
                   Slett
@@ -243,6 +251,7 @@ interface QuestionCardProps {
   fieldId: string
   onRemove(index: number): void
   hasAnswers: boolean
+  readOnly?: boolean
 }
 
 const QuestionCard = React.memo(function QuestionCard({
@@ -251,6 +260,7 @@ const QuestionCard = React.memo(function QuestionCard({
   control,
   fieldId,
   hasAnswers,
+  readOnly,
 }: QuestionCardProps) {
   const { setValue } = useFormContext()
 
@@ -274,7 +284,7 @@ const QuestionCard = React.memo(function QuestionCard({
                 <Controller
                   name={`questions.${index}.label`}
                   control={control}
-                  render={({ field }) => <TextInput label="Spørsmål" {...field} />}
+                  render={({ field }) => <TextInput label="Spørsmål" {...field} disabled={readOnly} />}
                 />
                 <Controller
                   name={`questions.${index}.type`}
@@ -285,7 +295,7 @@ const QuestionCard = React.memo(function QuestionCard({
                         label="Type"
                         data={typeOptions}
                         required={true}
-                        disabled={hasAnswers}
+                        disabled={hasAnswers || readOnly}
                         {...field}
                         onChange={(value) => {
                           field.onChange(value)
@@ -304,6 +314,7 @@ const QuestionCard = React.memo(function QuestionCard({
                     <Checkbox
                       label="Obligatorisk"
                       checked={field.value}
+                      disabled={readOnly}
                       onChange={(e) => field.onChange(e.currentTarget.checked)}
                     />
                   )}
@@ -315,6 +326,7 @@ const QuestionCard = React.memo(function QuestionCard({
                     <Checkbox
                       label="Vis til bedrift"
                       checked={field.value}
+                      disabled={readOnly}
                       onChange={(e) => field.onChange(e.currentTarget.checked)}
                     />
                   )}

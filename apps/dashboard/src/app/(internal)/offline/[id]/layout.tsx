@@ -1,10 +1,10 @@
 "use client"
+
 import { useTRPC } from "@/lib/trpc-client"
 import { Loader } from "@mantine/core"
+import { useQuery } from "@tanstack/react-query"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { OfflineDetailsContext } from "./provider"
-
-import { useQuery } from "@tanstack/react-query"
 
 export default function OfflineDetailsLayout({
   children,
@@ -13,6 +13,7 @@ export default function OfflineDetailsLayout({
   const trpc = useTRPC()
   const { id } = use(params)
   const { data, isLoading } = useQuery(trpc.offline.get.queryOptions(id))
+
   const value = useMemo(
     () =>
       !data || isLoading

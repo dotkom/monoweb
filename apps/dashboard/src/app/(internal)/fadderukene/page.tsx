@@ -1,5 +1,7 @@
 "use client"
 
+import { useAuthorization } from "@/auth/authorization-context"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { Button, Group, Skeleton, Stack, Text, Title } from "@mantine/core"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
@@ -8,6 +10,8 @@ import { useFadderukeFindManyQuery } from "./queries"
 
 export default function FadderukenePage() {
   const { fadderuker, isLoading } = useFadderukeFindManyQuery()
+  const { canEditFadderuke } = useAuthorization()
+  const canEdit = canEditFadderuke()
 
   return (
     <Stack>
@@ -16,9 +20,16 @@ export default function FadderukenePage() {
       <Text c="dimmed">Knytt et hovedarrangementet til en fadderuke.</Text>
 
       <Group>
-        <Button component={Link} href="/fadderukene/ny" leftSection={<IconPencil width={14} height={14} />}>
-          Opprett fadderuke
-        </Button>
+        <PermissionTooltip allowed={canEdit}>
+          <Button
+            component={Link}
+            href="/fadderukene/ny"
+            leftSection={<IconPencil width={14} height={14} />}
+            disabled={!canEdit}
+          >
+            Opprett fadderuke
+          </Button>
+        </PermissionTooltip>
       </Group>
 
       <Skeleton visible={isLoading}>

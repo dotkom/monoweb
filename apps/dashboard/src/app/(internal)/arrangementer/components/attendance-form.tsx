@@ -22,14 +22,16 @@ interface AttendanceFormProps {
   onSubmit(values: z.infer<typeof AttendanceFormSchema>): void
   defaultValues?: z.infer<typeof AttendanceFormSchema>
   label: string
+  disabled?: boolean
 }
 
-export const useAttendanceForm = ({ onSubmit, defaultValues, label }: AttendanceFormProps) =>
+export const useAttendanceForm = ({ onSubmit, defaultValues, label, disabled }: AttendanceFormProps) =>
   useFormBuilder({
     schema: AttendanceFormSchema,
     defaultValues,
-    onSubmit, // Directly use the onSubmit prop
+    onSubmit,
     label,
+    disabled,
     fields: {
       registerStart: createDateTimeInput({
         label: "Påmeldingsstart",

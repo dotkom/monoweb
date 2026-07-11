@@ -10,6 +10,7 @@ import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { type FC, useMemo, useRef } from "react"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import {
   useCreateAttendeePaymentAttendeeMutation,
   useRefundAttendeeMutation,
@@ -28,6 +29,7 @@ const PAYMENT_STATUS_BADGE: Record<AttendeePaymentStatus, BadgeProps> = {
 
 export const PaymentPage: FC = () => {
   const { attendance } = useEventContext()
+  const { canEdit } = useEventEditPermission()
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
   const reservedAttendees = useMemo(
@@ -110,6 +112,7 @@ export const PaymentPage: FC = () => {
               <Button
                 size="xs"
                 color="indigo"
+                disabled={!canEdit}
                 onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}
               >
                 Refunder
@@ -121,6 +124,7 @@ export const PaymentPage: FC = () => {
               <Button
                 size="xs"
                 color="orange"
+                disabled={!canEdit}
                 onClick={() =>
                   createAttendeePaymentMutation.mutate({
                     attendeeId: attendee.id,
@@ -132,14 +136,19 @@ export const PaymentPage: FC = () => {
             )
           }
           return (
-            <Button size="xs" color="yellow" onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}>
+            <Button
+              size="xs"
+              color="yellow"
+              disabled={!canEdit}
+              onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}
+            >
               Avbryt betaling
             </Button>
           )
         },
       }),
     ],
-    [columnHelper, refundAttendeeMutation, createAttendeePaymentMutation]
+    [columnHelper, refundAttendeeMutation, createAttendeePaymentMutation, canEdit]
   )
 
   const tableOptions = useMemo(
@@ -159,10 +168,21 @@ export const PaymentPage: FC = () => {
         <Title order={2}>Pris for betaling</Title>
         <Group>
           <Group>
-            <Input defaultValue={attendance?.attendancePrice?.toString()} ref={inputRef} placeholder="Beløp" />
+            <Input
+              defaultValue={attendance?.attendancePrice?.toString()}
+              ref={inputRef}
+              placeholder="Beløp"
+              disabled={!canEdit}
+            />
           </Group>
-          <Button onClick={createPayment}>{hasPayment ? "Endre pris" : "Opprett betaling"}</Button>
-          {hasPayment && <Button onClick={removePayment}>Fjern betaling</Button>}
+          <Button onClick={createPayment} disabled={!canEdit}>
+            {hasPayment ? "Endre pris" : "Opprett betaling"}
+          </Button>
+          {hasPayment && (
+            <Button onClick={removePayment} disabled={!canEdit}>
+              Fjern betaling
+            </Button>
+          )}
         </Group>
       </Box>
 

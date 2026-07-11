@@ -5,7 +5,14 @@ import { getErrorMessage, type InputProducerResult } from "./types"
 export function createTextareaInput<F extends FieldValues>({
   ...props
 }: Omit<TextareaProps, "error">): InputProducerResult<F> {
-  return function TextareaInput({ name, state, register }) {
-    return <Textarea {...register(name)} {...props} error={getErrorMessage(state, name)} />
+  return function TextareaInput({ name, state, register, disabled }) {
+    return (
+      <Textarea
+        {...register(name)}
+        {...props}
+        disabled={disabled ?? props.disabled}
+        error={getErrorMessage(state, name)}
+      />
+    )
   }
 }

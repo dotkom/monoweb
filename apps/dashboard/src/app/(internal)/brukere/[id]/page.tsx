@@ -1,6 +1,8 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { useAuthorization } from "@/auth/authorization-context"
+import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
 import {
   IconBuildingWarehouse,
   IconCampfire,
@@ -11,7 +13,8 @@ import {
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import type { FC } from "react"
-import { useAuthorization } from "@/auth/authorization-context"
+import { useEffect, useMemo } from "react"
+import { useUserEditPermission } from "@/hooks/use-user-edit-permission"
 import { UserEditCard } from "./edit-card"
 import { MembershipPage } from "./membership-page"
 import { useUserDetailsContext } from "./provider"
@@ -56,23 +59,42 @@ const SIDEBAR_LINKS = [
     label: "Hendelseslogg",
     slug: "hendelseslogg",
     component: UserAuditLogPage,
-    isAdministrator: true,
+    canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
   },
 ] satisfies {
   label: string
   slug: string
   icon: FC
   component: FC
-  isAdministrator?: boolean
+  canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
 }[]
 
 export default function UserDetailsPage() {
   const { user } = useUserDetailsContext()
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
+  const { canEdit } = useUserEditPermission()
+  const canManageMemberships = authorization.canManageUserMemberships()
   const router = useRouter()
 
   const searchParams = useSearchParams()
-  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+  const tabFromQuery = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+
+  const accessibleLinks = useMemo(
+    () => SIDEBAR_LINKS.filter((link) => link.canAccess?.(authorization) ?? true),
+    [authorization]
+  )
+
+  const currentTab = accessibleLinks.some((link) => link.slug === tabFromQuery) ? tabFromQuery : SIDEBAR_LINKS[0].slug
+
+  useEffect(() => {
+    if (tabFromQuery === currentTab) {
+      return
+    }
+
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("tab", currentTab)
+    router.replace(`/brukere/${user.id}?${params.toString()}`)
+  }, [currentTab, router, searchParams, tabFromQuery, user.id])
 
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -81,30 +103,40 @@ export default function UserDetailsPage() {
   }
 
   return (
-    <Box>
+    <Stack>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{user.name}</Title>
       </Group>
 
-      <Tabs defaultValue={currentTab} onChange={handleTabChange}>
+      {currentTab !== "medlemskap" && !canEdit && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere denne brukerprofilen."
+          message="Dette er fordi du kun kan redigere din egen profil."
+        />
+      )}
+
+      {currentTab === "medlemskap" && !canManageMemberships && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere medlemskap."
+          message="Dette er fordi du ikke er administrator. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
+
+      <Tabs value={currentTab} onChange={handleTabChange}>
         <Tabs.List>
-          {SIDEBAR_LINKS.filter((link) => !link.isAdministrator || isAdministrator).map(
-            ({ label, icon: Icon, slug }) => (
-              <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
-                {label}
-              </Tabs.Tab>
-            )
-          )}
+          {accessibleLinks.map(({ label, icon: Icon, slug }) => (
+            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
+              {label}
+            </Tabs.Tab>
+          ))}
         </Tabs.List>
-        {SIDEBAR_LINKS.filter((link) => !link.isAdministrator || isAdministrator).map(
-          ({ slug, component: Component }) => (
-            <Tabs.Panel mt="md" key={slug} value={slug}>
-              <Component />
-            </Tabs.Panel>
-          )
-        )}
+        {accessibleLinks.map(({ slug, component: Component }) => (
+          <Tabs.Panel mt="md" key={slug} value={slug}>
+            <Component />
+          </Tabs.Panel>
+        ))}
       </Tabs>
-    </Box>
+    </Stack>
   )
 }

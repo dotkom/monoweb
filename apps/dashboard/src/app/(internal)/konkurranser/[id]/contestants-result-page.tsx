@@ -31,6 +31,7 @@ import {
 } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useCallback, useMemo, useState } from "react"
+import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
 import {
   useAddContestantMutation,
   useRemoveContestantMutation,
@@ -40,7 +41,15 @@ import {
 } from "../mutations"
 import { useContestContext } from "./provider"
 
-const ScoreCell = ({ contestant, suffix }: { contestant: ContestantDetail; suffix?: string }) => {
+const ScoreCell = ({
+  contestant,
+  suffix,
+  disabled,
+}: {
+  contestant: ContestantDetail
+  suffix?: string
+  disabled?: boolean
+}) => {
   const updateResult = useUpdateContestantResultMutation()
   const [value, setValue] = useState<number | string>(contestant.resultValue ?? "")
 
@@ -58,6 +67,7 @@ const ScoreCell = ({ contestant, suffix }: { contestant: ContestantDetail; suffi
       value={value}
       onChange={setValue}
       onBlur={handleBlur}
+      disabled={disabled}
       placeholder="—"
       style={{ width: 120 }}
       allowDecimal={false}
@@ -68,6 +78,7 @@ const ScoreCell = ({ contestant, suffix }: { contestant: ContestantDetail; suffi
 
 export const DeltagarePage = () => {
   const { contest, contestants } = useContestContext()
+  const canEdit = useContestEditPermission()
   const addContestant = useAddContestantMutation()
   const removeContestant = useRemoveContestantMutation()
   const updateTeamContestant = useUpdateTeamContestantMutation()
@@ -262,6 +273,7 @@ export const DeltagarePage = () => {
         cell: (info) => (
           <ScoreCell
             contestant={info.row.original}
+            disabled={!canEdit}
             suffix={
               contest.resultType === "DURATION" ? "sekunder" : contest.resultType === "SCORE" ? "poeng" : undefined
             }
@@ -280,6 +292,7 @@ export const DeltagarePage = () => {
                     variant={isWinner ? "filled" : "subtle"}
                     color={isWinner ? "yellow" : "gray"}
                     size="xs"
+                    disabled={!canEdit}
                     leftSection={<IconTrophy width={14} height={14} />}
                     onClick={() =>
                       setWinner.mutate({
@@ -307,6 +320,7 @@ export const DeltagarePage = () => {
                 <Button
                   variant="subtle"
                   size="sm"
+                  disabled={!canEdit}
                   leftSection={<IconPencil width={14} height={14} />}
                   onClick={() => handleOpenEditTeam(info.row.original)}
                 >
@@ -317,6 +331,7 @@ export const DeltagarePage = () => {
                 variant="subtle"
                 color="red"
                 size="sm"
+                disabled={!canEdit}
                 leftSection={<IconTrash width={14} height={14} />}
                 onClick={() => removeContestant.mutate({ contestantId: info.row.original.id })}
               >
@@ -327,7 +342,7 @@ export const DeltagarePage = () => {
         },
       }),
     ],
-    [columnHelper, contest, handleOpenEditTeam, removeContestant, setWinner]
+    [columnHelper, contest, handleOpenEditTeam, removeContestant, setWinner, canEdit]
   )
 
   const table = useReactTable({
@@ -402,7 +417,7 @@ export const DeltagarePage = () => {
                 color={contest.winnerContestantId ? "gray" : undefined}
                 c={contest.winnerContestantId ? "var(--mantine-color-text)" : undefined}
                 onClick={handlePublishWinner}
-                disabled={sortedContestants.length === 0 || sortedContestants[0].resultValue == null}
+                disabled={!canEdit || sortedContestants.length === 0 || sortedContestants[0].resultValue == null}
                 leftSection={<IconTrophy width={14} height={14} />}
               >
                 {contest.winnerContestantId ? "Oppdater vinner" : "Publiser vinner"}
@@ -412,6 +427,7 @@ export const DeltagarePage = () => {
                 <Button
                   variant="subtle"
                   color="red"
+                  disabled={!canEdit}
                   onClick={handleClearWinner}
                   leftSection={<IconTrophyOff width={14} height={14} />}
                 >
@@ -432,10 +448,10 @@ export const DeltagarePage = () => {
       <Divider />
 
       <Group align="flex-start" wrap="wrap">
-        <Button leftSection={<IconUserPlus width={14} height={14} />} onClick={openAddIndividual}>
+        <Button leftSection={<IconUserPlus width={14} height={14} />} onClick={openAddIndividual} disabled={!canEdit}>
           Legg til individ
         </Button>
-        <Button leftSection={<IconUsersPlus width={14} height={14} />} onClick={openAddTeam}>
+        <Button leftSection={<IconUsersPlus width={14} height={14} />} onClick={openAddTeam} disabled={!canEdit}>
           Legg til lag
         </Button>
       </Group>
@@ -463,7 +479,7 @@ export const DeltagarePage = () => {
             value={teamMembers}
           />
 
-          <Button onClick={handleAddTeam} disabled={!teamName.trim()}>
+          <Button onClick={handleAddTeam} disabled={!canEdit || !teamName.trim()}>
             Legg til lag
           </Button>
         </Stack>
@@ -490,7 +506,7 @@ export const DeltagarePage = () => {
 
           <Button
             onClick={handleSaveEditTeam}
-            disabled={!editTeamName.trim() || editTeamMembers.length === 0}
+            disabled={!canEdit || !editTeamName.trim() || editTeamMembers.length === 0}
             loading={updateTeamContestant.isPending}
           >
             Lagre

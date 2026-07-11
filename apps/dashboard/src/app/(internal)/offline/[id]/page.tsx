@@ -1,6 +1,8 @@
 "use client"
 
-import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
+import { useAuthorization } from "@/auth/authorization-context"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { OfflineEditCard } from "./edit-card"
@@ -17,6 +19,8 @@ const SIDEBAR_LINKS = [
 
 export default function OfflineDetailsPage() {
   const { offline } = useOfflineDetailsContext()
+  const { canEditOffline } = useAuthorization()
+  const canEdit = canEditOffline()
   const router = useRouter()
 
   const searchParams = useSearchParams()
@@ -29,11 +33,18 @@ export default function OfflineDetailsPage() {
   }
 
   return (
-    <Box>
+    <Stack>
       <Group>
         <CloseButton onClick={() => router.back()} />
         <Title>{offline.title}</Title>
       </Group>
+
+      {!canEdit && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere Offline-utgaven."
+          message="Dette er fordi du ikke er leder, nestleder eller redaktør i Prokom. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange}>
         <Tabs.List>
@@ -49,6 +60,6 @@ export default function OfflineDetailsPage() {
           </Tabs.Panel>
         ))}
       </Tabs>
-    </Box>
+    </Stack>
   )
 }

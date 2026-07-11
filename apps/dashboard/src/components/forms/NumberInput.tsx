@@ -5,7 +5,7 @@ import { getErrorMessage, type InputProducerResult } from "./types"
 export function createNumberInput<F extends FieldValues>({
   ...props
 }: Omit<NumberInputProps, "error">): InputProducerResult<F> {
-  return function FormNumberInput({ name, state, control }) {
+  return function FormNumberInput({ name, state, control, disabled }) {
     return (
       <Controller
         control={control}
@@ -15,6 +15,7 @@ export function createNumberInput<F extends FieldValues>({
             {...props}
             value={field.value}
             onChange={(value) => field.onChange({ target: { value } })}
+            disabled={disabled ?? props.disabled}
             error={getErrorMessage(state, name)}
           />
         )}

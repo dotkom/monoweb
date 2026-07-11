@@ -5,6 +5,9 @@ import { useDisclosure } from "@mantine/hooks"
 import { IconArrowLeft, IconCancel, IconListDetails, IconTrash, IconUsers } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo } from "react"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
 import { useDeleteContestMutation } from "../mutations"
 import { InfoPage } from "./info-page"
 import { DeltagarePage } from "./contestants-result-page"
@@ -30,6 +33,7 @@ const TAB_SLUGS = new Set<string>(TABS.map((tab) => tab.slug))
 
 export default function ContestDetailPage() {
   const { contest } = useContestContext()
+  const canEdit = useContestEditPermission()
   const router = useRouter()
   const deleteContest = useDeleteContestMutation()
   const [opened, { open, close }] = useDisclosure(false)
@@ -84,9 +88,17 @@ export default function ContestDetailPage() {
             </Group>
           </Modal>
 
-          <Button color="red" variant="light" onClick={open} leftSection={<IconTrash height={14} width={14} />}>
-            Slett konkurranse
-          </Button>
+          <PermissionTooltip allowed={canEdit}>
+            <Button
+              color="red"
+              variant="light"
+              onClick={open}
+              disabled={!canEdit}
+              leftSection={<IconTrash height={14} width={14} />}
+            >
+              Slett konkurranse
+            </Button>
+          </PermissionTooltip>
         </Group>
       </Group>
 
@@ -96,6 +108,13 @@ export default function ContestDetailPage() {
           {groupLabel}
         </Text>
       </Stack>
+
+      {!canEdit && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere konkurransen."
+          message="Dette er fordi du ikke er arrangør. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>

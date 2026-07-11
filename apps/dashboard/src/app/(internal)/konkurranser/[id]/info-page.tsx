@@ -9,6 +9,7 @@ import { createTextInput } from "@/components/forms/TextInput"
 import { ContestUpdateSchema } from "@dotkomonline/rpc/contest"
 import { Stack } from "@mantine/core"
 import type { z } from "zod"
+import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
 import { useUpdateContestMutation } from "../mutations"
 import { useContestContext } from "./provider"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
@@ -30,6 +31,7 @@ type FormValues = z.infer<typeof FormSchema>
 
 export const InfoPage = () => {
   const { contest } = useContestContext()
+  const canEdit = useContestEditPermission()
   const updateContest = useUpdateContestMutation()
   const { groups } = useGroupAllQuery()
 
@@ -57,6 +59,7 @@ export const InfoPage = () => {
       })
     },
     label: "Oppdater konkurranse",
+    disabled: !canEdit,
     fields: {
       name: createTextInput({
         label: "Navn",
