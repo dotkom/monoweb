@@ -1,7 +1,10 @@
 "use client"
 
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { GenericTable } from "@/components/GenericTable"
 import { DateTooltip } from "@/components/DateTooltip"
+import { useGroupPermissions } from "@/hooks/use-group-permissions"
 import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, type Notification } from "@dotkomonline/rpc"
 import { Anchor, Box, Button, Skeleton, Stack, Title } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -13,6 +16,7 @@ import { useGroupDetailsContext } from "./provider"
 
 export const GroupNotificationPage: FC = () => {
   const { group } = useGroupDetailsContext()
+  const { canEdit } = useGroupPermissions()
   const { notifications, isLoading } = useNotificationsByPayloadQuery("GROUP", group.slug)
 
   const columnHelper = createColumnHelper<Notification>()
@@ -71,11 +75,27 @@ export const GroupNotificationPage: FC = () => {
   return (
     <Skeleton visible={isLoading}>
       <Stack gap="lg">
+        {!canEdit && (
+          <ReadOnlyNotice
+            title="Du kan ikke opprette varslinger for denne gruppen."
+            message="Dette er fordi du ikke er medlem av gruppen. Kontakt dotkom dersom du mener dette er en feil."
+          />
+        )}
+
         <Box>
           <Title order={3}>Opprett varsling</Title>
-          <Button mt="md" onClick={openCreateGroupNotificationModal({ groupSlug: group.slug })}>
-            Legg til ny varsling
-          </Button>
+          <PermissionTooltip
+            allowed={canEdit}
+            label="Du kan ikke opprette varslinger for denne gruppen"
+          >
+            <Button
+              mt="md"
+              onClick={openCreateGroupNotificationModal({ groupSlug: group.slug })}
+              disabled={!canEdit}
+            >
+              Legg til ny varsling
+            </Button>
+          </PermissionTooltip>
         </Box>
 
         <Box>
