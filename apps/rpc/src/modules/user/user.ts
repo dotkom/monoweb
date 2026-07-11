@@ -180,6 +180,10 @@ export function isVanityVerified(user: User) {
   return user.flags.some(({ name }) => name === FlagName.VANITY_VERIFIED)
 }
 
+export function isExceptionallyDistinguished(user: User) {
+  return user.flags.some(({ name }) => name === FlagName.EXCEPTIONALLY_DISTINGUISHED)
+}
+
 export function isMembershipActive(
   membership: Membership | MembershipWrite,
   now: TZDate | Date = getCurrentUTC()
