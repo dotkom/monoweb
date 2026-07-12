@@ -2,13 +2,21 @@ import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text, Title } from "@dotkomonline/ui"
+import { OfflineHighlight } from "./offline-highlight"
 
-const OfflinePage = async () => {
+interface OfflinePageProps {
+  searchParams: Promise<{ offlineId?: string }>
+}
+
+const OfflinePage = async ({ searchParams }: OfflinePageProps) => {
+  const { offlineId } = await searchParams
   const offlines = await server.offline.all.query({ take: 1000 })
   const offlinesByYear = groupOfflinesByYear(offlines)
 
   return (
     <div>
+      {offlineId !== undefined && <OfflineHighlight offlineId={offlineId} />}
+
       <div className="border-gray-600 border-b flex flex-col pb-5">
         <Title element="h1" className="text-3xl">
           Offline
@@ -21,8 +29,8 @@ const OfflinePage = async () => {
 
       {Object.entries(offlinesByYear)
         .sort(([a], [b]) => Number(b) - Number(a))
-        .map(([year, offlines]) => (
-          <OfflineYearSection offlines={offlines} year={year} key={year} />
+        .map(([year, yearOfflines]) => (
+          <OfflineYearSection offlines={yearOfflines} year={year} highlightedOfflineId={offlineId} key={year} />
         ))}
     </div>
   )
@@ -42,9 +50,10 @@ function groupOfflinesByYear(offlines: Offline[]) {
 interface OfflineYearSectionProps {
   offlines: Offline[]
   year: string
+  highlightedOfflineId?: string
 }
 
-const OfflineYearSection = ({ offlines, year }: OfflineYearSectionProps) => {
+const OfflineYearSection = ({ offlines, year, highlightedOfflineId }: OfflineYearSectionProps) => {
   return (
     <div className="mt-8">
       <Title
@@ -57,7 +66,11 @@ const OfflineYearSection = ({ offlines, year }: OfflineYearSectionProps) => {
 
       <div className="flex flex-wrap gap-12 justify-center sm:justify-normal p-4">
         {offlines.map((offline) => (
-          <OfflineCard offline={offline} key={offline.id} />
+          <OfflineCard
+            offline={offline}
+            key={offline.id}
+            highlighted={offline.id === highlightedOfflineId}
+          />
         ))}
       </div>
     </div>

@@ -7,8 +7,13 @@ export const CreateNotificationModal: FC<ContextModalProps> = ({ context, id }) 
   const close = () => context.closeModal(id)
   const create = useCreateNotificationMutation()
   const FormComponent = useNotificationWriteForm({
+    includeRecipientPicker: true,
     onSubmit: (data) => {
-      create.mutate(data), close()
+      create.mutate(data, {
+        onSuccess: () => {
+          close()
+        },
+      })
     },
   })
   return <FormComponent />

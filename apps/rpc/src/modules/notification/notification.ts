@@ -34,6 +34,7 @@ export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSche
 
 export const NotificationRecipientSchema = z.object({
   id: z.string(),
+  userId: z.string(),
   readAt: z.coerce.date().nullable(),
 })
 

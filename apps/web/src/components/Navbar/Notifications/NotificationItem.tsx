@@ -61,7 +61,7 @@ const getNotificationUrl = (payloadType: NotificationPayloadType, payload: strin
     case "USER":
       return payload ? `/profil/${payload}` : null
     case "OFFLINE":
-      return `/offline` // TODO: Fix in the future
+      return payload ? `/offline?offlineId=${payload}` : "/offline"
     case "JOB_LISTING":
       return payload ? `/karriere/${payload}` : null
     case "NONE":
@@ -119,7 +119,7 @@ export const NotificationItem = ({ userNotification, onItemClick, className, ...
 
         {isImportant && (
           <Badge
-            variant="solid"
+            variant="destructive"
             color="red"
             className={cn("bg-red-500 text-white text-xs py-1 px-2", { "mb-1": isImportant })}
           >
