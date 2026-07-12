@@ -20,7 +20,7 @@
     "@types/html-to-text": "9.0.4",
     "@types/node": "22.19.7",
     "typescript": "5.9.3",
-    "vitest": "3.2.6"
+    "vitest": "3.2.7"
   },
   "dependencies": {
     "@aws-sdk/s3-presigned-post": "^3.908.0",
