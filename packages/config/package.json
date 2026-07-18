@@ -19,7 +19,7 @@
     "@radix-ui/colors": "3.0.0",
     "@tailwindcss/postcss": "4.1.18",
     "@tailwindcss/typography": "0.5.20",
-    "postcss": "8.5.16",
+    "postcss": "8.5.19",
     "tailwindcss": "4.3.0",
     "tailwindcss-animate": "1.0.7",
     "tailwindcss-radix": "4.0.2",
