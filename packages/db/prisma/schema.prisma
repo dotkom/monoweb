@@ -86,7 +86,6 @@ model User {
   gender              Gender   @default(UNKNOWN)
   dietaryRestrictions String?  @map("dietary_restrictions")
   ntnuUsername        String?  @map("ntnu_username")
-  flags               String[]
   /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
   workspaceUserId     String?  @unique @map("workspace_user_id")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -110,6 +109,7 @@ model User {
   notificationsUpdated  Notification[]          @relation("last_updated_by")
   contestants           Contestant[]
   contestTeams          ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks         UserFlagLink[]
 
   @@map("ow_user")
 }
@@ -931,4 +931,30 @@ model ContestTeam {
   members User[] @relation("ContestTeamMember")
 
   @@map("contest_team")
+}
+
+model UserFlag {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  description String?
+  imageUrl    String?  @map("image_url")
+
+  userFlagLinks UserFlagLink[]
+
+  @@map("user_flag")
+}
+
+model UserFlagLink {
+  id        String   @id @default(uuid())
+  awardedAt DateTime @map("awarded_at") @db.Timestamptz(3)
+  reason    String?  @map("reason")
+
+  userId     String   @map("user_id")
+  userFlagId String   @map("user_flag_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userFlag   UserFlag @relation(fields: [userFlagId], references: [id])
+
+  @@map("user_flag_link")
 }
