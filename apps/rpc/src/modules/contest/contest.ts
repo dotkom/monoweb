@@ -86,3 +86,7 @@ export const ContestantDetailSchema = ContestantSchema.extend({
   participantCount: z.int().nonnegative(),
 })
 export type ContestantDetail = z.infer<typeof ContestantDetailSchema>
+
+export function getContestantName(contestant: ContestantDetail) {
+  return contestant.team?.name ?? contestant.user?.name ?? "Ukjent lag"
+}

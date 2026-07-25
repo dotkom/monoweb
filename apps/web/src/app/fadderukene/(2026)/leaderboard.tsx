@@ -2,7 +2,13 @@
 
 import { useTRPC } from "@/utils/trpc/client"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import type { ContestId, ContestResultOrder, ContestUserSummary, ContestantDetail } from "@dotkomonline/rpc/contest"
+import {
+  type ContestId,
+  type ContestResultOrder,
+  type ContestUserSummary,
+  type ContestantDetail,
+  getContestantName,
+} from "@dotkomonline/rpc/contest"
 import { Avatar, AvatarFallback, AvatarImage, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { IconUserFilled } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
@@ -39,10 +45,6 @@ function rankContestants(contestants: ContestantDetail[], order: ContestResultOr
   })
 
   return sorted.map((contestant, index) => ({ contestant, rank: index + 1 }))
-}
-
-function getTeamName(contestant: ContestantDetail) {
-  return contestant.team?.name ?? contestant.user?.name ?? "Ukjent lag"
 }
 
 type AvatarStackProps = {
@@ -127,7 +129,7 @@ function PodiumCard({ className, rankedContestant, userId, onSelect }: PodiumCar
     >
       <Image
         src={image}
-        alt={getTeamName(contestant)}
+        alt={getContestantName(contestant)}
         width={180}
         height={180}
         className={cn("p-1", rank === 1 && "sm:scale-120")}
@@ -141,7 +143,7 @@ function PodiumCard({ className, rankedContestant, userId, onSelect }: PodiumCar
           rank === 1 && "sm:text-2xl"
         )}
       >
-        {getTeamName(contestant)}
+        {getContestantName(contestant)}
       </Text>
 
       <Text element="span" className={cn("text-sm w-fit", rank === 1 && "sm:text-base")}>
@@ -190,7 +192,7 @@ function LeaderboardRow({ rankedContestant, onSelect, userId }: LeaderboardRowPr
         </Text>
 
         <Text element="span" className="min-w-0 truncate font-marcellus font-medium">
-          {getTeamName(contestant)}
+          {getContestantName(contestant)}
         </Text>
 
         <AvatarStack

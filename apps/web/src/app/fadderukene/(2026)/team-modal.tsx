@@ -1,7 +1,7 @@
 "use client"
 
 import { useFullPathname } from "@/utils/use-full-pathname"
-import type { ContestantDetail } from "@dotkomonline/rpc/contest"
+import { type ContestantDetail, getContestantName } from "@dotkomonline/rpc/contest"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -31,7 +31,7 @@ export function TeamModal({ contestant, rank, userId, onClose }: TeamModalProps)
 
   const isAuthenticated = userId !== null
   const team = contestant?.team ?? null
-  const teamName = team?.name ?? contestant?.user?.name ?? "Ukjent lag"
+  const teamName = contestant === null ? "Ukjent lag" : getContestantName(contestant)
   const members = team?.members ?? []
   const memberCount = team?.memberCount ?? contestant?.participantCount ?? 0
   const membersAreHidden = !isAuthenticated && members.length === 0 && memberCount > 0
