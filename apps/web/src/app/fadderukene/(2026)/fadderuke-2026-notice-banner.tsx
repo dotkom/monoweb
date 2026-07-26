@@ -188,7 +188,7 @@ export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026Noti
             className="rounded-xl p-4"
           >
             <div className="flex flex-col gap-2">
-              <Title element="p" className="text-4xl sm:text-5xl font-marcellus font-semibold">
+              <Title element="p" className="text-4xl sm:text-5xl font-marcellus font-semibold uppercase">
                 Onlinelekene
               </Title>
 
