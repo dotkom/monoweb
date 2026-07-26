@@ -1,5 +1,14 @@
 import type { FC } from "react"
-import type { Control, FieldPath, FieldValue, FieldValues, FormState, UseFormRegister } from "react-hook-form"
+import type {
+  Control,
+  FieldPath,
+  FieldValue,
+  FieldValues,
+  FormState,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form"
 
 export interface InputFieldContext<T extends FieldValues> {
   name: FieldPath<T>
@@ -7,6 +16,8 @@ export interface InputFieldContext<T extends FieldValues> {
   control: Control<T>
   state: FormState<T>
   defaultValue: FieldValue<T>
+  setValue: UseFormSetValue<T>
+  getValues: UseFormGetValues<T>
   setError(name: FieldPath<T>, error: { type: string; message: string }): void
   clearErrors(name?: FieldPath<T>): void
   disabled?: boolean

@@ -109,6 +109,7 @@ export const useEventEditForm = ({
       start: createDateTimeInput({
         label: "Starttidspunkt",
         withAsterisk: true,
+        syncOffsetTo: "end",
       }),
       end: createDateTimeInput({
         label: "Sluttidspunkt",

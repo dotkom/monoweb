@@ -19,7 +19,7 @@ import {
   EventWriteSchema,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
-import { addHours, roundToNearestHours } from "date-fns"
+import { addDays, addHours, setHours, setMilliseconds, setMinutes, setSeconds } from "date-fns"
 import { z } from "zod"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
@@ -45,11 +45,11 @@ const FormValidationSchema = EventWriteSchema.extend({
 
 type FormValidationResult = z.infer<typeof FormValidationSchema>
 
-const nextHour = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
+const tomorrowAt16 = setMilliseconds(setSeconds(setMinutes(setHours(addDays(new Date(), 1), 16), 0), 0), 0)
 
 const DEFAULT_VALUES = {
-  start: nextHour,
-  end: addHours(nextHour, 1),
+  start: tomorrowAt16,
+  end: addHours(tomorrowAt16, 4),
   status: "PUBLIC",
   type: "SOCIAL",
 
@@ -124,6 +124,7 @@ export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps
       start: createDateTimeInput({
         label: "Starttidspunkt",
         withAsterisk: true,
+        syncOffsetTo: "end",
       }),
       end: createDateTimeInput({
         label: "Sluttidspunkt",
