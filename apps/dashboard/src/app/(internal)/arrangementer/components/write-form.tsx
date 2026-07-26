@@ -3,7 +3,6 @@ import { validateEventWrite } from "@/app/(internal)/arrangementer/validation"
 import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
-import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
@@ -168,9 +167,6 @@ export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps
         data: contests.map((contest) => ({ value: contest.id, label: contest.name })),
         searchable: true,
         clearable: true,
-      }),
-      markForMissedAttendance: createCheckboxInput({
-        label: "Gi prikk for fravær",
       }),
     },
   })

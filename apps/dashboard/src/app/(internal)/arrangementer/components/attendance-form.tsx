@@ -36,11 +36,11 @@ export const useAttendanceForm = ({ onSubmit, defaultValues, label, disabled }: 
       registerStart: createDateTimeInput({
         label: "Påmeldingsstart",
       }),
-      deregisterDeadline: createDateTimeInput({
-        label: "Frist avmelding",
-      }),
       registerEnd: createDateTimeInput({
         label: "Påmeldingsslutt",
+      }),
+      deregisterDeadline: createDateTimeInput({
+        label: "Avmeldingsfrist",
       }),
     },
   })
