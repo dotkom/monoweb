@@ -4,7 +4,7 @@ import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
@@ -96,7 +96,7 @@ export const useEventEditForm = ({
         placeholder: "https://...",
         description: "Lenke til Google Maps eller MazeMap. Må være en gyldig lenke.",
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Bilde",
         maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         description: (
@@ -105,6 +105,7 @@ export const useEventEditForm = ({
           </>
         ),
         onFileUpload: uploadFile,
+        aspectRatio: { width: 24, height: 9 },
       }),
       start: createDateTimeInput({
         label: "Starttidspunkt",

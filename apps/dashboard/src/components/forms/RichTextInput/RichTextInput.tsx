@@ -1,6 +1,7 @@
 "use client"
 
 import { useUploadImageModal } from "@/components/ImageUploadModal"
+import type { AspectRatio } from "@/components/forms/ImageInput"
 import { InsertImageButton } from "@/components/forms/RichTextInput/InsertImageButton"
 import {
   AddColumnAfter,
@@ -38,6 +39,7 @@ interface RichTextEditorFieldProps {
   onChange: (value: string) => void
   onFileUpload?: (file: File) => Promise<string>
   maxFileSizeKiB?: number
+  aspectRatio?: AspectRatio
   editorProps: Omit<RichTextEditorProps, "error" | "children" | "editor">
 }
 
@@ -47,6 +49,7 @@ function RichTextEditorField({
   onChange,
   onFileUpload,
   maxFileSizeKiB,
+  aspectRatio,
   editorProps,
 }: RichTextEditorFieldProps) {
   const editorRef = useRef<Editor | null>(null)
@@ -57,6 +60,7 @@ function RichTextEditorField({
   const openImageUploadModal = useUploadImageModal({
     onFileUpload,
     maxSizeKiB: maxFileSizeKiB,
+    aspectRatio,
     handleSubmit: async (imageUrl, alt, title) => {
       const chain = editorRef.current?.chain()
 
@@ -179,12 +183,14 @@ export function createRichTextInput<F extends FieldValues>({
   label,
   onFileUpload,
   maxFileSizeKiB,
+  aspectRatio,
   ...props
 }: Omit<RichTextEditorProps, "error" | "children" | "editor"> & {
   required: boolean
   label: string
   onFileUpload?: (file: File) => Promise<string>
   maxFileSizeKiB?: number
+  aspectRatio?: AspectRatio
 }): InputProducerResult<F> {
   return function RichTextInput({ name, state, control, disabled }) {
     return (
@@ -200,6 +206,7 @@ export function createRichTextInput<F extends FieldValues>({
               onChange={field.onChange}
               onFileUpload={onFileUpload}
               maxFileSizeKiB={maxFileSizeKiB}
+              aspectRatio={aspectRatio}
               editorProps={props}
             />
           )}
