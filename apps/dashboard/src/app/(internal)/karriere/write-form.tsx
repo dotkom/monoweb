@@ -71,6 +71,7 @@ export const useJobListingWriteForm = ({
       start: createDateTimeInput({
         label: "Startdato",
         withAsterisk: true,
+        syncOffsetTo: "end",
       }),
       end: createDateTimeInput({
         label: "Sluttdato",

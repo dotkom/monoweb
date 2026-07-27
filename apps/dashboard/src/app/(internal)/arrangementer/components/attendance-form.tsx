@@ -35,6 +35,7 @@ export const useAttendanceForm = ({ onSubmit, defaultValues, label, disabled }: 
     fields: {
       registerStart: createDateTimeInput({
         label: "Påmeldingsstart",
+        syncOffsetTo: "registerEnd",
       }),
       registerEnd: createDateTimeInput({
         label: "Påmeldingsslutt",

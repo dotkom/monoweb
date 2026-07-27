@@ -49,6 +49,8 @@ export function useFormBuilder<T extends z.ZodRawShape>({
         register={form.register}
         control={form.control}
         state={form.formState}
+        setValue={form.setValue}
+        getValues={form.getValues}
         setError={form.setError}
         clearErrors={form.clearErrors}
         disabled={disabled}
