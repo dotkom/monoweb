@@ -1,11 +1,11 @@
 import type { Attendance } from "@dotkomonline/rpc/attendance"
-import { Box, Divider, Title } from "@mantine/core"
+import { Box, Checkbox, Divider, Stack, Title } from "@mantine/core"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
-import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
+import { useAddAttendanceMutation, useUpdateAttendanceMutation, useUpdateEventMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const AttendancePage: FC = () => {
@@ -35,17 +35,21 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
   })
 
   return (
-    <Box>
+    <Stack gap="md">
       <Title order={5}>Lag påmelding</Title>
+      <Box mb="md">
+        <MarkForMissedAttendanceCheckbox />
+      </Box>
       <AttendanceForm />
-    </Box>
+    </Stack>
   )
 }
 
-interface EventAttendanceProps {
+interface AttendancePageDetailProps {
   attendance: Attendance
 }
-const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
+
+const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
   const { canEdit } = useEventEditPermission()
   const updateAttendanceMut = useUpdateAttendanceMutation()
 
@@ -76,6 +80,9 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
         <Title mb={10} order={3}>
           Påmeldingstid
         </Title>
+        <Box mb="md">
+          <MarkForMissedAttendanceCheckbox />
+        </Box>
         <AttendanceForm />
       </Box>
       <Divider my={32} />
@@ -85,5 +92,42 @@ const AttendancePageDetail: FC<EventAttendanceProps> = ({ attendance }) => {
         <PoolsForm />
       </Box>
     </Box>
+  )
+}
+
+function MarkForMissedAttendanceCheckbox() {
+  const { event, attendance } = useEventContext()
+  const { canEdit } = useEventEditPermission()
+  const updateEvent = useUpdateEventMutation()
+
+  return (
+    <Checkbox
+      label="Gi prikk for fravær"
+      description="Deltakere som ikke møter får automatisk prikk"
+      checked={event.markForMissedAttendance}
+      disabled={attendance === null || !canEdit || updateEvent.isPending}
+      onChange={(changeEvent) => {
+        updateEvent.mutate({
+          id: event.id,
+          event: {
+            status: event.status,
+            type: event.type,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            description: event.description,
+            imageUrl: event.imageUrl,
+            locationTitle: event.locationTitle,
+            locationAddress: event.locationAddress,
+            locationLink: event.locationLink,
+            markForMissedAttendance: changeEvent.currentTarget.checked,
+            contestId: event.contestId,
+          },
+          groupIds: event.hostingGroups.map((group) => group.slug),
+          companyIds: event.companies.map((company) => company.id),
+          parentId: event.parentId,
+        })
+      }}
+    />
   )
 }
