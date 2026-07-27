@@ -9,6 +9,7 @@ import {
   EventWithFeedbackFormSchema,
   EventWriteSchema,
 } from "./event"
+import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
 import { CompanySchema } from "../company/company"
 import { GroupSchema } from "../group/group"
 import { UserSchema } from "../user/user"
@@ -21,6 +22,15 @@ import { procedure, t } from "../../trpc"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { attendanceRouter } from "./attendance-router"
 import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
+
+const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
+
+function assertHasCommitteeOrganizer(groupIds: Iterable<string>): void {
+  const hasCommitteeOrganizer = [...groupIds].some((groupId) => COMMITTEE_AFFILIATION_SET.has(groupId))
+  if (!hasCommitteeOrganizer) {
+    throw new InvalidArgumentError("Event must have at least one committee organizer")
+  }
+}
 
 export type GetEventInput = inferProcedureInput<typeof getEventProcedure>
 export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
@@ -68,6 +78,8 @@ const createEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    assertHasCommitteeOrganizer(input.groupIds)
+
     // This will remove any groups the user is not affiliated with, which restricts editors to only being able to create
     // events for their own groups. This does not account for the parent event's organizer groups.
     const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
@@ -81,6 +93,9 @@ const createEventProcedure = procedure
         `There are no allowed organizer groups to create the event for User(ID=${ctx.principal.subject}) with input GroupOrganizers(IDs=${input.groupIds.join(",")})`
       )
     }
+
+    // Create only persists affiliated groups, so the saved organizers must still include a committee.
+    assertHasCommitteeOrganizer(organizerGroups)
 
     const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
 
@@ -117,6 +132,8 @@ const editEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    assertHasCommitteeOrganizer(input.groupIds)
+
     // This will remove any groups the user is not affiliated with, which restricts editors to only being able to update
     // events for their own groups. This does not account for the parent event's organizer groups.
     const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(

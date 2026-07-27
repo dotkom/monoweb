@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker"
 import { describe, expect, it } from "vitest"
 import { CommitteeGroupSlug } from "../authorization-service"
 import { core, dbClient } from "../../../vitest-integration.setup"
-import { FailedPreconditionError } from "../../error"
+import { FailedPreconditionError, InvalidArgumentError } from "../../error"
 
 // biome-ignore lint/suspicious/noExportsInTest: used in another spec
 export function getMockGroup(input: Partial<GroupWrite> = {}): GroupWrite {
@@ -63,7 +63,11 @@ describe("event integration tests", () => {
     // Updating with new ones and removing some
     const group2 = await core.groupService.create(
       dbClient,
-      getMockGroup({ abbreviation: CommitteeGroupSlug.FAGKOM, name: "Fag- og kurskomiteen" })
+      getMockGroup({
+        slug: CommitteeGroupSlug.FAGKOM,
+        abbreviation: CommitteeGroupSlug.FAGKOM,
+        name: "Fag- og kurskomiteen",
+      })
     )
     const updated2 = await core.eventService.updateEventOrganizers(
       dbClient,
@@ -76,6 +80,27 @@ describe("event integration tests", () => {
       expect.objectContaining({
         slug: group.slug,
       })
+    )
+  })
+
+  it("should reject organizers without a committee", async () => {
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const interestGroup = await core.groupService.create(
+      dbClient,
+      getMockGroup({
+        slug: "faxeordenen",
+        type: "INTEREST_GROUP",
+        abbreviation: "Faxeordenen",
+        name: "Faxeordenen",
+      })
+    )
+
+    await expect(
+      core.eventService.updateEventOrganizers(dbClient, event.id, new Set([interestGroup.slug]), new Set())
+    ).rejects.toThrow(InvalidArgumentError)
+
+    await expect(core.eventService.updateEventOrganizers(dbClient, event.id, new Set(), new Set())).rejects.toThrow(
+      InvalidArgumentError
     )
   })
 

@@ -16,6 +16,7 @@ import {
   type EventWrite,
   EVENT_IMAGE_MAX_SIZE_KIB,
 } from "./event"
+import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
 import type { UserId } from "../user/user"
@@ -23,6 +24,8 @@ import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
+
+const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
 
 export interface EventService {
   createEvent(handle: DBHandle, data: EventWrite): Promise<Event>
@@ -166,8 +169,10 @@ export function getEventService(
     },
 
     async updateEventOrganizers(handle, eventId, hostingGroups, companies) {
-      if (hostingGroups.size === 0) {
-        throw new InvalidArgumentError(`Event(ID=${eventId}) must have at least one hosting group`)
+      const hasCommitteeOrganizer = [...hostingGroups].some((groupId) => COMMITTEE_AFFILIATION_SET.has(groupId))
+
+      if (!hasCommitteeOrganizer) {
+        throw new InvalidArgumentError(`Event(ID=${eventId}) must have at least one committee organizer`)
       }
 
       const event = await this.getEventById(handle, eventId)

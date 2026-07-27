@@ -11,10 +11,37 @@ const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies readonly GroupId[
  * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#CommitteeGroupSlug}
  */
 const CommitteeGroupSlug = {
+  HOVEDSTYRET: "hs",
+  DOTKOM: "dotkom",
+  APPKOM: "appkom",
+  ARRKOM: "arrkom",
   BACKLOG: "backlog",
+  BANKOM: "bankom",
+  BEDKOM: "bedkom",
+  DEBUG: "debug",
+  DOTDAGENE: "dotdagene",
+  EKSKOM: "ekskom",
+  FAGKOM: "fagkom",
+  FEMINIT: "feminit",
+  FOND: "fond",
+  JUBKOM: "jubkom",
+  ONLINE_IL: "online-il",
   PROKOM: "prokom",
+  REDAKSJONEN: "redaksjonen",
+  TRIKOM: "trikom",
   VELKOM: "velkom",
 } as const satisfies Record<string, GroupId>
+
+/**
+ * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#COMMITTEE_AFFILIATIONS}
+ */
+export const COMMITTEE_AFFILIATIONS: readonly GroupId[] = Object.values(CommitteeGroupSlug)
+
+const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
+
+export function isCommitteeAffiliation(groupId: string): boolean {
+  return COMMITTEE_AFFILIATION_SET.has(groupId)
+}
 
 export interface AuthorizationState {
   isAdministrator: boolean
