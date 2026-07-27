@@ -17,7 +17,8 @@ interface ModalProps {
 const FormSchema = z.object({
   message: z.string().min(1),
 })
-type FormValues = z.infer<typeof FormSchema>
+type FormValues = z.output<typeof FormSchema>
+type FormInput = z.input<typeof FormSchema>
 
 export const NotifyAttendeesModal: FC<ContextModalProps<ModalProps>> = ({
   context,
@@ -29,7 +30,7 @@ export const NotifyAttendeesModal: FC<ContextModalProps<ModalProps>> = ({
     register,
     handleSubmit,
     formState: { isValid, errors },
-  } = useForm<FormValues>({
+  } = useForm<FormInput, unknown, FormValues>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
   })

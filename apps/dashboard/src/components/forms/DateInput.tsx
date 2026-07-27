@@ -6,9 +6,9 @@ import { getErrorMessage, type InputProducerResult } from "./types"
 import { ActionIcon, Stack } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
 
-export function createDateInput<F extends FieldValues>({
+export function createDateInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>({
   ...props
-}: Omit<DatePickerInputProps, "error">): InputProducerResult<F> {
+}: Omit<DatePickerInputProps, "error">): InputProducerResult<F, TTransformedValues> {
   return function FormDateInput({ name, state, control, defaultValue, disabled }) {
     return (
       <Controller

@@ -2,11 +2,14 @@ import { Select, type SelectProps } from "@mantine/core"
 import { Controller, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "./types"
 
-export function createIntegerSelectInput<F extends FieldValues>({
+export function createIntegerSelectInput<
+  F extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = F,
+>({
   ...props
 }: Omit<SelectProps, "data" | "error"> & {
   data: { value: number; label: string }[]
-}): InputProducerResult<F> {
+}): InputProducerResult<F, TTransformedValues> {
   return function FormSelectInput({ name, state, control, disabled }) {
     return (
       <Controller

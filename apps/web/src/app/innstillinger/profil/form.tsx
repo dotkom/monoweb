@@ -6,7 +6,6 @@ import {
   GenderSchema,
   USER_IMAGE_MAX_SIZE_KIB,
   type User,
-  type UserWrite,
   UserWriteSchema,
   getGenderName,
 } from "@dotkomonline/rpc/user"
@@ -34,13 +33,21 @@ import Link from "next/link"
 import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
+import type { z } from "zod"
 
 const GENDER_OPTIONS = GenderSchema.options.map((option) => ({
   label: getGenderName(option),
   value: option,
 }))
 
-export type FormUserWrite = Omit<UserWrite, "workspaceUserId" | "name" | "email">
+const ProfileFormSchema = UserWriteSchema.omit({
+  workspaceUserId: true,
+  name: true,
+  email: true,
+})
+
+export type FormUserWrite = z.output<typeof ProfileFormSchema>
+type FormUserWriteInput = z.input<typeof ProfileFormSchema>
 
 interface FormProps {
   user: User
@@ -70,11 +77,11 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     trigger,
     formState: { errors, isDirty },
     handleSubmit,
-  } = useForm<FormUserWrite>({
+  } = useForm<FormUserWriteInput, unknown, FormUserWrite>({
     defaultValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
-    resolver: zodResolver(UserWriteSchema.omit({ workspaceUserId: true, name: true, email: true })),
+    resolver: zodResolver(ProfileFormSchema),
   })
 
   const username = useWatch({ control, name: "username" })

@@ -4,13 +4,13 @@ import { Button, Text, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
 import { FormProvider, useForm } from "react-hook-form"
-import { DeliveryMethod, type FormSchema, InvoiceRelation, formSchema } from "./components/form-schema"
+import { DeliveryMethod, type FormInput, type FormSchema, InvoiceRelation, formSchema } from "./components/form-schema"
 import { InvoiceForm } from "./components/invoice-form"
 import { Section } from "./components/section"
 import { useSubmitInvoiceMutation } from "./mutations"
 
 export default function InvoicificationPage() {
-  const form = useForm<FormSchema>({
+  const form = useForm<FormInput, unknown, FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       preferredDeliveryMethod: DeliveryMethod.EHF,

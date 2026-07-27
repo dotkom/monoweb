@@ -11,11 +11,14 @@ function entriesOf<T extends Record<string, unknown>, K extends string & keyof T
 interface FormBuilderOptions<T extends z.ZodRawShape> {
   schema: z.ZodObject<T>
   fields: Partial<{
-    [K in keyof z.infer<z.ZodObject<T>>]: InputProducerResult<z.infer<z.ZodObject<T>>>
+    [K in keyof z.input<z.ZodObject<T>>]: InputProducerResult<z.input<z.ZodObject<T>>, z.output<z.ZodObject<T>>>
   }>
-  defaultValues?: DefaultValues<z.infer<z.ZodObject<T>>>
+  defaultValues?: DefaultValues<z.input<z.ZodObject<T>>>
   label: string
-  onSubmit(data: z.infer<z.ZodObject<T>>, form: UseFormReturn<z.infer<z.ZodObject<T>>>): void
+  onSubmit(
+    data: z.output<z.ZodObject<T>>,
+    form: UseFormReturn<z.input<z.ZodObject<T>>, unknown, z.output<z.ZodObject<T>>>
+  ): void
   disabled?: boolean
 }
 
@@ -27,25 +30,32 @@ export function useFormBuilder<T extends z.ZodRawShape>({
   onSubmit,
   disabled,
 }: FormBuilderOptions<T>) {
-  const form = useForm<z.infer<z.ZodObject<T>>>({
+  type FormInput = z.input<z.ZodObject<T>>
+  type FormOutput = z.output<z.ZodObject<T>>
+
+  const form = useForm<FormInput, unknown, FormOutput>({
     resolver: zodResolver(schema),
     mode: "onBlur",
     defaultValues,
   })
+
   const components = entriesOf(fields).map(([name, fc]) => {
     if (!fc) {
       throw new Error()
     }
-    const Component: InputProducerResult<z.infer<z.ZodObject<T>>> = fc
+
+    const Component: InputProducerResult<FormInput, FormOutput> = fc
+
     // zod v4's $InferObjectOutput<T> is opaque in generics. FieldPath<T> cannot index DeepPartial<T> without this cast
-    const defaultValue = (form.formState.defaultValues as Record<string, unknown>)?.[name as string] as FieldValue<
-      z.infer<z.ZodObject<T>>
-    >
+    const defaultValue = (form.formState.defaultValues as Record<string, unknown>)?.[
+      name as string
+    ] as FieldValue<FormInput>
+
     return (
       <Component
         defaultValue={defaultValue}
         key={name}
-        name={name as FieldPath<z.infer<z.ZodObject<T>>>}
+        name={name as FieldPath<FormInput>}
         register={form.register}
         control={form.control}
         state={form.formState}

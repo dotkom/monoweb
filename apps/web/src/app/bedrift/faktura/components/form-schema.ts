@@ -28,4 +28,5 @@ export const formSchema = z.object({
   comment: z.string().default("Ingen kommentar"),
 })
 
-export type FormSchema = z.infer<typeof formSchema>
+export type FormInput = z.input<typeof formSchema>
+export type FormSchema = z.output<typeof formSchema>

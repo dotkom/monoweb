@@ -47,9 +47,10 @@ export const PoolFormSchema = z.object({
     .nullable()),
 })
 export type PoolForm = z.infer<typeof PoolFormSchema>
+type PoolFormInput = z.input<typeof PoolFormSchema>
 
 export const usePoolForm = (props: PoolFormProps) => {
-  const form = useForm<PoolForm>({
+  const form = useForm<PoolFormInput, unknown, PoolForm>({
     resolver: zodResolver(PoolFormSchema),
     mode: "onBlur",
     defaultValues: {
@@ -72,14 +73,14 @@ export const usePoolForm = (props: PoolFormProps) => {
       [
         {
           name: "yearCriteria",
-          component: createLabelledCheckboxGroupInput<PoolForm>({
+          component: createLabelledCheckboxGroupInput<PoolFormInput, PoolForm>({
             disabledOptions: props.disabledYears,
             entries: yearEntries,
           }),
         },
         {
           name: "title",
-          component: createTextInput<PoolForm>({
+          component: createTextInput<PoolFormInput, PoolForm>({
             label: "Tittel",
             required: true,
             rightSection: (
@@ -99,7 +100,7 @@ export const usePoolForm = (props: PoolFormProps) => {
         },
         {
           name: "capacity",
-          component: createNumberInput<PoolForm>({
+          component: createNumberInput<PoolFormInput, PoolForm>({
             label: "Kapasitet",
             description: (
               <Stack gap="xs">
@@ -115,7 +116,7 @@ export const usePoolForm = (props: PoolFormProps) => {
         },
         {
           name: "mergeDelayHours",
-          component: createNumberInput<PoolForm>({
+          component: createNumberInput<PoolFormInput, PoolForm>({
             label: "Utsettelse i timer",
             description: (
               <Stack gap="xs">

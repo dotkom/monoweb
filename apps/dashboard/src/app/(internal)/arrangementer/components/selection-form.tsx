@@ -16,7 +16,8 @@ const FormValuesSchema = z.object({
     .min(1, "Du må legge til minst ett alternativ"),
 })
 
-export type SelectionsFormValues = z.infer<typeof FormValuesSchema>
+export type SelectionsFormValues = z.output<typeof FormValuesSchema>
+type SelectionsFormInput = z.input<typeof FormValuesSchema>
 
 interface Props {
   onSubmit(data: SelectionsFormValues): void
@@ -35,7 +36,7 @@ export const SelectionsForm: FC<Props> = ({ onSubmit, defaultAlternatives }) => 
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<SelectionsFormValues>({
+  } = useForm<SelectionsFormInput, unknown, SelectionsFormValues>({
     defaultValues: defaultAlternatives,
     mode: "onSubmit",
     resolver: zodResolver(FormValuesSchema),
