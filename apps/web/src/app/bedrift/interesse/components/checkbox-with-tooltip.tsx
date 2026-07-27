@@ -4,7 +4,7 @@ import { Checkbox, Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from
 import { IconQuestionMark } from "@tabler/icons-react"
 import type { FC, ReactNode } from "react"
 import { Controller, useFormContext } from "react-hook-form"
-import type { FormSchema } from "./form-schema"
+import type { FormInput, FormSchema } from "./form-schema"
 
 export interface CheckboxWithTooltipProps {
   name: keyof FormSchema
@@ -13,7 +13,7 @@ export interface CheckboxWithTooltipProps {
 }
 
 export const CheckboxWithTooltip: FC<CheckboxWithTooltipProps> = ({ label, name, tooltip }) => {
-  const form = useFormContext<FormSchema>()
+  const form = useFormContext<FormInput, unknown, FormSchema>()
 
   return (
     <Controller

@@ -3,13 +3,13 @@ import { IconX } from "@tabler/icons-react"
 import { Controller, type FieldValues } from "react-hook-form"
 import type { InputProducerResult } from "./types"
 
-export function createFileInput<F extends FieldValues>(
+export function createFileInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>(
   props: Omit<FileInputProps, "error"> & {
     onFileUpload: (file: File) => Promise<string>
     existingFileUrl?: string
     maxSizeKiB?: number
   }
-): InputProducerResult<F> {
+): InputProducerResult<F, TTransformedValues> {
   const { onFileUpload, existingFileUrl, maxSizeKiB, ...fileInputProps } = props
 
   const maxSizeDescription = maxSizeKiB ? `Maks filstørrelse er ${maxSizeKiB / 1024} MiB` : undefined

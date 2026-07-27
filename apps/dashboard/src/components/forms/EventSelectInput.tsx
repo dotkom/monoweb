@@ -11,11 +11,11 @@ interface Props extends Omit<SelectProps, "error"> {
   excludeEventIds?: EventId[]
 }
 
-export function createEventSelectInput<F extends FieldValues>({
+export function createEventSelectInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>({
   excludeChildEvents = false,
   excludeEventIds,
   ...props
-}: Props): InputProducerResult<F> {
+}: Props): InputProducerResult<F, TTransformedValues> {
   return function FormSelectInput({ name, state, control, disabled }) {
     const [searchQuery, setSearchQuery] = useState("")
     const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300)

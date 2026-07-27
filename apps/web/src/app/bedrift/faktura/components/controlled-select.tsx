@@ -4,19 +4,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { ComponentPropsWithoutRef } from "react"
 import { type Control, Controller, type FieldValue, type FieldValues } from "react-hook-form"
 
-export type ControlledSelectProps<TFieldValues extends FieldValues> = {
-  readonly control: Control<TFieldValues>
+export type ControlledSelectProps<
+  TFieldValues extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = TFieldValues,
+> = {
+  readonly control: Control<TFieldValues, unknown, TTransformedValues>
   readonly name: FieldValue<TFieldValues>
   placeholder: string
   readonly options: ComponentPropsWithoutRef<typeof SelectItem>[]
 }
 
-export function ControlledSelect<TFieldValues extends FieldValues>({
-  control,
-  name,
-  placeholder,
-  options,
-}: ControlledSelectProps<TFieldValues>) {
+export function ControlledSelect<
+  TFieldValues extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = TFieldValues,
+>({ control, name, placeholder, options }: ControlledSelectProps<TFieldValues, TTransformedValues>) {
   return (
     <Controller
       render={({ field }) => (

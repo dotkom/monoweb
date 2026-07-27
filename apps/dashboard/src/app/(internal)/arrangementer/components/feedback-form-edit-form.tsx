@@ -66,6 +66,7 @@ const FormValuesSchema = z
   })
 
 export type FormValues = z.infer<typeof FormValuesSchema>
+type FormInput = z.input<typeof FormValuesSchema>
 
 interface Props {
   onSubmit(id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]): void
@@ -80,7 +81,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSubmit, defaultValues, feedb
 
   defaultValues?.questions.sort((a, b) => a.order - b.order)
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormInput, unknown, FormValues>({
     mode: "onSubmit",
     resolver: zodResolver(FormValuesSchema),
     defaultValues,
@@ -247,7 +248,7 @@ const CopyLinkRow = ({ url, label, info }: { url: string; label: string; info: s
 
 interface QuestionCardProps {
   index: number
-  control: Control<FormValues>
+  control: Control<FormInput, unknown, FormValues>
   fieldId: string
   onRemove(index: number): void
   hasAnswers: boolean
@@ -264,7 +265,7 @@ const QuestionCard = React.memo(function QuestionCard({
 }: QuestionCardProps) {
   const { setValue } = useFormContext()
 
-  const type = useWatch<FormValues>({
+  const type = useWatch({
     control,
     name: `questions.${index}.type`,
   })

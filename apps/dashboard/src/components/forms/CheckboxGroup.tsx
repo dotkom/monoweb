@@ -38,9 +38,12 @@ const CheckboxGroup = ({ selected, disabledOptions, setSelected, entries }: Chec
   )
 }
 
-export function createLabelledCheckboxGroupInput<F extends FieldValues>({
+export function createLabelledCheckboxGroupInput<
+  F extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = F,
+>({
   ...props
-}: Omit<CheckboxGroupsProps, "error" | "selected" | "setSelected">): InputProducerResult<F> {
+}: Omit<CheckboxGroupsProps, "error" | "selected" | "setSelected">): InputProducerResult<F, TTransformedValues> {
   return function LabelledCheckboxGroupInput({ name, state, control }) {
     return (
       <div>

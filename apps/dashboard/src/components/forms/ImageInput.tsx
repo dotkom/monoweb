@@ -249,7 +249,7 @@ function ImageDropzoneField({
   )
 }
 
-export function createImageInput<F extends FieldValues>({
+export function createImageInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>({
   ...props
 }: Omit<FileInputProps, "error"> & {
   onFileUpload: (file: File) => Promise<string>
@@ -257,7 +257,7 @@ export function createImageInput<F extends FieldValues>({
   acceptGif?: boolean
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
-}): InputProducerResult<F> {
+}): InputProducerResult<F, TTransformedValues> {
   const { onFileUpload, existingImageUrl, acceptGif, maxSizeKiB, aspectRatio, label, description } = props
 
   return function FormImageInput({ name, control, setError, clearErrors, disabled }) {
@@ -301,7 +301,7 @@ export function createImageInput<F extends FieldValues>({
   }
 }
 
-export function createModalImageInput<F extends FieldValues>({
+export function createModalImageInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>({
   label,
   description,
   onFileUpload,
@@ -313,7 +313,7 @@ export function createModalImageInput<F extends FieldValues>({
   onFileUpload: (file: File) => Promise<string>
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
-}): InputProducerResult<F> {
+}): InputProducerResult<F, TTransformedValues> {
   return function FormModalImageInput({ name, control, disabled }) {
     return (
       <Controller

@@ -6,7 +6,7 @@ import type { FC } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import { CheckboxWithTooltip } from "./checkbox-with-tooltip"
 import { CustomErrorMessage } from "./custom-error-message"
-import type { FormSchema } from "./form-schema"
+import type { FormInput, FormSchema } from "./form-schema"
 import { Section } from "./section"
 
 const instagramTakeoverTooltip = (
@@ -54,7 +54,7 @@ const femalesInTechTooltip = (
 )
 
 export const InterestForm: FC = () => {
-  const { register, control, formState } = useFormContext<FormSchema>()
+  const { register, control, formState } = useFormContext<FormInput, unknown, FormSchema>()
 
   return (
     <>

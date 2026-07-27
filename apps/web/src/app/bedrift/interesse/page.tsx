@@ -5,12 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconLoader2 } from "@tabler/icons-react"
 import { FormProvider, useForm } from "react-hook-form"
 import { InterestForm } from "./components/interest-form"
-import { type FormSchema, formSchema } from "./components/form-schema"
+import { type FormInput, type FormSchema, formSchema } from "./components/form-schema"
 import { Section } from "./components/section"
 import { useSubmitInterestMutation } from "./mutations"
 
 export default function InterestFormPage() {
-  const form = useForm<FormSchema>({
+  const form = useForm<FormInput, unknown, FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       requestsCompanyPresentation: false,

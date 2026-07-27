@@ -177,7 +177,7 @@ function RichTextEditorField({
   )
 }
 
-export function createRichTextInput<F extends FieldValues>({
+export function createRichTextInput<F extends FieldValues, TTransformedValues extends FieldValues | undefined = F>({
   onChange,
   required,
   label,
@@ -191,7 +191,7 @@ export function createRichTextInput<F extends FieldValues>({
   onFileUpload?: (file: File) => Promise<string>
   maxFileSizeKiB?: number
   aspectRatio?: AspectRatio
-}): InputProducerResult<F> {
+}): InputProducerResult<F, TTransformedValues> {
   return function RichTextInput({ name, state, control, disabled }) {
     return (
       <Input.Wrapper error={getErrorMessage(state, name)}>

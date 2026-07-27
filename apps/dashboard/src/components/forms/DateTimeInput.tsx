@@ -7,12 +7,15 @@ import { useRef } from "react"
 import { Controller, type FieldPath, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "./types"
 
-export function createDateTimeInput<FieldValue extends FieldValues>({
+export function createDateTimeInput<
+  FieldValue extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = FieldValue,
+>({
   syncOffsetTo,
   ...props
 }: Omit<DateTimePickerProps, "error"> & {
   syncOffsetTo?: FieldPath<FieldValue>
-}): InputProducerResult<FieldValue> {
+}): InputProducerResult<FieldValue, TTransformedValues> {
   return function FormDateTimeInput({ name, state, control, defaultValue, disabled, setValue, getValues }) {
     const previousValueRef = useRef(toDate(getValues(name) ?? defaultValue))
 
