@@ -1,5 +1,5 @@
 import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutations"
-import { validateEventWrite } from "@/app/(internal)/arrangementer/validation"
+import { validateEventOrganizers, validateEventWrite } from "@/app/(internal)/arrangementer/validation"
 import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
@@ -37,7 +37,7 @@ const FormValidationSchema = EventWriteSchema.extend({
   companyIds: z.array(z.string()),
   parentId: EventSchema.shape.id.nullable(),
 }).superRefine((data, ctx) => {
-  const issues = validateEventWrite(data)
+  const issues = [...validateEventWrite(data), ...validateEventOrganizers(data.hostingGroupIds)]
   for (const issue of issues) {
     ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
   }
@@ -136,6 +136,7 @@ export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps
         placeholder: "Velg grupper",
         data: groups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
+        withAsterisk: true,
       }),
       companyIds: createMultipleSelectInput({
         label: "Bedrifter",

@@ -18,7 +18,7 @@ import {
 } from "@dotkomonline/rpc/event"
 import type { Group } from "@dotkomonline/rpc/group"
 import { z } from "zod"
-import { validateEventWrite } from "../validation"
+import { validateEventOrganizers, validateEventWrite } from "../validation"
 
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
   value: type,
@@ -34,7 +34,7 @@ const FormValidationSchema = EventSchema.extend({
   hostingGroupIds: z.array(z.string()),
   companyIds: z.array(z.string()),
 }).superRefine((data, ctx) => {
-  const issues = validateEventWrite(data)
+  const issues = [...validateEventWrite(data), ...validateEventOrganizers(data.hostingGroupIds)]
   for (const issue of issues) {
     ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
   }
@@ -121,6 +121,7 @@ export const useEventEditForm = ({
         placeholder: "Velg grupper",
         data: hostingGroups.map((group) => ({ value: group.slug, label: group.abbreviation })),
         searchable: true,
+        required: true,
       }),
       companyIds: createMultipleSelectInput({
         label: "Bedrifter",

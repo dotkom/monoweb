@@ -1,3 +1,4 @@
+import { isCommitteeAffiliation } from "@/auth/permissions"
 import { EventStatusSchema, EventTypeSchema, type EventWrite } from "@dotkomonline/rpc/event"
 import { isAfter } from "date-fns"
 import type { z } from "zod"
@@ -27,8 +28,8 @@ const isValidMapUrl = (value: string | null) => {
 const MIN_TITLE_LENGTH = 2
 const MIN_DESCRIPTION_LENGTH = 2
 
-export const validateEventWrite = (event: EventWrite): z.ZodIssue[] => {
-  const issues: z.ZodIssue[] = []
+export const validateEventWrite = (event: EventWrite): z.core.$ZodIssue[] => {
+  const issues: z.core.$ZodIssue[] = []
 
   if (!event.title || event.title.length < MIN_TITLE_LENGTH) {
     issues.push({ code: "custom", message: `Tittel må være minst ${MIN_TITLE_LENGTH} tegn lang`, path: ["title"] })
@@ -65,6 +66,21 @@ export const validateEventWrite = (event: EventWrite): z.ZodIssue[] => {
       code: "custom",
       message: "Lenken må være en gyldig Google Maps eller MazeMap-lenke",
       path: ["locationLink"],
+    })
+  }
+
+  return issues
+}
+
+export const validateEventOrganizers = (hostingGroupIds: string[]): z.core.$ZodIssue[] => {
+  const issues: z.core.$ZodIssue[] = []
+  const hasCommitteeOrganizer = hostingGroupIds.some((groupId) => isCommitteeAffiliation(groupId))
+
+  if (!hasCommitteeOrganizer) {
+    issues.push({
+      code: "custom",
+      message: "Du må velge minst én komité som arrangør",
+      path: ["hostingGroupIds"],
     })
   }
 
