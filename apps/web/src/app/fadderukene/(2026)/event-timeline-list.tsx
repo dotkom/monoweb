@@ -138,10 +138,10 @@ const EventItem = ({ event, attendance, userId }: EventItemProps) => {
           event.locationLink && !eventEndInPast ? "rounded-t-lg rounded-b-sm xs:rounded-lg" : "rounded-lg"
         )}
       >
-        <div className="flex flex-col gap-2 p-2 w-full md:max-w-[467.67px]">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 p-2">
           <Text
             className={cn(
-              "text-base lg:text-lg font-title font-medium line-clamp-2 md:truncate md:min-w-0",
+              "min-w-0 text-base lg:text-lg font-title font-medium line-clamp-2 wrap-break-word",
               eventEndInPast && "text-muted-foreground"
             )}
           >
@@ -149,7 +149,7 @@ const EventItem = ({ event, attendance, userId }: EventItemProps) => {
           </Text>
 
           {event.locationTitle && (
-            <div className="flex items-center gap-2 text-sm md:text-base">
+            <div className="flex min-w-0 items-center gap-2 text-sm md:text-base">
               <IconMapPin
                 aria-hidden
                 className={cn(
@@ -159,7 +159,9 @@ const EventItem = ({ event, attendance, userId }: EventItemProps) => {
                     : "text-gray-800 dark:text-stone-400"
                 )}
               />
-              <Text className={cn(eventEndInPast && "text-muted-foreground")}>{event.locationTitle}</Text>
+              <Text className={cn("min-w-0 truncate", eventEndInPast && "text-muted-foreground")}>
+                {event.locationTitle}
+              </Text>
             </div>
           )}
 
@@ -168,7 +170,7 @@ const EventItem = ({ event, attendance, userId }: EventItemProps) => {
           )}
         </div>
 
-        <div className="w-max max-sm:hidden">
+        <div className="w-max max-sm:hidden shrink-0">
           <div className="relative aspect-video h-24 md:h-28 bg-gray-100 dark:bg-stone-800 rounded-sm overflow-hidden">
             {event.imageUrl ? (
               <Image
