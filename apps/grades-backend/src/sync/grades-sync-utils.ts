@@ -8,7 +8,7 @@ import type {
   GradeType,
   Semester,
 } from "../modules/course/course-types"
-import type { Grade, GradeWrite } from "../modules/grade/grade-types"
+import type { GradeDistribution, GradeDistributionWrite } from "../modules/grade-distribution/grade-distribution-types"
 import type { DbhCourseRecord, DbhSemesterGrade } from "./dbh/dbh-types"
 import type { NtnuCourseScrapeResult } from "./ntnu/ntnu-scraper"
 
@@ -60,16 +60,16 @@ export function calculateTaughtTo(
   return discontinuedYear - 1
 }
 
-export function parseDbhGradeResultsToGradeWrites(
+export function parseDbhGradeResultsToGradeDistributionWrites(
   dbhGradeResults: DbhSemesterGrade[],
   courseId: CourseId
-): GradeWrite[] {
+): GradeDistributionWrite[] {
   const gradesBySemester = Object.groupBy(
     dbhGradeResults,
     (gradeResult) => `${gradeResult.year}-${gradeResult.semester}`
   )
 
-  const writes: GradeWrite[] = []
+  const writes: GradeDistributionWrite[] = []
 
   // DBH returns one grade record per grade type ("A", "B", "PASSED", "FAILED" etc) per semester,
   // so we group by semester and then aggregate the counts to create write objects
@@ -80,7 +80,7 @@ export function parseDbhGradeResultsToGradeWrites(
 
     const first = semesterGrades[0]
 
-    const gradeWrite: GradeWrite = {
+    const gradeWrite: GradeDistributionWrite = {
       courseId,
       year: first.year,
       semester: first.semester,
@@ -305,27 +305,36 @@ function getDbhSemestersForYear(year: number | undefined, dbhCourseRecords: DbhC
   return Array.from(new Set(semesters))
 }
 
-export function calculateCourseStatistics(grades: Grade[]): {
+export function calculateCourseStatistics(gradeDistributions: GradeDistribution[]): {
   candidateCount: number
   averageGrade: number
   passRate: number
 } {
-  if (grades.length === 0) {
+  if (gradeDistributions.length === 0) {
     return { candidateCount: 0, averageGrade: 0, passRate: 0 }
   }
 
-  const candidateCount = grades.reduce((sum, grade) => sum + getGradeCandidateCount(grade), 0)
-  const failedCount = grades.reduce((sum, grade) => sum + getFailedCandidateCount(grade), 0)
-  const letterGradeCandidateCount = grades.reduce((sum, grade) => sum + getLetterGradeCandidateCount(grade), 0)
+  const candidateCount = gradeDistributions.reduce(
+    (sum, gradeDistribution) => sum + getGradeDistributionCandidateCount(gradeDistribution),
+    0
+  )
+  const failedCount = gradeDistributions.reduce(
+    (sum, gradeDistribution) => sum + getFailedCandidateCount(gradeDistribution),
+    0
+  )
+  const letterGradeCandidateCount = gradeDistributions.reduce(
+    (sum, gradeDistribution) => sum + getLetterGradeCandidateCount(gradeDistribution),
+    0
+  )
 
-  const averageGradePoints = grades.reduce(
-    (sum, grade) =>
+  const averageGradePoints = gradeDistributions.reduce(
+    (sum, gradeDistribution) =>
       sum +
-      grade.gradeACount * 5 +
-      grade.gradeBCount * 4 +
-      grade.gradeCCount * 3 +
-      grade.gradeDCount * 2 +
-      grade.gradeECount * 1,
+      gradeDistribution.gradeACount * 5 +
+      gradeDistribution.gradeBCount * 4 +
+      gradeDistribution.gradeCCount * 3 +
+      gradeDistribution.gradeDCount * 2 +
+      gradeDistribution.gradeECount * 1,
     0
   )
 
@@ -335,8 +344,8 @@ export function calculateCourseStatistics(grades: Grade[]): {
   return { candidateCount, averageGrade, passRate }
 }
 
-type GradeCountFields = Pick<
-  Grade,
+type GradeDistributionCountFields = Pick<
+  GradeDistribution,
   | "gradeACount"
   | "gradeBCount"
   | "gradeCCount"
@@ -347,32 +356,32 @@ type GradeCountFields = Pick<
   | "failedCount"
 >
 
-export function getGradeCandidateCount(grade: GradeCountFields) {
+export function getGradeDistributionCandidateCount(gradeDistribution: GradeDistributionCountFields) {
   return (
-    grade.gradeACount +
-    grade.gradeBCount +
-    grade.gradeCCount +
-    grade.gradeDCount +
-    grade.gradeECount +
-    grade.gradeFCount +
-    grade.passedCount +
-    grade.failedCount
+    gradeDistribution.gradeACount +
+    gradeDistribution.gradeBCount +
+    gradeDistribution.gradeCCount +
+    gradeDistribution.gradeDCount +
+    gradeDistribution.gradeECount +
+    gradeDistribution.gradeFCount +
+    gradeDistribution.passedCount +
+    gradeDistribution.failedCount
   )
 }
 
-export function getLetterGradeCandidateCount(grade: GradeCountFields) {
+export function getLetterGradeCandidateCount(gradeDistribution: GradeDistributionCountFields) {
   return (
-    grade.gradeACount +
-    grade.gradeBCount +
-    grade.gradeCCount +
-    grade.gradeDCount +
-    grade.gradeECount +
-    grade.gradeFCount
+    gradeDistribution.gradeACount +
+    gradeDistribution.gradeBCount +
+    gradeDistribution.gradeCCount +
+    gradeDistribution.gradeDCount +
+    gradeDistribution.gradeECount +
+    gradeDistribution.gradeFCount
   )
 }
 
-export function getFailedCandidateCount(grade: GradeCountFields) {
-  return grade.gradeFCount + grade.failedCount
+export function getFailedCandidateCount(gradeDistribution: GradeDistributionCountFields) {
+  return gradeDistribution.gradeFCount + gradeDistribution.failedCount
 }
 
 function getPreferredGradeType(hasLetterGrades: boolean, hasPassFailGrades: boolean): GradeType {
@@ -384,9 +393,13 @@ function getPreferredGradeType(hasLetterGrades: boolean, hasPassFailGrades: bool
   return "PASS_FAIL"
 }
 
-export function calculateCourseGradeType(grades: Grade[]): GradeType {
-  const hasLetterGrades = grades.some((grade) => getLetterGradeCandidateCount(grade) > 0)
-  const hasPassedFailedGrades = grades.some((grade) => grade.passedCount > 0 || grade.failedCount > 0)
+export function calculateCourseGradeType(gradeDistributions: GradeDistribution[]): GradeType {
+  const hasLetterGrades = gradeDistributions.some(
+    (gradeDistribution) => getLetterGradeCandidateCount(gradeDistribution) > 0
+  )
+  const hasPassedFailedGrades = gradeDistributions.some(
+    (gradeDistribution) => gradeDistribution.passedCount > 0 || gradeDistribution.failedCount > 0
+  )
 
   return getPreferredGradeType(hasLetterGrades, hasPassedFailedGrades)
 }
@@ -427,7 +440,7 @@ export function getPreferredNtnuTaughtSemesters(ntnuCourse: NtnuCourseScrapeResu
  */
 export function mapDbhSemesterToSummer(
   dbhSemesterGrade: DbhSemesterGrade,
-  existingGradesForCourse: Grade[],
+  existingGradesForCourse: GradeDistribution[],
   ntnuTaughtSemesters: Semester[]
 ): Semester {
   const dbhSemester = dbhSemesterGrade.semester
@@ -492,7 +505,7 @@ type HistoricalSummerMapping = {
 
  * This works only because we have historical data from `Karstat`, which supported SUMMER semesters, before we switched to DBH.
  */
-function getHistoricalSummerMapping(existingGradesForCourse: Grade[]): HistoricalSummerMapping {
+function getHistoricalSummerMapping(existingGradesForCourse: GradeDistribution[]): HistoricalSummerMapping {
   const years = new Set(existingGradesForCourse.map((grade) => grade.year))
 
   let summerRepresentsSpring: boolean | null = null

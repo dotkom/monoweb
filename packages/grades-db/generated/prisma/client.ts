@@ -47,10 +47,10 @@ export { Prisma }
  */
 export type Course = Prisma.CourseModel
 /**
- * Model Grade
+ * Model GradeDistribution
  * 
  */
-export type Grade = Prisma.GradeModel
+export type GradeDistribution = Prisma.GradeDistributionModel
 /**
  * Model Faculty
  * 

@@ -52,7 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Course: 'Course',
-  Grade: 'Grade',
+  GradeDistribution: 'GradeDistribution',
   Faculty: 'Faculty',
   Department: 'Department'
 } as const
@@ -115,7 +115,7 @@ export const RelationLoadStrategy = {
 export type RelationLoadStrategy = (typeof RelationLoadStrategy)[keyof typeof RelationLoadStrategy]
 
 
-export const GradeScalarFieldEnum = {
+export const GradeDistributionScalarFieldEnum = {
   id: 'id',
   gradeACount: 'gradeACount',
   gradeBCount: 'gradeBCount',
@@ -132,7 +132,7 @@ export const GradeScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type GradeScalarFieldEnum = (typeof GradeScalarFieldEnum)[keyof typeof GradeScalarFieldEnum]
+export type GradeDistributionScalarFieldEnum = (typeof GradeDistributionScalarFieldEnum)[keyof typeof GradeDistributionScalarFieldEnum]
 
 
 export const FacultyScalarFieldEnum = {

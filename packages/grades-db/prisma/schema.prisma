@@ -82,7 +82,7 @@ model Course {
   taughtSemesters   Semester[]         @default([]) @map("taught_semesters")
   teachingLanguages TeachingLanguage[] @default([]) @map("teaching_languages")
   campuses          Campus[]           @default([])
-  grades            Grade[]
+  gradeDistributions GradeDistribution[]
 
   facultyId String?  @map("faculty_id")
   faculty   Faculty? @relation(fields: [facultyId], references: [id])
@@ -99,7 +99,7 @@ model Course {
   @@map("course")
 }
 
-model Grade {
+model GradeDistribution {
   id String @id @default(uuid())
 
   // For letter-graded courses

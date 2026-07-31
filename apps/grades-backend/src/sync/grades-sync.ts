@@ -4,8 +4,8 @@ import { createConfiguration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import type { CourseService } from "../modules/course/course-service"
 import type { Course, CourseCode, CourseId, Department, Faculty, GradeType } from "../modules/course/course-types"
-import type { GradeService } from "../modules/grade/grade-service"
-import type { Grade, GradeWrite } from "../modules/grade/grade-types"
+import type { GradeDistributionService } from "../modules/grade-distribution/grade-distribution-service"
+import type { GradeDistribution, GradeDistributionWrite } from "../modules/grade-distribution/grade-distribution-types"
 import { getAllCourseRecords, getAllGrades } from "./dbh/dbh-service"
 import type { DbhCourseRecord, DbhSemesterGrade } from "./dbh/dbh-types"
 import {
@@ -18,19 +18,19 @@ import {
   getDbhGradeType,
   getPreferredNtnuTaughtSemesters,
   mapDbhSemesterToSummer,
-  parseDbhGradeResultsToGradeWrites,
+  parseDbhGradeResultsToGradeDistributionWrites,
   type CourseSyncData,
 } from "./grades-sync-utils"
 import { scrapeNtnuCourse, type NtnuCourseScrapeResult } from "./ntnu/ntnu-scraper"
 
 type CourseSyncContext = {
   courseService: CourseService
-  gradeService: GradeService
+  gradeDistributionService: GradeDistributionService
   dbClient: DBClient
   coursesByCode: Partial<Record<CourseCode, Course>>
   dbhCourseRecordsByCode: Partial<Record<CourseCode, DbhCourseRecord[]>>
   dbhGradeResultsByCode: Partial<Record<CourseCode, DbhSemesterGrade[]>>
-  semesterResultsByCourseId: Partial<Record<CourseId, Grade[]>>
+  semesterResultsByCourseId: Partial<Record<CourseId, GradeDistribution[]>>
   facultiesByCode: Partial<Record<string, Faculty>>
   departmentsByCode: Partial<Record<string, Department>>
 }
@@ -50,7 +50,7 @@ const serviceLayer = await createServiceLayer(dependencies)
 const prisma = serviceLayer.prisma
 
 const courseService = serviceLayer.courseService
-const gradeService = serviceLayer.gradeService
+const gradeDistributionService = serviceLayer.gradeDistributionService
 
 const faculties = await courseService.findManyFaculties(prisma)
 const departments = await courseService.findManyDepartments(prisma)
@@ -59,7 +59,7 @@ const allDbhSemesterCourseRecords = await getAllCourseRecords()
 const allDbhGradeResults = await getAllGrades()
 
 const courses = await courseService.findMany(prisma, {}, 0, Number.MAX_SAFE_INTEGER)
-const semesterResults = await gradeService.findMany(prisma)
+const semesterResults = await gradeDistributionService.findMany(prisma)
 
 const dbhCourseRecordsByCode = Object.groupBy(allDbhSemesterCourseRecords, (record) => record.code)
 const dbhGradeResultsByCode = Object.groupBy(allDbhGradeResults, (record) => record.code)
@@ -75,7 +75,7 @@ const validCourseCodes = new Set(
 
 const ctx: CourseSyncContext = {
   courseService,
-  gradeService,
+  gradeDistributionService,
   dbClient: prisma,
   coursesByCode,
   dbhCourseRecordsByCode,
@@ -171,7 +171,7 @@ type CourseSourceData = {
   existingCourse?: Course
   dbhCourseRecords: DbhCourseRecord[]
   dbhSemesterGrades: DbhSemesterGrade[]
-  existingSemesterGrades: Grade[]
+  existingSemesterGrades: GradeDistribution[]
   faculty?: Faculty
   department?: Department
   ntnuScrapeResult: NtnuCourseScrapeResult
@@ -229,19 +229,26 @@ async function syncSemesterResults(sourceData: CourseSourceData, syncedCourse: C
     )
   })
 
-  const semesterResultWrites: GradeWrite[] = parseDbhGradeResultsToGradeWrites(newSemesterResults, syncedCourse.id)
+  const semesterResultWrites: GradeDistributionWrite[] = parseDbhGradeResultsToGradeDistributionWrites(
+    newSemesterResults,
+    syncedCourse.id
+  )
 
   if (semesterResultWrites.length === 0) {
     return sourceData.existingSemesterGrades
   }
 
-  const createdGrades = await ctx.gradeService.createMany(ctx.dbClient, semesterResultWrites)
+  const createdGrades = await ctx.gradeDistributionService.createMany(ctx.dbClient, semesterResultWrites)
   const allGradesForCourse = [...sourceData.existingSemesterGrades, ...createdGrades]
 
   return allGradesForCourse
 }
 
-async function syncCourseStatistics(syncedCourse: Course, ctx: CourseSyncContext, allGradesForCourse: Grade[]) {
+async function syncCourseStatistics(
+  syncedCourse: Course,
+  ctx: CourseSyncContext,
+  allGradesForCourse: GradeDistribution[]
+) {
   const courseStatistics = calculateCourseStatistics(allGradesForCourse)
   const gradeType = calculateCourseGradeType(allGradesForCourse)
   const patch = { ...courseStatistics, gradeType }

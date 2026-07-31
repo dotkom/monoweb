@@ -1,6 +1,6 @@
 import { createPrisma } from "./index"
 import { getCourseFixtures } from "./fixtures/course"
-import { getGradeFixtures } from "./fixtures/grade"
+import { getGradeDistributionFixtures } from "./fixtures/grade"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -15,5 +15,5 @@ const db = createPrisma(process.env.DATABASE_URL)
 const courseInput = getCourseFixtures()
 await db.course.createMany({ data: courseInput, skipDuplicates: true })
 
-const gradeInput = getGradeFixtures()
-await db.grade.createMany({ data: gradeInput, skipDuplicates: true })
+const gradeDistributionInput = getGradeDistributionFixtures()
+await db.gradeDistribution.createMany({ data: gradeDistributionInput, skipDuplicates: true })

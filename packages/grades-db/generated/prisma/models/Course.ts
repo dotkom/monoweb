@@ -412,7 +412,7 @@ export type CourseWhereInput = {
   facultyId?: Prisma.StringNullableFilter<"Course"> | string | null
   departmentId?: Prisma.StringNullableFilter<"Course"> | string | null
   latestYearCheckedForNtnuData?: Prisma.IntNullableFilter<"Course"> | number | null
-  grades?: Prisma.GradeListRelationFilter
+  gradeDistributions?: Prisma.GradeDistributionListRelationFilter
   faculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
   department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
 }
@@ -446,7 +446,7 @@ export type CourseOrderByWithRelationInput = {
   facultyId?: Prisma.SortOrderInput | Prisma.SortOrder
   departmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   latestYearCheckedForNtnuData?: Prisma.SortOrderInput | Prisma.SortOrder
-  grades?: Prisma.GradeOrderByRelationAggregateInput
+  gradeDistributions?: Prisma.GradeDistributionOrderByRelationAggregateInput
   faculty?: Prisma.FacultyOrderByWithRelationInput
   department?: Prisma.DepartmentOrderByWithRelationInput
 }
@@ -483,7 +483,7 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   facultyId?: Prisma.StringNullableFilter<"Course"> | string | null
   departmentId?: Prisma.StringNullableFilter<"Course"> | string | null
   latestYearCheckedForNtnuData?: Prisma.IntNullableFilter<"Course"> | number | null
-  grades?: Prisma.GradeListRelationFilter
+  gradeDistributions?: Prisma.GradeDistributionListRelationFilter
   faculty?: Prisma.XOR<Prisma.FacultyNullableScalarRelationFilter, Prisma.FacultyWhereInput> | null
   department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
 }, "id" | "code">
@@ -585,7 +585,7 @@ export type CourseCreateInput = {
   teachingLanguages?: Prisma.CourseCreateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseCreatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionCreateNestedManyWithoutCourseInput
   faculty?: Prisma.FacultyCreateNestedOneWithoutCoursesInput
   department?: Prisma.DepartmentCreateNestedOneWithoutCoursesInput
 }
@@ -619,7 +619,7 @@ export type CourseUncheckedCreateInput = {
   facultyId?: string | null
   departmentId?: string | null
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeUncheckedCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedCreateNestedManyWithoutCourseInput
 }
 
 export type CourseUpdateInput = {
@@ -649,7 +649,7 @@ export type CourseUpdateInput = {
   teachingLanguages?: Prisma.CourseUpdateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseUpdatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUpdateManyWithoutCourseNestedInput
   faculty?: Prisma.FacultyUpdateOneWithoutCoursesNestedInput
   department?: Prisma.DepartmentUpdateOneWithoutCoursesNestedInput
 }
@@ -683,7 +683,7 @@ export type CourseUncheckedUpdateInput = {
   facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUncheckedUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedUpdateManyWithoutCourseNestedInput
 }
 
 export type CourseCreateManyInput = {
@@ -1002,18 +1002,18 @@ export type CourseUpdatecampusesInput = {
   push?: $Enums.Campus | $Enums.Campus[]
 }
 
-export type CourseCreateNestedOneWithoutGradesInput = {
-  create?: Prisma.XOR<Prisma.CourseCreateWithoutGradesInput, Prisma.CourseUncheckedCreateWithoutGradesInput>
-  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutGradesInput
+export type CourseCreateNestedOneWithoutGradeDistributionsInput = {
+  create?: Prisma.XOR<Prisma.CourseCreateWithoutGradeDistributionsInput, Prisma.CourseUncheckedCreateWithoutGradeDistributionsInput>
+  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutGradeDistributionsInput
   connect?: Prisma.CourseWhereUniqueInput
 }
 
-export type CourseUpdateOneRequiredWithoutGradesNestedInput = {
-  create?: Prisma.XOR<Prisma.CourseCreateWithoutGradesInput, Prisma.CourseUncheckedCreateWithoutGradesInput>
-  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutGradesInput
-  upsert?: Prisma.CourseUpsertWithoutGradesInput
+export type CourseUpdateOneRequiredWithoutGradeDistributionsNestedInput = {
+  create?: Prisma.XOR<Prisma.CourseCreateWithoutGradeDistributionsInput, Prisma.CourseUncheckedCreateWithoutGradeDistributionsInput>
+  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutGradeDistributionsInput
+  upsert?: Prisma.CourseUpsertWithoutGradeDistributionsInput
   connect?: Prisma.CourseWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CourseUpdateToOneWithWhereWithoutGradesInput, Prisma.CourseUpdateWithoutGradesInput>, Prisma.CourseUncheckedUpdateWithoutGradesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CourseUpdateToOneWithWhereWithoutGradeDistributionsInput, Prisma.CourseUpdateWithoutGradeDistributionsInput>, Prisma.CourseUncheckedUpdateWithoutGradeDistributionsInput>
 }
 
 export type CourseCreateNestedManyWithoutFacultyInput = {
@@ -1100,7 +1100,7 @@ export type CourseUncheckedUpdateManyWithoutDepartmentNestedInput = {
   deleteMany?: Prisma.CourseScalarWhereInput | Prisma.CourseScalarWhereInput[]
 }
 
-export type CourseCreateWithoutGradesInput = {
+export type CourseCreateWithoutGradeDistributionsInput = {
   id?: string
   code: string
   nameNo: string
@@ -1131,7 +1131,7 @@ export type CourseCreateWithoutGradesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutCoursesInput
 }
 
-export type CourseUncheckedCreateWithoutGradesInput = {
+export type CourseUncheckedCreateWithoutGradeDistributionsInput = {
   id?: string
   code: string
   nameNo: string
@@ -1162,23 +1162,23 @@ export type CourseUncheckedCreateWithoutGradesInput = {
   latestYearCheckedForNtnuData?: number | null
 }
 
-export type CourseCreateOrConnectWithoutGradesInput = {
+export type CourseCreateOrConnectWithoutGradeDistributionsInput = {
   where: Prisma.CourseWhereUniqueInput
-  create: Prisma.XOR<Prisma.CourseCreateWithoutGradesInput, Prisma.CourseUncheckedCreateWithoutGradesInput>
+  create: Prisma.XOR<Prisma.CourseCreateWithoutGradeDistributionsInput, Prisma.CourseUncheckedCreateWithoutGradeDistributionsInput>
 }
 
-export type CourseUpsertWithoutGradesInput = {
-  update: Prisma.XOR<Prisma.CourseUpdateWithoutGradesInput, Prisma.CourseUncheckedUpdateWithoutGradesInput>
-  create: Prisma.XOR<Prisma.CourseCreateWithoutGradesInput, Prisma.CourseUncheckedCreateWithoutGradesInput>
+export type CourseUpsertWithoutGradeDistributionsInput = {
+  update: Prisma.XOR<Prisma.CourseUpdateWithoutGradeDistributionsInput, Prisma.CourseUncheckedUpdateWithoutGradeDistributionsInput>
+  create: Prisma.XOR<Prisma.CourseCreateWithoutGradeDistributionsInput, Prisma.CourseUncheckedCreateWithoutGradeDistributionsInput>
   where?: Prisma.CourseWhereInput
 }
 
-export type CourseUpdateToOneWithWhereWithoutGradesInput = {
+export type CourseUpdateToOneWithWhereWithoutGradeDistributionsInput = {
   where?: Prisma.CourseWhereInput
-  data: Prisma.XOR<Prisma.CourseUpdateWithoutGradesInput, Prisma.CourseUncheckedUpdateWithoutGradesInput>
+  data: Prisma.XOR<Prisma.CourseUpdateWithoutGradeDistributionsInput, Prisma.CourseUncheckedUpdateWithoutGradeDistributionsInput>
 }
 
-export type CourseUpdateWithoutGradesInput = {
+export type CourseUpdateWithoutGradeDistributionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   nameNo?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1209,7 +1209,7 @@ export type CourseUpdateWithoutGradesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutCoursesNestedInput
 }
 
-export type CourseUncheckedUpdateWithoutGradesInput = {
+export type CourseUncheckedUpdateWithoutGradeDistributionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   nameNo?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1267,7 +1267,7 @@ export type CourseCreateWithoutFacultyInput = {
   teachingLanguages?: Prisma.CourseCreateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseCreatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionCreateNestedManyWithoutCourseInput
   department?: Prisma.DepartmentCreateNestedOneWithoutCoursesInput
 }
 
@@ -1299,7 +1299,7 @@ export type CourseUncheckedCreateWithoutFacultyInput = {
   campuses?: Prisma.CourseCreatecampusesInput | $Enums.Campus[]
   departmentId?: string | null
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeUncheckedCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedCreateNestedManyWithoutCourseInput
 }
 
 export type CourseCreateOrConnectWithoutFacultyInput = {
@@ -1389,7 +1389,7 @@ export type CourseCreateWithoutDepartmentInput = {
   teachingLanguages?: Prisma.CourseCreateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseCreatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionCreateNestedManyWithoutCourseInput
   faculty?: Prisma.FacultyCreateNestedOneWithoutCoursesInput
 }
 
@@ -1421,7 +1421,7 @@ export type CourseUncheckedCreateWithoutDepartmentInput = {
   campuses?: Prisma.CourseCreatecampusesInput | $Enums.Campus[]
   facultyId?: string | null
   latestYearCheckedForNtnuData?: number | null
-  grades?: Prisma.GradeUncheckedCreateNestedManyWithoutCourseInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedCreateNestedManyWithoutCourseInput
 }
 
 export type CourseCreateOrConnectWithoutDepartmentInput = {
@@ -1507,7 +1507,7 @@ export type CourseUpdateWithoutFacultyInput = {
   teachingLanguages?: Prisma.CourseUpdateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseUpdatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUpdateManyWithoutCourseNestedInput
   department?: Prisma.DepartmentUpdateOneWithoutCoursesNestedInput
 }
 
@@ -1539,7 +1539,7 @@ export type CourseUncheckedUpdateWithoutFacultyInput = {
   campuses?: Prisma.CourseUpdatecampusesInput | $Enums.Campus[]
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUncheckedUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedUpdateManyWithoutCourseNestedInput
 }
 
 export type CourseUncheckedUpdateManyWithoutFacultyInput = {
@@ -1629,7 +1629,7 @@ export type CourseUpdateWithoutDepartmentInput = {
   teachingLanguages?: Prisma.CourseUpdateteachingLanguagesInput | $Enums.TeachingLanguage[]
   campuses?: Prisma.CourseUpdatecampusesInput | $Enums.Campus[]
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUpdateManyWithoutCourseNestedInput
   faculty?: Prisma.FacultyUpdateOneWithoutCoursesNestedInput
 }
 
@@ -1661,7 +1661,7 @@ export type CourseUncheckedUpdateWithoutDepartmentInput = {
   campuses?: Prisma.CourseUpdatecampusesInput | $Enums.Campus[]
   facultyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   latestYearCheckedForNtnuData?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  grades?: Prisma.GradeUncheckedUpdateManyWithoutCourseNestedInput
+  gradeDistributions?: Prisma.GradeDistributionUncheckedUpdateManyWithoutCourseNestedInput
 }
 
 export type CourseUncheckedUpdateManyWithoutDepartmentInput = {
@@ -1700,11 +1700,11 @@ export type CourseUncheckedUpdateManyWithoutDepartmentInput = {
  */
 
 export type CourseCountOutputType = {
-  grades: number
+  gradeDistributions: number
 }
 
 export type CourseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  grades?: boolean | CourseCountOutputTypeCountGradesArgs
+  gradeDistributions?: boolean | CourseCountOutputTypeCountGradeDistributionsArgs
 }
 
 /**
@@ -1720,8 +1720,8 @@ export type CourseCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * CourseCountOutputType without action
  */
-export type CourseCountOutputTypeCountGradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.GradeWhereInput
+export type CourseCountOutputTypeCountGradeDistributionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GradeDistributionWhereInput
 }
 
 
@@ -1754,7 +1754,7 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   facultyId?: boolean
   departmentId?: boolean
   latestYearCheckedForNtnuData?: boolean
-  grades?: boolean | Prisma.Course$gradesArgs<ExtArgs>
+  gradeDistributions?: boolean | Prisma.Course$gradeDistributionsArgs<ExtArgs>
   faculty?: boolean | Prisma.Course$facultyArgs<ExtArgs>
   department?: boolean | Prisma.Course$departmentArgs<ExtArgs>
   _count?: boolean | Prisma.CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -1859,7 +1859,7 @@ export type CourseSelectScalar = {
 
 export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "nameNo" | "nameEn" | "credits" | "studyLevel" | "gradeType" | "firstYearTaught" | "lastYearTaught" | "contentNo" | "contentEn" | "teachingMethodsNo" | "teachingMethodsEn" | "learningOutcomesNo" | "learningOutcomesEn" | "examTypeNo" | "examTypeEn" | "candidateCount" | "averageGrade" | "passRate" | "createdAt" | "updatedAt" | "taughtSemesters" | "teachingLanguages" | "campuses" | "facultyId" | "departmentId" | "latestYearCheckedForNtnuData", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  grades?: boolean | Prisma.Course$gradesArgs<ExtArgs>
+  gradeDistributions?: boolean | Prisma.Course$gradeDistributionsArgs<ExtArgs>
   faculty?: boolean | Prisma.Course$facultyArgs<ExtArgs>
   department?: boolean | Prisma.Course$departmentArgs<ExtArgs>
   _count?: boolean | Prisma.CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -1876,7 +1876,7 @@ export type CourseIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Course"
   objects: {
-    grades: Prisma.$GradePayload<ExtArgs>[]
+    gradeDistributions: Prisma.$GradeDistributionPayload<ExtArgs>[]
     faculty: Prisma.$FacultyPayload<ExtArgs> | null
     department: Prisma.$DepartmentPayload<ExtArgs> | null
   }
@@ -2306,7 +2306,7 @@ readonly fields: CourseFieldRefs;
  */
 export interface Prisma__CourseClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  grades<T extends Prisma.Course$gradesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$gradesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GradePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  gradeDistributions<T extends Prisma.Course$gradeDistributionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$gradeDistributionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GradeDistributionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   faculty<T extends Prisma.Course$facultyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$facultyArgs<ExtArgs>>): Prisma.Prisma__FacultyClient<runtime.Types.Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   department<T extends Prisma.Course$departmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$departmentArgs<ExtArgs>>): Prisma.Prisma__DepartmentClient<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -2776,27 +2776,27 @@ export type CourseDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Course.grades
+ * Course.gradeDistributions
  */
-export type Course$gradesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Course$gradeDistributionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Grade
+   * Select specific fields to fetch from the GradeDistribution
    */
-  select?: Prisma.GradeSelect<ExtArgs> | null
+  select?: Prisma.GradeDistributionSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Grade
+   * Omit specific fields from the GradeDistribution
    */
-  omit?: Prisma.GradeOmit<ExtArgs> | null
+  omit?: Prisma.GradeDistributionOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.GradeInclude<ExtArgs> | null
-  where?: Prisma.GradeWhereInput
-  orderBy?: Prisma.GradeOrderByWithRelationInput | Prisma.GradeOrderByWithRelationInput[]
-  cursor?: Prisma.GradeWhereUniqueInput
+  include?: Prisma.GradeDistributionInclude<ExtArgs> | null
+  where?: Prisma.GradeDistributionWhereInput
+  orderBy?: Prisma.GradeDistributionOrderByWithRelationInput | Prisma.GradeDistributionOrderByWithRelationInput[]
+  cursor?: Prisma.GradeDistributionWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.GradeScalarFieldEnum | Prisma.GradeScalarFieldEnum[]
+  distinct?: Prisma.GradeDistributionScalarFieldEnum | Prisma.GradeDistributionScalarFieldEnum[]
 }
 
 /**
