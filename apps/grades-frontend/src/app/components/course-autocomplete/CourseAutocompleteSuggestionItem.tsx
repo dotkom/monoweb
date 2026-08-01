@@ -1,21 +1,25 @@
 import { getCourseName, type Course } from "@dotkomonline/grades-backend/course"
-import { Button, Text, Title } from "@dotkomonline/ui"
+import { Button, cn, Text, Title } from "@dotkomonline/ui"
 import { useLocale } from "next-intl"
 import Link from "next/link"
 
 interface Props {
   course: Course
   onClick?: () => void
+  className?: string
 }
 
-export const CourseAutocompleteSuggestionItem = ({ course, onClick }: Props) => {
+export const CourseAutocompleteSuggestionItem = ({ course, onClick, className }: Props) => {
   const locale = useLocale()
 
   return (
     <Button
       element={Link}
       href={`/emner/${course.code}`}
-      className="rounded-lg p-2 items-start flex flex-col gap-1 transition-colors hover:bg-neutral-50 dark:hover:bg-stone-600 focus:bg-neutral-50 dark:focus:bg-stone-600 group outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-stone-500 ring-inset"
+      className={cn(
+        "h-auto rounded-lg p-2 items-start flex flex-col gap-1 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-600 focus:bg-neutral-100 dark:focus:bg-stone-600 group outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-stone-500 ring-inset border-none",
+        className
+      )}
       variant="ghost"
       onClick={onClick}
     >

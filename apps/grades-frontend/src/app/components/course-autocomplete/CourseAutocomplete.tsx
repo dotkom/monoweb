@@ -32,7 +32,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
 
   const [isOpen, setIsOpen] = useState(false)
   const [shouldResetSuggestions, setShouldResetSuggestions] = useState(true)
-  const formRef = useRef<HTMLFormElement | null>(null)
+  const anchorRef = useRef<HTMLDivElement | null>(null)
 
   const { register, handleSubmit, getValues, watch } = useForm<CourseFilterQuery>({
     defaultValues,
@@ -47,7 +47,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
     }
   }, [searchValue])
 
-  const { data: suggestions } = useQuery(
+  const { data: suggestions, isLoading } = useQuery(
     trpc.course.findCourses.queryOptions(
       {
         filter: {
@@ -78,42 +78,52 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
     setIsOpen(false)
   }
 
-  const isLoading = suggestions === undefined
-
   return (
     <Popover
       open={shouldShowPopover}
-      onOpenChange={(open, eventDetails) => {
-        if (!open && eventDetails.reason === "outside-press") {
-          const target = (eventDetails.event as Event | undefined)?.target
-
-          if (target instanceof Node && formRef.current?.contains(target)) {
+      onOpenChange={(nextOpen, details) => {
+        if (!nextOpen) {
+          if (details.reason === "focus-out") {
+            details.cancel()
             return
+          }
+
+          if (details.reason === "outside-press") {
+            const target = details.event.target
+
+            if (target instanceof Node && anchorRef.current?.contains(target)) {
+              details.cancel()
+              setIsOpen(true)
+              return
+            }
           }
         }
 
-        setIsOpen(open)
+        setIsOpen(nextOpen)
       }}
       modal={false}
     >
       <PopoverAnchor asChild>
-        <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className={className}>
-          <SearchInput
-            {...register("bySearch")}
-            placeholder={resolvedPlaceholder}
-            autoComplete="off"
-            onFocus={() => setIsOpen(true)}
-            onPointerDown={() => setIsOpen(true)}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className={className}>
+          <div ref={anchorRef}>
+            <SearchInput
+              {...register("bySearch")}
+              placeholder={resolvedPlaceholder}
+              autoComplete="off"
+              onFocus={() => setIsOpen(true)}
+              onPointerDown={() => setIsOpen(true)}
+            />
+          </div>
         </form>
       </PopoverAnchor>
 
       <PopoverContent
-        className="min-w-36 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-600 dark:bg-[color-mix(in_srgb,theme(colors.stone.700),theme(colors.stone.800))] w-96"
+        className="min-w-36 gap-0 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-600 dark:bg-[color-mix(in_srgb,theme(colors.stone.700),theme(colors.stone.800))] w-96"
         align="start"
         side="bottom"
         aria-busy={isLoading}
         initialFocus={false}
+        finalFocus={false}
       >
         {isLoading || suggestions === undefined ? (
           <CourseAutocompleteSkeleton />
@@ -123,7 +133,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
 
             <Link
               href={`/emner?bySearch=${searchValue}`}
-              className="mt-1 text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:ring-1 focus:ring-neutral-300 ring-inset focus:text-neutral-900 transition-colors hover:bg-neutral-50 dark:hover:bg-stone-600 focus:bg-neutral-50 dark:focus:bg-stone-600"
+              className="text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 dark:border-stone-600 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:text-neutral-900 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-600 focus:bg-neutral-100 dark:focus:bg-stone-600"
               onClick={() => setIsOpen(false)}
             >
               <Text className="leading-none text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200">
@@ -153,7 +163,10 @@ const CourseAutocompleteSkeleton = () => {
         <CourseAutocompleteSuggestionSkeleton />
         <CourseAutocompleteSuggestionSkeleton />
       </div>
-      <div aria-hidden className="mt-1 flex p-3 border-t border-neutral-200 text-neutral-700 rounded-b-lg">
+      <div
+        aria-hidden
+        className="mt-1 flex p-3 border-t border-neutral-200 dark:border-stone-600 text-neutral-700 rounded-b-lg"
+      >
         <div className="h-4 w-1/4 rounded bg-neutral-200 dark:bg-stone-600 motion-safe:animate-pulse" />
       </div>
     </>

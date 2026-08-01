@@ -36,7 +36,10 @@ export const Navbar = () => {
     >
       <div className={cn("flex h-16 w-full items-center justify-between", "mx-auto max-w-7xl", "gap-6 px-4 lg:px-12")}>
         <div className="flex items-center gap-4 sm:gap-6 w-full min-w-0">
-          <Link href="/" className={cn("group inline-flex items-center rounded-lg")}>
+          <Link
+            href="/"
+            className="group inline-flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/20 py-0.5 px-2"
+          >
             <Title
               className={cn(
                 "text-xl font-semibold sm:text-2xl",
@@ -56,6 +59,7 @@ export const Navbar = () => {
               "relative hidden sm:inline-flex items-center rounded-lg px-2.5 pt-1.5 pb-2 font-medium",
               "text-neutral-800 dark:text-white",
               "hover:bg-neutral-100 dark:hover:bg-stone-700",
+              "outline-none focus-visible:ring-2 focus-visible:ring-ring/20",
               isCourseListPageRoute
                 ? "font-semibold"
                 : "text-neutral-700 dark:text-stone-200 hover:text-neutral-900 dark:hover:text-white"

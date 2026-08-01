@@ -50,16 +50,18 @@ export const MobileNavigation = () => {
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
         <DropdownMenuTrigger asChild>
           <IconActionButton aria-label={isOpen ? t("closeNavigation") : t("openNavigation")}>
-            <IconMenu2 size={24} />
+            <IconMenu2 className="size-6" />
           </IconActionButton>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
           align="center"
+          positionMethod="fixed"
           side="bottom"
           sideOffset={8}
+          collisionPadding={0}
           className={cn(
-            "sm:hidden w-[calc(var(--radix-popper-available-width)-2rem)]",
+            "sm:hidden w-[calc(var(--available-width)-2rem)]",
             "mx-4 mt-3",
             "rounded-2xl border border-neutral-200/80 dark:border-stone-700/80",
             "bg-white/90 dark:bg-stone-800/90 backdrop-blur-lg",
@@ -77,6 +79,7 @@ export const MobileNavigation = () => {
                     "group relative flex items-center justify-between gap-2",
                     "rounded-md px-3 py-2.5 text-[15px] font-medium",
                     "transition-colors",
+                    "outline-none focus-visible:ring-2 focus-visible:ring-ring/20 ring-inset",
                     isCourseListPageRoute
                       ? "bg-neutral-100 text-neutral-900 dark:bg-stone-700 dark:text-white hover:bg-neutral-200 dark:hover:bg-stone-600"
                       : "text-neutral-800 dark:text-white hover:bg-neutral-100 dark:hover:bg-stone-700"
@@ -85,7 +88,7 @@ export const MobileNavigation = () => {
                   <span>{t("courses")}</span>
                 </Link>
 
-                <DropdownMenuSeparator className="my-3 bg-neutral-200/80 dark:bg-stone-700/80" />
+                <DropdownMenuSeparator className="my-3 bg-neutral-200/80 dark:bg-stone-700/80 w-full" />
               </section>
 
               <section className="flex flex-col gap-6 px-1">
@@ -125,7 +128,7 @@ export const MobileNavigation = () => {
                     <IconWorld size={16} />
                     {t("language")}
                   </Text>
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row gap-2 pb-0.5">
                     <PillActionButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
                       {tLocale("norwegian")}
                     </PillActionButton>

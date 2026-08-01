@@ -32,12 +32,12 @@ export const LocalePopover = () => {
           aria-label={t("ariaLabel", { language: currentLanguage })}
           className={cn("inline-flex items-center justify-center gap-2 px-3.5 py-2")}
         >
-          <IconWorld size={20} stroke={1.8} />
+          <IconWorld stroke={1.8} className="size-5" />
           {currentLanguage}
         </ActionButton>
       </PopoverTrigger>
       <PopoverPortal>
-        <PopoverContent className="flex flex-col p-1 min-w-30">
+        <PopoverContent className="min-w-28 w-auto flex flex-col p-1 transition-colors gap-0 dark:bg-stone-700 ring-0 border">
           <PopoverOptionButton onClick={() => onLocaleChange("no")} isActive={locale === "no"}>
             <Text>{t("norwegian")}</Text>
           </PopoverOptionButton>

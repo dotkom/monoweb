@@ -11,6 +11,10 @@
     "./course": {
       "import": "./src/modules/course/course-types.ts",
       "types": "./src/modules/course/course-types.ts"
+    },
+    "./grade-distribution": {
+      "import": "./src/modules/grade-distribution/grade-distribution-types.ts",
+      "types": "./src/modules/grade-distribution/grade-distribution-types.ts"
     }
   },
   "scripts": {

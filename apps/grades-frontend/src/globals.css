@@ -1,6 +1,21 @@
 @import url("@dotkomonline/config/tailwind.css");
 @import url("@dotkomonline/ui/globals.css");
 
+:root {
+  --color-brand: #4842ae;
+  --primary: var(--color-brand);
+  --primary-foreground: #ffffff;
+  --ring: #57534e;
+}
+
+.dark,
+[data-theme="dark"] {
+  --color-brand: #4842ae;
+  --primary: var(--color-brand);
+  --primary-foreground: #ffffff;
+  --ring: #a8a29e;
+}
+
 @layer base {
   body {
     text-rendering: optimizeLegibility;

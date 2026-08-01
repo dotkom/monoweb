@@ -18,17 +18,18 @@ export const ActionButton = ({ isActive, surface = "default", className, childre
 
   const activeClassName = cn(
     "bg-neutral-100 text-neutral-900 dark:bg-stone-700 dark:text-white",
-    "ring-1 ring-inset ring-neutral-200/80 dark:ring-stone-700/80",
     "hover:bg-neutral-200 dark:hover:bg-stone-600"
   )
 
   return (
     <Button
       variant="ghost"
+      size="xl"
       {...props}
       className={cn(
         "text-neutral-800 dark:text-white",
         "transition-colors",
+        "border-transparent focus-visible:border-transparent",
         surface === "glass" && glassSurfaceClassName,
         defaultHoverClassName,
         isActive && activeClassName,
@@ -51,7 +52,7 @@ export const IconActionButton = ({
     <ActionButton
       isActive={isActive}
       surface={surface}
-      className={cn("inline-flex size-10 items-center justify-center rounded-lg", "bg-transparent p-0", className)}
+      className={cn("inline-flex size-10 items-center justify-center rounded-lg p-0", className)}
       {...props}
     >
       {children}
