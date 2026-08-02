@@ -1,6 +1,6 @@
 import { useUserFileUploadMutation } from "@/app/(internal)/brukere/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
@@ -69,7 +69,7 @@ export const useUserProfileEditForm = ({
         label: "Allergier",
         placeholder: "Melk, nøtter, gluten",
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Profilbilde",
         maxSizeKiB: USER_IMAGE_MAX_SIZE_KIB,
         onFileUpload: fileUpload,

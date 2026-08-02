@@ -2,7 +2,7 @@ import { useArticleFileUploadMutation } from "@/app/(internal)/artikler/mutation
 import { useTagsAllQuery } from "@/app/(internal)/artikler/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -52,11 +52,9 @@ export const useArticleWriteForm = ({
         placeholder: "Jahn Teigen",
         required: true,
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Cover bilde",
         maxSizeKiB: ARTICLE_IMAGE_MAX_SIZE_KIB,
-        placeholder: "Last opp",
-        required: true,
         onFileUpload: fileUpload,
       }),
       vimeoId: createTextInput({
