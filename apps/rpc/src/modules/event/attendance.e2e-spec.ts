@@ -41,7 +41,7 @@ export function getMockMembership(input: Partial<MembershipWrite> = {}): Members
     start: getCurrentSemesterStart(),
     end: getNextSemesterStart(),
     specialization: null,
-    semester: isSpringSemester() ? 1 : 2,
+    semester: isSpringSemester() ? 1 : 0,
     ...input,
   }
 }
