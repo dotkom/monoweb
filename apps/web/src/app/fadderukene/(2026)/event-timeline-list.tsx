@@ -200,7 +200,7 @@ const EventItem = ({ event, attendance, userId }: EventItemProps) => {
         <Button
           element={Link}
           href={event.locationLink}
-          className="grow h-8 rounded-b-lg rounded-t-sm xs:hidden w-auto p-0 bg-white/50 dark:bg-white/15"
+          className="grow h-10 rounded-b-lg rounded-t-sm xs:hidden w-auto p-0 bg-white/50 dark:bg-white/15"
           target="_blank"
           rel="noreferrer"
         >
