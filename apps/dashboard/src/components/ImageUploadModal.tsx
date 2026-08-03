@@ -21,6 +21,7 @@ interface UploadImageModalProps {
   onFileUpload: (file: File) => Promise<string>
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
+  acceptGif?: boolean
   withMetadata?: boolean
 }
 
@@ -52,6 +53,7 @@ const MetadataUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "con
         onFileUpload: innerProps.onFileUpload,
         maxSizeKiB: innerProps.maxSizeKiB,
         aspectRatio: innerProps.aspectRatio,
+        acceptGif: innerProps.acceptGif,
       }),
       alt: createTextInput({
         label: "Alt-tekst",
@@ -93,6 +95,7 @@ const ImageOnlyUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "co
         onFileUpload: innerProps.onFileUpload,
         maxSizeKiB: innerProps.maxSizeKiB,
         aspectRatio: innerProps.aspectRatio,
+        acceptGif: innerProps.acceptGif,
       }),
     },
   })

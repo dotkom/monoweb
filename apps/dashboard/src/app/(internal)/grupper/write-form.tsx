@@ -1,7 +1,7 @@
 import { useGroupFileUploadMutation } from "@/app/(internal)/grupper/mutations"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -122,10 +122,9 @@ export const useGroupWriteForm = ({
       contactUrl: createTextInput({
         label: "Kontakt-lenke",
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Bilde",
         maxSizeKiB: GROUP_IMAGE_MAX_SIZE_KIB,
-        placeholder: "Last opp",
         onFileUpload: fileUpload,
       }),
       type: createSelectInput({

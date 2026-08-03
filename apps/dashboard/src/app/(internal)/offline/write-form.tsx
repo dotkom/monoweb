@@ -5,7 +5,7 @@ import {
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { createFileInput } from "@/components/forms/FileInput"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { OFFLINE_FILE_MAX_SIZE_KIB, OFFLINE_IMAGE_MAX_SIZE_KIB, OfflineWriteSchema } from "@dotkomonline/rpc/offline"
 import type { z } from "zod"
@@ -52,11 +52,9 @@ export const useOfflineWriteForm = ({
         required: true,
         onFileUpload: fileUpload,
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Bilde",
         maxSizeKiB: OFFLINE_IMAGE_MAX_SIZE_KIB,
-        placeholder: "Last opp",
-        required: true,
         onFileUpload: imageUpload,
       }),
     },

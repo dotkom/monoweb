@@ -1,6 +1,6 @@
 import { useCompanyFileUploadMutation } from "@/app/(internal)/bedrifter/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
-import { createImageInput } from "@/components/forms/ImageInput"
+import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/rpc/company"
@@ -67,10 +67,9 @@ export const useCompanyWriteForm = ({
         label: "Lokasjon",
         placeholder: "Oslo",
       }),
-      imageUrl: createImageInput({
+      imageUrl: createModalImageInput({
         label: "Bilde",
         maxSizeKiB: COMPANY_IMAGE_MAX_SIZE_KIB,
-        placeholder: "Last opp",
         onFileUpload: fileUpload,
       }),
     },

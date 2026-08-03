@@ -307,12 +307,14 @@ export function createModalImageInput<F extends FieldValues, TTransformedValues 
   onFileUpload,
   maxSizeKiB,
   aspectRatio,
+  acceptGif,
 }: {
   label: string
   description?: ReactNode
   onFileUpload: (file: File) => Promise<string>
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
+  acceptGif?: boolean
 }): InputProducerResult<F, TTransformedValues> {
   return function FormModalImageInput({ name, control, disabled }) {
     return (
@@ -329,6 +331,7 @@ export function createModalImageInput<F extends FieldValues, TTransformedValues 
                 onFileUpload,
                 maxSizeKiB,
                 aspectRatio,
+                acceptGif,
                 withMetadata: false,
                 handleSubmit: async (imageUrl: string) => {
                   field.onChange(imageUrl)
