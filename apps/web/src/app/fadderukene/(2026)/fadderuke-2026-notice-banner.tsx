@@ -6,6 +6,7 @@ import { IconArrowUpRight, IconEye, IconEyeOff, IconHandClick, IconMoodPuzzled }
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { ScrollingClouds } from "./clouds"
 
 const STORAGE_KEY = "fadderuke-2026-banner-hidden"
 
@@ -59,7 +60,7 @@ function ContestantSlotDisplay({ slot }: { slot: NoticeContestantSlot }) {
         className={cn(
           "flex flex-row items-center gap-3 sm:gap-5 rounded-xl p-2",
           slot.isYourTeam &&
-            "transition-colors bg-[#b7dced] group-hover/fadderuke-link:bg-violet-200/50 dark:bg-white/5"
+            "transition-colors bg-sky-200/50 group-hover/fadderuke-link:bg-violet-200/50 dark:bg-white/5"
         )}
       >
         <Image
@@ -178,23 +179,28 @@ export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026Noti
 
       <Link
         href="/fadderukene"
-        className="group/fadderuke-link flex flex-col gap-6 rounded-2xl transition-colors bg-[#c5e5f1] dark:bg-sky-950 hover:bg-violet-100 dark:hover:bg-teal-950"
+        className="group/fadderuke-link relative flex flex-col gap-6 overflow-hidden rounded-2xl transition-colors bg-sky-100 dark:bg-sky-950 hover:bg-violet-100 dark:hover:bg-teal-950"
       >
-        <div className="p-3">
+        <ScrollingClouds className="bottom-42 top-auto" />
+
+        <div className="relative p-3">
           <Stripes
             colorA="bg-[#c5e5f1] group-hover/fadderuke-link:bg-violet-100 dark:bg-sky-950 dark:group-hover/fadderuke-link:bg-teal-950 transition-colors"
             colorB="bg-[#b7dced] group-hover/fadderuke-link:bg-violet-200 dark:bg-blue-900 dark:group-hover/fadderuke-link:bg-cyan-900 transition-colors"
             animated
-            className="rounded-xl p-4"
+            className="rounded-lg p-4"
           >
-            <div className="flex flex-col gap-2">
-              <Title element="p" className="text-4xl sm:text-5xl font-marcellus font-semibold uppercase">
+            <div className="flex flex-col gap-1 sm:gap-2">
+              <Title
+                element="p"
+                className="text-3xl min-[340px]:text-4xl sm:text-5xl font-marcellus font-semibold uppercase"
+              >
                 Onlinelekene
               </Title>
 
               <Text
                 element="h2"
-                className="text-xl font-medium dark:text-blue-300 dark:group-hover/fadderuke-link:text-teal-300 transition-colors"
+                className="text-lg sm:text-xl font-medium dark:text-blue-300 dark:group-hover/fadderuke-link:text-teal-300 transition-colors"
               >
                 Fadderukene 2026
               </Text>
@@ -202,7 +208,7 @@ export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026Noti
           </Stripes>
         </div>
 
-        <div className="flex flex-row mx-4 sm:mx-7 gap-4 sm:gap-5 items-center">
+        <div className="relative flex flex-row mx-4 sm:mx-7 gap-4 sm:gap-5 items-center">
           <IconMoodPuzzled className="size-7 shrink-0" />
 
           <div className="flex flex-col gap-1 min-w-0">
@@ -216,7 +222,7 @@ export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026Noti
         {contestantSlots.length > 0 && (
           <div
             className={cn(
-              "mx-4 sm:mx-7 mt-2 sm:mt-4 grid grid-cols-1 gap-4 md:grid-rows-[auto_auto] md:gap-x-8 md:gap-y-1",
+              "relative mx-4 sm:mx-7 mt-2 sm:mt-4 grid grid-cols-1 gap-4 md:grid-rows-[auto_auto] md:gap-x-8 md:gap-y-1",
               contestantSlots.length >= 2 && "md:grid-cols-2",
               contestantSlots.length >= 3 && "lg:grid-cols-3"
             )}
@@ -228,40 +234,40 @@ export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026Noti
         )}
 
         <Image
-          src="/fadderuke-2026-hero-empty.svg"
+          src="/fadderuke-2026-hero-small.svg"
           alt=""
           width={1080}
           height={729}
           priority
           draggable={false}
-          className="mt-4 h-auto w-full select-none rounded-xl md:hidden dark:hidden"
+          className="relative mt-4 h-auto w-full pointer-events-none select-none rounded-xl min-[550px]:hidden dark:hidden"
         />
         <Image
-          src="/fadderuke-2026-hero-empty-dark.svg"
+          src="/fadderuke-2026-hero-small-dark.svg"
           alt=""
           width={1080}
           height={729}
           priority
           draggable={false}
-          className="mt-4 h-auto w-full select-none rounded-xl not-dark:hidden md:hidden"
+          className="relative mt-4 h-auto w-full pointer-events-none select-none rounded-xl not-dark:hidden min-[550px]:hidden"
         />
         <Image
-          src="/fadderuke-2026-hero-empty-small.svg"
+          src="/fadderuke-2026-hero.svg"
           alt=""
           width={1080}
           height={729}
           priority
           draggable={false}
-          className="mt-4 hidden h-auto w-full select-none rounded-xl md:block dark:hidden"
+          className="relative mt-4 hidden h-auto w-full pointer-events-none select-none rounded-xl min-[550px]:block dark:hidden"
         />
         <Image
-          src="/fadderuke-2026-hero-empty-small-dark.svg"
+          src="/fadderuke-2026-hero-dark.svg"
           alt=""
           width={1080}
           height={729}
           priority
           draggable={false}
-          className="mt-4 hidden h-auto w-full select-none rounded-xl not-dark:hidden md:block"
+          className="relative mt-4 hidden h-auto w-full pointer-events-none select-none rounded-xl not-dark:hidden min-[550px]:block"
         />
       </Link>
     </div>
