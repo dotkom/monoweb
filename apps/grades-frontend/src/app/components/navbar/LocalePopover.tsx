@@ -30,7 +30,7 @@ export const LocalePopover = () => {
       <PopoverTrigger asChild>
         <ActionButton
           aria-label={t("ariaLabel", { language: currentLanguage })}
-          className={cn("inline-flex items-center justify-center gap-2 px-3.5 py-2")}
+          className={cn("inline-flex items-center justify-center gap-2 px-3.5 py-2 font-normal")}
         >
           <IconWorld stroke={1.8} className="size-5" />
           {currentLanguage}

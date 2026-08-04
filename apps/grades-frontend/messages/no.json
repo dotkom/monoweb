@@ -3,7 +3,7 @@
     "Semester": {
       "SPRING": "Vår",
       "AUTUMN": "Høst",
-      "SUMMER": "Sommer"
+      "SUMMER": "Kont"
     },
     "Campus": {
       "TRONDHEIM": "Trondheim",
@@ -12,11 +12,7 @@
     },
     "TeachingLanguage": {
       "NORWEGIAN": "Norsk",
-      "ENGLISH": "Engelsk",
-      "shortLabel": {
-        "NORWEGIAN": "NO",
-        "ENGLISH": "EN"
-      }
+      "ENGLISH": "Engelsk"
     },
     "StudyLevel": {
       "BACHELOR_ADVANCED": "Bachelor (avansert)",
@@ -26,6 +22,15 @@
       "MASTER": "Master",
       "PHD": "PhD",
       "UNKNOWN": "Ukjent"
+    },
+    "SemesterShort": {
+      "SPRING": "V",
+      "SUMMER": "S",
+      "AUTUMN": "H"
+    },
+    "PeriodPreset": {
+      "ALL_YEARS": "Alle år",
+      "LAST_THREE_YEARS": "Siste 3 år"
     }
   },
   "Common": {
@@ -40,7 +45,7 @@
     "courseSearchPlaceholder": "Søk etter emner..."
   },
   "ThemePopover": {
-    "ariaLabel": "Tema: {theme}",
+    "ariaLabel": "Fargetema",
     "light": "Lys",
     "dark": "Mørk",
     "system": "System"
@@ -84,5 +89,71 @@
     "placeholder": "Søk etter emner...",
     "noResults": "Ingen emner funnet",
     "seeAllResults": "Se alle resultater"
+  },
+  "CoursePage": {
+    "common": {
+      "semesterLabel": "{semester} {year}",
+      "compareAgainst": {
+        "ALL_YEARS": "Mot alle år",
+        "LAST_THREE_YEARS": "Mot siste 3 år",
+        "semester": "Mot {label}"
+      },
+      "compareAgainstShort": {
+        "ALL_YEARS": "mot alle år",
+        "LAST_THREE_YEARS": "mot siste 3 år",
+        "semester": "mot {label}"
+      }
+    },
+    "hero": {
+      "credits": "{credits, number} stp"
+    },
+    "semesterTabs": {
+      "olderSemesters": "Eldre semestre"
+    },
+    "barChart": {
+      "title": "Karakterfordeling",
+      "compare": "Sammenlign",
+      "percent": "{value, number} %",
+      "hoverOff": "{grade} · {percent} · {count} av {total}",
+      "hoverCompare": "{grade} · {percent} valgt · {comparisonPercent} sammenligning",
+      "grades": {
+        "PASS": "Bestått",
+        "FAIL": "Ikke bestått"
+      }
+    },
+    "lineChart": {
+      "averageOverTime": "Snitt over tid",
+      "passRateOverTime": "Ståprosent over tid"
+    },
+    "kpiCard": {
+      "comparisonSameAsPeriod": "Allerede valgt som periode",
+      "averageGrade": "Snitt",
+      "passRate": "Ståprosent",
+      "passRateDiff": "{count, number} poeng",
+      "diffEqual": "likt",
+      "rangeBar": {
+        "historicalSpan": "Historisk spenn",
+        "minAverage": "Laveste snitt: {semester}",
+        "maxAverage": "Høyeste snitt: {semester}",
+        "minPassRate": "Laveste ståprosent: {semester}",
+        "maxPassRate": "Høyeste ståprosent: {semester}",
+        "periodValue": "{period}: {value}"
+      }
+    },
+    "CourseAbout": {
+      "content": "Faglig innhold",
+      "learningOutcomes": "Læringsmål",
+      "teachingMethods": "Læringsformer og aktiviteter",
+      "title": "Om emnet",
+      "Meta": {
+        "studyLevel": "Nivå",
+        "examType": "Vurderingsform",
+        "faculty": "Fakultet",
+        "department": "Institutt",
+        "taughtSince": "Undervist siden",
+        "candidateCount": "Kandidater totalt",
+        "dataLastUpdated": "Data oppdatert"
+      }
+    }
   }
 }

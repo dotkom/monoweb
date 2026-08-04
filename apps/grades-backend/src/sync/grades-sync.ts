@@ -5,14 +5,17 @@ import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import type { CourseService } from "../modules/course/course-service"
 import type { Course, CourseCode, CourseId, Department, Faculty, GradeType } from "../modules/course/course-types"
 import type { GradeDistributionService } from "../modules/grade-distribution/grade-distribution-service"
-import type { GradeDistribution, GradeDistributionWrite } from "../modules/grade-distribution/grade-distribution-types"
+import {
+  calculateCourseGradeType,
+  calculateCourseStatistics,
+  type GradeDistribution,
+  type GradeDistributionWrite,
+} from "../modules/grade-distribution/grade-distribution-types"
 import { getAllCourseRecords, getAllGrades } from "./dbh/dbh-service"
 import type { DbhCourseRecord, DbhSemesterGrade } from "./dbh/dbh-types"
 import {
   buildCourseCreateWrite,
   buildCourseUpdatePatch,
-  calculateCourseGradeType,
-  calculateCourseStatistics,
   calculateTaughtFrom,
   calculateTaughtTo,
   getDbhGradeType,

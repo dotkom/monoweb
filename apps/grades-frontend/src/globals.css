@@ -2,18 +2,18 @@
 @import url("@dotkomonline/ui/globals.css");
 
 :root {
-  --color-brand: #4842ae;
+  --color-brand: #5d58d3;
   --primary: var(--color-brand);
   --primary-foreground: #ffffff;
-  --ring: #57534e;
+  --ring: var(--stone-600);
 }
 
 .dark,
 [data-theme="dark"] {
-  --color-brand: #4842ae;
+  --color-brand: #5d58d3;
   --primary: var(--color-brand);
   --primary-foreground: #ffffff;
-  --ring: #a8a29e;
+  --ring: var(--stone-400);
 }
 
 @layer base {

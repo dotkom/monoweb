@@ -30,7 +30,23 @@ const findCourseProcedure = procedure
     return course
   })
 
+export type FindFacultiesInput = inferProcedureInput<typeof findFacultiesProcedure>
+export type FindFacultiesOutput = inferProcedureOutput<typeof findFacultiesProcedure>
+const findFacultiesProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  const faculties = await ctx.courseService.findManyFaculties(ctx.handle)
+  return faculties
+})
+
+export type FindDepartmentsInput = inferProcedureInput<typeof findDepartmentsProcedure>
+export type FindDepartmentsOutput = inferProcedureOutput<typeof findDepartmentsProcedure>
+const findDepartmentsProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  const departments = await ctx.courseService.findManyDepartments(ctx.handle)
+  return departments
+})
+
 export const courseRouter = t.router({
   findCourses: findCoursesProcedure,
   findCourse: findCourseProcedure,
+  findFaculties: findFacultiesProcedure,
+  findDepartments: findDepartmentsProcedure,
 })

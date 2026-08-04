@@ -24,9 +24,12 @@ function TooltipContent({
   align = "center",
   alignOffset = 0,
   children,
+  arrowClassName,
   ...props
 }: TooltipPrimitive.Popup.Props &
-  Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+    arrowClassName?: string
+  }) {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Positioner
@@ -38,7 +41,7 @@ function TooltipContent({
       >
         <TooltipPrimitive.Popup data-slot="tooltip-content" className={cn(tooltipContentClass, className)} {...props}>
           {children}
-          <TooltipPrimitive.Arrow className={tooltipArrowClass} />
+          <TooltipPrimitive.Arrow className={cn(tooltipArrowClass, arrowClassName)} />
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>
