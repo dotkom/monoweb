@@ -2,8 +2,8 @@ import { cn, TextInput } from "@dotkomonline/ui"
 import { IconSearch } from "@tabler/icons-react"
 import { forwardRef, type ComponentPropsWithRef } from "react"
 
-export const SearchInput = forwardRef<HTMLInputElement, ComponentPropsWithRef<"input">>(
-  ({ className, ...props }, ref) => {
+export const SearchInput = forwardRef<HTMLInputElement, ComponentPropsWithRef<"input"> & { inputClassName?: string }>(
+  ({ className, inputClassName, ...props }, ref) => {
     return (
       <div className={cn("relative", className)}>
         <IconSearch
@@ -13,7 +13,15 @@ export const SearchInput = forwardRef<HTMLInputElement, ComponentPropsWithRef<"i
         <TextInput
           ref={ref}
           {...props}
-          className="pl-10 rounded-lg w-full h-full text-base border border-neutral-200 dark:border-stone-600 dark:bg-stone-800 focus:border-neutral-300 focus:ring-1 ring-neutral-300"
+          className={cn(
+            "pl-10 w-full rounded-lg border border-neutral-200 bg-white text-base shadow-none outline-none transition-colors",
+            "hover:border-neutral-300 hover:bg-white",
+            "focus-visible:border-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "dark:border-stone-700 dark:bg-stone-800",
+            "dark:hover:border-stone-600 dark:hover:bg-stone-800",
+            "dark:focus-visible:border-stone-500",
+            inputClassName
+          )}
         />
       </div>
     )

@@ -71,6 +71,11 @@ export function GradeRangeBar({
   const meanTooltip = t("periodValue", { period: comparisonPeriodLabel, value: formatLabel(mean) })
   const valueTooltip = t("periodValue", { period: selectedPeriodLabel, value: formatLabel(value) })
 
+  // Don't show range bar if all grades are the same
+  if (min === max) {
+    return null
+  }
+
   return (
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2">
       <RangeBarTooltip label={minTooltip}>

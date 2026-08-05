@@ -1,7 +1,7 @@
 import type { Locale } from "@/i18n/locale"
 import { server } from "@/utils/trpc/server"
 import { getCourseLocalizedTextFields, type Course } from "@dotkomonline/grades-backend/course"
-import { Text, Title } from "@dotkomonline/ui"
+import { cn, Text, Title } from "@dotkomonline/ui"
 import { Separator } from "@dotkomonline/ui/components/separator"
 import { getLocale, getTranslations } from "next-intl/server"
 import { Fragment } from "react"
@@ -30,6 +30,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
     server.gradeDistribution.findGradeDistributions.query(courseId),
   ])
 
+  const showLetter = course.gradeType !== "PASS_FAIL"
+
   return (
     <div className="flex flex-col gap-10">
       <Hero course={course} locale={locale} />
@@ -38,12 +40,23 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <div className="flex flex-col gap-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <CourseBarChartCard gradeDistributions={gradeDistributions} className="order-2 lg:order-1" />
-            <CourseKpiCard gradeDistributions={gradeDistributions} className="order-1 lg:order-2" />
-            <CourseLineChartCard gradeDistributions={gradeDistributions} mode="LETTER" className="order-3 lg:order-3" />
+            <CourseKpiCard
+              gradeDistributions={gradeDistributions}
+              showLetter={showLetter}
+              className="order-1 lg:order-2"
+            />
+
+            {showLetter && (
+              <CourseLineChartCard
+                gradeDistributions={gradeDistributions}
+                mode="LETTER"
+                className="order-3 lg:order-3"
+              />
+            )}
             <CourseLineChartCard
               gradeDistributions={gradeDistributions}
               mode="PASS_FAIL"
-              className="order-4 lg:order-4"
+              className={cn("order-4 lg:order-4", !showLetter && "lg:col-span-2")}
             />
           </div>
 

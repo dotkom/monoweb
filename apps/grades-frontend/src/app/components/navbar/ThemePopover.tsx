@@ -31,7 +31,7 @@ export const ThemePopover = () => {
         </IconActionButton>
       </PopoverTrigger>
       <PopoverPortal>
-        <PopoverContent className="min-w-36 w-auto flex flex-col p-1 transition-colors gap-0 dark:bg-stone-700 ring-0 border">
+        <PopoverContent className="min-w-36 w-auto flex flex-col p-1 transition-colors gap-0 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 ring-0">
           <PopoverOptionButton onClick={() => onChange("light")} isActive={theme === "light"}>
             <IconSun className="size-4" />
             <Text>{t("light")}</Text>

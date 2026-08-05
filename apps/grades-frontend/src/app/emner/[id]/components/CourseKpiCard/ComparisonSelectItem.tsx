@@ -6,7 +6,7 @@ import type { PeriodSelection } from "../../course-page-params"
 import { isSamePeriodSelection } from "../../utils"
 
 const selectItemClassName =
-  "cursor-pointer p-2 text-neutral-950 hover:bg-gray-100 data-highlighted:bg-gray-100 dark:text-stone-200 dark:hover:bg-stone-700 dark:data-highlighted:bg-stone-700 data-disabled:text-neutral-400 dark:data-disabled:text-stone-500"
+  "cursor-pointer p-2 text-neutral-950 hover:bg-neutral-100 data-highlighted:bg-neutral-100 dark:text-stone-200 dark:hover:bg-stone-700 dark:data-highlighted:bg-stone-700 data-disabled:text-neutral-400 dark:data-disabled:text-stone-500"
 
 type Props = {
   value: string

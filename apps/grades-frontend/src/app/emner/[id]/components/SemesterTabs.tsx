@@ -150,7 +150,7 @@ export const SemesterTabs = ({ gradeDistributions }: Props) => {
               <SelectItem
                 key={serializeSemesterKey(semester)}
                 value={serializeSemesterKey(semester)}
-                className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-stone-700 data-highlighted:bg-gray-100 dark:data-highlighted:bg-stone-700"
+                className="cursor-pointer p-2 hover:bg-neutral-100 dark:hover:bg-stone-700 data-highlighted:bg-neutral-100 dark:data-highlighted:bg-stone-700"
               >
                 {periodLabel({ kind: "semester", semester })}
               </SelectItem>

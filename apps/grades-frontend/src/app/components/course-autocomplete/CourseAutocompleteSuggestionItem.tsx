@@ -17,7 +17,7 @@ export const CourseAutocompleteSuggestionItem = ({ course, onClick, className }:
       element={Link}
       href={`/emner/${course.code}`}
       className={cn(
-        "h-auto rounded-lg p-2 items-start flex flex-col gap-1 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-600 focus:bg-neutral-100 dark:focus:bg-stone-600 group outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-stone-500 ring-inset border-none",
+        "h-auto rounded-lg p-2 items-start flex flex-col gap-1 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-700 focus:bg-neutral-100 dark:focus:bg-stone-700 group outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-stone-500 ring-inset border-none",
         className
       )}
       variant="ghost"

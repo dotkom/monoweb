@@ -18,10 +18,11 @@ import { KpiMetric } from "./KpiMetric"
 
 type Props = {
   gradeDistributions: GradeDistribution[]
+  showLetter: boolean
   className?: string
 }
 
-export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
+export const CourseKpiCard = ({ gradeDistributions, showLetter, className }: Props) => {
   const { periodSelection, comparisonPeriodSelection, setParams, selectedRows, comparisonRows } =
     useCoursePeriodView(gradeDistributions)
 
@@ -116,18 +117,25 @@ export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
         </Select>
       }
     >
-      <div className="grid grid-cols-2 divide-x divide-gray-200 dark:divide-stone-700">
-        <KpiMetric
-          allGradeDistributions={gradeDistributions}
-          selectedGradeDistributions={selectedRows}
-          comparisonGradeDistributions={comparisonRows}
-          className="pr-4 sm:pr-6"
-          format={formatNumber}
-          mode="LETTER"
-          comparisonLabel={formatComparePeriodLabel(comparisonPeriodSelection, true)}
-          selectedPeriodLabel={selectedPeriodLabel}
-          comparisonPeriodLabel={periodLabel(comparisonPeriodSelection)}
-        />
+      <div
+        className={cn(
+          "grid divide-gray-200 dark:divide-stone-700",
+          showLetter ? "grid-cols-2 divide-x" : "grid-cols-1"
+        )}
+      >
+        {showLetter && (
+          <KpiMetric
+            allGradeDistributions={gradeDistributions}
+            selectedGradeDistributions={selectedRows}
+            comparisonGradeDistributions={comparisonRows}
+            className="pr-4 sm:pr-6"
+            format={formatNumber}
+            mode="LETTER"
+            comparisonLabel={formatComparePeriodLabel(comparisonPeriodSelection, true)}
+            selectedPeriodLabel={selectedPeriodLabel}
+            comparisonPeriodLabel={periodLabel(comparisonPeriodSelection)}
+          />
+        )}
         <KpiMetric
           allGradeDistributions={gradeDistributions}
           selectedGradeDistributions={selectedRows}

@@ -77,7 +77,7 @@ type MetaRowItemProps = {
 
 const MetaRowItem = ({ label, value }: MetaRowItemProps) => {
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-2 gap-4">
       <Text element="dt" className="text-neutral-500 dark:text-stone-400 text-[13px]">
         {label}
       </Text>
