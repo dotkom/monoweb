@@ -3,9 +3,13 @@ import * as cheerio from "cheerio"
 import type { Element } from "domhandler"
 import sanitizeHtml from "sanitize-html"
 import type { z } from "zod"
-import { SemesterSchema, type CourseCampus, type CourseCode, type GradeType } from "../../modules/course/course-types"
-
-export type Locale = "no" | "en"
+import {
+  SemesterSchema,
+  type CourseCampus,
+  type CourseCode,
+  type GradeType,
+  type Locale,
+} from "../../modules/course/course-types"
 
 export const NtnuCourseSemesterSchema = SemesterSchema.extract(["AUTUMN", "SPRING"])
 export type NtnuCourseSemester = z.infer<typeof NtnuCourseSemesterSchema>

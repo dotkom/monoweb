@@ -8,7 +8,11 @@ import type {
   GradeType,
   Semester,
 } from "../modules/course/course-types"
-import type { GradeDistribution, GradeDistributionWrite } from "../modules/grade-distribution/grade-distribution-types"
+import {
+  getPreferredGradeType,
+  type GradeDistribution,
+  type GradeDistributionWrite,
+} from "../modules/grade-distribution/grade-distribution-types"
 import type { DbhCourseRecord, DbhSemesterGrade } from "./dbh/dbh-types"
 import type { NtnuCourseScrapeResult } from "./ntnu/ntnu-scraper"
 
@@ -303,105 +307,6 @@ function getDbhSemestersForYear(year: number | undefined, dbhCourseRecords: DbhC
   const semesters = relevantCourseRecords.map((record) => record.semester as Semester)
 
   return Array.from(new Set(semesters))
-}
-
-export function calculateCourseStatistics(gradeDistributions: GradeDistribution[]): {
-  candidateCount: number
-  averageGrade: number
-  passRate: number
-} {
-  if (gradeDistributions.length === 0) {
-    return { candidateCount: 0, averageGrade: 0, passRate: 0 }
-  }
-
-  const candidateCount = gradeDistributions.reduce(
-    (sum, gradeDistribution) => sum + getGradeDistributionCandidateCount(gradeDistribution),
-    0
-  )
-  const failedCount = gradeDistributions.reduce(
-    (sum, gradeDistribution) => sum + getFailedCandidateCount(gradeDistribution),
-    0
-  )
-  const letterGradeCandidateCount = gradeDistributions.reduce(
-    (sum, gradeDistribution) => sum + getLetterGradeCandidateCount(gradeDistribution),
-    0
-  )
-
-  const averageGradePoints = gradeDistributions.reduce(
-    (sum, gradeDistribution) =>
-      sum +
-      gradeDistribution.gradeACount * 5 +
-      gradeDistribution.gradeBCount * 4 +
-      gradeDistribution.gradeCCount * 3 +
-      gradeDistribution.gradeDCount * 2 +
-      gradeDistribution.gradeECount * 1,
-    0
-  )
-
-  const averageGrade = letterGradeCandidateCount === 0 ? 0 : averageGradePoints / letterGradeCandidateCount
-  const passRate = candidateCount === 0 ? 0 : ((candidateCount - failedCount) * 100) / candidateCount
-
-  return { candidateCount, averageGrade, passRate }
-}
-
-type GradeDistributionCountFields = Pick<
-  GradeDistribution,
-  | "gradeACount"
-  | "gradeBCount"
-  | "gradeCCount"
-  | "gradeDCount"
-  | "gradeECount"
-  | "gradeFCount"
-  | "passedCount"
-  | "failedCount"
->
-
-export function getGradeDistributionCandidateCount(gradeDistribution: GradeDistributionCountFields) {
-  return (
-    gradeDistribution.gradeACount +
-    gradeDistribution.gradeBCount +
-    gradeDistribution.gradeCCount +
-    gradeDistribution.gradeDCount +
-    gradeDistribution.gradeECount +
-    gradeDistribution.gradeFCount +
-    gradeDistribution.passedCount +
-    gradeDistribution.failedCount
-  )
-}
-
-export function getLetterGradeCandidateCount(gradeDistribution: GradeDistributionCountFields) {
-  return (
-    gradeDistribution.gradeACount +
-    gradeDistribution.gradeBCount +
-    gradeDistribution.gradeCCount +
-    gradeDistribution.gradeDCount +
-    gradeDistribution.gradeECount +
-    gradeDistribution.gradeFCount
-  )
-}
-
-export function getFailedCandidateCount(gradeDistribution: GradeDistributionCountFields) {
-  return gradeDistribution.gradeFCount + gradeDistribution.failedCount
-}
-
-function getPreferredGradeType(hasLetterGrades: boolean, hasPassFailGrades: boolean): GradeType {
-  // If there are both letter grades and pass/fail grades, we prefer letter grades as they contain more information
-  if (hasLetterGrades || !hasPassFailGrades) {
-    return "LETTER"
-  }
-
-  return "PASS_FAIL"
-}
-
-export function calculateCourseGradeType(gradeDistributions: GradeDistribution[]): GradeType {
-  const hasLetterGrades = gradeDistributions.some(
-    (gradeDistribution) => getLetterGradeCandidateCount(gradeDistribution) > 0
-  )
-  const hasPassedFailedGrades = gradeDistributions.some(
-    (gradeDistribution) => gradeDistribution.passedCount > 0 || gradeDistribution.failedCount > 0
-  )
-
-  return getPreferredGradeType(hasLetterGrades, hasPassedFailedGrades)
 }
 
 export function getDbhGradeType(dbhGradeResults: DbhSemesterGrade[]): GradeType {

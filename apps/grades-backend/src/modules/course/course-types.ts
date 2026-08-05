@@ -127,6 +127,10 @@ export const CourseFilterQuerySchema = z
   })
   .partial()
 
+export type SemesterKey = { year: number; semester: Semester }
+
+export type SerializedSemesterKey = `${number}-${Semester}`
+
 export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"]) => {
   const roundedAverage = Math.round(averageGrade)
 
@@ -161,10 +165,35 @@ export const mapLetterGradeFilterToMinAverageGrade = (minGrade: MinLetterGradeFi
   }
 }
 
-export const getCourseName = (course: Course, locale: "no" | "en") => {
-  if (locale === "en" && course.nameEn !== null) {
-    return course.nameEn
+export type Locale = "no" | "en"
+
+export function pickLocalized(locale: Locale, no: string | null, en: string | null): string | null {
+  const preferred = locale === "en" ? en : no
+  const fallback = locale === "en" ? no : en
+
+  return preferred || fallback || null
+}
+
+export const getCourseLocalizedTextFields = (course: Course, locale: Locale) => ({
+  name: pickLocalized(locale, course.nameNo, course.nameEn) ?? course.nameNo,
+  content: pickLocalized(locale, course.contentNo, course.contentEn),
+  learningOutcomes: pickLocalized(locale, course.learningOutcomesNo, course.learningOutcomesEn),
+  teachingMethods: pickLocalized(locale, course.teachingMethodsNo, course.teachingMethodsEn),
+  examType: pickLocalized(locale, course.examTypeNo, course.examTypeEn),
+})
+
+export function serializeSemesterKey({ year, semester }: SemesterKey): SerializedSemesterKey {
+  return `${year}-${semester}`
+}
+
+export function parseSemesterKey(value: string): SemesterKey | null {
+  const [yearStr, semesterStr] = value.split("-")
+  const year = Number(yearStr)
+  const semester = SemesterSchema.safeParse(semesterStr)
+
+  if (!Number.isInteger(year) || !semester.success) {
+    return null
   }
 
-  return course.nameNo
+  return { year, semester: semester.data }
 }

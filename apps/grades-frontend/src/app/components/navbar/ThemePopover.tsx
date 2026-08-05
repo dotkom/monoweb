@@ -9,10 +9,9 @@ import { PopoverOptionButton } from "./PopoverOptionButton"
 import { IconActionButton } from "../action-button/ActionButton"
 
 export const ThemePopover = () => {
-  const { theme, setTheme, resolvedTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
   const t = useTranslations("ThemePopover")
-  const resolvedThemeLabel = resolvedTheme === "light" || resolvedTheme === "dark" ? resolvedTheme : "system"
 
   const onChange = (newTheme: string) => {
     if (newTheme === theme) {
@@ -26,16 +25,13 @@ export const ThemePopover = () => {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <IconActionButton aria-label={t("ariaLabel", { theme: t(resolvedThemeLabel) })}>
-          {resolvedTheme === "light" ? (
-            <IconSun stroke={1.8} className="size-5" />
-          ) : (
-            <IconMoon stroke={1.8} className="size-5" />
-          )}
+        <IconActionButton aria-label={t("ariaLabel")}>
+          <IconSun stroke={1.8} className="size-5 dark:hidden" />
+          <IconMoon stroke={1.8} className="size-5 hidden dark:block" />
         </IconActionButton>
       </PopoverTrigger>
       <PopoverPortal>
-        <PopoverContent className="min-w-36 w-auto flex flex-col p-1 transition-colors gap-0 dark:bg-stone-700 ring-0 border">
+        <PopoverContent className="min-w-36 w-auto flex flex-col p-1 transition-colors gap-0 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 ring-0">
           <PopoverOptionButton onClick={() => onChange("light")} isActive={theme === "light"}>
             <IconSun className="size-4" />
             <Text>{t("light")}</Text>

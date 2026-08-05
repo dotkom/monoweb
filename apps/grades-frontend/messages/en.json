@@ -3,7 +3,7 @@
     "Semester": {
       "SPRING": "Spring",
       "AUTUMN": "Autumn",
-      "SUMMER": "Summer"
+      "SUMMER": "Resit"
     },
     "Campus": {
       "TRONDHEIM": "Trondheim",
@@ -12,11 +12,7 @@
     },
     "TeachingLanguage": {
       "NORWEGIAN": "Norwegian",
-      "ENGLISH": "English",
-      "shortLabel": {
-        "NORWEGIAN": "NO",
-        "ENGLISH": "EN"
-      }
+      "ENGLISH": "English"
     },
     "StudyLevel": {
       "BACHELOR_ADVANCED": "Bachelor (advanced)",
@@ -26,6 +22,15 @@
       "MASTER": "Master",
       "PHD": "PhD",
       "UNKNOWN": "Unknown"
+    },
+    "SemesterShort": {
+      "SPRING": "S",
+      "SUMMER": "C",
+      "AUTUMN": "A"
+    },
+    "PeriodPreset": {
+      "ALL_YEARS": "All years",
+      "LAST_THREE_YEARS": "Last 3 years"
     }
   },
   "Common": {
@@ -40,7 +45,7 @@
     "courseSearchPlaceholder": "Search for courses..."
   },
   "ThemePopover": {
-    "ariaLabel": "Theme: {theme}",
+    "ariaLabel": "Theme",
     "light": "Light",
     "dark": "Dark",
     "system": "System"
@@ -84,5 +89,71 @@
     "placeholder": "Search for courses...",
     "noResults": "No courses found",
     "seeAllResults": "See all results"
+  },
+  "CoursePage": {
+    "common": {
+      "semesterLabel": "{semester} {year}",
+      "compareAgainst": {
+        "ALL_YEARS": "Compared to all years",
+        "LAST_THREE_YEARS": "Compared to last 3 years",
+        "semester": "Compared to {label}"
+      },
+      "compareAgainstShort": {
+        "ALL_YEARS": "vs all years",
+        "LAST_THREE_YEARS": "vs last 3 years",
+        "semester": "vs {label}"
+      }
+    },
+    "hero": {
+      "credits": "{credits, number} ECTS"
+    },
+    "semesterTabs": {
+      "olderSemesters": "Older semesters"
+    },
+    "barChart": {
+      "title": "Grade distribution",
+      "compare": "Compare",
+      "percent": "{value, number}%",
+      "hoverOff": "{grade} · {percent} · {count} of {total}",
+      "hoverCompare": "{grade} · {percent} selected · {comparisonPercent} comparison",
+      "grades": {
+        "PASS": "Pass",
+        "FAIL": "Fail"
+      }
+    },
+    "lineChart": {
+      "averageOverTime": "Average over time",
+      "passRateOverTime": "Pass rate over time"
+    },
+    "kpiCard": {
+      "comparisonSameAsPeriod": "Already selected as period",
+      "averageGrade": "Average grade",
+      "passRate": "Pass rate",
+      "passRateDiff": "{count, number} points",
+      "diffEqual": "same",
+      "rangeBar": {
+        "historicalSpan": "All-time range",
+        "minAverage": "Lowest average: {semester}",
+        "maxAverage": "Highest average: {semester}",
+        "minPassRate": "Lowest pass rate: {semester}",
+        "maxPassRate": "Highest pass rate: {semester}",
+        "periodValue": "{period}: {value}"
+      }
+    },
+    "CourseAbout": {
+      "content": "Content",
+      "learningOutcomes": "Learning outcomes",
+      "teachingMethods": "Teaching methods",
+      "title": "About this course",
+      "Meta": {
+        "studyLevel": "Study level",
+        "examType": "Assessment form",
+        "faculty": "Faculty",
+        "department": "Department",
+        "taughtSince": "Taught since",
+        "candidateCount": "Total candidates",
+        "dataLastUpdated": "Last updated"
+      }
+    }
   }
 }

@@ -2,8 +2,8 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { secondsToMilliseconds } from "date-fns"
 import pLimit from "p-limit"
 import pRetry, { AbortError } from "p-retry"
-import type { CourseCode } from "../../modules/course/course-types"
-import { parseNtnuCoursePage, type Locale, type NtnuCourse, type NtnuCoursePageParseResult } from "./ntnu-course-parser"
+import type { CourseCode, Locale } from "../../modules/course/course-types"
+import { parseNtnuCoursePage, type NtnuCourse, type NtnuCoursePageParseResult } from "./ntnu-course-parser"
 
 const FETCH_TIMEOUT = secondsToMilliseconds(3)
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504])
