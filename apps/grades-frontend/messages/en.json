@@ -65,17 +65,12 @@
     "openAriaLabel": "Open filters",
     "closeAriaLabel": "Close filters",
     "drawerTitle": "Filter courses",
+    "filterButton": "Filter",
+    "sortBy": "Sort by",
     "semester": "Semester",
     "teachingLanguage": "Language",
     "campus": "Campus",
     "minGrade": "Grade",
-    "sortBy": "Sort by",
-    "sortOptions": {
-      "nameAsc": "Name (A-Z)",
-      "nameDesc": "Name (Z-A)",
-      "gradeAsc": "Grade (low to high)",
-      "gradeDesc": "Grade (high to low)"
-    },
     "minGradeOptions": {
       "ALL": "All",
       "A": "A",
@@ -83,12 +78,24 @@
       "C": "Minimum C",
       "D": "Minimum D",
       "E": "Minimum E"
-    }
+    },
+    "clearAll": "Clear all"
   },
   "CourseAutocomplete": {
     "placeholder": "Search for courses...",
     "noResults": "No courses found",
     "seeAllResults": "See all results"
+  },
+  "CourseListToolbar": {
+    "searchPlaceholder": "Search for courses...",
+    "sortOptions": {
+      "mostCandidates": "Most students",
+      "highestGrade": "Highest average",
+      "highestPassRate": "Highest pass rate",
+      "leastCandidates": "Least students",
+      "lowestGrade": "Lowest average",
+      "lowestPassRate": "Lowest pass rate"
+    }
   },
   "CoursePage": {
     "common": {
@@ -113,6 +120,7 @@
     "barChart": {
       "title": "Grade distribution",
       "compare": "Compare",
+      "compareDisabledReason": "Not enough data to compare",
       "percent": "{value, number}%",
       "hoverOff": "{grade} · {percent} · {count} of {total}",
       "hoverCompare": "{grade} · {percent} selected · {comparisonPercent} comparison",

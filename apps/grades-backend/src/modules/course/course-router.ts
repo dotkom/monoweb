@@ -10,14 +10,21 @@ const findCoursesProcedure = procedure
   .input(
     z.object({
       filter: CourseFilterQuerySchema.optional(),
-      offset: z.int().min(0).default(0),
+      // Tanstack InfiniteQuery expects offset to be called cursor
+      cursor: z.int().min(0).default(0),
       limit: z.int().min(1).max(100).default(20),
     })
   )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.courseService.findMany(ctx.handle, input.filter ?? {}, input.offset, input.limit)
-    return items
+    const items = await ctx.courseService.findMany(ctx.handle, input.filter ?? {}, input.cursor, input.limit)
+
+    const nextCursor = items.length === input.limit ? input.cursor + input.limit : undefined
+
+    return {
+      items,
+      nextCursor,
+    }
   })
 
 export type FindCourseInput = inferProcedureInput<typeof findCourseProcedure>

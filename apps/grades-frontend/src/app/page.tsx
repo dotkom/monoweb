@@ -1,23 +1,7 @@
-import { server } from "@/utils/trpc/server"
-import { CourseCard } from "./components/CourseCard"
-
 export default async function App() {
-  // Placeholder filter
-  // TODO: Replace with actual user input filtering
-  const courses = await server.course.findCourses.query({
-    filter: {
-      sortBy: ["CANDIDATE_COUNT"],
-      orderBy: "desc",
-    },
-  })
-
   return (
     <div>
-      <section className="flex flex-col gap-16 w-full">
-        {courses.map((course) => (
-          <CourseCard key={course.code} course={course} />
-        ))}
-      </section>
+      <section className="flex flex-col gap-16 w-full"></section>
     </div>
   )
 }

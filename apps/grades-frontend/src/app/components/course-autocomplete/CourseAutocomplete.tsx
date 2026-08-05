@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createSerializer } from "nuqs"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { SearchInput } from "../SearchInput"
@@ -47,7 +47,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
     }
   }, [searchValue])
 
-  const { data: suggestions, isLoading } = useQuery(
+  const { data: suggestionsPage, isLoading } = useQuery(
     trpc.course.findCourses.queryOptions(
       {
         filter: {
@@ -61,6 +61,8 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
       }
     )
   )
+
+  const suggestions = useMemo(() => suggestionsPage?.items ?? undefined, [suggestionsPage])
 
   useEffect(() => {
     if (debouncedSearch.length > 0 && suggestions !== undefined) {
@@ -112,13 +114,14 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
               autoComplete="off"
               onFocus={() => setIsOpen(true)}
               onPointerDown={() => setIsOpen(true)}
+              inputClassName="h-8"
             />
           </div>
         </form>
       </PopoverAnchor>
 
       <PopoverContent
-        className="min-w-36 gap-0 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-600 dark:bg-[color-mix(in_srgb,theme(colors.stone.700),theme(colors.stone.800))] w-96"
+        className="min-w-36 gap-0 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-700 dark:bg-stone-800 w-96"
         align="start"
         side="bottom"
         aria-busy={isLoading}
@@ -133,7 +136,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
 
             <Link
               href={`/emner?bySearch=${searchValue}`}
-              className="text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 dark:border-stone-600 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:text-neutral-900 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-600 focus:bg-neutral-100 dark:focus:bg-stone-600"
+              className="text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 dark:border-stone-700 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:text-neutral-900 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-700 focus:bg-neutral-100 dark:focus:bg-stone-700"
               onClick={() => setIsOpen(false)}
             >
               <Text className="leading-none text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200">
@@ -165,7 +168,7 @@ const CourseAutocompleteSkeleton = () => {
       </div>
       <div
         aria-hidden
-        className="mt-1 flex p-3 border-t border-neutral-200 dark:border-stone-600 text-neutral-700 rounded-b-lg"
+        className="mt-1 flex p-3 border-t border-neutral-200 dark:border-stone-700 text-neutral-700 rounded-b-lg"
       >
         <div className="h-4 w-1/4 rounded bg-neutral-200 dark:bg-stone-600 motion-safe:animate-pulse" />
       </div>
