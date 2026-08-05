@@ -37,7 +37,7 @@
     "Semester": "Semester"
   },
   "Navbar": {
-    "courses": "Emner",
+    "courses": "Alle emner",
     "openNavigation": "Åpne meny",
     "closeNavigation": "Lukk meny",
     "theme": "Fargetema",
@@ -69,6 +69,13 @@
     "searchPlaceholder": "Søk etter navn eller emnekode...",
     "subheading": "Karakterstatistikk for NTNU-emner",
     "viewAll": "Se alle"
+  },
+  "Footer": {
+    "tagline": "Til studentene ved NTNU, med kjærlighet <3",
+    "madeBy": "Laget av Dotkom · <online>Linjeforeningen Online</online>",
+    "github": "GitHub",
+    "contact": "Kontakt",
+    "dataSources": "Karakterdata fra DBH / HK-dir. Emneinformasjon fra NTNU."
   },
   "CourseFilters": {
     "ariaLabel": "Emnefiltre",
