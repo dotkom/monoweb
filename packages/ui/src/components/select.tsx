@@ -32,9 +32,11 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  icon,
   ...props
 }: SelectPrimitive.Trigger.Props & {
   size?: "sm" | "default"
+  icon?: React.ReactElement
 }) {
   return (
     <SelectPrimitive.Trigger
@@ -44,7 +46,9 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon render={<IconSelector className="pointer-events-none size-4 text-muted-foreground" />} />
+      <SelectPrimitive.Icon
+        render={icon ?? <IconSelector className="pointer-events-none size-4 text-muted-foreground" />}
+      />
     </SelectPrimitive.Trigger>
   )
 }

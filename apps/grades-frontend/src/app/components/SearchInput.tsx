@@ -7,13 +7,13 @@ export const SearchInput = forwardRef<HTMLInputElement, ComponentPropsWithRef<"i
     return (
       <div className={cn("relative", className)}>
         <IconSearch
-          className="w-8 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-neutral-500"
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-500"
           aria-hidden
         />
         <TextInput
           ref={ref}
           {...props}
-          className="pl-10 rounded-lg w-full h-full text-base border border-neutral-200 placeholder:text-neutral-500 focus:border-neutral-300 focus:ring-1 ring-neutral-300"
+          className="pl-10 rounded-lg w-full h-full text-base border border-neutral-200 dark:border-stone-600 dark:bg-stone-800 focus:border-neutral-300 focus:ring-1 ring-neutral-300"
         />
       </div>
     )

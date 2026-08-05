@@ -46,9 +46,7 @@ export const CourseCard = async ({ course }: Props) => {
           ))}
 
           {course.campuses.map((campus) => (
-            <CourseBadge key={campus} className="hidden sm:inline-flex">
-              {t(`Enums.Campus.${campus}`)}
-            </CourseBadge>
+            <CourseBadge key={campus}>{t(`Enums.Campus.${campus}`)}</CourseBadge>
           ))}
         </div>
       </div>

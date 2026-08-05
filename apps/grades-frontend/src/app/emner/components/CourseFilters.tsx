@@ -17,33 +17,29 @@ type Props = {
 
 export function CourseFilters({ defaultValues }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)")
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
+    const sync = () => {
+      setIsDesktop(mediaQuery.matches)
+      if (!mediaQuery.matches) {
         setIsDrawerOpen(false)
       }
     }
-
-    if (mediaQuery.matches) {
-      setIsDrawerOpen(false)
-    }
-
-    mediaQuery.addEventListener("change", handleChange)
-    return () => mediaQuery.removeEventListener("change", handleChange)
+    sync()
+    mediaQuery.addEventListener("change", sync)
+    return () => mediaQuery.removeEventListener("change", sync)
   }, [])
 
-  return (
-    <>
-      <MobileCourseFilters
-        defaultValues={defaultValues}
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
-      />
-      <DesktopCourseFilters defaultValues={defaultValues} />
-    </>
+  if (isDesktop === null) {
+    return null
+  }
+
+  return isDesktop ? (
+    <DesktopCourseFilters defaultValues={defaultValues} />
+  ) : (
+    <MobileCourseFilters defaultValues={defaultValues} isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
   )
 }
 
@@ -59,19 +55,19 @@ const MobileCourseFilters = ({ defaultValues, isDrawerOpen, setIsDrawerOpen }: M
   return (
     <div className="md:hidden">
       <div className="w-full py-3 flex items-center gap-3">
-        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-          <DrawerTrigger asChild>
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} modal={false}>
+          <DrawerTrigger asChild className="border-none">
             <IconActionButton surface="glass" aria-label={t("CourseFilters.openAriaLabel")} className="ml-auto">
-              <IconFilter2 size={20} stroke={1.8} />
+              <IconFilter2 className="size-5" stroke={1.8} />
             </IconActionButton>
           </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
+          <DrawerContent handleClassName="dark:bg-stone-500" className="dark:bg-stone-800">
+            <DrawerHeader className="pt-0">
               <div className="flex items-center justify-between gap-4">
                 <DrawerTitle>{t("CourseFilters.drawerTitle")}</DrawerTitle>
                 <DrawerClose asChild>
                   <IconActionButton aria-label={t("CourseFilters.closeAriaLabel")}>
-                    <IconX size={20} stroke={1.8} />
+                    <IconX className="size-5" stroke={1.8} />
                   </IconActionButton>
                 </DrawerClose>
               </div>

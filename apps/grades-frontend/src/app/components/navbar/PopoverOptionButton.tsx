@@ -1,5 +1,6 @@
-import { Button, cn } from "@dotkomonline/ui"
+import { cn } from "@dotkomonline/ui"
 import { IconCheck } from "@tabler/icons-react"
+import { ActionButton } from "../action-button/ActionButton"
 
 interface Props {
   children: React.ReactNode
@@ -9,8 +10,7 @@ interface Props {
 }
 
 export const PopoverOptionButton = ({ children, isActive, onClick, className }: Props) => (
-  <Button
-    variant="ghost"
+  <ActionButton
     onClick={onClick}
     className={cn(
       "flex w-full justify-start text-left rounded-md px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-200/70 dark:hover:bg-stone-600 hover:text-neutral-900",
@@ -20,5 +20,5 @@ export const PopoverOptionButton = ({ children, isActive, onClick, className }: 
   >
     {children}
     {isActive && <IconCheck className="ml-auto" size={16} stroke={2} />}
-  </Button>
+  </ActionButton>
 )

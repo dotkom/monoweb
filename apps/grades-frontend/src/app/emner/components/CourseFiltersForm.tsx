@@ -19,6 +19,7 @@ import {
   SelectScrollUpButton,
   SelectTrigger,
   SelectValue,
+  Text,
 } from "@dotkomonline/ui"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
@@ -137,20 +138,29 @@ export function CourseFiltersForm({ defaultValues, className }: Props) {
               }}
               value={field.value ?? MIN_GRADE_OPTIONS_ALL}
             >
-              <SelectTrigger className="focus:ring-neutral-950 dark:focus:ring-stone-200">
+              <SelectTrigger className="dark:bg-stone-800 dark:border-stone-700">
                 <SelectValue>
                   {field.value
                     ? t(`CourseFilters.minGradeOptions.${field.value}`)
                     : t("CourseFilters.minGradeOptions.ALL")}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="dark:bg-stone-800 dark:border-stone-700">
                 <SelectScrollUpButton />
 
-                <SelectItem value={MIN_GRADE_OPTIONS_ALL}>{t("CourseFilters.minGradeOptions.ALL")}</SelectItem>
+                <SelectItem
+                  className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-stone-700 data-highlighted:bg-gray-100 dark:data-highlighted:bg-stone-700"
+                  value={MIN_GRADE_OPTIONS_ALL}
+                >
+                  {t("CourseFilters.minGradeOptions.ALL")}
+                </SelectItem>
 
                 {MinLetterGradeFilterSchema.options.map((option) => (
-                  <SelectItem key={option} value={option}>
+                  <SelectItem
+                    className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-stone-700 data-highlighted:bg-gray-100 dark:data-highlighted:bg-stone-700"
+                    key={option}
+                    value={option}
+                  >
                     {t(`CourseFilters.minGradeOptions.${option}`)}
                   </SelectItem>
                 ))}
@@ -192,9 +202,13 @@ function MultiSelectCheckboxRow({ id, label, value, option, onChange }: MultiSel
   const isChecked = value.includes(option)
 
   return (
-    <div className="flex items-center gap-3">
+    <Label className="flex w-full cursor-pointer items-center gap-3 group">
       <Checkbox
         id={id}
+        className={cn(
+          "dark:bg-stone-800 dark:border-stone-500 border-neutral-300",
+          "not-data-checked:group-hover:bg-neutral-100 dark:not-data-checked:group-hover:bg-stone-700/50"
+        )}
         checked={isChecked}
         onCheckedChange={(checked) => {
           if (checked) {
@@ -204,9 +218,13 @@ function MultiSelectCheckboxRow({ id, label, value, option, onChange }: MultiSel
 
           onChange(value.filter((v) => v !== option))
         }}
-        label={label}
-        labelClassName="text-sm"
       />
-    </div>
+      <Text
+        element="span"
+        className="flex-1 text-sm select-none font-normal text-neutral-700 dark:text-stone-200 group-hover:text-neutral-900 dark:group-hover:text-stone-100"
+      >
+        {label}
+      </Text>
+    </Label>
   )
 }

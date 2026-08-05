@@ -11,8 +11,14 @@ interface Props {
 export const CourseAutocompleteSuggestions = ({ courses, className, onItemClick }: Props) => {
   return (
     <div className={cn("flex flex-col", className)}>
-      {courses.map((course) => (
-        <CourseAutocompleteSuggestionItem key={course.id} course={course} onClick={onItemClick} />
+      {courses.map((course, index) => (
+        <CourseAutocompleteSuggestionItem
+          key={course.id}
+          course={course}
+          onClick={onItemClick}
+          // Last item sits on top of divider
+          className={index === courses.length - 1 ? "rounded-b-none" : undefined}
+        />
       ))}
     </div>
   )
