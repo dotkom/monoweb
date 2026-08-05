@@ -10,6 +10,7 @@ export interface $DbEnums {
   group_type: "COMMITTEE" | "NODE_COMMITTEE" | "ASSOCIATED" | "INTEREST_GROUP" | "EMAIL_ONLY"
   group_member_visibility: "ALL_MEMBERS" | "WITH_ROLES" | "LEADER" | "NONE"
   GroupRecruitmentMethod: "NONE" | "SPRING_APPLICATION" | "AUTUMN_APPLICATION" | "GENERAL_ASSEMBLY" | "NOMINATION" | "OTHER"
+  group_preferred_display_name: "ABBREVIATION" | "NAME"
   group_role_type: "LEADER" | "PUNISHER" | "TREASURER" | "COSMETIC" | "DEPUTY_LEADER" | "TRUSTEE" | "EMAIL_ONLY" | "TEMPORARILY_LEAVE" | "EDITOR_IN_CHIEF"
   event_status: "DRAFT" | "PUBLIC" | "DELETED"
   event_type: "GENERAL_ASSEMBLY" | "COMPANY" | "ACADEMIC" | "SOCIAL" | "INTERNAL" | "OTHER" | "WELCOME"

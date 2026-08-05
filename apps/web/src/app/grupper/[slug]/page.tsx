@@ -1,5 +1,5 @@
 import { server } from "@/utils/trpc/server"
-import { createGroupPageUrl } from "@dotkomonline/rpc/group"
+import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import type { Metadata } from "next"
 import { GroupPage } from "../components/GroupPage"
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Pick<GroupPageProps, "params"
     }
   }
 
-  const name = group.name || group.abbreviation
+  const name = getGroupDisplayName(group)
   const description = richTextToPlainText(group.shortDescription || group.description)
   const groupPageUrl = createGroupPageUrl(group)
 

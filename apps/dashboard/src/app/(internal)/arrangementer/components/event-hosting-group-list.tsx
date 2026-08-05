@@ -1,5 +1,5 @@
 import type { Company } from "@dotkomonline/rpc/company"
-import { GroupTypeSchema, type Group } from "@dotkomonline/rpc/group"
+import { getGroupDisplayName, GroupTypeSchema, type Group } from "@dotkomonline/rpc/group"
 import { Anchor, Group as MantineGroup, Text, Tooltip } from "@mantine/core"
 import Link from "next/link"
 import type { FC } from "react"
@@ -21,7 +21,7 @@ const getHref = (groupOrCompany: Group | Company) => {
 const getName = (groupOrCompany: Group | Company) => {
   const isGroup = "type" in groupOrCompany
 
-  return isGroup ? groupOrCompany.abbreviation : groupOrCompany.name
+  return isGroup ? getGroupDisplayName(groupOrCompany) : groupOrCompany.name
 }
 
 export const EventHostingGroupList: FC<EventHostingGroupListProps> = ({ groups, companies }) => {

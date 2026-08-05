@@ -3,8 +3,10 @@ import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { createSegmentedControlInput } from "@/components/forms/SegmentedControlInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
+import type { InputFieldContext, InputProducerResult } from "@/components/forms/types"
 import {
   GROUP_IMAGE_MAX_SIZE_KIB,
   type GroupId,
@@ -13,12 +15,16 @@ import {
   GroupTypeSchema,
   type GroupWrite,
   GroupWriteSchema,
+  getGroupDisplayName,
   getGroupMemberVisibilityName,
+  getGroupPreferredDisplayNameLabel,
   getGroupRecruitmentMethodName,
   getGroupTypeName,
 } from "@dotkomonline/rpc/group"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { Stack, Text } from "@mantine/core"
 import { useMemo } from "react"
+import { useWatch } from "react-hook-form"
 import z from "zod"
 import { useGroupAllQuery } from "./queries"
 
@@ -29,11 +35,13 @@ const FormSchema = GroupWriteSchema.omit({
   isActive: z.boolean(),
 })
 
-type FormResult = z.infer<typeof FormSchema>
+type FormInput = z.input<typeof FormSchema>
+type FormResult = z.output<typeof FormSchema>
 
 const DEFAULT_VALUES: Partial<FormResult> = {
   imageUrl: null,
   recruitmentMethod: "NONE",
+  preferredDisplayName: "ABBREVIATION",
 }
 
 interface UseGroupWriteFormProps {
@@ -80,14 +88,14 @@ export const useGroupWriteForm = ({
     label,
     disabled,
     fields: {
-      name: createTextInput({
-        label: "Navn",
-        placeholder: "Drifts- og utviklingskomiteen",
-      }),
       slug: createTextInput({
         label: "Slug",
         placeholder: "dotkom",
         required: Boolean(defaultValues.slug),
+      }),
+      name: createTextInput({
+        label: "Navn",
+        placeholder: "Drifts- og utviklingskomiteen",
       }),
       abbreviation: createTextInput({
         label: "Kort navn",
@@ -95,6 +103,7 @@ export const useGroupWriteForm = ({
         withAsterisk: true,
         required: true,
       }),
+      preferredDisplayName: createPreferredDisplayNameField(),
       description: createRichTextInput({
         label: "Beskrivelse",
         required: true,
@@ -156,8 +165,12 @@ export const useGroupWriteForm = ({
   })
 }
 
-const validateGroupWrite = (group: FormResult, existingGroupSlugs: GroupId[], initialSlug?: string): z.ZodIssue[] => {
-  const issues: z.ZodIssue[] = []
+const validateGroupWrite = (
+  group: FormResult,
+  existingGroupSlugs: GroupId[],
+  initialSlug?: string
+): z.core.$ZodIssue[] => {
+  const issues: z.core.$ZodIssue[] = []
 
   if (!group.slug) {
     return issues
@@ -187,5 +200,53 @@ const validateGroupWrite = (group: FormResult, existingGroupSlugs: GroupId[], in
     })
   }
 
+  if (group.preferredDisplayName === "NAME" && !group.name?.trim()) {
+    issues.push({
+      code: "custom",
+      message: "Offisielt navn må fylles ut når det er valgt som visningsnavn",
+      path: ["name"],
+    })
+  }
+
   return issues
+}
+
+function createPreferredDisplayNameField(): InputProducerResult<FormInput, FormResult> {
+  const PreferredDisplayNameInput = createSegmentedControlInput<FormInput, FormResult>({
+    label: "Visningsnavn",
+    description: "Dette er navnet som vises på nettsiden.",
+    withAsterisk: true,
+    required: true,
+    data: [
+      { value: "ABBREVIATION", label: getGroupPreferredDisplayNameLabel("ABBREVIATION") },
+      { value: "NAME", label: getGroupPreferredDisplayNameLabel("NAME") },
+    ],
+  })
+
+  return function PreferredDisplayNameField(context) {
+    return (
+      <Stack gap="xs">
+        <PreferredDisplayNameInput {...context} />
+        <PreferredDisplayNamePreview control={context.control} />
+      </Stack>
+    )
+  }
+}
+
+function PreferredDisplayNamePreview({ control }: Pick<InputFieldContext<FormInput>, "control">) {
+  const preferredDisplayName = useWatch({ control, name: "preferredDisplayName" })
+  const name = useWatch({ control, name: "name" })
+  const abbreviation = useWatch({ control, name: "abbreviation" })
+
+  const displayName = getGroupDisplayName({
+    preferredDisplayName: preferredDisplayName ?? "ABBREVIATION",
+    name: name ?? "",
+    abbreviation: abbreviation ?? "",
+  })
+
+  return (
+    <Text size="sm" c="dimmed">
+      Forhåndsvisning: {displayName || "—"}
+    </Text>
+  )
 }
