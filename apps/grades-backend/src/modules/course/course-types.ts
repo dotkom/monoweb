@@ -28,7 +28,7 @@ export const FacultySchema = z.object({
   id: z.string(),
   nameNo: z.string(),
   nameEn: z.string(),
-  code: z.number().int(),
+  code: z.int(),
 })
 export type Faculty = z.infer<typeof FacultySchema>
 
@@ -36,7 +36,7 @@ export const DepartmentSchema = z.object({
   id: z.string(),
   nameNo: z.string(),
   nameEn: z.string(),
-  code: z.number().int(),
+  code: z.int(),
   facultyId: z.string(),
 })
 export type Department = z.infer<typeof DepartmentSchema>
@@ -49,8 +49,8 @@ export const CourseSchema = z.object({
   credits: z.number().nullable(),
   studyLevel: StudyLevelSchema,
   gradeType: GradeTypeSchema,
-  firstYearTaught: z.number().int(),
-  lastYearTaught: z.number().int().nullable(),
+  firstYearTaught: z.int(),
+  lastYearTaught: z.int().nullable(),
   contentNo: z.string().nullable(),
   contentEn: z.string().nullable(),
   teachingMethodsNo: z.string().nullable(),
@@ -59,7 +59,7 @@ export const CourseSchema = z.object({
   learningOutcomesEn: z.string().nullable(),
   examTypeNo: z.string().nullable(),
   examTypeEn: z.string().nullable(),
-  candidateCount: z.number().int(),
+  candidateCount: z.int(),
   averageGrade: z.number(),
   passRate: z.number(),
   createdAt: z.date(),
@@ -69,7 +69,7 @@ export const CourseSchema = z.object({
   campuses: z.array(CourseCampusSchema),
   facultyId: z.string().nullable(),
   departmentId: z.string().nullable(),
-  latestYearCheckedForNtnuData: z.number().int().nullable(),
+  latestYearCheckedForNtnuData: z.int().nullable(),
 })
 
 export type CourseId = Course["id"]

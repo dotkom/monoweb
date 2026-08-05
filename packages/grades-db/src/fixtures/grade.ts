@@ -1,6 +1,6 @@
 import type { Prisma } from "../index"
 
-export const getGradeFixtures = () =>
+export const getGradeDistributionFixtures = () =>
   [
     {
       id: "4f0ebe39-7ebb-44cf-9acb-6a6f14b8183f",
@@ -8898,4 +8898,4 @@ export const getGradeFixtures = () =>
       gradeFCount: 0,
       failedCount: 18,
     },
-  ] as const satisfies Prisma.GradeCreateManyInput[]
+  ] as const satisfies Prisma.GradeDistributionCreateManyInput[]

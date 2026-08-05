@@ -9,7 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Course'
-export type * from './models/Grade'
+export type * from './models/GradeDistribution'
 export type * from './models/Faculty'
 export type * from './models/Department'
 export type * from './commonInputTypes'

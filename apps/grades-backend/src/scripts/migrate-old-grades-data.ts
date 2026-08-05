@@ -16,7 +16,7 @@ import {
   type Semester,
   type StudyLevel,
 } from "../modules/course/course-types"
-import type { GradeWrite } from "../modules/grade/grade-types"
+import type { GradeDistributionWrite } from "../modules/grade-distribution/grade-distribution-types"
 
 // To run the script, run the commented SQL queries and copy the contents to new json files in `./scripts`
 
@@ -352,7 +352,7 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
     {} as Record<string, Course>
   )
 
-  const data: GradeWrite[] = oldGrades.map((grade) => {
+  const data: GradeDistributionWrite[] = oldGrades.map((grade) => {
     const course = courseByCode[grade.course_code]
     if (!course) {
       throw new Error(`Course not found for code ${grade.course_code}`)
@@ -369,7 +369,7 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
       failedCount = grade.f
     }
 
-    const gradeWrite: GradeWrite = {
+    const gradeWrite: GradeDistributionWrite = {
       courseId: course.id,
       semester: grade.semester,
       year: grade.year,
@@ -386,7 +386,7 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
     return gradeWrite
   })
 
-  return prisma.grade.createManyAndReturn({
+  return prisma.gradeDistribution.createManyAndReturn({
     data,
   })
 }
