@@ -17,7 +17,7 @@ export default function FadderukenePage() {
     <Stack>
       <Title order={1}>Fadderukene</Title>
 
-      <Text c="dimmed">Knytt et hovedarrangementet til en fadderuke.</Text>
+      <Text c="dimmed">Knytt et hovedarrangement til en fadderuke.</Text>
 
       <Group>
         <PermissionTooltip allowed={canEdit}>
