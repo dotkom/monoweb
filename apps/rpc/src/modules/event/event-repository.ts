@@ -335,7 +335,9 @@ export function getEventRepository(): EventRepository {
       const events = await handle.event.findMany({
         where: {
           parentId: parentEventId,
-          status: "PUBLIC",
+          status: {
+            not: "DELETED",
+          },
         },
         include: {
           companies: {

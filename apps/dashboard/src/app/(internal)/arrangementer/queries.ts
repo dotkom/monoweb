@@ -94,3 +94,13 @@ export const useFeedbackAnswersGetQuery = (formId: FeedbackFormId | SkipToken) =
   const trpc = useTRPC()
   return useQuery(trpc.event.feedback.getAllAnswers.queryOptions(formId))
 }
+
+export const useEventParentQuery = (eventId: EventId, enabled = true) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.event.findParentEvent.queryOptions({ eventId }, { enabled }))
+}
+
+export const useEventChildEventsQuery = (eventId: EventId, enabled = true) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.event.findChildEvents.queryOptions({ eventId }, { enabled }))
+}

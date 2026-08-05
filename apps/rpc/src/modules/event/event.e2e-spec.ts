@@ -182,4 +182,16 @@ describe("event integration tests", () => {
       FailedPreconditionError
     )
   })
+
+  it("should prevent assigning a parent to an event that already has children", async () => {
+    const parentEvent = await core.eventService.createEvent(dbClient, getMockEvent())
+    const childEvent = await core.eventService.createEvent(dbClient, getMockEvent())
+    const otherEvent = await core.eventService.createEvent(dbClient, getMockEvent())
+
+    await expect(core.eventService.updateEventParent(dbClient, childEvent.id, parentEvent.id)).resolves.toBeDefined()
+
+    await expect(core.eventService.updateEventParent(dbClient, parentEvent.id, otherEvent.id)).rejects.toThrow(
+      FailedPreconditionError
+    )
+  })
 })
