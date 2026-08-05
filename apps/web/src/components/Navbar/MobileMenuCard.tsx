@@ -20,12 +20,12 @@ export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: Ico
         className={cn(
           "relative flex flex-col items-start justify-start p-4 rounded-xl transition-colors",
           "bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600",
-          "border border-blue-200 dark:border-stone-600"
+          "border border-slate-300/80 dark:border-stone-600"
         )}
       >
         <div className="flex w-full items-start justify-between mb-1">
           <IconComponent className="shrink-0 size-6 text-gray-700 dark:text-stone-300" />
-          <IconChevronRight className="shrink-0 size-6 opacity-70 text-gray-700 dark:text-stone-300" />
+          <IconChevronRight className="shrink-0 size-6 text-gray-700 dark:text-stone-300" />
         </div>
         <Text element="span" className="text-base font-medium text-gray-800 dark:text-stone-100">
           {title}

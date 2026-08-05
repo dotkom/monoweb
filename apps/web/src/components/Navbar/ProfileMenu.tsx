@@ -68,7 +68,12 @@ const ThemeDropdown: FC = () => {
       <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
         <ThemeIcon width={22} height={22} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={24} positionMethod="fixed" className="min-w-10 w-fit rounded-xl">
+      <DropdownMenuContent
+        align="end"
+        sideOffset={24}
+        positionMethod="fixed"
+        className="w-fit -mr-3 rounded-xl border border-slate-300/70 bg-blue-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
+      >
         <ThemeToggle />
       </DropdownMenuContent>
     </DropdownMenu>
@@ -88,7 +93,7 @@ const ContactDebugDropdown: FC = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
-      className="w-[calc(100vw-2rem)] mx-4 xs:w-80 xs:ml-4 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 rounded-3xl shadow-sm"
+      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-slate-300/70 dark:border-stone-700 rounded-3xl shadow-md"
       sideOffset={24}
       positionMethod="fixed"
     >
@@ -224,7 +229,7 @@ export const ProfileMenu: FC = () => {
 
   if (isInvalid && sessionRecoveryMessages !== null) {
     return (
-      <div className="flex gap-2 mr-2 lg:mr-0">
+      <div className="flex gap-2">
         <ContactDebugDropdown />
         <SessionRecoveryDropdown {...sessionRecoveryMessages} returnTo={fullPathname} />
       </div>
@@ -232,7 +237,7 @@ export const ProfileMenu: FC = () => {
   }
 
   return (
-    <div className="flex gap-2 mr-2 lg:mr-0">
+    <div className="flex gap-2">
       <ContactDebugDropdown />
       <AvatarDropdown dbUser={dbUser} dbUserIsLoading={dbUserQuery.isLoading} />
     </div>
@@ -293,7 +298,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[calc(100vw-2rem)] mx-4 xs:ml-4 xs:w-72 xs:-mr-16 lg:-mr-4 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-blue-100 dark:border-stone-700 shadow-sm"
+        className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-slate-300/70 dark:border-stone-700 shadow-md"
         sideOffset={24}
         positionMethod="fixed"
       >
