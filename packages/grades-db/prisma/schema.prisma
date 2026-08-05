@@ -125,7 +125,7 @@ model GradeDistribution {
 
   @@unique([courseId, semester, year])
   @@index([courseId])
-  @@map("grade")
+  @@map("grade_distribution")
 }
 
 model Faculty {
