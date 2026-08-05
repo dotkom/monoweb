@@ -60,6 +60,16 @@
     "passFail": "Bestått / ikke bestått",
     "passRate": "{rate}% bestått"
   },
+  "Frontpage": {
+    "activeSemesterCoursesTitle": {
+      "SPRING": "Emner som går til våren",
+      "AUTUMN": "Emner som går til høsten"
+    },
+    "largestCoursesTitle": "Mest populære emner",
+    "searchPlaceholder": "Søk etter navn eller emnekode...",
+    "subheading": "Karakterstatistikk for NTNU-emner",
+    "viewAll": "Se alle"
+  },
   "CourseFilters": {
     "ariaLabel": "Emnefiltre",
     "openAriaLabel": "Åpne filtre",

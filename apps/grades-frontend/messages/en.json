@@ -60,6 +60,16 @@
     "passFail": "Pass / fail",
     "passRate": "{rate}% passed"
   },
+  "Frontpage": {
+    "activeSemesterCoursesTitle": {
+      "SPRING": "Courses taught in spring",
+      "AUTUMN": "Courses taught in autumn"
+    },
+    "largestCoursesTitle": "Most popular courses",
+    "searchPlaceholder": "Search by name or course code...",
+    "subheading": "Grade statistics for NTNU courses",
+    "viewAll": "View all"
+  },
   "CourseFilters": {
     "ariaLabel": "Course filters",
     "openAriaLabel": "Open filters",

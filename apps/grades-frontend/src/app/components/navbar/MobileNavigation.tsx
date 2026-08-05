@@ -104,21 +104,21 @@ export const MobileNavigation = () => {
                       isActive={theme === "light"}
                       aria-label={tTheme("light")}
                     >
-                      <IconSun size={16} />
+                      <IconSun size={16} stroke={1.8} />
                     </IconActionButton>
                     <IconActionButton
                       onClick={() => onThemeChange("dark")}
                       isActive={theme === "dark"}
                       aria-label={tTheme("dark")}
                     >
-                      <IconMoon size={16} />
+                      <IconMoon size={16} stroke={1.8} />
                     </IconActionButton>
                     <IconActionButton
                       onClick={() => onThemeChange("system")}
                       isActive={theme === "system"}
                       aria-label={tTheme("system")}
                     >
-                      <IconDeviceMobile size={16} />
+                      <IconDeviceMobile size={16} stroke={1.8} />
                     </IconActionButton>
                   </div>
                 </div>

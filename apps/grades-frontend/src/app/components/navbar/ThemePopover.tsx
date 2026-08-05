@@ -33,18 +33,18 @@ export const ThemePopover = () => {
       <PopoverPortal>
         <PopoverContent className="min-w-36 w-auto flex flex-col p-1 transition-colors gap-0 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 ring-0">
           <PopoverOptionButton onClick={() => onChange("light")} isActive={theme === "light"}>
-            <IconSun className="size-4" />
+            <IconSun className="size-4" stroke={1.8} />
             <Text>{t("light")}</Text>
           </PopoverOptionButton>
 
           <PopoverOptionButton onClick={() => onChange("dark")} isActive={theme === "dark"}>
-            <IconMoon className="size-4" />
+            <IconMoon className="size-4" stroke={1.8} />
             <Text>{t("dark")}</Text>
           </PopoverOptionButton>
 
           <PopoverOptionButton onClick={() => onChange("system")} isActive={theme === "system"}>
             <IconDeviceDesktop className="size-4 hidden xs:block" />
-            <IconDeviceMobile className="size-4 xs:hidden" />
+            <IconDeviceMobile className="size-4 xs:hidden" stroke={1.8} />
             <Text>{t("system")}</Text>
           </PopoverOptionButton>
         </PopoverContent>

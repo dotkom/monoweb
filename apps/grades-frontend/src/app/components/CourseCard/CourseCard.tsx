@@ -12,9 +12,10 @@ import { Fragment } from "react"
 
 interface Props {
   course: Course
+  className?: string
 }
 
-export const CourseCard = ({ course }: Props) => {
+export const CourseCard = ({ course, className }: Props) => {
   const t = useTranslations()
   const locale = useLocale()
 
@@ -41,22 +42,23 @@ export const CourseCard = ({ course }: Props) => {
         "bg-white text-neutral-950 border-neutral-200",
         "dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700",
         "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:shadow-md hover:border-neutral-400 hover:bg-neutral-50",
+        "hover:shadow-md hover:border-neutral-400 hover:bg-neutral-50",
         "dark:hover:bg-stone-700 dark:hover:border-stone-600",
-        isDeprecated && "border-dashed border-neutral-300 dark:border-stone-700"
+        isDeprecated && "border-dashed border-neutral-300 dark:border-stone-700",
+        className
       )}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 h-full min-h-0">
         <div className="flex flex-col gap-1">
           <Title className="text-lg sm:text-xl font-normal">{getCourseLocalizedTextFields(course, locale).name}</Title>
           <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>
         </div>
 
         {metaItems.length > 0 && (
-          <div className="flex flex-row flex-wrap items-center gap-2.5">
+          <div className="flex flex-row flex-wrap items-center gap-x-2.5 gap-y-1 mt-auto">
             {metaItems.map((item, index) => (
               <Fragment key={item}>
-                <Text className="text-sm text-neutral-600 dark:text-stone-300">{item}</Text>
+                <Text className="text-sm leading-snug text-neutral-600 dark:text-stone-300">{item}</Text>
                 {index < metaItems.length - 1 && (
                   <span className="size-1 shrink-0 rounded-full bg-neutral-400 dark:bg-stone-500" aria-hidden />
                 )}
@@ -73,7 +75,7 @@ export const CourseCard = ({ course }: Props) => {
           </Text>
         </div>
 
-        <Title className="text-4xl sm:text-5xl font-bold leading-none tracking-tight tabular-nums text-neutral-950 dark:text-stone-50">
+        <Text className="text-4xl sm:text-5xl font-bold leading-none tracking-tight tabular-nums text-neutral-950 dark:text-stone-50">
           {isLetterGrade
             ? mapAverageGradeToLetterGrade(course.averageGrade)
             : passRateParts.map((part) =>
@@ -88,7 +90,7 @@ export const CourseCard = ({ course }: Props) => {
                   <span key={part.type + part.value}>{part.value}</span>
                 )
               )}
-        </Title>
+        </Text>
       </div>
     </Link>
   )
