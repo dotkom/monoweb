@@ -56,25 +56,14 @@ export const Navbar = () => {
           <Link
             href="/emner"
             className={cn(
-              "relative hidden sm:inline-flex items-center rounded-lg px-2.5 pt-1.5 pb-2 font-medium",
-              "text-neutral-800 dark:text-white",
-              "hover:bg-neutral-100 dark:hover:bg-stone-700",
+              "hidden sm:inline-flex items-center rounded-lg px-2.5 py-1.5 font-medium transition-colors",
               "outline-none focus-visible:ring-2 focus-visible:ring-ring/20",
               isCourseListPageRoute
-                ? "font-semibold"
-                : "text-neutral-700 dark:text-stone-200 hover:text-neutral-900 dark:hover:text-white"
+                ? "bg-neutral-100 text-neutral-900 dark:bg-stone-700 dark:text-white"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-stone-300 dark:hover:bg-stone-700 dark:hover:text-white"
             )}
           >
             {t("courses")}
-            <span
-              aria-hidden="true"
-              className={cn(
-                "pointer-events-none absolute bottom-1 left-2.5 right-2.5 h-0.5 rounded-full",
-                "transition-opacity",
-                "bg-neutral-300/80 dark:bg-stone-600",
-                isCourseListPageRoute ? "opacity-100" : "opacity-0"
-              )}
-            />
           </Link>
 
           {showCourseSearch && (

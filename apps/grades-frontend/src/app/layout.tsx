@@ -42,12 +42,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
               <NextIntlClientProvider>
                 <NuqsAdapter>
-                  <div className="flex flex-col gap-8">
+                  <div className="flex min-h-screen flex-col gap-8">
                     <Navbar />
-                    <div className="min-h-screen flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 lg:px-12">
+                    <div className="mx-auto flex w-full max-w-7xl grow flex-col gap-8 px-4 lg:px-12">
                       <main className="grow">{children}</main>
-                      <Footer />
                     </div>
+                    <Footer />
                   </div>
                 </NuqsAdapter>
               </NextIntlClientProvider>

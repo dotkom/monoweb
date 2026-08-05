@@ -37,7 +37,7 @@
     "Semester": "Semester"
   },
   "Navbar": {
-    "courses": "Courses",
+    "courses": "All courses",
     "openNavigation": "Open navigation",
     "closeNavigation": "Close navigation",
     "theme": "Theme",
@@ -69,6 +69,13 @@
     "searchPlaceholder": "Search by name or course code...",
     "subheading": "Grade statistics for NTNU courses",
     "viewAll": "View all"
+  },
+  "Footer": {
+    "tagline": "To the students at NTNU, with love <3",
+    "madeBy": "Made by Dotkom · <online>Online</online>",
+    "github": "GitHub",
+    "contact": "Contact",
+    "dataSources": "Grade data from DBH / HK-dir. Course information from NTNU."
   },
   "CourseFilters": {
     "ariaLabel": "Course filters",
