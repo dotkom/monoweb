@@ -1,6 +1,5 @@
 "use client"
 
-import { CourseFilterParsers } from "@/app/emner/course-filter-parsers"
 import {
   CourseCampusSchema,
   MinLetterGradeFilterSchema,
@@ -22,155 +21,123 @@ import {
   Text,
 } from "@dotkomonline/ui"
 import { useTranslations } from "next-intl"
-import { useRouter } from "next/navigation"
-import { createSerializer } from "nuqs"
-import { useEffect, type PropsWithChildren } from "react"
-import { Controller, useForm } from "react-hook-form"
-import { useDebouncedCallback } from "use-debounce"
-
-const serialize = createSerializer(CourseFilterParsers)
+import type { PropsWithChildren } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { CourseSortSelect } from "./CourseSortSelect"
 
 const MIN_GRADE_OPTIONS_ALL = "ALL"
 
 const semesterOptions = SemesterSchema.options.filter((s) => s !== "SUMMER")
 
+const FIELD_TRIGGER_CLASS =
+  "border-neutral-200 bg-white hover:border-neutral-300 hover:bg-white focus-visible:border-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-stone-800 dark:border-stone-700 dark:hover:bg-stone-800 dark:hover:border-stone-600 dark:focus-visible:border-stone-500"
+
+const SELECT_ITEM_CLASS =
+  "cursor-pointer p-2 hover:bg-neutral-100 data-highlighted:bg-neutral-100 dark:hover:bg-stone-700 dark:data-highlighted:bg-stone-700"
+
 type Props = {
-  defaultValues: CourseFilterQuery
+  idPrefix: string
+  showSort?: boolean
   className?: string
 }
 
-export function CourseFiltersForm({ defaultValues, className }: Props) {
+export function CourseFiltersForm({ idPrefix, showSort = false, className }: Props) {
   const t = useTranslations()
-  const router = useRouter()
+  const { control, setValue } = useFormContext<CourseFilterQuery>()
 
-  const form = useForm<CourseFilterQuery>({ defaultValues })
+  const bySemester = useWatch({ control, name: "bySemester" }) ?? []
+  const byTeachingLanguage = useWatch({ control, name: "byTeachingLanguage" }) ?? []
+  const byCampus = useWatch({ control, name: "byCampus" }) ?? []
+  const byMinGrade = useWatch({ control, name: "byMinGrade" })
 
-  const updateUrl = useDebouncedCallback((values: CourseFilterQuery) => {
-    const queryString = serialize(values)
-    router.push(`/emner${queryString}`)
-  }, 300)
-
-  useEffect(() => {
-    const sub = form.watch((values) => {
-      updateUrl(values)
-    })
-
-    return () => sub.unsubscribe()
-  }, [form, updateUrl])
+  const fieldId = (name: string) => `${idPrefix}-${name}`
 
   return (
-    <form onSubmit={form.handleSubmit(updateUrl)} className={cn("flex flex-col gap-6", className)}>
-      <Field label={t("Common.Semester")} labelFor="bySemester">
-        <Controller
-          name="bySemester"
-          control={form.control}
-          render={({ field: { value = [], onChange } }) => (
-            <div className="flex flex-col gap-2">
-              {semesterOptions.map((semester) => (
-                <MultiSelectCheckboxRow
-                  key={semester}
-                  id={semester}
-                  value={value}
-                  option={semester}
-                  onChange={onChange}
-                  label={t(`Enums.Semester.${semester}`)}
-                />
-              ))}
-            </div>
-          )}
-        />
+    <div className={cn("flex flex-col gap-6", className)}>
+      {showSort && (
+        <Field label={t("CourseFilters.sortBy")} labelFor={fieldId("sortBy")}>
+          <CourseSortSelect className="w-full" />
+        </Field>
+      )}
+
+      <Field label={t("Common.Semester")} labelFor={fieldId("bySemester")}>
+        <div className="flex flex-col gap-2">
+          {semesterOptions.map((semester) => (
+            <MultiSelectCheckboxRow
+              key={semester}
+              id={fieldId(semester)}
+              value={bySemester}
+              option={semester}
+              onChange={(next) => setValue("bySemester", next)}
+              label={t(`Enums.Semester.${semester}`)}
+            />
+          ))}
+        </div>
       </Field>
 
-      <Field label={t("CourseFilters.teachingLanguage")} labelFor="byTeachingLanguage">
-        <Controller
-          name="byTeachingLanguage"
-          control={form.control}
-          render={({ field: { value = [], onChange } }) => (
-            <div className="flex flex-col gap-2">
-              {TeachingLanguageSchema.options.map((language) => (
-                <MultiSelectCheckboxRow
-                  key={language}
-                  id={language}
-                  value={value}
-                  option={language}
-                  onChange={onChange}
-                  label={t(`Enums.TeachingLanguage.${language}`)}
-                />
-              ))}
-            </div>
-          )}
-        />
+      <Field label={t("CourseFilters.teachingLanguage")} labelFor={fieldId("byTeachingLanguage")}>
+        <div className="flex flex-col gap-2">
+          {TeachingLanguageSchema.options.map((language) => (
+            <MultiSelectCheckboxRow
+              key={language}
+              id={fieldId(language)}
+              value={byTeachingLanguage}
+              option={language}
+              onChange={(next) => setValue("byTeachingLanguage", next)}
+              label={t(`Enums.TeachingLanguage.${language}`)}
+            />
+          ))}
+        </div>
       </Field>
 
-      <Field label={t("CourseFilters.campus")} labelFor="byCampus">
-        <Controller
-          name="byCampus"
-          control={form.control}
-          render={({ field: { value = [], onChange } }) => (
-            <div className="flex flex-col gap-2">
-              {CourseCampusSchema.options.map((campus) => (
-                <MultiSelectCheckboxRow
-                  key={campus}
-                  id={campus}
-                  value={value}
-                  option={campus}
-                  onChange={onChange}
-                  label={t(`Enums.Campus.${campus}`)}
-                />
-              ))}
-            </div>
-          )}
-        />
+      <Field label={t("CourseFilters.campus")} labelFor={fieldId("byCampus")}>
+        <div className="flex flex-col gap-2">
+          {CourseCampusSchema.options.map((campus) => (
+            <MultiSelectCheckboxRow
+              key={campus}
+              id={fieldId(campus)}
+              value={byCampus}
+              option={campus}
+              onChange={(next) => setValue("byCampus", next)}
+              label={t(`Enums.Campus.${campus}`)}
+            />
+          ))}
+        </div>
       </Field>
 
-      <Field label={t("CourseFilters.minGrade")} labelFor="byMinGrade">
-        <Controller
-          name="byMinGrade"
-          control={form.control}
-          render={({ field }) => (
-            <Select
-              onValueChange={(val) => {
-                if (val === MIN_GRADE_OPTIONS_ALL) {
-                  field.onChange(undefined)
-                } else {
-                  field.onChange(val)
-                }
-              }}
-              value={field.value ?? MIN_GRADE_OPTIONS_ALL}
-            >
-              <SelectTrigger className="dark:bg-stone-800 dark:border-stone-700">
-                <SelectValue>
-                  {field.value
-                    ? t(`CourseFilters.minGradeOptions.${field.value}`)
-                    : t("CourseFilters.minGradeOptions.ALL")}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent className="dark:bg-stone-800 dark:border-stone-700">
-                <SelectScrollUpButton />
+      <Field label={t("CourseFilters.minGrade")} labelFor={fieldId("byMinGrade")}>
+        <Select
+          onValueChange={(val) => {
+            if (val === MIN_GRADE_OPTIONS_ALL) {
+              setValue("byMinGrade", null)
+            } else {
+              setValue("byMinGrade", val as NonNullable<CourseFilterQuery["byMinGrade"]>)
+            }
+          }}
+          value={byMinGrade ?? MIN_GRADE_OPTIONS_ALL}
+        >
+          <SelectTrigger className={FIELD_TRIGGER_CLASS}>
+            <SelectValue>
+              {byMinGrade ? t(`CourseFilters.minGradeOptions.${byMinGrade}`) : t("CourseFilters.minGradeOptions.ALL")}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="dark:bg-stone-800 dark:border-stone-700">
+            <SelectScrollUpButton />
 
-                <SelectItem
-                  className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-stone-700 data-highlighted:bg-gray-100 dark:data-highlighted:bg-stone-700"
-                  value={MIN_GRADE_OPTIONS_ALL}
-                >
-                  {t("CourseFilters.minGradeOptions.ALL")}
-                </SelectItem>
+            <SelectItem className={SELECT_ITEM_CLASS} value={MIN_GRADE_OPTIONS_ALL}>
+              {t("CourseFilters.minGradeOptions.ALL")}
+            </SelectItem>
 
-                {MinLetterGradeFilterSchema.options.map((option) => (
-                  <SelectItem
-                    className="cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-stone-700 data-highlighted:bg-gray-100 dark:data-highlighted:bg-stone-700"
-                    key={option}
-                    value={option}
-                  >
-                    {t(`CourseFilters.minGradeOptions.${option}`)}
-                  </SelectItem>
-                ))}
-                <SelectScrollDownButton />
-              </SelectContent>
-            </Select>
-          )}
-        />
+            {MinLetterGradeFilterSchema.options.map((option) => (
+              <SelectItem className={SELECT_ITEM_CLASS} key={option} value={option}>
+                {t(`CourseFilters.minGradeOptions.${option}`)}
+              </SelectItem>
+            ))}
+            <SelectScrollDownButton />
+          </SelectContent>
+        </Select>
       </Field>
-    </form>
+    </div>
   )
 }
 
@@ -190,15 +157,21 @@ function Field({ label, labelFor, children }: FieldProps) {
   )
 }
 
-type MultiSelectCheckboxRowProps = {
+type MultiSelectCheckboxRowProps<T extends string> = {
   id: string
   label: string
-  value: string[]
-  option: string
-  onChange: (next: string[]) => void
+  value: T[]
+  option: T
+  onChange: (next: T[]) => void
 }
 
-function MultiSelectCheckboxRow({ id, label, value, option, onChange }: MultiSelectCheckboxRowProps) {
+function MultiSelectCheckboxRow<T extends string>({
+  id,
+  label,
+  value,
+  option,
+  onChange,
+}: MultiSelectCheckboxRowProps<T>) {
   const isChecked = value.includes(option)
 
   return (
@@ -206,8 +179,9 @@ function MultiSelectCheckboxRow({ id, label, value, option, onChange }: MultiSel
       <Checkbox
         id={id}
         className={cn(
-          "dark:bg-stone-800 dark:border-stone-500 border-neutral-300",
-          "not-data-checked:group-hover:bg-neutral-100 dark:not-data-checked:group-hover:bg-stone-700/50"
+          "border-neutral-200 dark:bg-stone-800 dark:border-stone-700",
+          "not-data-checked:group-hover:bg-neutral-100 dark:not-data-checked:group-hover:bg-stone-800",
+          "not-data-checked:group-hover:border-neutral-300 dark:not-data-checked:group-hover:border-stone-600"
         )}
         checked={isChecked}
         onCheckedChange={(checked) => {

@@ -34,7 +34,10 @@ export function ComparisonSelectItem({ value, selection, periodSelection, disabl
       <TooltipTrigger asChild>
         <div className="w-full">{item}</div>
       </TooltipTrigger>
-      <TooltipContent className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200">
+      <TooltipContent
+        className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200"
+        arrowClassName="dark:bg-stone-800"
+      >
         <Text className="text-sm">{disabledReason}</Text>
       </TooltipContent>
     </Tooltip>
