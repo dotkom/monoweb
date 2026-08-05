@@ -3,6 +3,7 @@ import type { FC } from "react"
 import { Stack } from "@mantine/core"
 import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useEventEditForm } from "../components/edit-form"
+import { ParentEventCard } from "../components/parent-event-card"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { useUpdateEventMutation } from "../mutations"
 import { useEventContext } from "./provider"
@@ -26,11 +27,11 @@ export const EventEditCard: FC = () => {
     companies: companies,
     disabled: !canEdit,
     onSubmit: (data) => {
-      const { hostingGroupIds, companyIds, ...event } = data
+      const { hostingGroupIds, companyIds, ...eventData } = data
 
       edit.mutate({
         id: data.id,
-        event,
+        event: eventData,
         groupIds: hostingGroupIds,
         companyIds,
         parentId: event.parentId,
@@ -41,6 +42,7 @@ export const EventEditCard: FC = () => {
 
   return (
     <Stack>
+      <ParentEventCard eventId={event.id} disabled={!canEdit} />
       <FormComponent />
     </Stack>
   )
