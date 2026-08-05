@@ -1,6 +1,7 @@
 import { Text, Title } from "@dotkomonline/ui"
 import { OnlineLogo } from "../atoms/OnlineLogo"
 import Image from "next/image"
+import Link from "next/link"
 
 export const LogoSection = () => (
   <div className="flex flex-col gap-6 lg:gap-4 lg:flex-row lg:justify-between">
@@ -15,8 +16,8 @@ export const LogoSection = () => (
 
     <span className="lg:hidden h-1 w-full bg-field-border" />
 
-    <div className="flex flex-col gap-1">
-      <Title element="p" className="text-sm">
+    <Link href="https://www.nito.no" target="_blank" rel="noopener noreferrer" className="flex flex-col gap-1">
+      <Title element="span" className="text-sm">
         I samarbeid med
       </Title>
 
@@ -35,7 +36,7 @@ export const LogoSection = () => (
         height={50}
         className="h-7 w-fit lg:h-10 shrink-0 object-contain not-dark:hidden"
       />
-    </div>
+    </Link>
 
     <span className="lg:hidden h-1 w-full bg-field-border" />
   </div>
