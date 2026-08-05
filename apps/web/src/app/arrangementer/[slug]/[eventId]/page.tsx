@@ -109,14 +109,15 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
   const parentEvent = parentEventWithAttendance?.event ?? null
   const parentAttendance = parentEventWithAttendance?.attendance ?? null
 
-  const futureChildEventWithAttendances = childEventWithAttendance.filter(({ event }) => !isPast(event.end))
-  const pastChildEventsWithAttendances = childEventWithAttendance.filter(({ event }) => isPast(event.end))
+  const publicChildEvents = childEventWithAttendance.filter(({ event }) => event.status === "PUBLIC")
+  const futureChildEventWithAttendances = publicChildEvents.filter(({ event }) => !isPast(event.end))
+  const pastChildEventsWithAttendances = publicChildEvents.filter(({ event }) => isPast(event.end))
 
   return (
     <div className="flex flex-col gap-8">
       <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
 
-      {childEventWithAttendance.length > 0 ? (
+      {publicChildEvents.length > 0 ? (
         <Tabs defaultValue="description">
           <TabsList className="w-full sm:w-fit sm:min-w-95">
             <TabsTrigger className="w-full sm:w-fit" value="description">
