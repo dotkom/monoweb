@@ -97,7 +97,7 @@ export default function EventPage() {
       <Title order={1}>Arrangementer</Title>
 
       <Group justify="space-between" align="flex-end" wrap="wrap">
-        <Stack gap="sm">
+        <Stack gap="sm" align="flex-start">
           <SegmentedControl
             value={timeTab}
             onChange={handleTimeTabChange}

@@ -2,7 +2,7 @@ import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import type { FeedbackFormId } from "@dotkomonline/rpc/feedback-form"
 import type { UserId } from "@dotkomonline/rpc/user"
-import { type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
 import { useTRPC } from "@/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
@@ -41,6 +41,7 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
       ...page,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    placeholderData: keepPreviousData,
   })
 
   return { events: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]), ...query }

@@ -18,6 +18,8 @@ export const EventFilters = ({ onChange }: Props) => {
     onChange(debouncedData)
   }, [onChange, debouncedData])
 
+  const hasSearchTerm = Boolean(data.bySearchTerm)
+
   return (
     <form
       onSubmit={(e) => {
@@ -25,18 +27,24 @@ export const EventFilters = ({ onChange }: Props) => {
       }}
     >
       <Group gap={4}>
-        <TextInput placeholder="Søk etter arrangementer..." {...form.register("bySearchTerm")} />
-        {Boolean(data.bySearchTerm) && (
-          <ActionIcon
-            size="input-sm"
-            variant="subtle"
-            color="gray"
-            type="reset"
-            onClick={() => form.resetField("bySearchTerm")}
-          >
-            <IconX size={16} />
-          </ActionIcon>
-        )}
+        <TextInput
+          placeholder="Søk etter arrangementer..."
+          {...form.register("bySearchTerm")}
+          style={{ width: 200 }}
+          rightSection={
+            hasSearchTerm && (
+              <ActionIcon
+                size="input-sm"
+                variant="subtle"
+                color="gray"
+                type="reset"
+                onClick={() => form.resetField("bySearchTerm")}
+              >
+                <IconX size={16} />
+              </ActionIcon>
+            )
+          }
+        />
       </Group>
     </form>
   )
