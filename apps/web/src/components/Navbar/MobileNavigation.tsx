@@ -76,7 +76,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           side="bottom"
           sideOffset={8}
           positionMethod="fixed"
-          className="w-[calc(100vw-2rem)] mx-2.75 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-slate-300/70 dark:border-stone-700 shadow-md rounded-3xl"
+          className="w-[calc(100vw-2rem)] mx-2.75 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-gray-300/70 dark:border-stone-700 shadow-md rounded-3xl"
         >
           <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
             <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">

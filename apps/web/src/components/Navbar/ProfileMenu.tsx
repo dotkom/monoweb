@@ -72,7 +72,7 @@ const ThemeDropdown: FC = () => {
         align="end"
         sideOffset={24}
         positionMethod="fixed"
-        className="w-fit -mr-3 rounded-xl border border-slate-300/70 bg-blue-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
+        className="w-fit -mr-3 rounded-xl border border-gray-300/70 bg-blue-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
       >
         <ThemeToggle />
       </DropdownMenuContent>
@@ -93,7 +93,7 @@ const ContactDebugDropdown: FC = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
-      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-slate-300/70 dark:border-stone-700 rounded-3xl shadow-md"
+      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
       sideOffset={24}
       positionMethod="fixed"
     >
@@ -298,7 +298,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-slate-300/70 dark:border-stone-700 shadow-md"
+        className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
         sideOffset={24}
         positionMethod="fixed"
       >

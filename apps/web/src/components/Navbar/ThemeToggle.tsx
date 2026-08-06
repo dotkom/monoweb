@@ -66,7 +66,7 @@ export const ThemeToggle = () => {
                   "p-0.5",
                   "hover:bg-white dark:hover:bg-stone-700",
                   "aria-pressed:bg-white data-[state=on]:bg-white",
-                  "aria-pressed:border data-[state=on]:border aria-pressed:border-slate-200 dark:aria-pressed:border-none",
+                  "aria-pressed:border data-[state=on]:border aria-pressed:border-gray-200 dark:aria-pressed:border-none",
                   "aria-pressed:dark:bg-stone-700 data-[state=on]:dark:bg-stone-700",
                   item.className
                 )}

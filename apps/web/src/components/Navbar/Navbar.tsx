@@ -182,7 +182,7 @@ export const Navbar: FC = () => {
     <header className={cn("navbar-shell sticky top-4 z-50 mt-4 flex items-stretch", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
-          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] bg-blue-100/80 border border-slate-300/70 p-3 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
+          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] bg-blue-100/80 border border-gray-300/70 p-3 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
           "flex flex-row items-center justify-between w-full",
           "min-w-0 grow",
           showLoginButton && "rounded-r-md",
@@ -215,7 +215,7 @@ export const Navbar: FC = () => {
         </div>
       )}
 
-      <div className="ml-2 flex size-(--navbar-height) shrink-0 items-center justify-center rounded-full bg-blue-100/80 border border-slate-300/70 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90 lg:hidden">
+      <div className="ml-2 flex size-(--navbar-height) shrink-0 items-center justify-center rounded-full bg-blue-100/80 border border-gray-300/70 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90 lg:hidden">
         <MobileNavigation links={links} />
       </div>
     </header>
