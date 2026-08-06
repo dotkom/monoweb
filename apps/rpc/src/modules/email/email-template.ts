@@ -1,5 +1,6 @@
 import * as fsp from "node:fs/promises"
 import * as path from "node:path"
+import { fileURLToPath } from "node:url"
 import { TZDate } from "@date-fns/tz"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -14,6 +15,8 @@ export type EmailType =
   | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
   | "WAITLIST_NOTIFICATION"
+  | "COMMITTEE_EMAIL_CREATED"
+  | "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodType<TData>
@@ -30,7 +33,7 @@ export function createEmailTemplate<const TData, const TType extends EmailType>(
   return definition
 }
 
-const templates = path.resolve(new URL("../../../resources/email", import.meta.url).pathname)
+const templates = fileURLToPath(new URL("../../../resources/email", import.meta.url))
 
 export const DEFAULT_EMAIL_SOURCE = "noreply@online.ntnu.no"
 
@@ -151,6 +154,32 @@ export const emails = {
         position: z.number(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "waitlist_notification.mustache"), "utf-8"),
+  }),
+  COMMITTEE_EMAIL_CREATED: createEmailTemplate({
+    type: "COMMITTEE_EMAIL_CREATED",
+    getSchema: () =>
+      z.object({
+        firstName: z.string().min(1),
+        email: z.email(),
+        password: z.string().min(1),
+        dotkomLeaderName: z.string().min(1),
+        committeeLeaderName: z.string().min(1),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "committee_email_created.mustache"), "utf-8"),
+  }),
+  COMMITTEE_EMAIL_CREATED_2FA_ENFORCED: createEmailTemplate({
+    type: "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED",
+    getSchema: () =>
+      z.object({
+        firstName: z.string().min(1),
+        email: z.email(),
+        password: z.string().min(1),
+        dotkomLeaderName: z.string().min(1),
+        committeeLeaderName: z.string().min(1),
+        recoveryCodes: z.array(z.string()).min(1),
+      }),
+    getTemplate: async () =>
+      fsp.readFile(path.join(templates, "committee_email_created_2fa_enforced.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
