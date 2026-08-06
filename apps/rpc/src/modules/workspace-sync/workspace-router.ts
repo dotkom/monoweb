@@ -1,3 +1,4 @@
+import { CommitteeGroupSlug } from "../authorization-service"
 import { GroupRoleTypeEnum, GroupSchema } from "../group/group"
 import { UserSchema } from "../user/user"
 import {
@@ -16,13 +17,18 @@ import { procedure, t } from "../../trpc"
 export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
 export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
 const createWorkspaceUserProcedure = procedure
-  .input(z.object({ userId: UserSchema.shape.id }))
+  .input(
+    z.object({
+      userId: UserSchema.shape.id,
+      contactCommittee: z.enum(Object.values(CommitteeGroupSlug) as [CommitteeGroupSlug, ...CommitteeGroupSlug[]]),
+    })
+  )
   .output(
     z.object({
       user: UserSchema,
       workspaceUser: WorkspaceUserSchema,
       recoveryCodes: z.array(z.string()).nullable(),
-      password: z.string(),
+      password: z.string().nullable(),
     })
   )
   .use(withAuthentication())
@@ -39,7 +45,7 @@ const createWorkspaceUserProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-    return await workspaceService.createWorkspaceUser(ctx.handle, input.userId)
+    return await workspaceService.createWorkspaceUser(ctx.handle, input.userId, input.contactCommittee)
   })
 
 export type FindWorkspaceUserInput = inferProcedureInput<typeof findWorkspaceUserProcedure>
