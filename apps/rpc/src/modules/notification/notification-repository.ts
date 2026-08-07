@@ -18,7 +18,10 @@ import { type Pageable, pageQuery } from "@dotkomonline/utils"
 export interface NotificationRepository {
   findById(handle: DBHandle, notificationId: NotificationId): Promise<Notification | null>
   findMany(handle: DBHandle, page: Pageable): Promise<Notification[]>
-  createWithRecipients(handle: DBHandle, notificationData: NotificationWrite): Promise<Notification>
+  createWithRecipients(
+    handle: DBHandle,
+    notificationData: NotificationWrite & { createdById?: string | null }
+  ): Promise<Notification>
   update(
     handle: DBHandle,
     notificationId: NotificationId,
@@ -47,7 +50,9 @@ export interface NotificationRepository {
   findRecipientsByNotificationId(
     handle: DBHandle,
     notificationId: NotificationId
-  ): Promise<Array<{ id: string; readAt: Date | null; userId: string; user: { id: string; name: string | null } }>>
+  ): Promise<Array<{ id: string; userId: string; user: { id: string; name: string | null } }>>
+  countReadRecipients(handle: DBHandle, notificationId: NotificationId): Promise<number>
+  countRecipients(handle: DBHandle, notificationId: NotificationId): Promise<number>
   findAllForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
   getUnreadCountForUser(handle: DBHandle, userId: UserId): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
@@ -71,10 +76,11 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async createWithRecipients(handle, data) {
-      const { recipientIds, ...notificationData } = data
+      const { recipientIds, createdById, ...notificationData } = data
       const notification = await handle.notification.create({
         data: {
           ...notificationData,
+          ...(createdById !== undefined ? { createdById } : {}),
           recipients: {
             createMany: {
               data: recipientIds.map((userId) => ({
@@ -103,9 +109,7 @@ export function getNotificationRepository(): NotificationRepository {
           ...(actorGroupId !== undefined
             ? { actorGroup: actorGroupId ? { connect: { slug: actorGroupId } } : { disconnect: true } }
             : {}),
-          ...(taskId !== undefined
-            ? { task: taskId ? { connect: { id: taskId } } : { disconnect: true } }
-            : {}),
+          ...(taskId !== undefined ? { task: taskId ? { connect: { id: taskId } } : { disconnect: true } } : {}),
         },
         include: {
           actorGroup: {
@@ -175,7 +179,6 @@ export function getNotificationRepository(): NotificationRepository {
         where: { notificationId },
         select: {
           id: true,
-          readAt: true,
           userId: true,
           user: {
             select: {
@@ -184,6 +187,18 @@ export function getNotificationRepository(): NotificationRepository {
             },
           },
         },
+      })
+    },
+
+    async countReadRecipients(handle, notificationId) {
+      return handle.notificationRecipient.count({
+        where: { notificationId, readAt: { not: null } },
+      })
+    },
+
+    async countRecipients(handle, notificationId) {
+      return handle.notificationRecipient.count({
+        where: { notificationId },
       })
     },
 

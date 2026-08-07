@@ -16,17 +16,15 @@ interface UseUserAllQueryProps {
   page?: Pageable
 }
 
-export const useUserAllQuery = ({ filter, page }: UseUserAllQueryProps, options?: Parameters<typeof useQuery>[2]) => {
+export const useUserAllQuery = ({ filter, page }: UseUserAllQueryProps, enabled = true) => {
   const trpc = useTRPC()
-  const { data, isLoading } = useQuery(
-    trpc.user.all.queryOptions(
-      {
-        filter,
-        ...page,
-      },
-      options
-    )
-  )
+  const { data, isLoading } = useQuery({
+    ...trpc.user.all.queryOptions({
+      filter,
+      ...page,
+    }),
+    enabled,
+  })
   return { users: useMemo(() => data?.items ?? [], [data]), isLoading }
 }
 

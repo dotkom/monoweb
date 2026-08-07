@@ -127,12 +127,14 @@ export function getGroupService(
 
       if (createdGroup.type === "INTEREST_GROUP") {
         const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_INTEREST_GROUP")
+        const shortDescription = `En ny interessegruppe "${createdGroup.name}" har blitt opprettet.`
         await notificationService.create(
           handle,
           recipients,
           "NEW_INTEREST_GROUP",
           `Ny interessegruppe: ${createdGroup.name}`,
-          `En ny interessegruppe "${createdGroup.name}" har blitt opprettet.`,
+          shortDescription,
+          shortDescription,
           createdGroup.slug,
           "GROUP",
           createdGroup.slug

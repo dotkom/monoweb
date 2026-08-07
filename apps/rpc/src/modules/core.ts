@@ -59,6 +59,7 @@ import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
 import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
 import { getFadderukeService } from "./fadderuke/fadderuke-service"
+import { getNotificationPermissionsRepository } from "./user/notification-permissions-repository"
 import { getNotificationRepository } from "./notification/notification-repository"
 import { getNotificationService } from "./notification/notification-service"
 import { getNotificationTaskService } from "./notification/notification-task-service"
@@ -194,11 +195,12 @@ export async function createServiceLayer(
   const contestRepository = getContestRepository()
   const fadderukeRepository = getFadderukeRepository()
   const notificationRepository = getNotificationRepository()
+  const notificationPermissionsRepository = getNotificationPermissionsRepository()
 
   const notificationService = getNotificationService(
     notificationRepository,
-    userRepository,
     attendanceRepository,
+    notificationPermissionsRepository,
     eventEmitter
   )
   const membershipService = getMembershipService()

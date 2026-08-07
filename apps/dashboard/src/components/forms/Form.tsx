@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@/lib/zod-resolver"
 import { Button, Flex } from "@mantine/core"
 import { useCallback, useRef } from "react"
 import { type DefaultValues, type FieldPath, type FieldValue, type UseFormReturn, useForm } from "react-hook-form"
