@@ -38,10 +38,11 @@ interface HoverCardTriggerProps extends PopoverPrimitive.Trigger.Props {
   /** ms to wait before opening on hover (desktop only, ignored on touch) */
   delay?: number
   /** ms to wait before closing on hover-out (desktop only, ignored on touch) */
+  /** (Note: if close delay is short, the card might flash during transition out) */
   closeDelay?: number
 }
 
-function HoverCardTrigger({ delay = 75, closeDelay = 100, className, ...props }: HoverCardTriggerProps) {
+function HoverCardTrigger({ delay = 75, closeDelay = 150, className, ...props }: HoverCardTriggerProps) {
   const isTouchDevice = useIsTouchDevice()
 
   return (

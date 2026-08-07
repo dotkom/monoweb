@@ -79,7 +79,6 @@ export const EventCalendarItem = ({ eventDetail, userId, eventDisplayProps, clas
     <HoverCard>
       <HoverCardTrigger
         delay={10}
-        closeDelay={150}
         className={cn(
           "text-left ml-[2px] mr-px my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
           isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
