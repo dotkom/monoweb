@@ -542,6 +542,37 @@ export const useUpdateAttendeeReservedMutation = () => {
   )
 }
 
+export const useCreateEventNotificationMutation = (eventId: string) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+  return useMutation(
+    trpc.notification.create.mutationOptions({
+      onMutate: () => {
+        notification.loading({
+          title: "Lager varsling...",
+          message: "Varslingen blir opprettet.",
+        })
+      },
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.notification.findManyByPayload.queryKey({ payloadType: "EVENT", payload: eventId }),
+        })
+        notification.complete({
+          title: "Varsling opprettet",
+          message: `Varslingen "${data.title}" har blitt opprettet.`,
+        })
+      },
+      onError: (err) => {
+        notification.fail({
+          title: "Feil oppsto",
+          message: `En feil oppsto under opprettelse av varslingen: ${err.toString()}.`,
+        })
+      },
+    })
+  )
+}
+
 export const useEventFileUploadMutation = () => {
   const trpc = useTRPC()
 
