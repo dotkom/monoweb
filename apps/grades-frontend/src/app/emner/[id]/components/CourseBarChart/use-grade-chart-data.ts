@@ -1,8 +1,4 @@
-import {
-  getChartCountFields,
-  sumGradeCountFields,
-  type GradeDistributionCountFields,
-} from "@dotkomonline/grades-backend/grade-distribution"
+import { getChartCountFields, type GradeDistributionCountFields } from "@dotkomonline/grades-backend/grade-distribution"
 import { useMemo, useState } from "react"
 import { chartFieldLabel, type AggregatedGradeDistribution } from "../../utils"
 
@@ -45,6 +41,43 @@ function chartRowLabel(field: keyof GradeDistributionCountFields, t: TranslateFn
   return label
 }
 
+/**
+ * Letter-only rows store A–F and leave passed/failed at 0. When the chart is
+ * PASS/FAIL-only, fold letter grades into pass/fail so letter comparisons ghost correctly.
+ * Skip folding when letter bars are also shown, or totals would double-count.
+ */
+function getChartFieldCount(
+  grades: GradeDistributionCountFields,
+  field: keyof GradeDistributionCountFields,
+  fields: readonly (keyof GradeDistributionCountFields)[]
+) {
+  const chartIsPassFailOnly = fields.every((key) => key === "passedCount" || key === "failedCount")
+
+  if (chartIsPassFailOnly && field === "passedCount") {
+    return (
+      grades.passedCount +
+      grades.gradeACount +
+      grades.gradeBCount +
+      grades.gradeCCount +
+      grades.gradeDCount +
+      grades.gradeECount
+    )
+  }
+
+  if (chartIsPassFailOnly && field === "failedCount") {
+    return grades.failedCount + grades.gradeFCount
+  }
+
+  return grades[field]
+}
+
+function sumChartFieldCounts(
+  grades: GradeDistributionCountFields,
+  fields: readonly (keyof GradeDistributionCountFields)[]
+) {
+  return fields.reduce((sum, field) => sum + getChartFieldCount(grades, field, fields), 0)
+}
+
 export function useGradeChartData({ primary, comparison, ghostEnabled, t }: Options) {
   const [activeField, setActiveField] = useState<keyof GradeDistributionCountFields | null>(null)
 
@@ -54,12 +87,12 @@ export function useGradeChartData({ primary, comparison, ghostEnabled, t }: Opti
 
   const data = useMemo(() => {
     const fields = getChartCountFields(primary.grades)
-    const primaryTotal = sumGradeCountFields(primary.grades, fields)
-    const comparisonTotal = comparison ? sumGradeCountFields(comparison.grades, fields) : 0
+    const primaryTotal = sumChartFieldCounts(primary.grades, fields)
+    const comparisonTotal = comparison ? sumChartFieldCounts(comparison.grades, fields) : 0
 
     return fields.map((field): ChartRow => {
-      const count = primary.grades[field]
-      const ghostCount = comparison?.grades[field] ?? 0
+      const count = getChartFieldCount(primary.grades, field, fields)
+      const ghostCount = comparison ? getChartFieldCount(comparison.grades, field, fields) : 0
       const value = toPercent(count, primaryTotal)
       const ghostValue = showComparison ? toPercent(ghostCount, comparisonTotal) : 0
 

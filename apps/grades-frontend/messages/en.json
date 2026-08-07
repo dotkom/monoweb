@@ -138,6 +138,7 @@
       "title": "Grade distribution",
       "compare": "Compare",
       "compareDisabledReason": "Not enough data to compare",
+      "compareDisabledNotComparable": "Not comparable",
       "percent": "{value, number}%",
       "hoverOff": "{grade} · {percent} · {count} of {total}",
       "hoverCompare": "{grade} · {percent} selected · {comparisonPercent} comparison",
@@ -152,6 +153,7 @@
     },
     "kpiCard": {
       "comparisonSameAsPeriod": "Already selected as period",
+      "comparisonNotComparable": "Not comparable",
       "averageGrade": "Average grade",
       "passRate": "Pass rate",
       "passRateDiff": "{count, number} points",

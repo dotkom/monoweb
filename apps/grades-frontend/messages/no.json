@@ -138,6 +138,7 @@
       "title": "Karakterfordeling",
       "compare": "Sammenlign",
       "compareDisabledReason": "Ikke nok data til å sammenligne",
+      "compareDisabledNotComparable": "Ikke sammenlignbart",
       "percent": "{value, number} %",
       "hoverOff": "{grade} · {percent} · {count} av {total}",
       "hoverCompare": "{grade} · {percent} valgt · {comparisonPercent} sammenligning",
@@ -152,6 +153,7 @@
     },
     "kpiCard": {
       "comparisonSameAsPeriod": "Allerede valgt som periode",
+      "comparisonNotComparable": "Ikke sammenlignbart",
       "averageGrade": "Snitt",
       "passRate": "Ståprosent",
       "passRateDiff": "{count, number} poeng",
