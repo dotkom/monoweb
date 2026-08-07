@@ -205,7 +205,7 @@ export type NotificationGroupByOutputType = {
   type: $Enums.NotificationType
   payload: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId: string | null
   createdById: string | null
   lastUpdatedById: string | null
   taskId: string | null
@@ -242,11 +242,11 @@ export type NotificationWhereInput = {
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   payload?: Prisma.StringNullableFilter<"Notification"> | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFilter<"Notification"> | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFilter<"Notification"> | string
+  actorGroupId?: Prisma.StringNullableFilter<"Notification"> | string | null
   createdById?: Prisma.StringNullableFilter<"Notification"> | string | null
   lastUpdatedById?: Prisma.StringNullableFilter<"Notification"> | string | null
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
-  actorGroup?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  actorGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   lastUpdatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
@@ -263,7 +263,7 @@ export type NotificationOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   payload?: Prisma.SortOrderInput | Prisma.SortOrder
   payloadType?: Prisma.SortOrder
-  actorGroupId?: Prisma.SortOrder
+  actorGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUpdatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -287,11 +287,11 @@ export type NotificationWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   payload?: Prisma.StringNullableFilter<"Notification"> | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFilter<"Notification"> | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFilter<"Notification"> | string
+  actorGroupId?: Prisma.StringNullableFilter<"Notification"> | string | null
   createdById?: Prisma.StringNullableFilter<"Notification"> | string | null
   lastUpdatedById?: Prisma.StringNullableFilter<"Notification"> | string | null
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
-  actorGroup?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  actorGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   lastUpdatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   task?: Prisma.XOR<Prisma.TaskNullableScalarRelationFilter, Prisma.TaskWhereInput> | null
@@ -308,7 +308,7 @@ export type NotificationOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   payload?: Prisma.SortOrderInput | Prisma.SortOrder
   payloadType?: Prisma.SortOrder
-  actorGroupId?: Prisma.SortOrder
+  actorGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUpdatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -330,7 +330,7 @@ export type NotificationScalarWhereWithAggregatesInput = {
   type?: Prisma.EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
   payload?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringWithAggregatesFilter<"Notification"> | string
+  actorGroupId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   createdById?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   lastUpdatedById?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
   taskId?: Prisma.StringNullableWithAggregatesFilter<"Notification"> | string | null
@@ -346,7 +346,7 @@ export type NotificationCreateInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroup: Prisma.GroupCreateNestedOneWithoutNotificationsInput
+  actorGroup?: Prisma.GroupCreateNestedOneWithoutNotificationsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutNotificationsCreatedInput
   lastUpdatedBy?: Prisma.UserCreateNestedOneWithoutNotificationsUpdatedInput
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
@@ -363,7 +363,7 @@ export type NotificationUncheckedCreateInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   lastUpdatedById?: string | null
   taskId?: string | null
@@ -380,7 +380,7 @@ export type NotificationUpdateInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroup?: Prisma.GroupUpdateOneRequiredWithoutNotificationsNestedInput
+  actorGroup?: Prisma.GroupUpdateOneWithoutNotificationsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutNotificationsCreatedNestedInput
   lastUpdatedBy?: Prisma.UserUpdateOneWithoutNotificationsUpdatedNestedInput
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
@@ -397,7 +397,7 @@ export type NotificationUncheckedUpdateInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -414,7 +414,7 @@ export type NotificationCreateManyInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   lastUpdatedById?: string | null
   taskId?: string | null
@@ -442,7 +442,7 @@ export type NotificationUncheckedUpdateManyInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -711,7 +711,7 @@ export type NotificationCreateWithoutCreatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroup: Prisma.GroupCreateNestedOneWithoutNotificationsInput
+  actorGroup?: Prisma.GroupCreateNestedOneWithoutNotificationsInput
   lastUpdatedBy?: Prisma.UserCreateNestedOneWithoutNotificationsUpdatedInput
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
   recipients?: Prisma.NotificationRecipientCreateNestedManyWithoutNotificationInput
@@ -727,7 +727,7 @@ export type NotificationUncheckedCreateWithoutCreatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   lastUpdatedById?: string | null
   taskId?: string | null
   recipients?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutNotificationInput
@@ -753,7 +753,7 @@ export type NotificationCreateWithoutLastUpdatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroup: Prisma.GroupCreateNestedOneWithoutNotificationsInput
+  actorGroup?: Prisma.GroupCreateNestedOneWithoutNotificationsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutNotificationsCreatedInput
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
   recipients?: Prisma.NotificationRecipientCreateNestedManyWithoutNotificationInput
@@ -769,7 +769,7 @@ export type NotificationUncheckedCreateWithoutLastUpdatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   taskId?: string | null
   recipients?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutNotificationInput
@@ -814,7 +814,7 @@ export type NotificationScalarWhereInput = {
   type?: Prisma.EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
   payload?: Prisma.StringNullableFilter<"Notification"> | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFilter<"Notification"> | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFilter<"Notification"> | string
+  actorGroupId?: Prisma.StringNullableFilter<"Notification"> | string | null
   createdById?: Prisma.StringNullableFilter<"Notification"> | string | null
   lastUpdatedById?: Prisma.StringNullableFilter<"Notification"> | string | null
   taskId?: Prisma.StringNullableFilter<"Notification"> | string | null
@@ -904,7 +904,7 @@ export type NotificationCreateWithoutTaskInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroup: Prisma.GroupCreateNestedOneWithoutNotificationsInput
+  actorGroup?: Prisma.GroupCreateNestedOneWithoutNotificationsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutNotificationsCreatedInput
   lastUpdatedBy?: Prisma.UserCreateNestedOneWithoutNotificationsUpdatedInput
   recipients?: Prisma.NotificationRecipientCreateNestedManyWithoutNotificationInput
@@ -920,7 +920,7 @@ export type NotificationUncheckedCreateWithoutTaskInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   lastUpdatedById?: string | null
   recipients?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutNotificationInput
@@ -962,7 +962,7 @@ export type NotificationCreateWithoutRecipientsInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroup: Prisma.GroupCreateNestedOneWithoutNotificationsInput
+  actorGroup?: Prisma.GroupCreateNestedOneWithoutNotificationsInput
   createdBy?: Prisma.UserCreateNestedOneWithoutNotificationsCreatedInput
   lastUpdatedBy?: Prisma.UserCreateNestedOneWithoutNotificationsUpdatedInput
   task?: Prisma.TaskCreateNestedOneWithoutNotificationsInput
@@ -978,7 +978,7 @@ export type NotificationUncheckedCreateWithoutRecipientsInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   lastUpdatedById?: string | null
   taskId?: string | null
@@ -1010,7 +1010,7 @@ export type NotificationUpdateWithoutRecipientsInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroup?: Prisma.GroupUpdateOneRequiredWithoutNotificationsNestedInput
+  actorGroup?: Prisma.GroupUpdateOneWithoutNotificationsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutNotificationsCreatedNestedInput
   lastUpdatedBy?: Prisma.UserUpdateOneWithoutNotificationsUpdatedNestedInput
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
@@ -1026,7 +1026,7 @@ export type NotificationUncheckedUpdateWithoutRecipientsInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1042,7 +1042,7 @@ export type NotificationCreateManyCreatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   lastUpdatedById?: string | null
   taskId?: string | null
 }
@@ -1057,7 +1057,7 @@ export type NotificationCreateManyLastUpdatedByInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   taskId?: string | null
 }
@@ -1072,7 +1072,7 @@ export type NotificationUpdateWithoutCreatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroup?: Prisma.GroupUpdateOneRequiredWithoutNotificationsNestedInput
+  actorGroup?: Prisma.GroupUpdateOneWithoutNotificationsNestedInput
   lastUpdatedBy?: Prisma.UserUpdateOneWithoutNotificationsUpdatedNestedInput
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
   recipients?: Prisma.NotificationRecipientUpdateManyWithoutNotificationNestedInput
@@ -1088,7 +1088,7 @@ export type NotificationUncheckedUpdateWithoutCreatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedInput
@@ -1104,7 +1104,7 @@ export type NotificationUncheckedUpdateManyWithoutCreatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1119,7 +1119,7 @@ export type NotificationUpdateWithoutLastUpdatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroup?: Prisma.GroupUpdateOneRequiredWithoutNotificationsNestedInput
+  actorGroup?: Prisma.GroupUpdateOneWithoutNotificationsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutNotificationsCreatedNestedInput
   task?: Prisma.TaskUpdateOneWithoutNotificationsNestedInput
   recipients?: Prisma.NotificationRecipientUpdateManyWithoutNotificationNestedInput
@@ -1135,7 +1135,7 @@ export type NotificationUncheckedUpdateWithoutLastUpdatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedInput
@@ -1151,7 +1151,7 @@ export type NotificationUncheckedUpdateManyWithoutLastUpdatedByInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1228,7 +1228,7 @@ export type NotificationCreateManyTaskInput = {
   type: $Enums.NotificationType
   payload?: string | null
   payloadType: $Enums.NotificationPayloadType
-  actorGroupId: string
+  actorGroupId?: string | null
   createdById?: string | null
   lastUpdatedById?: string | null
 }
@@ -1243,7 +1243,7 @@ export type NotificationUpdateWithoutTaskInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroup?: Prisma.GroupUpdateOneRequiredWithoutNotificationsNestedInput
+  actorGroup?: Prisma.GroupUpdateOneWithoutNotificationsNestedInput
   createdBy?: Prisma.UserUpdateOneWithoutNotificationsCreatedNestedInput
   lastUpdatedBy?: Prisma.UserUpdateOneWithoutNotificationsUpdatedNestedInput
   recipients?: Prisma.NotificationRecipientUpdateManyWithoutNotificationNestedInput
@@ -1259,7 +1259,7 @@ export type NotificationUncheckedUpdateWithoutTaskInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipients?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutNotificationNestedInput
@@ -1275,7 +1275,7 @@ export type NotificationUncheckedUpdateManyWithoutTaskInput = {
   type?: Prisma.EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
   payload?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payloadType?: Prisma.EnumNotificationPayloadTypeFieldUpdateOperationsInput | $Enums.NotificationPayloadType
-  actorGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  actorGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastUpdatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1325,7 +1325,7 @@ export type NotificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdById?: boolean
   lastUpdatedById?: boolean
   taskId?: boolean
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
@@ -1347,7 +1347,7 @@ export type NotificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdById?: boolean
   lastUpdatedById?: boolean
   taskId?: boolean
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
@@ -1367,7 +1367,7 @@ export type NotificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdById?: boolean
   lastUpdatedById?: boolean
   taskId?: boolean
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
@@ -1391,7 +1391,7 @@ export type NotificationSelectScalar = {
 
 export type NotificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "title" | "shortDescription" | "content" | "type" | "payload" | "payloadType" | "actorGroupId" | "createdById" | "lastUpdatedById" | "taskId", ExtArgs["result"]["notification"]>
 export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
@@ -1399,13 +1399,13 @@ export type NotificationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   _count?: boolean | Prisma.NotificationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type NotificationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
 }
 export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  actorGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  actorGroup?: boolean | Prisma.Notification$actorGroupArgs<ExtArgs>
   createdBy?: boolean | Prisma.Notification$createdByArgs<ExtArgs>
   lastUpdatedBy?: boolean | Prisma.Notification$lastUpdatedByArgs<ExtArgs>
   task?: boolean | Prisma.Notification$taskArgs<ExtArgs>
@@ -1414,7 +1414,7 @@ export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types
 export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Notification"
   objects: {
-    actorGroup: Prisma.$GroupPayload<ExtArgs>
+    actorGroup: Prisma.$GroupPayload<ExtArgs> | null
     createdBy: Prisma.$UserPayload<ExtArgs> | null
     lastUpdatedBy: Prisma.$UserPayload<ExtArgs> | null
     task: Prisma.$TaskPayload<ExtArgs> | null
@@ -1442,7 +1442,7 @@ export type $NotificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     /**
      * The group that created the notification or the system created on behalf of.
      */
-    actorGroupId: string
+    actorGroupId: string | null
     /**
      * The specific user that created the notification. This is meant for logging purposes. Nullable because the system
      * can create notifications without a specific user to link it to, for example with recurring tasks.
@@ -1848,7 +1848,7 @@ readonly fields: NotificationFieldRefs;
  */
 export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  actorGroup<T extends Prisma.GroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupDefaultArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  actorGroup<T extends Prisma.Notification$actorGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$actorGroupArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.Notification$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   lastUpdatedBy<T extends Prisma.Notification$lastUpdatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$lastUpdatedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   task<T extends Prisma.Notification$taskArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Notification$taskArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2302,6 +2302,25 @@ export type NotificationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many Notifications to delete.
    */
   limit?: number
+}
+
+/**
+ * Notification.actorGroup
+ */
+export type Notification$actorGroupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Group
+   */
+  select?: Prisma.GroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Group
+   */
+  omit?: Prisma.GroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupInclude<ExtArgs> | null
+  where?: Prisma.GroupWhereInput
 }
 
 /**
