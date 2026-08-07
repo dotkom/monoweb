@@ -36,6 +36,8 @@ export default async function FadderukenePage() {
     return <GenericFadderukenePage />
   }
 
+  const publicChildEvents = childEvents.filter(({ event }) => event.status === "PUBLIC")
+
   const timeAllocation = getFadderukeActiveInterval(parentEvent.event.start, parentEvent.event.end)
 
   if (!isWithinInterval(now, timeAllocation)) {
@@ -45,7 +47,7 @@ export default async function FadderukenePage() {
   return (
     <Page
       parentEventWithAttendance={parentEvent}
-      childEventsWithAttendance={childEvents}
+      childEventsWithAttendance={publicChildEvents}
       contestId={parentEvent.event.contestId}
     />
   )

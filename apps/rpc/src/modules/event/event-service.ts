@@ -199,10 +199,21 @@ export function getEventService(
         throw new FailedPreconditionError(`Event(ID=${eventId}) cannot be assigned itself as a parent.`)
       }
       const event = await this.getEventById(handle, eventId)
+
       if (parentEventId === null) {
         return await eventRepository.updateEventParent(handle, event.id, null)
       }
+
+      const childEvents = await eventRepository.findByParentEventId(handle, event.id, { orderBy: "asc" })
+
+      if (childEvents.length > 0) {
+        throw new FailedPreconditionError(
+          `Event(ID=${event.id}) cannot be assigned a parent, as it already has child events.`
+        )
+      }
+
       const parentEvent = await this.getEventById(handle, parentEventId)
+
       // NOTE: This check ensures two things:
       // 1. that we do not create circular references
       // 2. that the max-height of the event tree is 2 (aka, only one level of nesting)
@@ -211,6 +222,7 @@ export function getEventService(
           `Event(ID=${event.id}) cannot be assigned parent, as parent Event(ID=${parentEvent.id}) already has a parent.`
         )
       }
+
       return await eventRepository.updateEventParent(handle, event.id, parentEvent.id)
     },
 
