@@ -1,8 +1,9 @@
 "use client"
 
 import DOMPurify from "isomorphic-dompurify"
+import { IconChevronDown } from "@tabler/icons-react"
 import { useLayoutEffect, useRef, useState } from "react"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
+import { Button } from "../../atoms/Button/Button"
 import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
 
@@ -22,7 +23,7 @@ export function RichText({
   content,
   className,
   maxLines,
-  readMoreText = "Vis mer...",
+  readMoreText = "Vis mer",
   readLessText = "Vis mindre",
   hideToggleButton = false,
   toggleButtonClassName,
@@ -111,7 +112,7 @@ export function RichText({
       // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
       dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
       className={cn(
-        "prose text-base dark:prose-stone dark:prose-invert overflow-hidden",
+        "prose text-base dark:prose-stone dark:prose-invert overflow-hidden transition-[max-height] duration-200 ease-out motion-reduce:transition-none",
         "prose-a:text-blue-600 dark:prose-a:text-blue-300",
         "[&_ul>li::marker]:text-black dark:[&_ul>li::marker]:text-white",
         "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",
@@ -141,20 +142,24 @@ export function RichText({
   }
 
   return (
-    <Collapsible ref={containerRef} open={isExpanded} onOpenChange={setIsExpanded}>
-      <CollapsibleContent forceMount>{RichTextContent}</CollapsibleContent>
-      <CollapsibleTrigger
-        asChild
-        onClick={handleToggleExpandCollapse}
-        className={cn(
-          "transition-colors text-gray-500 dark:text-stone-400 hover:text-black dark:hover:text-white [font-size:inherit]",
-          isExpanded && "mt-2",
-          toggleButtonClassName
-        )}
-      >
-        <Text element="button">{isExpanded ? readLessText : readMoreText}</Text>
-      </CollapsibleTrigger>
-    </Collapsible>
+    <div ref={containerRef}>
+      {RichTextContent}
+      <div className="mt-3 flex justify-center">
+        <Button
+          aria-expanded={isExpanded}
+          className={toggleButtonClassName}
+          iconRight={
+            <IconChevronDown className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
+          }
+          onClick={handleToggleExpandCollapse}
+          size="lg"
+          type="button"
+          variant="outline"
+        >
+          {isExpanded ? readLessText : readMoreText}
+        </Button>
+      </div>
+    </div>
   )
 }
 
