@@ -7,7 +7,7 @@ import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import * as crypto from "node:crypto"
 import { isDevelopmentEnvironment } from "../../configuration"
-import { isSameDay } from "date-fns"
+import { compareDesc, isSameDay } from "date-fns"
 import { AlreadyExistsError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { FeideGroupsRepository, NTNUGroup } from "../feide/feide-groups-repository"
@@ -131,7 +131,7 @@ export interface UserService {
   ): Promise<PresignedPost>
 }
 
-const ONLINE_MASTER_PROGRAMMES = ["MSIT", "MIT"]
+const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
 const ONLINE_BACHELOR_PROGRAMMES = ["BIT"]
 
 export function getUserService(
@@ -367,7 +367,6 @@ export function getUserService(
 
     // Master degree always takes precedence over bachelor.
     const study = masterProgramme !== undefined ? "MASTER" : "BACHELOR"
-    const estimatedSemester = membershipService.findEstimatedSemester(study, courses)
 
     // We grant memberships for one semester at a time. This has some trade-offs, and natural alternative end dates are:
     //   1. One semester (what we use)
@@ -393,29 +392,55 @@ export function getUserService(
     const endDate = getNextSemesterStart()
 
     if (study === "MASTER") {
-      const code = getSpecializationFromCode(studySpecializations?.[0].code)
+      // We prefer an unfinished specialization; otherwise the most recently finished one.
+      const specializationCode = studySpecializations
+        .toSorted((a, b) => {
+          if (a.finished === undefined && b.finished === undefined) {
+            return 0
+          }
+
+          if (a.finished === undefined) {
+            return -1
+          }
+
+          if (b.finished === undefined) {
+            return 1
+          }
+
+          return compareDesc(a.finished, b.finished)
+        })
+        .at(0)?.code
+
+      const specialization =
+        specializationCode !== undefined ? getSpecializationFromCode(specializationCode) : "UNKNOWN"
 
       // If we have a new code that we have not seen, or for some other reason the code catches and returns UNKNOWN, we
       // emit a trace for it.
-      if (code === "UNKNOWN") {
+      if (specialization === "UNKNOWN") {
         logger.warn(
           "Caught unrecognized specialization code %s for specializations %o",
-          studySpecializations?.[0].code,
+          specializationCode,
           studySpecializations
         )
       }
 
+      const estimatedSemester = membershipService.findEstimatedSemester(courses, study, specialization)
+
       logger.info("Estimated end date for the master's programme to be %s", endDate.toUTCString())
+
       return {
         type: "MASTER_STUDENT",
         start: startDate,
         end: endDate,
-        specialization: code,
+        specialization,
         semester: estimatedSemester,
       }
     }
 
+    const estimatedSemester = membershipService.findEstimatedSemester(courses, study)
+
     logger.info("Estimated end date for the bachelor's programme to be %s", endDate.toUTCString())
+
     return {
       type: "BACHELOR_STUDENT",
       start: startDate,
@@ -892,7 +917,12 @@ function areMembershipsEqual(a: Membership, b: MembershipWrite) {
 }
 
 function getSpecializationFromCode(code: string): MembershipSpecialization {
-  // Derived from 'MSIT.json' file which is pulled from Feide Groups API and the NTNU study plan.
+  // The codes are derived from 'MSIT.json' file which is pulled from Feide Groups API and the NTNU study plan.
+  //
+  // You can also find these codes in the URL of NTNU's study plan:
+  // https://www.ntnu.edu/studies/studyplan#programmeCode=MSIT&year=2026&dir=MSIT-PSE-26
+  //                                                                         ^^^^^^^^
+  // See screenshot: https://drive.google.com/file/d/1C2DNUCFwQAfm8cqGtZyFj6ULLUoAY9WL/view?usp=sharing
   switch (code) {
     case "MSIT-AI":
       return "ARTIFICIAL_INTELLIGENCE"
@@ -902,6 +932,10 @@ function getSpecializationFromCode(code: string): MembershipSpecialization {
       return "INTERACTION_DESIGN"
     case "MSIT-SWE":
       return "SOFTWARE_ENGINEERING"
+    case "MSIT-PSE":
+      return "PROGRAMMING_AND_SECURITY_ENGINEERING"
+    case "MSIT-VI":
+      return "VISUAL_INFORMATICS"
   }
   return "UNKNOWN"
 }
