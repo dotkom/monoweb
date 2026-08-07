@@ -43,9 +43,9 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
               onLoad={(loadEvent) => {
                 const image = loadEvent.currentTarget
                 const ratio = image.naturalWidth / image.naturalHeight
-                const target = 5 / 2
-                const epsilon = 0.05
-                setHasCorrectAspectRatio(Math.abs(ratio - target) < epsilon)
+                const target = 24 / 9
+                const tolerance = 0.05
+                setHasCorrectAspectRatio(Math.abs(ratio - target) < tolerance)
               }}
             />
           ) : (
