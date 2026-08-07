@@ -50,6 +50,27 @@
     pointer-events: none;
   }
 
+  .shimmer-silver {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer-silver::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(180, 180, 180, 0.25) 45%,
+      rgba(255, 255, 255, 0.65) 50%,
+      rgba(180, 180, 180, 0.25) 55%,
+      transparent 70%
+    );
+    animation: 5s shimmer 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
   .animate-distinguished-sheen {
     animation: distinguished-sheen 9s ease-in-out infinite;
   }
