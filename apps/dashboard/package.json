@@ -74,6 +74,7 @@
     "@types/node": "22.19.7",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "jsdom": "28.1.0",
     "open-color": "1.9.1",
     "postcss": "8.5.19",
     "postcss-preset-mantine": "1.18.0",

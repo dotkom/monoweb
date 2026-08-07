@@ -195,6 +195,9 @@ importers:
       '@types/react-dom':
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.17)
+      jsdom:
+        specifier: 28.1.0
+        version: 28.1.0(@noble/hashes@1.8.0)
       open-color:
         specifier: 1.9.1
         version: 1.9.1
@@ -14883,7 +14886,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.0
-      undici: 7.22.0
+      undici: 7.25.0
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0

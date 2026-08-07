@@ -25,25 +25,26 @@ interface UploadImageModalProps {
   withMetadata?: boolean
 }
 
-export const UploadImageModal: FC<ContextModalProps<UploadImageModalProps>> = ({ context, innerProps }) => {
+export const UploadImageModal: FC<ContextModalProps<UploadImageModalProps>> = ({ context, id, innerProps }) => {
   const withMetadata = innerProps.withMetadata !== false
 
   if (!withMetadata) {
-    return <ImageOnlyUploadForm context={context} innerProps={innerProps} />
+    return <ImageOnlyUploadForm context={context} id={id} innerProps={innerProps} />
   }
 
-  return <MetadataUploadForm context={context} innerProps={innerProps} />
+  return <MetadataUploadForm context={context} id={id} innerProps={innerProps} />
 }
 
-const MetadataUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "context" | "innerProps">> = ({
+const MetadataUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "context" | "id" | "innerProps">> = ({
   context,
+  id,
   innerProps,
 }) => {
   const Form = useFormBuilder({
     schema: metadataValidationSchema,
     onSubmit: async (data) => {
       await innerProps.handleSubmit?.(data.imageUrl, data.alt, data.title || undefined)
-      context.closeAll()
+      context.closeModal(id)
     },
     label: "Last opp bilde",
     fields: {
@@ -77,15 +78,16 @@ const MetadataUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "con
   )
 }
 
-const ImageOnlyUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "context" | "innerProps">> = ({
+const ImageOnlyUploadForm: FC<Pick<ContextModalProps<UploadImageModalProps>, "context" | "id" | "innerProps">> = ({
   context,
+  id,
   innerProps,
 }) => {
   const Form = useFormBuilder({
     schema: imageOnlyValidationSchema,
     onSubmit: async (data) => {
       await innerProps.handleSubmit?.(data.imageUrl, "", undefined)
-      context.closeAll()
+      context.closeModal(id)
     },
     label: "Lagre",
     fields: {
