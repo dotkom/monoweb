@@ -58,7 +58,6 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
       <CollapsibleTrigger
         className={cn(
           "cursor-pointer w-full flex items-center justify-between gap-2 font-medium text-gray-500",
-          "[&[data-state=open]>svg]:rotate-180",
           "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         )}
       >
@@ -76,13 +75,7 @@ export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
         <IconChevronDown className="size-[1.25em] transition-transform" />
       </CollapsibleTrigger>
 
-      <CollapsibleContent
-        className={cn(
-          "overflow-hidden",
-          "data-[state=open]:animate-collapsible-down",
-          "data-[state=closed]:animate-collapsible-up"
-        )}
-      >
+      <CollapsibleContent>
         <div className="relative flex flex-col border border-field-border rounded-xl">
           <div className="relative m-px">
             <IconSearch className="w-8 md:w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3 text-muted-foreground" />

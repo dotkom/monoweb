@@ -28,7 +28,6 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
       <CollapsibleTrigger
         className={cn(
           "cursor-pointer w-full flex items-center justify-between gap-2 font-medium text-gray-500",
-          "[&[data-state=open]>svg]:rotate-180",
           "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         )}
       >
@@ -45,13 +44,7 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
         </div>
         <IconChevronDown className="size-[1.25em] transition-transform" />
       </CollapsibleTrigger>
-      <CollapsibleContent
-        className={cn(
-          "overflow-hidden",
-          "data-[state=open]:animate-collapsible-down",
-          "data-[state=closed]:animate-collapsible-up"
-        )}
-      >
+      <CollapsibleContent>
         <div className="flex flex-col pt-2">
           {EVENT_TYPE_OPTIONS.map((type) => {
             const isSelected = value.includes(type.value)
