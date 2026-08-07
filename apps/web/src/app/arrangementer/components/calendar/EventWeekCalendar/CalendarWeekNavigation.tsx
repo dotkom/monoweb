@@ -45,12 +45,12 @@ export const CalendarWeekNavigation: FC<WeekNavigationProps> = ({ year, weekNumb
       <Title className="text-lg font-medium">
         Uke {weekNumber}, {year}
       </Title>
-      <div className="flex gap-2 sm:gap-1">
-        <Button className="p-1 aspect-square" onClick={handlePreviousWeek} aria-label="Forrige uke">
-          <IconChevronLeft className="size-5" />
+      <div className="flex gap-1">
+        <Button size="icon-xl" variant="outline" onClick={handlePreviousWeek} aria-label="Forrige uke">
+          <IconChevronLeft />
         </Button>
-        <Button className="p-1 aspect-square" onClick={handleNextWeek} aria-label="Neste uke">
-          <IconChevronRight className="size-5" />
+        <Button size="icon-xl" variant="outline" onClick={handleNextWeek} aria-label="Neste uke">
+          <IconChevronRight />
         </Button>
       </div>
     </div>

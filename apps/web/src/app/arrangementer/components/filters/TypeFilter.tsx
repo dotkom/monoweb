@@ -62,7 +62,7 @@ export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
                   id={`type-${type.value}`}
                   checked={isSelected}
                   onCheckedChange={() => handleToggle(type.value)}
-                  className="max-md:size-4.5"
+                  className="size-5"
                 />
                 <Label
                   htmlFor={`type-${type.value}`}

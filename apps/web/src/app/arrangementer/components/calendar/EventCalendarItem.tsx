@@ -78,8 +78,10 @@ export const EventCalendarItem = ({ eventDetail, userId, eventDisplayProps, clas
   return (
     <HoverCard>
       <HoverCardTrigger
+        delay={10}
+        closeDelay={150}
         className={cn(
-          "ml-[2px] mr-px my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
+          "text-left ml-[2px] mr-px my-0.5 pl-[0.2rem] sm:pl-[0.4rem] text-xs sm:text-sm sm:mx-1 overflow-hidden relative",
           isActive ? triggerClasses : "bg-gray-100 text-gray-500 dark:bg-stone-800 dark:text-stone-400",
           borderClasses,
           getColStartClass(eventDisplayProps.startCol + 1),
@@ -100,10 +102,8 @@ export const EventCalendarItem = ({ eventDetail, userId, eventDisplayProps, clas
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        className={cn(
-          "border-2 border-transparent transition-colors duration-300 max-w-80 min-w-60 w-full",
-          cardClasses
-        )}
+        collisionPadding={16}
+        className={cn("p-0 border-2 transition-colors duration-300 max-w-80 min-w-60 w-full ring-0", cardClasses)}
       >
         <Link href={createEventPageUrl(event.id, event.title)}>
           <div className="p-4">

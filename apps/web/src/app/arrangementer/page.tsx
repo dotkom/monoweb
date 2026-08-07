@@ -11,18 +11,20 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Text,
   Title,
   ToggleGroup,
   ToggleGroupItem,
   cn,
 } from "@dotkomonline/ui"
-import { IconCalendarMonth, IconFilter2, IconLayoutList, IconSearch, IconX } from "@tabler/icons-react"
+import {
+  IconCalendarMonth,
+  IconFilter2,
+  IconLayoutColumns,
+  IconLayoutList,
+  IconSearch,
+  IconX,
+} from "@tabler/icons-react"
 import { useTRPC } from "@/utils/trpc/client"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
@@ -39,13 +41,8 @@ import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "./
 import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
-import type { EventsView } from "./hooks/useEventsViewNavigation"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
-
-const calendarViewOptions = [
-  { value: "month", label: "Måned" },
-  { value: "week", label: "Uke" },
-] as const
+import { GridIcon } from "@/components/icons/GridIcon"
 
 const EventPage = () => {
   const { view, isList, isCalendar } = useEventsView()
@@ -111,8 +108,8 @@ const EventPage = () => {
         Arrangementer
       </Title>
 
-      <div className={cn("flex gap-2 justify-between", isCalendar ? "flex-wrap" : "")}>
-        <div className={cn("flex gap-2", isList ? "w-full" : "")}>
+      <div className={cn("flex gap-x-2 gap-y-3 justify-between", isCalendar ? "flex-wrap" : "")}>
+        <div className={cn("flex gap-2", isCalendar ? "flex-wrap" : "w-full")}>
           <ToggleGroup
             className="shrink-0 h-10"
             multiple={false}
@@ -164,7 +161,7 @@ const EventPage = () => {
                     <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
                       <div>
                         <div className="flex flex-col gap-2">
-                          <Text element="span" className="h-5.5 font-medium text-gray-500 dark:text-stone-400 text-sm">
+                          <Text element="span" className="h-5.5 font-medium text-sm">
                             Sorter
                           </Text>
                           <SortFilter
@@ -217,48 +214,28 @@ const EventPage = () => {
           )}
 
           {isCalendar && (
-            <>
-              <ToggleGroup
-                className="hidden xs:flex shrink-0 h-full"
-                multiple={false}
-                spacing={0}
-                value={[view]}
-                onValueChange={(value) => {
-                  const nextView = value.at(0)
+            <ToggleGroup
+              className="shrink-0 h-10"
+              multiple={false}
+              spacing={0}
+              value={[view]}
+              onValueChange={(value) => {
+                const nextView = value.at(0)
 
-                  if (nextView === "month" || nextView === "week") {
-                    navigateToView(nextView)
-                  }
-                }}
-              >
-                <ToggleGroupItem value="month" className="h-full border-field-border">
-                  Måned
-                </ToggleGroupItem>
-                <ToggleGroupItem value="week" className="h-full border-field-border">
-                  Uke
-                </ToggleGroupItem>
-              </ToggleGroup>
-
-              <div className="xs:hidden">
-                <Select
-                  value={view}
-                  onValueChange={(selectedView) => navigateToView(selectedView as EventsView)}
-                  items={calendarViewOptions}
-                >
-                  <SelectTrigger className="h-11.5 rounded-lg min-w-26 font-medium dark:border-none">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-lg -ml-[2px] py-[2px] md:dark:border-none shadow-none min-w-26">
-                    <SelectItem value="month" className="h-8 rounded-md">
-                      <Text element="span">Måned</Text>
-                    </SelectItem>
-                    <SelectItem value="week" className="h-8 rounded-md">
-                      <Text element="span">Uke</Text>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
+                if (nextView === "month" || nextView === "week") {
+                  navigateToView(nextView)
+                }
+              }}
+            >
+              <ToggleGroupItem value="month" className="h-full border-field-border">
+                <GridIcon className="size-4.5 mr-1" />
+                Måned
+              </ToggleGroupItem>
+              <ToggleGroupItem value="week" className="h-full border-field-border">
+                <IconLayoutColumns className="size-4.5 mr-1" />
+                Uke
+              </ToggleGroupItem>
+            </ToggleGroup>
           )}
         </div>
 
@@ -282,13 +259,13 @@ const EventPage = () => {
       </div>
 
       {isList && searchBarOpen && (
-        <div className="sm:hidden mt-2">
+        <div className="sm:hidden">
           <SearchInput initialValue={filters.search} onDebouncedChange={(value) => updateFilters({ search: value })} />
         </div>
       )}
 
       {isList && (
-        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-12">
+        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12">
           <div className="max-md:hidden mt-4">
             <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
             <div className="mt-6">
