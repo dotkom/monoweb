@@ -34,7 +34,6 @@ export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
   const formatNumber = (n: number) => format.number(n, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const selectedPeriodLabel = periodLabel(periodSelection)
-  const comparisonLabel = formatComparePeriodLabel(comparisonPeriodSelection)
 
   const comparisonValue =
     comparisonPeriodSelection.kind === "preset"
@@ -48,7 +47,7 @@ export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
   return (
     <CourseSectionCard
       className={className}
-      title={<Text className="font-medium text-sm dark:text-stone-200">{selectedPeriodLabel}</Text>}
+      title={<Text className="font-medium text-sm dark:text-stone-200">{t("CoursePage.kpiCard.title")}</Text>}
       action={
         <Select
           value={comparisonValue}
@@ -70,13 +69,16 @@ export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
               <IconChevronDown className="pointer-events-none size-4 text-neutral-500 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out dark:text-stone-400" />
             }
             className={cn(
-              "border-none rounded-md h-8",
+              "border-none rounded-lg h-8",
               "data-placeholder:text-foreground data-popup-open:[&_svg]:rotate-180",
               "bg-neutral-100 text-neutral-950 hover:bg-neutral-200/80",
               "dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
             )}
           >
-            <SelectValue>{comparisonLabel}</SelectValue>
+            <SelectValue>
+              <span className="sm:hidden">{formatComparePeriodLabel(comparisonPeriodSelection, true)}</span>
+              <span className="hidden sm:inline">{formatComparePeriodLabel(comparisonPeriodSelection)}</span>
+            </SelectValue>
           </SelectTrigger>
           <SelectContent className="max-h-60 w-(--anchor-width) min-w-(--anchor-width) max-w-(--anchor-width) dark:bg-stone-800 dark:border-stone-700">
             <ComparisonSelectItem
