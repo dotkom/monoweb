@@ -38,12 +38,12 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
 
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
-      <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100 [&[data-state=open]>svg]:rotate-180">
+      <CollapsibleTrigger className="w-full flex items-center gap-2 py-1 text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100">
         <Text className="text-sm">{hasAttendablePool ? "Andre påmeldingsgrupper" : "Påmeldingsgrupper"}</Text>
         <IconChevronDown className="size-[1.25em] transition-transform" />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
+      <CollapsibleContent>
         <div className="flex flex-col gap-2 text-sm mb-1">
           {nonAttendablePools.map((pool) => (
             <AttendanceBoxPoolSmall key={pool.id} pool={pool} attendance={attendance} />
