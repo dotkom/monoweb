@@ -52,23 +52,29 @@ function RichTextEditorField({
   aspectRatio,
   editorProps,
 }: RichTextEditorFieldProps) {
-  const editorRef = useRef<Editor | null>(null)
-
-  // This is used to track the last selection before opening the image modal
-  const lastSelectionRef = useRef<{ from: number; to: number } | null>(null)
+  const editorReference = useRef<Editor | null>(null)
+  const imageInsertionSelectionReference = useRef<{ from: number; to: number } | null>(null)
 
   const openImageUploadModal = useUploadImageModal({
     onFileUpload,
     maxSizeKiB: maxFileSizeKiB,
     aspectRatio,
     handleSubmit: async (imageUrl, alt, title) => {
-      const chain = editorRef.current?.chain()
+      const currentEditor = editorReference.current
 
-      if (lastSelectionRef.current) {
-        chain?.setTextSelection(lastSelectionRef.current)
+      if (!currentEditor || currentEditor.isDestroyed) {
+        return
       }
 
-      chain?.focus().setImage({ src: imageUrl, alt, title }).run()
+      const commandChain = currentEditor.chain()
+      const imageInsertionSelection = imageInsertionSelectionReference.current
+
+      if (imageInsertionSelection) {
+        commandChain.setTextSelection(imageInsertionSelection)
+      }
+
+      commandChain.setImage({ src: imageUrl, alt, title }).run()
+      imageInsertionSelectionReference.current = null
     },
   })
 
@@ -101,17 +107,26 @@ function RichTextEditorField({
     content: value,
     immediatelyRender: false,
     onUpdate: (update) => onChange(update.editor.getHTML()),
-    onSelectionUpdate: ({ editor: currentEditor }) => {
-      const { from, to } = currentEditor.state.selection
-      lastSelectionRef.current = { from, to }
-    },
   })
 
   useEffect(() => {
     editor?.setEditable(!disabled)
   }, [disabled, editor])
 
-  editorRef.current = editor
+  editorReference.current = editor
+
+  const handleOpenImageUploadModal = () => {
+    const currentEditor = editorReference.current
+
+    if (!currentEditor || currentEditor.isDestroyed) {
+      return
+    }
+
+    const { from, to } = currentEditor.state.selection
+    imageInsertionSelectionReference.current = { from, to }
+
+    openImageUploadModal()
+  }
 
   return (
     <RichTextEditor {...editorProps} editor={editor} variant="subtle">
@@ -151,7 +166,7 @@ function RichTextEditorField({
               <Divider orientation="vertical" className="mx-0" />
 
               <RichTextEditor.ControlsGroup>
-                <InsertImageButton onClick={openImageUploadModal} />
+                <InsertImageButton onClick={handleOpenImageUploadModal} />
               </RichTextEditor.ControlsGroup>
             </>
           )}
