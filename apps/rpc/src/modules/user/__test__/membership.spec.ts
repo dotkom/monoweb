@@ -164,6 +164,88 @@ describe("Membership integration tests", () => {
     const semester = membershipService.findEstimatedSemester(courses, "MASTER", "SOFTWARE_ENGINEERING")
     expect(semester).toBe(goal)
   })
+
+  it("master programming and security engineering year 1 autumn", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING.YEAR_1_AUTUMN
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "PROGRAMMING_AND_SECURITY_ENGINEERING")
+    expect(semester).toBe(goal)
+  })
+
+  it("master programming and security engineering year 1 spring", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING.YEAR_1_SPRING
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "PROGRAMMING_AND_SECURITY_ENGINEERING")
+    expect(semester).toBe(goal)
+  })
+
+  it("master programming and security engineering year 2 autumn", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING.YEAR_2_AUTUMN
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "PROGRAMMING_AND_SECURITY_ENGINEERING")
+    expect(semester).toBe(goal)
+  })
+
+  it("master programming and security engineering thesis semester", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING.YEAR_2_SPRING_THESIS
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "PROGRAMMING_AND_SECURITY_ENGINEERING")
+    expect(semester).toBe(goal)
+  })
+
+  it("master programming and security engineering with failed compulsory course", async () => {
+    const { goal, courses, dataRetrievedAt } =
+      MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING.YEAR_1_SPRING_FAILED_AUTUMN_COURSE
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "PROGRAMMING_AND_SECURITY_ENGINEERING")
+    expect(semester).toBe(goal)
+  })
+
+  it("master visual informatics year 1 autumn", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_VISUAL_INFORMATICS.YEAR_1_AUTUMN
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "VISUAL_INFORMATICS")
+    expect(semester).toBe(goal)
+  })
+
+  it("master visual informatics year 1 spring", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_VISUAL_INFORMATICS.YEAR_1_SPRING
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "VISUAL_INFORMATICS")
+    expect(semester).toBe(goal)
+  })
+
+  it("master visual informatics year 2 autumn", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_VISUAL_INFORMATICS.YEAR_2_AUTUMN
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "VISUAL_INFORMATICS")
+    expect(semester).toBe(goal)
+  })
+
+  it("master visual informatics thesis semester", async () => {
+    const { goal, courses, dataRetrievedAt } = MASTER_VISUAL_INFORMATICS.YEAR_2_SPRING_THESIS
+
+    vi.setSystemTime(new Date(dataRetrievedAt))
+
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "VISUAL_INFORMATICS")
+    expect(semester).toBe(goal)
+  })
 })
 
 const MASTER = {
@@ -850,6 +932,603 @@ const MASTER = {
         code: "MA0301",
         name: "Elementær diskret matematikk",
         finished: new Date("2022-08-14T22:00:00.000Z"),
+      },
+    ],
+  },
+} as const
+
+// Synthesized data
+const GJOVIK_MSIT_BACHELOR_BACKGROUND = [
+  {
+    code: "PROG1001",
+    name: "Grunnleggende programmering",
+    finished: new Date("2023-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "PROG1003",
+    name: "Objektorientert programmering",
+    finished: new Date("2024-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "PROG1004",
+    name: "Programvareutvikling",
+    finished: new Date("2024-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "PROG2053",
+    name: "Webteknologier",
+    finished: new Date("2024-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "DCSG1001",
+    name: "Infrastruktur: grunnleggende ferdigheter",
+    finished: new Date("2023-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "DCSG1002",
+    name: "Cybersikkerhet og teamarbeid",
+    finished: new Date("2023-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "DCSG1006",
+    name: "Datakommunikasjon og nettverk",
+    finished: new Date("2024-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "DCSG2001",
+    name: "Sammenkoblede nettverk og nettverkssikkerhet",
+    finished: new Date("2024-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "DCSG2003",
+    name: "Robuste og skalerbare tjenester ",
+    finished: new Date("2025-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "DCSG2005",
+    name: "Risikostyring",
+    finished: new Date("2025-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "IDATG2102",
+    name: "Algoritmiske metoder",
+    finished: new Date("2025-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "IDATG2202",
+    name: "Operativsystemer, virtualisering og sikkerhet",
+    finished: new Date("2024-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "IDATG2204",
+    name: "Datamodellering og databasesystemer",
+    finished: new Date("2025-08-14T22:00:00.000Z"),
+  },
+  {
+    code: "BMA1010",
+    name: "Matematikk for Informatikk",
+    finished: new Date("2023-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "EXPH0300",
+    name: "Examen philosophicum for naturvitenskap og teknologi",
+    finished: new Date("2024-12-14T23:00:00.000Z"),
+  },
+  {
+    code: "DCSG2900",
+    name: "Bacheloroppgave Bachelor i digital infrastruktur og cybersikkerhet",
+    finished: new Date("2026-08-14T22:00:00.000Z"),
+  },
+]
+
+const MASTER_PROGRAMMING_AND_SECURITY_ENGINEERING = {
+  // Synthesized data
+  YEAR_1_AUTUMN: {
+    dataRetrievedAt: new Date(2026, 9, 15),
+    goal: MASTER_SEMESTER_OFFSET + 0,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: undefined,
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: undefined,
+      },
+      {
+        code: "IMT4113",
+        name: "Introduksjon til cyber- og informasjonssikkerhets-teknologi",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_1_SPRING: {
+    dataRetrievedAt: new Date(2027, 1, 15),
+    goal: MASTER_SEMESTER_OFFSET + 1,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4113",
+        name: "Introduksjon til cyber- og informasjonssikkerhets-teknologi",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4853",
+        name: "Eksperter i team - Secure software in practice",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: undefined,
+      },
+      {
+        code: "IMT4116",
+        name: "Skadevareanalyse og reversing",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_2_AUTUMN: {
+    dataRetrievedAt: new Date(2027, 9, 15),
+    goal: MASTER_SEMESTER_OFFSET + 2,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4113",
+        name: "Introduksjon til cyber- og informasjonssikkerhets-teknologi",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4853",
+        name: "Eksperter i team - Secure software in practice",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IMT4116",
+        name: "Skadevareanalyse og reversing",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "MACS4000",
+        name: "Forprosjekt (Applied Computer Science og MSIT)",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4300",
+        name: "Spesialisering (Programmering og sikkerhet i programvareutvikling)",
+        finished: undefined,
+      },
+      {
+        code: "IIK3100",
+        name: "Etisk hacking og penetrasjonstesting",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_2_SPRING_THESIS: {
+    dataRetrievedAt: new Date(2028, 1, 15),
+    goal: MASTER_SEMESTER_OFFSET + 3,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4113",
+        name: "Introduksjon til cyber- og informasjonssikkerhets-teknologi",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4853",
+        name: "Eksperter i team - Secure software in practice",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IMT4116",
+        name: "Skadevareanalyse og reversing",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "MACS4000",
+        name: "Forprosjekt (Applied Computer Science og MSIT)",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4300",
+        name: "Spesialisering (Programmering og sikkerhet i programvareutvikling)",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IIK3100",
+        name: "Etisk hacking og penetrasjonstesting",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "MACS490",
+        name: "Masteroppgave (MACS og MSIT)",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_1_SPRING_FAILED_AUTUMN_COURSE: {
+    dataRetrievedAt: new Date(2027, 1, 15),
+    goal: MASTER_SEMESTER_OFFSET + 1,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4113",
+        name: "Introduksjon til cyber- og informasjonssikkerhets-teknologi",
+        finished: undefined,
+      },
+      {
+        code: "IMT4853",
+        name: "Eksperter i team - Secure software in practice",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: undefined,
+      },
+      {
+        code: "IMT4125",
+        name: "Nettverksikkerhet",
+        finished: undefined,
+      },
+    ],
+  },
+} as const
+
+const MASTER_VISUAL_INFORMATICS = {
+  // Synthesized data
+  YEAR_1_AUTUMN: {
+    dataRetrievedAt: new Date(2026, 9, 15),
+    goal: MASTER_SEMESTER_OFFSET + 0,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: undefined,
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4121",
+        name: "Introduksjon til visuell databehandling og informatikk",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_1_SPRING: {
+    dataRetrievedAt: new Date(2027, 1, 15),
+    goal: MASTER_SEMESTER_OFFSET + 1,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4121",
+        name: "Introduksjon til visuell databehandling og informatikk",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4310",
+        name: "Eksperter i Team - 3D Acquisition and Reproduction of Material Appearance – Challenges and Opportunities",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4200",
+        name: "Visuell informatikk",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_2_AUTUMN: {
+    dataRetrievedAt: new Date(2027, 9, 15),
+    goal: MASTER_SEMESTER_OFFSET + 2,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4121",
+        name: "Introduksjon til visuell databehandling og informatikk",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4310",
+        name: "Eksperter i Team - 3D Acquisition and Reproduction of Material Appearance – Challenges and Opportunities",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4200",
+        name: "Visuell informatikk",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "MACS4000",
+        name: "Forprosjekt (Applied Computer Science og MSIT)",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4322",
+        name: "Advanced visual informatics",
+        finished: undefined,
+      },
+      {
+        code: "IDIG4845",
+        name: "Datagrafikk og immersive medier",
+        finished: undefined,
+      },
+    ],
+  },
+  // Synthesized data
+  YEAR_2_SPRING_THESIS: {
+    dataRetrievedAt: new Date(2028, 1, 15),
+    goal: MASTER_SEMESTER_OFFSET + 3,
+    courses: [
+      ...GJOVIK_MSIT_BACHELOR_BACKGROUND,
+      {
+        code: "HMS0009",
+        name: "HMS-kurs for 1. årsstudenter 2-årig master",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4110",
+        name: "Scientific Methodology and Communication",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4110",
+        name: "Moderne programvareutvikling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4120",
+        name: "Digital Informasjonsbehandling",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4121",
+        name: "Introduksjon til visuell databehandling og informatikk",
+        finished: new Date("2026-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IMT4310",
+        name: "Eksperter i Team - 3D Acquisition and Reproduction of Material Appearance – Challenges and Opportunities",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4210",
+        name: "Programmering og programvarearkitektur",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4220",
+        name: "Moderne Maskinlæring",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "IDIG4200",
+        name: "Visuell informatikk",
+        finished: new Date("2027-08-14T22:00:00.000Z"),
+      },
+      {
+        code: "MACS4000",
+        name: "Forprosjekt (Applied Computer Science og MSIT)",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4322",
+        name: "Advanced visual informatics",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "IDIG4845",
+        name: "Datagrafikk og immersive medier",
+        finished: new Date("2027-12-14T23:00:00.000Z"),
+      },
+      {
+        code: "MACS490",
+        name: "Masteroppgave (MACS og MSIT)",
+        finished: undefined,
       },
     ],
   },
