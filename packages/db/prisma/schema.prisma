@@ -27,16 +27,30 @@ enum MembershipType {
   @@map("membership_type")
 }
 
-/// Taken from the Feide API. The values were found by digging around in our Auth0 user profiles.
+/// This is our domain mapping of the specialization codes from the Feide API.
 ///
-/// We have an additional value `UNKNOWN` to represent users that do not have a specialization or if some new value is
-/// suddenly added to the Feide API that we do not yet know about.
+/// The codes can be found from the Feide Groups API. You can also find the codes in the URL of NTNU's study plan:
+/// https://www.ntnu.edu/studies/studyplan#programmeCode=MSIT&year=2026&dir=MSIT-PSE-26
+///                                                                         ^^^^^^^^
+/// See screenshot: https://drive.google.com/file/d/1C2DNUCFwQAfm8cqGtZyFj6ULLUoAY9WL/view?usp=sharing
+///
+/// We have an additional value `UNKNOWN` to represent users that:
+///  a) do not have a specialization
+///  b) if a new value is added to the Feide API that we do not yet know about
 enum MembershipSpecialization {
-  ARTIFICIAL_INTELLIGENCE @map("ARTIFICIAL_INTELLIGENCE")
-  DATABASE_AND_SEARCH     @map("DATABASE_AND_SEARCH")
-  INTERACTION_DESIGN      @map("INTERACTION_DESIGN")
-  SOFTWARE_ENGINEERING    @map("SOFTWARE_ENGINEERING")
-  UNKNOWN                 @map("UNKNOWN")
+  /// MSIT-AI
+  ARTIFICIAL_INTELLIGENCE              @map("ARTIFICIAL_INTELLIGENCE")
+  /// MSIT-DBS
+  DATABASE_AND_SEARCH                  @map("DATABASE_AND_SEARCH")
+  /// MSIT-IXDGLT
+  INTERACTION_DESIGN                   @map("INTERACTION_DESIGN")
+  /// MSIT-SWE
+  SOFTWARE_ENGINEERING                 @map("SOFTWARE_ENGINEERING")
+  /// MSIT-PSE
+  PROGRAMMING_AND_SECURITY_ENGINEERING @map("PROGRAMMING_AND_SECURITY_ENGINEERING")
+  /// MSIT-VI
+  VISUAL_INFORMATICS                   @map("VISUAL_INFORMATICS")
+  UNKNOWN                              @map("UNKNOWN")
 
   @@map("membership_specialization")
 }
@@ -44,7 +58,7 @@ enum MembershipSpecialization {
 model Membership {
   id             String                    @id @default(uuid())
   type           MembershipType
-  /// Specialization of the student. This is relevant for Master students. For all other students, this value should be
+  /// Specialization of the student. This is relevant for master students. For all other students, this value should be
   /// `UNKNOWN`.
   specialization MembershipSpecialization? @default(UNKNOWN)
   start          DateTime                  @db.Timestamptz(3)

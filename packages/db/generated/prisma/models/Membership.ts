@@ -633,7 +633,7 @@ export type $MembershipPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     type: $Enums.MembershipType
     /**
-     * Specialization of the student. This is relevant for Master students. For all other students, this value should be
+     * Specialization of the student. This is relevant for master students. For all other students, this value should be
      * `UNKNOWN`.
      */
     specialization: $Enums.MembershipSpecialization | null

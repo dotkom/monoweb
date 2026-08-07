@@ -9,6 +9,8 @@ export const MembershipSpecializationSchema = z.enum([
   "DATABASE_AND_SEARCH",
   "INTERACTION_DESIGN",
   "SOFTWARE_ENGINEERING",
+  "PROGRAMMING_AND_SECURITY_ENGINEERING",
+  "VISUAL_INFORMATICS",
   "UNKNOWN",
 ])
 export type MembershipSpecialization = z.infer<typeof MembershipSpecializationSchema>
@@ -180,11 +182,15 @@ export function getSpecializationName(specialization: MembershipSpecialization) 
     case "ARTIFICIAL_INTELLIGENCE":
       return "Kunstig intelligens"
     case "DATABASE_AND_SEARCH":
-      return "Database og søk"
+      return "Databaser og søk"
     case "INTERACTION_DESIGN":
-      return "Interaksjonsdesign"
+      return "Interaksjonsdesign, spill- og læringsteknologi"
     case "SOFTWARE_ENGINEERING":
-      return "Programvareutvikling"
+      return "Programvaresystemer"
+    case "PROGRAMMING_AND_SECURITY_ENGINEERING":
+      return "Programmering og programvaresikkerhet"
+    case "VISUAL_INFORMATICS":
+      return "Visuell informatikk"
     case "UNKNOWN":
       return "Ukjent spesialisering"
   }

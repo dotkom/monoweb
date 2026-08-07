@@ -17,7 +17,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -26,7 +26,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -35,7 +35,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -44,7 +44,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -53,7 +53,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -62,7 +62,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -71,7 +71,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -80,7 +80,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -89,7 +89,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -98,7 +98,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -107,7 +107,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -116,7 +116,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -125,7 +125,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -134,7 +134,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("BACHELOR", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "BACHELOR")
     expect(semester).toBe(goal)
   })
 
@@ -143,7 +143,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("MASTER", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "SOFTWARE_ENGINEERING")
     expect(semester).toBe(goal)
   })
 
@@ -152,7 +152,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("MASTER", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "SOFTWARE_ENGINEERING")
     expect(semester).toBe(goal)
   })
 
@@ -161,7 +161,7 @@ describe("Membership integration tests", () => {
 
     vi.setSystemTime(new Date(dataRetrievedAt))
 
-    const semester = membershipService.findEstimatedSemester("MASTER", courses)
+    const semester = membershipService.findEstimatedSemester(courses, "MASTER", "SOFTWARE_ENGINEERING")
     expect(semester).toBe(goal)
   })
 })

@@ -8,6 +8,7 @@ import {
 import invariant from "tiny-invariant"
 import type { NTNUGroup } from "../feide/feide-groups-repository"
 import { getLogger } from "@dotkomonline/logger"
+import type { MembershipSpecialization } from "./user"
 
 export interface MembershipService {
   /**
@@ -15,9 +16,10 @@ export interface MembershipService {
    *
    * NOTE: The value is 0-indexed.
    *
-   * Master studies begin at semester 6.
+   * Master studies begin at semester 6. For masters, `specialization` selects which study plan to
+   * match against.
    *
-   * @see getStudyGrade(semester) in types package
+   * @see `getStudyGrade(semester)` in `@dotkomonline/utils` package
    *
    * @example
    * findEstimatedSemester(...) -> 0 // 1st semester Bachelor (Autumn)
@@ -26,12 +28,16 @@ export interface MembershipService {
    * findEstimatedSemester(...) -> 3 // 4th semester Bachelor
    * findEstimatedSemester(...) -> 4 // 5th semester Bachelor
    * findEstimatedSemester(...) -> 5 // 6th semester Bachelor
-   * findEstimatedSemester(...) -> 6 // 1st semester Master (regardless of prior Bachelor length)
-   * findEstimatedSemester(...) -> 7 // 2nd semester Master
+   * findEstimatedSemester(...) -> 6 // 1st semester Master (Autumn) (regardless of prior Bachelor length)
+   * findEstimatedSemester(...) -> 7 // 2nd semester Master (Spring)
    * findEstimatedSemester(...) -> 8 // 3rd semester Master
    * findEstimatedSemester(...) -> 9 // 4th semester Master
    */
-  findEstimatedSemester(study: "BACHELOR" | "MASTER", courses: ReadonlyArray<NTNUGroup>): number
+  findEstimatedSemester(
+    courses: ReadonlyArray<NTNUGroup>,
+    study: "BACHELOR" | "MASTER",
+    specialization?: MembershipSpecialization
+  ): number
 }
 
 // Semesters are 0-indexed in our calculations. The values for `minimumEnrolledCourses` are arbitrarily chosen by us.
@@ -76,7 +82,13 @@ export const BACHELOR_LAST_SEMESTER = BACHELOR_STUDY_PLAN.at(-1)?.semester ?? 5
 // comprehend and easier for manual intervention.
 export const MASTER_SEMESTER_OFFSET = BACHELOR_LAST_SEMESTER + 1
 
-const MASTER_STUDY_PLAN = [
+// As of 2026, the Trondheim MSIT specializations share enough courses to use the same study plan. This is why it is
+// called "Trondheim" master study plan. The first year have no courses set, which is okay, as we put you in first or
+// second semester based on the current season. All semesters after that include mandatory courses shared for all
+// Trondheim MSIT specializations.
+//
+// NOTE: Eksperter i team is omitted because there are so many course codes for that subject.
+const TRONDHEIM_MASTER_STUDY_PLAN = [
   {
     semester: MASTER_SEMESTER_OFFSET + 0,
     courses: [],
@@ -99,10 +111,52 @@ const MASTER_STUDY_PLAN = [
   },
 ] as const
 
-export const MASTER_FIRST_SEMESTER = MASTER_STUDY_PLAN.at(0)?.semester ?? 6
-export const MASTER_LAST_SEMESTER = MASTER_STUDY_PLAN.at(-1)?.semester ?? 9
+export const MASTER_FIRST_SEMESTER = TRONDHEIM_MASTER_STUDY_PLAN.at(0)?.semester ?? 6
+export const MASTER_LAST_SEMESTER = TRONDHEIM_MASTER_STUDY_PLAN.at(-1)?.semester ?? 9
 
-type StudyPlanCourseSet = typeof BACHELOR_STUDY_PLAN | typeof MASTER_STUDY_PLAN
+// In 2026, MSIT added two new specializations that are located in Gjøvik campus that do not share enough courses to use
+// the same study plan as the Trondheim MSIT specializations (the two new specializations share no courses with the
+// older ones be exact). This is why it is called "Gjøvik" master study plan.
+const GJOVIK_MASTER_STUDY_PLAN = [
+  {
+    semester: MASTER_SEMESTER_OFFSET + 0,
+    courses: ["IDIG4110", "IDIG4120", "IMT4110"],
+    minimumEnrolledCourses: 3,
+  },
+  {
+    semester: MASTER_SEMESTER_OFFSET + 1,
+    courses: ["IDIG4210", "IDIG4220"],
+    minimumEnrolledCourses: 2,
+  },
+  {
+    semester: MASTER_SEMESTER_OFFSET + 2,
+    courses: ["MACS4000"],
+    minimumEnrolledCourses: 1,
+  },
+  {
+    semester: MASTER_SEMESTER_OFFSET + 3,
+    courses: ["MACS490"],
+    minimumEnrolledCourses: 1,
+  },
+] as const
+
+type MasterStudyPlanCourseSet = typeof TRONDHEIM_MASTER_STUDY_PLAN | typeof GJOVIK_MASTER_STUDY_PLAN
+type StudyPlanCourseSet = typeof BACHELOR_STUDY_PLAN | MasterStudyPlanCourseSet
+
+function getMasterStudyPlan(specialization: MembershipSpecialization): MasterStudyPlanCourseSet {
+  switch (specialization) {
+    case "ARTIFICIAL_INTELLIGENCE":
+    case "DATABASE_AND_SEARCH":
+    case "INTERACTION_DESIGN":
+    case "SOFTWARE_ENGINEERING":
+    case "UNKNOWN":
+      return TRONDHEIM_MASTER_STUDY_PLAN
+
+    case "PROGRAMMING_AND_SECURITY_ENGINEERING":
+    case "VISUAL_INFORMATICS":
+      return GJOVIK_MASTER_STUDY_PLAN
+  }
+}
 
 export function getMembershipService(): MembershipService {
   const logger = getLogger("membership-service")
@@ -111,8 +165,8 @@ export function getMembershipService(): MembershipService {
    * Find the approximate semester based on a student's courses against a hard-coded set of courses.
    */
   function estimateSemester(
-    courseSet: StudyPlanCourseSet,
     studentCourses: ReadonlyArray<NTNUGroup>,
+    courseSet: StudyPlanCourseSet,
     semesterOffset: number
   ): number {
     logger.info("Searching for semester estimate based on courses %o and study plan %o", studentCourses, courseSet)
@@ -143,13 +197,14 @@ export function getMembershipService(): MembershipService {
           isPreviousSemesterValueEstimated = false
           continue
         } else {
+          // TLDR: We don't break here to attempt to better predict exchange students.
+          //
           // If they aren't attending in enough of the required courses for this semester, we would basically end our
           // search here, as this is how far they have gotten into their studies. But users who have been exchange
           // students won't have their non-NTNU courses recognized by us, so we continue the loop in case they have a
           // "hole" in their course plan.
           // We set that the previous semester value was estimated, even though we don't update our estimate. This is to
           // prevent us from trying to estimate two semesters in a row.
-          // TLDR: We don't break here to attempt to better predict exchange students.
           isPreviousSemesterValueEstimated = true
           continue
         }
@@ -278,11 +333,14 @@ export function getMembershipService(): MembershipService {
   }
 
   return {
-    findEstimatedSemester(study, courses) {
-      const studyPlan = study === "MASTER" ? MASTER_STUDY_PLAN : BACHELOR_STUDY_PLAN
-      const offset = study === "MASTER" ? MASTER_SEMESTER_OFFSET : 0
+    findEstimatedSemester(courses, study, specialization) {
+      if (study === "BACHELOR") {
+        return estimateSemester(courses, BACHELOR_STUDY_PLAN, 0)
+      }
 
-      return estimateSemester(studyPlan, courses, offset)
+      const studyPlan = getMasterStudyPlan(specialization ?? "UNKNOWN")
+
+      return estimateSemester(courses, studyPlan, MASTER_SEMESTER_OFFSET)
     },
   }
 }
