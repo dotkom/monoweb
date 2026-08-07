@@ -69,7 +69,7 @@ export const OnlineHero: FC = () => {
   }
 
   return (
-    <div className="flex flex-col lg:justify-stretch md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
+    <div className="flex flex-col lg:justify-stretch pt-4 md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
       <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0 lg:order-2">
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />

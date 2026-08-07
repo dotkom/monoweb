@@ -182,10 +182,11 @@ export const Navbar: FC = () => {
     <header className={cn("navbar-shell sticky top-4 z-50 mt-4 flex items-stretch", showLoginButton && "gap-1.5")}>
       <div
         className={cn(
-          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] border border-blue-100 bg-blue-100/80 p-3 shadow-sm backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
+          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] bg-blue-100/80 border border-gray-300/70 p-3 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
           "flex flex-row items-center justify-between w-full",
-          showLoginButton ? "min-w-0 grow" : "w-full",
-          !isLoggedIn && "rounded-r-lg"
+          "min-w-0 grow",
+          showLoginButton && "rounded-r-md",
+          !isLoggedIn && "rounded-r-md"
         )}
       >
         <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
@@ -196,24 +197,27 @@ export const Navbar: FC = () => {
 
         <div className="ml-auto flex items-center">
           <ProfileMenu />
-          <MobileNavigation links={links} />
         </div>
       </div>
 
       {showLoginButton && (
-        <div className="flex h-(--navbar-height) shrink-0 rounded-l-lg rounded-r-[calc(var(--navbar-height)/2)] bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
+        <div className="flex h-(--navbar-height) shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
           <Button
             element="a"
             variant="default"
             size="lg"
-            className="h-full min-w-19 shrink-0 rounded-l-lg rounded-r-[calc(var(--navbar-height)/2)] py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
+            className="h-full min-w-19 shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
             icon={<IconLogin2 className="mr-1.5 size-6" />}
           >
-            <span className="hidden min-[380px]:inline">Logg inn</span>
+            <span className="hidden min-[400px]:inline">Logg inn</span>
           </Button>
         </div>
       )}
+
+      <div className="ml-2 flex size-(--navbar-height) shrink-0 items-center justify-center rounded-full bg-blue-100/80 border border-gray-300/70 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90 lg:hidden">
+        <MobileNavigation links={links} />
+      </div>
     </header>
   )
 }
