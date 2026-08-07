@@ -86,6 +86,10 @@ export function getLetterGradeCandidateCount(gradeDistribution: GradeDistributio
   return sumGradeCountFields(gradeDistribution, letterGradeCountFieldKeys)
 }
 
+export function getPassFailCandidateCount(gradeDistribution: GradeDistributionCountFields) {
+  return gradeDistribution.passedCount + gradeDistribution.failedCount
+}
+
 export function aggregateGradeDistributions(gradeDistributions: GradeDistribution[]): GradeDistributionCountFields {
   return gradeDistributions.reduce((acc, gradeDistribution) => {
     for (const field of gradeDistributionCountFieldKeys) {
@@ -113,11 +117,11 @@ export function calculateCourseGradeType(gradeDistributions: GradeDistribution[]
   const hasLetterGrades = gradeDistributions.some(
     (gradeDistribution) => getLetterGradeCandidateCount(gradeDistribution) > 0
   )
-  const hasPassedFailedGrades = gradeDistributions.some(
-    (gradeDistribution) => gradeDistribution.passedCount > 0 || gradeDistribution.failedCount > 0
+  const hasPassFailGrades = gradeDistributions.some(
+    (gradeDistribution) => getPassFailCandidateCount(gradeDistribution) > 0
   )
 
-  return getPreferredGradeType(hasLetterGrades, hasPassedFailedGrades)
+  return getPreferredGradeType(hasLetterGrades, hasPassFailGrades)
 }
 
 export function calculateCourseStatistics(gradeDistributions: GradeDistribution[]): {

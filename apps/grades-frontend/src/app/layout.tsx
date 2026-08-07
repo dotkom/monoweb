@@ -2,16 +2,16 @@ import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { cn } from "@dotkomonline/ui"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
+import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
 import { Figtree, Inter } from "next/font/google"
-import { NuqsAdapter } from "nuqs/adapters/next"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { Footer } from "./components/Footer"
 import { Navbar } from "./components/navbar/Navbar"
-import type { Metadata } from "next"
 
 setDateFnsDefaultOptions({ locale: nb })
 
