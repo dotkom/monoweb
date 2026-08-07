@@ -71,15 +71,14 @@ function toLineChartPoints(
     const label = `${t(semester.semester)}${String(semester.year).slice(-2)}`
 
     if (mode === "LETTER") {
-      if (getLetterGradeCandidateCount(gradeDistribution) === 0) {
-        return []
-      }
+      const letterCount = getLetterGradeCandidateCount(gradeDistribution)
 
+      // Show pass/fail semesters as empty dots on the x-axis
       return [
         {
           id: serializeSemesterKey(semester),
           label,
-          value: stats.averageGrade,
+          value: letterCount > 0 ? stats.averageGrade : null,
         },
       ]
     }
