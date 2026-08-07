@@ -1,7 +1,7 @@
 "use client"
 
-import type { Notification } from "@dotkomonline/types"
 import { createContext, useContext } from "react"
+import type { Notification } from "@dotkomonline/rpc"
 
 export const NotificationDetailsContext = createContext<{
   notification: Notification
