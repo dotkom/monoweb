@@ -9,8 +9,15 @@ import Link from "next/link"
 import type { FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
+import { secondsToMilliseconds } from "date-fns"
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
+// How far the pointer needs to move (in px) before we consider it a "drag"
+const DRAG_THRESHOLD_PX = 4
+// How long the hint stays visible once shown
+const HINT_DURATION_MS = secondsToMilliseconds(3)
+// How many plain (non-dragging, non-light-switch) clicks before the hint is displayed
+const CLICKS_BEFORE_HINT = 3
 
 interface SplineInstance {
   setVariable?: (name: string, value: boolean | number | string) => void
@@ -37,13 +44,6 @@ export const OnlineHero: FC = () => {
   const failedClickCount = useRef<number>(0)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  // How far the pointer needs to move (in px) before we consider it a "drag"
-  const DRAG_THRESHOLD = 4
-  // How long the hint stays visible once shown
-  const HINT_DURATION_MS = 3000
-  // How many plain (non-dragging, non-light-switch) clicks before the hint is displayed
-  const CLICKS_BEFORE_HINT = 3
 
   const updateSplineDarkMode = useCallback((darkModeValue: boolean) => {
     if (splineRef.current?.setVariable) {
@@ -85,32 +85,34 @@ export const OnlineHero: FC = () => {
     // on a parent element never fire. Listening on window in the CAPTURE
     // phase runs before Spline gets a chance to stop propagation, so this
     // works regardless of what the canvas does internally.
-    const handleWindowPointerDown = (e: PointerEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) return
+    const handleWindowPointerDown = (event: PointerEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        return
+      }
 
       pointerInteraction.current = {
-        startX: e.clientX,
-        startY: e.clientY,
+        startX: event.clientX,
+        startY: event.clientY,
         movedPastThreshold: false,
       }
 
       wasLightSwitchClick.current = false
-      setIsTouchInteraction(e.pointerType === "touch")
+      setIsTouchInteraction(event.pointerType === "touch")
 
       // Note: an already-visible hint is intentionally left alone here -
       // it should only go away once the user actually drags correctly,
       // not just because they clicked again
     }
 
-    const handleWindowPointerMove = (e: PointerEvent) => {
+    const handleWindowPointerMove = (event: PointerEvent) => {
       const interaction = pointerInteraction.current
 
-      if (!interaction || interaction.movedPastThreshold) return
+      if (interaction === null || interaction.movedPastThreshold) return
 
-      const dx = e.clientX - interaction.startX
-      const dy = e.clientY - interaction.startY
+      const dx = event.clientX - interaction.startX
+      const dy = event.clientY - interaction.startY
 
-      if (Math.hypot(dx, dy) > DRAG_THRESHOLD) {
+      if (Math.hypot(dx, dy) > DRAG_THRESHOLD_PX) {
         // They're dragging correctly - they've figured it out, so hide the
         // hint (if visible) and reset the counter in case they need it again
         interaction.movedPastThreshold = true
