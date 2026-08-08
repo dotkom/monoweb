@@ -167,7 +167,6 @@ export function ProfilePage() {
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
-  // const isLoggedIn = sessionUser != null
   const isLoggedIn = sessionUser != null
   const isUser = user ? user.id === sessionUser?.sub : false
 
@@ -243,8 +242,6 @@ export function ProfilePage() {
 
   const [onlyAction] = actions
 
-  // Labelled buttons on desktop, a single settings icon button on small screens.
-  // With more than one action the icon button opens a dropdown instead of linking directly
   const settingsButton =
     onlyAction !== undefined && actions.length === 1 ? (
       <Button
@@ -255,13 +252,13 @@ export function ProfilePage() {
         variant="secondary"
         size="icon-xl"
         aria-label={onlyAction.label}
-        icon={<IconSettings width={24} height={24} />}
+        icon={<IconSettings/>}
       />
     ) : (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon-xl" aria-label="Innstillinger for profil">
-            <IconSettings width={24} height={24} />
+            <IconSettings/>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
