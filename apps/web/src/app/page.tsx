@@ -1,20 +1,16 @@
-import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
+import { EventCard } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
 import { CommitteeApplicationsNotice } from "@/components/notices/committee-applications-notice"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
-import type { AttendanceSummary } from "@dotkomonline/rpc/attendance"
-import type { EventSummary, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDate, startOfDay } from "date-fns"
-import { nb } from "date-fns/locale"
-import Image from "next/image"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { IconArrowRight } from "@tabler/icons-react"
+import { startOfDay } from "date-fns"
 import Link from "next/link"
-import type { FC } from "react"
 import { Fadderuke2026Notice } from "./fadderukene/(2026)/fadderuke-2026-notice"
 
 export default async function App() {
@@ -79,7 +75,7 @@ export default async function App() {
           <>
             <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
               {events.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} />
+                <EventCard key={event.id} event={event} attendance={attendance} userId={user?.id} />
               ))}
 
               <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
@@ -103,7 +99,7 @@ export default async function App() {
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
                 {events.map(({ event, attendance }) => (
                   <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
-                    <EventCard event={event} attendance={attendance} />
+                    <EventCard event={event} attendance={attendance} userId={user?.id} />
                   </div>
                 ))}
 
@@ -144,7 +140,7 @@ export default async function App() {
           <>
             <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
               {eventsUserIsAttending.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} />
+                <EventCard key={event.id} event={event} attendance={attendance} userId={user.id} />
               ))}
 
               <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
@@ -168,7 +164,7 @@ export default async function App() {
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
                 {eventsUserIsAttending.map(({ event, attendance }) => (
                   <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
-                    <EventCard event={event} attendance={attendance} />
+                    <EventCard event={event} attendance={attendance} userId={user.id} />
                   </div>
                 ))}
 
@@ -194,56 +190,6 @@ export default async function App() {
         )}
       </div>
     </section>
-  )
-}
-
-interface ComingEventProps {
-  event: EventSummary
-  attendance: AttendanceSummary | null
-  className?: string
-}
-
-const EventCard: FC<ComingEventProps> = ({ event, attendance, className }) => {
-  const _reservedStatus = attendance?.currentUserAttendee?.reserved ?? false
-
-  return (
-    <Link
-      href={createEventPageUrl(event.id, event.title)}
-      className={cn(
-        "flex flex-col w-full h-fit gap-3 p-3 rounded-2xl border transition-colors",
-        "border-gray-100 bg-gray-50 hover:bg-transparent",
-        "dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
-        className
-      )}
-    >
-      <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005}>
-        {event.imageUrl ? (
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-100 dark:border-stone-700">
-            <Image
-              src={event.imageUrl}
-              alt={event.title}
-              fill
-              sizes="(max-width: 768px) 85vw, 30vw"
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="rounded-lg border w-full border-gray-100 dark:border-stone-700 overflow-hidden aspect-video">
-            <PlaceHolderImage variant={event.type} className="scale-160 object-contain" />
-          </div>
-        )}
-      </Tilt>
-      <div className="flex flex-col gap-2 w-full">
-        <Title element="p" size="lg" title={event.title} className="max-md:text-lg font-semibold line-clamp-1">
-          {event.title}
-        </Title>
-
-        <div className="flex flex-row gap-2 items-center">
-          <IconCalendarEvent className="size-5 text-gray-800 dark:text-stone-400" />
-          <Text className="text-sm">{formatDate(event.start, "dd.MM", { locale: nb })}</Text>
-        </div>
-      </div>
-    </Link>
   )
 }
 
