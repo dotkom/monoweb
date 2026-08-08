@@ -4,9 +4,14 @@ import { cn } from "@dotkomonline/ui"
 import { useSyncExternalStore } from "react"
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { AggregatedGradeDistribution } from "../../utils"
-import { CHART_SURFACE_CLASS, CHART_X_AXIS_HEIGHT, GradeTick, SlotHoverCursor } from "./grade-bar-chart-primitives"
+import {
+  CHART_SURFACE_CLASS,
+  CHART_X_AXIS_HEIGHT,
+  GradeTick,
+  LegendSwatch,
+  SlotHoverCursor,
+} from "./grade-bar-chart-primitives"
 import { DistributionBarShape } from "./grade-bar-chart-shape"
-import { GradeBarChartHeader } from "./GradeBarChartHeader"
 import { useGradeChartData } from "./use-grade-chart-data"
 
 const COMPACT_AXIS_LABELS_QUERY = "(max-width: 599px), (min-width: 1024px) and (max-width: 1179px)"
@@ -39,7 +44,7 @@ export function GradeDistributionBarChart({
   comparisonPeriodLabel,
 }: Props) {
   const compactViewport = useMediaQuery(COMPACT_AXIS_LABELS_QUERY)
-  const { data, yMax, activeRow, setActiveField, showComparison, formatPercent } = useGradeChartData({
+  const { data, yMax, showComparison, formatPercent } = useGradeChartData({
     primary,
     comparison,
     ghostEnabled,
@@ -50,14 +55,14 @@ export function GradeDistributionBarChart({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <GradeBarChartHeader
-        showComparison={showComparison}
-        primaryPeriodLabel={primaryPeriodLabel}
-        comparisonPeriodLabel={comparisonPeriodLabel}
-        activeRow={activeRow}
-        candidateCount={primary.candidateCount}
-        formatPercent={formatPercent}
-      />
+      <div className="flex min-h-5 min-w-0 items-center gap-4">
+        {showComparison && (
+          <>
+            <LegendSwatch label={primaryPeriodLabel} variant="primary" />
+            <LegendSwatch label={comparisonPeriodLabel} variant="ghost" />
+          </>
+        )}
+      </div>
 
       {/* biome-ignore lint/a11y/noStaticElementInteractions: block text/focus selection on Recharts SVG */}
       <div
@@ -76,15 +81,6 @@ export function GradeDistributionBarChart({
             tabIndex={-1}
             className="outline-none"
             style={{ userSelect: "none" }}
-            onMouseMove={(state) => {
-              const index = state?.activeTooltipIndex
-              if (typeof index !== "number" || index < 0 || index >= data.length) {
-                return
-              }
-
-              setActiveField(data[index].field)
-            }}
-            onMouseLeave={() => setActiveField(null)}
           >
             <XAxis
               dataKey="axisLabel"
