@@ -1,4 +1,10 @@
-import { getChartCountFields, type GradeDistributionCountFields } from "@dotkomonline/grades-backend/grade-distribution"
+import {
+  getChartCountFields,
+  letterGradeCountFieldKeys,
+  passFailCountFieldKeys,
+  type GradeDistributionCountFields,
+} from "@dotkomonline/grades-backend/grade-distribution"
+import { useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 import { chartFieldLabel, type AggregatedGradeDistribution } from "../../utils"
 
@@ -7,21 +13,21 @@ const Y_MAX_HEADROOM = 1.1
 export type ChartRow = {
   field: keyof GradeDistributionCountFields
   label: string
+  axisLabel: string
   value: number
   count: number
   ghostValue: number
-  ghostCount: number
   plotValue: number
 }
-
-type TranslateFn = (key: "percent" | "grades.PASS" | "grades.FAIL", values?: { value: number }) => string
 
 type Options = {
   primary: AggregatedGradeDistribution
   comparison: AggregatedGradeDistribution | null
   ghostEnabled: boolean
-  t: TranslateFn
+  compactViewport: boolean
 }
+
+type BarChartTranslate = ReturnType<typeof useTranslations<"CoursePage.barChart">>
 
 function toPercent(count: number, total: number) {
   if (total <= 0) {
@@ -31,54 +37,51 @@ function toPercent(count: number, total: number) {
   return (count / total) * 100
 }
 
-function chartRowLabel(field: keyof GradeDistributionCountFields, t: TranslateFn) {
-  const label = chartFieldLabel(field)
+function chartRowLabels(field: keyof GradeDistributionCountFields, t: BarChartTranslate, compactAxisLabels: boolean) {
+  const grade = chartFieldLabel(field)
 
-  if (label === "PASS" || label === "FAIL") {
-    return t(`grades.${label}`)
+  if (grade === "PASS" || grade === "FAIL") {
+    return {
+      label: t(`grades.${grade}`),
+      axisLabel: compactAxisLabels ? t(`grades.${grade}Short`) : t(`grades.${grade}`),
+    }
   }
 
-  return label
+  return { label: grade, axisLabel: grade }
 }
 
-/**
- * Letter-only rows store A–F and leave passed/failed at 0. When the chart is
- * PASS/FAIL-only, fold letter grades into pass/fail so letter comparisons ghost correctly.
- * Skip folding when letter bars are also shown, or totals would double-count.
- */
-function getChartFieldCount(
-  grades: GradeDistributionCountFields,
-  field: keyof GradeDistributionCountFields,
-  fields: readonly (keyof GradeDistributionCountFields)[]
+// When ghost compare is on, show the union of primary and comparison columns.
+function getChartFieldsForView(
+  primary: GradeDistributionCountFields,
+  comparison: GradeDistributionCountFields | null,
+  showComparison: boolean
 ) {
-  const chartIsPassFailOnly = fields.every((key) => key === "passedCount" || key === "failedCount")
-
-  if (chartIsPassFailOnly && field === "passedCount") {
-    return (
-      grades.passedCount +
-      grades.gradeACount +
-      grades.gradeBCount +
-      grades.gradeCCount +
-      grades.gradeDCount +
-      grades.gradeECount
-    )
+  const primaryFields = getChartCountFields(primary)
+  if (!showComparison || !comparison) {
+    return primaryFields
   }
 
-  if (chartIsPassFailOnly && field === "failedCount") {
-    return grades.failedCount + grades.gradeFCount
-  }
+  const comparisonFields = getChartCountFields(comparison)
+  const orderedKeys = [...letterGradeCountFieldKeys, ...passFailCountFieldKeys]
 
-  return grades[field]
+  return orderedKeys.filter((key) => primaryFields.includes(key) || comparisonFields.includes(key))
+}
+
+function chartFieldsAreMixedLetterAndPassFail(fields: readonly (keyof GradeDistributionCountFields)[]) {
+  const hasLetter = fields.some((field) => field.startsWith("grade"))
+  const hasPassFail = fields.some((field) => field === "passedCount" || field === "failedCount")
+  return hasLetter && hasPassFail
 }
 
 function sumChartFieldCounts(
   grades: GradeDistributionCountFields,
   fields: readonly (keyof GradeDistributionCountFields)[]
 ) {
-  return fields.reduce((sum, field) => sum + getChartFieldCount(grades, field, fields), 0)
+  return fields.reduce((sum, field) => sum + grades[field], 0)
 }
 
-export function useGradeChartData({ primary, comparison, ghostEnabled, t }: Options) {
+export function useGradeChartData({ primary, comparison, ghostEnabled, compactViewport }: Options) {
+  const t = useTranslations("CoursePage.barChart")
   const [activeField, setActiveField] = useState<keyof GradeDistributionCountFields | null>(null)
 
   const showComparison = ghostEnabled && comparison !== null
@@ -86,27 +89,29 @@ export function useGradeChartData({ primary, comparison, ghostEnabled, t }: Opti
   const formatPercent = (value: number) => t("percent", { value: Math.round(value) })
 
   const data = useMemo(() => {
-    const fields = getChartCountFields(primary.grades)
+    const fields = getChartFieldsForView(primary.grades, comparison?.grades ?? null, showComparison)
+    const compactAxisLabels = compactViewport && chartFieldsAreMixedLetterAndPassFail(fields)
     const primaryTotal = sumChartFieldCounts(primary.grades, fields)
     const comparisonTotal = comparison ? sumChartFieldCounts(comparison.grades, fields) : 0
 
     return fields.map((field): ChartRow => {
-      const count = getChartFieldCount(primary.grades, field, fields)
-      const ghostCount = comparison ? getChartFieldCount(comparison.grades, field, fields) : 0
+      const count = primary.grades[field]
+      const ghostCount = comparison ? comparison.grades[field] : 0
       const value = toPercent(count, primaryTotal)
       const ghostValue = showComparison ? toPercent(ghostCount, comparisonTotal) : 0
+      const { label, axisLabel } = chartRowLabels(field, t, compactAxisLabels)
 
       return {
         field,
-        label: chartRowLabel(field, t),
+        label,
+        axisLabel,
         value,
         count,
         ghostValue,
-        ghostCount,
         plotValue: showComparison ? Math.max(value, ghostValue) : value,
       }
     })
-  }, [primary.grades, comparison, showComparison, t])
+  }, [primary.grades, comparison, showComparison, compactViewport, t])
 
   const yMax = useMemo(() => {
     const peak = data.reduce((max, row) => Math.max(max, row.plotValue), 0)

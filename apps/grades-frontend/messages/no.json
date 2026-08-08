@@ -144,7 +144,9 @@
       "hoverCompare": "{grade} · {percent} valgt · {comparisonPercent} sammenligning",
       "grades": {
         "PASS": "Bestått",
-        "FAIL": "Ikke bestått"
+        "FAIL": "Ikke bestått",
+        "PASSShort": "Bst.",
+        "FAILShort": "IBst."
       }
     },
     "lineChart": {

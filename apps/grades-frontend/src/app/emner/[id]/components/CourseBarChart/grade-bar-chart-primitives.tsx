@@ -5,6 +5,19 @@ import { cn, Text } from "@dotkomonline/ui"
 const HOVER_INSET_PX = 2
 const HOVER_RADIUS = 6
 
+export const CHART_X_AXIS_HEIGHT = 17
+
+export const CHART_SURFACE_CLASS = cn(
+  "overflow-visible select-none text-muted-foreground outline-none",
+  "**:select-none **:outline-none",
+  "[&_.recharts-wrapper]:outline-none [&_.recharts-surface]:outline-none [&_svg]:outline-none",
+  "[&_.recharts-wrapper]:focus:outline-none [&_.recharts-surface]:focus:outline-none [&_svg]:focus:outline-none",
+  "[&_.recharts-wrapper]:overflow-visible [&_.recharts-surface]:overflow-visible [&_svg]:overflow-visible"
+)
+
+const TICK_FONT_SIZE = 12
+const TICK_DY = -2
+
 export type TickProps = {
   x?: number | string
   y?: number | string
@@ -30,10 +43,11 @@ export function GradeTick({ x, y, payload }: TickProps) {
     <text
       x={tickX}
       y={tickY}
-      dy={6}
+      dy={TICK_DY}
       textAnchor="middle"
+      dominantBaseline="hanging"
       fill="currentColor"
-      fontSize={12}
+      fontSize={TICK_FONT_SIZE}
       className="text-muted-foreground"
     >
       {payload.value}

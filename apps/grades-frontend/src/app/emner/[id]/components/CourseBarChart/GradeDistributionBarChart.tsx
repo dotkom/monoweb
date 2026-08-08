@@ -1,13 +1,27 @@
 "use client"
 
 import { cn } from "@dotkomonline/ui"
-import { useTranslations } from "next-intl"
+import { useSyncExternalStore } from "react"
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { AggregatedGradeDistribution } from "../../utils"
-import { GradeTick, SlotHoverCursor } from "./grade-bar-chart-primitives"
+import { CHART_SURFACE_CLASS, CHART_X_AXIS_HEIGHT, GradeTick, SlotHoverCursor } from "./grade-bar-chart-primitives"
 import { DistributionBarShape } from "./grade-bar-chart-shape"
 import { GradeBarChartHeader } from "./GradeBarChartHeader"
 import { useGradeChartData } from "./use-grade-chart-data"
+
+const COMPACT_AXIS_LABELS_QUERY = "(max-width: 599px), (min-width: 1024px) and (max-width: 1179px)"
+
+function useMediaQuery(query: string) {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mql = window.matchMedia(query)
+      mql.addEventListener("change", onChange)
+      return () => mql.removeEventListener("change", onChange)
+    },
+    () => window.matchMedia(query).matches,
+    () => false
+  )
+}
 
 type Props = {
   primary: AggregatedGradeDistribution
@@ -24,12 +38,12 @@ export function GradeDistributionBarChart({
   primaryPeriodLabel,
   comparisonPeriodLabel,
 }: Props) {
-  const t = useTranslations("CoursePage.barChart")
+  const compactViewport = useMediaQuery(COMPACT_AXIS_LABELS_QUERY)
   const { data, yMax, activeRow, setActiveField, showComparison, formatPercent } = useGradeChartData({
     primary,
     comparison,
     ghostEnabled,
-    t,
+    compactViewport,
   })
 
   const baseline = { x1: 0, x2: 0, y: 0 }
@@ -47,12 +61,7 @@ export function GradeDistributionBarChart({
 
       {/* biome-ignore lint/a11y/noStaticElementInteractions: block text/focus selection on Recharts SVG */}
       <div
-        className={cn(
-          "min-h-56 w-full flex-1 select-none text-muted-foreground outline-none lg:min-h-0",
-          "**:select-none **:outline-none",
-          "[&_.recharts-wrapper]:outline-none [&_.recharts-surface]:outline-none [&_svg]:outline-none",
-          "[&_.recharts-wrapper]:focus:outline-none [&_.recharts-surface]:focus:outline-none [&_svg]:focus:outline-none"
-        )}
+        className={cn("min-h-56 w-full flex-1 lg:min-h-0", CHART_SURFACE_CLASS)}
         onMouseDown={(event) => {
           event.preventDefault()
         }}
@@ -68,22 +77,22 @@ export function GradeDistributionBarChart({
             className="outline-none"
             style={{ userSelect: "none" }}
             onMouseMove={(state) => {
-              const label = state?.activeLabel
-              if (typeof label !== "string") {
+              const index = state?.activeTooltipIndex
+              if (typeof index !== "number" || index < 0 || index >= data.length) {
                 return
               }
 
-              const row = data.find((item) => item.label === label)
-              if (row) {
-                setActiveField(row.field)
-              }
+              setActiveField(data[index].field)
             }}
             onMouseLeave={() => setActiveField(null)}
           >
             <XAxis
-              dataKey="label"
+              dataKey="axisLabel"
               tickLine={false}
               axisLine={false}
+              interval={0}
+              height={CHART_X_AXIS_HEIGHT}
+              tickMargin={0}
               tick={<GradeTick />}
               className="text-muted-foreground"
             />

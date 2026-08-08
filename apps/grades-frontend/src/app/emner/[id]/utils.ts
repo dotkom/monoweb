@@ -1,28 +1,31 @@
-import type { Semester, SemesterKey } from "@dotkomonline/grades-backend/course"
+import type { Semester } from "@dotkomonline/grades-backend/course"
 import {
   aggregateGradeDistributions,
   calculateCourseStatistics,
   getLetterGradeCandidateCount,
+  getPassFailCandidateCount,
   sortGradeDistributionsByYearAndSemester,
   type GradeDistribution,
   type GradeDistributionCountFields,
 } from "@dotkomonline/grades-backend/grade-distribution"
 import type { PeriodPreset, PeriodSelection } from "./course-page-params"
 
+const CHART_FIELD_LABELS: Record<keyof GradeDistributionCountFields, string> = {
+  gradeACount: "A",
+  gradeBCount: "B",
+  gradeCCount: "C",
+  gradeDCount: "D",
+  gradeECount: "E",
+  gradeFCount: "F",
+  passedCount: "PASS",
+  failedCount: "FAIL",
+}
+
 export function chartFieldLabel(field: keyof GradeDistributionCountFields): string {
-  if (field === "passedCount") {
-    return "PASS"
-  }
-
-  if (field === "failedCount") {
-    return "FAIL"
-  }
-
-  return field.replace(/^grade/, "").replace(/Count$/, "")
+  return CHART_FIELD_LABELS[field]
 }
 
 export type AggregatedGradeDistribution = {
-  semesters: SemesterKey[]
   candidateCount: number
   averageGrade: number | null
   passRate: number
@@ -66,7 +69,6 @@ export function toAggregatedGradeDistribution(gradeDistributions: GradeDistribut
   const letterCount = getLetterGradeCandidateCount(grades)
 
   return {
-    semesters: gradeDistributions.map((gd) => ({ year: gd.year, semester: gd.semester })),
     candidateCount,
     averageGrade: letterCount === 0 ? null : averageGrade,
     passRate,
@@ -161,8 +163,6 @@ export function getFallbackComparisonPeriodSelection(primary: PeriodSelection): 
 }
 
 export type PeriodCompareFlags = {
-  selectedHasLetterGrades: boolean
-  comparisonHasLetterGrades: boolean
   showLetterKpi: boolean
   showLetterDelta: boolean
   canGhostCompare: boolean
@@ -174,12 +174,11 @@ export function getPeriodCompareFlags(
 ): PeriodCompareFlags {
   const selectedHasLetterGrades = selectedRows.some((row) => getLetterGradeCandidateCount(row) > 0)
   const comparisonHasLetterGrades = comparisonRows.some((row) => getLetterGradeCandidateCount(row) > 0)
+  const comparisonHasPassFailGrades = comparisonRows.some((row) => getPassFailCandidateCount(row) > 0)
 
   return {
-    selectedHasLetterGrades,
-    comparisonHasLetterGrades,
     showLetterKpi: selectedHasLetterGrades,
     showLetterDelta: selectedHasLetterGrades && comparisonHasLetterGrades,
-    canGhostCompare: !selectedHasLetterGrades || comparisonHasLetterGrades,
+    canGhostCompare: !selectedHasLetterGrades || comparisonHasLetterGrades || comparisonHasPassFailGrades,
   }
 }
