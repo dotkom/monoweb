@@ -17,8 +17,13 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   RadialProgress,
   ReadMore,
+  RichText,
   Text,
   Title,
   Tooltip,
@@ -37,6 +42,7 @@ import {
   IconPhone,
   IconPointFilled,
   IconQuestionMark,
+  IconSettings,
   IconUser,
 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
@@ -49,19 +55,30 @@ import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
 
+interface ProfileAction {
+  label: string
+  href: string
+  icon: ElementType
+  newTab: boolean
+}
+
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
 
   return (
     <>
-      <div className="flex flex-row gap-2 items-center">
-        <Icon className="size-5" />
-        <Text>{props.label}:</Text>
+      <div className="flex flex-row gap-2 items-center text-gray-600 dark:text-stone-400">
+        <Icon className="size-5 shrink-0" />
+        <Text className="text-sm leading-6">{props.label}:</Text>
       </div>
       {props.value !== null ? (
-        <Text>{props.value}</Text>
+        <Text className="text-base ml-7 mb-4 sm:ml-0 sm:mb-0 md:ml-7 md:mb-4 lg:ml-0 lg:mb-0 wrap-break-word min-w-0">
+          {props.value}
+        </Text>
       ) : (
-        <Text className="text-gray-500 dark:text-stone-400">Ingen informasjon</Text>
+        <Text className="text-base ml-7 mb-4 sm:ml-0 sm:mb-0 md:ml-7 md:mb-4 lg:ml-0 lg:mb-0 text-gray-500 dark:text-stone-400">
+          Ingen informasjon
+        </Text>
       )}
     </>
   )
@@ -97,7 +114,7 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
                   {!hasExpired && <IconPointFilled className="text-red-500 -mx-1" width={20} height={20} />}
                   <Text className={cn(!hasExpired && "text-lg font-medium")}>{mark.title}</Text>
                 </div>
-                <div className={cn("flex flex-row gap-2 items-center")}>
+                <div className={cn("flex flex-row flex-wrap gap-2 items-center")}>
                   <Text>
                     {mark.weight} prikk{mark.weight !== 1 ? "er" : ""}
                   </Text>
@@ -213,102 +230,150 @@ export function ProfilePage() {
 
   const dashboardUrl = new URL(`/brukere/${user.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
+  const actions: ProfileAction[] = []
+
+  if (isUser) {
+    actions.push({ label: "Rediger profil", href: "/innstillinger/profil", icon: IconEdit, newTab: false })
+  }
+
+  if (isAdmin) {
+    actions.push({ label: "Administrer bruker", href: dashboardUrl, icon: IconExternalLink, newTab: true })
+  }
+
+  const [onlyAction] = actions
+
+  const settingsButton =
+    onlyAction !== undefined && actions.length === 1 ? (
+      <Button
+        element={Link}
+        href={onlyAction.href}
+        target={onlyAction.newTab ? "_blank" : undefined}
+        rel={onlyAction.newTab ? "noopener noreferrer" : undefined}
+        variant="secondary"
+        size="icon-xl"
+        aria-label={onlyAction.label}
+        icon={<IconSettings />}
+      />
+    ) : (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" size="icon-xl" aria-label="Innstillinger for profil">
+            <IconSettings />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {actions.map((action) => (
+            <DropdownMenuItem asChild key={action.label}>
+              <Link
+                href={action.href}
+                target={action.newTab ? "_blank" : undefined}
+                rel={action.newTab ? "noopener noreferrer" : undefined}
+                className="flex flex-row items-center gap-2"
+              >
+                <action.icon className="size-5 shrink-0" />
+                <Text className="text-sm">{action.label}</Text>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
   return (
     <div className="flex flex-col gap-8 w-full">
-      <div className="flex flex-row gap-4">
-        <Avatar className="w-16 h-16 md:w-32 md:h-32">
+      <div className="flex flex-row items-start gap-4">
+        <Avatar className="w-16 h-16 md:w-32 md:h-32 shrink-0">
           <AvatarImage src={user.imageUrl ?? undefined} className="object-cover" />
           <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
             <IconUser width={64} height={64} />
           </AvatarFallback>
         </Avatar>
 
-        <div className="flex flex-col gap-2 grow">
-          <div className="flex flex-row w-full justify-between">
-            <Title element="h1" className="font-semibold text-xl md:text-2xl">
-              {user.name}
-            </Title>
-            <div className="flex flex-row gap-2 items-center">
-              {isUser && (
-                <Button
-                  element={Link}
-                  href="/innstillinger/profil"
-                  variant="default"
-                  color="dark"
-                  icon={<IconEdit width={20} height={20} />}
-                  className="hidden gap-2 md:flex"
-                >
-                  Rediger profil
-                </Button>
-              )}
-              {isAdmin && (
-                <Button
-                  element={Link}
-                  href={dashboardUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Rediger"
-                  icon={<IconExternalLink width={20} height={20} />}
-                >
-                  Administrer bruker
-                </Button>
-              )}
-            </div>
-          </div>
+        <div className="flex flex-col gap-1 min-w-0 grow">
+          <div className="flex flex-row gap-2">
+            <div className="flex flex-col gap-1 min-w-0 grow ">
+              <div className="flex flex-row flex-wrap w-full justify-between items-start gap-2 pt-2">
+                <Title element="h1" className="font-semibold text-xl md:text-2xl wrap-break-word min-w-0">
+                  {user.name}
+                </Title>
+                {actions.length > 0 && (
+                  <div className="hidden lg:flex flex-row flex-wrap gap-2 items-center shrink-0">
+                    {actions.map((action) => (
+                      <Button
+                        key={action.label}
+                        element={Link}
+                        href={action.href}
+                        target={action.newTab ? "_blank" : undefined}
+                        rel={action.newTab ? "noopener noreferrer" : undefined}
+                        variant={action.href === dashboardUrl ? "secondary" : "default"}
+                        icon={<action.icon width={20} height={20} />}
+                      >
+                        {action.label}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-          <div className="flex flex-col text-sm gap-1 md:flex-row md:items-center md:gap-2">
-            {activeMembership ? (
-              <Text>
-                {grade && `${grade}. klasse (`}
-                {getMembershipTypeName(activeMembership.type)}
-                {grade && ")"}
-              </Text>
-            ) : (
-              <Text className="text-gray-500 dark:text-stone-400">Ingen klasseinformasjon</Text>
-            )}
-
-            <IconPointFilled className="text-gray-500 dark:text-stone-400 hidden md:block" width={16} height={16} />
-
-            {user.createdAt && (
-              <Tooltip delayDuration={100}>
-                <TooltipTrigger>
+              <div className="flex flex-row flex-wrap items-center text-sm gap-x-2 gap-y-1">
+                {activeMembership ? (
                   <Text>
-                    {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
+                    {grade && `${grade}. klasse (`}
+                    {getMembershipTypeName(activeMembership.type)}
+                    {grade && ")"}
                   </Text>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <Text className="text-xs text-gray-500 dark:text-stone-400">
-                    Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
-                  </Text>
-                </TooltipContent>
-              </Tooltip>
-            )}
+                ) : (
+                  <Text className="text-gray-500 dark:text-stone-400">Ingen klasseinformasjon</Text>
+                )}
+
+                <IconPointFilled className="text-gray-500 dark:text-stone-400 shrink-0" width={16} height={16} />
+
+                {user.createdAt && (
+                  <Tooltip delayDuration={100}>
+                    <TooltipTrigger>
+                      <Text>
+                        {capitalizeFirstLetter(formatDistanceToNowStrict(user.createdAt, { locale: nb }))} i Online
+                      </Text>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <Text className="text-xs text-gray-500 dark:text-stone-400">
+                        Registrert {formatDate(user.createdAt, "dd. MMMM yyyy HH:mm")}
+                      </Text>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            </div>
+
+            {actions.length > 0 && <div className="lg:hidden shrink-0">{settingsButton}</div>}
           </div>
 
-          <div className="flex flex-row items-center gap-2 text-sm">
-            {isCompiled && (
+          {isCompiled && (
+            <div className="flex flex-row items-center gap-2 text-sm">
               <div className="flex flex-row items-center w-fit gap-2 p-1.5 bg-gray-100 dark:bg-stone-700 rounded-md">
                 <OnlineIcon height={16} width={16} />
                 <Text>Kompilert</Text>
               </div>
+            </div>
+          )}
+
+          <div className="mt-3">
+            {user.biography ? (
+              <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
+                <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
+              </ReadMore>
+            ) : (
+              <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
             )}
           </div>
-
-          {user.biography ? (
-            <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
-              <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
-            </ReadMore>
-          ) : (
-            <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
-          )}
         </div>
       </div>
 
       {isUser && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
-          <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
+          <div className="flex flex-col gap-3 min-w-0">
             <Title>Din bruker</Title>
-            <div className="grid grid-cols-[auto_1fr] items-start gap-3 overflow-x-scroll sm:overflow-hidden text-sm sm:text-base">
+            <div className="grid sm:grid-cols-[auto_1fr] md:grid-cols-1 lg:grid-cols-[auto_1fr] items-start gap-1 sm:gap-3 md:gap-1 lg:gap-3 text-sm sm:text-base">
               <UserProp label="Brukernavn" value={user.username} icon={IconUser} />
               <UserProp label="E-post" value={user.email} icon={IconMail} />
               <UserProp label="Kjønn" value={getGenderName(user.gender)} icon={IconGenderBigender} />
@@ -328,7 +393,7 @@ export function ProfilePage() {
           </div>
 
           {marks && marks.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 md:col-span-2">
               <div>
                 <Title>Prikker og suspensjoner</Title>
                 <PenaltyDialog />
@@ -355,8 +420,8 @@ export function ProfilePage() {
                   href={`/tilbakemelding/${event.id}`}
                   className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
                 >
-                  <div className="flex flex-col gap-0.5">
-                    <Text className="text-lg">{event.title}</Text>
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <Text className="text-lg wrap-break-word">{event.title}</Text>
                     <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
                       Gi tilbakemelding på {event.title} som du deltok på{" "}
                       {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
@@ -390,7 +455,7 @@ export function ProfilePage() {
                   <GroupLogoAvatar
                     src={group.imageUrl}
                     alt={displayName}
-                    className="w-14 h-14 p-0.75"
+                    className="w-14 h-14 p-0.75 shrink-0"
                     fallback={
                       <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
                         <IconQuestionMark className="size-8 text-muted-foreground" />
@@ -399,13 +464,12 @@ export function ProfilePage() {
                   />
                   <div className="flex flex-col gap-0.5 grow min-w-0">
                     <Text className="text-lg">{displayName}</Text>
-                    {user.biography ? (
-                      <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
-                        <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
-                      </ReadMore>
-                    ) : (
-                      <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
-                    )}
+                    <RichText
+                      maxLines={3}
+                      className="line-clamp-2 text-muted-foreground"
+                      hideToggleButton={true}
+                      content={group.description}
+                    />
                   </div>
                 </Link>
               )
