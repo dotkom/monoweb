@@ -12,13 +12,16 @@ import type {
   WorkspaceMemberSyncState,
   WorkspaceUser,
 } from "./workspace"
-import { slugify } from "@dotkomonline/utils"
-import { isAfter } from "date-fns"
+import { slugify, type SlugifyOptions } from "@dotkomonline/utils"
+import { compareAsc, isAfter } from "date-fns"
 import type { admin_directory_v1 } from "@googleapis/admin"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
 import { NotFoundError } from "../../error"
+import { CommitteeGroupSlug } from "../authorization-service"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 
@@ -29,13 +32,14 @@ const SLUGIFY_OPTIONS = {
   replacement: ".",
   strict: false,
   remove: /[^a-zA-Z0-9-\s]/g,
-}
+} as const satisfies SlugifyOptions
 
 export interface WorkspaceService {
   // User
   createWorkspaceUser(
     handle: DBHandle,
-    userId: UserId
+    userId: UserId,
+    contactCommittee: CommitteeGroupSlug
   ): Promise<{
     user: User
     workspaceUser: WorkspaceUser
@@ -65,10 +69,13 @@ export interface WorkspaceService {
   synchronizeWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<boolean>
 }
 
+const DOTKOM_LEADER_EMAIL = "dotkom-leder@online.ntnu.no"
+
 export function getWorkspaceService(
   directory: admin_directory_v1.Admin,
   userService: UserService,
   groupService: GroupService,
+  emailService: EmailService,
   configuration: ConfigurationWithGoogleWorkspace
 ): WorkspaceService {
   const logger = getLogger("workspace-sync-service")
@@ -246,6 +253,98 @@ export function getWorkspaceService(
     return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
   }
 
+  async function getLeaderName(handle: DBHandle, groupSlug: GroupId, fallback: string): Promise<string> {
+    const leaders = await groupService.findLeadersBySlug(handle, groupSlug)
+    const leader = leaders
+      .values()
+      .filter((leader) => {
+        const membership = getActiveGroupMembership(leader, groupSlug)
+
+        return membership?.end === null
+      })
+      .toArray()
+      .toSorted((a, b) => {
+        const membershipA = getActiveGroupMembership(a, groupSlug)
+        const membershipB = getActiveGroupMembership(b, groupSlug)
+
+        // sanity check -- they should never be null
+        if (membershipA == null || membershipB == null) {
+          return 0
+        }
+
+        return compareAsc(membershipA.start, membershipB.start)
+      })
+      .at(0)
+
+    if (leader?.name == null) {
+      return fallback
+    }
+
+    return leader.name
+  }
+
+  async function sendCommitteeEmailCreatedEmail(
+    handle: DBHandle,
+    user: User,
+    committeeEmail: string,
+    password: string,
+    firstName: string,
+    contactCommittee: CommitteeGroupSlug,
+    twoFactorAuthentication: {
+      enforced: boolean
+      recoveryCodes: string[] | null
+    }
+  ): Promise<void> {
+    if (user.email === null) {
+      logger.warn("User(ID=%s) does not have an email, cannot send committee email created notification", user.id)
+      return
+    }
+
+    const [dotkomLeaderName, committeeLeaderName] = await Promise.all([
+      getLeaderName(handle, CommitteeGroupSlug.DOTKOM, "Dotkomleder"),
+      getLeaderName(handle, contactCommittee, ""),
+    ])
+
+    if (twoFactorAuthentication.enforced) {
+      invariant(twoFactorAuthentication.recoveryCodes, "Expected recovery codes to be defined when 2FA is enforced")
+
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        [DOTKOM_LEADER_EMAIL],
+        [user.email],
+        [],
+        [],
+        "(Online) Opprettelse av komité-e-postadresse",
+        emails.COMMITTEE_EMAIL_CREATED_2FA_ENFORCED,
+        {
+          firstName,
+          email: committeeEmail,
+          password,
+          dotkomLeaderName,
+          committeeLeaderName,
+          recoveryCodes: twoFactorAuthentication.recoveryCodes,
+        }
+      )
+    } else {
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        [DOTKOM_LEADER_EMAIL],
+        [user.email],
+        [],
+        [],
+        "(Online) Opprettelse av komité-e-postadresse",
+        emails.COMMITTEE_EMAIL_CREATED,
+        {
+          firstName,
+          email: committeeEmail,
+          password,
+          dotkomLeaderName,
+          committeeLeaderName,
+        }
+      )
+    }
+  }
+
   function getWorkspaceMemberSyncState(memberLink: Omit<WorkspaceMemberLink, "syncState">): WorkspaceMemberSyncState {
     // Some of the oldest users do not have Workspace accounts, and we do not want to give "Needs linking" warnings for
     // them, since it has been over a decade since their last group membership ended. We do not want to create new
@@ -282,7 +381,7 @@ export function getWorkspaceService(
   }
 
   return {
-    async createWorkspaceUser(handle, userId) {
+    async createWorkspaceUser(handle, userId, contactCommittee) {
       const user = await userService.getById(handle, userId)
 
       if (user.workspaceUserId) {
@@ -301,9 +400,10 @@ export function getWorkspaceService(
       const password = getTemporaryPassword()
 
       const firstName = user.name.split(" ").slice(0, -1).join(" ")
+      const firstFirstName = firstName.split(" ").at(0)
       const lastName = user.name.split(" ").at(-1)
 
-      if (!firstName || !lastName) {
+      if (!firstName || !firstFirstName || !lastName) {
         throw new Error("Failed to split user name into first and last name")
       }
 
@@ -330,12 +430,19 @@ export function getWorkspaceService(
 
       const is2faEnforced = response.data.isEnforcedIn2Sv ?? false
       const is2faEnabled = response.data.isEnrolledIn2Sv ?? false
+      const isGroup2faEnforced =
+        configuration.googleWorkspace.twoFactorAuthenticationRequiredGroups?.includes(contactCommittee)
 
       let recoveryCodes: string[] | null = null
 
-      if (is2faEnforced && !is2faEnabled) {
+      if ((is2faEnforced && !is2faEnabled) || isGroup2faEnforced) {
         recoveryCodes = await createRecoveryCodes(user)
       }
+
+      await sendCommitteeEmailCreatedEmail(handle, newUser, primaryEmail, password, firstName, contactCommittee, {
+        enforced: is2faEnforced || isGroup2faEnforced,
+        recoveryCodes,
+      })
 
       return {
         user: newUser,
