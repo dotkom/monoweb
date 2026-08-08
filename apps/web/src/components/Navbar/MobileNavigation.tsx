@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Text,
-  cn,
 } from "@dotkomonline/ui"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { IconArrowUpRight, IconChevronDown, IconHome } from "@tabler/icons-react"
@@ -104,23 +103,11 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       "items" in link && link.items.length > 0 ? (
                         <div key={link.title}>
                           <Collapsible defaultOpen={false}>
-                            <CollapsibleTrigger
-                              className={cn(
-                                "cursor-pointer w-full flex items-center justify-between xs:justify-start gap-2 text-base px-3 py-2 rounded-lg hover:bg-blue-100/80 dark:hover:bg-stone-700/50 transition-colors",
-                                "[&[data-state=open]>svg]:rotate-180"
-                              )}
-                            >
+                            <CollapsibleTrigger className="cursor-pointer w-full flex items-center justify-between xs:justify-start gap-2 text-base px-3 py-2 rounded-lg hover:bg-blue-100/80 dark:hover:bg-stone-700/50 transition-colors">
                               <Text className="text-lg">{link.title}</Text>
                               <IconChevronDown className="transition-transform size-4" />
                             </CollapsibleTrigger>
-                            <CollapsibleContent
-                              className={cn(
-                                "overflow-hidden",
-                                "data-[state=open]:animate-collapsible-down",
-                                "data-[state=closed]:animate-collapsible-up",
-                                "mb-2"
-                              )}
-                            >
+                            <CollapsibleContent className="mb-2">
                               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-2">
                                 {link.items.map((subLink) => (
                                   <DropdownMenuItem
