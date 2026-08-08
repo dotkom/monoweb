@@ -1,14 +1,14 @@
 "use client"
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import * as React from "react"
+import { useState, useEffect, useCallback } from "react"
 import { cn } from "#lib/utils"
 
 // Detect touch on mount rather than at render time, to avoid an
 // SSR/hydration mismatch.
 function useIsTouchDevice() {
-  const [isTouchDevice, setIsTouchDevice] = React.useState(false)
-  React.useEffect(() => {
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  useEffect(() => {
     setIsTouchDevice(typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0))
   }, [])
   return isTouchDevice
@@ -17,7 +17,7 @@ function useIsTouchDevice() {
 function HoverCard({ onOpenChange, ...props }: PopoverPrimitive.Root.Props) {
   const isTouchDevice = useIsTouchDevice()
 
-  const handleOpenChange = React.useCallback<NonNullable<PopoverPrimitive.Root.Props["onOpenChange"]>>(
+  const handleOpenChange = useCallback<NonNullable<PopoverPrimitive.Root.Props["onOpenChange"]>>(
     (open, eventDetails) => {
       // On non-touch devices, hover is the only thing that should open or
       // close the card
@@ -35,11 +35,14 @@ function HoverCard({ onOpenChange, ...props }: PopoverPrimitive.Root.Props) {
 }
 
 interface HoverCardTriggerProps extends PopoverPrimitive.Trigger.Props {
-  /** ms to wait before opening on hover (desktop only, ignored on touch) */
-  delay?: number
-  /** ms to wait before closing on hover-out (desktop only, ignored on touch) */
-  /** (Note: if close delay is short, the card might flash during transition out) */
-  closeDelay?: number
+  /** Milliseconds to wait before opening on hover (desktop only, ignored on touch) */
+  openDelayMs?: number
+  /**
+   * Milliseconds to wait before closing on hover-out (desktop only, ignored on touch)
+   *
+   * NOTE: if close delay is short, the card might flash during transition out)
+   */
+  closeDelayMs?: number
 }
 
 function HoverCardTrigger({ delay = 75, closeDelay = 150, className, ...props }: HoverCardTriggerProps) {
