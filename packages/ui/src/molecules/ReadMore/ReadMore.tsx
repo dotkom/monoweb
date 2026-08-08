@@ -5,7 +5,7 @@ import { type ReactNode, useLayoutEffect, useRef, useState } from "react"
 import { Button } from "../../atoms/Button/Button"
 import { cn } from "../../utils"
 
-const DEFAULT_LINE_HEIGHT = 28
+const DEFAULT_LINE_HEIGHT_PX = 28
 
 interface ReadMoreProps {
   children: ReactNode
@@ -30,7 +30,7 @@ export function ReadMore({
 }: ReadMoreProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
-  const [collapsedMaxHeight, setCollapsedMaxHeight] = useState(maxLines ? DEFAULT_LINE_HEIGHT * maxLines : 0)
+  const [collapsedMaxHeight, setCollapsedMaxHeight] = useState(maxLines ? DEFAULT_LINE_HEIGHT_PX * maxLines : 0)
   const [expandedMaxHeight, setExpandedMaxHeight] = useState(0)
   const [previousContainerHeight, setPreviousContainerHeight] = useState<number | null>(null)
 
@@ -40,7 +40,7 @@ export function ReadMore({
   const measureHeights = () => {
     const contentElement = contentElementRef.current
 
-    if (!maxLines || !contentElement) {
+    if (maxLines === undefined || contentElement === null) {
       return
     }
 
@@ -49,7 +49,7 @@ export function ReadMore({
     const measuredElement = contentElement.firstElementChild ?? contentElement
     const computedStyles = getComputedStyle(measuredElement)
 
-    const lineHeight = Number.parseFloat(computedStyles.lineHeight || "0") || DEFAULT_LINE_HEIGHT
+    const lineHeight = Number.parseFloat(computedStyles.lineHeight || "0") || DEFAULT_LINE_HEIGHT_PX
     const wrapperStyles = getComputedStyle(contentElement)
     const verticalPadding =
       Number.parseFloat(wrapperStyles.paddingTop || "0") + Number.parseFloat(wrapperStyles.paddingBottom || "0")
@@ -84,7 +84,7 @@ export function ReadMore({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: should not have containerRef as dependency
   useLayoutEffect(() => {
-    if (isExpanded || previousContainerHeight === null || !containerRef.current) {
+    if (isExpanded || previousContainerHeight === null || containerRef.current === null) {
       return
     }
 
