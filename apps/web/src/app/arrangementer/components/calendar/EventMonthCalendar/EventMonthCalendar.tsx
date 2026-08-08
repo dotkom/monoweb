@@ -64,7 +64,11 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
     <div className="relative">
       {isLoading && (
         <div className="z-50 absolute flex justify-center w-full h-full">
-          <IconLoader2 className="gray-800 dark:stone-200 animate-spin absolute top-40" width={40} height={40} />
+          <IconLoader2
+            className="text-gray-200 dark:text-stone-700 animate-spin absolute top-40"
+            width={40}
+            height={40}
+          />
         </div>
       )}
       <div className="grid grid-cols-7 sm:grid-cols-[auto_1fr_1fr_1fr_1fr_1fr_1fr_1fr]">

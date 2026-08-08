@@ -48,12 +48,12 @@ export const CalendarMonthNavigation: FC<CalendarNavigationProps> = ({ year, mon
       <Title className="text-lg font-medium">
         {months[month]} {year}
       </Title>
-      <div className="flex gap-2 sm:gap-1">
-        <Button onClick={handlePreviousMonth} aria-label="Forrige måned" className="p-1 aspect-square">
-          <IconChevronLeft className="size-5" />
+      <div className="flex gap-1">
+        <Button size="icon-xl" variant="outline" onClick={handlePreviousMonth} aria-label="Forrige måned">
+          <IconChevronLeft />
         </Button>
-        <Button onClick={handleNextMonth} aria-label="Neste måned" className="p-1 aspect-square">
-          <IconChevronRight className="size-5" />
+        <Button size="icon-xl" variant="outline" onClick={handleNextMonth} aria-label="Neste måned">
+          <IconChevronRight />
         </Button>
       </div>
     </div>

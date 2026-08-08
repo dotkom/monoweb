@@ -63,7 +63,11 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
     <div className="relative">
       {isLoading && (
         <div className="z-50 absolute flex justify-center w-full h-full">
-          <IconLoader2 className="gray-800 dark:stone-200 animate-spin absolute top-16" width={40} height={40} />
+          <IconLoader2
+            className="text-gray-200 dark:text-stone-700 dark:stone-200 animate-spin absolute top-16"
+            width={40}
+            height={40}
+          />
         </div>
       )}
       <div className="grid grid-cols-7 sm:grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
