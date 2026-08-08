@@ -13,7 +13,7 @@ import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconArrowUpRight } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
-import { redirect, useSearchParams } from "next/navigation"
+import { redirect, usePathname, useSearchParams } from "next/navigation"
 
 function LoadingCard({ className = "h-36" }: { className?: string }) {
   return <div className={`w-full rounded-xl bg-gray-100 dark:bg-stone-800 animate-pulse ${className}`} />
@@ -37,6 +37,7 @@ function MembershipPageSkeleton() {
 
 export default function MedlemskapPage() {
   const fullPathname = useFullPathname()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const {
     sessionUser,
@@ -78,9 +79,12 @@ export default function MedlemskapPage() {
 
   const user = dbUser
 
+  const feideReturnSearchParams = new URLSearchParams(searchParams.toString())
+  feideReturnSearchParams.set("returnedFromFeide", "true")
+
   const feideAuthorizeUrl = createAuthorizeUrl({
     connection: "FEIDE",
-    returnTo: fullPathname,
+    returnTo: `${pathname}?${feideReturnSearchParams.toString()}`,
   })
 
   const isLoading = auth0ConnectionsIsLoading || auth0Connections === undefined
@@ -93,11 +97,12 @@ export default function MedlemskapPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {returnedFromFeide && (
+      {returnedFromFeide && activeMembership === null && (
         <div className="flex items-center dark:bg-red-900 bg-red-600 p-6 text-white rounded-xl gap-4">
           <IconAlertTriangle width={36} height={36} />
           <Text>
-            Vi kunne ikke bekrefte ditt medlemsskap automatisk. Dersom dette er feil ta kontakt med{" "}
+            Du ble logget inn med FEIDE, men vi kunne ikke bekrefte medlemskapet ditt automatisk. Dersom dette er feil,
+            ta kontakt med{" "}
             <Link className="underline" href="/grupper/hs">
               Hovedstyret
             </Link>
