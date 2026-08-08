@@ -19,7 +19,6 @@ import {
   Button,
   RadialProgress,
   ReadMore,
-  RichText,
   Text,
   Title,
   Tooltip,
@@ -296,7 +295,9 @@ export function ProfilePage() {
           </div>
 
           {user.biography ? (
-            <ReadMore>{user.biography}</ReadMore>
+            <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
+              <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
+            </ReadMore>
           ) : (
             <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
           )}
@@ -398,12 +399,13 @@ export function ProfilePage() {
                   />
                   <div className="flex flex-col gap-0.5 grow min-w-0">
                     <Text className="text-lg">{displayName}</Text>
-                    <RichText
-                      maxLines={3}
-                      className="line-clamp-2 text-muted-foreground"
-                      hideToggleButton={true}
-                      content={group.description}
-                    />
+                    {user.biography ? (
+                      <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
+                        <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
+                      </ReadMore>
+                    ) : (
+                      <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
+                    )}
                   </div>
                 </Link>
               )
