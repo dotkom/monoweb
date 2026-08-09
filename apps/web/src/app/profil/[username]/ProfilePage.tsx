@@ -55,13 +55,6 @@ import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
 
-interface ProfileAction {
-  label: string
-  href: string
-  icon: ElementType
-  newTab: boolean
-}
-
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
 
@@ -230,31 +223,8 @@ export function ProfilePage() {
 
   const dashboardUrl = new URL(`/brukere/${user.id}`, env.NEXT_PUBLIC_DASHBOARD_URL).toString()
 
-  const actions: ProfileAction[] = []
-
-  if (isUser) {
-    actions.push({ label: "Rediger profil", href: "/innstillinger/profil", icon: IconEdit, newTab: false })
-  }
-
-  if (isAdmin) {
-    actions.push({ label: "Administrer bruker", href: dashboardUrl, icon: IconExternalLink, newTab: true })
-  }
-
-  const [onlyAction] = actions
-
   const settingsButton =
-    onlyAction !== undefined && actions.length === 1 ? (
-      <Button
-        element={Link}
-        href={onlyAction.href}
-        target={onlyAction.newTab ? "_blank" : undefined}
-        rel={onlyAction.newTab ? "noopener noreferrer" : undefined}
-        variant="secondary"
-        size="icon-xl"
-        aria-label={onlyAction.label}
-        icon={<IconSettings />}
-      />
-    ) : (
+    isUser && isAdmin ? (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon-xl" aria-label="Innstillinger for profil">
@@ -262,22 +232,46 @@ export function ProfilePage() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {actions.map((action) => (
-            <DropdownMenuItem asChild key={action.label}>
-              <Link
-                href={action.href}
-                target={action.newTab ? "_blank" : undefined}
-                rel={action.newTab ? "noopener noreferrer" : undefined}
-                className="flex flex-row items-center gap-2"
-              >
-                <action.icon className="size-5 shrink-0" />
-                <Text className="text-sm">{action.label}</Text>
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          <DropdownMenuItem asChild>
+            <Link href="/innstillinger/profil" className="flex flex-row items-center gap-2">
+              <IconEdit className="size-5 shrink-0" />
+              <Text className="text-sm">Rediger profil</Text>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link
+              href={dashboardUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-row items-center gap-2"
+            >
+              <IconExternalLink className="size-5 shrink-0" />
+              <Text className="text-sm">Administrer bruker</Text>
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    )
+    ) : isUser ? (
+      <Button
+        element={Link}
+        href="/innstillinger/profil"
+        variant="secondary"
+        size="icon-xl"
+        aria-label="Rediger profil"
+        icon={<IconSettings />}
+      />
+    ) : isAdmin ? (
+      <Button
+        element={Link}
+        href={dashboardUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="secondary"
+        size="icon-xl"
+        aria-label="Administrer bruker"
+        icon={<IconSettings />}
+      />
+    ) : null
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -296,21 +290,25 @@ export function ProfilePage() {
                 <Title element="h1" className="font-semibold text-xl md:text-2xl wrap-break-word min-w-0">
                   {user.name}
                 </Title>
-                {actions.length > 0 && (
+                {(isUser || isAdmin) && (
                   <div className="hidden lg:flex flex-row flex-wrap gap-2 items-center shrink-0">
-                    {actions.map((action) => (
-                      <Button
-                        key={action.label}
-                        element={Link}
-                        href={action.href}
-                        target={action.newTab ? "_blank" : undefined}
-                        rel={action.newTab ? "noopener noreferrer" : undefined}
-                        variant={action.href === dashboardUrl ? "secondary" : "default"}
-                        icon={<action.icon width={20} height={20} />}
-                      >
-                        {action.label}
+                    {isUser && (
+                      <Button element={Link} href="/innstillinger/profil" icon={<IconEdit width={20} height={20} />}>
+                        Rediger profil
                       </Button>
-                    ))}
+                    )}
+                    {isAdmin && (
+                      <Button
+                        element={Link}
+                        href={dashboardUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="secondary"
+                        icon={<IconExternalLink width={20} height={20} />}
+                      >
+                        Administrer bruker
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -345,7 +343,7 @@ export function ProfilePage() {
               </div>
             </div>
 
-            {actions.length > 0 && <div className="lg:hidden shrink-0">{settingsButton}</div>}
+            {settingsButton && <div className="lg:hidden shrink-0">{settingsButton}</div>}
           </div>
 
           {isCompiled && (
@@ -360,7 +358,7 @@ export function ProfilePage() {
           <div className="mt-3">
             {user.biography ? (
               <ReadMore maxLines={3} toggleButtonClassName="mr-auto">
-                <Text className="whitespace-pre-line wrap-break-word">{user.biography}</Text>
+                <Text className="whitespace-pre-line wrap-break-word max-w-prose">{user.biography}</Text>
               </ReadMore>
             ) : (
               <Text className="text-gray-500 dark:text-stone-400">Ingen biografi</Text>
