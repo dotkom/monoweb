@@ -4,7 +4,6 @@ import {
   MembershipWriteSchema,
   UserFilterQuerySchema,
   UserSchema,
-  UserUpdateResultSchema,
   UserWriteSchema,
 } from "./user"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
@@ -182,7 +181,7 @@ const updateUserProcedure = procedure
       input: UserWriteSchema.partial(),
     })
   )
-  .output(UserUpdateResultSchema)
+  .output(UserSchema)
   .use(withAuthentication())
   .use(
     withAuthorization(

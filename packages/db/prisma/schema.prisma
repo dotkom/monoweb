@@ -931,11 +931,10 @@ enum ContestResultOrder {
 }
 
 model Contestant {
-  id                            String   @id @default(uuid())
-  createdAt                     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  resultValue                   Int?     @map("result_value")
-  fadderukeProfilePointsAwarded Int      @default(0) @map("fadderuke_profile_points_awarded")
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  resultValue Int?     @map("result_value")
 
   contestId String  @map("contest_id")
   userId    String? @map("user_id")

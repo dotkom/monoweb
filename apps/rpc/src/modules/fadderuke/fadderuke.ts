@@ -15,6 +15,3 @@ export const FadderukeWriteSchema = FadderukeSchema.pick({
   eventId: true,
 })
 export type FadderukeWrite = z.infer<typeof FadderukeWriteSchema>
-
-// biome-ignore lint/performance/noBarrelFile: this is temporary
-export * from "./fadderuke-contest-profile-progress"
