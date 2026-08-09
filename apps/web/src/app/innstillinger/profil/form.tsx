@@ -25,11 +25,10 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconAlertTriangle, IconArrowUpRight, IconCheck, IconLoader, IconX } from "@tabler/icons-react"
+import { IconAlertTriangle, IconCheck, IconLoader, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { secondsToMilliseconds } from "date-fns"
 import Image from "next/image"
-import Link from "next/link"
 import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
@@ -191,23 +190,12 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           />
         </div>
 
-        <div className="w-full flex flex-col gap-1">
-          <TextInput label="E-post" value={user.email || "<Tom e-post>"} disabled />
-          <Text className="text-xs font-medium text-amber-600 dark:text-orange-300">
-            E-post har flyttet til{" "}
-            <Link href="/innstillinger/bruker" className="inline-flex items-center gap-0.5">
-              Min bruker
-              <IconArrowUpRight className="size-3.5" />
-            </Link>
-          </Text>
-        </div>
-
         <Controller
           control={control}
           name="imageUrl"
           render={({ field: { onChange, value } }) => (
             <div className="w-full flex flex-col gap-1">
-              <Label htmlFor="pfp" className="text-base">
+              <Label htmlFor="pfp" className="text-sm">
                 Profilbilde
               </Label>
               <Text className="text-xs text-gray-500 dark:text-stone-500">
@@ -261,7 +249,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           name="gender"
           render={({ field: { onChange, value } }) => (
             <div className="w-full flex flex-col gap-1">
-              <Label htmlFor="gender" className="text-base">
+              <Label htmlFor="gender" className="text-sm">
                 Kjønn
               </Label>
 
