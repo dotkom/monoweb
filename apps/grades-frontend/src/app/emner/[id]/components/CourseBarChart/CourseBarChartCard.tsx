@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl"
 import { useMemo } from "react"
 import { useCoursePeriodView } from "../../useCoursePeriodView"
 import { useFormatComparePeriodLabel, usePeriodLabel } from "../../usePeriodLabel"
-import { sameSemesters, toAggregatedGradeDistribution } from "../../utils"
+import { getPeriodCompareFlags, sameSemesters, toAggregatedGradeDistribution } from "../../utils"
 import { CourseSectionCard } from "../CourseSectionCard"
 import { GradeDistributionBarChart } from "./GradeDistributionBarChart"
 
@@ -35,8 +35,13 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
   const primaryPeriodLabel = periodLabel(periodSelection)
   const comparisonPeriodLabel = formatComparePeriodLabel(comparisonPeriodSelection)
 
-  const ghostEnabled = params.isGhost === true
-  const canCompare = comparison !== null
+  const { canGhostCompare: rawCanCompare } = getPeriodCompareFlags(selectedRows, comparisonRows)
+  const showGhostComparison = params.isGhost === true && rawCanCompare && comparison !== null
+
+  const canCompare = comparison !== null && rawCanCompare
+
+  const comparisonDisabledReason =
+    comparison === null ? tBar("compareDisabledReason") : tBar("compareDisabledNotComparable")
 
   return (
     <CourseSectionCard
@@ -49,14 +54,14 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
               <Button
                 className={cn(
                   "cursor-pointer border-none text-sm font-normal transition-colors rounded-md",
-                  ghostEnabled
+                  showGhostComparison
                     ? "bg-neutral-100 text-neutral-950 hover:bg-neutral-200/80 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
-                    : "text-muted-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"
+                    : "text-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"
                 )}
                 disabled={!canCompare}
-                onClick={() => setParams({ isGhost: !ghostEnabled })}
+                onClick={() => setParams({ isGhost: !params.isGhost })}
                 variant="ghost"
-                iconRight={<Layers2Icon className={cn("size-4 transition-colors")} />}
+                icon={<Layers2Icon className="size-4 transition-colors" />}
               >
                 {tBar("compare")}
               </Button>
@@ -66,7 +71,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
             className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200"
             arrowClassName="dark:bg-stone-800"
           >
-            <Text className="text-sm">{tBar("compareDisabledReason")}</Text>
+            <Text className="text-sm">{comparisonDisabledReason}</Text>
           </TooltipContent>
         </Tooltip>
       }
@@ -74,7 +79,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
       <GradeDistributionBarChart
         primary={primary}
         comparison={comparison}
-        ghostEnabled={ghostEnabled}
+        ghostEnabled={showGhostComparison}
         primaryPeriodLabel={primaryPeriodLabel}
         comparisonPeriodLabel={comparisonPeriodLabel}
       />

@@ -15,20 +15,7 @@ type GradeRangeBarProps = {
   mode: GradeType
   selectedPeriodLabel: string
   comparisonPeriodLabel: string
-}
-
-function RangeBarTooltip({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <Tooltip delayDuration={100}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent
-        className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200"
-        arrowClassName="dark:bg-stone-800"
-      >
-        <Text className="text-sm">{label}</Text>
-      </TooltipContent>
-    </Tooltip>
-  )
+  showComparisonTick: boolean
 }
 
 export function GradeRangeBar({
@@ -40,6 +27,7 @@ export function GradeRangeBar({
   mode,
   selectedPeriodLabel,
   comparisonPeriodLabel,
+  showComparisonTick,
 }: GradeRangeBarProps) {
   const t = useTranslations("CoursePage.kpiCard.rangeBar")
   const formatter = useFormatter()
@@ -64,6 +52,7 @@ export function GradeRangeBar({
 
   const minSemester = periodLabel({ kind: "semester", semester: min.semester })
   const maxSemester = periodLabel({ kind: "semester", semester: max.semester })
+
   const minTooltip =
     mode === "LETTER" ? t("minAverage", { semester: minSemester }) : t("minPassRate", { semester: minSemester })
   const maxTooltip =
@@ -91,16 +80,18 @@ export function GradeRangeBar({
       <div className="relative h-3 w-full min-w-0">
         <div className="absolute top-1/2 right-0 left-0 h-1 -translate-y-1/2 rounded bg-neutral-200 dark:bg-stone-700" />
 
-        <RangeBarTooltip label={meanTooltip}>
-          <button
-            type="button"
-            aria-label={meanTooltip}
-            className="absolute top-1/2 z-10 flex size-4 -translate-x-1/2 -translate-y-1/2 cursor-default items-center justify-center"
-            style={{ left: pct(mean) }}
-          >
-            <span className="h-3 w-0.5 rounded bg-neutral-400 dark:bg-stone-500" />
-          </button>
-        </RangeBarTooltip>
+        {showComparisonTick && (
+          <RangeBarTooltip label={meanTooltip}>
+            <button
+              type="button"
+              aria-label={meanTooltip}
+              className="absolute top-1/2 z-10 flex size-4 -translate-x-1/2 -translate-y-1/2 cursor-default items-center justify-center"
+              style={{ left: pct(mean) }}
+            >
+              <span className="h-4 w-0.5 rounded bg-neutral-400 dark:bg-stone-500" />
+            </button>
+          </RangeBarTooltip>
+        )}
 
         <RangeBarTooltip label={valueTooltip}>
           <button
@@ -126,5 +117,19 @@ export function GradeRangeBar({
         {t("historicalSpan")}
       </Text>
     </div>
+  )
+}
+
+function RangeBarTooltip({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent
+        className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200"
+        arrowClassName="dark:bg-stone-800"
+      >
+        <Text className="text-sm">{label}</Text>
+      </TooltipContent>
+    </Tooltip>
   )
 }

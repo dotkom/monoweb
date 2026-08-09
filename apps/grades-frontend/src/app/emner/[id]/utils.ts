@@ -159,3 +159,27 @@ export function getFallbackComparisonPeriodSelection(primary: PeriodSelection): 
     preset: secondaryFallback,
   }
 }
+
+export type PeriodCompareFlags = {
+  selectedHasLetterGrades: boolean
+  comparisonHasLetterGrades: boolean
+  showLetterKpi: boolean
+  showLetterDelta: boolean
+  canGhostCompare: boolean
+}
+
+export function getPeriodCompareFlags(
+  selectedRows: GradeDistributionCountFields[],
+  comparisonRows: GradeDistributionCountFields[]
+): PeriodCompareFlags {
+  const selectedHasLetterGrades = selectedRows.some((row) => getLetterGradeCandidateCount(row) > 0)
+  const comparisonHasLetterGrades = comparisonRows.some((row) => getLetterGradeCandidateCount(row) > 0)
+
+  return {
+    selectedHasLetterGrades,
+    comparisonHasLetterGrades,
+    showLetterKpi: selectedHasLetterGrades,
+    showLetterDelta: selectedHasLetterGrades && comparisonHasLetterGrades,
+    canGhostCompare: !selectedHasLetterGrades || comparisonHasLetterGrades,
+  }
+}

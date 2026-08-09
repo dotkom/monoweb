@@ -20,6 +20,8 @@ type Props = {
   comparisonLabel: string
   selectedPeriodLabel: string
   comparisonPeriodLabel: string
+  showDelta: boolean
+  showRangeBarComparisonTick: boolean
 }
 
 export function KpiMetric({
@@ -32,6 +34,8 @@ export function KpiMetric({
   comparisonLabel,
   selectedPeriodLabel,
   comparisonPeriodLabel,
+  showDelta,
+  showRangeBarComparisonTick,
 }: Props) {
   const t = useTranslations()
   const formatter = useFormatter()
@@ -46,34 +50,39 @@ export function KpiMetric({
     [comparisonGradeDistributions]
   )
 
+  const selectedAverage = aggregatedGradeDistribution.averageGrade
+  const comparisonAverage = comparisonAggregatedGradeDistribution.averageGrade
+
   const mainValue =
     mode === "LETTER"
-      ? mapAverageGradeToLetterGrade(aggregatedGradeDistribution.averageGrade ?? 0)
+      ? selectedAverage == null
+        ? "—"
+        : mapAverageGradeToLetterGrade(selectedAverage)
       : Math.round(aggregatedGradeDistribution.passRate)
 
-  const secondaryValue = formatter.number(aggregatedGradeDistribution.averageGrade ?? 0, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })
+  const secondaryValue =
+    selectedAverage == null
+      ? null
+      : formatter.number(selectedAverage, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
 
   const parts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
   }).formatToParts(aggregatedGradeDistribution.passRate / 100)
 
-  const selectedValue =
-    mode === "PASS_FAIL" ? aggregatedGradeDistribution.passRate : (aggregatedGradeDistribution.averageGrade ?? 0)
-  const comparisonMean =
-    mode === "PASS_FAIL"
-      ? comparisonAggregatedGradeDistribution.passRate
-      : (comparisonAggregatedGradeDistribution.averageGrade ?? 0)
+  const selectedValue = mode === "PASS_FAIL" ? aggregatedGradeDistribution.passRate : selectedAverage
+  const comparisonMean = mode === "PASS_FAIL" ? comparisonAggregatedGradeDistribution.passRate : comparisonAverage
 
-  const diff = selectedValue - comparisonMean
+  const canDiff = selectedValue != null && comparisonMean != null
+  const diff = canDiff ? selectedValue - comparisonMean : 0
   const absDiff = Math.abs(diff)
   const passRateDiffPoints = Math.round(absDiff)
-  const diffIsNeutral = mode === "PASS_FAIL" ? passRateDiffPoints === 0 : absDiff < 0.005
-  const diffIsPositive = !diffIsNeutral && diff > 0
-  const diffIsNegative = !diffIsNeutral && diff < 0
+  const diffIsNeutral = !canDiff || (mode === "PASS_FAIL" ? passRateDiffPoints === 0 : absDiff < 0.005)
+  const diffIsPositive = canDiff && !diffIsNeutral && diff > 0
+  const diffIsNegative = canDiff && !diffIsNeutral && diff < 0
 
   const diffValueLabel = diffIsNeutral
     ? t("CoursePage.kpiCard.diffEqual")
@@ -108,48 +117,59 @@ export function KpiMetric({
                     )
                   : mainValue}
               </Title>
-              {mode === "LETTER" && (
+              {mode === "LETTER" && secondaryValue != null && (
                 <Text className="text-xl sm:text-2xl font-medium text-neutral-500 tabular-nums dark:text-stone-400">
                   {secondaryValue}
                 </Text>
               )}
             </div>
-            <div className="flex min-w-0 items-center gap-1">
-              <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
-                {diffIsPositive ? (
-                  <IconArrowUpRight className="size-4 text-green-700 dark:text-green-400" />
-                ) : diffIsNegative ? (
-                  <IconArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
-                ) : (
-                  <IconArrowRight className="size-4 text-neutral-400 dark:text-stone-500" />
-                )}
-                <Text
-                  className={cn(
-                    "text-sm",
-                    diffIsPositive && "tabular-nums text-green-700 dark:text-green-400",
-                    diffIsNegative && "tabular-nums text-red-600 dark:text-red-400",
-                    diffIsNeutral && "text-neutral-400 dark:text-stone-500"
-                  )}
-                >
-                  {diffValueLabel}
+            <div className="flex min-h-5 min-w-0 items-center gap-1">
+              {showDelta ? (
+                <>
+                  <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
+                    {diffIsPositive ? (
+                      <IconArrowUpRight className="size-4 text-green-700 dark:text-green-400" />
+                    ) : diffIsNegative ? (
+                      <IconArrowDownRight className="size-4 text-red-600 dark:text-red-400" />
+                    ) : (
+                      <IconArrowRight className="size-4 text-neutral-400 dark:text-stone-500" />
+                    )}
+                    <Text
+                      className={cn(
+                        "text-sm",
+                        diffIsPositive && "tabular-nums text-green-700 dark:text-green-400",
+                        diffIsNegative && "tabular-nums text-red-600 dark:text-red-400",
+                        diffIsNeutral && "text-neutral-400 dark:text-stone-500"
+                      )}
+                    >
+                      {diffValueLabel}
+                    </Text>
+                  </span>
+                  <Text className="hidden text-sm text-neutral-500 sm:inline dark:text-stone-400">
+                    {comparisonLabel}
+                  </Text>
+                </>
+              ) : (
+                <Text className="text-sm text-neutral-400 dark:text-stone-500">
+                  {t("CoursePage.kpiCard.comparisonNotComparable")}
                 </Text>
-              </span>
-              <Text className="hidden text-sm text-neutral-500 sm:inline dark:text-stone-400">{comparisonLabel}</Text>
+              )}
             </div>
           </div>
         </div>
       </div>
-      {extremes && (
+      {extremes && selectedValue != null && (
         <div className="hidden sm:block">
           <GradeRangeBar
             min={extremes.min}
             max={extremes.max}
-            mean={comparisonMean}
+            mean={comparisonMean ?? selectedValue}
             value={selectedValue}
             format={format}
             mode={mode}
             selectedPeriodLabel={selectedPeriodLabel}
             comparisonPeriodLabel={comparisonPeriodLabel}
+            showComparisonTick={showRangeBarComparisonTick && comparisonMean != null}
           />
         </div>
       )}

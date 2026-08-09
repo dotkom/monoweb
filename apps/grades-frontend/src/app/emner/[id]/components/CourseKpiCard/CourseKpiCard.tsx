@@ -12,17 +12,17 @@ import { useFormatter, useTranslations } from "next-intl"
 import { parseAsPeriodSelection } from "../../course-page-params"
 import { useCoursePeriodView } from "../../useCoursePeriodView"
 import { useFormatComparePeriodLabel, usePeriodLabel } from "../../usePeriodLabel"
+import { getPeriodCompareFlags } from "../../utils"
 import { CourseSectionCard } from "../CourseSectionCard"
 import { ComparisonSelectItem } from "./ComparisonSelectItem"
 import { KpiMetric } from "./KpiMetric"
 
 type Props = {
   gradeDistributions: GradeDistribution[]
-  showLetter: boolean
   className?: string
 }
 
-export const CourseKpiCard = ({ gradeDistributions, showLetter, className }: Props) => {
+export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
   const { periodSelection, comparisonPeriodSelection, setParams, selectedRows, comparisonRows } =
     useCoursePeriodView(gradeDistributions)
 
@@ -42,6 +42,8 @@ export const CourseKpiCard = ({ gradeDistributions, showLetter, className }: Pro
       : comparisonPeriodSelection.semester
         ? serializeSemesterKey(comparisonPeriodSelection.semester)
         : undefined
+
+  const { showLetterKpi, showLetterDelta } = getPeriodCompareFlags(selectedRows, comparisonRows)
 
   return (
     <CourseSectionCard
@@ -120,10 +122,10 @@ export const CourseKpiCard = ({ gradeDistributions, showLetter, className }: Pro
       <div
         className={cn(
           "grid divide-gray-200 dark:divide-stone-700",
-          showLetter ? "grid-cols-2 divide-x" : "grid-cols-1"
+          showLetterKpi ? "grid-cols-2 divide-x" : "grid-cols-1"
         )}
       >
-        {showLetter && (
+        {showLetterKpi && (
           <KpiMetric
             allGradeDistributions={gradeDistributions}
             selectedGradeDistributions={selectedRows}
@@ -134,18 +136,22 @@ export const CourseKpiCard = ({ gradeDistributions, showLetter, className }: Pro
             comparisonLabel={formatComparePeriodLabel(comparisonPeriodSelection, true)}
             selectedPeriodLabel={selectedPeriodLabel}
             comparisonPeriodLabel={periodLabel(comparisonPeriodSelection)}
+            showDelta={showLetterDelta}
+            showRangeBarComparisonTick={showLetterDelta}
           />
         )}
         <KpiMetric
           allGradeDistributions={gradeDistributions}
           selectedGradeDistributions={selectedRows}
           comparisonGradeDistributions={comparisonRows}
-          className="pl-4 sm:pl-6"
+          className={cn(showLetterKpi && "pl-4 sm:pl-6")}
           format={formatNumber}
           mode="PASS_FAIL"
           comparisonLabel={formatComparePeriodLabel(comparisonPeriodSelection, true)}
           selectedPeriodLabel={selectedPeriodLabel}
           comparisonPeriodLabel={periodLabel(comparisonPeriodSelection)}
+          showDelta={true}
+          showRangeBarComparisonTick={true}
         />
       </div>
     </CourseSectionCard>

@@ -32,6 +32,8 @@ export function GradeDistributionBarChart({
     t,
   })
 
+  const baseline = { x1: 0, x2: 0, y: 0 }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <GradeBarChartHeader
@@ -81,7 +83,7 @@ export function GradeDistributionBarChart({
             <XAxis
               dataKey="label"
               tickLine={false}
-              axisLine={{ stroke: "currentColor", strokeWidth: 1 }}
+              axisLine={false}
               tick={<GradeTick />}
               className="text-muted-foreground"
             />
@@ -90,9 +92,35 @@ export function GradeDistributionBarChart({
             <Bar
               dataKey="plotValue"
               isAnimationActive={false}
-              shape={(props) => (
-                <DistributionBarShape {...props} showComparison={showComparison} formatPercent={formatPercent} />
-              )}
+              shape={(props) => {
+                const lastIndex = data.length - 1
+
+                // Draw a baseline from the first bar to the last bar
+                if (props.index === 0) {
+                  baseline.x1 = props.x
+                  baseline.y = props.y + props.height
+                }
+
+                if (props.index === lastIndex) {
+                  baseline.x2 = props.x + props.width
+                }
+
+                return (
+                  <g>
+                    <DistributionBarShape {...props} showComparison={showComparison} formatPercent={formatPercent} />
+                    {props.index === lastIndex && (
+                      <line
+                        x1={baseline.x1}
+                        x2={baseline.x2}
+                        y1={baseline.y}
+                        y2={baseline.y}
+                        stroke="currentColor"
+                        strokeWidth={1}
+                      />
+                    )}
+                  </g>
+                )
+              }}
             />
           </BarChart>
         </ResponsiveContainer>

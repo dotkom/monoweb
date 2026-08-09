@@ -39,7 +39,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <SemesterTabs gradeDistributions={gradeDistributions} />
         <div className="flex flex-col gap-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <CourseKpiCard gradeDistributions={gradeDistributions} showLetter={showLetterLineChart} />
+            <CourseKpiCard gradeDistributions={gradeDistributions} />
             <CourseBarChartCard gradeDistributions={gradeDistributions} />
 
             {showLetterLineChart && <CourseLineChartCard gradeDistributions={gradeDistributions} mode="LETTER" />}
