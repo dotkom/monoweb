@@ -1,5 +1,6 @@
 "use client"
 
+import { roundAverageGrade, roundPassRate } from "@/app/lib/format-stats"
 import { mapAverageGradeToLetterGrade, type GradeType } from "@dotkomonline/grades-backend/course"
 import type { GradeDistribution } from "@dotkomonline/grades-backend/grade-distribution"
 import { cn, Text, Title } from "@dotkomonline/ui"
@@ -18,8 +19,6 @@ type Props = {
   format: (n: number) => string
   mode: GradeType
   comparisonLabel: string
-  selectedPeriodLabel: string
-  comparisonPeriodLabel: string
   showDelta: boolean
   showRangeBarComparisonTick: boolean
 }
@@ -32,8 +31,6 @@ export function KpiMetric({
   format,
   mode,
   comparisonLabel,
-  selectedPeriodLabel,
-  comparisonPeriodLabel,
   showDelta,
   showRangeBarComparisonTick,
 }: Props) {
@@ -53,17 +50,22 @@ export function KpiMetric({
   const selectedAverage = aggregatedGradeDistribution.averageGrade
   const comparisonAverage = comparisonAggregatedGradeDistribution.averageGrade
 
+  const selectedAverageDisplay = selectedAverage == null ? null : roundAverageGrade(selectedAverage)
+  const comparisonAverageDisplay = comparisonAverage == null ? null : roundAverageGrade(comparisonAverage)
+  const selectedPassRateDisplay = roundPassRate(aggregatedGradeDistribution.passRate)
+  const comparisonPassRateDisplay = roundPassRate(comparisonAggregatedGradeDistribution.passRate)
+
   const mainValue =
     mode === "LETTER"
       ? selectedAverage == null
         ? "—"
         : mapAverageGradeToLetterGrade(selectedAverage)
-      : Math.round(aggregatedGradeDistribution.passRate)
+      : selectedPassRateDisplay
 
   const secondaryValue =
-    selectedAverage == null
+    selectedAverageDisplay == null
       ? null
-      : formatter.number(selectedAverage, {
+      : formatter.number(selectedAverageDisplay, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })
@@ -71,23 +73,22 @@ export function KpiMetric({
   const parts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
-  }).formatToParts(aggregatedGradeDistribution.passRate / 100)
+  }).formatToParts(selectedPassRateDisplay / 100)
 
-  const selectedValue = mode === "PASS_FAIL" ? aggregatedGradeDistribution.passRate : selectedAverage
-  const comparisonMean = mode === "PASS_FAIL" ? comparisonAggregatedGradeDistribution.passRate : comparisonAverage
+  const selectedValue = mode === "PASS_FAIL" ? selectedPassRateDisplay : selectedAverageDisplay
+  const comparisonMean = mode === "PASS_FAIL" ? comparisonPassRateDisplay : comparisonAverageDisplay
 
   const canDiff = selectedValue != null && comparisonMean != null
   const diff = canDiff ? selectedValue - comparisonMean : 0
   const absDiff = Math.abs(diff)
-  const passRateDiffPoints = Math.round(absDiff)
-  const diffIsNeutral = !canDiff || (mode === "PASS_FAIL" ? passRateDiffPoints === 0 : absDiff < 0.005)
+  const diffIsNeutral = !canDiff || diff === 0
   const diffIsPositive = canDiff && !diffIsNeutral && diff > 0
   const diffIsNegative = canDiff && !diffIsNeutral && diff < 0
 
   const diffValueLabel = diffIsNeutral
     ? t("CoursePage.kpiCard.diffEqual")
     : mode === "PASS_FAIL"
-      ? t("CoursePage.kpiCard.passRateDiff", { count: passRateDiffPoints })
+      ? t("CoursePage.kpiCard.passRateDiff", { count: absDiff })
       : format(absDiff)
 
   const extremes = useMemo(() => getCourseSemesterExtremes(allGradeDistributions, mode), [allGradeDistributions, mode])
@@ -167,8 +168,6 @@ export function KpiMetric({
             value={selectedValue}
             format={format}
             mode={mode}
-            selectedPeriodLabel={selectedPeriodLabel}
-            comparisonPeriodLabel={comparisonPeriodLabel}
             showComparisonTick={showRangeBarComparisonTick && comparisonMean != null}
             diff={diffIsPositive ? "positive" : diffIsNegative ? "negative" : "neutral"}
           />

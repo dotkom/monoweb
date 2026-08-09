@@ -51,21 +51,21 @@ export const CourseAboutMeta = ({ course, faculties, departments }: Props) => {
 
   return (
     <aside className="p-4 sm:p-6 h-fit rounded-lg bg-neutral-50 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 lg:max-w-96">
-      <dl className="flex flex-col gap-5">
-        <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
+        <dl className="flex flex-col gap-4">
           {topItems.map((item) => (
             <MetaRowItem key={item.label} label={item.label} value={item.value} />
           ))}
-        </div>
+        </dl>
 
         <Separator />
 
-        <div className="flex flex-col gap-4">
+        <dl className="flex flex-col gap-4">
           {bottomItems.map((item) => (
             <MetaRowItem key={item.label} label={item.label} value={item.value} />
           ))}
-        </div>
-      </dl>
+        </dl>
+      </div>
     </aside>
   )
 }

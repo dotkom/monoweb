@@ -127,6 +127,11 @@
         "ALL_YEARS": "vs all years",
         "LAST_THREE_YEARS": "vs last 3 years",
         "semester": "vs {label}"
+      },
+      "compareAgainstCompact": {
+        "ALL_YEARS": "vs all years",
+        "LAST_THREE_YEARS": "vs last 3 years",
+        "semester": "vs {label}"
       }
     },
     "hero": {
@@ -137,7 +142,7 @@
     },
     "barChart": {
       "title": "Grade distribution",
-      "compare": "Compare",
+      "showComparison": "Show comparison",
       "compareDisabledReason": "Not enough data to compare",
       "compareDisabledNotComparable": "Not comparable",
       "percent": "{value, number}%",
@@ -160,8 +165,8 @@
       "passRate": "Pass rate",
       "passRateDiff": "{count, number} points",
       "diffEqual": "same",
+      "compareSelectAriaLabel": "Compare against",
       "rangeBar": {
-        "historicalSpan": "All-time range",
         "minAverage": "Lowest average: {semester}",
         "maxAverage": "Highest average: {semester}",
         "minPassRate": "Lowest pass rate: {semester}",

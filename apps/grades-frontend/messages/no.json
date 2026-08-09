@@ -127,6 +127,11 @@
         "ALL_YEARS": "mot alle år",
         "LAST_THREE_YEARS": "mot siste 3 år",
         "semester": "mot {label}"
+      },
+      "compareAgainstCompact": {
+        "ALL_YEARS": "Mot alle år",
+        "LAST_THREE_YEARS": "Mot siste 3 år",
+        "semester": "Mot {label}"
       }
     },
     "hero": {
@@ -137,7 +142,7 @@
     },
     "barChart": {
       "title": "Karakterfordeling",
-      "compare": "Sammenlign",
+      "showComparison": "Vis sammenligning",
       "compareDisabledReason": "Ikke nok data til å sammenligne",
       "compareDisabledNotComparable": "Ikke sammenlignbart",
       "percent": "{value, number} %",
@@ -160,8 +165,8 @@
       "passRate": "Ståprosent",
       "passRateDiff": "{count, number} poeng",
       "diffEqual": "likt",
+      "compareSelectAriaLabel": "Sammenlign med",
       "rangeBar": {
-        "historicalSpan": "Historisk spenn",
         "minAverage": "Laveste snitt: {semester}",
         "maxAverage": "Høyeste snitt: {semester}",
         "minPassRate": "Laveste ståprosent: {semester}",

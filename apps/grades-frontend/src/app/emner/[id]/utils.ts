@@ -1,4 +1,4 @@
-import type { Semester } from "@dotkomonline/grades-backend/course"
+import type { Course, Semester } from "@dotkomonline/grades-backend/course"
 import {
   aggregateGradeDistributions,
   calculateCourseStatistics,
@@ -8,6 +8,7 @@ import {
   type GradeDistribution,
   type GradeDistributionCountFields,
 } from "@dotkomonline/grades-backend/grade-distribution"
+import type { useFormatter, useTranslations } from "next-intl"
 import type { PeriodPreset, PeriodSelection } from "./course-page-params"
 
 const CHART_FIELD_LABELS: Record<keyof GradeDistributionCountFields, string> = {
@@ -181,4 +182,23 @@ export function getPeriodCompareFlags(
     showLetterDelta: selectedHasLetterGrades && comparisonHasLetterGrades,
     canGhostCompare: !selectedHasLetterGrades || comparisonHasLetterGrades || comparisonHasPassFailGrades,
   }
+}
+
+export function buildCourseMetaItems(
+  course: Course,
+  t: ReturnType<typeof useTranslations<never>>,
+  format: ReturnType<typeof useFormatter>
+) {
+  const formatList = (items: string[]) => format.list(items, { type: "conjunction" })
+
+  const isDeprecated = course.lastYearTaught !== null
+
+  const metaItems = [
+    isDeprecated && course.lastYearTaught ? t("CourseCard.lastTaught", { year: course.lastYearTaught }) : null,
+    formatList(course.taughtSemesters.map((semester) => t(`Enums.Semester.${semester}`))),
+    formatList(course.campuses.map((campus) => t(`Enums.Campus.${campus}`))),
+    formatList(course.teachingLanguages.map((language) => t(`Enums.TeachingLanguage.${language}`))),
+  ].filter(Boolean)
+
+  return metaItems
 }

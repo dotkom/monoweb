@@ -8,6 +8,7 @@ import {
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
+import { roundPassRate } from "@/app/lib/format-stats"
 
 interface Props {
   course: Course
@@ -21,10 +22,11 @@ export const CourseRow = ({ course, className }: Props) => {
   const isLetterGrade = course.gradeType === "LETTER"
   const name = getCourseLocalizedTextFields(course, locale).name
 
+  const passRateDisplay = roundPassRate(course.passRate)
   const passRateParts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
-  }).formatToParts(course.passRate / 100)
+  }).formatToParts(passRateDisplay / 100)
 
   return (
     <Link
@@ -55,7 +57,7 @@ export const CourseRow = ({ course, className }: Props) => {
       <div className="flex shrink-0 items-center gap-2.5 sm:gap-3 self-center">
         {isLetterGrade ? (
           <Text className="shrink-0 whitespace-nowrap text-xs font-medium text-neutral-500 dark:text-stone-400 sm:text-sm">
-            {t("CourseCard.passRate", { rate: Math.round(course.passRate) })}
+            {t("CourseCard.passRate", { rate: passRateDisplay })}
           </Text>
         ) : (
           <Text className="hidden sm:inline shrink-0 whitespace-nowrap text-xs font-medium text-neutral-500 dark:text-stone-400 sm:text-sm">

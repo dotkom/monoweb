@@ -16,7 +16,7 @@ import { usePeriodLabel } from "../usePeriodLabel"
 
 const tabClassName = (selected: boolean) =>
   cn(
-    "h-auto px-3 py-2 font-medium text-sm flex-shrink-0 focus-visible:ring-inset",
+    "h-auto px-2 py-1.5 text-xs font-medium flex-shrink-0 focus-visible:ring-inset sm:px-3 sm:py-2 sm:text-sm",
     "dark:border-stone-700 dark:bg-stone-800 dark:hover:border-stone-600 dark:hover:bg-stone-700 hover:bg-muted/60",
     selected &&
       "border-transparent bg-primary text-primary-foreground hover:border-transparent hover:bg-primary/90 hover:text-primary-foreground dark:border-transparent dark:bg-primary dark:hover:bg-primary/90"
@@ -100,7 +100,14 @@ export const SemesterTabs = ({ gradeDistributions }: Props) => {
   const olderSelection = olderSemesters.find((semester) => isSemesterSelected(semester)) ?? null
 
   return (
-    <div className={cn("flex gap-3 overflow-x-auto pb-1", "scrollbar-none [&::-webkit-scrollbar]:hidden")}>
+    <div
+      className={cn(
+        "flex gap-2 overflow-x-auto sm:gap-3",
+        "scrollbar-none [&::-webkit-scrollbar]:hidden",
+        "mask-[linear-gradient(to_right,black_calc(100%-0.5rem),transparent)]",
+        "[-webkit-mask-image:linear-gradient(to_right,black_calc(100%-0.5rem),transparent)]"
+      )}
+    >
       {recentSemesters.map((semester) => (
         <Button
           key={serializeSemesterKey(semester)}
@@ -129,12 +136,13 @@ export const SemesterTabs = ({ gradeDistributions }: Props) => {
           }}
         >
           <SelectTrigger
+            aria-label={t("CoursePage.semesterTabs.olderSemesters")}
             ref={refIfSelected(olderSelection !== null)}
             icon={
               <IconChevronDown className="pointer-events-none size-4 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out" />
             }
             className={cn(
-              "w-40 data-placeholder:text-foreground data-popup-open:[&_svg]:rotate-180",
+              "w-28 data-placeholder:text-foreground data-popup-open:[&_svg]:rotate-180 sm:w-40",
               "dark:bg-stone-800 dark:border-stone-700",
               tabClassName(olderSelection !== null)
             )}

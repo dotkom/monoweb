@@ -1,12 +1,14 @@
 "use client"
 
+import { buildCourseMetaItems } from "@/app/emner/[id]/utils"
+import { roundPassRate } from "@/app/lib/format-stats"
 import {
   type Course,
   getCourseLocalizedTextFields,
   mapAverageGradeToLetterGrade,
 } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
-import { useLocale, useTranslations } from "next-intl"
+import { useFormatter, useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
 
 interface Props {
@@ -17,21 +19,18 @@ interface Props {
 export const CourseCard = ({ course, className }: Props) => {
   const t = useTranslations()
   const locale = useLocale()
+  const format = useFormatter()
 
   const isDeprecated = course.lastYearTaught !== null
   const isLetterGrade = course.gradeType === "LETTER"
 
-  const metaItems = [
-    isDeprecated && course.lastYearTaught ? t("CourseCard.lastTaught", { year: course.lastYearTaught }) : null,
-    ...course.taughtSemesters.map((semester) => t(`Enums.Semester.${semester}`)),
-    ...course.campuses.map((campus) => t(`Enums.Campus.${campus}`)),
-    ...course.teachingLanguages.map((language) => t(`Enums.TeachingLanguage.${language}`)),
-  ].filter(Boolean)
+  const metaItems = buildCourseMetaItems(course, t, format)
 
+  const passRateDisplay = roundPassRate(course.passRate)
   const passRateParts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
-  }).formatToParts(course.passRate / 100)
+  }).formatToParts(passRateDisplay / 100)
 
   return (
     <Link
@@ -55,11 +54,11 @@ export const CourseCard = ({ course, className }: Props) => {
           <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-2.5 h-3.5 overflow-hidden">
+        <div className="flex max-h-5 flex-wrap items-center gap-x-2.5 overflow-hidden">
           {metaItems.map((item, index) => (
-            <div key={item} className="flex h-3.5 items-center gap-x-2.5 whitespace-nowrap shrink-0">
+            <div key={item} className="flex shrink-0 items-center gap-x-2.5 whitespace-nowrap">
               {index > 0 && <span className="size-1 rounded-full bg-neutral-400 dark:bg-stone-500" aria-hidden />}
-              <Text className="text-sm leading-none text-neutral-600 dark:text-stone-300">{item}</Text>
+              <Text className="text-sm text-neutral-600 dark:text-stone-300">{item}</Text>
             </div>
           ))}
         </div>
@@ -68,7 +67,7 @@ export const CourseCard = ({ course, className }: Props) => {
       <div className="flex shrink-0 flex-col items-end gap-2">
         <div className="min-h-4 flex items-center">
           <Text className="text-neutral-500 dark:text-stone-400 font-medium text-xs h-7 flex items-end">
-            {isLetterGrade ? t("CourseCard.passRate", { rate: Math.round(course.passRate) }) : t("CourseCard.passFail")}
+            {isLetterGrade ? t("CourseCard.passRate", { rate: passRateDisplay }) : t("CourseCard.passFail")}
           </Text>
         </div>
 
