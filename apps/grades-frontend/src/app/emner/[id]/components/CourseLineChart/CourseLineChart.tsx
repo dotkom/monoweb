@@ -3,15 +3,25 @@
 import { cn } from "@dotkomonline/ui"
 import { useFormatter } from "next-intl"
 import { useId, useLayoutEffect, useMemo, useRef, useState } from "react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { SelectionDot } from "./line-chart-selection-dot"
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceDot,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  type MouseHandlerDataParam,
+} from "recharts"
+import { SelectionDot, NullFloorDot } from "./line-chart-selection-dot"
 
 export type CourseLineChartMode = "LETTER" | "PASS_FAIL"
 
 export type CourseLineChartPoint = {
   id: string
   label: string
-  value: number
+  value: number | null
 }
 
 type Props = {
@@ -36,7 +46,7 @@ const PASS_RATE_Y_TICKS = [0, 25, 50, 75, 100] as const
 
 const LINE_TYPE = "monotoneX" as const
 const PRIMARY_STROKE = "var(--primary)"
-const HISTORY_STROKE = "var(--muted-foreground)"
+const HISTORY_STROKE = "var(--chart-history)"
 const LINE_STROKE_WIDTH = 1.8
 const MAX_X_TICKS = 8
 const HOVER_DOT_RADIUS = 4.5
@@ -142,18 +152,15 @@ function formatMetricValue(format: ReturnType<typeof useFormatter>, mode: Course
   return format.number(value / 100, { style: "percent", maximumFractionDigits: 0 })
 }
 
-function resolvePointIdFromChartEvent(
-  state: {
-    activeTooltipIndex?: number | string | unknown
-    activeIndex?: number | string | unknown
-    activeLabel?: string | number
-  },
-  points: CourseLineChartPoint[]
-): string | null {
+function resolvePointIdFromChartEvent(state: MouseHandlerDataParam, points: CourseLineChartPoint[]): string | null {
+  if (!state.isTooltipActive || state.activeCoordinate == null) {
+    return null
+  }
+
   const rawIndex = state.activeTooltipIndex ?? state.activeIndex
   const index = typeof rawIndex === "number" ? rawIndex : Number(rawIndex)
 
-  if (Number.isInteger(index) && index >= 0) {
+  if (Number.isInteger(index) && index >= 0 && index < points.length) {
     return points[index]?.id ?? null
   }
 
@@ -207,8 +214,11 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
     return getPeriodStrokeStops(points.length, selectionRange)
   }, [highlightPeriod, points.length, selectionRange])
 
-  const focusLabel = focusPoint ? formatMetricValue(format, mode, focusPoint.value) : null
+  const focusLabel =
+    focusPoint == null || focusPoint.value == null ? null : formatMetricValue(format, mode, focusPoint.value)
   const focusId = focusPoint?.id ?? null
+  const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds])
+  const nullPoints = useMemo(() => points.filter((point) => point.value == null), [points])
 
   const yTicks = mode === "LETTER" ? [...LETTER_Y_TICKS] : [...PASS_RATE_Y_TICKS]
   const yDomain: [number, number] = mode === "LETTER" ? [0, 5] : [0, 100]
@@ -246,7 +256,6 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
       <ResponsiveContainer
         width="100%"
         height="100%"
-        debounce={50}
         initialDimension={{ width: 480, height: 160 }}
         className="overflow-visible!"
       >
@@ -323,24 +332,32 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             strokeLinecap="round"
             strokeLinejoin="round"
             style={onPointClick ? { cursor: "pointer" } : undefined}
-            dot={(dotProps) => (
-              <SelectionDot
-                cx={dotProps.cx}
-                cy={dotProps.cy}
-                payload={dotProps.payload as CourseLineChartPoint | undefined}
-                focusId={focusId}
-                label={focusLabel}
-                showPrimaryDot={isSingleSelection}
-                chartWidth={chartWidth}
-              />
-            )}
+            dot={(dotProps) => {
+              const payload = dotProps.payload as CourseLineChartPoint | undefined
+              if (payload?.value == null) {
+                return null
+              }
+
+              return (
+                <SelectionDot
+                  cx={dotProps.cx}
+                  cy={dotProps.cy}
+                  payload={payload}
+                  focusId={focusId}
+                  label={focusLabel}
+                  showPrimaryDot={isSingleSelection}
+                  inSelectedPeriod={highlightPeriod && selectedIdSet.has(payload.id)}
+                  chartWidth={chartWidth}
+                />
+              )
+            }}
             activeDot={(dotProps) => {
               const payload = dotProps.payload as CourseLineChartPoint | undefined
               if (isSingleSelection && payload?.id === focusId) {
                 return null
               }
 
-              if (dotProps.cx == null || dotProps.cy == null) {
+              if (dotProps.cx == null || dotProps.cy == null || payload?.value == null) {
                 return null
               }
 
@@ -356,6 +373,24 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             }}
             isAnimationActive={false}
           />
+
+          {nullPoints.map((point) => (
+            <ReferenceDot
+              key={point.id}
+              x={point.label}
+              y={0}
+              ifOverflow="visible"
+              shape={(shapeProps) => (
+                <NullFloorDot
+                  cx={shapeProps.cx}
+                  cy={shapeProps.cy}
+                  focused={isSingleSelection && point.id === focusId}
+                  inSelectedPeriod={highlightPeriod && selectedIdSet.has(point.id)}
+                  onSelect={() => onPointClick?.(point.id)}
+                />
+              )}
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
     </div>

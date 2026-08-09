@@ -6,6 +6,7 @@
   --primary: var(--color-brand);
   --primary-foreground: #ffffff;
   --ring: var(--stone-600);
+  --chart-history: #a3a3a3;
 }
 
 .dark,
@@ -14,6 +15,7 @@
   --primary: var(--color-brand);
   --primary-foreground: #ffffff;
   --ring: var(--stone-400);
+  --chart-history: var(--muted-foreground);
 }
 
 @layer base {
