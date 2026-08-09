@@ -28,9 +28,11 @@ type ContestWithGroups = Prisma.ContestGetPayload<{
   include: typeof contestGroupsInclude
 }>
 
-function mapDbContestToApi(row: ContestWithGroups): Contest {
+function mapDbContestToDomain(row: ContestWithGroups): Contest {
   return {
     id: row.id,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
     name: row.name,
     description: row.description,
     startDate: row.startDate,
@@ -81,7 +83,7 @@ export function getContestRepository(): ContestRepository {
         return null
       }
 
-      return parseOrReport(ContestSchema, mapDbContestToApi(contest))
+      return parseOrReport(ContestSchema, mapDbContestToDomain(contest))
     },
 
     async findMany(handle, page) {
@@ -90,7 +92,7 @@ export function getContestRepository(): ContestRepository {
         include: contestGroupsInclude,
       })
 
-      return parseOrReport(ContestSchema.array(), contests.map(mapDbContestToApi))
+      return parseOrReport(ContestSchema.array(), contests.map(mapDbContestToDomain))
     },
 
     async create(handle, data) {
@@ -110,7 +112,7 @@ export function getContestRepository(): ContestRepository {
         include: contestGroupsInclude,
       })
 
-      return parseOrReport(ContestSchema, mapDbContestToApi(contest))
+      return parseOrReport(ContestSchema, mapDbContestToDomain(contest))
     },
 
     async update(handle, contestId, data) {
@@ -131,7 +133,7 @@ export function getContestRepository(): ContestRepository {
         include: contestGroupsInclude,
       })
 
-      return parseOrReport(ContestSchema, mapDbContestToApi(contest))
+      return parseOrReport(ContestSchema, mapDbContestToDomain(contest))
     },
 
     async delete(handle, contestId) {
@@ -153,7 +155,7 @@ export function getContestRepository(): ContestRepository {
         include: contestGroupsInclude,
       })
 
-      return parseOrReport(ContestSchema, mapDbContestToApi(contest))
+      return parseOrReport(ContestSchema, mapDbContestToDomain(contest))
     },
 
     async findContestantById(handle, contestantId) {

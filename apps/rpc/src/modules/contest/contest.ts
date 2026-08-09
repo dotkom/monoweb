@@ -9,6 +9,8 @@ export type ContestResultOrder = z.infer<typeof ContestResultOrderSchema>
 
 export const ContestSchema = z.object({
   id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
   name: z.string(),
   description: z.string().nullable(),
   startDate: z.date().nullable(),
@@ -35,6 +37,8 @@ export type ContestUpdate = z.infer<typeof ContestUpdateSchema>
 
 export const ContestantSchema = z.object({
   id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
   resultValue: z.number().int().nullable(),
   contestId: z.string(),
   userId: z.string().nullable(),
@@ -59,6 +63,8 @@ export type ContestUserSummary = z.infer<typeof ContestUserSummarySchema>
 
 export const ContestTeamSchema = z.object({
   id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
   name: z.string(),
   contestantId: z.string(),
 })

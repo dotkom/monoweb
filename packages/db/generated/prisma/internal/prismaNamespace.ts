@@ -3950,6 +3950,8 @@ export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[k
 
 export const ContestScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   name: 'name',
   description: 'description',
   startDate: 'startDate',
@@ -3963,10 +3965,10 @@ export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeo
 
 export const FadderukeScalarFieldEnum = {
   id: 'id',
-  year: 'year',
-  eventId: 'eventId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  year: 'year',
+  eventId: 'eventId'
 } as const
 
 export type FadderukeScalarFieldEnum = (typeof FadderukeScalarFieldEnum)[keyof typeof FadderukeScalarFieldEnum]
@@ -3974,6 +3976,8 @@ export type FadderukeScalarFieldEnum = (typeof FadderukeScalarFieldEnum)[keyof t
 
 export const ContestantScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   resultValue: 'resultValue',
   contestId: 'contestId',
   userId: 'userId'
@@ -3984,6 +3988,8 @@ export type ContestantScalarFieldEnum = (typeof ContestantScalarFieldEnum)[keyof
 
 export const ContestTeamScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   name: 'name',
   contestantId: 'contestantId'
 } as const

@@ -36,26 +36,26 @@ export type FadderukeSumAggregateOutputType = {
 
 export type FadderukeMinAggregateOutputType = {
   id: string | null
-  year: number | null
-  eventId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  year: number | null
+  eventId: string | null
 }
 
 export type FadderukeMaxAggregateOutputType = {
   id: string | null
-  year: number | null
-  eventId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  year: number | null
+  eventId: string | null
 }
 
 export type FadderukeCountAggregateOutputType = {
   id: number
-  year: number
-  eventId: number
   createdAt: number
   updatedAt: number
+  year: number
+  eventId: number
   _all: number
 }
 
@@ -70,26 +70,26 @@ export type FadderukeSumAggregateInputType = {
 
 export type FadderukeMinAggregateInputType = {
   id?: true
-  year?: true
-  eventId?: true
   createdAt?: true
   updatedAt?: true
+  year?: true
+  eventId?: true
 }
 
 export type FadderukeMaxAggregateInputType = {
   id?: true
-  year?: true
-  eventId?: true
   createdAt?: true
   updatedAt?: true
+  year?: true
+  eventId?: true
 }
 
 export type FadderukeCountAggregateInputType = {
   id?: true
-  year?: true
-  eventId?: true
   createdAt?: true
   updatedAt?: true
+  year?: true
+  eventId?: true
   _all?: true
 }
 
@@ -181,10 +181,10 @@ export type FadderukeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type FadderukeGroupByOutputType = {
   id: string
-  year: number
-  eventId: string
   createdAt: Date
   updatedAt: Date
+  year: number
+  eventId: string
   _count: FadderukeCountAggregateOutputType | null
   _avg: FadderukeAvgAggregateOutputType | null
   _sum: FadderukeSumAggregateOutputType | null
@@ -212,19 +212,19 @@ export type FadderukeWhereInput = {
   OR?: Prisma.FadderukeWhereInput[]
   NOT?: Prisma.FadderukeWhereInput | Prisma.FadderukeWhereInput[]
   id?: Prisma.StringFilter<"Fadderuke"> | string
-  year?: Prisma.IntFilter<"Fadderuke"> | number
-  eventId?: Prisma.StringFilter<"Fadderuke"> | string
   createdAt?: Prisma.DateTimeFilter<"Fadderuke"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Fadderuke"> | Date | string
+  year?: Prisma.IntFilter<"Fadderuke"> | number
+  eventId?: Prisma.StringFilter<"Fadderuke"> | string
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
 }
 
 export type FadderukeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  year?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  year?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
 }
 
@@ -242,10 +242,10 @@ export type FadderukeWhereUniqueInput = Prisma.AtLeast<{
 
 export type FadderukeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  year?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  year?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
   _count?: Prisma.FadderukeCountOrderByAggregateInput
   _avg?: Prisma.FadderukeAvgOrderByAggregateInput
   _max?: Prisma.FadderukeMaxOrderByAggregateInput
@@ -258,65 +258,65 @@ export type FadderukeScalarWhereWithAggregatesInput = {
   OR?: Prisma.FadderukeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FadderukeScalarWhereWithAggregatesInput | Prisma.FadderukeScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Fadderuke"> | string
-  year?: Prisma.IntWithAggregatesFilter<"Fadderuke"> | number
-  eventId?: Prisma.StringWithAggregatesFilter<"Fadderuke"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Fadderuke"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Fadderuke"> | Date | string
+  year?: Prisma.IntWithAggregatesFilter<"Fadderuke"> | number
+  eventId?: Prisma.StringWithAggregatesFilter<"Fadderuke"> | string
 }
 
 export type FadderukeCreateInput = {
   id?: string
-  year: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  year: number
   event: Prisma.EventCreateNestedOneWithoutFadderukeInput
 }
 
 export type FadderukeUncheckedCreateInput = {
   id?: string
-  year: number
-  eventId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  year: number
+  eventId: string
 }
 
 export type FadderukeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
   event?: Prisma.EventUpdateOneRequiredWithoutFadderukeNestedInput
 }
 
 export type FadderukeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FadderukeCreateManyInput = {
   id?: string
-  year: number
-  eventId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  year: number
+  eventId: string
 }
 
 export type FadderukeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type FadderukeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type FadderukeNullableScalarRelationFilter = {
@@ -326,10 +326,10 @@ export type FadderukeNullableScalarRelationFilter = {
 
 export type FadderukeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  year?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  year?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FadderukeAvgOrderByAggregateInput = {
@@ -338,18 +338,18 @@ export type FadderukeAvgOrderByAggregateInput = {
 
 export type FadderukeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  year?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  year?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FadderukeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  year?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  year?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
 }
 
 export type FadderukeSumOrderByAggregateInput = {
@@ -390,16 +390,16 @@ export type FadderukeUncheckedUpdateOneWithoutEventNestedInput = {
 
 export type FadderukeCreateWithoutEventInput = {
   id?: string
-  year: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  year: number
 }
 
 export type FadderukeUncheckedCreateWithoutEventInput = {
   id?: string
-  year: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  year: number
 }
 
 export type FadderukeCreateOrConnectWithoutEventInput = {
@@ -420,56 +420,56 @@ export type FadderukeUpdateToOneWithWhereWithoutEventInput = {
 
 export type FadderukeUpdateWithoutEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type FadderukeUncheckedUpdateWithoutEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  year?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
 
 export type FadderukeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  year?: boolean
-  eventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  year?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderuke"]>
 
 export type FadderukeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  year?: boolean
-  eventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  year?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderuke"]>
 
 export type FadderukeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  year?: boolean
-  eventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  year?: boolean
+  eventId?: boolean
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderuke"]>
 
 export type FadderukeSelectScalar = {
   id?: boolean
-  year?: boolean
-  eventId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  year?: boolean
+  eventId?: boolean
 }
 
-export type FadderukeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "year" | "eventId" | "createdAt" | "updatedAt", ExtArgs["result"]["fadderuke"]>
+export type FadderukeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "year" | "eventId", ExtArgs["result"]["fadderuke"]>
 export type FadderukeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
 }
@@ -487,10 +487,10 @@ export type $FadderukePayload<ExtArgs extends runtime.Types.Extensions.InternalA
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    year: number
-    eventId: string
     createdAt: Date
     updatedAt: Date
+    year: number
+    eventId: string
   }, ExtArgs["result"]["fadderuke"]>
   composites: {}
 }
@@ -916,10 +916,10 @@ export interface Prisma__FadderukeClient<T, Null = never, ExtArgs extends runtim
  */
 export interface FadderukeFieldRefs {
   readonly id: Prisma.FieldRef<"Fadderuke", 'String'>
-  readonly year: Prisma.FieldRef<"Fadderuke", 'Int'>
-  readonly eventId: Prisma.FieldRef<"Fadderuke", 'String'>
   readonly createdAt: Prisma.FieldRef<"Fadderuke", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Fadderuke", 'DateTime'>
+  readonly year: Prisma.FieldRef<"Fadderuke", 'Int'>
+  readonly eventId: Prisma.FieldRef<"Fadderuke", 'String'>
 }
     
 
