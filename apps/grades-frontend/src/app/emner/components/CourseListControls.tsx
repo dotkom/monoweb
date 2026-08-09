@@ -92,6 +92,8 @@ export function CourseListControls({ defaultValues, initialPage }: Props) {
 
   const totalCount = data?.pages[0].totalCount ?? 0
 
+  const isInitialPageEmpty = initialPage.items.length === 0
+
   return (
     <FormProvider {...form}>
       <div className="w-full flex flex-col md:flex-row gap-6">
@@ -115,6 +117,7 @@ export function CourseListControls({ defaultValues, initialPage }: Props) {
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={hasNextPage}
             isFetching={isFetching}
+            isInitialPageEmpty={isInitialPageEmpty}
           />
         </div>
       </div>

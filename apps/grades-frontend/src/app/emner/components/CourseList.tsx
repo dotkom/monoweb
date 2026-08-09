@@ -4,6 +4,7 @@ import type { Course } from "@dotkomonline/grades-backend/course"
 import { useEffect, useRef } from "react"
 import { CourseCard } from "../../components/CourseCard/CourseCard"
 import { CourseCardSkeleton } from "../../components/CourseCard/CourseCardSkeleton"
+import { CourseListEmptyState } from "./CourseListEmptyState"
 
 interface Props {
   courses: Course[]
@@ -11,9 +12,17 @@ interface Props {
   isFetchingNextPage: boolean
   hasNextPage: boolean
   isFetching: boolean
+  isInitialPageEmpty: boolean
 }
 
-export const CourseList = ({ courses, fetchNextPage, isFetchingNextPage, hasNextPage, isFetching }: Props) => {
+export const CourseList = ({
+  courses,
+  fetchNextPage,
+  isFetchingNextPage,
+  hasNextPage,
+  isFetching,
+  isInitialPageEmpty,
+}: Props) => {
   const loaderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -37,11 +46,15 @@ export const CourseList = ({ courses, fetchNextPage, isFetchingNextPage, hasNext
     return () => observer.disconnect()
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
+  const showEmptyState = courses.length === 0 && (!isFetching || isInitialPageEmpty)
+
   return (
     <section className="flex w-full flex-col gap-4" aria-busy={isFetchingNextPage || isFetching}>
       {courses.map((course) => (
         <CourseCard key={course.code} course={course} />
       ))}
+
+      {showEmptyState && <CourseListEmptyState />}
 
       {isFetchingNextPage && <CourseListSkeleton />}
       <div ref={loaderRef} />
