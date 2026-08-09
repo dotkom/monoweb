@@ -2,16 +2,21 @@ import type { SemesterKey } from "@dotkomonline/grades-backend/course"
 import { useTranslations } from "next-intl"
 import type { PeriodSelection } from "./course-page-params"
 
+export type ComparePeriodLabelVariant = "default" | "compact" | "inline"
+
 export function useFormatComparePeriodLabel() {
   const t = useTranslations("CoursePage.common")
   const periodLabel = usePeriodLabel()
 
-  return (periodSelection: PeriodSelection, short: boolean = false) => {
+  return (periodSelection: PeriodSelection, variant: ComparePeriodLabelVariant = "default") => {
+    const key =
+      variant === "inline" ? "compareAgainstShort" : variant === "compact" ? "compareAgainstCompact" : "compareAgainst"
+
     if (periodSelection.kind === "preset") {
-      return t(`compareAgainst${short ? "Short" : ""}.${periodSelection.preset}`)
+      return t(`${key}.${periodSelection.preset}`)
     }
 
-    return t(`compareAgainst${short ? "Short" : ""}.semester`, { label: periodLabel(periodSelection) })
+    return t(`${key}.semester`, { label: periodLabel(periodSelection) })
   }
 }
 

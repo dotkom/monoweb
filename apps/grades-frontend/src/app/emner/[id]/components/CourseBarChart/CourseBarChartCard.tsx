@@ -48,7 +48,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
       title={tBar("title")}
       action={
         <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild disabled={canCompare}>
+          <TooltipTrigger asChild>
             <span className="inline-flex">
               <Button
                 className={cn(
@@ -61,8 +61,9 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
                 onClick={() => setParams({ isGhost: !params.isGhost })}
                 variant="ghost"
                 icon={<Layers2Icon className="size-4 transition-colors" />}
+                aria-label={tBar("showComparison")}
               >
-                {tBar("compare")}
+                <span className="hidden xs:inline">{tBar("showComparison")}</span>
               </Button>
             </span>
           </TooltipTrigger>
@@ -70,7 +71,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
             className="dark:bg-stone-800 dark:border-stone-700 dark:text-stone-200"
             arrowClassName="dark:bg-stone-800"
           >
-            <Text className="text-sm">{comparisonDisabledReason}</Text>
+            <Text className="text-sm">{canCompare ? tBar("showComparison") : comparisonDisabledReason}</Text>
           </TooltipContent>
         </Tooltip>
       }

@@ -6,6 +6,7 @@ import {
 } from "@dotkomonline/grades-backend/grade-distribution"
 import { useTranslations } from "next-intl"
 import { useMemo } from "react"
+import { roundPassRate } from "@/app/lib/format-stats"
 import { chartFieldLabel, type AggregatedGradeDistribution } from "../../utils"
 
 const Y_MAX_HEADROOM = 1.1
@@ -79,7 +80,7 @@ export function useGradeChartData({ primary, comparison, ghostEnabled, compactVi
 
   const showComparison = ghostEnabled && comparison !== null
 
-  const formatPercent = (value: number) => t("percent", { value: Math.round(value) })
+  const formatPercent = (value: number) => t("percent", { value: roundPassRate(value) })
 
   const data = useMemo(() => {
     const fields = getChartFieldsForView(primary.grades, comparison?.grades ?? null, showComparison)

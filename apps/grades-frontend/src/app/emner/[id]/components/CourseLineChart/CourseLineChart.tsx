@@ -1,5 +1,6 @@
 "use client"
 
+import { roundAverageGrade, roundPassRate } from "@/app/lib/format-stats"
 import { cn } from "@dotkomonline/ui"
 import { useFormatter } from "next-intl"
 import { useId, useLayoutEffect, useMemo, useRef, useState } from "react"
@@ -15,7 +16,9 @@ import {
   type MouseHandlerDataParam,
 } from "recharts"
 import { CHART_SURFACE_CLASS, CHART_X_AXIS_HEIGHT, GradeTick } from "../CourseBarChart/grade-bar-chart-primitives"
-import { SelectionDot, NullFloorDot } from "./line-chart-selection-dot"
+import { NullFloorDot, SelectionDot } from "./line-chart-selection-dot"
+
+const CHART_PLOT_MARGIN = 5
 
 export type CourseLineChartMode = "LETTER" | "PASS_FAIL"
 
@@ -146,10 +149,10 @@ function estimateYAxisWidth(mode: CourseLineChartMode) {
 
 function formatMetricValue(format: ReturnType<typeof useFormatter>, mode: CourseLineChartMode, value: number) {
   if (mode === "LETTER") {
-    return format.number(value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    return format.number(roundAverageGrade(value), { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
 
-  return format.number(value / 100, { style: "percent", maximumFractionDigits: 0 })
+  return format.number(roundPassRate(value) / 100, { style: "percent", maximumFractionDigits: 0 })
 }
 
 function resolvePointIdFromChartEvent(state: MouseHandlerDataParam, points: CourseLineChartPoint[]): string | null {
@@ -228,7 +231,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
       return LETTER_Y_LABELS[value as (typeof LETTER_Y_TICKS)[number]] ?? ""
     }
 
-    return format.number(value / 100, { style: "percent", maximumFractionDigits: 0 })
+    return format.number(roundPassRate(value) / 100, { style: "percent", maximumFractionDigits: 0 })
   }
 
   const lineStroke = periodStrokeStops ? `url(#${strokeGradientId})` : HISTORY_STROKE
@@ -257,7 +260,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
       >
         <LineChart
           data={points}
-          margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
+          margin={{ top: 4, right: CHART_PLOT_MARGIN, left: CHART_PLOT_MARGIN, bottom: 0 }}
           accessibilityLayer={false}
           tabIndex={-1}
           className="cursor-pointer! outline-none"

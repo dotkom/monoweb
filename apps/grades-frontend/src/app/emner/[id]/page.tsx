@@ -3,13 +3,14 @@ import { server } from "@/utils/trpc/server"
 import { getCourseLocalizedTextFields, type Course } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { Separator } from "@dotkomonline/ui/components/separator"
-import { getLocale, getTranslations } from "next-intl/server"
-import { Fragment } from "react"
+import { getFormatter, getLocale, getTranslations } from "next-intl/server"
+import { ComparisonSelect } from "./components/ComparisonSelect"
 import { CourseAbout } from "./components/CourseAbout/CourseAbout"
 import { CourseBarChartCard } from "./components/CourseBarChart/CourseBarChartCard"
 import { CourseKpiCard } from "./components/CourseKpiCard/CourseKpiCard"
 import { CourseLineChartCard } from "./components/CourseLineChart/CourseLineChartCard"
 import { SemesterTabs } from "./components/SemesterTabs"
+import { buildCourseMetaItems } from "./utils"
 
 interface CoursePageProps {
   params: Promise<{
@@ -36,7 +37,15 @@ export default async function CoursePage({ params }: CoursePageProps) {
     <div className="flex flex-col gap-10">
       <Hero course={course} locale={locale} />
       <div className="flex flex-col gap-4">
-        <SemesterTabs gradeDistributions={gradeDistributions} />
+        <div className="flex flex-row items-center gap-2 sm:gap-3">
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <SemesterTabs gradeDistributions={gradeDistributions} />
+          </div>
+          <div className="shrink-0">
+            <ComparisonSelect gradeDistributions={gradeDistributions} />
+          </div>
+        </div>
+
         <div className="flex flex-col gap-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <CourseKpiCard gradeDistributions={gradeDistributions} />
@@ -61,12 +70,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
 const Hero = async ({ course, locale }: { course: Course; locale: Locale }) => {
   const t = await getTranslations()
-  const items = [
-    course.credits && t("CoursePage.hero.credits", { credits: course.credits }),
-    course.taughtSemesters.map((semester) => t(`Enums.Semester.${semester}`)).join(", "),
-    course.teachingLanguages.map((language) => t(`Enums.TeachingLanguage.${language}`)).join(", "),
-    course.campuses.map((campus) => t(`Enums.Campus.${campus}`)).join(", "),
-  ].filter(Boolean)
+  const format = await getFormatter({ locale })
+
+  const metaItems = buildCourseMetaItems(course, t, format)
 
   return (
     <div className="flex flex-col gap-2">
@@ -74,19 +80,17 @@ const Hero = async ({ course, locale }: { course: Course; locale: Locale }) => {
         <Title element="h2" className="font-medium text-base text-neutral-600 dark:text-stone-300">
           {course.code}
         </Title>
-        <Title element="h1" className="text-3xl font-bold">
+        <Title element="h1" className="text-xl font-bold sm:text-2xl lg:text-3xl">
           {getCourseLocalizedTextFields(course, locale).name}
         </Title>
       </div>
 
-      <div className="flex flex-row gap-2.5 items-center">
-        {items.map((item, index) => (
-          <Fragment key={item}>
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+        {metaItems.map((item, index) => (
+          <div key={item} className="flex shrink-0 items-center gap-x-2.5 whitespace-nowrap">
+            {index > 0 && <span className="size-1 rounded-full bg-neutral-400 dark:bg-stone-500" aria-hidden />}
             <Text className="text-sm text-neutral-600 dark:text-stone-300">{item}</Text>
-            {index < items.length - 1 && (
-              <span className="size-1 shrink-0 rounded-full bg-neutral-400 dark:bg-stone-500" aria-hidden />
-            )}
-          </Fragment>
+          </div>
         ))}
       </div>
     </div>
