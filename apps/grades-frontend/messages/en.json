@@ -145,6 +145,10 @@
     "hero": {
       "credits": "{credits, number} ECTS"
     },
+    "noGrades": {
+      "title": "No grade statistics yet",
+      "hint": "We don't have grade data for this course yet. Statistics may appear once results are published."
+    },
     "semesterTabs": {
       "olderSemesters": "Older semesters"
     },
