@@ -35,10 +35,9 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
   const primaryPeriodLabel = periodLabel(periodSelection)
   const comparisonPeriodLabel = formatComparePeriodLabel(comparisonPeriodSelection)
 
-  const { canGhostCompare: rawCanCompare } = getPeriodCompareFlags(selectedRows, comparisonRows)
-  const showGhostComparison = params.isGhost === true && rawCanCompare && comparison !== null
-
-  const canCompare = comparison !== null && rawCanCompare
+  const { canGhostCompare } = getPeriodCompareFlags(selectedRows, comparisonRows)
+  const canCompare = comparison !== null && canGhostCompare
+  const isComparisonEnabled = params.isGhost === true && canCompare
 
   const comparisonDisabledReason =
     comparison === null ? tBar("compareDisabledReason") : tBar("compareDisabledNotComparable")
@@ -54,7 +53,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
               <Button
                 className={cn(
                   "cursor-pointer border-none text-sm font-normal transition-colors rounded-lg",
-                  showGhostComparison
+                  isComparisonEnabled
                     ? "bg-neutral-100 text-neutral-950 hover:bg-neutral-200/80 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
                     : "text-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"
                 )}
@@ -79,7 +78,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
       <GradeDistributionBarChart
         primary={primary}
         comparison={comparison}
-        ghostEnabled={showGhostComparison}
+        ghostEnabled={isComparisonEnabled}
         primaryPeriodLabel={primaryPeriodLabel}
         comparisonPeriodLabel={comparisonPeriodLabel}
       />

@@ -144,7 +144,9 @@
       "hoverCompare": "{grade} · {percent} selected · {comparisonPercent} comparison",
       "grades": {
         "PASS": "Pass",
-        "FAIL": "Fail"
+        "FAIL": "Fail",
+        "PASSShort": "Pass",
+        "FAILShort": "Fail"
       }
     },
     "lineChart": {

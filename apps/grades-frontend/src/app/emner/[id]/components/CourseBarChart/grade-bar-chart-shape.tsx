@@ -26,17 +26,16 @@ export type ShapeProps = {
 }
 
 function barHeights(payload: ChartRow, slotTop: number, slotHeight: number) {
-  const baseline = slotTop + slotHeight
+  const chartBaseline = slotTop + slotHeight
   const scale = payload.plotValue > 0 ? payload.plotValue : 1
   const primaryHeight = (payload.value / scale) * slotHeight
   const ghostHeight = (payload.ghostValue / scale) * slotHeight
 
   return {
-    baseline,
     primaryHeight,
     ghostHeight,
-    primaryY: baseline - primaryHeight,
-    ghostY: baseline - ghostHeight,
+    primaryY: chartBaseline - primaryHeight,
+    ghostY: chartBaseline - ghostHeight,
   }
 }
 

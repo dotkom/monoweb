@@ -14,6 +14,7 @@ import {
   YAxis,
   type MouseHandlerDataParam,
 } from "recharts"
+import { CHART_SURFACE_CLASS, CHART_X_AXIS_HEIGHT, GradeTick } from "../CourseBarChart/grade-bar-chart-primitives"
 import { SelectionDot, NullFloorDot } from "./line-chart-selection-dot"
 
 export type CourseLineChartMode = "LETTER" | "PASS_FAIL"
@@ -28,7 +29,7 @@ type Props = {
   mode: CourseLineChartMode
   points: CourseLineChartPoint[]
   selectedIds: string[]
-  onPointClick?: (pointId: string) => void
+  onPointClick: (pointId: string) => void
   className?: string
 }
 
@@ -51,8 +52,7 @@ const LINE_STROKE_WIDTH = 1.8
 const MAX_X_TICKS = 8
 const HOVER_DOT_RADIUS = 4.5
 const GRID_STROKE_OPACITY = 0.07
-const AXIS_TICK_MARGIN = 8
-const X_AXIS_HEIGHT = AXIS_TICK_MARGIN + 14
+const Y_AXIS_TICK_MARGIN = 8
 
 function getFocusPoint(points: CourseLineChartPoint[], selectedIds: string[]): CourseLineChartPoint | null {
   if (selectedIds.length !== 1) {
@@ -92,24 +92,24 @@ function getSelectionIndexRange(points: CourseLineChartPoint[], selectedIds: str
 function getPeriodStrokeStops(
   pointCount: number,
   selection: { start: number; end: number }
-): Array<{ offset: number; color: string; role: string }> {
+): { id: string; offset: number; color: string }[] {
   const lastIndex = pointCount - 1
   const toPct = (index: number) => (index / lastIndex) * 100
   const startPct = toPct(selection.start)
   const endPct = selection.end >= lastIndex ? 100 : toPct(selection.end)
-  const stops: Array<{ offset: number; color: string; role: string }> = []
+  const stops: { id: string; offset: number; color: string }[] = []
 
   if (selection.start > 0) {
-    stops.push({ offset: 0, color: HISTORY_STROKE, role: "before-start" })
-    stops.push({ offset: startPct, color: HISTORY_STROKE, role: "before-end" })
+    stops.push({ id: "before-start", offset: 0, color: HISTORY_STROKE })
+    stops.push({ id: "before-end", offset: startPct, color: HISTORY_STROKE })
   }
 
-  stops.push({ offset: startPct, color: PRIMARY_STROKE, role: "primary-start" })
-  stops.push({ offset: endPct, color: PRIMARY_STROKE, role: "primary-end" })
+  stops.push({ id: "primary-start", offset: startPct, color: PRIMARY_STROKE })
+  stops.push({ id: "primary-end", offset: endPct, color: PRIMARY_STROKE })
 
   if (endPct < 100) {
-    stops.push({ offset: endPct, color: HISTORY_STROKE, role: "after-start" })
-    stops.push({ offset: 100, color: HISTORY_STROKE, role: "after-end" })
+    stops.push({ id: "after-start", offset: endPct, color: HISTORY_STROKE })
+    stops.push({ id: "after-end", offset: 100, color: HISTORY_STROKE })
   }
 
   return stops
@@ -141,7 +141,7 @@ function getEvenXTickLabels(points: CourseLineChartPoint[], maxTicks: number) {
 }
 
 function estimateYAxisWidth(mode: CourseLineChartMode) {
-  return mode === "PASS_FAIL" ? AXIS_TICK_MARGIN + 36 : AXIS_TICK_MARGIN + 12
+  return mode === "PASS_FAIL" ? Y_AXIS_TICK_MARGIN + 36 : Y_AXIS_TICK_MARGIN + 12
 }
 
 function formatMetricValue(format: ReturnType<typeof useFormatter>, mode: CourseLineChartMode, value: number) {
@@ -198,9 +198,8 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
   }, [])
 
   const isSingleSelection = selectedIds.length === 1
-  const isPeriodSelection = selectedIds.length > 1
   const selectionCoversAll = selectedIds.length > 0 && points.every((point) => selectedIds.includes(point.id))
-  const highlightPeriod = isPeriodSelection && !selectionCoversAll
+  const highlightPeriod = selectedIds.length > 1 && !selectionCoversAll
 
   const focusPoint = useMemo(() => getFocusPoint(points, selectedIds), [points, selectedIds])
   const selectionRange = useMemo(() => getSelectionIndexRange(points, selectedIds), [points, selectedIds])
@@ -239,16 +238,13 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
     <div
       ref={containerRef}
       className={cn(
-        "min-h-40 w-full flex-1 overflow-visible select-none text-muted-foreground outline-none",
-        "**:select-none **:outline-none",
-        "[&_.recharts-wrapper]:overflow-visible! [&_.recharts-surface]:overflow-visible!",
-        "[&_.recharts-wrapper]:outline-none [&_.recharts-surface]:outline-none [&_svg]:outline-none [&_svg]:overflow-visible!",
-        "[&_.recharts-wrapper]:focus:outline-none [&_.recharts-surface]:focus:outline-none [&_svg]:focus:outline-none",
-        onPointClick &&
-          "cursor-pointer! [&_.recharts-wrapper]:cursor-pointer! [&_svg]:cursor-pointer! **:cursor-pointer!",
+        "min-h-40 w-full flex-1 cursor-pointer!",
+        "[&_.recharts-wrapper]:cursor-pointer! [&_svg]:cursor-pointer! **:cursor-pointer!",
+        "[&_.recharts-wrapper]:overflow-visible! [&_.recharts-surface]:overflow-visible! [&_svg]:overflow-visible!",
+        CHART_SURFACE_CLASS,
         className
       )}
-      style={onPointClick ? { cursor: "pointer" } : undefined}
+      style={{ cursor: "pointer" }}
       onMouseDown={(event) => {
         event.preventDefault()
       }}
@@ -264,12 +260,12 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
           margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
           accessibilityLayer={false}
           tabIndex={-1}
-          className={onPointClick ? "cursor-pointer! outline-none" : "outline-none"}
-          style={{ userSelect: "none", cursor: onPointClick ? "pointer" : undefined }}
+          className="cursor-pointer! outline-none"
+          style={{ userSelect: "none", cursor: "pointer" }}
           onClick={(state) => {
             const id = resolvePointIdFromChartEvent(state, points)
             if (id) {
-              onPointClick?.(id)
+              onPointClick(id)
             }
           }}
         >
@@ -277,11 +273,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             <defs>
               <linearGradient id={strokeGradientId} x1="0" y1="0" x2="1" y2="0">
                 {periodStrokeStops.map((stop) => (
-                  <stop
-                    key={`${stop.offset}-${stop.color}-${stop.role}`}
-                    offset={`${stop.offset}%`}
-                    stopColor={stop.color}
-                  />
+                  <stop key={stop.id} offset={`${stop.offset}%`} stopColor={stop.color} />
                 ))}
               </linearGradient>
             </defs>
@@ -301,9 +293,9 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             ticks={xTickLabels}
             tickLine={false}
             axisLine={false}
-            height={X_AXIS_HEIGHT}
-            tickMargin={AXIS_TICK_MARGIN}
-            tick={{ fontSize: 12 }}
+            height={CHART_X_AXIS_HEIGHT}
+            tickMargin={0}
+            tick={<GradeTick />}
             interval={0}
             padding={{ left: 0, right: 0 }}
           />
@@ -315,7 +307,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             tickLine={false}
             axisLine={false}
             width={yAxisWidth}
-            tickMargin={AXIS_TICK_MARGIN}
+            tickMargin={Y_AXIS_TICK_MARGIN}
             tick={{ fontSize: 12 }}
             tickFormatter={formatYTick}
             interval={0}
@@ -331,7 +323,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
             strokeWidth={LINE_STROKE_WIDTH}
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={onPointClick ? { cursor: "pointer" } : undefined}
+            style={{ cursor: "pointer" }}
             dot={(dotProps) => {
               const payload = dotProps.payload as CourseLineChartPoint | undefined
               if (payload?.value == null) {
@@ -367,7 +359,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
                   cy={dotProps.cy}
                   r={HOVER_DOT_RADIUS}
                   fill={PRIMARY_STROKE}
-                  style={onPointClick ? { cursor: "pointer" } : undefined}
+                  style={{ cursor: "pointer" }}
                 />
               )
             }}
@@ -386,7 +378,7 @@ export function CourseLineChart({ mode, points, selectedIds, onPointClick, class
                   cy={shapeProps.cy}
                   focused={isSingleSelection && point.id === focusId}
                   inSelectedPeriod={highlightPeriod && selectedIdSet.has(point.id)}
-                  onSelect={() => onPointClick?.(point.id)}
+                  onSelect={() => onPointClick(point.id)}
                 />
               )}
             />

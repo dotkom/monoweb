@@ -65,7 +65,7 @@ export function SelectionDot({
 
     return (
       <ZIndexLayer zIndex={DefaultZIndexes.label}>
-        <g onPointerDown={(event) => event.stopPropagation()}>
+        <g>
           <circle cx={cx} cy={cy} r={SELECTION_DOT_RADIUS} fill={PRIMARY_FILL} />
           {label && (
             <g>
@@ -124,9 +124,6 @@ export function NullFloorDot({ cx, cy, focused = false, inSelectedPeriod = false
         onClick={(event) => {
           event.stopPropagation()
           onSelect?.()
-        }}
-        onPointerDown={(event) => {
-          event.stopPropagation()
         }}
       >
         <circle cx={cx} cy={markCy} r={NULL_FLOOR_HIT_RADIUS} fill="transparent" />
