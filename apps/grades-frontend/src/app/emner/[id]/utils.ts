@@ -106,6 +106,19 @@ export function resolvePeriodSelection(
     }
   }
 
+  const selectionExists =
+    selection.kind === "semester" &&
+    gradeDistributions.some(
+      (gd) => gd.year === selection.semester?.year && gd.semester === selection.semester?.semester
+    )
+
+  if (selection.kind === "semester" && !selectionExists) {
+    return {
+      kind: "semester",
+      semester: defaultSemester,
+    }
+  }
+
   return selection
 }
 

@@ -30,7 +30,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     server.gradeDistribution.findGradeDistributions.query(courseId),
   ])
 
-  const showLetter = course.gradeType !== "PASS_FAIL"
+  const showLetterLineChart = course.gradeType !== "PASS_FAIL"
 
   return (
     <div className="flex flex-col gap-10">
@@ -39,24 +39,14 @@ export default async function CoursePage({ params }: CoursePageProps) {
         <SemesterTabs gradeDistributions={gradeDistributions} />
         <div className="flex flex-col gap-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <CourseBarChartCard gradeDistributions={gradeDistributions} className="order-2 lg:order-1" />
-            <CourseKpiCard
-              gradeDistributions={gradeDistributions}
-              showLetter={showLetter}
-              className="order-1 lg:order-2"
-            />
+            <CourseKpiCard gradeDistributions={gradeDistributions} showLetter={showLetterLineChart} />
+            <CourseBarChartCard gradeDistributions={gradeDistributions} />
 
-            {showLetter && (
-              <CourseLineChartCard
-                gradeDistributions={gradeDistributions}
-                mode="LETTER"
-                className="order-3 lg:order-3"
-              />
-            )}
+            {showLetterLineChart && <CourseLineChartCard gradeDistributions={gradeDistributions} mode="LETTER" />}
             <CourseLineChartCard
               gradeDistributions={gradeDistributions}
               mode="PASS_FAIL"
-              className={cn("order-4 lg:order-4", !showLetter && "lg:col-span-2")}
+              className={cn(!showLetterLineChart && "lg:col-span-2")}
             />
           </div>
 
