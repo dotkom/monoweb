@@ -122,9 +122,11 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
       </PopoverAnchor>
 
       <PopoverContent
-        className="min-w-36 gap-0 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-700 dark:bg-stone-800 w-96"
+        className="min-w-36 gap-0 flex flex-col p-1 bg-white border border-neutral-200 shadow-md dark:border-stone-700 dark:bg-stone-800 w-[calc(var(--available-width)-2rem)] mx-4 sm:mx-0 sm:w-96"
         align="start"
         side="bottom"
+        positionMethod="fixed"
+        collisionPadding={0}
         aria-busy={isLoading}
         initialFocus={false}
         finalFocus={false}
@@ -145,7 +147,7 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
               </Text>
               <IconArrowRight
                 size={16}
-                className="transition-transform group-hover:translate-x-1 group-focus:translate-x-1 text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200"
+                className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1 motion-safe:group-focus:translate-x-1 text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200"
               />
             </Link>
           </>
@@ -169,7 +171,7 @@ const CourseAutocompleteSkeleton = () => {
       </div>
       <div
         aria-hidden
-        className="mt-1 flex p-3 border-t border-neutral-200 dark:border-stone-700 text-neutral-700 rounded-b-lg"
+        className="flex p-3 border-t border-neutral-200 dark:border-stone-700 text-neutral-700 rounded-b-lg"
       >
         <div className="h-4 w-1/4 rounded bg-neutral-200 dark:bg-stone-600 motion-safe:animate-pulse" />
       </div>

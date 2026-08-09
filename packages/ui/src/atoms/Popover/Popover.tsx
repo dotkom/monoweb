@@ -108,6 +108,8 @@ export function PopoverContent({
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  positionMethod = "absolute",
+  collisionPadding,
   initialFocus,
   ...props
 }: ContentProps) {
@@ -122,6 +124,8 @@ export function PopoverContent({
           alignOffset={alignOffset}
           side={side}
           sideOffset={sideOffset}
+          positionMethod={positionMethod}
+          collisionPadding={collisionPadding}
           className="isolate z-50"
         >
           <PopoverPrimitive.Popup
@@ -145,6 +149,8 @@ export function PopoverContent({
       alignOffset={alignOffset}
       side={side}
       sideOffset={sideOffset}
+      positionMethod={positionMethod}
+      collisionPadding={collisionPadding}
       initialFocus={initialFocus}
       {...props}
     />
