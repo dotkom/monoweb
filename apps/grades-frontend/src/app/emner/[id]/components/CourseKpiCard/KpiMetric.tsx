@@ -170,6 +170,7 @@ export function KpiMetric({
             selectedPeriodLabel={selectedPeriodLabel}
             comparisonPeriodLabel={comparisonPeriodLabel}
             showComparisonTick={showRangeBarComparisonTick && comparisonMean != null}
+            diff={diffIsPositive ? "positive" : diffIsNegative ? "negative" : "neutral"}
           />
         </div>
       )}

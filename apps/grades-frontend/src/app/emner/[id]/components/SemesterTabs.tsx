@@ -16,7 +16,7 @@ import { usePeriodLabel } from "../usePeriodLabel"
 
 const tabClassName = (selected: boolean) =>
   cn(
-    "h-auto px-3 py-2 font-medium text-sm flex-shrink-0",
+    "h-auto px-3 py-2 font-medium text-sm flex-shrink-0 focus-visible:ring-inset",
     "dark:border-stone-700 dark:bg-stone-800 dark:hover:border-stone-600 dark:hover:bg-stone-700 hover:bg-muted/60",
     selected &&
       "border-transparent bg-primary text-primary-foreground hover:border-transparent hover:bg-primary/90 hover:text-primary-foreground dark:border-transparent dark:bg-primary dark:hover:bg-primary/90"

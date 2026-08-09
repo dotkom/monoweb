@@ -1,7 +1,7 @@
 "use client"
 
 import type { GradeType, SemesterKey } from "@dotkomonline/grades-backend/course"
-import { Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { cn, Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { useFormatter, useTranslations } from "next-intl"
 import type { ReactNode } from "react"
 import { usePeriodLabel } from "../../usePeriodLabel"
@@ -16,6 +16,7 @@ type GradeRangeBarProps = {
   selectedPeriodLabel: string
   comparisonPeriodLabel: string
   showComparisonTick: boolean
+  diff: "positive" | "negative" | "neutral"
 }
 
 export function GradeRangeBar({
@@ -28,14 +29,20 @@ export function GradeRangeBar({
   selectedPeriodLabel,
   comparisonPeriodLabel,
   showComparisonTick,
+  diff,
 }: GradeRangeBarProps) {
   const t = useTranslations("CoursePage.kpiCard.rangeBar")
   const formatter = useFormatter()
   const periodLabel = usePeriodLabel()
 
   const span = max.value - min.value || 1
-  const pct = (n: number) => {
+  const toLeftPct = (n: number) => {
     const raw = ((n - min.value) / span) * 100
+    return `${Math.min(100, Math.max(0, raw))}%`
+  }
+
+  const toWidthPct = (start: number, end: number) => {
+    const raw = ((end - start) / span) * 100
     return `${Math.min(100, Math.max(0, raw))}%`
   }
 
@@ -81,24 +88,47 @@ export function GradeRangeBar({
         <div className="absolute top-1/2 right-0 left-0 h-1 -translate-y-1/2 rounded bg-neutral-200 dark:bg-stone-700" />
 
         {showComparisonTick && (
-          <RangeBarTooltip label={meanTooltip}>
-            <button
-              type="button"
-              aria-label={meanTooltip}
-              className="absolute top-1/2 z-10 flex size-4 -translate-x-1/2 -translate-y-1/2 cursor-default items-center justify-center"
-              style={{ left: pct(mean) }}
-            >
-              <span className="h-4 w-0.5 rounded bg-neutral-400 dark:bg-stone-500" />
-            </button>
-          </RangeBarTooltip>
+          <>
+            {diff === "positive" ? (
+              <div
+                className="absolute top-1/2 right-0 left-0 h-1 -translate-y-1/2 rounded bg-green-600/70 dark:bg-green-500/65"
+                style={{ left: toLeftPct(mean), width: toWidthPct(mean, value) }}
+              />
+            ) : (
+              diff === "negative" && (
+                <div
+                  className="absolute top-1/2 right-0 left-0 h-1 -translate-y-1/2 rounded bg-red-600/60 dark:bg-red-500/70"
+                  style={{ left: toLeftPct(value), width: toWidthPct(value, mean) }}
+                />
+              )
+            )}
+
+            <RangeBarTooltip label={meanTooltip}>
+              <button
+                type="button"
+                aria-label={meanTooltip}
+                className="absolute top-1/2 z-10 flex size-4 -translate-x-1/2 -translate-y-1/2 cursor-default items-center justify-center"
+                style={{ left: toLeftPct(mean) }}
+              >
+                <span className="h-4 w-0.5 rounded bg-neutral-400 dark:bg-stone-500" />
+              </button>
+            </RangeBarTooltip>
+          </>
         )}
 
         <RangeBarTooltip label={valueTooltip}>
           <button
             type="button"
             aria-label={valueTooltip}
-            className="absolute top-1/2 z-20 size-2.5 -translate-x-1/2 -translate-y-1/2 cursor-default rounded-full bg-primary"
-            style={{ left: pct(value) }}
+            className={cn(
+              "absolute top-1/2 z-20 size-2.5 -translate-x-1/2 -translate-y-1/2 cursor-default rounded-full",
+              !showComparisonTick || diff === "neutral"
+                ? "bg-neutral-500 dark:bg-stone-400"
+                : diff === "positive"
+                  ? "bg-green-600 dark:bg-green-500"
+                  : "bg-red-600 dark:bg-red-500"
+            )}
+            style={{ left: toLeftPct(value) }}
           />
         </RangeBarTooltip>
       </div>

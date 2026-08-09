@@ -139,12 +139,12 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
               className="text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 dark:border-stone-700 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:text-neutral-900 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-700 focus:bg-neutral-100 dark:focus:bg-stone-700"
               onClick={() => setIsOpen(false)}
             >
-              <Text className="leading-none text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200">
+              <Text className="leading-none text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200">
                 {t("seeAllResults")}
               </Text>
               <IconArrowRight
                 size={16}
-                className="transition-transform group-hover:translate-x-1 text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200"
+                className="transition-transform group-hover:translate-x-1 group-focus:translate-x-1 text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200"
               />
             </Link>
           </>

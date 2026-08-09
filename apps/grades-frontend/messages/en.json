@@ -152,6 +152,7 @@
       "passRateOverTime": "Pass rate over time"
     },
     "kpiCard": {
+      "title": "Overview",
       "comparisonSameAsPeriod": "Already selected as period",
       "comparisonNotComparable": "Not comparable",
       "averageGrade": "Average grade",

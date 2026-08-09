@@ -53,7 +53,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
             <span className="inline-flex">
               <Button
                 className={cn(
-                  "cursor-pointer border-none text-sm font-normal transition-colors rounded-md",
+                  "cursor-pointer border-none text-sm font-normal transition-colors rounded-lg",
                   showGhostComparison
                     ? "bg-neutral-100 text-neutral-950 hover:bg-neutral-200/80 dark:bg-stone-700 dark:text-stone-200 dark:hover:bg-stone-600"
                     : "text-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"

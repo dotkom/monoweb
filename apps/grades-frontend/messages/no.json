@@ -152,6 +152,7 @@
       "passRateOverTime": "Ståprosent over tid"
     },
     "kpiCard": {
+      "title": "Oversikt",
       "comparisonSameAsPeriod": "Allerede valgt som periode",
       "comparisonNotComparable": "Ikke sammenlignbart",
       "averageGrade": "Snitt",
