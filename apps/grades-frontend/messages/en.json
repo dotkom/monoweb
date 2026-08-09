@@ -104,6 +104,13 @@
     "noResults": "No courses found",
     "seeAllResults": "See all results"
   },
+  "CourseList": {
+    "empty": {
+      "title": "No courses found",
+      "hint": "Try removing or changing your filters.",
+      "clearFilters": "Clear all filters"
+    }
+  },
   "CourseListToolbar": {
     "searchPlaceholder": "Search for courses...",
     "totalCount": "{totalCount, plural, one {# course} other {# courses}}",

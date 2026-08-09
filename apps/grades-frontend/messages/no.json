@@ -104,6 +104,13 @@
     "noResults": "Ingen emner funnet",
     "seeAllResults": "Se alle resultater"
   },
+  "CourseList": {
+    "empty": {
+      "title": "Ingen emner funnet",
+      "hint": "Prøv å fjerne eller endre filtrene dine.",
+      "clearFilters": "Fjern alle filtre"
+    }
+  },
   "CourseListToolbar": {
     "searchPlaceholder": "Søk etter emner...",
     "totalCount": "{totalCount, plural, one {# emne} other {# emner}}",
