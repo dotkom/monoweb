@@ -60,7 +60,7 @@ function Mobile() {
           className="relative z-1 block h-auto w-full pointer-events-none select-none not-dark:hidden"
         />
 
-        <Torch className="top-2" imageClassName="w-36 min-[350px]:w-44" />
+        <Torch className="top-0 min-[400px]:top-2" imageClassName="w-36 min-[350px]:w-40 min-[400px]:w-44" />
       </div>
 
       <div className="relative flex w-full max-w-(--content-max-width) mx-auto flex-col gap-12 px-(--page-padding-x) pt-8">
