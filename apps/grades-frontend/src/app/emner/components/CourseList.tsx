@@ -1,33 +1,19 @@
 "use client"
 
-import { useTRPC } from "@/utils/trpc/client"
-import type { CourseRouter } from "@dotkomonline/grades-backend"
-import type { CourseFilterQuery } from "@dotkomonline/grades-backend/course"
-import { useInfiniteQuery } from "@tanstack/react-query"
-import { useEffect, useMemo, useRef } from "react"
+import type { Course } from "@dotkomonline/grades-backend/course"
+import { useEffect, useRef } from "react"
 import { CourseCard } from "../../components/CourseCard/CourseCard"
 import { CourseCardSkeleton } from "../../components/CourseCard/CourseCardSkeleton"
 
-type FindCoursesOutput = CourseRouter.FindCoursesOutput
-
 interface Props {
-  initialPage: FindCoursesOutput
-  filter: CourseFilterQuery
+  courses: Course[]
+  fetchNextPage: () => void
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  isFetching: boolean
 }
 
-export const CourseList = ({ initialPage, filter }: Props) => {
-  const trpc = useTRPC()
-
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isFetching } = useInfiniteQuery(
-    trpc.course.findCourses.infiniteQueryOptions(
-      { filter, cursor: 0, limit: 20 },
-      {
-        placeholderData: (previousData) => previousData ?? { pages: [initialPage], pageParams: [0] },
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
-      }
-    )
-  )
-
+export const CourseList = ({ courses, fetchNextPage, isFetchingNextPage, hasNextPage, isFetching }: Props) => {
   const loaderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -50,8 +36,6 @@ export const CourseList = ({ initialPage, filter }: Props) => {
     }
     return () => observer.disconnect()
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
-
-  const courses = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
 
   return (
     <section className="flex w-full flex-col gap-4" aria-busy={isFetchingNextPage || isFetching}>

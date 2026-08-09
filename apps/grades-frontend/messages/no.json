@@ -106,6 +106,7 @@
   },
   "CourseListToolbar": {
     "searchPlaceholder": "Søk etter emner...",
+    "totalCount": "{totalCount, plural, one {# emne} other {# emner}}",
     "sortOptions": {
       "mostCandidates": "Flest studenter",
       "highestGrade": "Høyest snitt",
