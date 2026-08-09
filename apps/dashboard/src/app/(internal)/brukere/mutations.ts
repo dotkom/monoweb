@@ -18,9 +18,9 @@ export const useUpdateUserMutation = () => {
       onSuccess: async (data) => {
         complete()
 
-        await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.user.get.queryOptions(data.user.id))
         await queryClient.invalidateQueries({ queryKey: trpc.user.all.queryKey() })
-        await queryClient.invalidateQueries(trpc.workspace.findUser.queryOptions({ userId: data.id }))
+        await queryClient.invalidateQueries(trpc.workspace.findUser.queryOptions({ userId: data.user.id }))
       },
     })
   )

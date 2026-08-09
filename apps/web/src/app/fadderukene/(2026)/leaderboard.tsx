@@ -10,11 +10,12 @@ import {
   getContestantName,
 } from "@dotkomonline/rpc/contest"
 import { Avatar, AvatarFallback, AvatarImage, RichText, Text, Title, cn } from "@dotkomonline/ui"
-import { IconUserFilled } from "@tabler/icons-react"
+import { IconArrowUpRight, IconHandClick, IconUserFilled } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { TeamModal } from "./team-modal"
 import Image from "next/image"
+import Link from "next/link"
 
 const MAX_VISIBLE_AVATARS = 5
 
@@ -307,6 +308,8 @@ export function Leaderboard({ contestId }: LeaderboardProps) {
 
         {data?.contest.description && <RichText content={data.contest.description} />}
 
+        <ProfilePointsBanner isAuthenticated={isAuthenticated} />
+
         {!isAuthenticated && (
           <Text className="text-sm text-muted-foreground">Logg inn for å se hvem som er med på lagene.</Text>
         )}
@@ -376,5 +379,41 @@ export function Leaderboard({ contestId }: LeaderboardProps) {
         onClose={() => setSelected(null)}
       />
     </div>
+  )
+}
+
+function ProfilePointsBanner({ isAuthenticated }: { isAuthenticated: boolean }) {
+  const trpc = useTRPC()
+
+  const { data: profileProgress } = useQuery({
+    ...trpc.fadderuke.getMyContestProfileProgress.queryOptions(),
+    enabled: isAuthenticated,
+  })
+
+  if (!profileProgress?.isContestTeamMember || profileProgress.teamProfileBonusAwarded) {
+    return null
+  }
+
+  return (
+    <Link
+      href="/innstillinger/profil"
+      className="flex flex-row gap-3 p-2 mt-6 rounded-md transition-colors border border-emerald-300/60 bg-emerald-100/75 hover:bg-blue-100 hover:border-blue-300/60 dark:border-amber-500/20 dark:bg-amber-950/30 dark:hover:bg-sky-950/50 dark:hover:border-sky-500/20"
+    >
+      <div className="mt-0.5 select-none text-xl text-center">👀</div>
+
+      <div className="flex min-w-0 flex-col gap-2">
+        <Text className="text-sm font-medium sm:text-base">Gi laget ditt poeng med profilen din</Text>
+        <Text className="text-sm text-muted-foreground">
+          Sett brukernavn og profilbilde for å gi laget ditt poeng. Når alle på laget har gjort det, får dere en svær
+          poengbonus 😳
+        </Text>
+        <div className="flex flex-row gap-1 items-center">
+          <IconHandClick className="size-4 shrink-0 text-muted-foreground" />
+          <Text className="text-sm text-muted-foreground">Trykk for å gå til profilinnstillinger.</Text>
+        </div>
+      </div>
+
+      <IconArrowUpRight className="size-5 shrink-0 self-center" />
+    </Link>
   )
 }

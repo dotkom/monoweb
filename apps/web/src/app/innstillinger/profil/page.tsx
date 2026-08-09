@@ -5,19 +5,34 @@ import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { Button, Title } from "@dotkomonline/ui"
+import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
-import { IconArrowLeft } from "@tabler/icons-react"
+import { IconArrowLeft, IconX } from "@tabler/icons-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { useState } from "react"
 import { type FormUserWrite, ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
+
+function getFadderukePointsToastMessage(pointsAwarded: number, teamBonusAwarded: number) {
+  if (teamBonusAwarded > 0 && pointsAwarded > 0) {
+    return `${pointsAwarded} poeng til laget, pluss ${teamBonusAwarded} i lagbonus!`
+  }
+
+  if (teamBonusAwarded > 0) {
+    return `Hele laget er ferdig! ${teamBonusAwarded} bonuspoeng til laget.`
+  }
+
+  return `${pointsAwarded} poeng til laget ditt!`
+}
 
 const EditProfilePage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const fullPathname = useFullPathname()
+  const [pointsToastMessage, setPointsToastMessage] = useState<string | null>(null)
   const {
     sessionUser,
     isLoading: authLoading,
@@ -31,11 +46,20 @@ const EditProfilePage = () => {
   const userEdit = useMutation(
     trpc.user.update.mutationOptions({
       onSuccess: async (data) => {
+        const totalPointsAwarded = data.fadderukeContestPointsAwarded + data.fadderukeTeamBonusAwarded
+
+        if (totalPointsAwarded > 0) {
+          setPointsToastMessage(
+            getFadderukePointsToastMessage(data.fadderukeContestPointsAwarded, data.fadderukeTeamBonusAwarded)
+          )
+        }
+
         await Promise.allSettled([
-          queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.username)),
-          queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
+          queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.user.username)),
+          queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.user.username)),
           queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
           queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
+          queryClient.invalidateQueries(trpc.fadderuke.getMyContestProfileProgress.queryOptions()),
         ])
       },
     })
@@ -103,6 +127,35 @@ const EditProfilePage = () => {
         saveSuccess={userEdit.isSuccess}
         resetSaveState={userEdit.reset}
       />
+
+      {pointsToastMessage ? (
+        <div
+          className={cn(
+            "fixed bottom-6 inset-x-0 mx-auto z-50 flex max-w-sm items-center gap-3 rounded-lg border border-green-300/60",
+            "bg-green-100 p-3 shadow-lg dark:border-green-500/20 dark:bg-green-950/90"
+          )}
+        >
+          <Image
+            src="/fadderuke-2026-torch.svg"
+            alt=""
+            width={20}
+            height={20}
+            draggable={false}
+            className="size-6.5 -ml-1 -my-1.5 -mr-1.5 shrink-0 object-contain select-none"
+          />
+          <Text className="min-w-0 flex-1 text-sm font-medium text-green-900 dark:text-green-100">
+            {pointsToastMessage}
+          </Text>
+          <button
+            type="button"
+            onClick={() => setPointsToastMessage(null)}
+            className="shrink-0 rounded-sm p-0.5 text-green-800 transition-colors hover:bg-green-200/80 dark:text-green-200 dark:hover:bg-green-900/60"
+            aria-label="Lukk"
+          >
+            <IconX className="size-4" />
+          </button>
+        </div>
+      ) : null}
     </div>
   )
 }
