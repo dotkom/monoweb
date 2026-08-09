@@ -4128,7 +4128,6 @@ export const ContestantScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   resultValue: 'resultValue',
-  fadderukeProfilePointsAwarded: 'fadderukeProfilePointsAwarded',
   contestId: 'contestId',
   userId: 'userId'
 } as const
