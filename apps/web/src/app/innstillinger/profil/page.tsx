@@ -131,7 +131,8 @@ const EditProfilePage = () => {
       {pointsToastMessage ? (
         <div
           className={cn(
-            "fixed bottom-6 inset-x-0 mx-auto z-50 flex max-w-sm items-center gap-3 rounded-lg border border-green-300/60",
+            "fixed bottom-12 sm:bottom-6 inset-x-3 mx-auto z-50 flex max-w-sm items-center gap-3 rounded-lg",
+            "border border-green-300/60",
             "bg-green-100 p-3 shadow-lg dark:border-green-500/20 dark:bg-green-950/90"
           )}
         >
@@ -141,18 +142,18 @@ const EditProfilePage = () => {
             width={20}
             height={20}
             draggable={false}
-            className="size-6.5 -ml-1 -my-1.5 -mr-1.5 shrink-0 object-contain select-none"
+            className="size-10 sm:size-6.5 sm:-ml-1 sm:-my-1.5 sm:-mr-1.5 shrink-0 object-contain select-none"
           />
-          <Text className="min-w-0 flex-1 text-sm font-medium text-green-900 dark:text-green-100">
+          <Text className="min-w-0 flex-1 text-base sm:text-sm font-medium text-green-900 dark:text-green-100">
             {pointsToastMessage}
           </Text>
           <button
             type="button"
             onClick={() => setPointsToastMessage(null)}
-            className="shrink-0 rounded-sm p-0.5 text-green-800 transition-colors hover:bg-green-200/80 dark:text-green-200 dark:hover:bg-green-900/60"
+            className="shrink-0 rounded-sm p-1 sm:p-0.5 text-green-800 transition-colors hover:bg-green-200/80 dark:text-green-200 dark:hover:bg-green-900/60"
             aria-label="Lukk"
           >
-            <IconX className="size-4" />
+            <IconX className="size-5 sm:size-4" />
           </button>
         </div>
       ) : null}
