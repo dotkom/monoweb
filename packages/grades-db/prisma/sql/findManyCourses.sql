@@ -64,6 +64,7 @@ WHERE
     $8::double precision IS NULL
     OR "average_grade" >= $8
   )
+  AND "candidate_count" > 0
 ORDER BY
   course_rank_score(code, name_no, name_en, last_year_taught, $3) DESC,
 

@@ -9,6 +9,7 @@ import { CourseAbout } from "./components/CourseAbout/CourseAbout"
 import { CourseBarChartCard } from "./components/CourseBarChart/CourseBarChartCard"
 import { CourseKpiCard } from "./components/CourseKpiCard/CourseKpiCard"
 import { CourseLineChartCard } from "./components/CourseLineChart/CourseLineChartCard"
+import { CourseNoGradesState } from "./components/CourseNoGradesState"
 import { SemesterTabs } from "./components/SemesterTabs"
 import { buildCourseMetaItems } from "./utils"
 
@@ -33,36 +34,62 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const showLetterLineChart = course.gradeType !== "PASS_FAIL"
 
+  const courseHasGradeData = course.candidateCount > 0
+  const courseHasAboutData =
+    course.contentNo !== null ||
+    course.contentEn !== null ||
+    course.teachingMethodsNo !== null ||
+    course.teachingMethodsEn !== null ||
+    course.learningOutcomesNo !== null ||
+    course.learningOutcomesEn !== null
+
   return (
     <div className="flex flex-col gap-10">
       <Hero course={course} locale={locale} />
       <div className="flex flex-col gap-4">
-        <div className="flex flex-row items-center gap-2 sm:gap-3">
-          <div className="min-w-0 flex-1 overflow-hidden">
-            <SemesterTabs gradeDistributions={gradeDistributions} />
+        {courseHasGradeData ? (
+          <>
+            <div className="flex flex-row items-center gap-2 sm:gap-3">
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <SemesterTabs gradeDistributions={gradeDistributions} />
+              </div>
+              <div className="shrink-0">
+                <ComparisonSelect gradeDistributions={gradeDistributions} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-12">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CourseKpiCard gradeDistributions={gradeDistributions} />
+                <CourseBarChartCard gradeDistributions={gradeDistributions} />
+
+                {showLetterLineChart && <CourseLineChartCard gradeDistributions={gradeDistributions} mode="LETTER" />}
+                <CourseLineChartCard
+                  gradeDistributions={gradeDistributions}
+                  mode="PASS_FAIL"
+                  className={cn(!showLetterLineChart && "lg:col-span-2")}
+                />
+              </div>
+
+              {courseHasAboutData && (
+                <>
+                  <Separator />
+                  <CourseAbout course={course} faculties={faculties} departments={departments} />
+                </>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-6">
+            <CourseNoGradesState />
+
+            {courseHasAboutData && (
+              <>
+                <Separator />
+                <CourseAbout course={course} faculties={faculties} departments={departments} />
+              </>
+            )}
           </div>
-          <div className="shrink-0">
-            <ComparisonSelect gradeDistributions={gradeDistributions} />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <CourseKpiCard gradeDistributions={gradeDistributions} />
-            <CourseBarChartCard gradeDistributions={gradeDistributions} />
-
-            {showLetterLineChart && <CourseLineChartCard gradeDistributions={gradeDistributions} mode="LETTER" />}
-            <CourseLineChartCard
-              gradeDistributions={gradeDistributions}
-              mode="PASS_FAIL"
-              className={cn(!showLetterLineChart && "lg:col-span-2")}
-            />
-          </div>
-
-          <Separator />
-
-          <CourseAbout course={course} faculties={faculties} departments={departments} />
-        </div>
+        )}
       </div>
     </div>
   )

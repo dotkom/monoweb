@@ -145,6 +145,10 @@
     "hero": {
       "credits": "{credits, number} stp"
     },
+    "noGrades": {
+      "title": "Ingen karakterstatistikk ennå",
+      "hint": "Vi har ikke karakterdata for dette emnet ennå. Statistikk kan dukke opp når resultater er offentliggjort."
+    },
     "semesterTabs": {
       "olderSemesters": "Eldre semestre"
     },
