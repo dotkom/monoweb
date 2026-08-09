@@ -140,8 +140,6 @@
       "compareDisabledReason": "Ikke nok data til å sammenligne",
       "compareDisabledNotComparable": "Ikke sammenlignbart",
       "percent": "{value, number} %",
-      "hoverOff": "{grade} · {percent} · {count} av {total}",
-      "hoverCompare": "{grade} · {percent} valgt · {comparisonPercent} sammenligning",
       "grades": {
         "PASS": "Bestått",
         "FAIL": "Ikke bestått",

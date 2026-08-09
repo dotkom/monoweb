@@ -5,17 +5,14 @@ import {
   type GradeDistributionCountFields,
 } from "@dotkomonline/grades-backend/grade-distribution"
 import { useTranslations } from "next-intl"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { chartFieldLabel, type AggregatedGradeDistribution } from "../../utils"
 
 const Y_MAX_HEADROOM = 1.1
 
 export type ChartRow = {
-  field: keyof GradeDistributionCountFields
-  label: string
   axisLabel: string
   value: number
-  count: number
   ghostValue: number
   plotValue: number
 }
@@ -37,20 +34,17 @@ function toPercent(count: number, total: number) {
   return (count / total) * 100
 }
 
-function chartRowLabels(field: keyof GradeDistributionCountFields, t: BarChartTranslate, compactAxisLabels: boolean) {
+function chartAxisLabel(field: keyof GradeDistributionCountFields, t: BarChartTranslate, compactAxisLabels: boolean) {
   const grade = chartFieldLabel(field)
 
   if (grade === "PASS" || grade === "FAIL") {
-    return {
-      label: t(`grades.${grade}`),
-      axisLabel: compactAxisLabels ? t(`grades.${grade}Short`) : t(`grades.${grade}`),
-    }
+    return compactAxisLabels ? t(`grades.${grade}Short`) : t(`grades.${grade}`)
   }
 
-  return { label: grade, axisLabel: grade }
+  return grade
 }
 
-// When ghost compare is on, show the union of primary and comparison columns.
+/** When ghost compare is on, show the union of primary and comparison columns. */
 function getChartFieldsForView(
   primary: GradeDistributionCountFields,
   comparison: GradeDistributionCountFields | null,
@@ -82,7 +76,6 @@ function sumChartFieldCounts(
 
 export function useGradeChartData({ primary, comparison, ghostEnabled, compactViewport }: Options) {
   const t = useTranslations("CoursePage.barChart")
-  const [activeField, setActiveField] = useState<keyof GradeDistributionCountFields | null>(null)
 
   const showComparison = ghostEnabled && comparison !== null
 
@@ -99,14 +92,10 @@ export function useGradeChartData({ primary, comparison, ghostEnabled, compactVi
       const ghostCount = comparison ? comparison.grades[field] : 0
       const value = toPercent(count, primaryTotal)
       const ghostValue = showComparison ? toPercent(ghostCount, comparisonTotal) : 0
-      const { label, axisLabel } = chartRowLabels(field, t, compactAxisLabels)
 
       return {
-        field,
-        label,
-        axisLabel,
+        axisLabel: chartAxisLabel(field, t, compactAxisLabels),
         value,
-        count,
         ghostValue,
         plotValue: showComparison ? Math.max(value, ghostValue) : value,
       }
@@ -118,13 +107,9 @@ export function useGradeChartData({ primary, comparison, ghostEnabled, compactVi
     return Math.max(peak * Y_MAX_HEADROOM, 1)
   }, [data])
 
-  const activeRow = data.find((row) => row.field === activeField) ?? null
-
   return {
     data,
     yMax,
-    activeRow,
-    setActiveField,
     showComparison,
     formatPercent,
   }

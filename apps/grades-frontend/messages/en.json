@@ -140,8 +140,6 @@
       "compareDisabledReason": "Not enough data to compare",
       "compareDisabledNotComparable": "Not comparable",
       "percent": "{value, number}%",
-      "hoverOff": "{grade} · {percent} · {count} of {total}",
-      "hoverCompare": "{grade} · {percent} selected · {comparisonPercent} comparison",
       "grades": {
         "PASS": "Pass",
         "FAIL": "Fail",
