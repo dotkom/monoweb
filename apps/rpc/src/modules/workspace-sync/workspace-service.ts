@@ -324,9 +324,10 @@ export function getWorkspaceService(
       invariant(response.data, "Expected response data to be defined")
       invariant(response.data.id, "Expected response data to have ID")
 
-      const newUser = await userService.update(handle, user.id, {
+      const updateResult = await userService.update(handle, user.id, {
         workspaceUserId: response.data.id,
       })
+      const newUser = updateResult.user
 
       const is2faEnforced = response.data.isEnforcedIn2Sv ?? false
       const is2faEnabled = response.data.isEnrolledIn2Sv ?? false

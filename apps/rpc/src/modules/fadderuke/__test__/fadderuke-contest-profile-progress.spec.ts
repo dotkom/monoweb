@@ -1,0 +1,314 @@
+import type { DBHandle } from "@dotkomonline/db"
+import { mockDeep } from "vitest-mock-extended"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import {
+  calculateFadderukeContestProfilePointsGiven,
+  calculateFadderukeContestTeamProfileBonus,
+  FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+  FADDERUKE_CONTEST_TEAM_PROFILE_BONUS_TOTAL,
+  FADDERUKE_CONTEST_USERNAME_POINTS,
+  FADDERUKE_CONTEST_YEAR,
+  getProfileProgressFromSnapshot,
+  isDefaultUsername,
+  isFadderukeContestTeamProfileComplete,
+  recordFadderukeContestProfileProgressOnUserUpdate,
+} from "../fadderuke-contest-profile-progress"
+
+const FADDERUKE_CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
+const DEFAULT_USERNAME = "550e8400-e29b-41d4-a716-446655440000"
+const USER_ID = "auth0|contest-user"
+
+function createHandle() {
+  return mockDeep<DBHandle>()
+}
+
+function mockSoloContestant(handle: DBHandle, resultValue = 420) {
+  handle.contestant.findFirst.mockResolvedValue({
+    id: "contestant-id",
+    resultValue,
+    userId: USER_ID,
+    team: null,
+  } as never)
+  handle.contestant.findUnique
+    .mockResolvedValueOnce({
+      resultValue,
+    } as never)
+    .mockResolvedValueOnce({
+      resultValue: resultValue + FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+    } as never)
+}
+
+describe("fadderuke contest profile progress", () => {
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it("treats uuid usernames as unset and non-uuid usernames as set", () => {
+    expect(isDefaultUsername(DEFAULT_USERNAME)).toBe(true)
+    expect(isDefaultUsername("brage")).toBe(false)
+  })
+
+  it("derives progress flags from the current profile snapshot", () => {
+    expect(
+      getProfileProgressFromSnapshot({
+        username: DEFAULT_USERNAME,
+        imageUrl: null,
+      })
+    ).toEqual({
+      hasSetUsername: false,
+      hasSetProfilePicture: false,
+    })
+
+    expect(
+      getProfileProgressFromSnapshot({
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      })
+    ).toEqual({
+      hasSetUsername: true,
+      hasSetProfilePicture: true,
+    })
+  })
+
+  it("calculates awarded points and the team bonus from progress rows", () => {
+    const progressRows = [
+      { hasSetUsername: true, hasSetProfilePicture: true },
+      { hasSetUsername: true, hasSetProfilePicture: false },
+    ]
+
+    const pointsGiven = calculateFadderukeContestProfilePointsGiven(progressRows)
+
+    expect(pointsGiven).toBe(FADDERUKE_CONTEST_USERNAME_POINTS * 2 + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS)
+    expect(calculateFadderukeContestTeamProfileBonus(pointsGiven)).toBe(
+      FADDERUKE_CONTEST_TEAM_PROFILE_BONUS_TOTAL - pointsGiven
+    )
+    expect(isFadderukeContestTeamProfileComplete(progressRows, 2)).toBe(false)
+    expect(
+      isFadderukeContestTeamProfileComplete(
+        [
+          { hasSetUsername: true, hasSetProfilePicture: true },
+          { hasSetUsername: true, hasSetProfilePicture: true },
+        ],
+        2
+      )
+    ).toBe(true)
+  })
+
+  it("records username and profile picture progress when a contest participant updates both", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue({
+      eventId: "fadderuke-event-id",
+    } as never)
+    handle.event.findUnique.mockResolvedValue({
+      contestId: FADDERUKE_CONTEST_ID,
+    } as never)
+    mockSoloContestant(handle)
+    handle.fadderukeContestProfileProgress.findFirst.mockResolvedValue(null)
+    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
+      id: "progress-id",
+      userId: USER_ID,
+      hasSetUsername: false,
+      hasSetProfilePicture: false,
+      hasAwardedTeamProfileBonus: false,
+      createdAt: new Date(),
+    } as never)
+    handle.fadderukeContestProfileProgress.findMany.mockResolvedValue([
+      {
+        id: "progress-id",
+        userId: USER_ID,
+        hasSetUsername: true,
+        hasSetProfilePicture: true,
+        hasAwardedTeamProfileBonus: false,
+      },
+    ] as never)
+
+    await recordFadderukeContestProfileProgressOnUserUpdate(
+      handle,
+      USER_ID,
+      {
+        username: DEFAULT_USERNAME,
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      },
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      }
+    )
+
+    expect(handle.fadderukeContestProfileProgress.create).toHaveBeenCalledWith({
+      data: {
+        userId: USER_ID,
+        hasSetUsername: false,
+        hasSetProfilePicture: false,
+      },
+    })
+    expect(handle.fadderukeContestProfileProgress.update).toHaveBeenCalledWith({
+      where: { id: "progress-id" },
+      data: {
+        hasSetUsername: true,
+        hasSetProfilePicture: true,
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(1, {
+      where: { id: "contestant-id" },
+      data: {
+        resultValue: 420 + FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(2, {
+      where: { id: "contestant-id" },
+      data: {
+        resultValue:
+          420 +
+          FADDERUKE_CONTEST_USERNAME_POINTS +
+          FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS +
+          calculateFadderukeContestTeamProfileBonus(
+            FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS
+          ),
+      },
+    })
+    expect(handle.fadderukeContestProfileProgress.updateMany).toHaveBeenCalledWith({
+      where: {
+        userId: {
+          in: [USER_ID],
+        },
+      },
+      data: {
+        hasAwardedTeamProfileBonus: true,
+      },
+    })
+  })
+
+  it("baselines existing profile state without awarding new progress on unrelated updates", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue({
+      eventId: "fadderuke-event-id",
+    } as never)
+    handle.event.findUnique.mockResolvedValue({
+      contestId: FADDERUKE_CONTEST_ID,
+    } as never)
+    mockSoloContestant(handle)
+    handle.fadderukeContestProfileProgress.findFirst.mockResolvedValue(null)
+    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
+      id: "progress-id",
+      userId: USER_ID,
+      hasSetUsername: true,
+      hasSetProfilePicture: true,
+      hasAwardedTeamProfileBonus: false,
+      createdAt: new Date(),
+    } as never)
+
+    await recordFadderukeContestProfileProgressOnUserUpdate(
+      handle,
+      USER_ID,
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      },
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      },
+      {
+        biography: "Hello",
+      } as never
+    )
+
+    expect(handle.fadderukeContestProfileProgress.create).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.update).not.toHaveBeenCalled()
+  })
+
+  it("does nothing when fadderuke contest is missing", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue(null)
+
+    await recordFadderukeContestProfileProgressOnUserUpdate(
+      handle,
+      USER_ID,
+      {
+        username: DEFAULT_USERNAME,
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+      }
+    )
+
+    expect(handle.contestant.findFirst).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.create).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.update).not.toHaveBeenCalled()
+  })
+
+  it("does not award any points after the team bonus has already been given", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue({
+      eventId: "fadderuke-event-id",
+    } as never)
+    handle.event.findUnique.mockResolvedValue({
+      contestId: FADDERUKE_CONTEST_ID,
+    } as never)
+    handle.contestant.findFirst.mockResolvedValue({
+      id: "contestant-id",
+      resultValue: 920,
+      userId: USER_ID,
+      team: null,
+    } as never)
+    handle.fadderukeContestProfileProgress.findFirst
+      .mockResolvedValueOnce({
+        id: "awarded-progress-id",
+        hasAwardedTeamProfileBonus: true,
+      } as never)
+      .mockResolvedValueOnce(null)
+    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
+      id: "progress-id",
+      userId: USER_ID,
+      hasSetUsername: false,
+      hasSetProfilePicture: false,
+      hasAwardedTeamProfileBonus: false,
+      createdAt: new Date(),
+    } as never)
+
+    await recordFadderukeContestProfileProgressOnUserUpdate(
+      handle,
+      USER_ID,
+      {
+        username: DEFAULT_USERNAME,
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      },
+      {
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      }
+    )
+
+    expect(handle.fadderukeContestProfileProgress.update).toHaveBeenCalledWith({
+      where: { id: "progress-id" },
+      data: {
+        hasSetUsername: true,
+        hasSetProfilePicture: true,
+      },
+    })
+    expect(handle.contestant.update).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("uses the configured fadderuke year when resolving the contest", () => {
+    expect(FADDERUKE_CONTEST_YEAR).toBe(2026)
+  })
+})

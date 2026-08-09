@@ -178,6 +178,12 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { lastUpdatedById: toId },
     })
   },
+  fadderukeContestProfileProgress: async (handle: DBHandle, fromId: string, toId: string) => {
+    await handle.fadderukeContestProfileProgress.updateMany({
+      where: { userId: fromId },
+      data: { userId: toId },
+    })
+  },
 } satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
 
 /**

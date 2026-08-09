@@ -1,5 +1,12 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { MembershipSchema, MembershipWriteSchema, UserFilterQuerySchema, UserSchema, UserWriteSchema } from "./user"
+import {
+  MembershipSchema,
+  MembershipWriteSchema,
+  UserFilterQuerySchema,
+  UserSchema,
+  UserUpdateResultSchema,
+  UserWriteSchema,
+} from "./user"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
@@ -181,6 +188,7 @@ const updateUserProcedure = procedure
       input: UserWriteSchema.partial(),
     })
   )
+  .output(UserUpdateResultSchema)
   .use(withAuthentication())
   .use(
     withAuthorization(

@@ -90,7 +90,8 @@ export const ModelName = {
   Contest: 'Contest',
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
-  ContestTeam: 'ContestTeam'
+  ContestTeam: 'ContestTeam',
+  FadderukeContestProfileProgress: 'FadderukeContestProfileProgress'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -658,6 +659,19 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const FadderukeContestProfileProgressScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  hasSetProfilePicture: 'hasSetProfilePicture',
+  hasSetUsername: 'hasSetUsername',
+  hasAwardedTeamProfileBonus: 'hasAwardedTeamProfileBonus',
+  userId: 'userId'
+} as const
+
+export type FadderukeContestProfileProgressScalarFieldEnum = (typeof FadderukeContestProfileProgressScalarFieldEnum)[keyof typeof FadderukeContestProfileProgressScalarFieldEnum]
 
 
 export const SortOrder = {
