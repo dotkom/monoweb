@@ -5,7 +5,7 @@ export const CourseCardSkeleton = () => {
     <div
       aria-hidden
       className={cn(
-        "rounded-xl shadow-sm p-4 sm:p-6 grid grid-cols-[1fr_auto] gap-8 w-full border",
+        "rounded-lg shadow-sm p-4 sm:p-6 grid grid-cols-[1fr_auto] gap-8 w-full border",
         "bg-white text-neutral-950 border-neutral-200",
         "dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700",
         "transition-all duration-200"

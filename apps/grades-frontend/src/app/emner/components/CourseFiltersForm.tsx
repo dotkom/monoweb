@@ -35,6 +35,8 @@ const FIELD_TRIGGER_CLASS =
 const SELECT_ITEM_CLASS =
   "cursor-pointer p-2 hover:bg-neutral-100 data-highlighted:bg-neutral-100 dark:hover:bg-stone-700 dark:data-highlighted:bg-stone-700"
 
+const FIELD_LABEL_CLASS = "font-body text-sm leading-none font-medium select-none text-neutral-600 dark:text-stone-300"
+
 type Props = {
   idPrefix: string
   showSort?: boolean
@@ -56,11 +58,11 @@ export function CourseFiltersForm({ idPrefix, showSort = false, className }: Pro
     <div className={cn("flex flex-col gap-6", className)}>
       {showSort && (
         <Field label={t("CourseFilters.sortBy")} labelFor={fieldId("sortBy")}>
-          <CourseSortSelect className="w-full" />
+          <CourseSortSelect id={fieldId("sortBy")} className="w-full" />
         </Field>
       )}
 
-      <Field label={t("Common.Semester")} labelFor={fieldId("bySemester")}>
+      <Field label={t("Common.Semester")}>
         <div className="flex flex-col gap-2">
           {semesterOptions.map((semester) => (
             <MultiSelectCheckboxRow
@@ -75,7 +77,7 @@ export function CourseFiltersForm({ idPrefix, showSort = false, className }: Pro
         </div>
       </Field>
 
-      <Field label={t("CourseFilters.teachingLanguage")} labelFor={fieldId("byTeachingLanguage")}>
+      <Field label={t("CourseFilters.teachingLanguage")}>
         <div className="flex flex-col gap-2">
           {TeachingLanguageSchema.options.map((language) => (
             <MultiSelectCheckboxRow
@@ -90,7 +92,7 @@ export function CourseFiltersForm({ idPrefix, showSort = false, className }: Pro
         </div>
       </Field>
 
-      <Field label={t("CourseFilters.campus")} labelFor={fieldId("byCampus")}>
+      <Field label={t("CourseFilters.campus")}>
         <div className="flex flex-col gap-2">
           {CourseCampusSchema.options.map((campus) => (
             <MultiSelectCheckboxRow
@@ -107,6 +109,7 @@ export function CourseFiltersForm({ idPrefix, showSort = false, className }: Pro
 
       <Field label={t("CourseFilters.minGrade")} labelFor={fieldId("byMinGrade")}>
         <Select
+          id={fieldId("byMinGrade")}
           onValueChange={(val) => {
             if (val === MIN_GRADE_OPTIONS_ALL) {
               setValue("byMinGrade", null)
@@ -143,17 +146,28 @@ export function CourseFiltersForm({ idPrefix, showSort = false, className }: Pro
 
 type FieldProps = PropsWithChildren<{
   label: string
-  labelFor: string
+  labelFor?: string
 }>
 
 function Field({ label, labelFor, children }: FieldProps) {
+  const labelClassName = FIELD_LABEL_CLASS
+
+  if (labelFor) {
+    return (
+      <div className="flex flex-col gap-3">
+        <Label htmlFor={labelFor} className={labelClassName}>
+          {label}
+        </Label>
+        {children}
+      </div>
+    )
+  }
+
   return (
-    <div className="flex flex-col gap-3">
-      <Label htmlFor={labelFor} className="text-neutral-600 dark:text-stone-300 font-medium">
-        {label}
-      </Label>
+    <fieldset className="m-0 flex min-w-0 flex-col border-0 p-0">
+      <legend className={cn(labelClassName, "p-0 mb-3")}>{label}</legend>
       {children}
-    </div>
+    </fieldset>
   )
 }
 
@@ -175,7 +189,7 @@ function MultiSelectCheckboxRow<T extends string>({
   const isChecked = value.includes(option)
 
   return (
-    <Label className="flex w-full cursor-pointer items-center gap-3 group">
+    <Label htmlFor={id} className="flex w-full cursor-pointer items-center gap-3 group">
       <Checkbox
         id={id}
         className={cn(

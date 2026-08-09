@@ -4,16 +4,28 @@ import { IconActionButton } from "@/app/components/action-button/ActionButton"
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@dotkomonline/ui"
 import { IconFilter2, IconX } from "@tabler/icons-react"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CourseFiltersForm } from "./CourseFiltersForm"
 
 export const MobileCourseFilters = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const t = useTranslations("CourseFilters")
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)")
+    const onChange = () => {
+      if (mediaQuery.matches) {
+        setIsDrawerOpen(false)
+      }
+    }
+    onChange()
+    mediaQuery.addEventListener("change", onChange)
+    return () => mediaQuery.removeEventListener("change", onChange)
+  }, [])
+
   return (
     <div className="md:hidden shrink-0">
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} modal={false}>
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} modal={true}>
         <DrawerTrigger asChild>
           <Button
             variant="unstyled"
