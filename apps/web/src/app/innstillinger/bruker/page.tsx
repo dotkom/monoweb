@@ -159,7 +159,7 @@ export default function MinBrukerPage() {
         )}
 
         <div className="flex flex-col gap-3">
-          <Text>Nåværende e-post</Text>
+          <Text className="text-sm">Nåværende e-post</Text>
           {user?.email ? (
             <div
               className={cn(
