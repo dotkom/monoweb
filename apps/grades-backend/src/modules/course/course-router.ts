@@ -17,13 +17,19 @@ const findCoursesProcedure = procedure
   )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.courseService.findMany(ctx.handle, input.filter ?? {}, input.cursor, input.limit)
+    const { courses: items, totalCount } = await ctx.courseService.findMany(
+      ctx.handle,
+      input.filter ?? {},
+      input.cursor,
+      input.limit
+    )
 
     const nextCursor = items.length === input.limit ? input.cursor + input.limit : undefined
 
     return {
       items,
       nextCursor,
+      totalCount,
     }
   })
 

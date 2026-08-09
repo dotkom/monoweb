@@ -14,7 +14,12 @@ import {
 } from "./course-types"
 
 export interface CourseRepository {
-  findMany(handle: DBHandle, query: CourseFilterQuery, offset: number, limit: number): Promise<Course[]>
+  findMany(
+    handle: DBHandle,
+    query: CourseFilterQuery,
+    offset: number,
+    limit: number
+  ): Promise<{ courses: Course[]; totalCount: number }>
   find(handle: DBHandle, code: string): Promise<Course>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
@@ -37,7 +42,7 @@ export function getCourseRepository(): CourseRepository {
       const byMinGrade = query.byMinGrade
       const minAverageGrade = byMinGrade != null ? mapLetterGradeFilterToMinAverageGrade(byMinGrade) : null
 
-      const courses = await handle.$queryRawTyped(
+      const rows = await handle.$queryRawTyped(
         sql.findManyCourses(
           offset,
           limit,
@@ -54,7 +59,10 @@ export function getCourseRepository(): CourseRepository {
         )
       )
 
-      return parseOrReport(CourseSchema.array(), courses)
+      const totalCount = rows[0]?.totalCount ?? 0
+      const courses = parseOrReport(CourseSchema.array(), rows)
+
+      return { courses, totalCount }
     },
 
     async find(handle, code) {

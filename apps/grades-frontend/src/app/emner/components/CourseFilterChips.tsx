@@ -99,11 +99,11 @@ export const CourseFilterChips = () => {
   const chips = (Object.keys(chipSources) as ChipFilterKey[]).flatMap((key) => chipSources[key](filters))
 
   if (chips.length === 0) {
-    return <div className="h-7" />
+    return null
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 transition duration-500 min-h-7">
+    <div className="flex flex-wrap items-center gap-1.5 transition duration-500">
       {chips.map((chip) => (
         <Chip key={chip.key} onClick={chip.onClear} label={chip.label} />
       ))}

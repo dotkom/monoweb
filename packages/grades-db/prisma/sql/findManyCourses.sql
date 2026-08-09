@@ -38,7 +38,8 @@ SELECT
   to_jsonb("campuses") AS "campuses",
   "faculty_id" AS "facultyId",
   "department_id" AS "departmentId",
-  "latest_year_checked_for_ntnu_data" AS "latestYearCheckedForNtnuData"
+  "latest_year_checked_for_ntnu_data" AS "latestYearCheckedForNtnuData",
+  COUNT(*) OVER()::int AS "totalCount"
 FROM "course"
 WHERE
   (

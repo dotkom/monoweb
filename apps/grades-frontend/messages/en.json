@@ -106,6 +106,7 @@
   },
   "CourseListToolbar": {
     "searchPlaceholder": "Search for courses...",
+    "totalCount": "{totalCount, plural, one {# course} other {# courses}}",
     "sortOptions": {
       "mostCandidates": "Most students",
       "highestGrade": "Highest average",
