@@ -6,15 +6,17 @@ import {
   type Semester,
   type TeachingLanguage,
 } from "@dotkomonline/grades-backend/course"
-import { cn, Text, Title } from "@dotkomonline/ui"
+import { cn, Title } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { createLoader, createSerializer } from "nuqs/server"
 import { CourseAutocomplete } from "./components/course-autocomplete/CourseAutocomplete"
-import { CourseCard } from "./components/CourseCard/CourseCard"
+import { CourseRow } from "./components/CourseRow/CourseRow"
 import { CourseFilterParsers } from "./emner/course-filter-parsers"
+
+const MAX_COURSES_PER_SECTION = 5
 
 const serialize = createSerializer(CourseFilterParsers)
 const loadSearchParams = createLoader(CourseFilterParsers)
@@ -47,36 +49,45 @@ export default async function App({
   // May-November is autumn, December-April is spring
   const activeSemester = month >= 4 && month <= 10 ? "AUTUMN" : "SPRING"
 
+  const coursesToFetch = MAX_COURSES_PER_SECTION * 2
+
   const [activeSemesterCourses, largestCourses] = await Promise.all([
     server.course.findCourses.query({
       filter: {
         bySemester: [activeSemester],
         sortBy: ["CANDIDATE_COUNT"],
       },
-      limit: 3,
+      limit: coursesToFetch,
     }),
     server.course.findCourses.query({
       filter: {
         sortBy: ["CANDIDATE_COUNT"],
       },
-      limit: 3,
+      limit: coursesToFetch,
     }),
   ])
 
+  // Dedupe courses so the sections don't show the same course twice
+  const resolvedLargestCourses = largestCourses.items.slice(0, MAX_COURSES_PER_SECTION)
+  const resolvedActiveSemesterCourses = activeSemesterCourses.items
+    .filter((course) => !resolvedLargestCourses.some((c) => c.id === course.id))
+    .slice(0, MAX_COURSES_PER_SECTION)
+
   return (
-    <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <Title className="text-3xl font-bold">Grades</Title>
-          <Text className="text-base text-neutral-500 dark:text-stone-400">{t("Frontpage.subheading")}</Text>
+    <div className="flex flex-col gap-10 sm:gap-12">
+      <div className="flex flex-col gap-5 sm:gap-6">
+        <div className="flex flex-col gap-1.5 max-w-2xl">
+          <Title className="text-xl sm:text-2xl font-bold tracking-tight">{t("Frontpage.heading")}</Title>
         </div>
-        <div className="flex flex-col gap-2.5">
+
+        <div className="flex flex-col gap-2.5 max-w-2xl">
           <CourseAutocomplete
             defaultValues={filterQuery}
             placeholder={t("Frontpage.searchPlaceholder")}
-            className="max-w-xl"
+            className="w-full"
+            inputClassName="h-11 text-base md:text-base!"
           />
-          <div className="flex flex-row gap-2.5 overflow-x-auto">
+          <div className="flex flex-row flex-wrap gap-2">
             {filterChips.map((chip) => {
               const href = `/emner${serialize({ [chip.key]: [chip.value] })}`
 
@@ -85,14 +96,15 @@ export default async function App({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-10">
-        <CardSection
-          courses={activeSemesterCourses.items}
+
+      <div className="flex flex-col gap-8 sm:gap-10">
+        <CourseSection
+          courses={resolvedActiveSemesterCourses}
           title={t(`Frontpage.activeSemesterCoursesTitle.${activeSemester}`)}
           seeMoreHref={`/emner${serialize({ bySemester: [activeSemester] })}`}
         />
-        <CardSection
-          courses={largestCourses.items}
+        <CourseSection
+          courses={resolvedLargestCourses}
           title={t("Frontpage.largestCoursesTitle")}
           seeMoreHref={`/emner${serialize({ sortBy: ["CANDIDATE_COUNT"] })}`}
         />
@@ -111,7 +123,7 @@ const FilterChipLink = ({ href, label }: FilterChipLinkProps) => {
     <Link
       href={href}
       className={cn(
-        "shrink-0 rounded-md border px-2 py-1 text-xs font-medium outline-none transition-colors",
+        "shrink-0 rounded-lg border px-2 py-1 text-xs font-medium outline-none transition-colors sm:px-2.5 sm:py-1.5 sm:text-sm",
         "border-neutral-200 bg-white text-neutral-700",
         "hover:border-neutral-300 hover:bg-neutral-50",
         "focus-visible:border-neutral-400",
@@ -125,36 +137,42 @@ const FilterChipLink = ({ href, label }: FilterChipLinkProps) => {
   )
 }
 
-interface CardSectionProps {
+interface CourseSectionProps {
   courses: Course[]
   title: string
   seeMoreHref: string
 }
 
-const CardSection = async ({ courses, title, seeMoreHref }: CardSectionProps) => {
+const CourseSection = async ({ courses, title, seeMoreHref }: CourseSectionProps) => {
   const t = await getTranslations()
 
+  if (courses.length === 0) {
+    return null
+  }
+
   return (
-    <div className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       <div className="flex flex-row justify-between items-center gap-3">
         <Title element="h2" className="min-w-0 text-lg font-semibold">
           {title}
         </Title>
         <Link
           href={seeMoreHref}
-          className="group flex shrink-0 whitespace-nowrap items-center gap-1 text-sm font-medium text-neutral-600 hover:text-neutral-900 dark:text-stone-400 dark:hover:text-stone-200 transition-colors"
+          className="p-1 rounded-lg group flex shrink-0 whitespace-nowrap items-center gap-1 text-sm font-medium text-neutral-600 hover:text-neutral-900 focus:text-neutral-900 dark:text-stone-400 dark:hover:text-stone-200 dark:focus:text-stone-200 transition-colors"
         >
           {t("Frontpage.viewAll")}
-          <IconArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          <IconArrowRight
+            size={16}
+            className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1 motion-safe:group-focus:translate-x-1"
+          />
         </Link>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-2">
+
+      <div className="rounded-xl border border-neutral-200 dark:border-stone-700 divide-y divide-neutral-200 dark:divide-stone-700 [&>a:first-child]:rounded-t-xl [&>a:last-child]:rounded-b-xl">
         {courses.map((course) => (
-          <div key={course.id} className="min-w-sm flex-1 basis-0 self-stretch">
-            <CourseCard course={course} className="h-full w-full" />
-          </div>
+          <CourseRow key={course.id} course={course} />
         ))}
       </div>
-    </div>
+    </section>
   )
 }

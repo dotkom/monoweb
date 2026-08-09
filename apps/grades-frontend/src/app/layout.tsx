@@ -39,7 +39,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body className={cn(fontTitle.variable, fontBody.variable, "bg-white dark:bg-stone-900")}>
         <PlausibleProvider domain="grades.no">
           <QueryProvider>
-            <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+            <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme" disableTransitionOnChange>
               <NextIntlClientProvider>
                 <NuqsAdapter>
                   <div className="flex min-h-screen flex-col gap-8">

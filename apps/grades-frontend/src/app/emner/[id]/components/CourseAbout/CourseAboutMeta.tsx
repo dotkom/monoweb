@@ -50,7 +50,7 @@ export const CourseAboutMeta = ({ course, faculties, departments }: Props) => {
   ].filter((item): item is MetaRowItemProps => item.value != null)
 
   return (
-    <aside className="p-4 sm:p-6 h-fit rounded-xl bg-neutral-50 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 lg:max-w-96">
+    <aside className="p-4 sm:p-6 h-fit rounded-lg bg-neutral-50 border border-neutral-200 dark:bg-stone-800 dark:border-stone-700 lg:max-w-96">
       <dl className="flex flex-col gap-5">
         <div className="flex flex-col gap-4">
           {topItems.map((item) => (

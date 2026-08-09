@@ -3,7 +3,7 @@
 import { CourseFilterParsers } from "@/app/emner/course-filter-parsers"
 import { useTRPC } from "@/utils/trpc/client"
 import type { CourseFilterQuery } from "@dotkomonline/grades-backend/course"
-import { Popover, PopoverAnchor, PopoverContent, Text } from "@dotkomonline/ui"
+import { cn, Popover, PopoverAnchor, PopoverContent, Text } from "@dotkomonline/ui"
 import { IconArrowRight } from "@tabler/icons-react"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useTranslations } from "next-intl"
@@ -21,11 +21,12 @@ const serialize = createSerializer(CourseFilterParsers)
 
 interface Props {
   className?: string
+  inputClassName?: string
   placeholder?: string
   defaultValues: CourseFilterQuery
 }
 
-export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Props) => {
+export const CourseAutocomplete = ({ className, inputClassName, placeholder, defaultValues }: Props) => {
   const trpc = useTRPC()
   const router = useRouter()
   const t = useTranslations("CourseAutocomplete")
@@ -114,7 +115,7 @@ export const CourseAutocomplete = ({ className, placeholder, defaultValues }: Pr
               autoComplete="off"
               onFocus={() => setIsOpen(true)}
               onPointerDown={() => setIsOpen(true)}
-              inputClassName="h-8"
+              inputClassName={cn("h-8", inputClassName)}
             />
           </div>
         </form>
