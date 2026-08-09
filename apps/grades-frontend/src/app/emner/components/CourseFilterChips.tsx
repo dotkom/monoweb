@@ -15,7 +15,23 @@ import {
 } from "../course-filter-parsers"
 
 type ChipFilterKey = Exclude<keyof CourseFilterQuery, "orderBy">
-type Chip = { label: string; onClick: () => void }
+type Chip = { key: string; label: string; onClear: () => void }
+type Filters = Partial<CourseFilterQuery>
+
+function removeChips<T extends string>(
+  values: T[] | undefined,
+  field: string,
+  labelOf: (value: T) => string,
+  clear: (next: T[]) => void
+): Chip[] {
+  const list = values ?? []
+
+  return list.map((value) => ({
+    key: `${field}-${value}`,
+    label: labelOf(value),
+    onClear: () => clear(list.filter((v) => v !== value)),
+  }))
+}
 
 export const CourseFilterChips = () => {
   const t = useTranslations()
@@ -24,40 +40,37 @@ export const CourseFilterChips = () => {
 
   const chipSources = {
     bySearch: (p) =>
-      p.bySearch?.trim() ? [{ label: `'${p.bySearch}'`, onClick: () => setValue("bySearch", "") }] : [],
+      p.bySearch?.trim()
+        ? [{ key: "bySearch", label: `'${p.bySearch}'`, onClear: () => setValue("bySearch", "") }]
+        : [],
     bySemester: (p) =>
-      (p.bySemester ?? []).map((semester) => ({
-        label: t(`Enums.Semester.${semester}`),
-        onClick: () =>
-          setValue(
-            "bySemester",
-            (p.bySemester ?? []).filter((s) => s !== semester)
-          ),
-      })),
+      removeChips(
+        p.bySemester,
+        "bySemester",
+        (semester) => t(`Enums.Semester.${semester}`),
+        (next) => setValue("bySemester", next)
+      ),
     byTeachingLanguage: (p) =>
-      (p.byTeachingLanguage ?? []).map((language) => ({
-        label: t(`Enums.TeachingLanguage.${language}`),
-        onClick: () =>
-          setValue(
-            "byTeachingLanguage",
-            (p.byTeachingLanguage ?? []).filter((l) => l !== language)
-          ),
-      })),
+      removeChips(
+        p.byTeachingLanguage,
+        "byTeachingLanguage",
+        (language) => t(`Enums.TeachingLanguage.${language}`),
+        (next) => setValue("byTeachingLanguage", next)
+      ),
     byCampus: (p) =>
-      (p.byCampus ?? []).map((campus) => ({
-        label: t(`Enums.Campus.${campus}`),
-        onClick: () =>
-          setValue(
-            "byCampus",
-            (p.byCampus ?? []).filter((c) => c !== campus)
-          ),
-      })),
+      removeChips(
+        p.byCampus,
+        "byCampus",
+        (campus) => t(`Enums.Campus.${campus}`),
+        (next) => setValue("byCampus", next)
+      ),
     byMinGrade: (p) =>
       p.byMinGrade
         ? [
             {
+              key: "byMinGrade",
               label: t(`CourseFilters.minGradeOptions.${p.byMinGrade}`),
-              onClick: () => setValue("byMinGrade", null),
+              onClear: () => setValue("byMinGrade", null),
             },
           ]
         : [],
@@ -66,24 +79,22 @@ export const CourseFilterChips = () => {
       if (value === DEFAULT_COURSE_FILTER_SORT) {
         return []
       }
+
       const option = findCourseFilterSortOption(value)
       const defaults = parseCourseFilterSortValue(DEFAULT_COURSE_FILTER_SORT)
       if (!defaults) {
         return []
       }
+
       return [
         {
+          key: "sortBy",
           label: t(`CourseListToolbar.sortOptions.${option.labelKey}`),
-          onClick: () => {
-            reset({
-              ...getValues(),
-              ...defaults,
-            })
-          },
+          onClear: () => reset({ ...getValues(), ...defaults }),
         },
       ]
     },
-  } satisfies Record<ChipFilterKey, (p: typeof filters) => Chip[]>
+  } satisfies Record<ChipFilterKey, (p: Filters) => Chip[]>
 
   const chips = (Object.keys(chipSources) as ChipFilterKey[]).flatMap((key) => chipSources[key](filters))
 
@@ -94,7 +105,7 @@ export const CourseFilterChips = () => {
   return (
     <div className="flex flex-wrap items-center gap-1.5 transition duration-500 min-h-7">
       {chips.map((chip) => (
-        <Chip key={chip.label} onClick={chip.onClick} label={chip.label} />
+        <Chip key={chip.key} onClick={chip.onClear} label={chip.label} />
       ))}
 
       <Separator
@@ -120,13 +131,16 @@ const Chip = ({ onClick, label, isClearAll }: ChipProps) => {
       variant="unstyled"
       onClick={onClick}
       className={cn(
-        "group inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs",
+        "group inline-flex max-w-full min-w-0 items-center gap-1 rounded-md px-2 py-1 text-xs",
         "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
-        "dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700"
+        "dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700",
+        "h-auto shrink whitespace-normal wrap-break-word text-left"
       )}
     >
-      <Text element="span">{label}</Text>
-      {!isClearAll && <IconX className="size-3 opacity-50 group-hover:opacity-100" />}
+      <Text element="span" className="min-w-0 wrap-break-word">
+        {label}
+      </Text>
+      {!isClearAll && <IconX className="size-3 shrink-0 opacity-50 group-hover:opacity-100" />}
     </Button>
   )
 }

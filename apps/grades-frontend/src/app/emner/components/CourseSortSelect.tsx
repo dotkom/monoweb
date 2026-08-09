@@ -18,11 +18,12 @@ const SELECT_ITEM_CLASS =
   "cursor-pointer p-2 hover:bg-neutral-100 data-highlighted:bg-neutral-100 dark:hover:bg-stone-700 dark:data-highlighted:bg-stone-700"
 
 type Props = {
+  id?: string
   className?: string
 }
 
-export function CourseSortSelect({ className }: Props) {
-  const t = useTranslations("CourseListToolbar")
+export function CourseSortSelect({ id, className }: Props) {
+  const t = useTranslations()
   const { control, getValues, reset } = useFormContext<CourseFilterQuery>()
 
   const sortBy = useWatch({ control, name: "sortBy" })
@@ -32,6 +33,7 @@ export function CourseSortSelect({ className }: Props) {
 
   return (
     <Select
+      id={id}
       value={value}
       onValueChange={(next) => {
         if (!next) {
@@ -49,13 +51,13 @@ export function CourseSortSelect({ className }: Props) {
         })
       }}
     >
-      <SelectTrigger className={cn(FIELD_TRIGGER_CLASS, className)}>
-        <SelectValue>{t(`sortOptions.${selected.labelKey}`)}</SelectValue>
+      <SelectTrigger className={cn(FIELD_TRIGGER_CLASS, className)} aria-label={t("CourseFilters.sortBy")}>
+        <SelectValue>{t(`CourseListToolbar.sortOptions.${selected.labelKey}`)}</SelectValue>
       </SelectTrigger>
       <SelectContent className="dark:bg-stone-800 dark:border-stone-700">
         {COURSE_FILTER_SORT_OPTIONS.map((option) => (
           <SelectItem className={SELECT_ITEM_CLASS} key={option.value} value={option.value}>
-            {t(`sortOptions.${option.labelKey}`)}
+            {t(`CourseListToolbar.sortOptions.${option.labelKey}`)}
           </SelectItem>
         ))}
       </SelectContent>

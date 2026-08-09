@@ -54,7 +54,7 @@ export const Footer = async () => {
           </nav>
         </div>
 
-        <Text className="text-xs text-neutral-400 dark:text-stone-500">{t("dataSources")}</Text>
+        <Text className="text-xs text-neutral-500 dark:text-stone-400">{t("dataSources")}</Text>
       </div>
     </footer>
   )
