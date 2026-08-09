@@ -36,6 +36,8 @@ export type ContestantSumAggregateOutputType = {
 
 export type ContestantMinAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
   resultValue: number | null
   contestId: string | null
   userId: string | null
@@ -43,6 +45,8 @@ export type ContestantMinAggregateOutputType = {
 
 export type ContestantMaxAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
   resultValue: number | null
   contestId: string | null
   userId: string | null
@@ -50,6 +54,8 @@ export type ContestantMaxAggregateOutputType = {
 
 export type ContestantCountAggregateOutputType = {
   id: number
+  createdAt: number
+  updatedAt: number
   resultValue: number
   contestId: number
   userId: number
@@ -67,6 +73,8 @@ export type ContestantSumAggregateInputType = {
 
 export type ContestantMinAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   resultValue?: true
   contestId?: true
   userId?: true
@@ -74,6 +82,8 @@ export type ContestantMinAggregateInputType = {
 
 export type ContestantMaxAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   resultValue?: true
   contestId?: true
   userId?: true
@@ -81,6 +91,8 @@ export type ContestantMaxAggregateInputType = {
 
 export type ContestantCountAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   resultValue?: true
   contestId?: true
   userId?: true
@@ -175,6 +187,8 @@ export type ContestantGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type ContestantGroupByOutputType = {
   id: string
+  createdAt: Date
+  updatedAt: Date
   resultValue: number | null
   contestId: string
   userId: string | null
@@ -205,6 +219,8 @@ export type ContestantWhereInput = {
   OR?: Prisma.ContestantWhereInput[]
   NOT?: Prisma.ContestantWhereInput | Prisma.ContestantWhereInput[]
   id?: Prisma.StringFilter<"Contestant"> | string
+  createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
@@ -216,6 +232,8 @@ export type ContestantWhereInput = {
 
 export type ContestantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrderInput | Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -231,6 +249,8 @@ export type ContestantWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ContestantWhereInput | Prisma.ContestantWhereInput[]
   OR?: Prisma.ContestantWhereInput[]
   NOT?: Prisma.ContestantWhereInput | Prisma.ContestantWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
@@ -242,6 +262,8 @@ export type ContestantWhereUniqueInput = Prisma.AtLeast<{
 
 export type ContestantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrderInput | Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -257,6 +279,8 @@ export type ContestantScalarWhereWithAggregatesInput = {
   OR?: Prisma.ContestantScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ContestantScalarWhereWithAggregatesInput | Prisma.ContestantScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Contestant"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableWithAggregatesFilter<"Contestant"> | number | null
   contestId?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
   userId?: Prisma.StringNullableWithAggregatesFilter<"Contestant"> | string | null
@@ -264,6 +288,8 @@ export type ContestantScalarWhereWithAggregatesInput = {
 
 export type ContestantCreateInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
@@ -273,6 +299,8 @@ export type ContestantCreateInput = {
 
 export type ContestantUncheckedCreateInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
   userId?: string | null
@@ -282,6 +310,8 @@ export type ContestantUncheckedCreateInput = {
 
 export type ContestantUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
@@ -291,6 +321,8 @@ export type ContestantUpdateInput = {
 
 export type ContestantUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -300,6 +332,8 @@ export type ContestantUncheckedUpdateInput = {
 
 export type ContestantCreateManyInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
   userId?: string | null
@@ -307,11 +341,15 @@ export type ContestantCreateManyInput = {
 
 export type ContestantUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ContestantUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -339,6 +377,8 @@ export type ContestantContestIdUserIdCompoundUniqueInput = {
 
 export type ContestantCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -350,6 +390,8 @@ export type ContestantAvgOrderByAggregateInput = {
 
 export type ContestantMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -357,6 +399,8 @@ export type ContestantMaxOrderByAggregateInput = {
 
 export type ContestantMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -487,6 +531,8 @@ export type ContestantUpdateOneRequiredWithoutTeamNestedInput = {
 
 export type ContestantCreateWithoutUserInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
@@ -495,6 +541,8 @@ export type ContestantCreateWithoutUserInput = {
 
 export type ContestantUncheckedCreateWithoutUserInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
@@ -532,6 +580,8 @@ export type ContestantScalarWhereInput = {
   OR?: Prisma.ContestantScalarWhereInput[]
   NOT?: Prisma.ContestantScalarWhereInput | Prisma.ContestantScalarWhereInput[]
   id?: Prisma.StringFilter<"Contestant"> | string
+  createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
@@ -539,6 +589,8 @@ export type ContestantScalarWhereInput = {
 
 export type ContestantCreateWithoutWonContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
@@ -547,6 +599,8 @@ export type ContestantCreateWithoutWonContestInput = {
 
 export type ContestantUncheckedCreateWithoutWonContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
   userId?: string | null
@@ -560,6 +614,8 @@ export type ContestantCreateOrConnectWithoutWonContestInput = {
 
 export type ContestantCreateWithoutContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
@@ -568,6 +624,8 @@ export type ContestantCreateWithoutContestInput = {
 
 export type ContestantUncheckedCreateWithoutContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   userId?: string | null
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
@@ -597,6 +655,8 @@ export type ContestantUpdateToOneWithWhereWithoutWonContestInput = {
 
 export type ContestantUpdateWithoutWonContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
@@ -605,6 +665,8 @@ export type ContestantUpdateWithoutWonContestInput = {
 
 export type ContestantUncheckedUpdateWithoutWonContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -629,6 +691,8 @@ export type ContestantUpdateManyWithWhereWithoutContestInput = {
 
 export type ContestantCreateWithoutTeamInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
@@ -637,6 +701,8 @@ export type ContestantCreateWithoutTeamInput = {
 
 export type ContestantUncheckedCreateWithoutTeamInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
   userId?: string | null
@@ -661,6 +727,8 @@ export type ContestantUpdateToOneWithWhereWithoutTeamInput = {
 
 export type ContestantUpdateWithoutTeamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
@@ -669,6 +737,8 @@ export type ContestantUpdateWithoutTeamInput = {
 
 export type ContestantUncheckedUpdateWithoutTeamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -677,12 +747,16 @@ export type ContestantUncheckedUpdateWithoutTeamInput = {
 
 export type ContestantCreateManyUserInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   contestId: string
 }
 
 export type ContestantUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
@@ -691,6 +765,8 @@ export type ContestantUpdateWithoutUserInput = {
 
 export type ContestantUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
@@ -699,18 +775,24 @@ export type ContestantUncheckedUpdateWithoutUserInput = {
 
 export type ContestantUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ContestantCreateManyContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   resultValue?: number | null
   userId?: string | null
 }
 
 export type ContestantUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
@@ -719,6 +801,8 @@ export type ContestantUpdateWithoutContestInput = {
 
 export type ContestantUncheckedUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
@@ -727,6 +811,8 @@ export type ContestantUncheckedUpdateWithoutContestInput = {
 
 export type ContestantUncheckedUpdateManyWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -735,6 +821,8 @@ export type ContestantUncheckedUpdateManyWithoutContestInput = {
 
 export type ContestantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   resultValue?: boolean
   contestId?: boolean
   userId?: boolean
@@ -746,6 +834,8 @@ export type ContestantSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type ContestantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   resultValue?: boolean
   contestId?: boolean
   userId?: boolean
@@ -755,6 +845,8 @@ export type ContestantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 
 export type ContestantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   resultValue?: boolean
   contestId?: boolean
   userId?: boolean
@@ -764,12 +856,14 @@ export type ContestantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 
 export type ContestantSelectScalar = {
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   resultValue?: boolean
   contestId?: boolean
   userId?: boolean
 }
 
-export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "resultValue" | "contestId" | "userId", ExtArgs["result"]["contestant"]>
+export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "resultValue" | "contestId" | "userId", ExtArgs["result"]["contestant"]>
 export type ContestantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Contestant$userArgs<ExtArgs>
@@ -795,6 +889,8 @@ export type $ContestantPayload<ExtArgs extends runtime.Types.Extensions.Internal
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    createdAt: Date
+    updatedAt: Date
     resultValue: number | null
     contestId: string
     userId: string | null
@@ -1226,6 +1322,8 @@ export interface Prisma__ContestantClient<T, Null = never, ExtArgs extends runti
  */
 export interface ContestantFieldRefs {
   readonly id: Prisma.FieldRef<"Contestant", 'String'>
+  readonly createdAt: Prisma.FieldRef<"Contestant", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Contestant", 'DateTime'>
   readonly resultValue: Prisma.FieldRef<"Contestant", 'Int'>
   readonly contestId: Prisma.FieldRef<"Contestant", 'String'>
   readonly userId: Prisma.FieldRef<"Contestant", 'String'>
