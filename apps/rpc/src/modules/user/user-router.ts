@@ -36,14 +36,6 @@ export type GetUserOutput = inferProcedureOutput<typeof getUserProcedure>
 const getUserProcedure = procedure
   .input(UserSchema.shape.id)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isCommitteeMember(),
-        isSameSubject((i) => i)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.userService.getById(ctx.handle, input)
@@ -53,6 +45,7 @@ export type GetUserByUsernameInput = inferProcedureInput<typeof getUserByUsernam
 export type GetUserByUsernameOutput = inferProcedureOutput<typeof getUserByUsernameProcedure>
 const getUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
+  .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.userService.getByUsername(ctx.handle, input)
@@ -62,6 +55,7 @@ export type FindUserByUsernameInput = inferProcedureInput<typeof findUserByUsern
 export type FindUserByUsernameOutput = inferProcedureOutput<typeof findUserByUsernameProcedure>
 const findUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
+  .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.userService.findByUsername(ctx.handle, input)
