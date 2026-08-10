@@ -8,6 +8,7 @@ type StripedProps = PropsWithChildren<{
   stripeWidth?: number
   speed?: `${number}s` | `${number}.${number}s`
   className?: string
+  childrenContainerClassName?: string
 }>
 
 export const Stripes = ({
@@ -18,6 +19,7 @@ export const Stripes = ({
   speed = "2.0s",
   className,
   children,
+  childrenContainerClassName,
 }: StripedProps) => {
   return (
     <div className={cn("relative overflow-hidden w-full h-full", className)}>
@@ -42,7 +44,7 @@ export const Stripes = ({
           } as CSSProperties
         }
       />
-      <div className="relative z-1 w-full">{children}</div>
+      <div className={cn("relative z-1 w-full", childrenContainerClassName)}>{children}</div>
     </div>
   )
 }

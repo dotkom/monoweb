@@ -348,6 +348,15 @@ const mergeUsersProcedure = procedure
     return user
   })
 
+export type HasDuplicateUserOutput = inferProcedureOutput<typeof hasDuplicateUserProcedure>
+const hasDuplicateUserProcedure = procedure
+  .output(z.string().nullable())
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ ctx }) => {
+    return ctx.userService.hasDuplicateUser(ctx.handle, ctx.principal.subject)
+  })
+
 export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
 export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0ConnectionsProcedure>
 const getAuth0ConnectionsProcedure = procedure
@@ -400,6 +409,7 @@ export const userRouter = t.router({
   getAuthorization: getAuthorizationProcedure,
   confirmIdentityLink: confirmIdentityLinkProcedure,
   mergeUsers: mergeUsersProcedure,
+  hasDuplicateUser: hasDuplicateUserProcedure,
   getAuth0Connections: getAuth0ConnectionsProcedure,
   getBirthdayPartyGuess: getBirthdayPartyGuessProcedure,
 })

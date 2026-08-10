@@ -144,4 +144,38 @@ describe("UserService", () => {
     expect(userRepository.update).not.toHaveBeenCalled()
     expect(managementClient.users.update).toHaveBeenCalledWith({ id: existingUser.id }, { name: existingUser.name })
   })
+
+  it("reports a duplicate when another login type has a compatible name", async () => {
+    const { userRepository, userService } = createService()
+    const user = makeUser({ id: "auth0|password-user", name: "Christopher Olsen" })
+
+    userRepository.findById.mockResolvedValue(user)
+    userRepository.findIdsAndNamesByAuth0Provider.mockResolvedValue([
+      { id: "oauth2|FEIDE|other", name: "Hans Christopher Olsen" },
+    ])
+
+    await expect(userService.hasDuplicateUser(handle, user.id)).resolves.toBe("oauth2|FEIDE|other")
+    expect(userRepository.findIdsAndNamesByAuth0Provider).toHaveBeenCalledWith(handle, "oauth2")
+  })
+
+  it("ignores another account with the same login type", async () => {
+    const { userRepository, userService } = createService()
+    const user = makeUser({ id: "auth0|password-user", name: "Christopher Olsen" })
+
+    userRepository.findById.mockResolvedValue(user)
+    userRepository.findIdsAndNamesByAuth0Provider.mockResolvedValue([])
+
+    await expect(userService.hasDuplicateUser(handle, user.id)).resolves.toBeNull()
+    expect(userRepository.findIdsAndNamesByAuth0Provider).toHaveBeenCalledWith(handle, "oauth2")
+  })
+
+  it("returns null without scanning names when the user has no name", async () => {
+    const { userRepository, userService } = createService()
+    const user = makeUser({ name: null })
+
+    userRepository.findById.mockResolvedValue(user)
+
+    await expect(userService.hasDuplicateUser(handle, user.id)).resolves.toBeNull()
+    expect(userRepository.findIdsAndNamesByAuth0Provider).not.toHaveBeenCalled()
+  })
 })

@@ -1,4 +1,5 @@
-import { Auth0Client } from "@auth0/nextjs-auth0/server"
+import { Auth0Client, filterDefaultIdTokenClaims } from "@auth0/nextjs-auth0/server"
+import type { SessionData } from "@auth0/nextjs-auth0/types"
 import type { AppRouter } from "@dotkomonline/rpc"
 import {
   AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
@@ -12,6 +13,13 @@ import { NextResponse } from "next/server"
 import superjson from "superjson"
 import { env } from "@/env"
 import { Auth0JwtService } from "@/lib/auth0-jwt"
+
+declare module "@auth0/nextjs-auth0/types" {
+  interface User {
+    hasDuplicateUser?: boolean
+    duplicateUserId?: string
+  }
+}
 
 export const AUTH0_SESSION_COOKIE_NAME = "onlineweb_session_web" as const
 
@@ -40,8 +48,8 @@ function wait(milliseconds: number): Promise<void> {
 
 type RegisterUserResult = { ok: true } | { ok: false; code: typeof AuthErrorCode.REGISTER_FAILED }
 
-async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUserResult> {
-  const client = trpc.createTRPCClient<AppRouter>({
+function createAuthenticatedClient(accessToken: string) {
+  return trpc.createTRPCClient<AppRouter>({
     links: [
       trpc.httpLink({
         transformer: superjson,
@@ -52,6 +60,10 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
       }),
     ],
   })
+}
+
+async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUserResult> {
+  const client = createAuthenticatedClient(accessToken)
 
   // In case Auth0 Management API and RPC are briefly unavailable right after callback (cold start, propagation lag), we
   // retry once.
@@ -75,6 +87,39 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
   }
 
   return { ok: false, code: AuthErrorCode.REGISTER_FAILED }
+}
+
+async function findDuplicateUserAfterSignIn(accessToken: string): Promise<string | null> {
+  const client = createAuthenticatedClient(accessToken)
+
+  try {
+    return await client.user.hasDuplicateUser.query()
+  } catch (error) {
+    console.error("[web:auth0] duplicate user lookup failed", error)
+    return null
+  }
+}
+
+function rememberDuplicateUser(session: SessionData): SessionData {
+  const duplicateUserId = typeof session.duplicateUserId === "string" ? session.duplicateUserId : null
+  const user = filterDefaultIdTokenClaims(session.user)
+
+  if (duplicateUserId === null) {
+    return {
+      ...session,
+      user,
+    }
+  }
+
+  return {
+    ...session,
+    duplicateUserId,
+    user: {
+      ...user,
+      hasDuplicateUser: true,
+      duplicateUserId,
+    },
+  }
 }
 
 export const auth0 = new Auth0Client({
@@ -105,6 +150,10 @@ export const auth0 = new Auth0Client({
   },
   signInReturnToPath: "/",
 
+  async beforeSessionSaved(session) {
+    return rememberDuplicateUser(session)
+  },
+
   async onCallback(error, ctx, session) {
     if (error !== null) {
       console.error("[web:auth0] login callback error", error)
@@ -128,6 +177,17 @@ export const auth0 = new Auth0Client({
 
         return NextResponse.redirect(new URL(clearSessionPath, env.NEXT_PUBLIC_ORIGIN))
       }
+
+      const duplicateUserId = await findDuplicateUserAfterSignIn(session.tokenSet.accessToken)
+      session.duplicateUserId = duplicateUserId
+
+      if (duplicateUserId !== null) {
+        session.user = {
+          ...session.user,
+          hasDuplicateUser: true,
+          duplicateUserId,
+        }
+      }
     }
 
     const baseUrl = ctx.appBaseUrl ?? env.NEXT_PUBLIC_ORIGIN
@@ -135,3 +195,23 @@ export const auth0 = new Auth0Client({
     return NextResponse.redirect(new URL(ctx.returnTo ?? "/", baseUrl))
   },
 })
+
+export async function clearHasDuplicateUserFromSession(): Promise<void> {
+  const session = await auth0.getSession()
+
+  if (session === null) {
+    return
+  }
+
+  const user = { ...session.user }
+  delete user.hasDuplicateUser
+  delete user.duplicateUserId
+
+  const updatedSession: SessionData = {
+    ...session,
+    user,
+  }
+  delete updatedSession.duplicateUserId
+
+  await auth0.updateSession(updatedSession)
+}

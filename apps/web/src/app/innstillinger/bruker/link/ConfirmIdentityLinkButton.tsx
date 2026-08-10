@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@dotkomonline/ui"
+import { useUser } from "@auth0/nextjs-auth0/client"
 import { createLogoutUrl } from "@dotkomonline/utils"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
@@ -9,6 +10,7 @@ import { IDENTITY_LINK_REQUIRES_LOGIN_KEY } from "@/components/notices/identity-
 
 export function ConfirmIdentityLinkButton() {
   const router = useRouter()
+  const { invalidate: invalidateSessionUser } = useUser()
   const [isPending, startTransition] = useTransition()
 
   const onConfirm = () => {
@@ -25,6 +27,7 @@ export function ConfirmIdentityLinkButton() {
         }
 
         sessionStorage.removeItem(IDENTITY_LINK_REQUIRES_LOGIN_KEY)
+        await invalidateSessionUser()
         router.replace("/innstillinger/bruker?link_status=ok")
       } catch (error: unknown) {
         sessionStorage.removeItem(IDENTITY_LINK_REQUIRES_LOGIN_KEY)

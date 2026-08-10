@@ -18,6 +18,7 @@ import {
   MASTER_LAST_SEMESTER,
   type MembershipService,
 } from "./membership-service"
+import { namesLookLikeSamePerson } from "./duplicate-user-name"
 import type { UserRepository } from "./user-repository"
 import {
   Auth0UserProfileAppMetadataSchema,
@@ -41,6 +42,8 @@ import {
   type UserFlagWithUsers,
   type UserFlagWrite,
   type BirthdayPartyGuess,
+  type Auth0Provider,
+  Auth0ProviderSchema,
 } from "./user"
 
 export interface UserService {
@@ -90,6 +93,16 @@ export interface UserService {
   getByUsername(handle: DBHandle, username: Username): Promise<User>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findUsers(handle: DBHandle, query: UserFilterQuery, page?: Pageable): Promise<User[]>
+  /**
+   * The id of another account that looks like the same person, or null.
+   *
+   * It requires:
+   *  1. A different login type (FEIDE and Username-Password-Authentication)
+   *  2. A name whose tokens are an ordered subset of this user's name, or the other way around
+   *
+   * This will look through every user in the database.
+   */
+  hasDuplicateUser(handle: DBHandle, userId: UserId): Promise<UserId | null>
 
   /**
    * Attempt to discover an automatically granted membership from FEIDE.
@@ -520,6 +533,34 @@ export function getUserService(
 
     async findUsers(handle, query, page) {
       return await userRepository.findMany(handle, query, page ?? { take: 20 })
+    },
+
+    async hasDuplicateUser(handle, userId) {
+      const user = await this.findById(handle, userId)
+
+      if (user === null || user.name === null) {
+        return null
+      }
+
+      // We don't allow linking the same identity twice. As of 2026, we only use our own database connection and FEIDE,
+      // which have different Auth0 provider IDs. Therefore we query the users for the opposite provider. If future
+      // connections share the same provider ID, this would not be as useful.
+      const oppositeProvider = getOppositeAuth0Provider(user.id)
+      const candidates = await userRepository.findIdsAndNamesByAuth0Provider(handle, oppositeProvider)
+
+      for (const candidate of candidates) {
+        if (candidate.id === userId || candidate.name === null) {
+          continue
+        }
+
+        if (!namesLookLikeSamePerson(user.name, candidate.name)) {
+          continue
+        }
+
+        return candidate.id
+      }
+
+      return null
     },
 
     async register(handle, userId) {
@@ -1087,4 +1128,16 @@ function isMissingAuth0User(error: unknown): boolean {
   }
 
   return error.statusCode === 404
+}
+
+function getOppositeAuth0Provider(userId: UserId): Auth0Provider {
+  if (userId.startsWith(Auth0ProviderSchema.enum.auth0)) {
+    return Auth0ProviderSchema.enum.oauth2
+  }
+
+  if (userId.startsWith(Auth0ProviderSchema.enum.oauth2)) {
+    return Auth0ProviderSchema.enum.auth0
+  }
+
+  throw new InvalidArgumentError(`Invalid Auth0 provider: ${userId}`)
 }

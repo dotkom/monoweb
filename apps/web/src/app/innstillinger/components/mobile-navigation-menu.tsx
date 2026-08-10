@@ -17,6 +17,7 @@ import { settingsNavigationItems } from "./navigation-menu"
 
 export const MobileProfileNavigationMenu = () => {
   const pathname = usePathname()
+
   const currentLink =
     settingsNavigationItems.find((item) => pathname.startsWith(item.slug)) ?? settingsNavigationItems[0]
   const [open, setOpen] = useState(false)
@@ -33,7 +34,7 @@ export const MobileProfileNavigationMenu = () => {
             aria-haspopup="menu"
             aria-label={`Innstillinger: ${currentLink.title}. Åpne meny for å bytte seksjon.`}
             className={cn(
-              "flex w-full items-center rounded-xl border p-2 text-left",
+              "relative flex w-full items-center rounded-xl border p-2 text-left",
               "border-gray-200 bg-white",
               "dark:border-stone-700 dark:bg-stone-800",
               "transition-colors hover:bg-gray-50 dark:hover:bg-stone-700/80",

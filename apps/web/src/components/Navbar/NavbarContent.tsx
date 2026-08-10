@@ -5,11 +5,13 @@ import { VinstraffIcon } from "@/components/atoms/VinstraffIcon"
 import { env } from "@/env"
 import type { AuthState } from "@/utils/authenticated-user-state"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import { Button, cn } from "@dotkomonline/ui"
+import { Button, cn, Stripes, Text } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import {
   type Icon,
+  IconArrowUpRight,
   IconArticle,
   IconBolt,
   IconBook2,
@@ -190,46 +192,74 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
   const isLoggedIn = authState.sessionUser !== null && authState.sessionUser !== undefined && !authState.isInvalid
   const showLoginButton = !authState.isLoading && authState.sessionUser === null && !authState.isInvalid
 
+  const { showNudge } = useFeideLinkNudge()
+  const isIdentityLinkPage = fullPathname.split("?")[0] === "/innstillinger/bruker/link"
+  const showDuplicateAccountStrip = showNudge && !isIdentityLinkPage
+
   return (
-    <header className={cn("navbar-shell sticky top-4 z-50 mt-4 flex items-stretch", showLoginButton && "gap-1.5")}>
-      <div
-        className={cn(
-          "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] bg-blue-100/80 border border-gray-300/70 p-3 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
-          "flex flex-row items-center justify-between w-full",
-          "min-w-0 grow",
-          showLoginButton && "rounded-r-md",
-          !isLoggedIn && "rounded-r-md"
+    <header className="sticky top-4 z-50 mt-4 flex flex-col gap-0.75">
+      <div className={cn("navbar-shell flex items-stretch", showLoginButton && "gap-1.5")}>
+        <div
+          className={cn(
+            "h-(--navbar-height) rounded-[calc(var(--navbar-height)/2)] bg-blue-100/80 border border-gray-300/70 p-3 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90",
+            "flex flex-row items-center justify-between w-full",
+            "min-w-0 grow",
+            showLoginButton && "rounded-r-md",
+            !isLoggedIn && "rounded-r-md"
+          )}
+        >
+          <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
+            <OnlineIcon className="size-10 shrink-0" />
+          </Link>
+
+          <MainNavigation links={links} />
+
+          <div className="ml-auto flex items-center">
+            <ProfileMenu authState={authState} />
+          </div>
+        </div>
+
+        {showLoginButton && (
+          <div className="flex h-(--navbar-height) shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
+            <Button
+              element="a"
+              variant="default"
+              size="lg"
+              className="h-full min-w-19 shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
+              href={createAuthorizeUrl({ returnTo: fullPathname })}
+              icon={<IconLogin2 className="mr-1.5 size-6" />}
+            >
+              <span className="hidden min-[400px]:inline">Logg inn</span>
+            </Button>
+          </div>
         )}
-      >
-        <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
-          <OnlineIcon className="size-10 shrink-0" />
-        </Link>
 
-        <MainNavigation links={links} />
-
-        <div className="ml-auto flex items-center">
-          <ProfileMenu authState={authState} />
+        <div className="ml-2 flex size-(--navbar-height) shrink-0 items-center justify-center rounded-full bg-blue-100/80 border border-gray-300/70 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90 lg:hidden">
+          <MobileNavigation links={links} />
         </div>
       </div>
 
-      {showLoginButton && (
-        <div className="flex h-(--navbar-height) shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] bg-blue-100/80 shadow-sm backdrop-blur-xl dark:bg-stone-800/90">
-          <Button
-            element="a"
-            variant="default"
-            size="lg"
-            className="h-full min-w-19 shrink-0 rounded-l-md rounded-r-[calc(var(--navbar-height)/2)] py-0 pl-3 pr-4 xs:pl-6 xs:pr-8 font-medium"
-            href={createAuthorizeUrl({ returnTo: fullPathname })}
-            icon={<IconLogin2 className="mr-1.5 size-6" />}
+      {showDuplicateAccountStrip && (
+        <Link
+          href="/innstillinger/bruker"
+          className="flex items-center justify-center h-6 rounded-t-xs rounded-b-lg bg-red-500 dark:bg-red-600"
+        >
+          <Stripes
+            colorA="bg-red-500 dark:bg-red-600"
+            colorB="bg-white/15 dark:bg-white/20"
+            animated
+            speed="3s"
+            className="rounded-t-xs rounded-b-lg h-full"
+            childrenContainerClassName="flex gap-1 items-center justify-center h-full"
           >
-            <span className="hidden min-[400px]:inline">Logg inn</span>
-          </Button>
-        </div>
-      )}
+            <Text element="span" className="text-sm font-medium text-white">
+              Vi tror du har to kontoer. Trykk her for å koble dem sammen
+            </Text>
 
-      <div className="ml-2 flex size-(--navbar-height) shrink-0 items-center justify-center rounded-full bg-blue-100/80 border border-gray-300/70 shadow-xs backdrop-blur-xl dark:border-stone-700/30 dark:bg-stone-800/90 lg:hidden">
-        <MobileNavigation links={links} />
-      </div>
+            <IconArrowUpRight className="size-4 rounded-sm text-white" />
+          </Stripes>
+        </Link>
+      )}
     </header>
   )
 }
