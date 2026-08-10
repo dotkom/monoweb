@@ -1,6 +1,7 @@
 import type { FadderukePageProps } from "../lib"
 import type { ContestId } from "@dotkomonline/rpc/contest"
 import type { EventWithAttendance } from "@dotkomonline/rpc/event"
+import { getServerSession } from "@/auth"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { IconCalendarEvent, IconHandClick, IconTrophy } from "@tabler/icons-react"
 import Image from "next/image"
@@ -9,14 +10,17 @@ import { EventTimeline } from "./event-timeline"
 import { Leaderboard } from "./leaderboard"
 import { About, Debug, Welcome } from "./sections"
 
-export function Fadderukene2026Page({ childEventsWithAttendance, contestId }: FadderukePageProps) {
+export async function Fadderukene2026Page({ childEventsWithAttendance, contestId }: FadderukePageProps) {
+  const session = await getServerSession()
+  const showRegisterButton = session === null
+
   return (
     <div className="relative min-h-full">
       <div className="md:hidden">
-        <Mobile />
+        <Mobile showRegisterButton={showRegisterButton} />
       </div>
       <div className="hidden md:block">
-        <Desktop />
+        <Desktop showRegisterButton={showRegisterButton} />
       </div>
 
       <div className="relative left-1/2 w-[calc(100dvw+2px)] -mx-px -translate-x-1/2 overflow-x-clip">
@@ -33,7 +37,7 @@ export function Fadderukene2026Page({ childEventsWithAttendance, contestId }: Fa
   )
 }
 
-function Mobile() {
+function Mobile({ showRegisterButton }: { showRegisterButton: boolean }) {
   return (
     <div className="relative left-1/2 w-dvw -translate-x-1/2 overflow-x-clip bg-[#EDE3D4] dark:bg-taupe-800">
       <div className="relative">
@@ -82,7 +86,10 @@ function Mobile() {
           </div>
         </header>
 
-        <JumpLinks buttonClassName="h-14 bg-[#dfd0b9] hover:bg-[#c5b59d] dark:bg-white/5 dark:hover:bg-white/12" />
+        <JumpLinks
+          showRegisterButton={showRegisterButton}
+          buttonClassName="h-14 bg-[#dfd0b9] hover:bg-[#c5b59d] dark:bg-white/5 dark:hover:bg-white/12"
+        />
 
         <Welcome />
         <About />
@@ -95,7 +102,7 @@ function Mobile() {
   )
 }
 
-function Desktop() {
+function Desktop({ showRegisterButton }: { showRegisterButton: boolean }) {
   return (
     <div className="relative left-1/2 w-dvw -translate-x-1/2 overflow-x-clip bg-[#EDE3D4] dark:bg-taupe-800">
       <div className="relative grid">
@@ -153,6 +160,7 @@ function Desktop() {
           </header>
 
           <JumpLinks
+            showRegisterButton={showRegisterButton}
             className="mt-58"
             buttonClassName="h-16 bg-sky-300/25 hover:bg-sky-300/50 dark:bg-white/5 dark:hover:bg-white/12"
           />
@@ -223,21 +231,55 @@ function Torch({ className, imageClassName }: { className?: string; imageClassNa
   )
 }
 
-function JumpLinks({ className, buttonClassName }: { className?: string; buttonClassName?: string }) {
+function JumpLinks({
+  showRegisterButton,
+  className,
+  buttonClassName,
+}: {
+  showRegisterButton: boolean
+  className?: string
+  buttonClassName?: string
+}) {
   return (
-    <nav className={cn("w-full max-w-3xl mx-auto", className)}>
-      <div className="grid grid-cols-2 gap-3">
-        <Button element="a" href="#program" size="lg" className={buttonClassName}>
-          <IconCalendarEvent aria-hidden className="size-4.5" />
-          Program
-        </Button>
+    <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
+      <nav className={cn(className)}>
+        <div className="grid grid-cols-2 gap-3">
+          <Button element="a" href="#program" size="lg" className={buttonClassName}>
+            <IconCalendarEvent aria-hidden className="size-4.5" />
+            Program
+          </Button>
 
-        <Button element="a" href="#pallen" size="lg" className={buttonClassName}>
-          <IconTrophy aria-hidden className="size-4.5" />
-          Pallen
-        </Button>
-      </div>
-    </nav>
+          <Button element="a" href="#pallen" size="lg" className={buttonClassName}>
+            <IconTrophy aria-hidden className="size-4.5" />
+            Pallen
+          </Button>
+        </div>
+      </nav>
+
+      {showRegisterButton && (
+        <div className="flex flex-row gap-2 sm:gap-3 items-center">
+          <Text className="text-sm sm:text-base">Har du ikke bruker enda?</Text>{" "}
+          <Button
+            element="a"
+            size="sm"
+            color="brand"
+            href="/api/auth/authorize?screen_hint=signup"
+            className="sm:hidden bg-violet-300 text-black hover:bg-violet-200 dark:bg-brand-accent dark:hover:bg-brand-accent/80"
+          >
+            Registrer deg
+          </Button>
+          <Button
+            element="a"
+            size="lg"
+            color="brand"
+            href="/api/auth/authorize?screen_hint=signup"
+            className="max-sm:hidden bg-violet-300 text-black hover:bg-violet-200 dark:bg-brand-accent dark:hover:bg-brand-accent/80"
+          >
+            Registrer deg
+          </Button>
+        </div>
+      )}
+    </div>
   )
 }
 
