@@ -8,9 +8,15 @@ export type SettingsMenuItemProps = {
   title: string
   slug: string
   icon: Icon
+  showNotificationDot?: boolean
 }
 
-export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon: Icon }) => {
+export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({
+  title,
+  slug,
+  icon: Icon,
+  showNotificationDot = false,
+}) => {
   const path = usePathname()
   const isCurrent = path.startsWith(slug)
 
@@ -29,6 +35,7 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon:
       <Text element="span" className="text-base">
         {title}
       </Text>
+      {showNotificationDot && <span className="size-2.5 rounded-full bg-red-500" />}
     </Button>
   )
 }

@@ -1,5 +1,8 @@
 "use client"
 
+import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import {
   Button,
   cn,
@@ -10,6 +13,7 @@ import {
   Text,
 } from "@dotkomonline/ui"
 import { IconCheck, IconChevronDown } from "@tabler/icons-react"
+import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -17,6 +21,19 @@ import { settingsNavigationItems } from "./navigation-menu"
 
 export const MobileProfileNavigationMenu = () => {
   const pathname = usePathname()
+  const trpc = useTRPC()
+  const { sessionUser } = useAuthenticatedUser()
+
+  const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
+    ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
+    enabled: sessionUser != null,
+  })
+
+  const { showNudge: showFeideLinkNudge } = useFeideLinkNudge({
+    auth0Connections,
+    auth0ConnectionsIsLoading,
+  })
+
   const currentLink =
     settingsNavigationItems.find((item) => pathname.startsWith(item.slug)) ?? settingsNavigationItems[0]
   const [open, setOpen] = useState(false)
@@ -33,7 +50,7 @@ export const MobileProfileNavigationMenu = () => {
             aria-haspopup="menu"
             aria-label={`Innstillinger: ${currentLink.title}. Åpne meny for å bytte seksjon.`}
             className={cn(
-              "flex w-full items-center rounded-xl border p-2 text-left",
+              "relative flex w-full items-center rounded-xl border p-2 text-left",
               "border-gray-200 bg-white",
               "dark:border-stone-700 dark:bg-stone-800",
               "transition-colors hover:bg-gray-50 dark:hover:bg-stone-700/80",
@@ -49,6 +66,7 @@ export const MobileProfileNavigationMenu = () => {
                 {currentLink.title}
               </Text>
             </span>
+            {showFeideLinkNudge && !open && <span className="absolute top-2 right-10 size-3 rounded-full bg-red-500" />}
             <IconChevronDown
               className={cn(
                 "size-5 shrink-0 text-gray-500 transition-transform duration-200 dark:text-stone-400",
@@ -68,6 +86,7 @@ export const MobileProfileNavigationMenu = () => {
           {settingsNavigationItems.map((item) => {
             const isCurrent = pathname.startsWith(item.slug)
             const ItemIcon = item.icon
+            const showNotificationDot = showFeideLinkNudge && item.slug === "/innstillinger/bruker"
 
             return (
               <DropdownMenuItem key={item.slug} asChild>
@@ -82,6 +101,7 @@ export const MobileProfileNavigationMenu = () => {
                   <Text element="span" className="grow text-base">
                     {item.title}
                   </Text>
+                  {showNotificationDot && <span className="size-2.5 rounded-full bg-red-500" />}
                   {isCurrent && (
                     <IconCheck className="size-5 shrink-0 text-brand-700 dark:text-brand-400" aria-hidden />
                   )}
