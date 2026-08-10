@@ -8,6 +8,7 @@ import { EventListItemSkeleton } from "@/components/molecules/EventListItem/Even
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
+import { useFullPathname } from "@/utils/use-full-pathname"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
 import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
@@ -31,7 +32,13 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import { capitalizeFirstLetter, getCurrentUTC, getPunishmentExpiryDate, getStudyGrade } from "@dotkomonline/utils"
+import {
+  capitalizeFirstLetter,
+  createAuthorizeUrl,
+  getCurrentUTC,
+  getPunishmentExpiryDate,
+  getStudyGrade,
+} from "@dotkomonline/utils"
 import {
   IconChefHatOff,
   IconEdit,
@@ -49,7 +56,7 @@ import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
-import { notFound, useParams } from "next/navigation"
+import { notFound, redirect, useParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
 import SkeletonProfilePage from "./loading"
@@ -150,7 +157,8 @@ export function ProfilePage() {
   const username = decodeURIComponent(rawUsername)
 
   const trpc = useTRPC()
-  const { user: sessionUser } = useUser()
+  const fullPathname = useFullPathname()
+  const { user: sessionUser, isLoading: sessionLoading } = useUser()
 
   const [userResult] = useQueries({
     queries: [trpc.user.findByUsername.queryOptions(username)],
@@ -209,6 +217,10 @@ export function ProfilePage() {
   )
 
   const { isAdmin } = useIsAdminQuery()
+
+  if (!sessionLoading && sessionUser === null) {
+    redirect(createAuthorizeUrl({ returnTo: fullPathname }))
+  }
 
   if (user === undefined || userLoading) {
     return <SkeletonProfilePage />
