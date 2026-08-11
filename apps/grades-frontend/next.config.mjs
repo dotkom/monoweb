@@ -5,6 +5,50 @@ import createNextIntlPlugin from "next-intl/plugin"
 const nextConfig = {
   // zod v4 has internal ESM circular imports that webpack cannot linearize safely.
   serverExternalPackages: ["zod"],
+  async redirects() {
+    return [
+      {
+        source: "/course",
+        destination: "/emner",
+        permanent: true,
+      },
+      {
+        source: "/course/",
+        destination: "/emner",
+        permanent: true,
+      },
+      {
+        source: "/course/:code",
+        destination: "/emner/:code",
+        permanent: true,
+      },
+      {
+        source: "/course/:code/",
+        destination: "/emner/:code",
+        permanent: true,
+      },
+      {
+        source: "/login",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/login/",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/about",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/about/",
+        destination: "/",
+        permanent: true,
+      },
+    ]
+  },
 }
 
 const withNextIntl = createNextIntlPlugin()
