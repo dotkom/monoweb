@@ -9,6 +9,7 @@ import {
   FADDERUKE_CONTEST_USERNAME_POINTS,
   FADDERUKE_CONTEST_YEAR,
   getProfileProgressFromSnapshot,
+  hasProfilePicture,
   isDefaultUsername,
   isFadderukeContestTeamProfileComplete,
   recordFadderukeContestProfileProgressOnUserUpdate,
@@ -68,6 +69,12 @@ describe("fadderuke contest profile progress", () => {
       hasSetUsername: true,
       hasSetProfilePicture: true,
     })
+  })
+
+  it("treats gravatar default avatars as unset profile pictures", () => {
+    expect(hasProfilePicture(null)).toBe(false)
+    expect(hasProfilePicture("https://s.gravatar.com/avatar/abc123")).toBe(false)
+    expect(hasProfilePicture("https://example.com/avatar.png")).toBe(true)
   })
 
   it("calculates awarded points and the team bonus from progress rows", () => {

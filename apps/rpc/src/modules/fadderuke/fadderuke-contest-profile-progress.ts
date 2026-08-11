@@ -53,8 +53,14 @@ export function isDefaultUsername(username: string) {
   return z.guid().safeParse(username).success
 }
 
+export const DEFAULT_PROFILE_PICTURE_URL_PREFIX = "https://s.gravatar.com/avatar/"
+
 export function hasProfilePicture(imageUrl: string | null) {
-  return imageUrl !== null
+  if (imageUrl === null) {
+    return false
+  }
+
+  return !imageUrl.startsWith(DEFAULT_PROFILE_PICTURE_URL_PREFIX)
 }
 
 export function getProfileProgressFromSnapshot(user: ProfileSnapshot) {
