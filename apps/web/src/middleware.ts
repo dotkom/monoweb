@@ -1,114 +1,78 @@
 import {
-  ACCESS_TOKEN_REQUEST_HEADER,
-  CLEAR_SESSION_ENDPOINT,
   createClearSessionUrl,
-  getAuthSessionCookieNamesToClear,
   isAccessTokenFetchFailure,
   isAccessTokenUsable,
-  shouldPersistSessionTokensInMiddleware,
   toAbsoluteUrl,
-  toSameOriginAbsoluteUrl,
 } from "@dotkomonline/utils"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
-import { AUTH0_SESSION_COOKIE_NAME, auth0 } from "@/lib/auth0"
+import { auth0 } from "@/lib/auth0"
 
-function isRedirectResponse(response: NextResponse): boolean {
-  return response.status >= 300 && response.status < 400
-}
-
-function copyResponseCookies(source: NextResponse, target: NextResponse): void {
-  for (const cookie of source.cookies.getAll()) {
-    target.cookies.set(cookie)
-  }
-}
-
-function forwardRefreshedAccessToken(
-  request: NextRequest,
-  authResponse: NextResponse,
-  accessToken: string
-): NextResponse {
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set(ACCESS_TOKEN_REQUEST_HEADER, accessToken)
-
-  const downstreamResponse = NextResponse.next({
-    request: { headers: requestHeaders },
-  })
-
-  // Auth0 sets refreshed session cookies on `authResponse`. A bare `NextResponse.next()` would drop them.
-  copyResponseCookies(authResponse, downstreamResponse)
-
-  return downstreamResponse
-}
-
-function clearLocalAuthSession(request: NextRequest): NextResponse {
-  const returnTo = toSameOriginAbsoluteUrl(request.nextUrl.origin, request.nextUrl.searchParams.get("returnTo"))
-  const response = NextResponse.redirect(returnTo)
-
-  const cookies = request.cookies.getAll().map((cookie) => cookie.name)
-  const cookieNamesToClear = getAuthSessionCookieNamesToClear(cookies, AUTH0_SESSION_COOKIE_NAME)
-
-  for (const cookieName of cookieNamesToClear) {
-    response.cookies.set(cookieName, "", { path: "/", maxAge: 0 })
-  }
-
-  return response
-}
-
-function redirectToClearSession(request: NextRequest, authResponse: NextResponse): NextResponse {
+function redirectToClearSession(request: NextRequest): NextResponse {
   const clearSessionPath = createClearSessionUrl({
     returnTo: toAbsoluteUrl(request.nextUrl.origin, `${request.nextUrl.pathname}${request.nextUrl.search}`),
   })
 
-  const response = NextResponse.redirect(new URL(clearSessionPath, request.url))
-  copyResponseCookies(authResponse, response)
-
-  return response
+  return NextResponse.redirect(new URL(clearSessionPath, request.url))
 }
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname === CLEAR_SESSION_ENDPOINT && request.method === "GET") {
-    return clearLocalAuthSession(request)
-  }
-
+  // The Auth0 middleware creates the authorize, callback, logout and access-token endpoints for us. On normal requests
+  // it also extends the session cookie lifetime when the user has a session.
   const authResponse = await auth0.middleware(request)
 
-  if (!shouldPersistSessionTokensInMiddleware(request.nextUrl.pathname)) {
+  // Auth0 handles the token lifecycle and callback session creation for its own endpoints.
+  if (request.nextUrl.pathname.startsWith("/api/auth/")) {
     return authResponse
   }
 
-  if (isRedirectResponse(authResponse)) {
+  // Pass redirects from Auth0 directly to the browser.
+  if (authResponse.status >= 300 && authResponse.status < 400) {
     return authResponse
   }
 
   const session = await auth0.getSession(request)
 
+  // Requests with no session continue to the pages and RPC procedures, where access is decided.
   if (session === null) {
     return authResponse
   }
 
   const sessionToken = session.tokenSet?.accessToken
 
-  // If we already have a valid access token, we use it
+  // A usable access token continues to the requested page. Tokens inside the refresh buffer are renewed below.
   if (sessionToken !== undefined && sessionToken !== "" && isAccessTokenUsable(sessionToken)) {
-    return forwardRefreshedAccessToken(request, authResponse, sessionToken)
+    return authResponse
   }
 
   try {
-    const { token } = await auth0.getAccessToken(request, authResponse)
-
-    return forwardRefreshedAccessToken(request, authResponse, token)
+    // Auth0 writes the refreshed session to both the request and response cookies. The current render reads the new
+    // token from the request, and the browser stores it from the response.
+    await auth0.getAccessToken(request, authResponse)
   } catch (error) {
     console.error("[web:middleware] failed to refresh session tokens", error)
 
     if (isAccessTokenFetchFailure(error)) {
-      return redirectToClearSession(request, authResponse)
+      // A missing or rejected refresh token marks the local session as stale. The clear-session route deletes its
+      // cookies and returns the user to the requested page.
+      return redirectToClearSession(request)
     }
-
-    return authResponse
   }
+
+  return authResponse
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)"],
+  matcher: [
+    // Route the SDK's authorize, callback, logout and access-token endpoints through middleware
+    "/api/auth/:path*",
+    {
+      // Run middleware for normal page requests while omitting static files and Next.js prefetch requests
+      source: "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
 }
