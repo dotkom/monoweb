@@ -4,7 +4,7 @@ import { z } from "zod"
 export const FADDERUKE_CONTEST_YEAR = 2026
 export const FADDERUKE_CONTEST_USERNAME_POINTS = 10
 export const FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS = 10
-export const FADDERUKE_CONTEST_TEAM_PROFILE_BONUS_TOTAL = 500
+export const FADDERUKE_CONTEST_TEAM_PROFILE_BONUS_TOTAL = 1000
 
 export const FadderukeContestProfilePointsAwardedSchema = z.object({
   pointsAwarded: z.number().int(),
