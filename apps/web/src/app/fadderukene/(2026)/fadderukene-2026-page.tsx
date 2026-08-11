@@ -167,8 +167,12 @@ function Desktop({ showRegisterButton }: { showRegisterButton: boolean }) {
 
           <Welcome />
 
-          <div className="rounded-lg bg-white/10 p-2 backdrop-blur-2xl">
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+          <div className="relative overflow-hidden rounded-lg bg-white/10 p-2 backdrop-blur-2xl">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-2 rounded-md not-dark:bg-white/60 blur-2xl"
+            />
+            <div className="relative grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
               <div className="relative h-64 overflow-hidden rounded-sm md:h-80 lg:h-full lg:min-h-96">
                 <Image
                   src="https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/wide/34a15dcf-66da-4ff5-9405-8e154a5bfe03.jpeg"
