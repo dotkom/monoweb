@@ -57,9 +57,16 @@ const findDepartmentsProcedure = procedure.use(withDatabaseTransaction()).query(
   return departments
 })
 
+export type FindManySitemapEntriesInput = inferProcedureInput<typeof findManySitemapEntriesProcedure>
+export type FindManySitemapEntriesOutput = inferProcedureOutput<typeof findManySitemapEntriesProcedure>
+const findManySitemapEntriesProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+  return await ctx.courseService.findManySitemapEntries(ctx.handle)
+})
+
 export const courseRouter = t.router({
   findCourses: findCoursesProcedure,
   findCourse: findCourseProcedure,
   findFaculties: findFacultiesProcedure,
   findDepartments: findDepartmentsProcedure,
+  findManySitemapEntries: findManySitemapEntriesProcedure,
 })

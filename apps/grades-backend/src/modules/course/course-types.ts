@@ -131,6 +131,12 @@ export type SemesterKey = { year: number; semester: Semester }
 
 export type SerializedSemesterKey = `${number}-${Semester}`
 
+export const CourseSitemapEntrySchema = CourseSchema.pick({
+  code: true,
+  updatedAt: true,
+})
+export type CourseSitemapEntry = z.infer<typeof CourseSitemapEntrySchema>
+
 export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"]) => {
   const roundedAverage = Math.round(averageGrade)
 
