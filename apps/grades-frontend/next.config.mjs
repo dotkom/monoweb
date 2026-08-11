@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs"
 import createNextIntlPlugin from "next-intl/plugin"
 
 /** @type {import('next').NextConfig} */
@@ -7,4 +8,17 @@ const nextConfig = {
 }
 
 const withNextIntl = createNextIntlPlugin()
-export default withNextIntl(nextConfig)
+
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: "dotkom",
+  project: "grades-frontend",
+  sentryUrl: "https://sentry.io/",
+  tunnelRoute: "/pulse",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  webpack: {
+    reactComponentAnnotation: true,
+    treeshake: { removeDebugLogging: true },
+  },
+})
