@@ -9,7 +9,7 @@ export interface CourseService {
     offset: number,
     limit: number
   ): Promise<{ courses: Course[]; totalCount: number }>
-  find(handle: DBHandle, code: string): Promise<Course>
+  find(handle: DBHandle, code: string): Promise<Course | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>

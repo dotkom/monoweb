@@ -149,6 +149,10 @@
       "title": "No grade statistics yet",
       "hint": "We don't have grade data for this course yet. Statistics may appear once results are published."
     },
+    "notFound": {
+      "title": "Course not found",
+      "hint": "We couldn't find the course you're looking for. Check the course code, or search <link>here</link>."
+    },
     "semesterTabs": {
       "olderSemesters": "Older semesters"
     },

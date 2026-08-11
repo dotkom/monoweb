@@ -149,6 +149,10 @@
       "title": "Ingen karakterstatistikk ennå",
       "hint": "Vi har ikke karakterdata for dette emnet ennå. Statistikk kan dukke opp når resultater er offentliggjort."
     },
+    "notFound": {
+      "title": "Emne ikke funnet",
+      "hint": "Vi kunne ikke finne emnet du så etter. Sjekk emnekoden, eller søk etter emnet <link>her</link>."
+    },
     "semesterTabs": {
       "olderSemesters": "Eldre semestre"
     },
