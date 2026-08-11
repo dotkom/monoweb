@@ -3,12 +3,14 @@
 import { type ContestantDetail, getContestantName } from "@dotkomonline/rpc/contest"
 import { Button, Stripes, Text, Title, cn } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconEye, IconEyeOff, IconHandClick, IconMoodPuzzled } from "@tabler/icons-react"
+import { addMonths } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { ScrollingClouds } from "./clouds"
 
-const STORAGE_KEY = "fadderuke-2026-banner-hidden"
+const COOKIE_NAME = "Fadderuke2026BannerHidden"
+const OLD_LOCAL_STORAGE_KEY = "fadderuke-2026-banner-hidden"
 
 function getPodiumImage(rank: number) {
   if (rank >= 1 && rank <= 3) {
@@ -32,6 +34,13 @@ function getRankLabel(rank: number) {
   }
 
   return `${rank}. plass`
+}
+
+function setBannerHiddenCookie(hidden: boolean) {
+  const expires = addMonths(new Date(), 2).toUTCString()
+
+  // biome-ignore lint/suspicious/noDocumentCookie: CookieStore unsupported in Safari/Firefox
+  document.cookie = `${COOKIE_NAME}=${hidden ? "1" : "0"}; path=/; expires=${expires}; SameSite=Lax`
 }
 
 export type NoticeContestantSlot = {
@@ -86,30 +95,32 @@ function ContestantSlotDisplay({ slot }: { slot: NoticeContestantSlot }) {
 
 type Fadderuke2026NoticeBannerProps = {
   contestantSlots: NoticeContestantSlot[]
+  isInitiallyHidden: boolean
 }
 
-export function Fadderuke2026NoticeBanner({ contestantSlots }: Fadderuke2026NoticeBannerProps) {
-  const [isHidden, setIsHidden] = useState(false)
-  const [hasLoadedPreference, setHasLoadedPreference] = useState(false)
-
-  useEffect(() => {
-    setIsHidden(localStorage.getItem(STORAGE_KEY) === "1")
-    setHasLoadedPreference(true)
-  }, [])
+export function Fadderuke2026NoticeBanner({ contestantSlots, isInitiallyHidden }: Fadderuke2026NoticeBannerProps) {
+  const [isHidden, setIsHidden] = useState(isInitiallyHidden)
 
   const hideBanner = () => {
-    localStorage.setItem(STORAGE_KEY, "1")
+    setBannerHiddenCookie(true)
     setIsHidden(true)
   }
 
   const showBanner = () => {
-    localStorage.removeItem(STORAGE_KEY)
+    setBannerHiddenCookie(false)
     setIsHidden(false)
   }
 
-  if (!hasLoadedPreference) {
-    return null
-  }
+  // Migrate from localStorage to cookies for users who have the banner hidden in localStorage
+  useEffect(() => {
+    if (localStorage.getItem(OLD_LOCAL_STORAGE_KEY) !== "1") {
+      return
+    }
+
+    setBannerHiddenCookie(true)
+    localStorage.removeItem(OLD_LOCAL_STORAGE_KEY)
+    setIsHidden(true)
+  }, [])
 
   if (isHidden) {
     return (
