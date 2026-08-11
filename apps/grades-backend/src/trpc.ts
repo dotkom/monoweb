@@ -18,6 +18,7 @@ import {
   UnimplementedError,
 } from "./error"
 import type { ServiceLayer } from "./modules/core"
+import { captureException } from "@sentry/node"
 
 export const createTrpcContext = async (context: ServiceLayer) => {
   const trpcContext = {
@@ -99,6 +100,11 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
 
         span.recordException(error)
         span.setStatus({ code: SpanStatusCode.ERROR })
+
+        const isClientError = error.cause instanceof ForbiddenError || error.cause instanceof UnauthorizedError
+        if (!isClientError) {
+          captureException(error)
+        }
 
         return {
           marker: result.marker,

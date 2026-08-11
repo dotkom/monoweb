@@ -1,5 +1,7 @@
+import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
 import fastifyCors from "@fastify/cors"
+import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
 import rawBody from "fastify-raw-body"
@@ -37,6 +39,7 @@ await server.register(rawBody, {
 server.setErrorHandler((error) => {
   logger.error(error)
   console.error(error)
+  captureException(error)
 })
 server.register(fastifyCors, {
   origin: allowedOrigins,
