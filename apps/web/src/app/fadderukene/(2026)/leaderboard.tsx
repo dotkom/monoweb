@@ -394,6 +394,12 @@ function ProfilePointsBanner({ isAuthenticated }: { isAuthenticated: boolean }) 
     return null
   }
 
+  const hasClaimedAllPersonalProfilePoints = profileProgress.hasSetUsername && profileProgress.hasSetProfilePicture
+
+  if (hasClaimedAllPersonalProfilePoints) {
+    return null
+  }
+
   return (
     <Link
       href="/innstillinger/profil"
