@@ -2,25 +2,22 @@ import { server } from "@/utils/trpc/server"
 import type { ContestantDetail, ContestResultOrder } from "@dotkomonline/rpc/contest"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { type Interval, isWithinInterval } from "date-fns"
-import { Suspense } from "react"
+import { cookies } from "next/headers"
 import { Fadderuke2026NoticeBanner, type NoticeContestantSlot } from "./fadderuke-2026-notice-banner"
 
-export function Fadderuke2026Notice({ start, end }: Interval) {
+const COOKIE_NAME = "Fadderuke2026BannerHidden"
+
+export async function Fadderuke2026Notice({ start, end }: Interval) {
   if (!isWithinInterval(getCurrentUTC(), { start, end })) {
     return null
   }
 
-  return (
-    <Suspense fallback={<Fadderuke2026NoticeBanner contestantSlots={[]} />}>
-      <Fadderuke2026NoticeContent />
-    </Suspense>
-  )
-}
+  const cookieStore = await cookies()
+  const hidden = cookieStore.get(COOKIE_NAME)?.value === "1"
 
-async function Fadderuke2026NoticeContent() {
   const contestantSlots = await fetchNoticeContestantSlots()
 
-  return <Fadderuke2026NoticeBanner contestantSlots={contestantSlots} />
+  return <Fadderuke2026NoticeBanner contestantSlots={contestantSlots} isInitiallyHidden={hidden} />
 }
 
 function rankContestants(contestants: ContestantDetail[], order: ContestResultOrder) {
