@@ -36,6 +36,24 @@
   "Common": {
     "Semester": "Semester"
   },
+  "Metadata": {
+    "layout": {
+      "title": "Grades.no - Karakterstatistikk",
+      "description": "Karakterstatistikk for emner ved NTNU. Se snitt, karakterfordeling og ståprosent."
+    },
+    "courseListPage": {
+      "title": "Emner | Grades.no",
+      "description": "Søk etter emner ved NTNU. Se snitt, karakterfordeling og ståprosent."
+    },
+    "coursePage": {
+      "title": "{courseCode} - {courseName} | Grades.no",
+      "description": "Karakterstatistikk for {courseCode} {courseName} ved NTNU. Snitt, karakterfordeling og ståprosent.",
+      "notFound": {
+        "title": "Emne ikke funnet | Grades.no",
+        "description": "Fant ikke dette emnet på Grades.no."
+      }
+    }
+  },
   "Navbar": {
     "courses": "Alle emner",
     "openNavigation": "Åpne meny",
