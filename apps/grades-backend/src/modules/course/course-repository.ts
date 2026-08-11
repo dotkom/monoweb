@@ -20,7 +20,7 @@ export interface CourseRepository {
     offset: number,
     limit: number
   ): Promise<{ courses: Course[]; totalCount: number }>
-  find(handle: DBHandle, code: string): Promise<Course>
+  find(handle: DBHandle, code: string): Promise<Course | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
@@ -67,10 +67,10 @@ export function getCourseRepository(): CourseRepository {
 
     async find(handle, code) {
       const course = await handle.course.findUnique({
-        where: { code: code },
+        where: { code: code.toUpperCase() },
       })
 
-      return parseOrReport(CourseSchema, course)
+      return parseOrReport(CourseSchema.nullable(), course)
     },
 
     async create(handle, data) {

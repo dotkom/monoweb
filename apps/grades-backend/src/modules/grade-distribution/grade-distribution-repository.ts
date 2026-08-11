@@ -18,7 +18,7 @@ export function getGradeDistributionRepository(): GradeDistributionRepository {
       const gradeDistributions = await handle.gradeDistribution.findMany({
         where: {
           course: {
-            code: courseCode,
+            code: courseCode?.toUpperCase(),
           },
         },
         orderBy: [{ year: "asc" }, { semester: "asc" }],

@@ -13,6 +13,9 @@ import { CourseNoGradesState } from "./components/CourseNoGradesState"
 import { SemesterTabs } from "./components/SemesterTabs"
 import { buildCourseMetaItems } from "./utils"
 
+import { redirect } from "next/navigation"
+import { CourseNotFound } from "./components/CourseNotFound"
+
 interface CoursePageProps {
   params: Promise<{
     id: string
@@ -31,6 +34,14 @@ export default async function CoursePage({ params }: CoursePageProps) {
     server.course.findDepartments.query(),
     server.gradeDistribution.findGradeDistributions.query(courseId),
   ])
+
+  if (course === null) {
+    return <CourseNotFound />
+  }
+
+  if (courseId !== course.code) {
+    redirect(`/emner/${course.code}`)
+  }
 
   const showLetterLineChart = course.gradeType !== "PASS_FAIL"
 
