@@ -36,6 +36,24 @@
   "Common": {
     "Semester": "Semester"
   },
+  "Metadata": {
+    "layout": {
+      "title": "Grades.no - Grade statistics",
+      "description": "Grade statistics for courses at NTNU. Averages, grade distributions and pass rates."
+    },
+    "courseListPage": {
+      "title": "Courses | Grades.no",
+      "description": "Search for courses at NTNU and see averages, grade distributions and pass rates."
+    },
+    "coursePage": {
+      "title": "{courseCode} - {courseName} | Grades.no",
+      "description": "Grade statistics for {courseCode} {courseName} at NTNU. Averages, grade distributions and pass rates.",
+      "notFound": {
+        "title": "Course not found | Grades.no",
+        "description": "This course doesn't exist on Grades.no."
+      }
+    }
+  },
   "Navbar": {
     "courses": "All courses",
     "openNavigation": "Open navigation",

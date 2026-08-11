@@ -1,8 +1,11 @@
 export const dynamic = "force-dynamic"
 
 import { CourseFilterParsers } from "@/app/emner/course-filter-parsers"
+import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import { CourseFilterQuerySchema } from "@dotkomonline/grades-backend/course"
+import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import { createLoader } from "nuqs/server"
 import { CourseListControls } from "./components/CourseListControls"
 
@@ -22,4 +25,31 @@ export default async function CourseListPage({
   })
 
   return <CourseListControls defaultValues={filterQuery} initialPage={initialPage} />
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata.courseListPage")
+
+  const title = t("title")
+  const description = t("description")
+  const url = `${env.NEXT_PUBLIC_ORIGIN}/emner`
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Grades.no",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  }
 }
