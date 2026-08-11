@@ -1,16 +1,11 @@
 import { addSeconds, isBefore, subSeconds } from "date-fns"
 import { decodeJwt } from "jose"
 
-const AUTH_API_PREFIX = "/api/auth/"
-
 /**
  * Must match `tokenRefreshBuffer` on {@link https://github.com/auth0/nextjs-auth0 Auth0Client} in each app's `auth0.ts`
  * (currently one minute). Used when deciding if a cached access token is still usable server-side.
  */
 export const AUTH0_TOKEN_REFRESH_BUFFER_SECONDS = 60
-
-/** Request header set in middleware after a successful token refresh. */
-export const ACCESS_TOKEN_REQUEST_HEADER = "x-onlineweb-access-token"
 
 /** Allowed `?error=` query values */
 export const AuthErrorCode = {
@@ -41,14 +36,6 @@ export function resolveAuthErrorMessage(code: string | null): string | null {
 }
 
 /**
- * Returns true when middleware should attempt a persisted token refresh for the request. Skips Auth0 route handlers to
- * avoid refresh/logout loops.
- */
-export function shouldPersistSessionTokensInMiddleware(pathname: string): boolean {
-  return !pathname.startsWith(AUTH_API_PREFIX)
-}
-
-/**
  * Returns true when the access token is still valid outside the refresh buffer. Matches `tokenRefreshBuffer` on
  * {@link https://github.com/auth0/nextjs-auth0 Auth0Client}.
  */
@@ -71,8 +58,8 @@ export function isAccessTokenUsable(accessToken: string): boolean {
 }
 
 /**
- * `AccessTokenError.code` values from `@auth0/nextjs-auth0` (`AccessTokenErrorCode` in the SDK). Duplicated here so
- * `@dotkomonline/utils` does not depend on the Auth0 package.
+ * `AccessTokenError.code` values from `@auth0/nextjs-auth0` (`AccessTokenErrorCode` in the SDK). Duplicated here to
+ * keep `@dotkomonline/utils` independent from the Auth0 package.
  *
  * @see https://github.com/auth0/nextjs-auth0/blob/main/src/errors/oauth-errors.ts
  */
@@ -102,14 +89,14 @@ function readAuth0AccessTokenErrorCode(error: unknown): string | undefined {
 }
 
 /**
- * Returns true when `getAccessToken()` failed because the session cannot obtain a valid access token (missing refresh
- * token or Auth0 rejected refresh). Used to redirect through local session clearing / re-login.
+ * Returns true when `getAccessToken()` reports a session that needs local clearing and a new login. This covers a
+ * missing refresh token and a refresh rejected by Auth0.
  */
 export function isAccessTokenFetchFailure(error: unknown): boolean {
   const code = readAuth0AccessTokenErrorCode(error)
 
   if (code === Auth0AccessTokenErrorCode.MISSING_REFRESH_TOKEN) {
-    // SDK: no refresh token in session (e.g. access token expired and offline_access token was never stored).
+    // SDK: the session is missing a refresh token after its access token expired.
     return true
   }
 
@@ -121,7 +108,7 @@ export function isAccessTokenFetchFailure(error: unknown): boolean {
   if (error instanceof Error) {
     const message = error.message.toLowerCase()
 
-    // Fallback if `code` is lost (e.g. serialized). SDK user-facing text, not Auth0 tenant log descriptions.
+    // Serialized errors can retain the SDK-facing message after losing the error code.
     if (message.includes("refresh token was not provided")) {
       return true
     }
@@ -134,15 +121,10 @@ export function isAccessTokenFetchFailure(error: unknown): boolean {
   return false
 }
 
-// Cookie names are retrieved from looking inside Auth0 SDK's source code
+// These names follow the session cookie formats used by the Auth0 SDK.
 function isAuth0SdkSessionCookie(cookieName: string, sessionCookieName: string): boolean {
-  // Encrypted app session from @auth0/nextjs-auth0, including chunked variants
-  if (cookieName === sessionCookieName || cookieName.startsWith(`${sessionCookieName}.`)) {
-    return true
-  }
-
-  // Legacy cookie name from before we switched to `onlineweb_session_*` in May 2026.
-  if (cookieName === "__session" || cookieName.startsWith("__session.")) {
+  // Large encrypted sessions are split into sessionName__0, sessionName__1 and so on.
+  if (cookieName === sessionCookieName || cookieName.startsWith(`${sessionCookieName}__`)) {
     return true
   }
 
@@ -159,7 +141,7 @@ function isAuth0SdkSessionCookie(cookieName: string, sessionCookieName: string):
   return false
 }
 
-/** Returns Auth0 SDK session, legacy, connection, and transaction cookie names present on the request. */
+/** Returns Auth0 SDK session, connection, and transaction cookie names present on the request. */
 export function getAuthSessionCookieNamesToClear(cookieNames: string[], sessionCookieName: string): string[] {
   return cookieNames.filter((cookieName) => isAuth0SdkSessionCookie(cookieName, sessionCookieName))
 }
