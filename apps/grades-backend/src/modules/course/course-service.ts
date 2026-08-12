@@ -1,6 +1,14 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
 import type { CourseRepository } from "./course-repository"
-import type { Course, CourseFilterQuery, CourseId, CourseWrite, Department, Faculty } from "./course-types"
+import type {
+  Course,
+  CourseFilterQuery,
+  CourseId,
+  CourseSitemapEntry,
+  CourseWrite,
+  Department,
+  Faculty,
+} from "./course-types"
 
 export interface CourseService {
   findMany(
@@ -14,6 +22,7 @@ export interface CourseService {
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
   findManyDepartments(handle: DBHandle): Promise<Department[]>
+  findManySitemapEntries(handle: DBHandle): Promise<CourseSitemapEntry[]>
 }
 
 export function getCourseService(courseRepository: CourseRepository): CourseService {
@@ -40,6 +49,10 @@ export function getCourseService(courseRepository: CourseRepository): CourseServ
 
     async findManyDepartments(handle) {
       return courseRepository.findManyDepartments(handle)
+    },
+
+    async findManySitemapEntries(handle) {
+      return courseRepository.findManySitemapEntries(handle)
     },
   }
 }

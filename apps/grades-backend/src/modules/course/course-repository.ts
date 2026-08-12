@@ -5,6 +5,8 @@ import {
   type CourseFilterQuery,
   type CourseId,
   CourseSchema,
+  type CourseSitemapEntry,
+  CourseSitemapEntrySchema,
   type CourseWrite,
   type Department,
   DepartmentSchema,
@@ -25,6 +27,7 @@ export interface CourseRepository {
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
   findManyDepartments(handle: DBHandle): Promise<Department[]>
+  findManySitemapEntries(handle: DBHandle): Promise<CourseSitemapEntry[]>
 }
 
 export function getCourseRepository(): CourseRepository {
@@ -100,6 +103,15 @@ export function getCourseRepository(): CourseRepository {
       const departments = await handle.department.findMany()
 
       return parseOrReport(DepartmentSchema.array(), departments)
+    },
+
+    async findManySitemapEntries(handle) {
+      const courses = await handle.course.findMany({
+        select: { code: true, updatedAt: true },
+        orderBy: { code: "asc" },
+      })
+
+      return parseOrReport(CourseSitemapEntrySchema.array(), courses)
     },
   }
 }
