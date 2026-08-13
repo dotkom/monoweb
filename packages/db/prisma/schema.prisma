@@ -968,6 +968,7 @@ model Feature {
   startsAt      DateTime? @map("starts_at") @db.Timestamptz(3)
   endsAt        DateTime? @map("ends_at") @db.Timestamptz(3)
   configuration Json      @default("{}")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("feature")

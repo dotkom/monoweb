@@ -17,6 +17,7 @@ export const FeatureSchema = z.object({
   startsAt: z.date().nullable(),
   endsAt: z.date().nullable(),
   configuration: FeatureConfigurationSchema,
+  createdAt: z.date(),
   updatedAt: z.date(),
 })
 

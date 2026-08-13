@@ -668,6 +668,7 @@ export const FeatureScalarFieldEnum = {
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   configuration: 'configuration',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 

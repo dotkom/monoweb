@@ -29,6 +29,7 @@ export type FeatureMinAggregateOutputType = {
   enabled: boolean | null
   startsAt: Date | null
   endsAt: Date | null
+  createdAt: Date | null
   updatedAt: Date | null
 }
 
@@ -37,6 +38,7 @@ export type FeatureMaxAggregateOutputType = {
   enabled: boolean | null
   startsAt: Date | null
   endsAt: Date | null
+  createdAt: Date | null
   updatedAt: Date | null
 }
 
@@ -46,6 +48,7 @@ export type FeatureCountAggregateOutputType = {
   startsAt: number
   endsAt: number
   configuration: number
+  createdAt: number
   updatedAt: number
   _all: number
 }
@@ -56,6 +59,7 @@ export type FeatureMinAggregateInputType = {
   enabled?: true
   startsAt?: true
   endsAt?: true
+  createdAt?: true
   updatedAt?: true
 }
 
@@ -64,6 +68,7 @@ export type FeatureMaxAggregateInputType = {
   enabled?: true
   startsAt?: true
   endsAt?: true
+  createdAt?: true
   updatedAt?: true
 }
 
@@ -73,6 +78,7 @@ export type FeatureCountAggregateInputType = {
   startsAt?: true
   endsAt?: true
   configuration?: true
+  createdAt?: true
   updatedAt?: true
   _all?: true
 }
@@ -155,6 +161,7 @@ export type FeatureGroupByOutputType = {
   startsAt: Date | null
   endsAt: Date | null
   configuration: runtime.JsonValue
+  createdAt: Date
   updatedAt: Date
   _count: FeatureCountAggregateOutputType | null
   _min: FeatureMinAggregateOutputType | null
@@ -185,6 +192,7 @@ export type FeatureWhereInput = {
   startsAt?: Prisma.DateTimeNullableFilter<"Feature"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableFilter<"Feature"> | Date | string | null
   configuration?: Prisma.JsonFilter<"Feature">
+  createdAt?: Prisma.DateTimeFilter<"Feature"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Feature"> | Date | string
 }
 
@@ -194,6 +202,7 @@ export type FeatureOrderByWithRelationInput = {
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   configuration?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -206,6 +215,7 @@ export type FeatureWhereUniqueInput = Prisma.AtLeast<{
   startsAt?: Prisma.DateTimeNullableFilter<"Feature"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableFilter<"Feature"> | Date | string | null
   configuration?: Prisma.JsonFilter<"Feature">
+  createdAt?: Prisma.DateTimeFilter<"Feature"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Feature"> | Date | string
 }, "key">
 
@@ -215,6 +225,7 @@ export type FeatureOrderByWithAggregationInput = {
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   configuration?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.FeatureCountOrderByAggregateInput
   _max?: Prisma.FeatureMaxOrderByAggregateInput
@@ -230,6 +241,7 @@ export type FeatureScalarWhereWithAggregatesInput = {
   startsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Feature"> | Date | string | null
   endsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Feature"> | Date | string | null
   configuration?: Prisma.JsonWithAggregatesFilter<"Feature">
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Feature"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Feature"> | Date | string
 }
 
@@ -239,6 +251,7 @@ export type FeatureCreateInput = {
   startsAt?: Date | string | null
   endsAt?: Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
@@ -248,6 +261,7 @@ export type FeatureUncheckedCreateInput = {
   startsAt?: Date | string | null
   endsAt?: Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
@@ -257,6 +271,7 @@ export type FeatureUpdateInput = {
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -266,6 +281,7 @@ export type FeatureUncheckedUpdateInput = {
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -275,6 +291,7 @@ export type FeatureCreateManyInput = {
   startsAt?: Date | string | null
   endsAt?: Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
   updatedAt?: Date | string
 }
 
@@ -284,6 +301,7 @@ export type FeatureUpdateManyMutationInput = {
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -293,6 +311,7 @@ export type FeatureUncheckedUpdateManyInput = {
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   configuration?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -302,6 +321,7 @@ export type FeatureCountOrderByAggregateInput = {
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
   configuration?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -310,6 +330,7 @@ export type FeatureMaxOrderByAggregateInput = {
   enabled?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -318,6 +339,7 @@ export type FeatureMinOrderByAggregateInput = {
   enabled?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -329,6 +351,7 @@ export type FeatureSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   startsAt?: boolean
   endsAt?: boolean
   configuration?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["feature"]>
 
@@ -338,6 +361,7 @@ export type FeatureSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   startsAt?: boolean
   endsAt?: boolean
   configuration?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["feature"]>
 
@@ -347,6 +371,7 @@ export type FeatureSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   startsAt?: boolean
   endsAt?: boolean
   configuration?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["feature"]>
 
@@ -356,10 +381,11 @@ export type FeatureSelectScalar = {
   startsAt?: boolean
   endsAt?: boolean
   configuration?: boolean
+  createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type FeatureOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"key" | "enabled" | "startsAt" | "endsAt" | "configuration" | "updatedAt", ExtArgs["result"]["feature"]>
+export type FeatureOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"key" | "enabled" | "startsAt" | "endsAt" | "configuration" | "createdAt" | "updatedAt", ExtArgs["result"]["feature"]>
 
 export type $FeaturePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Feature"
@@ -370,6 +396,7 @@ export type $FeaturePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     startsAt: Date | null
     endsAt: Date | null
     configuration: runtime.JsonValue
+    createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["feature"]>
   composites: {}
@@ -799,6 +826,7 @@ export interface FeatureFieldRefs {
   readonly startsAt: Prisma.FieldRef<"Feature", 'DateTime'>
   readonly endsAt: Prisma.FieldRef<"Feature", 'DateTime'>
   readonly configuration: Prisma.FieldRef<"Feature", 'Json'>
+  readonly createdAt: Prisma.FieldRef<"Feature", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Feature", 'DateTime'>
 }
     
