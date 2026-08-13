@@ -10,6 +10,7 @@ import type {
   Department,
   Faculty,
 } from "./course-types"
+import type { CourseDetail } from "./course-detail"
 
 export interface CourseService {
   findMany(
@@ -19,7 +20,7 @@ export interface CourseService {
     limit: number
   ): Promise<{ courses: CourseListItem[]; totalCount: number }>
   findAll(handle: DBHandle): Promise<Course[]>
-  find(handle: DBHandle, code: string): Promise<Course | null>
+  find(handle: DBHandle, code: string): Promise<CourseDetail | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>

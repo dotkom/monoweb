@@ -31,16 +31,13 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const { id: rawParamId } = await params
   const courseId = decodeURIComponent(rawParamId)
 
-  const [course, faculties, departments, gradeDistributions] = await Promise.all([
-    server.course.findCourse.query(courseId),
-    server.course.findFaculties.query(),
-    server.course.findDepartments.query(),
-    server.gradeDistribution.findGradeDistributions.query(courseId),
-  ])
+  const courseDetail = await server.course.findCourse.query(courseId)
 
-  if (course === null) {
+  if (courseDetail === null) {
     return <CourseNotFound />
   }
+
+  const { faculty, department, gradeDistributions, ...course } = courseDetail
 
   if (courseId !== course.code) {
     redirect(`/emner/${course.code}`)
@@ -87,7 +84,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               {courseHasAboutData && (
                 <>
                   <Separator />
-                  <CourseAbout course={course} faculties={faculties} departments={departments} />
+                  <CourseAbout course={course} faculty={faculty} department={department} />
                 </>
               )}
             </div>
@@ -99,7 +96,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
             {courseHasAboutData && (
               <>
                 <Separator />
-                <CourseAbout course={course} faculties={faculties} departments={departments} />
+                <CourseAbout course={course} faculty={faculty} department={department} />
               </>
             )}
           </div>
