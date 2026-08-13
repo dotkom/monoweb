@@ -64,9 +64,10 @@ describe("fadderuke contest profile progress", () => {
     expect(isDefaultUsername("brage")).toBe(false)
   })
 
-  it("treats gravatar default avatars as unset profile pictures", () => {
+  it("treats gravatar and auth0 default avatars as unset profile pictures", () => {
     expect(hasProfilePicture(null)).toBe(false)
     expect(hasProfilePicture("https://s.gravatar.com/avatar/abc123")).toBe(false)
+    expect(hasProfilePicture("https://cdn.auth0.com/avatars/br.png")).toBe(false)
     expect(hasProfilePicture("https://example.com/avatar.png")).toBe(true)
   })
 
