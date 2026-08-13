@@ -9,16 +9,16 @@ export type PeriodSelection =
 
 export const parseAsSemesterKey = createParser({
   parse(value) {
-    return parseSemesterKey(value)
+    return parseSemesterKey(value.toUpperCase())
   },
   serialize(semester) {
-    return serializeSemesterKey(semester)
+    return serializeSemesterKey(semester).toLowerCase()
   },
 })
 
 function serializePeriodSelection(selection: PeriodSelection) {
   if (selection.kind === "preset") {
-    return selection.preset
+    return selection.preset.toLowerCase()
   }
 
   return selection.semester ? parseAsSemesterKey.serialize(selection.semester) : ""
@@ -26,11 +26,13 @@ function serializePeriodSelection(selection: PeriodSelection) {
 
 export const parseAsPeriodSelection = createParser<PeriodSelection>({
   parse(value) {
-    if (value === "ALL_YEARS" || value === "LAST_THREE_YEARS") {
-      return { kind: "preset", preset: value }
+    const upper = value.toUpperCase()
+
+    if (upper === "ALL_YEARS" || upper === "LAST_THREE_YEARS") {
+      return { kind: "preset", preset: upper }
     }
 
-    const semester = parseSemesterKey(value)
+    const semester = parseSemesterKey(upper)
     return semester ? { kind: "semester", semester } : null
   },
   serialize: serializePeriodSelection,
@@ -38,12 +40,11 @@ export const parseAsPeriodSelection = createParser<PeriodSelection>({
 
 export const CoursePageParsers = {
   period: parseAsPeriodSelection,
-  vs: parseAsPeriodSelection.withDefault({
+  compare: parseAsPeriodSelection.withDefault({
     kind: "preset",
     preset: "LAST_THREE_YEARS",
   }),
-  isSameSeason: parseAsBoolean,
-  isGhost: parseAsBoolean,
+  overlay: parseAsBoolean.withDefault(false),
 }
 
 export type CoursePageParams = inferParserType<typeof CoursePageParsers>

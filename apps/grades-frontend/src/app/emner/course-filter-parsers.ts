@@ -7,7 +7,8 @@ import {
   type CourseFilterQuery,
   type CourseFilterSort,
 } from "@dotkomonline/grades-backend/course"
-import { parseAsArrayOf, parseAsString, parseAsStringEnum } from "nuqs/server"
+import { parseAsArrayOf, parseAsString } from "nuqs/server"
+import { parseAsStringEnumLowercase } from "../lib/nuqs"
 
 export type CourseFilterSortValue = `${CourseFilterSort}:${"asc" | "desc"}`
 
@@ -60,10 +61,10 @@ export function findCourseFilterSortOption(value: CourseFilterSortValue) {
 
 export const CourseFilterParsers = {
   bySearch: parseAsString.withDefault(""),
-  sortBy: parseAsArrayOf(parseAsStringEnum(CourseFilterSortSchema.options)).withDefault(["CANDIDATE_COUNT"]),
-  orderBy: parseAsStringEnum(["asc", "desc"] as const).withDefault("desc"),
-  bySemester: parseAsArrayOf(parseAsStringEnum(SemesterSchema.options)).withDefault([]),
-  byTeachingLanguage: parseAsArrayOf(parseAsStringEnum(TeachingLanguageSchema.options)).withDefault([]),
-  byCampus: parseAsArrayOf(parseAsStringEnum(CourseCampusSchema.options)).withDefault([]),
-  byMinGrade: parseAsStringEnum(MinLetterGradeFilterSchema.options),
+  sortBy: parseAsArrayOf(parseAsStringEnumLowercase(CourseFilterSortSchema.options)).withDefault(["CANDIDATE_COUNT"]),
+  orderBy: parseAsStringEnumLowercase(["asc", "desc"] as const).withDefault("desc"),
+  bySemester: parseAsArrayOf(parseAsStringEnumLowercase(SemesterSchema.options)).withDefault([]),
+  byTeachingLanguage: parseAsArrayOf(parseAsStringEnumLowercase(TeachingLanguageSchema.options)).withDefault([]),
+  byCampus: parseAsArrayOf(parseAsStringEnumLowercase(CourseCampusSchema.options)).withDefault([]),
+  byMinGrade: parseAsStringEnumLowercase(MinLetterGradeFilterSchema.options),
 } satisfies Record<keyof CourseFilterQuery, unknown>

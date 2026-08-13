@@ -37,7 +37,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
 
   const { canGhostCompare } = getPeriodCompareFlags(selectedRows, comparisonRows)
   const canCompare = comparison !== null && canGhostCompare
-  const isComparisonEnabled = params.isGhost === true && canCompare
+  const isComparisonEnabled = params.overlay === true && canCompare
 
   const comparisonDisabledReason =
     comparison === null ? tBar("compareDisabledReason") : tBar("compareDisabledNotComparable")
@@ -58,7 +58,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
                     : "text-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"
                 )}
                 disabled={!canCompare}
-                onClick={() => setParams({ isGhost: !params.isGhost })}
+                onClick={() => setParams({ overlay: !params.overlay })}
                 variant="ghost"
                 icon={<Layers2Icon className="size-4 transition-colors" />}
                 aria-label={tBar("showComparison")}

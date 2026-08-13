@@ -45,7 +45,7 @@ export function ComparisonSelect({ gradeDistributions }: Props) {
           return
         }
 
-        setParams({ vs: selection })
+        setParams({ compare: selection })
       }}
     >
       <SelectTrigger
