@@ -241,8 +241,3 @@ export type Contestant = Prisma.ContestantModel
  * 
  */
 export type ContestTeam = Prisma.ContestTeamModel
-/**
- * Model FadderukeContestProfileProgress
- * 
- */
-export type FadderukeContestProfileProgress = Prisma.FadderukeContestProfileProgressModel

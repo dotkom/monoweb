@@ -281,7 +281,6 @@ export type UserWhereInput = {
   notificationsUpdated?: Prisma.NotificationListRelationFilter
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -316,7 +315,6 @@ export type UserOrderByWithRelationInput = {
   notificationsUpdated?: Prisma.NotificationOrderByRelationAggregateInput
   contestants?: Prisma.ContestantOrderByRelationAggregateInput
   contestTeams?: Prisma.ContestTeamOrderByRelationAggregateInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -354,7 +352,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notificationsUpdated?: Prisma.NotificationListRelationFilter
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressListRelationFilter
 }, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
 
 export type UserOrderByWithAggregationInput = {
@@ -433,7 +430,6 @@ export type UserCreateInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -468,7 +464,6 @@ export type UserUncheckedCreateInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -503,7 +498,6 @@ export type UserUpdateInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -538,7 +532,6 @@ export type UserUncheckedUpdateInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -944,20 +937,6 @@ export type UserUncheckedUpdateManyWithoutContestTeamsNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
-export type UserCreateNestedOneWithoutFadderukeContestProfileProgressInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedCreateWithoutFadderukeContestProfileProgressInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFadderukeContestProfileProgressInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutFadderukeContestProfileProgressNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedCreateWithoutFadderukeContestProfileProgressInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFadderukeContestProfileProgressInput
-  upsert?: Prisma.UserUpsertWithoutFadderukeContestProfileProgressInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFadderukeContestProfileProgressInput, Prisma.UserUpdateWithoutFadderukeContestProfileProgressInput>, Prisma.UserUncheckedUpdateWithoutFadderukeContestProfileProgressInput>
-}
-
 export type UserCreateWithoutMembershipsInput = {
   id: string
   username: string
@@ -989,7 +968,6 @@ export type UserCreateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -1023,7 +1001,6 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1073,7 +1050,6 @@ export type UserUpdateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1107,7 +1083,6 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGroupMembershipsInput = {
@@ -1141,7 +1116,6 @@ export type UserCreateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -1175,7 +1149,6 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -1225,7 +1198,6 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -1259,7 +1231,6 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAttendeeInput = {
@@ -1293,7 +1264,6 @@ export type UserCreateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeeInput = {
@@ -1327,7 +1297,6 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeeInput = {
@@ -1366,7 +1335,6 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
@@ -1400,7 +1368,6 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeesRefundedInput = {
@@ -1450,7 +1417,6 @@ export type UserUpdateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeeInput = {
@@ -1484,7 +1450,6 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAttendeesRefundedInput = {
@@ -1529,7 +1494,6 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
@@ -1563,7 +1527,6 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonalMarkInput = {
@@ -1597,7 +1560,6 @@ export type UserCreateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalMarkInput = {
@@ -1631,7 +1593,6 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalMarkInput = {
@@ -1670,7 +1631,6 @@ export type UserCreateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGivenMarksInput = {
@@ -1704,7 +1664,6 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGivenMarksInput = {
@@ -1754,7 +1713,6 @@ export type UserUpdateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalMarkInput = {
@@ -1788,7 +1746,6 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutGivenMarksInput = {
@@ -1833,7 +1790,6 @@ export type UserUpdateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGivenMarksInput = {
@@ -1867,7 +1823,6 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPrivacyPermissionsInput = {
@@ -1901,7 +1856,6 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
@@ -1935,7 +1889,6 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPrivacyPermissionsInput = {
@@ -1985,7 +1938,6 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
@@ -2019,7 +1971,6 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPermissionsInput = {
@@ -2053,7 +2004,6 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
@@ -2087,7 +2037,6 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPermissionsInput = {
@@ -2137,7 +2086,6 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
@@ -2171,7 +2119,6 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2205,7 +2152,6 @@ export type UserCreateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2239,7 +2185,6 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2289,7 +2234,6 @@ export type UserUpdateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2323,7 +2267,6 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeregisterReasonsInput = {
@@ -2357,7 +2300,6 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
@@ -2391,7 +2333,6 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeregisterReasonsInput = {
@@ -2441,7 +2382,6 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
@@ -2475,7 +2415,6 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsReceivedInput = {
@@ -2509,7 +2448,6 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
@@ -2543,7 +2481,6 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
@@ -2593,7 +2530,6 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
@@ -2627,7 +2563,6 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsCreatedInput = {
@@ -2661,7 +2596,6 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
@@ -2695,7 +2629,6 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsCreatedInput = {
@@ -2734,7 +2667,6 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
@@ -2768,7 +2700,6 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsUpdatedInput = {
@@ -2818,7 +2749,6 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
@@ -2852,7 +2782,6 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutNotificationsUpdatedInput = {
@@ -2897,7 +2826,6 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
@@ -2931,7 +2859,6 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestantsInput = {
@@ -2965,7 +2892,6 @@ export type UserCreateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestantsInput = {
@@ -2999,7 +2925,6 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestantsInput = {
@@ -3049,7 +2974,6 @@ export type UserUpdateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestantsInput = {
@@ -3083,7 +3007,6 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestTeamsInput = {
@@ -3117,7 +3040,6 @@ export type UserCreateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestTeamsInput = {
@@ -3151,7 +3073,6 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestTeamsInput = {
@@ -3197,158 +3118,6 @@ export type UserScalarWhereInput = {
   notificationPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
-export type UserCreateWithoutFadderukeContestProfileProgressInput = {
-  id: string
-  username: string
-  name?: string | null
-  email?: string | null
-  imageUrl?: string | null
-  biography?: string | null
-  phone?: string | null
-  gender?: $Enums.Gender
-  dietaryRestrictions?: string | null
-  ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
-  workspaceUserId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
-  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
-  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
-  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
-  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
-  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
-  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
-  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
-  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
-  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
-  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
-  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
-  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
-}
-
-export type UserUncheckedCreateWithoutFadderukeContestProfileProgressInput = {
-  id: string
-  username: string
-  name?: string | null
-  email?: string | null
-  imageUrl?: string | null
-  biography?: string | null
-  phone?: string | null
-  gender?: $Enums.Gender
-  dietaryRestrictions?: string | null
-  ntnuUsername?: string | null
-  flags?: Prisma.UserCreateflagsInput | string[]
-  workspaceUserId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
-  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
-  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
-  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
-  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
-  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
-  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
-  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
-  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
-  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
-  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
-  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
-  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
-}
-
-export type UserCreateOrConnectWithoutFadderukeContestProfileProgressInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedCreateWithoutFadderukeContestProfileProgressInput>
-}
-
-export type UserUpsertWithoutFadderukeContestProfileProgressInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedUpdateWithoutFadderukeContestProfileProgressInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedCreateWithoutFadderukeContestProfileProgressInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutFadderukeContestProfileProgressInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutFadderukeContestProfileProgressInput, Prisma.UserUncheckedUpdateWithoutFadderukeContestProfileProgressInput>
-}
-
-export type UserUpdateWithoutFadderukeContestProfileProgressInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
-  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
-  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
-  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
-  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
-  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
-  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
-  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
-  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
-  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
-  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
-  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
-  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
-  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
-}
-
-export type UserUncheckedUpdateWithoutFadderukeContestProfileProgressInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
-  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  flags?: Prisma.UserUpdateflagsInput | string[]
-  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
-  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
-  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
-  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
-  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
-  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
-  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
-  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
-  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
-  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
-}
-
 export type UserUpdateWithoutContestTeamsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3380,7 +3149,6 @@ export type UserUpdateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestTeamsInput = {
@@ -3414,7 +3182,6 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
@@ -3455,7 +3222,6 @@ export type UserCountOutputType = {
   notificationsUpdated: number
   contestants: number
   contestTeams: number
-  fadderukeContestProfileProgress: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3472,7 +3238,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notificationsUpdated?: boolean | UserCountOutputTypeCountNotificationsUpdatedArgs
   contestants?: boolean | UserCountOutputTypeCountContestantsArgs
   contestTeams?: boolean | UserCountOutputTypeCountContestTeamsArgs
-  fadderukeContestProfileProgress?: boolean | UserCountOutputTypeCountFadderukeContestProfileProgressArgs
 }
 
 /**
@@ -3576,13 +3341,6 @@ export type UserCountOutputTypeCountContestTeamsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ContestTeamWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountFadderukeContestProfileProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FadderukeContestProfileProgressWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3616,7 +3374,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notificationsUpdated?: boolean | Prisma.User$notificationsUpdatedArgs<ExtArgs>
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
-  fadderukeContestProfileProgress?: boolean | Prisma.User$fadderukeContestProfileProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3694,7 +3451,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notificationsUpdated?: boolean | Prisma.User$notificationsUpdatedArgs<ExtArgs>
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
-  fadderukeContestProfileProgress?: boolean | Prisma.User$fadderukeContestProfileProgressArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3718,7 +3474,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notificationsUpdated: Prisma.$NotificationPayload<ExtArgs>[]
     contestants: Prisma.$ContestantPayload<ExtArgs>[]
     contestTeams: Prisma.$ContestTeamPayload<ExtArgs>[]
-    fadderukeContestProfileProgress: Prisma.$FadderukeContestProfileProgressPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     /**
@@ -4152,7 +3907,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notificationsUpdated<T extends Prisma.User$notificationsUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contestants<T extends Prisma.User$contestantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contestTeams<T extends Prisma.User$contestTeamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestTeamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestTeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  fadderukeContestProfileProgress<T extends Prisma.User$fadderukeContestProfileProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$fadderukeContestProfileProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FadderukeContestProfileProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4947,30 +4701,6 @@ export type User$contestTeamsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ContestTeamScalarFieldEnum | Prisma.ContestTeamScalarFieldEnum[]
-}
-
-/**
- * User.fadderukeContestProfileProgress
- */
-export type User$fadderukeContestProfileProgressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FadderukeContestProfileProgress
-   */
-  select?: Prisma.FadderukeContestProfileProgressSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the FadderukeContestProfileProgress
-   */
-  omit?: Prisma.FadderukeContestProfileProgressOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FadderukeContestProfileProgressInclude<ExtArgs> | null
-  where?: Prisma.FadderukeContestProfileProgressWhereInput
-  orderBy?: Prisma.FadderukeContestProfileProgressOrderByWithRelationInput | Prisma.FadderukeContestProfileProgressOrderByWithRelationInput[]
-  cursor?: Prisma.FadderukeContestProfileProgressWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FadderukeContestProfileProgressScalarFieldEnum | Prisma.FadderukeContestProfileProgressScalarFieldEnum[]
 }
 
 /**

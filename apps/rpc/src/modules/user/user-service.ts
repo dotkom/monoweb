@@ -19,7 +19,7 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
-import { recordFadderukeContestProfileProgressOnUserUpdate } from "../fadderuke/fadderuke-contest-profile-progress"
+import { awardFadderukeContestProfilePointsOnUserUpdate } from "../fadderuke/fadderuke-contest-profile-progress"
 import {
   Auth0UserProfileAppMetadataSchema,
   Auth0UserProfileUserMetadataSchema,
@@ -654,13 +654,7 @@ export function getUserService(
       const currentUser = await this.getById(handle, userId)
       const updatedUser = await userRepository.update(handle, userId, data)
 
-      const fadderukeContestPoints = await recordFadderukeContestProfileProgressOnUserUpdate(
-        handle,
-        userId,
-        currentUser,
-        updatedUser,
-        data
-      )
+      const fadderukeContestPoints = await awardFadderukeContestProfilePointsOnUserUpdate(handle, userId, data)
       await syncProfileToAuth0(userId, currentUser, updatedUser, data)
 
       return {

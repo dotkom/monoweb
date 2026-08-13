@@ -111,20 +111,19 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee                        Attendee[]
-  personalMark                    PersonalMark[]
-  groupMemberships                GroupMembership[]
-  memberships                     Membership[]
-  givenMarks                      PersonalMark[]                    @relation("GivenBy")
-  attendeesRefunded               Attendee[]                        @relation(name: "RefundedBy")
-  auditLogs                       AuditLog[]
-  deregisterReasons               DeregisterReason[]
-  notificationsReceived           NotificationRecipient[]
-  notificationsCreated            Notification[]                    @relation("created_by")
-  notificationsUpdated            Notification[]                    @relation("last_updated_by")
-  contestants                     Contestant[]
-  contestTeams                    ContestTeam[]                     @relation("ContestTeamMember")
-  fadderukeContestProfileProgress FadderukeContestProfileProgress[] @relation("TemporaryFadderukeContestProfileProgress")
+  attendee              Attendee[]
+  personalMark          PersonalMark[]
+  groupMemberships      GroupMembership[]
+  memberships           Membership[]
+  givenMarks            PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
+  auditLogs             AuditLog[]
+  deregisterReasons     DeregisterReason[]
+  notificationsReceived NotificationRecipient[]
+  notificationsCreated  Notification[]          @relation("created_by")
+  notificationsUpdated  Notification[]          @relation("last_updated_by")
+  contestants           Contestant[]
+  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
 
   @@map("ow_user")
 }
@@ -932,10 +931,11 @@ enum ContestResultOrder {
 }
 
 model Contestant {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  resultValue Int?     @map("result_value")
+  id                            String   @id @default(uuid())
+  createdAt                     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  resultValue                   Int?     @map("result_value")
+  fadderukeProfilePointsAwarded Int      @default(0) @map("fadderuke_profile_points_awarded")
 
   contestId String  @map("contest_id")
   userId    String? @map("user_id")
@@ -961,18 +961,4 @@ model ContestTeam {
   members User[] @relation("ContestTeamMember")
 
   @@map("contest_team")
-}
-
-model FadderukeContestProfileProgress {
-  id                         String   @id @default(uuid())
-  createdAt                  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  hasSetProfilePicture       Boolean  @default(false) @map("has_set_profile_picture")
-  hasSetUsername             Boolean  @default(false) @map("has_set_username")
-  hasAwardedTeamProfileBonus Boolean  @default(false) @map("has_awarded_team_profile_bonus")
-
-  userId String @map("user_id")
-  user   User   @relation("TemporaryFadderukeContestProfileProgress", fields: [userId], references: [id])
-
-  @@map("temporary_fadderuke_contest_profile_progress")
 }

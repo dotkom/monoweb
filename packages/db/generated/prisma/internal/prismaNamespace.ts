@@ -423,8 +423,7 @@ export const ModelName = {
   Contest: 'Contest',
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
-  ContestTeam: 'ContestTeam',
-  FadderukeContestProfileProgress: 'FadderukeContestProfileProgress'
+  ContestTeam: 'ContestTeam'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -440,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "fadderukeContestProfileProgress"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3404,80 +3403,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    FadderukeContestProfileProgress: {
-      payload: Prisma.$FadderukeContestProfileProgressPayload<ExtArgs>
-      fields: Prisma.FadderukeContestProfileProgressFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.FadderukeContestProfileProgressFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.FadderukeContestProfileProgressFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        findFirst: {
-          args: Prisma.FadderukeContestProfileProgressFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.FadderukeContestProfileProgressFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        findMany: {
-          args: Prisma.FadderukeContestProfileProgressFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>[]
-        }
-        create: {
-          args: Prisma.FadderukeContestProfileProgressCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        createMany: {
-          args: Prisma.FadderukeContestProfileProgressCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.FadderukeContestProfileProgressCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>[]
-        }
-        delete: {
-          args: Prisma.FadderukeContestProfileProgressDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        update: {
-          args: Prisma.FadderukeContestProfileProgressUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        deleteMany: {
-          args: Prisma.FadderukeContestProfileProgressDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.FadderukeContestProfileProgressUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.FadderukeContestProfileProgressUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>[]
-        }
-        upsert: {
-          args: Prisma.FadderukeContestProfileProgressUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$FadderukeContestProfileProgressPayload>
-        }
-        aggregate: {
-          args: Prisma.FadderukeContestProfileProgressAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateFadderukeContestProfileProgress>
-        }
-        groupBy: {
-          args: Prisma.FadderukeContestProfileProgressGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FadderukeContestProfileProgressGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.FadderukeContestProfileProgressCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.FadderukeContestProfileProgressCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -4054,6 +3979,7 @@ export const ContestantScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   resultValue: 'resultValue',
+  fadderukeProfilePointsAwarded: 'fadderukeProfilePointsAwarded',
   contestId: 'contestId',
   userId: 'userId'
 } as const
@@ -4070,19 +3996,6 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
-
-
-export const FadderukeContestProfileProgressScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  hasSetProfilePicture: 'hasSetProfilePicture',
-  hasSetUsername: 'hasSetUsername',
-  hasAwardedTeamProfileBonus: 'hasAwardedTeamProfileBonus',
-  userId: 'userId'
-} as const
-
-export type FadderukeContestProfileProgressScalarFieldEnum = (typeof FadderukeContestProfileProgressScalarFieldEnum)[keyof typeof FadderukeContestProfileProgressScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -4659,7 +4572,6 @@ export type GlobalOmitConfig = {
   fadderuke?: Prisma.FadderukeOmit
   contestant?: Prisma.ContestantOmit
   contestTeam?: Prisma.ContestTeamOmit
-  fadderukeContestProfileProgress?: Prisma.FadderukeContestProfileProgressOmit
 }
 
 /* Types for Logging */
