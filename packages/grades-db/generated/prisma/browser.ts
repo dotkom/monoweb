@@ -37,3 +37,8 @@ export type Faculty = Prisma.FacultyModel
  * 
  */
 export type Department = Prisma.DepartmentModel
+/**
+ * Model CourseCodeAbbreviation
+ * 
+ */
+export type CourseCodeAbbreviation = Prisma.CourseCodeAbbreviationModel
