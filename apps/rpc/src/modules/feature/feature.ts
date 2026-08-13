@@ -22,6 +22,8 @@ export const FeatureSchema = z.object({
 
 export type Feature = z.infer<typeof FeatureSchema>
 
+export const FrontPageNoticeConfigurationSchema = z.object({ text: z.string() })
+
 export const FeatureWriteSchema = FeatureSchema.pick({
   key: true,
   enabled: true,
@@ -34,7 +36,7 @@ export const FeatureWriteSchema = FeatureSchema.pick({
   }
 
   if (feature.key === "front-page-notice") {
-    const result = z.object({ text: z.string() }).safeParse(feature.configuration)
+    const result = FrontPageNoticeConfigurationSchema.safeParse(feature.configuration)
     if (!result.success) {
       ctx.addIssue({ code: "custom", message: 'Notice configuration must contain a string field named "text"' })
     }
@@ -42,5 +44,3 @@ export const FeatureWriteSchema = FeatureSchema.pick({
 })
 
 export type FeatureWrite = z.infer<typeof FeatureWriteSchema>
-
-export const FrontPageNoticeConfigurationSchema = z.object({ text: z.string() })

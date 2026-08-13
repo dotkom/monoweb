@@ -1,7 +1,7 @@
 "use client"
 
 import { useTRPC } from "@/lib/trpc-client"
-import type { Feature, FeatureKey } from "@dotkomonline/rpc/feature"
+import { FrontPageNoticeConfigurationSchema, type Feature, type FeatureKey } from "@dotkomonline/rpc/feature"
 import {
   Alert,
   Box,
@@ -50,11 +50,8 @@ function getActivationMode(feature: Feature): ActivationMode {
 }
 
 function getNoticeText(configuration: unknown) {
-  if (configuration && typeof configuration === "object" && "text" in configuration) {
-    const text = (configuration as { text?: unknown }).text
-    return typeof text === "string" ? text : ""
-  }
-  return ""
+  const result = FrontPageNoticeConfigurationSchema.safeParse(configuration)
+  return result.success ? result.data.text : ""
 }
 
 function toInputDate(date: Date | null) {
