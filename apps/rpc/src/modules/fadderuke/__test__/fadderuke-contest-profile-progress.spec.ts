@@ -1,5 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { mockDeep } from "vitest-mock-extended"
+import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   calculateFadderukeContestProfilePointsGiven,
@@ -13,6 +13,7 @@ import {
   isDefaultUsername,
   isFadderukeContestTeamProfileComplete,
   recordFadderukeContestProfileProgressOnUserUpdate,
+  seedFadderukeContestProfileProgressForContestMembers,
 } from "../fadderuke-contest-profile-progress"
 
 const FADDERUKE_CONTEST_ID = "e368a124-4394-40ea-8354-928a97902e51"
@@ -23,20 +24,22 @@ function createHandle() {
   return mockDeep<DBHandle>()
 }
 
-function mockSoloContestant(handle: DBHandle, resultValue = 420) {
+function mockSoloContestant(handle: DeepMockProxy<DBHandle>, resultValue = 420) {
   handle.contestant.findFirst.mockResolvedValue({
     id: "contestant-id",
     resultValue,
+    fadderukeProfilePointsAwarded: 0,
+    hasAwardedFadderukeProfileTeamBonus: false,
     userId: USER_ID,
     team: null,
   } as never)
-  handle.contestant.findUnique
-    .mockResolvedValueOnce({
-      resultValue,
-    } as never)
-    .mockResolvedValueOnce({
-      resultValue: resultValue + FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
-    } as never)
+  handle.contestant.findUnique.mockResolvedValue({
+    fadderukeProfilePointsAwarded: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+    hasAwardedFadderukeProfileTeamBonus: false,
+  } as never)
+  handle.contestant.updateMany.mockResolvedValue({
+    count: 0,
+  })
 }
 
 describe("fadderuke contest profile progress", () => {
@@ -111,13 +114,14 @@ describe("fadderuke contest profile progress", () => {
       contestId: FADDERUKE_CONTEST_ID,
     } as never)
     mockSoloContestant(handle)
-    handle.fadderukeContestProfileProgress.findFirst.mockResolvedValue(null)
-    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
+    handle.fadderukeContestProfileProgress.createMany.mockResolvedValue({
+      count: 1,
+    })
+    handle.fadderukeContestProfileProgress.findUniqueOrThrow.mockResolvedValue({
       id: "progress-id",
       userId: USER_ID,
       hasSetUsername: false,
       hasSetProfilePicture: false,
-      hasAwardedTeamProfileBonus: false,
       createdAt: new Date(),
     } as never)
     handle.fadderukeContestProfileProgress.findMany.mockResolvedValue([
@@ -126,7 +130,6 @@ describe("fadderuke contest profile progress", () => {
         userId: USER_ID,
         hasSetUsername: true,
         hasSetProfilePicture: true,
-        hasAwardedTeamProfileBonus: false,
       },
     ] as never)
 
@@ -147,12 +150,13 @@ describe("fadderuke contest profile progress", () => {
       }
     )
 
-    expect(handle.fadderukeContestProfileProgress.create).toHaveBeenCalledWith({
+    expect(handle.fadderukeContestProfileProgress.createMany).toHaveBeenCalledWith({
       data: {
         userId: USER_ID,
         hasSetUsername: false,
         hasSetProfilePicture: false,
       },
+      skipDuplicates: true,
     })
     expect(handle.fadderukeContestProfileProgress.update).toHaveBeenCalledWith({
       where: { id: "progress-id" },
@@ -164,29 +168,178 @@ describe("fadderuke contest profile progress", () => {
     expect(handle.contestant.update).toHaveBeenNthCalledWith(1, {
       where: { id: "contestant-id" },
       data: {
-        resultValue: 420 + FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+        resultValue: {
+          increment: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+        },
       },
     })
     expect(handle.contestant.update).toHaveBeenNthCalledWith(2, {
       where: { id: "contestant-id" },
       data: {
-        resultValue:
-          420 +
-          FADDERUKE_CONTEST_USERNAME_POINTS +
-          FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS +
-          calculateFadderukeContestTeamProfileBonus(
-            FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS
-          ),
-      },
-    })
-    expect(handle.fadderukeContestProfileProgress.updateMany).toHaveBeenCalledWith({
-      where: {
-        userId: {
-          in: [USER_ID],
+        fadderukeProfilePointsAwarded: {
+          increment: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
         },
       },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(3, {
+      where: { id: "contestant-id" },
       data: {
-        hasAwardedTeamProfileBonus: true,
+        resultValue: {
+          increment: calculateFadderukeContestTeamProfileBonus(
+            FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS
+          ),
+        },
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(4, {
+      where: { id: "contestant-id" },
+      data: {
+        hasAwardedFadderukeProfileTeamBonus: true,
+      },
+    })
+    expect(handle.$queryRaw).toHaveBeenCalledOnce()
+  })
+
+  it("initializes an empty contestant score without a stale read", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue({
+      eventId: "fadderuke-event-id",
+    } as never)
+    handle.event.findUnique.mockResolvedValue({
+      contestId: FADDERUKE_CONTEST_ID,
+    } as never)
+    handle.contestant.findFirst.mockResolvedValue({
+      id: "contestant-id",
+      resultValue: null,
+      fadderukeProfilePointsAwarded: 0,
+      hasAwardedFadderukeProfileTeamBonus: false,
+      userId: USER_ID,
+      team: null,
+    } as never)
+    handle.contestant.findUnique.mockResolvedValue({
+      fadderukeProfilePointsAwarded: FADDERUKE_CONTEST_USERNAME_POINTS,
+      hasAwardedFadderukeProfileTeamBonus: false,
+    } as never)
+    handle.contestant.updateMany.mockResolvedValue({
+      count: 1,
+    })
+    handle.fadderukeContestProfileProgress.createMany.mockResolvedValue({
+      count: 1,
+    })
+    handle.fadderukeContestProfileProgress.findUniqueOrThrow.mockResolvedValue({
+      id: "progress-id",
+      userId: USER_ID,
+      hasSetUsername: false,
+      hasSetProfilePicture: false,
+      createdAt: new Date(),
+    } as never)
+    handle.fadderukeContestProfileProgress.findMany.mockResolvedValue([
+      {
+        id: "progress-id",
+        userId: USER_ID,
+        hasSetUsername: true,
+        hasSetProfilePicture: false,
+      },
+    ] as never)
+
+    await recordFadderukeContestProfileProgressOnUserUpdate(
+      handle,
+      USER_ID,
+      {
+        username: DEFAULT_USERNAME,
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+        imageUrl: null,
+      },
+      {
+        username: "brage",
+      }
+    )
+
+    expect(handle.contestant.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "contestant-id",
+        resultValue: null,
+      },
+      data: {
+        resultValue: FADDERUKE_CONTEST_USERNAME_POINTS,
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenCalledWith({
+      where: { id: "contestant-id" },
+      data: {
+        fadderukeProfilePointsAwarded: {
+          increment: FADDERUKE_CONTEST_USERNAME_POINTS,
+        },
+      },
+    })
+  })
+
+  it("awards existing profile points before calculating the team bonus during seeding", async () => {
+    const handle = createHandle()
+
+    handle.fadderuke.findUnique.mockResolvedValue({
+      eventId: "fadderuke-event-id",
+    } as never)
+    handle.event.findUnique.mockResolvedValue({
+      contestId: FADDERUKE_CONTEST_ID,
+    } as never)
+    mockSoloContestant(handle)
+    handle.user.findMany.mockResolvedValue([
+      {
+        id: USER_ID,
+        username: "brage",
+        imageUrl: "https://example.com/avatar.png",
+      },
+    ] as never)
+    handle.fadderukeContestProfileProgress.createMany.mockResolvedValue({
+      count: 1,
+    })
+    handle.fadderukeContestProfileProgress.findUniqueOrThrow.mockResolvedValue({
+      id: "progress-id",
+      userId: USER_ID,
+      hasSetUsername: true,
+      hasSetProfilePicture: true,
+      createdAt: new Date(),
+    } as never)
+    handle.fadderukeContestProfileProgress.findMany.mockResolvedValue([
+      {
+        id: "progress-id",
+        userId: USER_ID,
+        hasSetUsername: true,
+        hasSetProfilePicture: true,
+      },
+    ] as never)
+
+    await seedFadderukeContestProfileProgressForContestMembers(handle, FADDERUKE_CONTEST_ID, [USER_ID])
+
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(1, {
+      where: { id: "contestant-id" },
+      data: {
+        resultValue: {
+          increment: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+        },
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(2, {
+      where: { id: "contestant-id" },
+      data: {
+        fadderukeProfilePointsAwarded: {
+          increment: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+        },
+      },
+    })
+    expect(handle.contestant.update).toHaveBeenNthCalledWith(3, {
+      where: { id: "contestant-id" },
+      data: {
+        resultValue: {
+          increment: calculateFadderukeContestTeamProfileBonus(
+            FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS
+          ),
+        },
       },
     })
   })
@@ -201,15 +354,6 @@ describe("fadderuke contest profile progress", () => {
       contestId: FADDERUKE_CONTEST_ID,
     } as never)
     mockSoloContestant(handle)
-    handle.fadderukeContestProfileProgress.findFirst.mockResolvedValue(null)
-    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
-      id: "progress-id",
-      userId: USER_ID,
-      hasSetUsername: true,
-      hasSetProfilePicture: true,
-      hasAwardedTeamProfileBonus: false,
-      createdAt: new Date(),
-    } as never)
 
     await recordFadderukeContestProfileProgressOnUserUpdate(
       handle,
@@ -227,7 +371,7 @@ describe("fadderuke contest profile progress", () => {
       } as never
     )
 
-    expect(handle.fadderukeContestProfileProgress.create).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.createMany).not.toHaveBeenCalled()
     expect(handle.fadderukeContestProfileProgress.update).not.toHaveBeenCalled()
   })
 
@@ -253,7 +397,7 @@ describe("fadderuke contest profile progress", () => {
     )
 
     expect(handle.contestant.findFirst).not.toHaveBeenCalled()
-    expect(handle.fadderukeContestProfileProgress.create).not.toHaveBeenCalled()
+    expect(handle.fadderukeContestProfileProgress.createMany).not.toHaveBeenCalled()
     expect(handle.fadderukeContestProfileProgress.update).not.toHaveBeenCalled()
   })
 
@@ -269,21 +413,19 @@ describe("fadderuke contest profile progress", () => {
     handle.contestant.findFirst.mockResolvedValue({
       id: "contestant-id",
       resultValue: 920,
+      fadderukeProfilePointsAwarded: FADDERUKE_CONTEST_USERNAME_POINTS + FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
+      hasAwardedFadderukeProfileTeamBonus: true,
       userId: USER_ID,
       team: null,
     } as never)
-    handle.fadderukeContestProfileProgress.findFirst
-      .mockResolvedValueOnce({
-        id: "awarded-progress-id",
-        hasAwardedTeamProfileBonus: true,
-      } as never)
-      .mockResolvedValueOnce(null)
-    handle.fadderukeContestProfileProgress.create.mockResolvedValue({
+    handle.fadderukeContestProfileProgress.createMany.mockResolvedValue({
+      count: 1,
+    })
+    handle.fadderukeContestProfileProgress.findUniqueOrThrow.mockResolvedValue({
       id: "progress-id",
       userId: USER_ID,
       hasSetUsername: false,
       hasSetProfilePicture: false,
-      hasAwardedTeamProfileBonus: false,
       createdAt: new Date(),
     } as never)
 
@@ -312,7 +454,7 @@ describe("fadderuke contest profile progress", () => {
       },
     })
     expect(handle.contestant.update).not.toHaveBeenCalled()
-    expect(handle.fadderukeContestProfileProgress.updateMany).not.toHaveBeenCalled()
+    expect(handle.$queryRaw).not.toHaveBeenCalled()
   })
 
   it("uses the configured fadderuke year when resolving the contest", () => {

@@ -30,7 +30,6 @@ export type FadderukeContestProfileProgressMinAggregateOutputType = {
   updatedAt: Date | null
   hasSetProfilePicture: boolean | null
   hasSetUsername: boolean | null
-  hasAwardedTeamProfileBonus: boolean | null
   userId: string | null
 }
 
@@ -40,7 +39,6 @@ export type FadderukeContestProfileProgressMaxAggregateOutputType = {
   updatedAt: Date | null
   hasSetProfilePicture: boolean | null
   hasSetUsername: boolean | null
-  hasAwardedTeamProfileBonus: boolean | null
   userId: string | null
 }
 
@@ -50,7 +48,6 @@ export type FadderukeContestProfileProgressCountAggregateOutputType = {
   updatedAt: number
   hasSetProfilePicture: number
   hasSetUsername: number
-  hasAwardedTeamProfileBonus: number
   userId: number
   _all: number
 }
@@ -62,7 +59,6 @@ export type FadderukeContestProfileProgressMinAggregateInputType = {
   updatedAt?: true
   hasSetProfilePicture?: true
   hasSetUsername?: true
-  hasAwardedTeamProfileBonus?: true
   userId?: true
 }
 
@@ -72,7 +68,6 @@ export type FadderukeContestProfileProgressMaxAggregateInputType = {
   updatedAt?: true
   hasSetProfilePicture?: true
   hasSetUsername?: true
-  hasAwardedTeamProfileBonus?: true
   userId?: true
 }
 
@@ -82,7 +77,6 @@ export type FadderukeContestProfileProgressCountAggregateInputType = {
   updatedAt?: true
   hasSetProfilePicture?: true
   hasSetUsername?: true
-  hasAwardedTeamProfileBonus?: true
   userId?: true
   _all?: true
 }
@@ -165,7 +159,6 @@ export type FadderukeContestProfileProgressGroupByOutputType = {
   updatedAt: Date
   hasSetProfilePicture: boolean
   hasSetUsername: boolean
-  hasAwardedTeamProfileBonus: boolean
   userId: string
   _count: FadderukeContestProfileProgressCountAggregateOutputType | null
   _min: FadderukeContestProfileProgressMinAggregateOutputType | null
@@ -196,7 +189,6 @@ export type FadderukeContestProfileProgressWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"FadderukeContestProfileProgress"> | Date | string
   hasSetProfilePicture?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
   hasSetUsername?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
   userId?: Prisma.StringFilter<"FadderukeContestProfileProgress"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
@@ -207,13 +199,13 @@ export type FadderukeContestProfileProgressOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   hasSetProfilePicture?: Prisma.SortOrder
   hasSetUsername?: Prisma.SortOrder
-  hasAwardedTeamProfileBonus?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type FadderukeContestProfileProgressWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId?: string
   AND?: Prisma.FadderukeContestProfileProgressWhereInput | Prisma.FadderukeContestProfileProgressWhereInput[]
   OR?: Prisma.FadderukeContestProfileProgressWhereInput[]
   NOT?: Prisma.FadderukeContestProfileProgressWhereInput | Prisma.FadderukeContestProfileProgressWhereInput[]
@@ -221,10 +213,8 @@ export type FadderukeContestProfileProgressWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"FadderukeContestProfileProgress"> | Date | string
   hasSetProfilePicture?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
   hasSetUsername?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  userId?: Prisma.StringFilter<"FadderukeContestProfileProgress"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "userId">
 
 export type FadderukeContestProfileProgressOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -232,7 +222,6 @@ export type FadderukeContestProfileProgressOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   hasSetProfilePicture?: Prisma.SortOrder
   hasSetUsername?: Prisma.SortOrder
-  hasAwardedTeamProfileBonus?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.FadderukeContestProfileProgressCountOrderByAggregateInput
   _max?: Prisma.FadderukeContestProfileProgressMaxOrderByAggregateInput
@@ -248,7 +237,6 @@ export type FadderukeContestProfileProgressScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"FadderukeContestProfileProgress"> | Date | string
   hasSetProfilePicture?: Prisma.BoolWithAggregatesFilter<"FadderukeContestProfileProgress"> | boolean
   hasSetUsername?: Prisma.BoolWithAggregatesFilter<"FadderukeContestProfileProgress"> | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolWithAggregatesFilter<"FadderukeContestProfileProgress"> | boolean
   userId?: Prisma.StringWithAggregatesFilter<"FadderukeContestProfileProgress"> | string
 }
 
@@ -258,7 +246,6 @@ export type FadderukeContestProfileProgressCreateInput = {
   updatedAt?: Date | string
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   user: Prisma.UserCreateNestedOneWithoutFadderukeContestProfileProgressInput
 }
 
@@ -268,7 +255,6 @@ export type FadderukeContestProfileProgressUncheckedCreateInput = {
   updatedAt?: Date | string
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId: string
 }
 
@@ -278,7 +264,6 @@ export type FadderukeContestProfileProgressUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutFadderukeContestProfileProgressNestedInput
 }
 
@@ -288,7 +273,6 @@ export type FadderukeContestProfileProgressUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -298,7 +282,6 @@ export type FadderukeContestProfileProgressCreateManyInput = {
   updatedAt?: Date | string
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId: string
 }
 
@@ -308,7 +291,6 @@ export type FadderukeContestProfileProgressUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FadderukeContestProfileProgressUncheckedUpdateManyInput = {
@@ -317,18 +299,12 @@ export type FadderukeContestProfileProgressUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type FadderukeContestProfileProgressListRelationFilter = {
-  every?: Prisma.FadderukeContestProfileProgressWhereInput
-  some?: Prisma.FadderukeContestProfileProgressWhereInput
-  none?: Prisma.FadderukeContestProfileProgressWhereInput
-}
-
-export type FadderukeContestProfileProgressOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+export type FadderukeContestProfileProgressNullableScalarRelationFilter = {
+  is?: Prisma.FadderukeContestProfileProgressWhereInput | null
+  isNot?: Prisma.FadderukeContestProfileProgressWhereInput | null
 }
 
 export type FadderukeContestProfileProgressCountOrderByAggregateInput = {
@@ -337,7 +313,6 @@ export type FadderukeContestProfileProgressCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   hasSetProfilePicture?: Prisma.SortOrder
   hasSetUsername?: Prisma.SortOrder
-  hasAwardedTeamProfileBonus?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -347,7 +322,6 @@ export type FadderukeContestProfileProgressMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   hasSetProfilePicture?: Prisma.SortOrder
   hasSetUsername?: Prisma.SortOrder
-  hasAwardedTeamProfileBonus?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -357,50 +331,39 @@ export type FadderukeContestProfileProgressMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   hasSetProfilePicture?: Prisma.SortOrder
   hasSetUsername?: Prisma.SortOrder
-  hasAwardedTeamProfileBonus?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
-export type FadderukeContestProfileProgressCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput> | Prisma.FadderukeContestProfileProgressCreateWithoutUserInput[] | Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput | Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.FadderukeContestProfileProgressCreateManyUserInputEnvelope
-  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
+export type FadderukeContestProfileProgressCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput
+  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput
 }
 
-export type FadderukeContestProfileProgressUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput> | Prisma.FadderukeContestProfileProgressCreateWithoutUserInput[] | Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput | Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.FadderukeContestProfileProgressCreateManyUserInputEnvelope
-  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
+export type FadderukeContestProfileProgressUncheckedCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput
+  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput
 }
 
-export type FadderukeContestProfileProgressUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput> | Prisma.FadderukeContestProfileProgressCreateWithoutUserInput[] | Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput | Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.FadderukeContestProfileProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.FadderukeContestProfileProgressUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.FadderukeContestProfileProgressCreateManyUserInputEnvelope
-  set?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  disconnect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  delete?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  update?: Prisma.FadderukeContestProfileProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.FadderukeContestProfileProgressUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.FadderukeContestProfileProgressUpdateManyWithWhereWithoutUserInput | Prisma.FadderukeContestProfileProgressUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.FadderukeContestProfileProgressScalarWhereInput | Prisma.FadderukeContestProfileProgressScalarWhereInput[]
+export type FadderukeContestProfileProgressUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput
+  upsert?: Prisma.FadderukeContestProfileProgressUpsertWithoutUserInput
+  disconnect?: Prisma.FadderukeContestProfileProgressWhereInput | boolean
+  delete?: Prisma.FadderukeContestProfileProgressWhereInput | boolean
+  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FadderukeContestProfileProgressUpdateToOneWithWhereWithoutUserInput, Prisma.FadderukeContestProfileProgressUpdateWithoutUserInput>, Prisma.FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput>
 }
 
-export type FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput> | Prisma.FadderukeContestProfileProgressCreateWithoutUserInput[] | Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput | Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.FadderukeContestProfileProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.FadderukeContestProfileProgressUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.FadderukeContestProfileProgressCreateManyUserInputEnvelope
-  set?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  disconnect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  delete?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput | Prisma.FadderukeContestProfileProgressWhereUniqueInput[]
-  update?: Prisma.FadderukeContestProfileProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.FadderukeContestProfileProgressUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.FadderukeContestProfileProgressUpdateManyWithWhereWithoutUserInput | Prisma.FadderukeContestProfileProgressUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.FadderukeContestProfileProgressScalarWhereInput | Prisma.FadderukeContestProfileProgressScalarWhereInput[]
+export type FadderukeContestProfileProgressUncheckedUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.FadderukeContestProfileProgressCreateOrConnectWithoutUserInput
+  upsert?: Prisma.FadderukeContestProfileProgressUpsertWithoutUserInput
+  disconnect?: Prisma.FadderukeContestProfileProgressWhereInput | boolean
+  delete?: Prisma.FadderukeContestProfileProgressWhereInput | boolean
+  connect?: Prisma.FadderukeContestProfileProgressWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FadderukeContestProfileProgressUpdateToOneWithWhereWithoutUserInput, Prisma.FadderukeContestProfileProgressUpdateWithoutUserInput>, Prisma.FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput>
 }
 
 export type FadderukeContestProfileProgressCreateWithoutUserInput = {
@@ -409,7 +372,6 @@ export type FadderukeContestProfileProgressCreateWithoutUserInput = {
   updatedAt?: Date | string
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
 }
 
 export type FadderukeContestProfileProgressUncheckedCreateWithoutUserInput = {
@@ -418,7 +380,6 @@ export type FadderukeContestProfileProgressUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
 }
 
 export type FadderukeContestProfileProgressCreateOrConnectWithoutUserInput = {
@@ -426,47 +387,15 @@ export type FadderukeContestProfileProgressCreateOrConnectWithoutUserInput = {
   create: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
 }
 
-export type FadderukeContestProfileProgressCreateManyUserInputEnvelope = {
-  data: Prisma.FadderukeContestProfileProgressCreateManyUserInput | Prisma.FadderukeContestProfileProgressCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type FadderukeContestProfileProgressUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.FadderukeContestProfileProgressWhereUniqueInput
+export type FadderukeContestProfileProgressUpsertWithoutUserInput = {
   update: Prisma.XOR<Prisma.FadderukeContestProfileProgressUpdateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput>
   create: Prisma.XOR<Prisma.FadderukeContestProfileProgressCreateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedCreateWithoutUserInput>
+  where?: Prisma.FadderukeContestProfileProgressWhereInput
 }
 
-export type FadderukeContestProfileProgressUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.FadderukeContestProfileProgressWhereUniqueInput
+export type FadderukeContestProfileProgressUpdateToOneWithWhereWithoutUserInput = {
+  where?: Prisma.FadderukeContestProfileProgressWhereInput
   data: Prisma.XOR<Prisma.FadderukeContestProfileProgressUpdateWithoutUserInput, Prisma.FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput>
-}
-
-export type FadderukeContestProfileProgressUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.FadderukeContestProfileProgressScalarWhereInput
-  data: Prisma.XOR<Prisma.FadderukeContestProfileProgressUpdateManyMutationInput, Prisma.FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserInput>
-}
-
-export type FadderukeContestProfileProgressScalarWhereInput = {
-  AND?: Prisma.FadderukeContestProfileProgressScalarWhereInput | Prisma.FadderukeContestProfileProgressScalarWhereInput[]
-  OR?: Prisma.FadderukeContestProfileProgressScalarWhereInput[]
-  NOT?: Prisma.FadderukeContestProfileProgressScalarWhereInput | Prisma.FadderukeContestProfileProgressScalarWhereInput[]
-  id?: Prisma.StringFilter<"FadderukeContestProfileProgress"> | string
-  createdAt?: Prisma.DateTimeFilter<"FadderukeContestProfileProgress"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"FadderukeContestProfileProgress"> | Date | string
-  hasSetProfilePicture?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  hasSetUsername?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFilter<"FadderukeContestProfileProgress"> | boolean
-  userId?: Prisma.StringFilter<"FadderukeContestProfileProgress"> | string
-}
-
-export type FadderukeContestProfileProgressCreateManyUserInput = {
-  id?: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  hasSetProfilePicture?: boolean
-  hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
 }
 
 export type FadderukeContestProfileProgressUpdateWithoutUserInput = {
@@ -475,7 +404,6 @@ export type FadderukeContestProfileProgressUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput = {
@@ -484,16 +412,6 @@ export type FadderukeContestProfileProgressUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
   hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
-}
-
-export type FadderukeContestProfileProgressUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  hasSetProfilePicture?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasSetUsername?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasAwardedTeamProfileBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -504,7 +422,6 @@ export type FadderukeContestProfileProgressSelect<ExtArgs extends runtime.Types.
   updatedAt?: boolean
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderukeContestProfileProgress"]>
@@ -515,7 +432,6 @@ export type FadderukeContestProfileProgressSelectCreateManyAndReturn<ExtArgs ext
   updatedAt?: boolean
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderukeContestProfileProgress"]>
@@ -526,7 +442,6 @@ export type FadderukeContestProfileProgressSelectUpdateManyAndReturn<ExtArgs ext
   updatedAt?: boolean
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fadderukeContestProfileProgress"]>
@@ -537,11 +452,10 @@ export type FadderukeContestProfileProgressSelectScalar = {
   updatedAt?: boolean
   hasSetProfilePicture?: boolean
   hasSetUsername?: boolean
-  hasAwardedTeamProfileBonus?: boolean
   userId?: boolean
 }
 
-export type FadderukeContestProfileProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "hasSetProfilePicture" | "hasSetUsername" | "hasAwardedTeamProfileBonus" | "userId", ExtArgs["result"]["fadderukeContestProfileProgress"]>
+export type FadderukeContestProfileProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "hasSetProfilePicture" | "hasSetUsername" | "userId", ExtArgs["result"]["fadderukeContestProfileProgress"]>
 export type FadderukeContestProfileProgressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -563,7 +477,6 @@ export type $FadderukeContestProfileProgressPayload<ExtArgs extends runtime.Type
     updatedAt: Date
     hasSetProfilePicture: boolean
     hasSetUsername: boolean
-    hasAwardedTeamProfileBonus: boolean
     userId: string
   }, ExtArgs["result"]["fadderukeContestProfileProgress"]>
   composites: {}
@@ -994,7 +907,6 @@ export interface FadderukeContestProfileProgressFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"FadderukeContestProfileProgress", 'DateTime'>
   readonly hasSetProfilePicture: Prisma.FieldRef<"FadderukeContestProfileProgress", 'Boolean'>
   readonly hasSetUsername: Prisma.FieldRef<"FadderukeContestProfileProgress", 'Boolean'>
-  readonly hasAwardedTeamProfileBonus: Prisma.FieldRef<"FadderukeContestProfileProgress", 'Boolean'>
   readonly userId: Prisma.FieldRef<"FadderukeContestProfileProgress", 'String'>
 }
     

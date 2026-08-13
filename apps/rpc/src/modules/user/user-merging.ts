@@ -178,18 +178,51 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { lastUpdatedById: toId },
     })
   },
-  fadderukeContestProfileProgress: async (handle: DBHandle, fromId: string, toId: string) => {
-    await handle.fadderukeContestProfileProgress.updateMany({
-      where: { userId: fromId },
-      data: { userId: toId },
-    })
-  },
 } satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
 
 /**
  * Relations with custom merge logic (deduplication or conflict resolution against unique/PK constraints).
  */
 const CUSTOM_RELATION_MERGERS = {
+  fadderukeContestProfileProgress: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    survivor: User,
+    consumed: User
+  ) => {
+    const [survivorProgress, consumedProgress] = await Promise.all([
+      handle.fadderukeContestProfileProgress.findUnique({
+        where: { userId: survivor.id },
+      }),
+      handle.fadderukeContestProfileProgress.findUnique({
+        where: { userId: consumed.id },
+      }),
+    ])
+
+    if (consumedProgress === null) {
+      return
+    }
+
+    if (survivorProgress === null) {
+      await handle.fadderukeContestProfileProgress.update({
+        where: { id: consumedProgress.id },
+        data: { userId: survivor.id },
+      })
+      return
+    }
+
+    await handle.fadderukeContestProfileProgress.update({
+      where: { id: survivorProgress.id },
+      data: {
+        hasSetProfilePicture: survivorProgress.hasSetProfilePicture || consumedProgress.hasSetProfilePicture,
+        hasSetUsername: survivorProgress.hasSetUsername || consumedProgress.hasSetUsername,
+      },
+    })
+    await handle.fadderukeContestProfileProgress.delete({
+      where: { id: consumedProgress.id },
+    })
+  },
+
   // Deduplication of memberships.
   memberships: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMembershipKeys = new Set(survivor.memberships.map(buildMembershipDeduplicationKey))

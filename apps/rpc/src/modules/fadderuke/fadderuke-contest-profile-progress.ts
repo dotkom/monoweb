@@ -46,7 +46,6 @@ type ProfileSnapshot = {
 type ProfileProgressRow = {
   hasSetUsername: boolean
   hasSetProfilePicture: boolean
-  hasAwardedTeamProfileBonus: boolean
 }
 
 export function isDefaultUsername(username: string) {
@@ -151,6 +150,8 @@ async function findContestantForUser(handle: DBHandle, contestId: string, userId
     select: {
       id: true,
       resultValue: true,
+      fadderukeProfilePointsAwarded: true,
+      hasAwardedFadderukeProfileTeamBonus: true,
       userId: true,
       team: {
         select: {
@@ -180,26 +181,6 @@ function getContestantMemberUserIds(contestant: {
   return []
 }
 
-async function hasFadderukeContestTeamProfileBonusBeenAwarded(handle: DBHandle, memberUserIds: string[]) {
-  if (memberUserIds.length === 0) {
-    return false
-  }
-
-  const awardedProgress = await handle.fadderukeContestProfileProgress.findFirst({
-    where: {
-      userId: {
-        in: memberUserIds,
-      },
-      hasAwardedTeamProfileBonus: true,
-    },
-    select: {
-      id: true,
-    },
-  })
-
-  return awardedProgress !== null
-}
-
 async function getContestantContextForUser(handle: DBHandle, contestId: string, userId: string) {
   const contestant = await findContestantForUser(handle, contestId, userId)
 
@@ -208,12 +189,11 @@ async function getContestantContextForUser(handle: DBHandle, contestId: string, 
   }
 
   const memberUserIds = getContestantMemberUserIds(contestant)
-  const teamProfileBonusAwarded = await hasFadderukeContestTeamProfileBonusBeenAwarded(handle, memberUserIds)
 
   return {
     contestant,
     memberUserIds,
-    teamProfileBonusAwarded,
+    teamProfileBonusAwarded: contestant.hasAwardedFadderukeProfileTeamBonus,
   }
 }
 
@@ -228,16 +208,17 @@ async function awardPointsToContestant(handle: DBHandle, contestantId: string, p
     return
   }
 
-  const contestant = await handle.contestant.findUnique({
+  const initializedContestants = await handle.contestant.updateMany({
     where: {
       id: contestantId,
+      resultValue: null,
     },
-    select: {
-      resultValue: true,
+    data: {
+      resultValue: points,
     },
   })
 
-  if (contestant === null) {
+  if (initializedContestants.count > 0) {
     return
   }
 
@@ -246,40 +227,95 @@ async function awardPointsToContestant(handle: DBHandle, contestantId: string, p
       id: contestantId,
     },
     data: {
-      resultValue: (contestant.resultValue ?? 0) + points,
+      resultValue: {
+        increment: points,
+      },
+    },
+  })
+}
+
+async function awardProfilePointsToContestant(handle: DBHandle, contestantId: string, points: number) {
+  if (points === 0) {
+    return
+  }
+
+  await awardPointsToContestant(handle, contestantId, points)
+  await handle.contestant.update({
+    where: {
+      id: contestantId,
+    },
+    data: {
+      fadderukeProfilePointsAwarded: {
+        increment: points,
+      },
     },
   })
 }
 
 async function findProfileProgressForUser(handle: DBHandle, userId: string) {
-  return await handle.fadderukeContestProfileProgress.findFirst({
+  return await handle.fadderukeContestProfileProgress.findUnique({
     where: {
       userId,
-    },
-    orderBy: {
-      createdAt: "desc",
     },
   })
 }
 
 export async function baselineFadderukeContestProfileProgress(handle: DBHandle, userId: string, user: ProfileSnapshot) {
-  const existingProgress = await findProfileProgressForUser(handle, userId)
-
-  if (existingProgress !== null) {
-    return existingProgress
-  }
-
-  return await handle.fadderukeContestProfileProgress.create({
+  const snapshotProgress = getProfileProgressFromSnapshot(user)
+  const createdProgressRows = await handle.fadderukeContestProfileProgress.createMany({
     data: {
       userId,
-      ...getProfileProgressFromSnapshot(user),
+      ...snapshotProgress,
+    },
+    skipDuplicates: true,
+  })
+
+  const progress = await handle.fadderukeContestProfileProgress.findUniqueOrThrow({
+    where: {
+      userId,
     },
   })
+
+  let pointsToAwardOnBaseline = 0
+  let resolvedProgress = progress
+
+  if (createdProgressRows.count > 0) {
+    pointsToAwardOnBaseline = calculateFadderukeContestProfilePointsGiven([snapshotProgress])
+  } else {
+    const progressUpdates: {
+      hasSetUsername?: boolean
+      hasSetProfilePicture?: boolean
+    } = {}
+
+    if (snapshotProgress.hasSetUsername && !progress.hasSetUsername) {
+      progressUpdates.hasSetUsername = true
+      pointsToAwardOnBaseline += FADDERUKE_CONTEST_USERNAME_POINTS
+    }
+
+    if (snapshotProgress.hasSetProfilePicture && !progress.hasSetProfilePicture) {
+      progressUpdates.hasSetProfilePicture = true
+      pointsToAwardOnBaseline += FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS
+    }
+
+    if (pointsToAwardOnBaseline > 0) {
+      resolvedProgress = await handle.fadderukeContestProfileProgress.update({
+        where: {
+          id: progress.id,
+        },
+        data: progressUpdates,
+      })
+    }
+  }
+
+  return {
+    ...resolvedProgress,
+    pointsToAwardOnBaseline,
+  }
 }
 
 export async function baselineFadderukeContestProfileProgressForUsers(handle: DBHandle, userIds: string[]) {
   if (userIds.length === 0) {
-    return
+    return []
   }
 
   const users = await handle.user.findMany({
@@ -295,9 +331,23 @@ export async function baselineFadderukeContestProfileProgressForUsers(handle: DB
     },
   })
 
+  const progressBaselines = []
+
   for (const user of users) {
-    await baselineFadderukeContestProfileProgress(handle, user.id, user)
+    const progressBaseline = await baselineFadderukeContestProfileProgress(handle, user.id, user)
+    progressBaselines.push(progressBaseline)
   }
+
+  return progressBaselines
+}
+
+async function lockContestantForTeamProfileBonus(handle: DBHandle, contestantId: string) {
+  await handle.$queryRaw<Array<{ id: string }>>`
+    SELECT "id"
+    FROM "contestant"
+    WHERE "id" = ${contestantId}
+    FOR UPDATE
+  `
 }
 
 async function maybeAwardFadderukeContestTeamProfileBonus(
@@ -322,6 +372,22 @@ async function maybeAwardFadderukeContestTeamProfileBonus(
     return 0
   }
 
+  await lockContestantForTeamProfileBonus(handle, contestant.id)
+
+  const lockedContestant = await handle.contestant.findUnique({
+    where: {
+      id: contestant.id,
+    },
+    select: {
+      fadderukeProfilePointsAwarded: true,
+      hasAwardedFadderukeProfileTeamBonus: true,
+    },
+  })
+
+  if (lockedContestant === null || lockedContestant.hasAwardedFadderukeProfileTeamBonus) {
+    return 0
+  }
+
   const progressRows = await handle.fadderukeContestProfileProgress.findMany({
     where: {
       userId: {
@@ -333,7 +399,6 @@ async function maybeAwardFadderukeContestTeamProfileBonus(
       userId: true,
       hasSetUsername: true,
       hasSetProfilePicture: true,
-      hasAwardedTeamProfileBonus: true,
     },
   })
 
@@ -341,20 +406,16 @@ async function maybeAwardFadderukeContestTeamProfileBonus(
     return 0
   }
 
-  const bonusPoints = calculateFadderukeContestTeamProfileBonus(
-    calculateFadderukeContestProfilePointsGiven(progressRows)
-  )
+  const bonusPoints = calculateFadderukeContestTeamProfileBonus(lockedContestant.fadderukeProfilePointsAwarded)
 
   await awardPointsToContestant(handle, contestant.id, bonusPoints)
 
-  await handle.fadderukeContestProfileProgress.updateMany({
+  await handle.contestant.update({
     where: {
-      userId: {
-        in: memberUserIds,
-      },
+      id: contestant.id,
     },
     data: {
-      hasAwardedTeamProfileBonus: true,
+      hasAwardedFadderukeProfileTeamBonus: true,
     },
   })
 
@@ -396,8 +457,8 @@ export async function getFadderukeContestProfileProgressStatusForUser(handle: DB
 
   return {
     isContestTeamMember: true,
-    hasSetUsername: progress?.hasSetUsername ?? snapshotProgress.hasSetUsername,
-    hasSetProfilePicture: progress?.hasSetProfilePicture ?? snapshotProgress.hasSetProfilePicture,
+    hasSetUsername: (progress?.hasSetUsername ?? false) || snapshotProgress.hasSetUsername,
+    hasSetProfilePicture: (progress?.hasSetProfilePicture ?? false) || snapshotProgress.hasSetProfilePicture,
     teamProfileBonusAwarded: contestantContext?.teamProfileBonusAwarded ?? false,
     usernamePoints: FADDERUKE_CONTEST_USERNAME_POINTS,
     profilePicturePoints: FADDERUKE_CONTEST_PROFILE_PICTURE_POINTS,
@@ -438,6 +499,10 @@ export async function recordFadderukeContestProfileProgressOnUserUpdate(
   } = {}
   let pointsToAward = 0
 
+  if (!contestantContext.teamProfileBonusAwarded) {
+    pointsToAward = progress.pointsToAwardOnBaseline
+  }
+
   if (
     updateData.username !== undefined &&
     isDefaultUsername(currentUser.username) &&
@@ -464,26 +529,31 @@ export async function recordFadderukeContestProfileProgressOnUserUpdate(
     }
   }
 
-  if (progressUpdates.hasSetUsername === undefined && progressUpdates.hasSetProfilePicture === undefined) {
+  const hasProgressUpdates =
+    progressUpdates.hasSetUsername !== undefined || progressUpdates.hasSetProfilePicture !== undefined
+
+  if (!hasProgressUpdates && pointsToAward === 0) {
     return NO_POINTS_AWARDED
   }
 
-  await handle.fadderukeContestProfileProgress.update({
-    where: {
-      id: progress.id,
-    },
-    data: {
-      hasSetUsername: progressUpdates.hasSetUsername ?? progress.hasSetUsername,
-      hasSetProfilePicture: progressUpdates.hasSetProfilePicture ?? progress.hasSetProfilePicture,
-    },
-  })
+  if (hasProgressUpdates) {
+    await handle.fadderukeContestProfileProgress.update({
+      where: {
+        id: progress.id,
+      },
+      data: {
+        hasSetUsername: progressUpdates.hasSetUsername ?? progress.hasSetUsername,
+        hasSetProfilePicture: progressUpdates.hasSetProfilePicture ?? progress.hasSetProfilePicture,
+      },
+    })
+  }
 
   if (contestantContext.teamProfileBonusAwarded) {
     return NO_POINTS_AWARDED
   }
 
   if (pointsToAward > 0) {
-    await awardPointsToContestant(handle, contestantContext.contestant.id, pointsToAward)
+    await awardProfilePointsToContestant(handle, contestantContext.contestant.id, pointsToAward)
   }
 
   const teamBonusAwarded = await maybeAwardFadderukeContestTeamProfileBonus(
@@ -510,7 +580,25 @@ export async function seedFadderukeContestProfileProgressForContestMembers(
     return
   }
 
-  await baselineFadderukeContestProfileProgressForUsers(handle, userIds)
+  const progressBaselines = await baselineFadderukeContestProfileProgressForUsers(handle, userIds)
+
+  for (const progressBaseline of progressBaselines) {
+    if (progressBaseline.pointsToAwardOnBaseline === 0) {
+      continue
+    }
+
+    const contestantContext = await getContestantContextForUser(handle, contestId, progressBaseline.userId)
+
+    if (contestantContext === null || contestantContext.teamProfileBonusAwarded) {
+      continue
+    }
+
+    await awardProfilePointsToContestant(
+      handle,
+      contestantContext.contestant.id,
+      progressBaseline.pointsToAwardOnBaseline
+    )
+  }
 
   for (const userId of userIds) {
     await maybeAwardFadderukeContestTeamProfileBonus(handle, contestId, userId)

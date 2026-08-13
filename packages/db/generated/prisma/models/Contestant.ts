@@ -28,10 +28,12 @@ export type AggregateContestant = {
 
 export type ContestantAvgAggregateOutputType = {
   resultValue: number | null
+  fadderukeProfilePointsAwarded: number | null
 }
 
 export type ContestantSumAggregateOutputType = {
   resultValue: number | null
+  fadderukeProfilePointsAwarded: number | null
 }
 
 export type ContestantMinAggregateOutputType = {
@@ -39,6 +41,8 @@ export type ContestantMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   resultValue: number | null
+  fadderukeProfilePointsAwarded: number | null
+  hasAwardedFadderukeProfileTeamBonus: boolean | null
   contestId: string | null
   userId: string | null
 }
@@ -48,6 +52,8 @@ export type ContestantMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   resultValue: number | null
+  fadderukeProfilePointsAwarded: number | null
+  hasAwardedFadderukeProfileTeamBonus: boolean | null
   contestId: string | null
   userId: string | null
 }
@@ -57,6 +63,8 @@ export type ContestantCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   resultValue: number
+  fadderukeProfilePointsAwarded: number
+  hasAwardedFadderukeProfileTeamBonus: number
   contestId: number
   userId: number
   _all: number
@@ -65,10 +73,12 @@ export type ContestantCountAggregateOutputType = {
 
 export type ContestantAvgAggregateInputType = {
   resultValue?: true
+  fadderukeProfilePointsAwarded?: true
 }
 
 export type ContestantSumAggregateInputType = {
   resultValue?: true
+  fadderukeProfilePointsAwarded?: true
 }
 
 export type ContestantMinAggregateInputType = {
@@ -76,6 +86,8 @@ export type ContestantMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   resultValue?: true
+  fadderukeProfilePointsAwarded?: true
+  hasAwardedFadderukeProfileTeamBonus?: true
   contestId?: true
   userId?: true
 }
@@ -85,6 +97,8 @@ export type ContestantMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   resultValue?: true
+  fadderukeProfilePointsAwarded?: true
+  hasAwardedFadderukeProfileTeamBonus?: true
   contestId?: true
   userId?: true
 }
@@ -94,6 +108,8 @@ export type ContestantCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   resultValue?: true
+  fadderukeProfilePointsAwarded?: true
+  hasAwardedFadderukeProfileTeamBonus?: true
   contestId?: true
   userId?: true
   _all?: true
@@ -190,6 +206,8 @@ export type ContestantGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   resultValue: number | null
+  fadderukeProfilePointsAwarded: number
+  hasAwardedFadderukeProfileTeamBonus: boolean
   contestId: string
   userId: string | null
   _count: ContestantCountAggregateOutputType | null
@@ -222,6 +240,8 @@ export type ContestantWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFilter<"Contestant"> | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFilter<"Contestant"> | boolean
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
@@ -235,6 +255,8 @@ export type ContestantOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   contest?: Prisma.ContestOrderByWithRelationInput
@@ -252,6 +274,8 @@ export type ContestantWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFilter<"Contestant"> | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFilter<"Contestant"> | boolean
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
@@ -265,6 +289,8 @@ export type ContestantOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ContestantCountOrderByAggregateInput
@@ -282,6 +308,8 @@ export type ContestantScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Contestant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableWithAggregatesFilter<"Contestant"> | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntWithAggregatesFilter<"Contestant"> | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolWithAggregatesFilter<"Contestant"> | boolean
   contestId?: Prisma.StringWithAggregatesFilter<"Contestant"> | string
   userId?: Prisma.StringNullableWithAggregatesFilter<"Contestant"> | string | null
 }
@@ -291,6 +319,8 @@ export type ContestantCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
@@ -302,6 +332,8 @@ export type ContestantUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
   userId?: string | null
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
@@ -313,6 +345,8 @@ export type ContestantUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
@@ -324,6 +358,8 @@ export type ContestantUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
@@ -335,6 +371,8 @@ export type ContestantCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
   userId?: string | null
 }
@@ -344,6 +382,8 @@ export type ContestantUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ContestantUncheckedUpdateManyInput = {
@@ -351,6 +391,8 @@ export type ContestantUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -380,12 +422,15 @@ export type ContestantCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ContestantAvgOrderByAggregateInput = {
   resultValue?: Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
 }
 
 export type ContestantMaxOrderByAggregateInput = {
@@ -393,6 +438,8 @@ export type ContestantMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
@@ -402,12 +449,15 @@ export type ContestantMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resultValue?: Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ContestantSumOrderByAggregateInput = {
   resultValue?: Prisma.SortOrder
+  fadderukeProfilePointsAwarded?: Prisma.SortOrder
 }
 
 export type ContestantScalarRelationFilter = {
@@ -534,6 +584,8 @@ export type ContestantCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
   wonContest?: Prisma.ContestCreateNestedOneWithoutWinnerContestantInput
@@ -544,6 +596,8 @@ export type ContestantUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
   wonContest?: Prisma.ContestUncheckedCreateNestedOneWithoutWinnerContestantInput
@@ -583,6 +637,8 @@ export type ContestantScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Contestant"> | Date | string
   resultValue?: Prisma.IntNullableFilter<"Contestant"> | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFilter<"Contestant"> | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFilter<"Contestant"> | boolean
   contestId?: Prisma.StringFilter<"Contestant"> | string
   userId?: Prisma.StringNullableFilter<"Contestant"> | string | null
 }
@@ -592,6 +648,8 @@ export type ContestantCreateWithoutWonContestInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
@@ -602,6 +660,8 @@ export type ContestantUncheckedCreateWithoutWonContestInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
   userId?: string | null
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
@@ -617,6 +677,8 @@ export type ContestantCreateWithoutContestInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
   team?: Prisma.ContestTeamCreateNestedOneWithoutContestantInput
   wonContest?: Prisma.ContestCreateNestedOneWithoutWinnerContestantInput
@@ -627,6 +689,8 @@ export type ContestantUncheckedCreateWithoutContestInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   userId?: string | null
   team?: Prisma.ContestTeamUncheckedCreateNestedOneWithoutContestantInput
   wonContest?: Prisma.ContestUncheckedCreateNestedOneWithoutWinnerContestantInput
@@ -658,6 +722,8 @@ export type ContestantUpdateWithoutWonContestInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
@@ -668,6 +734,8 @@ export type ContestantUncheckedUpdateWithoutWonContestInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
@@ -694,6 +762,8 @@ export type ContestantCreateWithoutTeamInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contest: Prisma.ContestCreateNestedOneWithoutContestantsInput
   user?: Prisma.UserCreateNestedOneWithoutContestantsInput
   wonContest?: Prisma.ContestCreateNestedOneWithoutWinnerContestantInput
@@ -704,6 +774,8 @@ export type ContestantUncheckedCreateWithoutTeamInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
   userId?: string | null
   wonContest?: Prisma.ContestUncheckedCreateNestedOneWithoutWinnerContestantInput
@@ -730,6 +802,8 @@ export type ContestantUpdateWithoutTeamInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
   wonContest?: Prisma.ContestUpdateOneWithoutWinnerContestantNestedInput
@@ -740,6 +814,8 @@ export type ContestantUncheckedUpdateWithoutTeamInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   wonContest?: Prisma.ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput
@@ -750,6 +826,8 @@ export type ContestantCreateManyUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId: string
 }
 
@@ -758,6 +836,8 @@ export type ContestantUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contest?: Prisma.ContestUpdateOneRequiredWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
   wonContest?: Prisma.ContestUpdateOneWithoutWinnerContestantNestedInput
@@ -768,6 +848,8 @@ export type ContestantUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
   wonContest?: Prisma.ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput
@@ -778,6 +860,8 @@ export type ContestantUncheckedUpdateManyWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -786,6 +870,8 @@ export type ContestantCreateManyContestInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resultValue?: number | null
+  fadderukeProfilePointsAwarded?: number
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   userId?: string | null
 }
 
@@ -794,6 +880,8 @@ export type ContestantUpdateWithoutContestInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneWithoutContestantsNestedInput
   team?: Prisma.ContestTeamUpdateOneWithoutContestantNestedInput
   wonContest?: Prisma.ContestUpdateOneWithoutWinnerContestantNestedInput
@@ -804,6 +892,8 @@ export type ContestantUncheckedUpdateWithoutContestInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   team?: Prisma.ContestTeamUncheckedUpdateOneWithoutContestantNestedInput
   wonContest?: Prisma.ContestUncheckedUpdateOneWithoutWinnerContestantNestedInput
@@ -814,6 +904,8 @@ export type ContestantUncheckedUpdateManyWithoutContestInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resultValue?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  fadderukeProfilePointsAwarded?: Prisma.IntFieldUpdateOperationsInput | number
+  hasAwardedFadderukeProfileTeamBonus?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -824,6 +916,8 @@ export type ContestantSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   resultValue?: boolean
+  fadderukeProfilePointsAwarded?: boolean
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId?: boolean
   userId?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -837,6 +931,8 @@ export type ContestantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   createdAt?: boolean
   updatedAt?: boolean
   resultValue?: boolean
+  fadderukeProfilePointsAwarded?: boolean
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId?: boolean
   userId?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -848,6 +944,8 @@ export type ContestantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   createdAt?: boolean
   updatedAt?: boolean
   resultValue?: boolean
+  fadderukeProfilePointsAwarded?: boolean
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId?: boolean
   userId?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -859,11 +957,13 @@ export type ContestantSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   resultValue?: boolean
+  fadderukeProfilePointsAwarded?: boolean
+  hasAwardedFadderukeProfileTeamBonus?: boolean
   contestId?: boolean
   userId?: boolean
 }
 
-export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "resultValue" | "contestId" | "userId", ExtArgs["result"]["contestant"]>
+export type ContestantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "resultValue" | "fadderukeProfilePointsAwarded" | "hasAwardedFadderukeProfileTeamBonus" | "contestId" | "userId", ExtArgs["result"]["contestant"]>
 export type ContestantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Contestant$userArgs<ExtArgs>
@@ -892,6 +992,8 @@ export type $ContestantPayload<ExtArgs extends runtime.Types.Extensions.Internal
     createdAt: Date
     updatedAt: Date
     resultValue: number | null
+    fadderukeProfilePointsAwarded: number
+    hasAwardedFadderukeProfileTeamBonus: boolean
     contestId: string
     userId: string | null
   }, ExtArgs["result"]["contestant"]>
@@ -1325,6 +1427,8 @@ export interface ContestantFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Contestant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Contestant", 'DateTime'>
   readonly resultValue: Prisma.FieldRef<"Contestant", 'Int'>
+  readonly fadderukeProfilePointsAwarded: Prisma.FieldRef<"Contestant", 'Int'>
+  readonly hasAwardedFadderukeProfileTeamBonus: Prisma.FieldRef<"Contestant", 'Boolean'>
   readonly contestId: Prisma.FieldRef<"Contestant", 'String'>
   readonly userId: Prisma.FieldRef<"Contestant", 'String'>
 }

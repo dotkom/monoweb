@@ -4054,6 +4054,8 @@ export const ContestantScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   resultValue: 'resultValue',
+  fadderukeProfilePointsAwarded: 'fadderukeProfilePointsAwarded',
+  hasAwardedFadderukeProfileTeamBonus: 'hasAwardedFadderukeProfileTeamBonus',
   contestId: 'contestId',
   userId: 'userId'
 } as const
@@ -4078,7 +4080,6 @@ export const FadderukeContestProfileProgressScalarFieldEnum = {
   updatedAt: 'updatedAt',
   hasSetProfilePicture: 'hasSetProfilePicture',
   hasSetUsername: 'hasSetUsername',
-  hasAwardedTeamProfileBonus: 'hasAwardedTeamProfileBonus',
   userId: 'userId'
 } as const
 

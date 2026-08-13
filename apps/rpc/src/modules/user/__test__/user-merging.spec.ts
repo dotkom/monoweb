@@ -60,6 +60,7 @@ describe("mergeUsers", () => {
     handle.personalMark.findMany.mockResolvedValue([])
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
+    handle.fadderukeContestProfileProgress.findUnique.mockResolvedValue(null)
     deps = { groupRepository, attendanceService }
   })
 
@@ -319,6 +320,70 @@ describe("mergeUsers", () => {
       })
       expect(handle.personalMark.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+  })
+
+  describe("fadderuke contest profile progress", () => {
+    it("merges progress flags when both users have a row", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const survivorProgress = {
+        id: "survivor-progress",
+        userId: survivor.id,
+        hasSetUsername: true,
+        hasSetProfilePicture: false,
+      }
+      const consumedProgress = {
+        id: "consumed-progress",
+        userId: consumed.id,
+        hasSetUsername: false,
+        hasSetProfilePicture: true,
+      }
+
+      handle.fadderukeContestProfileProgress.findUnique.mockImplementation(async ({ where }) => {
+        if (where.userId === survivor.id) {
+          return survivorProgress as never
+        }
+
+        return consumedProgress as never
+      })
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.fadderukeContestProfileProgress.update).toHaveBeenCalledWith({
+        where: { id: survivorProgress.id },
+        data: {
+          hasSetUsername: true,
+          hasSetProfilePicture: true,
+        },
+      })
+      expect(handle.fadderukeContestProfileProgress.delete).toHaveBeenCalledWith({
+        where: { id: consumedProgress.id },
+      })
+    })
+
+    it("transfers consumed progress when the survivor has no row", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const consumedProgress = {
+        id: "consumed-progress",
+        userId: consumed.id,
+      }
+
+      handle.fadderukeContestProfileProgress.findUnique.mockImplementation(async ({ where }) => {
+        if (where.userId === survivor.id) {
+          return null
+        }
+
+        return consumedProgress as never
+      })
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.fadderukeContestProfileProgress.update).toHaveBeenCalledWith({
+        where: { id: consumedProgress.id },
         data: { userId: survivor.id },
       })
     })
