@@ -1,4 +1,5 @@
 import { buildLimitedDepthJsonSchema } from "@dotkomonline/utils"
+import { isAfter } from "date-fns"
 import { z } from "zod"
 
 export const FeatureKeySchema = z.enum(["fadderuke-2026-notice", "front-page-notice"])
@@ -28,7 +29,7 @@ export const FeatureWriteSchema = FeatureSchema.pick({
   endsAt: true,
   configuration: true,
 }).superRefine((feature, ctx) => {
-  if (feature.startsAt && feature.endsAt && feature.startsAt > feature.endsAt) {
+  if (feature.startsAt && feature.endsAt && isAfter(feature.startsAt, feature.endsAt)) {
     ctx.addIssue({ code: "custom", message: "Feature start must be before its end", path: ["endsAt"] })
   }
 

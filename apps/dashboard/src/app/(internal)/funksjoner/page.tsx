@@ -20,6 +20,7 @@ import {
 } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { differenceInCalendarDays, format, isAfter, isBefore, isValid, parseISO } from "date-fns"
 import { useEffect, useState } from "react"
 
 const FEATURES: Record<FeatureKey, { label: string; description: string }> = {
@@ -34,7 +35,6 @@ const FEATURES: Record<FeatureKey, { label: string; description: string }> = {
 }
 
 type ActivationMode = "off" | "always" | "scheduled"
-const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 
 type FeatureDraft = {
   feature: Feature
@@ -58,9 +58,7 @@ function getNoticeText(configuration: unknown) {
 }
 
 function toInputDate(date: Date | null) {
-  if (!date) return ""
-  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
-  return local.toISOString().slice(0, 16)
+  return date ? format(date, "yyyy-MM-dd'T'HH:mm") : ""
 }
 
 function toDraft(feature: Feature): FeatureDraft {
@@ -74,19 +72,19 @@ function toDraft(feature: Feature): FeatureDraft {
 }
 
 function getScheduleStatus(draft: FeatureDraft, now = new Date()) {
-  const startsAt = new Date(draft.startsAt)
-  const endsAt = new Date(draft.endsAt)
+  const startsAt = parseISO(draft.startsAt)
+  const endsAt = parseISO(draft.endsAt)
 
-  if (!draft.startsAt || !draft.endsAt || Number.isNaN(startsAt.getTime()) || Number.isNaN(endsAt.getTime())) {
+  if (!draft.startsAt || !draft.endsAt || !isValid(startsAt) || !isValid(endsAt)) {
     return "Ikke synlig"
   }
 
-  if (now < startsAt) {
-    return `Synlig om ${Math.max(1, Math.ceil((startsAt.getTime() - now.getTime()) / DAY_IN_MILLISECONDS))} dager`
+  if (isBefore(now, startsAt)) {
+    return `Synlig om ${Math.max(1, differenceInCalendarDays(startsAt, now))} dager`
   }
 
-  if (now <= endsAt) {
-    return `Synlig i ${Math.max(1, Math.ceil((endsAt.getTime() - now.getTime()) / DAY_IN_MILLISECONDS))} dager til`
+  if (!isAfter(now, endsAt)) {
+    return `Synlig i ${Math.max(1, differenceInCalendarDays(endsAt, now))} dager til`
   }
 
   return "Ikke synlig"
@@ -115,7 +113,7 @@ export default function FeaturesPage() {
     for (const draft of drafts) {
       if (draft.mode === "scheduled" && (!draft.startsAt || !draft.endsAt)) {
         validationErrors[draft.feature.key] = "Velg både start og slutt."
-      } else if (draft.mode === "scheduled" && new Date(draft.startsAt).getTime() > new Date(draft.endsAt).getTime()) {
+      } else if (draft.mode === "scheduled" && isAfter(parseISO(draft.startsAt), parseISO(draft.endsAt))) {
         validationErrors[draft.feature.key] = "Slutt må være etter start."
       }
     }
@@ -131,8 +129,8 @@ export default function FeaturesPage() {
           mutation.mutateAsync({
             key: draft.feature.key,
             enabled: draft.mode !== "off",
-            startsAt: draft.mode === "scheduled" ? new Date(draft.startsAt) : null,
-            endsAt: draft.mode === "scheduled" ? new Date(draft.endsAt) : null,
+            startsAt: draft.mode === "scheduled" ? parseISO(draft.startsAt) : null,
+            endsAt: draft.mode === "scheduled" ? parseISO(draft.endsAt) : null,
             configuration:
               draft.feature.key === "front-page-notice" ? { text: draft.noticeText } : draft.feature.configuration,
           })
