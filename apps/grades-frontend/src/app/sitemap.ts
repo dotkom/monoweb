@@ -1,8 +1,9 @@
-export const dynamic = "force-dynamic"
+export const revalidate = secondsInDay
 
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import { createAbsoluteCoursePageUrl } from "@dotkomonline/utils"
+import { secondsInDay } from "date-fns/constants"
 import type { MetadataRoute } from "next"
 
 // https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generating-a-sitemap-using-code-js-ts
