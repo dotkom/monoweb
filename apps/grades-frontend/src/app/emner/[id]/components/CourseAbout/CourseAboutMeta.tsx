@@ -11,18 +11,15 @@ import { useFormatter, useLocale, useTranslations } from "next-intl"
 
 interface Props {
   course: Course
-  faculties: Faculty[]
-  departments: Department[]
+  faculty: Faculty | null
+  department: Department | null
 }
 
-export const CourseAboutMeta = ({ course, faculties, departments }: Props) => {
+export const CourseAboutMeta = ({ course, faculty, department }: Props) => {
   const locale = useLocale()
   const t = useTranslations()
   const format = useFormatter()
   const { examType } = getCourseLocalizedTextFields(course, locale)
-
-  const faculty = faculties.find((f) => f.id === course.facultyId)
-  const department = departments.find((d) => d.id === course.departmentId)
 
   const localizedFacultyName = pickLocalized(locale, faculty?.nameNo ?? null, faculty?.nameEn ?? null)
   const localizedDepartmentName = pickLocalized(locale, department?.nameNo ?? null, department?.nameEn ?? null)

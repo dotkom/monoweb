@@ -1,5 +1,6 @@
 import { type DBHandle, sql } from "@dotkomonline/grades-db"
 import { parseOrReport } from "../../invariant"
+import { type CourseDetail, CourseDetailSchema } from "./course-detail"
 import {
   type Course,
   type CourseFilterQuery,
@@ -25,7 +26,7 @@ export interface CourseRepository {
     limit: number
   ): Promise<{ courses: CourseListItem[]; totalCount: number }>
   findAll(handle: DBHandle): Promise<Course[]>
-  find(handle: DBHandle, code: string): Promise<Course | null>
+  find(handle: DBHandle, code: string): Promise<CourseDetail | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
@@ -80,9 +81,15 @@ export function getCourseRepository(): CourseRepository {
     async find(handle, code) {
       const course = await handle.course.findUnique({
         where: { code: code.toUpperCase() },
+        include: {
+          faculty: true,
+          department: true,
+          gradeDistributions: true,
+          courseCodeAbbreviations: true,
+        },
       })
 
-      return parseOrReport(CourseSchema.nullable(), course)
+      return parseOrReport(CourseDetailSchema.nullable(), course)
     },
 
     async create(handle, data) {

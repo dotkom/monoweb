@@ -12,11 +12,11 @@ type TextSection = { title: string; text: string }
 
 interface Props {
   course: Course
-  faculties: Faculty[]
-  departments: Department[]
+  faculty: Faculty | null
+  department: Department | null
 }
 
-export const CourseAbout = ({ course, faculties, departments }: Props) => {
+export const CourseAbout = ({ course, faculty, department }: Props) => {
   const locale = useLocale()
   const t = useTranslations()
   const { content, learningOutcomes, teachingMethods } = getCourseLocalizedTextFields(course, locale)
@@ -38,7 +38,7 @@ export const CourseAbout = ({ course, faculties, departments }: Props) => {
             <TextSection key={section.title} title={section.title} text={section.text} />
           ))}
         </div>
-        <CourseAboutMeta course={course} faculties={faculties} departments={departments} />
+        <CourseAboutMeta course={course} faculty={faculty} department={department} />
       </div>
     </section>
   )
