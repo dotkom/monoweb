@@ -241,3 +241,8 @@ export type Contestant = Prisma.ContestantModel
  * 
  */
 export type ContestTeam = Prisma.ContestTeamModel
+/**
+ * Model Feature
+ * 
+ */
+export type Feature = Prisma.FeatureModel

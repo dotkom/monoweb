@@ -2,10 +2,13 @@ import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
+import { FrontPageNotice } from "@/components/notices/front-page-notice"
+import { getFeatureConfiguration, isFeatureActive } from "@/lib/features"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { BaseEvent, EventSummary, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import { FrontPageNoticeConfigurationSchema } from "@dotkomonline/rpc/feature"
 import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
@@ -17,6 +20,11 @@ import type { FC } from "react"
 import { Fadderuke2026Notice } from "./fadderukene/(2026)/fadderuke-2026-notice"
 
 export default async function App() {
+  const [frontPageNotice, showFadderukeNotice] = await Promise.all([
+    getFeatureConfiguration("front-page-notice", FrontPageNoticeConfigurationSchema),
+    isFeatureActive("fadderuke-2026-notice"),
+  ])
+
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
   try {
     events = await server.event.findFeaturedEvents.query({
@@ -37,7 +45,6 @@ export default async function App() {
   }
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
-
   let eventsUserIsAttending: Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"] = []
   if (user) {
     try {
@@ -63,10 +70,8 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
-        <Fadderuke2026Notice
-          start={TZDate.tz("Europe/Oslo", 2026, 6, 1)}
-          end={TZDate.tz("Europe/Oslo", 2026, 7, 23, 23, 59, 59)}
-        />
+        {frontPageNotice && <FrontPageNotice text={frontPageNotice.text} />}
+        {showFadderukeNotice && <Fadderuke2026Notice />}
         <OnlineHero />
       </div>
 

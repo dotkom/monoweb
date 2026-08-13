@@ -735,6 +735,9 @@ importers:
       jsdom:
         specifier: 28.1.0
         version: 28.1.0(@noble/hashes@1.8.0)
+      marked:
+        specifier: ^16.4.2
+        version: 16.4.2
       next:
         specifier: ^15.3.6
         version: 15.5.21(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
