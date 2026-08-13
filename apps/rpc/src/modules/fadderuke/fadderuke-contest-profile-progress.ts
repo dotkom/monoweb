@@ -47,10 +47,23 @@ export function isDefaultUsername(username: string) {
   return z.guid().safeParse(username).success
 }
 
-export const DEFAULT_PROFILE_PICTURE_URL_PREFIX = "https://s.gravatar.com/avatar/"
+export const DEFAULT_PROFILE_PICTURE_URL_PREFIXES = [
+  "https://s.gravatar.com/avatar/",
+  "https://cdn.auth0.com/avatars/",
+] as const
 
 export function hasProfilePicture(imageUrl: string | null) {
-  return imageUrl !== null && !imageUrl.startsWith(DEFAULT_PROFILE_PICTURE_URL_PREFIX)
+  if (imageUrl === null) {
+    return false
+  }
+
+  for (const prefix of DEFAULT_PROFILE_PICTURE_URL_PREFIXES) {
+    if (imageUrl.startsWith(prefix)) {
+      return false
+    }
+  }
+
+  return true
 }
 
 export function calculateFadderukeContestProfileScore(members: ProfileSnapshot[]) {
