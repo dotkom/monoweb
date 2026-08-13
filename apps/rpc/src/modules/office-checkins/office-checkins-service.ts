@@ -1,5 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
+import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
+import { addMinutes, compareDesc, differenceInCalendarDays, isAfter, isBefore, startOfDay } from "date-fns"
 import type { UserId } from "../user/user"
 import { type PublicUser, PublicUserSchema } from "../user/user"
 import type { UserService } from "../user/user-service"
@@ -14,49 +16,36 @@ import type {
 import type { OfficeCheckinRepository } from "./office-checkins-repository"
 
 const OSLO_TIME_ZONE = "Europe/Oslo"
-const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
-const LINK_LIFETIME_MILLISECONDS = 10 * 60 * 1000
 const LINK_SIGNATURE_PURPOSE = "office-checkin-rfid-link:v1"
-const osloDateFormatter = new Intl.DateTimeFormat("en-CA", {
-  timeZone: OSLO_TIME_ZONE,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-})
 
-function getOsloDayOrdinal(date: Date): number {
-  const parts = Object.fromEntries(osloDateFormatter.formatToParts(date).map((part) => [part.type, part.value]))
-  return Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)) / DAY_IN_MILLISECONDS
-}
-
-function getCurrentStreak(days: Set<number>, today: number): number {
-  const latestDay = Math.max(...[...days].filter((day) => day <= today))
-  if (latestDay < today - 1) {
-    return 0
-  }
-
-  let streak = 0
-  for (let day = Math.min(latestDay, today); days.has(day); day--) {
-    streak++
-  }
-  return streak
-}
-
-function getLeaderboardStats(checkins: OfficeCheckin[], today: number) {
-  const entries = new Map<string, { userRfid: string; days: Set<number> }>()
+function getLeaderboardStats(checkins: OfficeCheckin[], now: Date) {
+  const today = startOfDay(new TZDate(now, OSLO_TIME_ZONE))
+  const entries = new Map<string, { userRfid: string; days: Map<number, Date> }>()
 
   for (const checkin of checkins) {
-    const entry = entries.get(checkin.userRfid) ?? { userRfid: checkin.userRfid, days: new Set<number>() }
-    entry.days.add(getOsloDayOrdinal(checkin.time))
+    const entry = entries.get(checkin.userRfid) ?? { userRfid: checkin.userRfid, days: new Map<number, Date>() }
+    const day = startOfDay(new TZDate(checkin.time, OSLO_TIME_ZONE))
+    entry.days.set(day.getTime(), day)
     entries.set(checkin.userRfid, entry)
   }
 
   return [...entries.values()]
-    .map(({ userRfid, days }) => ({
-      userRfid,
-      totalDays: days.size,
-      currentStreak: getCurrentStreak(days, today),
-    }))
+    .map(({ userRfid, days }) => {
+      const sortedDays = [...days.values()].filter((day) => !isAfter(day, today)).sort(compareDesc)
+      const latestDay = sortedDays[0]
+      let currentStreak = 0
+
+      if (latestDay && differenceInCalendarDays(today, latestDay) <= 1) {
+        for (const [index, day] of sortedDays.entries()) {
+          if (differenceInCalendarDays(latestDay, day) !== index) {
+            break
+          }
+          currentStreak++
+        }
+      }
+
+      return { userRfid, totalDays: days.size, currentStreak }
+    })
     .sort((a, b) => b.totalDays - a.totalDays || b.currentStreak - a.currentStreak)
 }
 
@@ -104,8 +93,7 @@ export function getOfficeCheckinsService(
 
     async getLeaderboard(handle, now = new Date()) {
       const checkins = await officeCheckinRepository.findMany(handle)
-      const today = getOsloDayOrdinal(now)
-      const leaders = getLeaderboardStats(checkins, today).slice(0, 10)
+      const leaders = getLeaderboardStats(checkins, now).slice(0, 10)
 
       return await Promise.all(
         leaders.map(async (leader): Promise<OfficeCheckinLeaderboardEntry> => {
@@ -118,7 +106,7 @@ export function getOfficeCheckinsService(
 
     async getPublicLeaderboard(handle, now = new Date()) {
       const checkins = await officeCheckinRepository.findMany(handle)
-      const leaders = getLeaderboardStats(checkins, getOsloDayOrdinal(now))
+      const leaders = getLeaderboardStats(checkins, now)
       const entries = await Promise.all(
         leaders.map(async (leader): Promise<Omit<PublicOfficeCheckinLeaderboardEntry, "rank"> | null> => {
           const user = await userService.findByRfid(handle, leader.userRfid)
@@ -141,13 +129,14 @@ export function getOfficeCheckinsService(
     },
 
     createLinkUrl(userRfid, now = new Date()) {
-      const expires = now.getTime() + LINK_LIFETIME_MILLISECONDS
+      const expiresAt = addMinutes(now, 10)
+      const expires = expiresAt.getTime()
       const url = new URL("/studentnummer/koble", webPublicOrigin)
       url.searchParams.set("userRfid", userRfid)
       url.searchParams.set("expires", expires.toString())
       url.searchParams.set("signature", signLink(secretKey, userRfid, expires))
 
-      return { url: url.toString(), expiresAt: new Date(expires) }
+      return { url: url.toString(), expiresAt }
     },
 
     async linkUser(handle, userId, link, now = new Date()) {
@@ -155,7 +144,7 @@ export function getOfficeCheckinsService(
       const suppliedSignature = Buffer.from(link.signature, "hex")
 
       if (
-        link.expires < now.getTime() ||
+        isBefore(link.expires, now) ||
         suppliedSignature.length !== expectedSignature.length ||
         !timingSafeEqual(suppliedSignature, expectedSignature)
       ) {
