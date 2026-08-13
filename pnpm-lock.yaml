@@ -548,9 +548,6 @@ importers:
       lru-cache:
         specifier: ^11.1.0
         version: 11.2.6
-      marked:
-        specifier: ^16.1.1
-        version: 16.4.2
       mustache:
         specifier: ^4.2.0
         version: 4.2.0
@@ -735,9 +732,6 @@ importers:
       jsdom:
         specifier: 28.1.0
         version: 28.1.0(@noble/hashes@1.8.0)
-      marked:
-        specifier: ^16.4.2
-        version: 16.4.2
       next:
         specifier: ^15.3.6
         version: 15.5.21(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -6915,11 +6909,6 @@ packages:
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
-
-  marked@16.4.2:
-    resolution: {integrity: sha512-TI3V8YYWvkVf3KJe1dRkpnjs68JUPyEa5vjKrp1XEEJUAOaQc+Qj+L1qWbPd0SJuAdQkFU0h73sXXqwDYxsiDA==}
-    engines: {node: '>= 20'}
-    hasBin: true
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -15188,8 +15177,6 @@ snapshots:
       uc.micro: 2.1.0
 
   markdown-table@3.0.4: {}
-
-  marked@16.4.2: {}
 
   math-intrinsics@1.1.0: {}
 

@@ -40,17 +40,17 @@ interface RichTextEditorFieldProps {
   onFileUpload?: (file: File) => Promise<string>
   maxFileSizeKiB?: number
   aspectRatio?: AspectRatio
-  editorProps: Omit<RichTextEditorProps, "error" | "children" | "editor">
+  editorProps?: Omit<RichTextEditorProps, "error" | "children" | "editor">
 }
 
-function RichTextEditorField({
+export function RichTextInput({
   disabled,
   value,
   onChange,
   onFileUpload,
   maxFileSizeKiB,
   aspectRatio,
-  editorProps,
+  editorProps = {},
 }: RichTextEditorFieldProps) {
   const editorReference = useRef<Editor | null>(null)
   const imageInsertionSelectionReference = useRef<{ from: number; to: number } | null>(null)
@@ -207,7 +207,7 @@ export function createRichTextInput<F extends FieldValues, TTransformedValues ex
   maxFileSizeKiB?: number
   aspectRatio?: AspectRatio
 }): InputProducerResult<F, TTransformedValues> {
-  return function RichTextInput({ name, state, control, disabled }) {
+  return function FormRichTextInput({ name, state, control, disabled }) {
     return (
       <Input.Wrapper error={getErrorMessage(state, name)}>
         <Input.Label required={required}>{label}</Input.Label>
@@ -215,7 +215,7 @@ export function createRichTextInput<F extends FieldValues, TTransformedValues ex
           control={control}
           name={name}
           render={({ field }) => (
-            <RichTextEditorField
+            <RichTextInput
               disabled={disabled}
               value={field.value}
               onChange={field.onChange}

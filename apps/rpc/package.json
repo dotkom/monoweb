@@ -115,7 +115,6 @@
     "import-in-the-middle": "^3.0.1",
     "jose": "^6.0.11",
     "lru-cache": "^11.1.0",
-    "marked": "^16.1.1",
     "mustache": "^4.2.0",
     "p-queue": "^9.1.0",
     "require-in-the-middle": "^8.0.1",
