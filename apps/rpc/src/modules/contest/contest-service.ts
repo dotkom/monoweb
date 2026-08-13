@@ -11,7 +11,7 @@ import type {
 } from "./contest"
 import { InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
-import { seedFadderukeContestProfileProgressForContestMembers } from "../fadderuke/fadderuke-contest-profile-progress"
+import { awardFadderukeContestProfilePointsForContestMembers } from "../fadderuke/fadderuke-contest-profile-progress"
 import type { ContestRepository, UpdateContestTeamData } from "./contest-repository"
 
 function enrichContestantDetails(contestants: ContestantDetailDb[]): ContestantDetail[] {
@@ -188,7 +188,7 @@ export function getContestService(contestRepository: ContestRepository): Contest
 
       const contestant = await contestRepository.createContestant(handle, { contestId, userId, resultValue: null })
 
-      await seedFadderukeContestProfileProgressForContestMembers(handle, contestId, [userId])
+      await awardFadderukeContestProfilePointsForContestMembers(handle, contestId, [userId])
 
       return contestant
     },
@@ -217,7 +217,7 @@ export function getContestService(contestRepository: ContestRepository): Contest
 
       await contestRepository.createTeam(handle, contestant.id, teamName, memberIds)
 
-      await seedFadderukeContestProfileProgressForContestMembers(handle, contestId, memberIds)
+      await awardFadderukeContestProfilePointsForContestMembers(handle, contestId, memberIds)
 
       return contestant
     },
@@ -257,7 +257,7 @@ export function getContestService(contestRepository: ContestRepository): Contest
       await contestRepository.updateTeam(handle, contestantId, data)
 
       if (data.memberIds !== undefined) {
-        await seedFadderukeContestProfileProgressForContestMembers(handle, contestant.contestId, data.memberIds)
+        await awardFadderukeContestProfilePointsForContestMembers(handle, contestant.contestId, data.memberIds)
       }
 
       return await this.getContestantById(handle, contestantId)
