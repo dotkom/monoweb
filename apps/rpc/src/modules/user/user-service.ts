@@ -45,6 +45,7 @@ import {
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<UserUpdateResult>
+  linkRfid(handle: DBHandle, userId: UserId, userRfid: string): Promise<User>
   /**
    * Update the user's email in Auth0 and trigger a verification email to the new address.
    *
@@ -72,6 +73,7 @@ export interface UserService {
    * Feide APIs if the user does not have an active membership (transitive call to UserService#discoverMembership).
    */
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
+  findByRfid(handle: DBHandle, userRfid: string): Promise<User | null>
   /**
    * Get a user by their ID.
    *
@@ -481,6 +483,10 @@ export function getUserService(
       return await this.register(handle, userId)
     },
 
+    async findByRfid(handle, userRfid) {
+      return await userRepository.findByRfid(handle, userRfid)
+    },
+
     async getById(handle, userId) {
       const user = await this.findById(handle, userId)
 
@@ -662,6 +668,15 @@ export function getUserService(
         fadderukeContestPointsAwarded: fadderukeContestPoints.pointsAwarded,
         fadderukeTeamBonusAwarded: fadderukeContestPoints.teamBonusAwarded,
       }
+    },
+
+    async linkRfid(handle, userId, userRfid) {
+      const existingUser = await userRepository.findByRfid(handle, userRfid)
+      if (existingUser && existingUser.id !== userId) {
+        throw new AlreadyExistsError(`RFID=${userRfid} is already linked to another user`)
+      }
+
+      return await userRepository.updateRfid(handle, userId, userRfid)
     },
 
     async requestEmailChange(handle, userId, newEmail) {

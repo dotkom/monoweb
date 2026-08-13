@@ -41,6 +41,7 @@ export const createMockUser = (overrides: Partial<User> = {}): User => ({
   ntnuUsername: null,
   flags: [],
   workspaceUserId: null,
+  userRfid: null,
   privacyPermissionsId: null,
   notificationPermissionsId: null,
   memberships: [

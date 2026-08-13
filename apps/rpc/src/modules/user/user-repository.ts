@@ -26,7 +26,9 @@ export interface UserRepository {
    */
   register(handle: DBHandle, userId: UserId): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
+  updateRfid(handle: DBHandle, userId: UserId, userRfid: string): Promise<User>
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
+  findByRfid(handle: DBHandle, userRfid: string): Promise<User | null>
   findByUsername(handle: DBHandle, username: Username): Promise<User | null>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
@@ -75,6 +77,16 @@ export function getUserRepository(): UserRepository {
       return user
     },
 
+    async updateRfid(handle, userId, userRfid) {
+      const user = await handle.user.update({
+        where: { id: userId },
+        data: { userRfid },
+        include: { memberships: true },
+      })
+
+      return parseOrReport(UserSchema, user)
+    },
+
     async findById(handle, userId) {
       const user = await handle.user.findUnique({
         where: {
@@ -83,6 +95,15 @@ export function getUserRepository(): UserRepository {
         include: {
           memberships: true,
         },
+      })
+
+      return parseOrReport(UserSchema.nullable(), user)
+    },
+
+    async findByRfid(handle, userRfid) {
+      const user = await handle.user.findUnique({
+        where: { userRfid },
+        include: { memberships: true },
       })
 
       return parseOrReport(UserSchema.nullable(), user)

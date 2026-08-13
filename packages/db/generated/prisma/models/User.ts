@@ -36,6 +36,7 @@ export type UserMinAggregateOutputType = {
   dietaryRestrictions: string | null
   ntnuUsername: string | null
   workspaceUserId: string | null
+  userRfid: string | null
   createdAt: Date | null
   updatedAt: Date | null
   privacyPermissionsId: string | null
@@ -54,6 +55,7 @@ export type UserMaxAggregateOutputType = {
   dietaryRestrictions: string | null
   ntnuUsername: string | null
   workspaceUserId: string | null
+  userRfid: string | null
   createdAt: Date | null
   updatedAt: Date | null
   privacyPermissionsId: string | null
@@ -73,6 +75,7 @@ export type UserCountAggregateOutputType = {
   ntnuUsername: number
   flags: number
   workspaceUserId: number
+  userRfid: number
   createdAt: number
   updatedAt: number
   privacyPermissionsId: number
@@ -93,6 +96,7 @@ export type UserMinAggregateInputType = {
   dietaryRestrictions?: true
   ntnuUsername?: true
   workspaceUserId?: true
+  userRfid?: true
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
@@ -111,6 +115,7 @@ export type UserMaxAggregateInputType = {
   dietaryRestrictions?: true
   ntnuUsername?: true
   workspaceUserId?: true
+  userRfid?: true
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
@@ -130,6 +135,7 @@ export type UserCountAggregateInputType = {
   ntnuUsername?: true
   flags?: true
   workspaceUserId?: true
+  userRfid?: true
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
@@ -222,6 +228,7 @@ export type UserGroupByOutputType = {
   ntnuUsername: string | null
   flags: string[]
   workspaceUserId: string | null
+  userRfid: string | null
   createdAt: Date
   updatedAt: Date
   privacyPermissionsId: string | null
@@ -262,6 +269,7 @@ export type UserWhereInput = {
   ntnuUsername?: Prisma.StringNullableFilter<"User"> | string | null
   flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableFilter<"User"> | string | null
+  userRfid?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -296,6 +304,7 @@ export type UserOrderByWithRelationInput = {
   ntnuUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userRfid?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -321,6 +330,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   username?: string
   workspaceUserId?: string
+  userRfid?: string
   privacyPermissionsId?: string
   notificationPermissionsId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -352,7 +362,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notificationsUpdated?: Prisma.NotificationListRelationFilter
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
-}, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
+}, "id" | "username" | "workspaceUserId" | "userRfid" | "privacyPermissionsId" | "notificationPermissionsId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -367,6 +377,7 @@ export type UserOrderByWithAggregationInput = {
   ntnuUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userRfid?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -392,6 +403,7 @@ export type UserScalarWhereWithAggregatesInput = {
   ntnuUsername?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  userRfid?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -411,6 +423,7 @@ export type UserCreateInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -445,6 +458,7 @@ export type UserUncheckedCreateInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -479,6 +493,7 @@ export type UserUpdateInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -513,6 +528,7 @@ export type UserUncheckedUpdateInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -547,6 +563,7 @@ export type UserCreateManyInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -566,6 +583,7 @@ export type UserUpdateManyMutationInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -585,6 +603,7 @@ export type UserUncheckedUpdateManyInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -617,6 +636,7 @@ export type UserCountOrderByAggregateInput = {
   ntnuUsername?: Prisma.SortOrder
   flags?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrder
+  userRfid?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
@@ -635,6 +655,7 @@ export type UserMaxOrderByAggregateInput = {
   dietaryRestrictions?: Prisma.SortOrder
   ntnuUsername?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrder
+  userRfid?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
@@ -653,6 +674,7 @@ export type UserMinOrderByAggregateInput = {
   dietaryRestrictions?: Prisma.SortOrder
   ntnuUsername?: Prisma.SortOrder
   workspaceUserId?: Prisma.SortOrder
+  userRfid?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
@@ -950,6 +972,7 @@ export type UserCreateWithoutMembershipsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -983,6 +1006,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1032,6 +1056,7 @@ export type UserUpdateWithoutMembershipsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1065,6 +1090,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1098,6 +1124,7 @@ export type UserCreateWithoutGroupMembershipsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1131,6 +1158,7 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1180,6 +1208,7 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1213,6 +1242,7 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1246,6 +1276,7 @@ export type UserCreateWithoutAttendeeInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1279,6 +1310,7 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1317,6 +1349,7 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1350,6 +1383,7 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1399,6 +1433,7 @@ export type UserUpdateWithoutAttendeeInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1432,6 +1467,7 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1476,6 +1512,7 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1509,6 +1546,7 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1542,6 +1580,7 @@ export type UserCreateWithoutPersonalMarkInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1575,6 +1614,7 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1613,6 +1653,7 @@ export type UserCreateWithoutGivenMarksInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1646,6 +1687,7 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1695,6 +1737,7 @@ export type UserUpdateWithoutPersonalMarkInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1728,6 +1771,7 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1772,6 +1816,7 @@ export type UserUpdateWithoutGivenMarksInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1805,6 +1850,7 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1838,6 +1884,7 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1871,6 +1918,7 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -1920,6 +1968,7 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1953,6 +2002,7 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1986,6 +2036,7 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2019,6 +2070,7 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2068,6 +2120,7 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2101,6 +2154,7 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2134,6 +2188,7 @@ export type UserCreateWithoutAuditLogsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2167,6 +2222,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2216,6 +2272,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2249,6 +2306,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2282,6 +2340,7 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2315,6 +2374,7 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2364,6 +2424,7 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2397,6 +2458,7 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2430,6 +2492,7 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2463,6 +2526,7 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2512,6 +2576,7 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2545,6 +2610,7 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2578,6 +2644,7 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2611,6 +2678,7 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2649,6 +2717,7 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2682,6 +2751,7 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2731,6 +2801,7 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2764,6 +2835,7 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2808,6 +2880,7 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2841,6 +2914,7 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2874,6 +2948,7 @@ export type UserCreateWithoutContestantsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2907,6 +2982,7 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -2956,6 +3032,7 @@ export type UserUpdateWithoutContestantsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2989,6 +3066,7 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3022,6 +3100,7 @@ export type UserCreateWithoutContestTeamsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -3055,6 +3134,7 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   ntnuUsername?: string | null
   flags?: Prisma.UserCreateflagsInput | string[]
   workspaceUserId?: string | null
+  userRfid?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
@@ -3112,6 +3192,7 @@ export type UserScalarWhereInput = {
   ntnuUsername?: Prisma.StringNullableFilter<"User"> | string | null
   flags?: Prisma.StringNullableListFilter<"User">
   workspaceUserId?: Prisma.StringNullableFilter<"User"> | string | null
+  userRfid?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -3131,6 +3212,7 @@ export type UserUpdateWithoutContestTeamsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3164,6 +3246,7 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3197,6 +3280,7 @@ export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
   ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   flags?: Prisma.UserUpdateflagsInput | string[]
   workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userRfid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3355,6 +3439,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   ntnuUsername?: boolean
   flags?: boolean
   workspaceUserId?: boolean
+  userRfid?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
@@ -3390,6 +3475,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   ntnuUsername?: boolean
   flags?: boolean
   workspaceUserId?: boolean
+  userRfid?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
@@ -3409,6 +3495,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   ntnuUsername?: boolean
   flags?: boolean
   workspaceUserId?: boolean
+  userRfid?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
@@ -3428,13 +3515,14 @@ export type UserSelectScalar = {
   ntnuUsername?: boolean
   flags?: boolean
   workspaceUserId?: boolean
+  userRfid?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
   notificationPermissionsId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "flags" | "workspaceUserId" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationPermissionsId", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "flags" | "workspaceUserId" | "userRfid" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationPermissionsId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   privacyPermissions?: boolean | Prisma.User$privacyPermissionsArgs<ExtArgs>
   notificationPermissions?: boolean | Prisma.User$notificationPermissionsArgs<ExtArgs>
@@ -3494,6 +3582,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
      * Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
      */
     workspaceUserId: string | null
+    userRfid: string | null
     createdAt: Date
     updatedAt: Date
     privacyPermissionsId: string | null
@@ -3948,6 +4037,7 @@ export interface UserFieldRefs {
   readonly ntnuUsername: Prisma.FieldRef<"User", 'String'>
   readonly flags: Prisma.FieldRef<"User", 'String[]'>
   readonly workspaceUserId: Prisma.FieldRef<"User", 'String'>
+  readonly userRfid: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly privacyPermissionsId: Prisma.FieldRef<"User", 'String'>

@@ -55,6 +55,7 @@ export const UserSchema = z.object({
   ntnuUsername: z.string().nullable(),
   flags: z.array(z.string()),
   workspaceUserId: z.string().nullable(),
+  userRfid: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   privacyPermissionsId: z.string().nullable(),

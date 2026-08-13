@@ -9,9 +9,9 @@ import { TZDate } from "@date-fns/tz"
 import type { AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { BaseEvent, EventSummary, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { FrontPageNoticeConfigurationSchema } from "@dotkomonline/rpc/feature"
-import { Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
+import { Avatar, AvatarFallback, AvatarImage, Button, RichText, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
+import { IconArrowRight, IconCalendarEvent, IconUserFilled } from "@tabler/icons-react"
 import { formatDate, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
@@ -20,9 +20,10 @@ import type { FC } from "react"
 import { Fadderuke2026Notice } from "./fadderukene/(2026)/fadderuke-2026-notice"
 
 export default async function App() {
-  const [frontPageNotice, showFadderukeNotice] = await Promise.all([
+  const [frontPageNotice, showFadderukeNotice, showLeaderboard] = await Promise.all([
     getFeatureConfiguration("front-page-notice", FrontPageNoticeConfigurationSchema),
     isFeatureActive("fadderuke-2026-notice"),
+    isFeatureActive("office-leaderboard"),
   ])
 
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -36,6 +37,15 @@ export default async function App() {
 
   const featuredEvent = events[0] ?? null
   const otherEvents = events.slice(1)
+
+  let leaderboard: Awaited<ReturnType<typeof server.officeCheckins.leaderboard.query>> = []
+  if (showLeaderboard) {
+    try {
+      leaderboard = await server.officeCheckins.leaderboard.query()
+    } catch (e) {
+      console.error("Failed to fetch office check-in leaderboard", e)
+    }
+  }
 
   let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
   try {
@@ -74,6 +84,8 @@ export default async function App() {
         {showFadderukeNotice && <Fadderuke2026Notice />}
         <OnlineHero />
       </div>
+
+      {leaderboard.length > 0 && <OfficeLeaderboard entries={leaderboard} />}
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
@@ -183,6 +195,51 @@ export default async function App() {
           </div>
         )}
       </div>
+    </section>
+  )
+}
+
+type OfficeLeaderboardEntry = Awaited<ReturnType<typeof server.officeCheckins.leaderboard.query>>[number]
+
+function OfficeLeaderboard({ entries }: { entries: OfficeLeaderboardEntry[] }) {
+  return (
+    <section className="flex flex-col gap-4">
+      <div>
+        <Title className="text-3xl font-semibold">A4-krigere</Title>
+        <Text className="mt-1 text-gray-500 dark:text-stone-500">Flest dager på kontoret</Text>
+      </div>
+
+      <ol className="border-t border-gray-200 dark:border-stone-700">
+        {entries.slice(0, 5).map((entry) => (
+          <li key={entry.user.id} className="border-b border-gray-200 dark:border-stone-700">
+            <Link
+              href={`/profil/${entry.user.username}`}
+              className="group flex min-h-16 items-center gap-3 px-1 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-stone-900"
+            >
+              <span className="w-5 shrink-0 text-right font-mono text-sm text-gray-400 dark:text-stone-500">
+                {entry.rank}
+              </span>
+              <Avatar className="size-9">
+                <AvatarImage src={entry.user.imageUrl ?? undefined} alt={entry.user.name ?? entry.user.username} />
+                <AvatarFallback className="bg-gray-100 text-gray-600 dark:bg-stone-800 dark:text-stone-300">
+                  <IconUserFilled className="size-4" aria-hidden />
+                </AvatarFallback>
+              </Avatar>
+              <Text className="min-w-0 flex-1 truncate font-medium group-hover:underline">
+                {entry.user.name ?? entry.user.username}
+              </Text>
+              <div className="shrink-0 text-right">
+                <Text className="text-sm">
+                  {entry.totalDays} {entry.totalDays === 1 ? "dag" : "dager"}
+                </Text>
+                {entry.currentStreak > 0 && (
+                  <Text className="text-xs text-gray-500 dark:text-stone-500">{entry.currentStreak} på rad</Text>
+                )}
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ol>
     </section>
   )
 }

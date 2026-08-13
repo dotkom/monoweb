@@ -424,6 +424,7 @@ export const ModelName = {
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
+  OfficeCheckin: 'OfficeCheckin',
   Feature: 'Feature'
 } as const
 
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "feature"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "officeCheckin" | "feature"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3404,6 +3405,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OfficeCheckin: {
+      payload: Prisma.$OfficeCheckinPayload<ExtArgs>
+      fields: Prisma.OfficeCheckinFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OfficeCheckinFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OfficeCheckinFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        findFirst: {
+          args: Prisma.OfficeCheckinFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OfficeCheckinFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        findMany: {
+          args: Prisma.OfficeCheckinFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>[]
+        }
+        create: {
+          args: Prisma.OfficeCheckinCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        createMany: {
+          args: Prisma.OfficeCheckinCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OfficeCheckinCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>[]
+        }
+        delete: {
+          args: Prisma.OfficeCheckinDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        update: {
+          args: Prisma.OfficeCheckinUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        deleteMany: {
+          args: Prisma.OfficeCheckinDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OfficeCheckinUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OfficeCheckinUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>[]
+        }
+        upsert: {
+          args: Prisma.OfficeCheckinUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OfficeCheckinPayload>
+        }
+        aggregate: {
+          args: Prisma.OfficeCheckinAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOfficeCheckin>
+        }
+        groupBy: {
+          args: Prisma.OfficeCheckinGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OfficeCheckinGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OfficeCheckinCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OfficeCheckinCountAggregateOutputType> | number
+        }
+      }
+    }
     Feature: {
       payload: Prisma.$FeaturePayload<ExtArgs>
       fields: Prisma.FeatureFieldRefs
@@ -3555,6 +3630,7 @@ export const UserScalarFieldEnum = {
   ntnuUsername: 'ntnuUsername',
   flags: 'flags',
   workspaceUserId: 'workspaceUserId',
+  userRfid: 'userRfid',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   privacyPermissionsId: 'privacyPermissionsId',
@@ -4071,6 +4147,15 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const OfficeCheckinScalarFieldEnum = {
+  id: 'id',
+  time: 'time',
+  userRfid: 'userRfid'
+} as const
+
+export type OfficeCheckinScalarFieldEnum = (typeof OfficeCheckinScalarFieldEnum)[keyof typeof OfficeCheckinScalarFieldEnum]
 
 
 export const FeatureScalarFieldEnum = {
@@ -4660,6 +4745,7 @@ export type GlobalOmitConfig = {
   fadderuke?: Prisma.FadderukeOmit
   contestant?: Prisma.ContestantOmit
   contestTeam?: Prisma.ContestTeamOmit
+  officeCheckin?: Prisma.OfficeCheckinOmit
   feature?: Prisma.FeatureOmit
 }
 

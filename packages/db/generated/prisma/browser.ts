@@ -218,6 +218,11 @@ export type Contestant = Prisma.ContestantModel
  */
 export type ContestTeam = Prisma.ContestTeamModel
 /**
+ * Model OfficeCheckin
+ * 
+ */
+export type OfficeCheckin = Prisma.OfficeCheckinModel
+/**
  * Model Feature
  * 
  */

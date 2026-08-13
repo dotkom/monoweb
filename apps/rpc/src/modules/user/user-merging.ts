@@ -91,6 +91,7 @@ const BACKFILL_SCALAR_FIELDS = [
   "dietaryRestrictions",
   "ntnuUsername",
   "workspaceUserId",
+  "userRfid",
 ] as const satisfies AllUserKeys[]
 
 /**

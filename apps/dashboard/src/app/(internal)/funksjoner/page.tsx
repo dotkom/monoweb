@@ -29,6 +29,10 @@ const FEATURES: Record<FeatureKey, { label: string; description: string }> = {
     label: "Fadderukene 2026-banner",
     description: "Banneret øverst på forsiden.",
   },
+  "office-leaderboard": {
+    label: "A4-krigere scoreboard",
+    description: "Topp fem-listen på forsiden.",
+  },
   "front-page-notice": {
     label: "Melding på forsiden",
     description: "En kort melding over hovedinnholdet.",

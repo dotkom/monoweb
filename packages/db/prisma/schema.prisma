@@ -103,6 +103,7 @@ model User {
   flags               String[]
   /// Used for identifying the user in Google Workspace (my.name@online.ntnu.no)
   workspaceUserId     String?  @unique @map("workspace_user_id")
+  userRfid            String?  @unique @map("user_rfid")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -962,6 +963,14 @@ model ContestTeam {
 
   @@map("contest_team")
 }
+model OfficeCheckin {
+  id       String   @id @default(uuid())
+  time     DateTime @default(now())
+  userRfid String   @map("user_rfid")
+
+  @@index([userRfid], name: "idx_office_checkin_user_rfid")
+}
+
 model Feature {
   key           String    @id
   enabled       Boolean   @default(false)

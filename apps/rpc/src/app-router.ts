@@ -11,6 +11,7 @@ import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { offlineRouter } from "./modules/offline/offline-router"
+import { officeCheckinsRouter } from "./modules/office-checkins/office-checkins-router"
 import { rifRouter } from "./modules/rif/rif-router"
 import { userRouter } from "./modules/user/user-router"
 import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
@@ -28,6 +29,7 @@ export const appRouter = t.router({
   personalMark: personalMarkRouter,
   jobListing: jobListingRouter,
   offline: offlineRouter,
+  officeCheckins: officeCheckinsRouter,
   article: articleRouter,
   auditLog: auditLogRouter,
   workspace: workspaceRouter,
