@@ -4,6 +4,7 @@ import type {
   Course,
   CourseFilterQuery,
   CourseId,
+  CourseListItem,
   CourseSitemapEntry,
   CourseWrite,
   Department,
@@ -16,7 +17,8 @@ export interface CourseService {
     query: CourseFilterQuery,
     offset: number,
     limit: number
-  ): Promise<{ courses: Course[]; totalCount: number }>
+  ): Promise<{ courses: CourseListItem[]; totalCount: number }>
+  findAll(handle: DBHandle): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
@@ -29,6 +31,10 @@ export function getCourseService(courseRepository: CourseRepository): CourseServ
   return {
     async findMany(handle, query, offset, limit) {
       return courseRepository.findMany(handle, query, offset, limit)
+    },
+
+    async findAll(handle) {
+      return courseRepository.findAll(handle)
     },
 
     async find(handle, code) {

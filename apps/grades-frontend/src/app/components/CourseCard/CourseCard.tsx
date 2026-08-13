@@ -3,8 +3,8 @@
 import { buildCourseMetaItems } from "@/app/emner/[id]/utils"
 import { roundPassRate } from "@/app/lib/format-stats"
 import {
-  type Course,
-  getCourseLocalizedTextFields,
+  type CourseListItem,
+  getCourseLocalizedName,
   mapAverageGradeToLetterGrade,
 } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
@@ -12,7 +12,7 @@ import { useFormatter, useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
 
 interface Props {
-  course: Course
+  course: CourseListItem
   className?: string
 }
 
@@ -53,7 +53,7 @@ export const CourseCard = ({ course, className }: Props) => {
             className="text-lg sm:text-xl font-normal line-clamp-2 wrap-break-word hyphens-auto"
             lang={locale}
           >
-            {getCourseLocalizedTextFields(course, locale).name}
+            {getCourseLocalizedName(course, locale)}
           </Title>
           <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>
         </div>

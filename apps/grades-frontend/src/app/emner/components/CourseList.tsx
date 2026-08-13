@@ -1,13 +1,13 @@
 "use client"
 
-import type { Course } from "@dotkomonline/grades-backend/course"
+import type { CourseListItem } from "@dotkomonline/grades-backend/course"
 import { useEffect, useRef } from "react"
 import { CourseCard } from "../../components/CourseCard/CourseCard"
 import { CourseCardSkeleton } from "../../components/CourseCard/CourseCardSkeleton"
 import { CourseListEmptyState } from "./CourseListEmptyState"
 
 interface Props {
-  courses: Course[]
+  courses: CourseListItem[]
   fetchNextPage: () => void
   isFetchingNextPage: boolean
   hasNextPage: boolean

@@ -1,8 +1,8 @@
 import { server } from "@/utils/trpc/server"
 import {
   CourseFilterQuerySchema,
-  type Course,
   type CourseCampus,
+  type CourseListItem,
   type Semester,
   type TeachingLanguage,
 } from "@dotkomonline/grades-backend/course"
@@ -142,7 +142,7 @@ const FilterChipLink = ({ href, label }: FilterChipLinkProps) => {
 }
 
 interface CourseSectionProps {
-  courses: Course[]
+  courses: CourseListItem[]
   title: string
   seeMoreHref: string
   seeMoreLabel: string

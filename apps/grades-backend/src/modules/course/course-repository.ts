@@ -4,6 +4,8 @@ import {
   type Course,
   type CourseFilterQuery,
   type CourseId,
+  type CourseListItem,
+  CourseListItemSchema,
   CourseSchema,
   type CourseSitemapEntry,
   CourseSitemapEntrySchema,
@@ -21,7 +23,8 @@ export interface CourseRepository {
     query: CourseFilterQuery,
     offset: number,
     limit: number
-  ): Promise<{ courses: Course[]; totalCount: number }>
+  ): Promise<{ courses: CourseListItem[]; totalCount: number }>
+  findAll(handle: DBHandle): Promise<Course[]>
   find(handle: DBHandle, code: string): Promise<Course | null>
   create(handle: DBHandle, data: CourseWrite): Promise<Course>
   update(handle: DBHandle, id: CourseId, data: Partial<CourseWrite>): Promise<Course>
@@ -63,9 +66,15 @@ export function getCourseRepository(): CourseRepository {
       )
 
       const totalCount = rows[0]?.totalCount ?? 0
-      const courses = parseOrReport(CourseSchema.array(), rows)
+      const courses = parseOrReport(CourseListItemSchema.array(), rows)
 
       return { courses, totalCount }
+    },
+
+    async findAll(handle) {
+      const courses = await handle.course.findMany()
+
+      return parseOrReport(CourseSchema.array(), courses)
     },
 
     async find(handle, code) {

@@ -108,6 +108,24 @@ export const CourseWriteSchema = CourseSchema.pick({
 })
 export type CourseWrite = z.infer<typeof CourseWriteSchema>
 
+export const CourseListItemSchema = CourseSchema.pick({
+  id: true,
+  code: true,
+  nameNo: true,
+  nameEn: true,
+  credits: true,
+  studyLevel: true,
+  gradeType: true,
+  lastYearTaught: true,
+  candidateCount: true,
+  averageGrade: true,
+  passRate: true,
+  taughtSemesters: true,
+  teachingLanguages: true,
+  campuses: true,
+})
+export type CourseListItem = z.infer<typeof CourseListItemSchema>
+
 export type CourseFilterSort = z.infer<typeof CourseFilterSortSchema>
 export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "CANDIDATE_COUNT"])
 
@@ -180,8 +198,12 @@ export function pickLocalized(locale: Locale, no: string | null, en: string | nu
   return preferred || fallback || null
 }
 
+export const getCourseLocalizedName = (course: Course | CourseListItem, locale: Locale) => {
+  return pickLocalized(locale, course.nameNo, course.nameEn) ?? course.nameNo
+}
+
 export const getCourseLocalizedTextFields = (course: Course, locale: Locale) => ({
-  name: pickLocalized(locale, course.nameNo, course.nameEn) ?? course.nameNo,
+  name: getCourseLocalizedName(course, locale),
   content: pickLocalized(locale, course.contentNo, course.contentEn),
   learningOutcomes: pickLocalized(locale, course.learningOutcomesNo, course.learningOutcomesEn),
   teachingMethods: pickLocalized(locale, course.teachingMethodsNo, course.teachingMethodsEn),
