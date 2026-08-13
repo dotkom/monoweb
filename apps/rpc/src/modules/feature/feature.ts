@@ -2,7 +2,7 @@ import { buildLimitedDepthJsonSchema } from "@dotkomonline/utils"
 import { isAfter } from "date-fns"
 import { z } from "zod"
 
-export const FeatureKeySchema = z.enum(["fadderuke-2026-notice", "front-page-notice"])
+export const FeatureKeySchema = z.enum(["fadderuke-2026-notice", "office-leaderboard", "front-page-notice"])
 
 export type FeatureKey = z.infer<typeof FeatureKeySchema>
 

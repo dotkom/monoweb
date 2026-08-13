@@ -41,6 +41,8 @@ import { getPersonalMarkRepository } from "./mark/personal-mark-repository"
 import { getPersonalMarkService } from "./mark/personal-mark-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
+import { getOfficeCheckinRepository } from "./office-checkins/office-checkins-repository"
+import { getOfficeCheckinsService } from "./office-checkins/office-checkins-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
 import { getPaymentService } from "./payment/payment-service"
 import { getPaymentWebhookService } from "./payment/payment-webhook-service"
@@ -183,6 +185,7 @@ export async function createServiceLayer(
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const offlineRepository = getOfflineRepository()
+  const officeCheckinRepository = getOfficeCheckinRepository()
   const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
   const articleTagRepository = getArticleTagRepository()
@@ -242,6 +245,12 @@ export async function createServiceLayer(
   )
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
+  const officeCheckinsService = getOfficeCheckinsService(
+    officeCheckinRepository,
+    userService,
+    configuration.OFFICE_CHECKIN_SECRET_KEY,
+    configuration.WEB_PUBLIC_ORIGIN
+  )
   const articleService = getArticleService(
     articleRepository,
     articleTagRepository,
@@ -287,6 +296,7 @@ export async function createServiceLayer(
     personalMarkService,
     jobListingService,
     offlineService,
+    officeCheckinsService,
     articleService,
     auditLogService,
     attendanceService,

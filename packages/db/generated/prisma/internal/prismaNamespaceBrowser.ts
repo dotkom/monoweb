@@ -91,6 +91,7 @@ export const ModelName = {
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
+  OfficeCheckin: 'OfficeCheckin',
   Feature: 'Feature'
 } as const
 
@@ -144,6 +145,7 @@ export const UserScalarFieldEnum = {
   ntnuUsername: 'ntnuUsername',
   flags: 'flags',
   workspaceUserId: 'workspaceUserId',
+  userRfid: 'userRfid',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   privacyPermissionsId: 'privacyPermissionsId',
@@ -660,6 +662,15 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const OfficeCheckinScalarFieldEnum = {
+  id: 'id',
+  time: 'time',
+  userRfid: 'userRfid'
+} as const
+
+export type OfficeCheckinScalarFieldEnum = (typeof OfficeCheckinScalarFieldEnum)[keyof typeof OfficeCheckinScalarFieldEnum]
 
 
 export const FeatureScalarFieldEnum = {

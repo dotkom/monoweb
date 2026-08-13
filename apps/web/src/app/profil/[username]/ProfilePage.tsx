@@ -41,11 +41,13 @@ import {
 } from "@dotkomonline/utils"
 import {
   IconChefHatOff,
+  IconCircleCheck,
   IconEdit,
   IconExternalLink,
   IconGenderBigender,
   IconLock,
   IconMail,
+  IconNfc,
   IconPhone,
   IconPointFilled,
   IconQuestionMark,
@@ -150,7 +152,7 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
   )
 }
 
-export function ProfilePage() {
+export function ProfilePage({ studentNumberLinked = false }: { studentNumberLinked?: boolean }) {
   const now = useMemo(() => getCurrentUTC(), [])
 
   const { username: rawUsername } = useParams<{ username: string }>()
@@ -287,6 +289,12 @@ export function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-8 w-full">
+      {studentNumberLinked && (
+        <div className="flex items-center gap-2 rounded-lg bg-green-100 p-3 text-green-800 dark:bg-green-950 dark:text-green-200">
+          <IconCircleCheck className="size-5" />
+          <Text>Studentnummeret ble koblet til profilen din.</Text>
+        </div>
+      )}
       <div className="flex flex-row items-start gap-4">
         <Avatar className="w-16 h-16 md:w-32 md:h-32 shrink-0">
           <AvatarImage src={user.imageUrl ?? undefined} className="object-cover" />
@@ -388,6 +396,7 @@ export function ProfilePage() {
               <UserProp label="E-post" value={user.email} icon={IconMail} />
               <UserProp label="Kjønn" value={getGenderName(user.gender)} icon={IconGenderBigender} />
               <UserProp label="Telefon" value={user.phone} icon={IconPhone} />
+              <UserProp label="Studentnummer" value={user.userRfid} icon={IconNfc} />
               <UserProp
                 label="Kostholdsrestriksjoner"
                 value={user.dietaryRestrictions || "Ingen kostholdsrestriksjoner"}

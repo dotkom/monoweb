@@ -10,6 +10,7 @@ import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { createConfiguration, isAuthorizationUnsafelyDisabled, isDevelopmentEnvironment } from "../configuration"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
+import { registerCheckinRoutes } from "../http-routes/checkin"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createTrpcContext } from "../trpc"
@@ -122,6 +123,7 @@ server.register(fastifyTRPCPlugin, {
 })
 
 registerObservabilityProbeRoutes(server)
+registerCheckinRoutes(server, serviceLayer, configuration.OFFICE_CHECKIN_SECRET_KEY)
 registerStripeWebhookRoutes(server, serviceLayer)
 
 await identifyCallerIAMIdentity(configuration)

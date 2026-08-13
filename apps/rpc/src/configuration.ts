@@ -38,6 +38,8 @@ export const createConfiguration = () =>
 
     STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
 
+    OFFICE_CHECKIN_SECRET_KEY: config(process.env.OFFICE_CHECKIN_SECRET_KEY),
+
     googleWorkspace: {
       serviceAccount: config(process.env.WORKSPACE_SERVICE_ACCOUNT, null),
       userAccountEmail: config(process.env.WORKSPACE_USER_ACCOUNT_EMAIL, null),
