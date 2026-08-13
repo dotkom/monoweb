@@ -48,7 +48,9 @@ export function isDefaultUsername(username: string) {
 }
 
 export const DEFAULT_PROFILE_PICTURE_URL_PREFIXES = [
+  "https://gravatar.com/avatar/",
   "https://s.gravatar.com/avatar/",
+  "https://secure.gravatar.com/avatar/",
   "https://cdn.auth0.com/avatars/",
 ] as const
 
