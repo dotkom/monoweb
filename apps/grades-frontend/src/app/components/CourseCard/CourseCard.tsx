@@ -48,7 +48,11 @@ export const CourseCard = ({ course, className }: Props) => {
     >
       <div className="flex flex-col gap-6 h-full min-h-0 min-w-0">
         <div className="flex flex-col gap-1">
-          <Title className="text-lg sm:text-xl font-normal line-clamp-2 wrap-break-word hyphens-auto" lang={locale}>
+          <Title
+            element="h2"
+            className="text-lg sm:text-xl font-normal line-clamp-2 wrap-break-word hyphens-auto"
+            lang={locale}
+          >
             {getCourseLocalizedTextFields(course, locale).name}
           </Title>
           <Text className="font-bold text-sm sm:text-base text-neutral-500 dark:text-stone-400">{course.code}</Text>

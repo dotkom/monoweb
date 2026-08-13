@@ -87,7 +87,11 @@
     "largestCoursesTitle": "Most popular courses",
     "searchPlaceholder": "Search by name or course code...",
     "subheading": "Grade statistics for NTNU courses",
-    "viewAll": "View all"
+    "seeMoreLabel": {
+      "popular": "See all popular courses",
+      "AUTUMN": "See all autumn courses",
+      "SPRING": "See all spring courses"
+    }
   },
   "Footer": {
     "tagline": "To the students at NTNU, with love <3",
@@ -140,6 +144,9 @@
       "lowestGrade": "Lowest average",
       "lowestPassRate": "Lowest pass rate"
     }
+  },
+  "CourseListPage": {
+    "heading": "Browse courses"
   },
   "CoursePage": {
     "common": {

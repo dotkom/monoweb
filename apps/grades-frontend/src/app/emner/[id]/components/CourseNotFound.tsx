@@ -13,7 +13,9 @@ export async function CourseNotFound() {
       </div>
 
       <div className="flex max-w-sm flex-col gap-1">
-        <Text className="text-base font-medium text-neutral-800 dark:text-stone-100">{t("title")}</Text>
+        <Text element="h1" className="text-base font-medium text-neutral-800 dark:text-stone-100">
+          {t("title")}
+        </Text>
         <Text className="text-sm text-neutral-500 dark:text-stone-400">
           {t.rich("hint", {
             link: (chunks) => (

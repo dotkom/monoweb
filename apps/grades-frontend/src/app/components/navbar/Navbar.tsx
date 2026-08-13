@@ -41,6 +41,7 @@ export const Navbar = () => {
             className="group inline-flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/20 py-0.5 px-2"
           >
             <Title
+              element="span"
               className={cn(
                 "text-xl font-semibold sm:text-2xl",
                 "bg-linear-to-r bg-clip-text text-transparent",

@@ -118,7 +118,7 @@ const Hero = async ({ course, locale }: { course: Course; locale: Locale }) => {
   return (
     <div className="flex flex-col gap-2">
       <div>
-        <Title element="h2" className="font-medium text-base text-neutral-600 dark:text-stone-300">
+        <Title element="p" className="font-medium text-base text-neutral-600 dark:text-stone-300">
           {course.code}
         </Title>
         <Title element="h1" className="text-xl font-bold sm:text-2xl lg:text-3xl">

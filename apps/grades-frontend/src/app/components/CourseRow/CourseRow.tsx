@@ -1,5 +1,6 @@
 "use client"
 
+import { roundPassRate } from "@/app/lib/format-stats"
 import {
   type Course,
   getCourseLocalizedTextFields,
@@ -8,7 +9,6 @@ import {
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
-import { roundPassRate } from "@/app/lib/format-stats"
 
 interface Props {
   course: Course
@@ -46,6 +46,7 @@ export const CourseRow = ({ course, className }: Props) => {
         </Text>
 
         <Title
+          element="h3"
           className="min-w-0 text-sm sm:max-w-2xl sm:text-base font-normal line-clamp-2 sm:line-clamp-1 wrap-break-word hyphens-auto"
           lang={locale}
           title={name}
