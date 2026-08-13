@@ -102,7 +102,10 @@ export function KpiMetric({
           </Text>
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2 items-baseline">
-              <Title className="text-[54px] sm:text-[66px] font-bold leading-none tracking-tight text-neutral-950 tabular-nums dark:text-stone-50">
+              <Title
+                element="p"
+                className="text-[54px] sm:text-[66px] font-bold leading-none tracking-tight text-neutral-950 tabular-nums dark:text-stone-50"
+              >
                 {mode === "PASS_FAIL"
                   ? parts.map((part) =>
                       part.type === "percentSign" || part.type === "literal" ? (

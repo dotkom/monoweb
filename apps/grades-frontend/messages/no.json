@@ -87,7 +87,11 @@
     "largestCoursesTitle": "Mest populære emner",
     "searchPlaceholder": "Søk etter navn eller emnekode...",
     "subheading": "Karakterstatistikk for NTNU-emner",
-    "viewAll": "Se alle"
+    "seeMoreLabel": {
+      "popular": "Se alle populære emner",
+      "AUTUMN": "Se alle høstemner",
+      "SPRING": "Se alle våremner"
+    }
   },
   "Footer": {
     "tagline": "Til studentene ved NTNU, med kjærlighet <3",
@@ -140,6 +144,9 @@
       "lowestGrade": "Lavest snitt",
       "lowestPassRate": "Laveste ståprosent"
     }
+  },
+  "CourseListPage": {
+    "heading": "Emneoversikt"
   },
   "CoursePage": {
     "common": {

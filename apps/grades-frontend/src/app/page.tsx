@@ -77,7 +77,9 @@ export default async function App({
     <div className="flex flex-col gap-10 sm:gap-12">
       <div className="flex flex-col gap-5 sm:gap-6">
         <div className="flex flex-col gap-1.5 max-w-2xl">
-          <Title className="text-xl sm:text-2xl font-bold tracking-tight">{t("Frontpage.heading")}</Title>
+          <Title element="h1" className="text-xl sm:text-2xl font-bold tracking-tight">
+            {t("Frontpage.heading")}
+          </Title>
         </div>
 
         <div className="flex flex-col gap-2.5 max-w-2xl">
@@ -102,11 +104,13 @@ export default async function App({
           courses={resolvedActiveSemesterCourses}
           title={t(`Frontpage.activeSemesterCoursesTitle.${activeSemester}`)}
           seeMoreHref={`/emner${serialize({ bySemester: [activeSemester] })}`}
+          seeMoreLabel={t(`Frontpage.seeMoreLabel.${activeSemester}`)}
         />
         <CourseSection
           courses={resolvedLargestCourses}
           title={t("Frontpage.largestCoursesTitle")}
           seeMoreHref={`/emner${serialize({ sortBy: ["CANDIDATE_COUNT"] })}`}
+          seeMoreLabel={t("Frontpage.seeMoreLabel.popular")}
         />
       </div>
     </div>
@@ -141,11 +145,10 @@ interface CourseSectionProps {
   courses: Course[]
   title: string
   seeMoreHref: string
+  seeMoreLabel: string
 }
 
-const CourseSection = async ({ courses, title, seeMoreHref }: CourseSectionProps) => {
-  const t = await getTranslations()
-
+const CourseSection = ({ courses, title, seeMoreHref, seeMoreLabel }: CourseSectionProps) => {
   if (courses.length === 0) {
     return null
   }
@@ -160,7 +163,7 @@ const CourseSection = async ({ courses, title, seeMoreHref }: CourseSectionProps
           href={seeMoreHref}
           className="p-1 rounded-lg group flex shrink-0 whitespace-nowrap items-center gap-1 text-sm font-medium text-neutral-600 hover:text-neutral-900 focus:text-neutral-900 dark:text-stone-400 dark:hover:text-stone-200 dark:focus:text-stone-200 transition-colors"
         >
-          {t("Frontpage.viewAll")}
+          {seeMoreLabel}
           <IconArrowRight
             size={16}
             className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1 motion-safe:group-focus:translate-x-1"
