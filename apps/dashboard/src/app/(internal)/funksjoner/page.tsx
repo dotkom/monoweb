@@ -66,19 +66,19 @@ function toDraft(feature: Feature): FeatureDraft {
 }
 
 function getScheduleStatus(draft: FeatureDraft, now = new Date()) {
-  if (!draft.startsAt || !draft.endsAt) {
+  if (draft.endsAt && isAfter(now, draft.endsAt)) {
     return "Ikke synlig"
   }
 
-  if (isBefore(now, draft.startsAt)) {
+  if (draft.startsAt && isBefore(now, draft.startsAt)) {
     return `Synlig om ${Math.max(1, differenceInCalendarDays(draft.startsAt, now))} dager`
   }
 
-  if (!isAfter(now, draft.endsAt)) {
+  if (draft.endsAt) {
     return `Synlig i ${Math.max(1, differenceInCalendarDays(draft.endsAt, now))} dager til`
   }
 
-  return "Ikke synlig"
+  return "Synlig"
 }
 
 export default function FeaturesPage() {
@@ -102,12 +102,8 @@ export default function FeaturesPage() {
   const save = async () => {
     const validationErrors: Partial<Record<FeatureKey, string>> = {}
     for (const draft of drafts) {
-      if (draft.mode === "scheduled") {
-        if (!draft.startsAt || !draft.endsAt) {
-          validationErrors[draft.feature.key] = "Velg både start og slutt."
-        } else if (isAfter(draft.startsAt, draft.endsAt)) {
-          validationErrors[draft.feature.key] = "Slutt må være etter start."
-        }
+      if (draft.mode === "scheduled" && draft.startsAt && draft.endsAt && isAfter(draft.startsAt, draft.endsAt)) {
+        validationErrors[draft.feature.key] = "Slutt må være etter start."
       }
     }
 
