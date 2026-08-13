@@ -387,7 +387,8 @@ export const ModelName = {
   Course: 'Course',
   GradeDistribution: 'GradeDistribution',
   Faculty: 'Faculty',
-  Department: 'Department'
+  Department: 'Department',
+  CourseCodeAbbreviation: 'CourseCodeAbbreviation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "course" | "gradeDistribution" | "faculty" | "department"
+    modelProps: "course" | "gradeDistribution" | "faculty" | "department" | "courseCodeAbbreviation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -703,6 +704,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CourseCodeAbbreviation: {
+      payload: Prisma.$CourseCodeAbbreviationPayload<ExtArgs>
+      fields: Prisma.CourseCodeAbbreviationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CourseCodeAbbreviationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CourseCodeAbbreviationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        findFirst: {
+          args: Prisma.CourseCodeAbbreviationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CourseCodeAbbreviationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        findMany: {
+          args: Prisma.CourseCodeAbbreviationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>[]
+        }
+        create: {
+          args: Prisma.CourseCodeAbbreviationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        createMany: {
+          args: Prisma.CourseCodeAbbreviationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CourseCodeAbbreviationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>[]
+        }
+        delete: {
+          args: Prisma.CourseCodeAbbreviationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        update: {
+          args: Prisma.CourseCodeAbbreviationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        deleteMany: {
+          args: Prisma.CourseCodeAbbreviationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CourseCodeAbbreviationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CourseCodeAbbreviationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>[]
+        }
+        upsert: {
+          args: Prisma.CourseCodeAbbreviationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseCodeAbbreviationPayload>
+        }
+        aggregate: {
+          args: Prisma.CourseCodeAbbreviationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCourseCodeAbbreviation>
+        }
+        groupBy: {
+          args: Prisma.CourseCodeAbbreviationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseCodeAbbreviationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CourseCodeAbbreviationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseCodeAbbreviationCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -827,6 +902,14 @@ export const DepartmentScalarFieldEnum = {
 } as const
 
 export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
+
+
+export const CourseCodeAbbreviationScalarFieldEnum = {
+  abbreviation: 'abbreviation',
+  courseId: 'courseId'
+} as const
+
+export type CourseCodeAbbreviationScalarFieldEnum = (typeof CourseCodeAbbreviationScalarFieldEnum)[keyof typeof CourseCodeAbbreviationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1098,6 +1181,7 @@ export type GlobalOmitConfig = {
   gradeDistribution?: Prisma.GradeDistributionOmit
   faculty?: Prisma.FacultyOmit
   department?: Prisma.DepartmentOmit
+  courseCodeAbbreviation?: Prisma.CourseCodeAbbreviationOmit
 }
 
 /* Types for Logging */

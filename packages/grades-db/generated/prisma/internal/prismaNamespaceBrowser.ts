@@ -54,7 +54,8 @@ export const ModelName = {
   Course: 'Course',
   GradeDistribution: 'GradeDistribution',
   Faculty: 'Faculty',
-  Department: 'Department'
+  Department: 'Department',
+  CourseCodeAbbreviation: 'CourseCodeAbbreviation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -154,6 +155,14 @@ export const DepartmentScalarFieldEnum = {
 } as const
 
 export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
+
+
+export const CourseCodeAbbreviationScalarFieldEnum = {
+  abbreviation: 'abbreviation',
+  courseId: 'courseId'
+} as const
+
+export type CourseCodeAbbreviationScalarFieldEnum = (typeof CourseCodeAbbreviationScalarFieldEnum)[keyof typeof CourseCodeAbbreviationScalarFieldEnum]
 
 
 export const SortOrder = {

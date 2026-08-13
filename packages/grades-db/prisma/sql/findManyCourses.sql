@@ -47,6 +47,12 @@ WHERE
     OR "code" ILIKE $4
     OR "name_no" ILIKE $4
     OR "name_en" ILIKE $4
+    OR EXISTS (
+      SELECT 1
+      FROM "course_code_abbreviation" code_abbreviation
+      WHERE code_abbreviation."course_id" = "id"
+        AND code_abbreviation."abbreviation" ILIKE $4
+    )
   )
   AND (
     cardinality($5::"semester"[]) = 0
@@ -66,7 +72,18 @@ WHERE
   )
   AND "candidate_count" > 0
 ORDER BY
-  course_rank_score(code, name_no, name_en, last_year_taught, $3) DESC,
+  course_rank_score(
+    code,
+    ARRAY(
+      SELECT code_abbreviation.abbreviation
+      FROM course_code_abbreviation AS code_abbreviation
+      WHERE code_abbreviation.course_id = course.id
+    ),
+    name_no,
+    name_en,
+    last_year_taught,
+    $3
+  ) DESC,
 
   CASE WHEN $9 = 'asc' AND $10 = 'AVERAGE_GRADE' THEN "average_grade" END ASC NULLS LAST,
   CASE WHEN $9 = 'desc' AND $10 = 'AVERAGE_GRADE' THEN "average_grade" END DESC NULLS LAST,
