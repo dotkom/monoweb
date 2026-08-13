@@ -1,9 +1,9 @@
-import type { Course } from "@dotkomonline/grades-backend/course"
+import type { CourseListItem } from "@dotkomonline/grades-backend/course"
 import { cn } from "@dotkomonline/ui"
 import { CourseAutocompleteSuggestionItem } from "./CourseAutocompleteSuggestionItem"
 
 interface Props {
-  courses: Course[]
+  courses: CourseListItem[]
   className?: string
   onItemClick?: () => void
 }

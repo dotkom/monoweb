@@ -2,16 +2,16 @@
 
 import { roundPassRate } from "@/app/lib/format-stats"
 import {
-  type Course,
-  getCourseLocalizedTextFields,
+  getCourseLocalizedName,
   mapAverageGradeToLetterGrade,
+  type CourseListItem,
 } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
 
 interface Props {
-  course: Course
+  course: CourseListItem
   className?: string
 }
 
@@ -20,7 +20,7 @@ export const CourseRow = ({ course, className }: Props) => {
   const locale = useLocale()
 
   const isLetterGrade = course.gradeType === "LETTER"
-  const name = getCourseLocalizedTextFields(course, locale).name
+  const name = getCourseLocalizedName(course, locale)
 
   const passRateDisplay = roundPassRate(course.passRate)
   const passRateParts = new Intl.NumberFormat(locale, {

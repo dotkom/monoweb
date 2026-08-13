@@ -1,4 +1,4 @@
-import type { Course, Semester } from "@dotkomonline/grades-backend/course"
+import type { Course, CourseListItem, Semester } from "@dotkomonline/grades-backend/course"
 import {
   aggregateGradeDistributions,
   calculateCourseStatistics,
@@ -185,7 +185,7 @@ export function getPeriodCompareFlags(
 }
 
 export function buildCourseMetaItems(
-  course: Course,
+  course: CourseListItem | Course,
   t: ReturnType<typeof useTranslations<never>>,
   format: ReturnType<typeof useFormatter>
 ) {

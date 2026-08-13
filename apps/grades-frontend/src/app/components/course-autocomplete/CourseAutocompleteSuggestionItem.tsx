@@ -1,10 +1,10 @@
-import { getCourseLocalizedTextFields, type Course } from "@dotkomonline/grades-backend/course"
+import { type CourseListItem, getCourseLocalizedName } from "@dotkomonline/grades-backend/course"
 import { Button, cn, Text, Title } from "@dotkomonline/ui"
 import { useLocale } from "next-intl"
 import Link from "next/link"
 
 interface Props {
-  course: Course
+  course: CourseListItem
   onClick?: () => void
   className?: string
 }
@@ -27,7 +27,7 @@ export const CourseAutocompleteSuggestionItem = ({ course, onClick, className }:
         element="span"
         className="text-sm font-medium text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200 text-wrap"
       >
-        {getCourseLocalizedTextFields(course, locale).name}
+        {getCourseLocalizedName(course, locale)}
       </Title>
       <Text className="text-xs text-neutral-500 dark:text-stone-400 font-medium">{course.code}</Text>
     </Button>
