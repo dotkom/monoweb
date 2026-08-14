@@ -1,20 +1,24 @@
 "use client"
 
+import { EventCard, EventCardSkeleton } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendance, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
-import { Text } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
-import { useEffect, useRef, type FC } from "react"
+import { Fragment, useEffect, useRef, type FC } from "react"
 import z from "zod"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 
 export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
+export type EventListDisplayMode = "cards" | "list"
+
+type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
 
 interface EventListProps {
   futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
@@ -23,60 +27,106 @@ interface EventListProps {
   onLoadMore?(): void
   alwaysShowChildEvents?: boolean
   viewMode?: EventListViewMode
+  displayMode?: EventListDisplayMode
 }
 
+interface EventItemsProps {
+  eventsWithAttendance: EventWithAttendanceDetails[]
+  displayMode: EventListDisplayMode
+  userId?: UserId
+}
+
+interface EventSection {
+  key: string
+  title?: string
+  eventsWithAttendance: EventWithAttendanceDetails[]
+}
+
+const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, userId }) => {
+  if (displayMode === "cards") {
+    return (
+      <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+        {eventsWithAttendance.map(({ event, attendance }) => (
+          <EventCard key={event.id} event={event} attendance={attendance} userId={userId} className="h-full min-w-0" />
+        ))}
+      </div>
+    )
+  }
+
+  return eventsWithAttendance.map(({ event, attendance }) => (
+    <EventListItem key={event.id} event={event} attendance={attendance} userId={userId} />
+  ))
+}
+
+const Divider = ({ text }: { text: string }) => (
+  <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:-my-1">
+    <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
+    <Text className="shrink-0 select-none text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-stone-600">
+      {text}
+    </Text>
+    <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
+  </div>
+)
+
 export const EventList: FC<EventListProps> = ({
-  futureEventWithAttendances: futureEvents,
-  pastEventWithAttendances: pastEvents,
+  futureEventWithAttendances,
+  pastEventWithAttendances,
   onLoadMore,
   alwaysShowChildEvents,
   viewMode = "ATTENDANCE",
+  displayMode = "list",
   userId,
 }: EventListProps) => {
-  const now = getCurrentUTC()
+  const currentDate = getCurrentUTC()
+  const isCardView = displayMode === "cards"
 
-  const filteredFutureEvents = alwaysShowChildEvents
-    ? futureEvents
-    : futureEvents.filter((e) => {
-        if (!e.event.parentId) {
+  const filteredFutureEventWithAttendances = alwaysShowChildEvents
+    ? futureEventWithAttendances
+    : futureEventWithAttendances.filter((eventWithAttendance) => {
+        if (!eventWithAttendance.event.parentId) {
           return true
         }
 
-        const event = futureEvents.find((ev) => ev.event.id === e.event.parentId)
+        const parentEventWithAttendance = futureEventWithAttendances.find(
+          (candidateEventWithAttendance) => candidateEventWithAttendance.event.id === eventWithAttendance.event.parentId
+        )
 
-        // This is so the event doesn't disappear if the parent event or attendance was deleted
-        if (!event?.attendance) {
+        // Keep the child visible if its parent event or attendance has been deleted.
+        if (!parentEventWithAttendance?.attendance) {
           return true
         }
 
-        return getAttendee(event.attendance, userId ?? null)?.reserved
+        return getAttendee(parentEventWithAttendance.attendance, userId ?? null)?.reserved
       })
 
-  const groupedEvents = Object.groupBy(filteredFutureEvents, (event) => {
-    if (!event.attendance) {
+  const groupedEvents = Object.groupBy(filteredFutureEventWithAttendances, (eventWithAttendance) => {
+    if (!eventWithAttendance.attendance) {
       return "otherFutureEvents"
     }
 
-    if (getAttendee(event.attendance, userId ?? null)) {
+    if (getAttendee(eventWithAttendance.attendance, userId ?? null)) {
       return "yourEvents"
     }
 
-    if (event.attendance.registerStart >= event.attendance.registerEnd) {
+    if (eventWithAttendance.attendance.registerStart >= eventWithAttendance.attendance.registerEnd) {
       return "otherFutureEvents"
     }
 
-    const eventOpenInterval = interval(event.attendance.registerStart, event.attendance.registerEnd)
-    // Intervals are inclusive, so we subtract 1 millisecond to make it exclusive
+    const eventOpenInterval = interval(
+      eventWithAttendance.attendance.registerStart,
+      eventWithAttendance.attendance.registerEnd
+    )
+    // Intervals are inclusive, so subtract one millisecond to keep this interval exclusive.
     const openingSoonInterval = interval(
-      subDays(event.attendance.registerStart, OPENING_SOON_DAYS_THRESHOLD),
-      subMilliseconds(event.attendance.registerStart, 1)
+      subDays(eventWithAttendance.attendance.registerStart, OPENING_SOON_DAYS_THRESHOLD),
+      subMilliseconds(eventWithAttendance.attendance.registerStart, 1)
     )
 
-    if (isWithinInterval(now, eventOpenInterval)) {
+    if (isWithinInterval(currentDate, eventOpenInterval)) {
       return "openEvents"
     }
 
-    if (isWithinInterval(now, openingSoonInterval)) {
+    if (isWithinInterval(currentDate, openingSoonInterval)) {
       return "openingSoonEvents"
     }
 
@@ -85,125 +135,130 @@ export const EventList: FC<EventListProps> = ({
 
   const { yourEvents = [], openEvents = [], openingSoonEvents = [], otherFutureEvents = [] } = groupedEvents
 
-  openingSoonEvents.sort((a, b) => {
-    if (!a.attendance && !b.attendance) {
+  openingSoonEvents.sort((firstEventWithAttendance, secondEventWithAttendance) => {
+    if (!firstEventWithAttendance.attendance && !secondEventWithAttendance.attendance) {
       return 0
     }
 
-    if (!a.attendance?.registerStart) {
+    if (!firstEventWithAttendance.attendance?.registerStart) {
       return 1
     }
 
-    if (!b.attendance?.registerStart) {
+    if (!secondEventWithAttendance.attendance?.registerStart) {
       return -1
     }
 
-    return compareAsc(a.attendance.registerStart, b.attendance.registerStart)
+    return compareAsc(
+      firstEventWithAttendance.attendance.registerStart,
+      secondEventWithAttendance.attendance.registerStart
+    )
   })
 
-  const loaderRef = useRef<HTMLDivElement>(null)
+  const eventSections: EventSection[] =
+    viewMode === "CHRONOLOGICAL"
+      ? [
+          {
+            key: "future-events",
+            eventsWithAttendance: futureEventWithAttendances,
+          },
+          {
+            key: "past-events",
+            title: "Tidligere arrangementer",
+            eventsWithAttendance: pastEventWithAttendances,
+          },
+        ]
+      : [
+          {
+            key: "your-events",
+            title: "Dine arrangementer",
+            eventsWithAttendance: yourEvents,
+          },
+          {
+            key: "open-events",
+            title: "Åpne arrangementer",
+            eventsWithAttendance: openEvents,
+          },
+          {
+            key: "opening-soon-events",
+            title: "Åpner snart",
+            eventsWithAttendance: openingSoonEvents,
+          },
+          {
+            key: "other-future-events",
+            title: "Kommende arrangementer",
+            eventsWithAttendance: otherFutureEvents,
+          },
+          {
+            key: "past-events",
+            title: "Tidligere arrangementer",
+            eventsWithAttendance: pastEventWithAttendances,
+          },
+        ]
+
+  const loaderElementReference = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         onLoadMore?.()
       }
     })
 
-    if (loaderRef.current) observer.observe(loaderRef.current)
-    return () => observer.disconnect()
+    if (loaderElementReference.current) {
+      intersectionObserver.observe(loaderElementReference.current)
+    }
+
+    return () => intersectionObserver.disconnect()
   }, [onLoadMore])
 
-  if (futureEvents.length === 0 && pastEvents.length === 0) {
+  if (futureEventWithAttendances.length === 0 && pastEventWithAttendances.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 p-4">
-        <IconMoodConfuzed className="w-10 h-10 text-gray-500 dark:text-stone-500" />
+        <IconMoodConfuzed className="h-10 w-10 text-gray-500 dark:text-stone-500" />
         <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise...</Text>
       </div>
     )
   }
 
   return (
-    <section className="w-full flex flex-col gap-2">
-      {viewMode === "CHRONOLOGICAL" ? (
-        <>
-          {futureEvents.length > 0 &&
-            futureEvents.map(({ event, attendance }) => (
-              <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-            ))}
-          {pastEvents.length > 0 && (
-            <>
-              <Divider text="Tidligere arrangementer" />
-              {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          {yourEvents.length > 0 && (
-            <>
-              <Divider text="Dine arrangementer" />
-              {yourEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-          {openEvents.length > 0 && (
-            <>
-              <Divider text="Åpne arrangementer" />
-              {openEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-          {openingSoonEvents.length > 0 && (
-            <>
-              <Divider text="Åpner snart" />
-              {openingSoonEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-          {otherFutureEvents.length > 0 && (
-            <>
-              <Divider text="Kommende arrangementer" />
-              {otherFutureEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-          {pastEvents.length > 0 && (
-            <>
-              <Divider text="Tidligere arrangementer" />
-              {pastEvents.map(({ event, attendance }) => (
-                <EventListItem event={event} attendance={attendance} userId={userId} key={event.id} />
-              ))}
-            </>
-          )}
-        </>
-      )}
-      <div ref={loaderRef} />
+    <section className={cn("flex w-full min-w-0 flex-col gap-2", isCardView && "gap-6")}>
+      {eventSections.map((eventSection) => {
+        if (eventSection.eventsWithAttendance.length === 0) {
+          return null
+        }
+
+        return (
+          <Fragment key={eventSection.key}>
+            {eventSection.title && <Divider text={eventSection.title} />}
+            <EventItems
+              eventsWithAttendance={eventSection.eventsWithAttendance}
+              displayMode={displayMode}
+              userId={userId}
+            />
+          </Fragment>
+        )
+      })}
+      <div ref={loaderElementReference} />
     </section>
   )
 }
 
-const Divider = ({ text }: { text: string }) => (
-  <div className="w-full flex flex-row items-center gap-2 sm:-my-1">
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
-    <Text className="text-gray-400 dark:text-stone-600 text-xs uppercase tracking-widest font-medium select-none">
-      {text}
-    </Text>
-    <span className="grow h-[2px] bg-gray-200 dark:bg-stone-700 rounded-full" />
-  </div>
-)
+export const EventListSkeleton = ({ displayMode = "list" }: { displayMode?: EventListDisplayMode }) => {
+  if (displayMode === "cards") {
+    return (
+      <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+        <EventCardSkeleton />
+        <EventCardSkeleton />
+        <EventCardSkeleton />
+        <EventCardSkeleton />
+        <EventCardSkeleton />
+        <EventCardSkeleton />
+      </div>
+    )
+  }
 
-export const EventListSkeleton = () => {
   return (
     <div className="flex flex-col gap-1">
-      <EventListItemSkeleton />
-      <EventListItemSkeleton />
       <EventListItemSkeleton />
       <EventListItemSkeleton />
       <EventListItemSkeleton />

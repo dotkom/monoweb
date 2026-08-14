@@ -1,25 +1,30 @@
 "use client"
 
-import { useMemo } from "react"
 import { useSearchParams } from "next/navigation"
+import { useMemo } from "react"
 
-export type EventsView = "list" | "month" | "week"
+export type EventsView = "cards" | "list" | "month" | "week"
 
 export const useEventsView = () => {
   const searchParams = useSearchParams()
 
   const view = useMemo<EventsView>(() => {
-    const viewParam = searchParams.get("view")
+    const viewParameter = searchParams.get("view")
 
-    if (viewParam === "month" || viewParam === "week") {
-      return viewParam
+    if (viewParameter === "month" || viewParameter === "week") {
+      return viewParameter
     }
 
-    return "list"
+    if (viewParameter === "list") {
+      return "list"
+    }
+
+    return "cards"
   }, [searchParams])
 
   return {
     view,
+    isCards: view === "cards",
     isList: view === "list",
     isCalendar: view === "month" || view === "week",
     isMonth: view === "month",

@@ -20,6 +20,7 @@ import {
 import {
   IconCalendarMonth,
   IconFilter2,
+  IconLayout2,
   IconLayoutColumns,
   IconLayoutList,
   IconSearch,
@@ -45,8 +46,9 @@ import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
 import { GridIcon } from "@/components/icons/GridIcon"
 
 const EventPage = () => {
-  const { view, isList, isCalendar } = useEventsView()
+  const { view, isCards, isCalendar } = useEventsView()
   const { navigateToView } = useEventsViewNavigation()
+  const isEventListView = !isCalendar
 
   const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
@@ -100,7 +102,7 @@ const EventPage = () => {
   const activeFilterCount =
     filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
 
-  const tabValue = isCalendar ? "calendar" : "list"
+  const tabValue = isCalendar ? "calendar" : view
 
   return (
     <div className="flex flex-col gap-4">
@@ -108,8 +110,8 @@ const EventPage = () => {
         Arrangementer
       </Title>
 
-      <div className={cn("flex gap-x-2 gap-y-3 justify-between", isCalendar ? "flex-wrap" : "")}>
-        <div className={cn("flex gap-2", isCalendar ? "flex-wrap" : "w-full")}>
+      <div className={cn("flex min-w-0 justify-between gap-x-2 gap-y-3", isCalendar && "flex-wrap")}>
+        <div className={cn("flex min-w-0 gap-2", isCalendar ? "flex-wrap" : "w-full")}>
           <ToggleGroup
             className="shrink-0 h-10"
             multiple={false}
@@ -117,25 +119,50 @@ const EventPage = () => {
             value={[tabValue]}
             onValueChange={(value) => {
               const nextView = value.at(0)
+
               if (nextView === "calendar") {
                 navigateToView("month")
               }
+
               if (nextView === "list") {
                 navigateToView("list")
               }
+
+              if (nextView === "cards") {
+                navigateToView("cards")
+              }
             }}
           >
-            <ToggleGroupItem value="list" className="h-full border-field-border">
-              <IconLayoutList className="size-4.5 mr-1" />
-              Liste
+            <ToggleGroupItem
+              value="cards"
+              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+            >
+              <IconLayout2 className="size-4.5" />
+              <Text element="span" className="max-[390px]:hidden">
+                Kort
+              </Text>
             </ToggleGroupItem>
-            <ToggleGroupItem value="calendar" className="h-full border-field-border">
-              <IconCalendarMonth className="size-4.5 mr-1" />
-              Kalender
+            <ToggleGroupItem
+              value="list"
+              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+            >
+              <IconLayoutList className="size-4.5" />
+              <Text element="span" className="max-[390px]:hidden">
+                Liste
+              </Text>
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="calendar"
+              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+            >
+              <IconCalendarMonth className="size-4.5" />
+              <Text element="span" className="max-[390px]:hidden">
+                Kalender
+              </Text>
             </ToggleGroupItem>
           </ToggleGroup>
 
-          {isList && (
+          {isEventListView && (
             <div className="flex justify-end items-stretch gap-2 w-full">
               <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                 <DrawerTrigger asChild className="md:hidden">
@@ -258,14 +285,14 @@ const EventPage = () => {
         )}
       </div>
 
-      {isList && searchBarOpen && (
+      {isEventListView && searchBarOpen && (
         <div className="sm:hidden">
           <SearchInput initialValue={filters.search} onDebouncedChange={(value) => updateFilters({ search: value })} />
         </div>
       )}
 
-      {isList && (
-        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12">
+      {isEventListView && (
+        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0">
           <div className="max-md:hidden mt-4">
             <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
             <div className="mt-6">
@@ -277,7 +304,7 @@ const EventPage = () => {
             </div>
           </div>
 
-          <div className="mt-2">
+          <div className="mt-2 min-w-0">
             {hasActiveFilters && (
               <FilterChips
                 searchTerm={filters.search}
@@ -317,9 +344,10 @@ const EventPage = () => {
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
                   viewMode={filters.viewModeSort}
+                  displayMode={isCards ? "cards" : "list"}
                 />
               )}
-              {isLoading && <EventListSkeleton />}
+              {isLoading && <EventListSkeleton displayMode={isCards ? "cards" : "list"} />}
             </div>
           </div>
         </div>

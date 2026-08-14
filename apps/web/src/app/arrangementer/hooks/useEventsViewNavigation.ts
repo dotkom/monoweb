@@ -1,9 +1,21 @@
 "use client"
 
-import { useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useCallback } from "react"
+import type { EventsView } from "./useEventsView"
 
-export type EventsView = "list" | "month" | "week"
+const clearEventFilterParameters = (queryParameters: URLSearchParams) => {
+  queryParameters.delete("q")
+  queryParameters.delete("type")
+  queryParameters.delete("group")
+  queryParameters.delete("sort")
+}
+
+const clearCalendarParameters = (queryParameters: URLSearchParams) => {
+  queryParameters.delete("y")
+  queryParameters.delete("m")
+  queryParameters.delete("week")
+}
 
 export const useEventsViewNavigation = () => {
   const router = useRouter()
@@ -11,38 +23,26 @@ export const useEventsViewNavigation = () => {
 
   const navigateToView = useCallback(
     (nextView: EventsView) => {
-      const params = new URLSearchParams(searchParams.toString())
+      const queryParameters = new URLSearchParams(searchParams.toString())
 
       if (nextView === "month") {
-        params.set("view", "month")
-        // let y and m default to current year and month if not set
-        params.delete("week")
-
-        // clear list-specific filters
-        params.delete("q")
-        params.delete("type")
-        params.delete("group")
-        params.delete("sort")
+        queryParameters.set("view", "month")
+        queryParameters.delete("week")
+        clearEventFilterParameters(queryParameters)
       } else if (nextView === "week") {
-        params.set("view", "week")
-        // let week default to current week if not set
-        params.delete("y")
-        params.delete("m")
-
-        // clear list-specific filters
-        params.delete("q")
-        params.delete("type")
-        params.delete("group")
-        params.delete("sort")
+        queryParameters.set("view", "week")
+        queryParameters.delete("y")
+        queryParameters.delete("m")
+        clearEventFilterParameters(queryParameters)
+      } else if (nextView === "list") {
+        queryParameters.set("view", "list")
+        clearCalendarParameters(queryParameters)
       } else {
-        // list view is default, remove calendar params
-        params.delete("view")
-        params.delete("y")
-        params.delete("m")
-        params.delete("week")
+        queryParameters.delete("view")
+        clearCalendarParameters(queryParameters)
       }
 
-      router.replace(`?${params.toString()}`, { scroll: false })
+      router.replace(`?${queryParameters.toString()}`, { scroll: false })
     },
     [router, searchParams]
   )
