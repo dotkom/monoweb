@@ -25,11 +25,11 @@ export const CourseAutocompleteSuggestionItem = ({ course, onClick, className }:
     >
       <Title
         element="span"
-        className="text-sm font-medium text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200 text-wrap"
+        className="text-[15px] leading-5 font-normal text-neutral-900 dark:text-stone-300 group-hover:text-black dark:group-hover:text-stone-200 text-wrap"
       >
         {getCourseLocalizedName(course, locale)}
       </Title>
-      <Text className="text-xs text-neutral-500 dark:text-stone-400 font-medium">{course.code}</Text>
+      <Text className="text-sm text-neutral-500 dark:text-stone-400 font-medium tabular-nums">{course.code}</Text>
     </Button>
   )
 }
