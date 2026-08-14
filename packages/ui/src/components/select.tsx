@@ -77,7 +77,7 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
-          className={cn(selectContentClass, className)}
+          className={cn("pointer-events-auto", selectContentClass, className)}
           {...props}
         >
           <SelectScrollUpButton />
