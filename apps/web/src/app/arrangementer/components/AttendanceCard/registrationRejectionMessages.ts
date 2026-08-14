@@ -1,8 +1,9 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 
-type RegistrationRejectionCause = NonNullable<
-  NonNullable<AttendanceRouter.GetRegistrationAvailabilityOutput["registration"]>["rejectionCause"]
->
+type RegistrationView = NonNullable<AttendanceRouter.GetRegistrationAvailabilityOutput["registration"]>
+type RegistrationRejectionCause =
+  | NonNullable<RegistrationView["eventRejectionCause"]>
+  | NonNullable<RegistrationView["userRejectionCause"]>
 
 export type RegistrationRejectionMessageKey =
   | RegistrationRejectionCause
