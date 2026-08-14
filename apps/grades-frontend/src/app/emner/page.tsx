@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic"
-
 import { CourseFilterParsers } from "@/app/emner/course-filter-parsers"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"

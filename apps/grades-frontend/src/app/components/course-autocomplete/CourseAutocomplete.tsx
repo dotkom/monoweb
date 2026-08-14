@@ -40,7 +40,7 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
   })
 
   const searchValue = watch("bySearch")?.trim() ?? ""
-  const [debouncedSearch] = useDebounce(searchValue, 300)
+  const [debouncedSearch] = useDebounce(searchValue, 200)
 
   useEffect(() => {
     if (searchValue.length === 0) {
@@ -53,6 +53,8 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
       {
         filter: {
           bySearch: debouncedSearch,
+          sortBy: ["CANDIDATE_COUNT"],
+          orderBy: "desc",
         },
         limit: 5,
       },

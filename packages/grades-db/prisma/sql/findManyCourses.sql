@@ -10,88 +10,239 @@
 
 -- DOCS: https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/typedsql
 
+-- First, we find the IDs of the courses that match the search term.
+-- Using UNION so that indexes can be used on the individual columns.
+WITH search_ids AS (
+  SELECT "id"
+  FROM "course"
+  WHERE $4::text IS NOT NULL
+    AND "code" ILIKE $4
+  UNION
+  SELECT "id"
+  FROM "course"
+  WHERE $4::text IS NOT NULL
+    AND "name_no" ILIKE $4
+  UNION
+  SELECT "id"
+  FROM "course"
+  WHERE $4::text IS NOT NULL
+    AND "name_en" ILIKE $4
+  UNION
+  SELECT "course_id" AS "id"
+  FROM "course_code_abbreviation"
+  WHERE $4::text IS NOT NULL
+    AND "abbreviation" ILIKE $4
+)
 SELECT
-  "id",
-  "code",
-  "name_no" AS "nameNo",
-  "name_en" AS "nameEn",
-  "credits",
-  "study_level" AS "studyLevel",
-  "grade_type" AS "gradeType",
-  "last_year_taught" AS "lastYearTaught",
-  "candidate_count" AS "candidateCount",
-  "average_grade" AS "averageGrade",
-  "pass_rate" AS "passRate",
-  to_jsonb("taught_semesters") AS "taughtSemesters",
-  to_jsonb("teaching_languages") AS "teachingLanguages",
-  to_jsonb("campuses") AS "campuses",
-  COUNT(*) OVER()::int AS "totalCount"
-FROM "course"
-WHERE
+  matched."id",
+  matched."code",
+  matched."name_no" AS "nameNo",
+  matched."name_en" AS "nameEn",
+  matched."credits",
+  matched."study_level" AS "studyLevel",
+  matched."grade_type" AS "gradeType",
+  matched."last_year_taught" AS "lastYearTaught",
+  matched."candidate_count" AS "candidateCount",
+  matched."average_grade" AS "averageGrade",
+  matched."pass_rate" AS "passRate",
+  to_jsonb(matched."taught_semesters") AS "taughtSemesters",
+  to_jsonb(matched."teaching_languages") AS "teachingLanguages",
+  to_jsonb(matched."campuses") AS "campuses",
+  -- Subquery to count the total number of courses that match the filter, regardless of limit and offset.
+  -- Uses exactly the same filter as the main query, but without the expensive course_rank_score function.
   (
-    $4::text IS NULL
-    OR "code" ILIKE $4
-    OR "name_no" ILIKE $4
-    OR "name_en" ILIKE $4
-    OR EXISTS (
+    SELECT COUNT(*)::int
+    -- Two branches, first runs if search is null, second runs if search is not null. This is so that indexes are used for the search term.
+    -- 1. If search is null, we count all courses that match the filter.
+    -- 2. If search is not null, we count all courses that match the filter and the search term.
+    FROM (
       SELECT 1
-      FROM "course_code_abbreviation" code_abbreviation
-      WHERE code_abbreviation."course_id" = "id"
-        AND code_abbreviation."abbreviation" ILIKE $4
+      FROM "course" counted
+      WHERE $4::text IS NULL
+        AND (
+          cardinality($5::"semester"[]) = 0
+          OR counted."taught_semesters" && $5::"semester"[]
+        )
+        AND (
+          cardinality($6::"teaching_language"[]) = 0
+          OR counted."teaching_languages" && $6::"teaching_language"[]
+        )
+        AND (
+          cardinality($7::"campus"[]) = 0
+          OR counted."campuses" && $7::"campus"[]
+        )
+        AND (
+          $8::double precision IS NULL
+          OR counted."average_grade" >= $8
+        )
+        AND counted."candidate_count" > 0
+      UNION ALL
+      SELECT 1
+      FROM "course" counted
+      INNER JOIN search_ids ON search_ids."id" = counted."id"
+      WHERE $4::text IS NOT NULL
+        AND (
+          cardinality($5::"semester"[]) = 0
+          OR counted."taught_semesters" && $5::"semester"[]
+        )
+        AND (
+          cardinality($6::"teaching_language"[]) = 0
+          OR counted."teaching_languages" && $6::"teaching_language"[]
+        )
+        AND (
+          cardinality($7::"campus"[]) = 0
+          OR counted."campuses" && $7::"campus"[]
+        )
+        AND (
+          $8::double precision IS NULL
+          OR counted."average_grade" >= $8
+        )
+        AND counted."candidate_count" > 0
+    ) counted
+  ) AS "totalCount"
+  -- Main query to fetch the courses.
+  -- Two branches, first runs if search is null, second runs if search is not null. This is so that indexes are used for the search term.
+  -- 1. If search is null, we fetch all courses that match the filter.
+  -- 2. If search is not null, we fetch all courses that match the filter and the search term.
+FROM (
+  SELECT
+    course."id",
+    course."code",
+    course."name_no",
+    course."name_en",
+    course."credits",
+    course."study_level",
+    course."grade_type",
+    course."last_year_taught",
+    course."candidate_count",
+    course."average_grade",
+    course."pass_rate",
+    course."taught_semesters",
+    course."teaching_languages",
+    course."campuses",
+    ARRAY[]::text[] AS abbreviations
+  FROM "course" course
+  WHERE $4::text IS NULL
+    AND (
+      cardinality($5::"semester"[]) = 0
+      OR course."taught_semesters" && $5::"semester"[]
     )
-  )
-  AND (
-    cardinality($5::"semester"[]) = 0
-    OR "taught_semesters" && $5::"semester"[]
-  )
-  AND (
-    cardinality($6::"teaching_language"[]) = 0
-    OR "teaching_languages" && $6::"teaching_language"[]
-  )
-  AND (
-    cardinality($7::"campus"[]) = 0
-    OR "campuses" && $7::"campus"[]
-  )
-  AND (
-    $8::double precision IS NULL
-    OR "average_grade" >= $8
-  )
-  AND "candidate_count" > 0
+    AND (
+      cardinality($6::"teaching_language"[]) = 0
+      OR course."teaching_languages" && $6::"teaching_language"[]
+    )
+    AND (
+      cardinality($7::"campus"[]) = 0
+      OR course."campuses" && $7::"campus"[]
+    )
+    AND (
+      $8::double precision IS NULL
+      OR course."average_grade" >= $8
+    )
+    AND course."candidate_count" > 0
+  UNION ALL
+  SELECT
+    course."id",
+    course."code",
+    course."name_no",
+    course."name_en",
+    course."credits",
+    course."study_level",
+    course."grade_type",
+    course."last_year_taught",
+    course."candidate_count",
+    course."average_grade",
+    course."pass_rate",
+    course."taught_semesters",
+    course."teaching_languages",
+    course."campuses",
+    COALESCE(abbr.abbreviations, ARRAY[]::text[]) AS abbreviations
+  FROM "course" course
+  INNER JOIN search_ids ON search_ids."id" = course."id"
+  LEFT JOIN (
+    SELECT
+      course_id,
+      array_agg(abbreviation) AS abbreviations
+    FROM "course_code_abbreviation"
+    GROUP BY course_id
+  ) abbr ON abbr.course_id = course."id"
+  WHERE $4::text IS NOT NULL
+    AND (
+      cardinality($5::"semester"[]) = 0
+      OR course."taught_semesters" && $5::"semester"[]
+    )
+    AND (
+      cardinality($6::"teaching_language"[]) = 0
+      OR course."teaching_languages" && $6::"teaching_language"[]
+    )
+    AND (
+      cardinality($7::"campus"[]) = 0
+      OR course."campuses" && $7::"campus"[]
+    )
+    AND (
+      $8::double precision IS NULL
+      OR course."average_grade" >= $8
+    )
+    AND course."candidate_count" > 0
+) matched
 ORDER BY
-  course_rank_score(
-    code,
-    ARRAY(
-      SELECT code_abbreviation.abbreviation
-      FROM course_code_abbreviation AS code_abbreviation
-      WHERE code_abbreviation.course_id = course.id
-    ),
-    name_no,
-    name_en,
-    last_year_taught,
-    $3
-  ) DESC,
+  (matched."last_year_taught" IS NULL) DESC,
+  CASE
+    WHEN $3::text IS NULL OR btrim($3) = '' THEN NULL
+    ELSE course_rank_score(
+      matched."code",
+      matched.abbreviations,
+      matched."name_no",
+      matched."name_en",
+      $3
+    )
+  END DESC,
 
-  CASE WHEN $9 = 'asc' AND $10 = 'AVERAGE_GRADE' THEN "average_grade" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $10 = 'AVERAGE_GRADE' THEN "average_grade" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $10 = 'PASS_RATE' THEN "pass_rate" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $10 = 'PASS_RATE' THEN "pass_rate" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $10 = 'CANDIDATE_COUNT' THEN "candidate_count" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $10 = 'CANDIDATE_COUNT' THEN "candidate_count" END DESC NULLS LAST,
+  CASE WHEN $9 = 'asc' THEN
+    CASE $10
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END ASC NULLS LAST,
+  CASE WHEN $9 = 'desc' THEN
+    CASE $10
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END DESC NULLS LAST,
 
-  CASE WHEN $9 = 'asc' AND $11 = 'AVERAGE_GRADE' THEN "average_grade" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $11 = 'AVERAGE_GRADE' THEN "average_grade" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $11 = 'PASS_RATE' THEN "pass_rate" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $11 = 'PASS_RATE' THEN "pass_rate" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $11 = 'CANDIDATE_COUNT' THEN "candidate_count" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $11 = 'CANDIDATE_COUNT' THEN "candidate_count" END DESC NULLS LAST,
+  CASE WHEN $9 = 'asc' THEN
+    CASE $11
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END ASC NULLS LAST,
+  CASE WHEN $9 = 'desc' THEN
+    CASE $11
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END DESC NULLS LAST,
 
-  CASE WHEN $9 = 'asc' AND $12 = 'AVERAGE_GRADE' THEN "average_grade" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $12 = 'AVERAGE_GRADE' THEN "average_grade" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $12 = 'PASS_RATE' THEN "pass_rate" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $12 = 'PASS_RATE' THEN "pass_rate" END DESC NULLS LAST,
-  CASE WHEN $9 = 'asc' AND $12 = 'CANDIDATE_COUNT' THEN "candidate_count" END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' AND $12 = 'CANDIDATE_COUNT' THEN "candidate_count" END DESC NULLS LAST,
+  CASE WHEN $9 = 'asc' THEN
+    CASE $12
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END ASC NULLS LAST,
+  CASE WHEN $9 = 'desc' THEN
+    CASE $12
+      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
+      WHEN 'PASS_RATE' THEN matched."pass_rate"
+      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
+    END
+  END DESC NULLS LAST,
 
-  "id" DESC
+  matched."id" DESC
 OFFSET $1
 LIMIT $2;

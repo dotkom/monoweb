@@ -18,6 +18,12 @@ import { buildCourseMetaItems } from "./utils"
 import { createAbsoluteCoursePageUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
 import { CourseNotFound } from "./components/CourseNotFound"
+import { cache } from "react"
+
+// Cache course data to avoid re-fetching for CoursePage and generateMetadata
+const getCourse = cache(async (code: string) => {
+  return server.course.findCourse.query(code)
+})
 
 interface CoursePageProps {
   params: Promise<{
@@ -31,7 +37,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const { id: rawParamId } = await params
   const courseId = decodeURIComponent(rawParamId)
 
-  const courseDetail = await server.course.findCourse.query(courseId)
+  const courseDetail = await getCourse(courseId)
 
   if (courseDetail === null) {
     return <CourseNotFound />
@@ -141,7 +147,7 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
   const t = await getTranslations("Metadata.coursePage")
   const locale = await getLocale()
 
-  const course = await server.course.findCourse.query(id)
+  const course = await getCourse(id)
 
   if (!course) {
     return {
