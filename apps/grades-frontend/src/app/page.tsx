@@ -7,7 +7,6 @@ import {
   type TeachingLanguage,
 } from "@dotkomonline/grades-backend/course"
 import { cn, Title } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
@@ -15,8 +14,6 @@ import { createLoader, createSerializer } from "nuqs/server"
 import { CourseAutocomplete } from "./components/course-autocomplete/CourseAutocomplete"
 import { CourseRow } from "./components/CourseRow/CourseRow"
 import { CourseFilterParsers } from "./emner/course-filter-parsers"
-
-const MAX_COURSES_PER_SECTION = 5
 
 const serialize = createSerializer(CourseFilterParsers)
 const loadSearchParams = createLoader(CourseFilterParsers)
@@ -44,34 +41,7 @@ export default async function App({
     { label: t(`Enums.Campus.ALESUND`), key: "byCampus", value: "ALESUND" },
   ] satisfies ReadonlyArray<FilterChip>
 
-  const month = getCurrentUTC().getMonth()
-
-  // May-November is autumn, December-April is spring
-  const activeSemester = month >= 4 && month <= 10 ? "AUTUMN" : "SPRING"
-
-  const coursesToFetch = MAX_COURSES_PER_SECTION * 2
-
-  const [activeSemesterCourses, largestCourses] = await Promise.all([
-    server.course.findCourses.query({
-      filter: {
-        bySemester: [activeSemester],
-        sortBy: ["CANDIDATE_COUNT"],
-      },
-      limit: coursesToFetch,
-    }),
-    server.course.findCourses.query({
-      filter: {
-        sortBy: ["CANDIDATE_COUNT"],
-      },
-      limit: coursesToFetch,
-    }),
-  ])
-
-  // Dedupe courses so the sections don't show the same course twice
-  const resolvedLargestCourses = largestCourses.items.slice(0, MAX_COURSES_PER_SECTION)
-  const resolvedActiveSemesterCourses = activeSemesterCourses.items
-    .filter((course) => !resolvedLargestCourses.some((c) => c.id === course.id))
-    .slice(0, MAX_COURSES_PER_SECTION)
+  const { activeSemesterCourses, largestCourses, activeSemester } = await server.course.findFeaturedCourses.query()
 
   return (
     <div className="flex flex-col gap-10 sm:gap-12">
@@ -101,13 +71,13 @@ export default async function App({
 
       <div className="flex flex-col gap-8 sm:gap-10">
         <CourseSection
-          courses={resolvedActiveSemesterCourses}
+          courses={activeSemesterCourses}
           title={t(`Frontpage.activeSemesterCoursesTitle.${activeSemester}`)}
           seeMoreHref={`/emner${serialize({ bySemester: [activeSemester] })}`}
           seeMoreLabel={t(`Frontpage.seeMoreLabel.${activeSemester}`)}
         />
         <CourseSection
-          courses={resolvedLargestCourses}
+          courses={largestCourses}
           title={t("Frontpage.largestCoursesTitle")}
           seeMoreHref={`/emner${serialize({ sortBy: ["CANDIDATE_COUNT"] })}`}
           seeMoreLabel={t("Frontpage.seeMoreLabel.popular")}

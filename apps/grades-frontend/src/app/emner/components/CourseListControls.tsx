@@ -35,7 +35,7 @@ export function CourseListControls({ defaultValues, initialPage }: Props) {
   const trpc = useTRPC()
 
   const values = useWatch({ control: form.control })
-  const [debouncedSearch] = useDebounce(values.bySearch ?? "", 300)
+  const [debouncedSearch] = useDebounce(values.bySearch ?? "", 200)
 
   const filter = useMemo(
     () => ({
@@ -52,7 +52,7 @@ export function CourseListControls({ defaultValues, initialPage }: Props) {
     }
     lastUrlRef.current = url
     router.push(url, { scroll: false })
-  }, 300)
+  }, 200)
 
   // Sync form when URL changes externally
   useEffect(() => {
@@ -78,12 +78,16 @@ export function CourseListControls({ defaultValues, initialPage }: Props) {
     return () => subscription.unsubscribe()
   }, [form, pushUrl])
 
+  // If the filter is the same as the default values, we can use the initial page data.
+  const isServerFilter = serialize(filter) === serialize(defaultValues)
+
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isFetching } = useInfiniteQuery(
     trpc.course.findCourses.infiniteQueryOptions(
       { filter, cursor: 0, limit: 20 },
       {
-        placeholderData: (previousData) => previousData ?? { pages: [initialPage], pageParams: [0] },
         getNextPageParam: (lastPage) => lastPage.nextCursor,
+        placeholderData: (previousData) => previousData,
+        initialData: isServerFilter ? { pages: [initialPage], pageParams: [0] } : undefined,
       }
     )
   )
