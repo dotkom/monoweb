@@ -7,6 +7,7 @@ import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotk
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
+import { getAttendanceStatus } from "../attendanceStatus"
 import { deregistrationRejectionMessages } from "./deregistrationRejectionMessages"
 import { registrationRejectionMessages } from "./registrationRejectionMessages"
 
@@ -71,7 +72,8 @@ const getButtonColor = (
 const getDisabledText = (
   registrationAvailability: RegistrationAvailability | undefined,
   turnstileStatus: TurnstileStatus,
-  isLoggedIn: boolean
+  isLoggedIn: boolean,
+  attendance: Attendance
 ): string | null => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
@@ -98,6 +100,12 @@ const getDisabledText = (
     return null
   }
 
+  const attendanceStatus = getAttendanceStatus(attendance)
+
+  if (attendanceStatus === "NOT_OPENED") {
+    return registrationRejectionMessages.TOO_EARLY
+  }
+
   if (turnstileStatus === "loading") {
     return registrationRejectionMessages.TURNSTILE_LOADING
   }
@@ -110,8 +118,12 @@ const getDisabledText = (
     return registrationRejectionMessages.MISSING_TURNSTILE_TOKEN
   }
 
-  if (!registration.canRegister && registration.rejectionCause) {
-    return registrationRejectionMessages[registration.rejectionCause]
+  if (attendanceStatus === "CLOSED" || registration.eventRejectionCause === "TOO_LATE") {
+    return registrationRejectionMessages.TOO_LATE
+  }
+
+  if (registration.userRejectionCause !== null) {
+    return registrationRejectionMessages[registration.userRejectionCause]
   }
 
   return null
@@ -158,7 +170,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
   const buttonIcon = null
 
-  const disabledText = getDisabledText(registrationAvailability, turnstileStatus, Boolean(user))
+  const disabledText = getDisabledText(registrationAvailability, turnstileStatus, Boolean(user), attendance)
   const isAvailabilityPending = Boolean(user) && registrationAvailability === undefined
   const isButtonDisabled = Boolean(disabledText) || isLoading || isAvailabilityPending
 

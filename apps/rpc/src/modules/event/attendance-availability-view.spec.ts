@@ -105,7 +105,11 @@ describe("buildRegistrationAvailabilityView", () => {
   it("returns rejection cause when registration is not allowed", () => {
     const attendance = createAttendance()
     const punishment: Punishment = { suspended: true, delay: 0 }
-    const result: RegistrationAvailabilityResult = { success: false, cause: "SUSPENDED" }
+    const result: RegistrationAvailabilityResult = {
+      success: false,
+      eventCause: null,
+      userCause: "SUSPENDED",
+    }
 
     const view = buildRegistrationAvailabilityView(userId, result, punishment, attendance)
 
@@ -115,7 +119,8 @@ describe("buildRegistrationAvailabilityView", () => {
       pool: null,
       registration: {
         canRegister: false,
-        rejectionCause: "SUSPENDED",
+        eventRejectionCause: null,
+        userRejectionCause: "SUSPENDED",
         reservationActiveAt: null,
         willBeUnreserved: false,
         hasMergeDelay: false,
@@ -133,13 +138,68 @@ describe("buildRegistrationAvailabilityView", () => {
     const view = buildRegistrationAvailabilityView(userId, result, punishment, attendance)
 
     expect(view.registration?.canRegister).toBe(true)
-    expect(view.registration?.rejectionCause).toBeNull()
+    expect(view.registration?.eventRejectionCause).toBeNull()
+    expect(view.registration?.userRejectionCause).toBeNull()
     expect(view.registration?.willBeUnreserved).toBe(true)
     expect(view.punishment).toEqual(punishment)
     expect(view.pool).toEqual({
       id: attendance.pools[0].id,
       mergeDelayHours: null,
       isPoolFull: false,
+    })
+  })
+
+  it("includes pool delay when registration is only blocked by the window", () => {
+    const attendance = createAttendance()
+    const pool = {
+      ...attendance.pools[0],
+      mergeDelayHours: 4,
+    }
+    const attendanceWithDelay = {
+      ...attendance,
+      pools: [pool],
+    }
+    const reservationActiveAt = addHours(getCurrentUTC(), 4)
+    const result: RegistrationAvailabilityResult = {
+      success: false,
+      eventCause: "TOO_EARLY",
+      userCause: null,
+      pool,
+      reservationActiveAt: new TZDate(reservationActiveAt),
+    }
+
+    const view = buildRegistrationAvailabilityView(userId, result, null, attendanceWithDelay)
+
+    expect(view.registration?.canRegister).toBe(false)
+    expect(view.registration?.eventRejectionCause).toBe("TOO_EARLY")
+    expect(view.registration?.userRejectionCause).toBeNull()
+    expect(view.registration?.hasMergeDelay).toBe(true)
+    expect(view.registration?.willBeUnreserved).toBe(true)
+    expect(view.pool).toEqual({
+      id: pool.id,
+      mergeDelayHours: 4,
+      isPoolFull: false,
+    })
+  })
+
+  it("returns both event and user rejection causes when registration is too early and the user is suspended", () => {
+    const attendance = createAttendance()
+    const punishment: Punishment = { suspended: true, delay: 0 }
+    const result: RegistrationAvailabilityResult = {
+      success: false,
+      eventCause: "TOO_EARLY",
+      userCause: "SUSPENDED",
+    }
+
+    const view = buildRegistrationAvailabilityView(userId, result, punishment, attendance)
+
+    expect(view.registration).toEqual({
+      canRegister: false,
+      eventRejectionCause: "TOO_EARLY",
+      userRejectionCause: "SUSPENDED",
+      reservationActiveAt: null,
+      willBeUnreserved: false,
+      hasMergeDelay: false,
     })
   })
 

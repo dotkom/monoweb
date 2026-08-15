@@ -205,7 +205,8 @@ export const createMockRegistrationAvailability = (
   },
   registration: {
     canRegister: true,
-    rejectionCause: null,
+    eventRejectionCause: null,
+    userRejectionCause: null,
     reservationActiveAt: null,
     willBeUnreserved: false,
     hasMergeDelay: false,

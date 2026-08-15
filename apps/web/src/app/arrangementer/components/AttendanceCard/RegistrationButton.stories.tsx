@@ -63,7 +63,8 @@ export const AllStates = () => {
             },
             registration: {
               canRegister: true,
-              rejectionCause: null,
+              eventRejectionCause: null,
+              userRejectionCause: null,
               reservationActiveAt: null,
               willBeUnreserved: true,
               hasMergeDelay: false,
@@ -98,7 +99,8 @@ export const AllStates = () => {
             },
             registration: {
               canRegister: true,
-              rejectionCause: null,
+              eventRejectionCause: null,
+              userRejectionCause: null,
               reservationActiveAt: null,
               willBeUnreserved: false,
               hasMergeDelay: true,
@@ -170,7 +172,8 @@ export const AllStates = () => {
           registrationAvailability={createMockRegistrationAvailability({
             registration: {
               canRegister: false,
-              rejectionCause: "TOO_EARLY",
+              eventRejectionCause: "TOO_EARLY",
+              userRejectionCause: null,
               reservationActiveAt: null,
               willBeUnreserved: false,
               hasMergeDelay: false,
@@ -188,7 +191,8 @@ export const AllStates = () => {
           registrationAvailability={createMockRegistrationAvailability({
             registration: {
               canRegister: false,
-              rejectionCause: "TOO_LATE",
+              eventRejectionCause: "TOO_LATE",
+              userRejectionCause: null,
               reservationActiveAt: null,
               willBeUnreserved: false,
               hasMergeDelay: false,
@@ -207,7 +211,8 @@ export const AllStates = () => {
             punishment: createMockPunishment({ suspended: true, delay: 0 }),
             registration: {
               canRegister: false,
-              rejectionCause: "SUSPENDED",
+              eventRejectionCause: null,
+              userRejectionCause: "SUSPENDED",
               reservationActiveAt: null,
               willBeUnreserved: false,
               hasMergeDelay: false,
@@ -226,7 +231,8 @@ export const AllStates = () => {
             pool: null,
             registration: {
               canRegister: false,
-              rejectionCause: "NO_MATCHING_POOL",
+              eventRejectionCause: null,
+              userRejectionCause: "NO_MATCHING_POOL",
               reservationActiveAt: null,
               willBeUnreserved: false,
               hasMergeDelay: false,

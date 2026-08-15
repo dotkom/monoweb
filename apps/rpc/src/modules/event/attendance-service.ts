@@ -20,6 +20,8 @@ import {
   DEREGISTER_GRACE_PERIOD_MS,
   type RegistrationAvailabilityView,
   type RegistrationRejectionCause,
+  type RegistrationUserCause,
+  type RegistrationWindowCause,
   type RegisterChangeEvent,
   buildPoolOccupancies,
   getReservedAttendeeCount,
@@ -116,7 +118,7 @@ type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
 }
 
-export type { RegistrationRejectionCause } from "./attendance"
+export type { RegistrationRejectionCause, RegistrationUserCause, RegistrationWindowCause } from "./attendance"
 
 export type RegistrationBypassCause = keyof typeof RegistrationBypassCause
 export const RegistrationBypassCause = {
@@ -156,9 +158,37 @@ export type RegistrationAvailabilitySuccess = {
   options: EventRegistrationOptions
   success: true
 }
-export type RegistrationAvailabilityFailure = {
-  cause: RegistrationRejectionCause
-  success: false
+export type RegistrationAvailabilityFailure =
+  | {
+      success: false
+      eventCause: RegistrationWindowCause
+      userCause: null
+      pool: AttendancePool
+      reservationActiveAt: TZDate
+    }
+  | {
+      success: false
+      eventCause: RegistrationWindowCause | null
+      userCause: RegistrationUserCause
+    }
+
+export function getRegistrationAvailabilityFailureCause(
+  result: RegistrationAvailabilityFailure
+): RegistrationRejectionCause {
+  if (result.eventCause !== null) {
+    return result.eventCause
+  }
+  return result.userCause
+}
+
+function registrationAvailabilityFailure(
+  eventCause: RegistrationWindowCause | null,
+  userCause: RegistrationUserCause
+): RegistrationAvailabilityFailure {
+  if (eventCause === null) {
+    return { success: false, eventCause: null, userCause }
+  }
+  return { success: false, eventCause, userCause }
 }
 
 /**
@@ -500,6 +530,8 @@ export function getAttendanceService(
       // For example, we do not need to query the parent event if the `options` tell to ignore any constraints on the
       // parent event.
 
+      let eventCause: RegistrationWindowCause | null = null
+
       const turnstileCheckRunner = async (): Promise<boolean> => {
         if (!turnstileToken) {
           return false
@@ -538,28 +570,30 @@ export function getAttendanceService(
 
       if (!turnstileCheckResult) {
         if (!options.overrideTurnstileCheck) {
-          return { cause: "INVALID_TURNSTILE_TOKEN", success: false }
+          return registrationAvailabilityFailure(eventCause, "INVALID_TURNSTILE_TOKEN")
         }
         bypassedChecks.push("OVERRIDDEN_TURNSTILE_CHECK")
       }
 
       const isPreviouslyRegistered = attendance.attendees.some((a) => a.userId === userId)
       if (isPreviouslyRegistered) {
-        return { cause: "ALREADY_REGISTERED", success: false }
+        return registrationAvailabilityFailure(eventCause, "ALREADY_REGISTERED")
       }
 
       if (isFuture(attendance.registerStart)) {
         if (!options.ignoreRegistrationWindow) {
-          return { cause: "TOO_EARLY", success: false }
+          eventCause = "TOO_EARLY"
+        } else {
+          bypassedChecks.push("IGNORE_REGISTRATION_START")
         }
-        bypassedChecks.push("IGNORE_REGISTRATION_START")
       }
 
       if (isPast(attendance.registerEnd)) {
         if (!options.ignoreRegistrationWindow) {
-          return { cause: "TOO_LATE", success: false }
+          eventCause = "TOO_LATE"
+        } else {
+          bypassedChecks.push("IGNORE_REGISTRATION_END")
         }
-        bypassedChecks.push("IGNORE_REGISTRATION_END")
       }
 
       // PERF: We only query and check parent relationship when bypassing is not required.
@@ -575,11 +609,11 @@ export function getAttendanceService(
             const attendee = parentAttendance.attendees.find((a) => a.userId === userId)
 
             if (attendee === undefined) {
-              return { cause: "MISSING_PARENT_REGISTRATION", success: false }
+              return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_REGISTRATION")
             }
 
             if (!attendee.reserved) {
-              return { cause: "MISSING_PARENT_RESERVATION", success: false }
+              return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_RESERVATION")
             }
           }
         }
@@ -588,7 +622,7 @@ export function getAttendanceService(
       const membership = findActiveMembership(user)
 
       if (membership === null) {
-        return { cause: "MISSING_MEMBERSHIP", success: false }
+        return registrationAvailabilityFailure(eventCause, "MISSING_MEMBERSHIP")
       }
 
       // This is a "free" check that does zero roundtrips against the database, despite having a rather large piece of
@@ -609,7 +643,7 @@ export function getAttendanceService(
           )
 
           // TODO: Maybe this should just be an invariant?
-          return { cause: "NO_MATCHING_POOL", success: false }
+          return registrationAvailabilityFailure(eventCause, "NO_MATCHING_POOL")
         }
 
         applicablePool = pool
@@ -619,7 +653,7 @@ export function getAttendanceService(
       }
 
       if (applicablePool === null) {
-        return { cause: "NO_MATCHING_POOL", success: false }
+        return registrationAvailabilityFailure(eventCause, "NO_MATCHING_POOL")
       }
 
       // PERF: This always has to be queried at this point, so for this reason, this query comes relatively late in
@@ -628,7 +662,7 @@ export function getAttendanceService(
       const punishment = await personalMarkService.findPunishmentByUserId(handle, userId)
 
       if (punishment?.suspended === true) {
-        return { cause: "SUSPENDED", success: false }
+        return registrationAvailabilityFailure(eventCause, "SUSPENDED")
       }
 
       let reservationActiveAt = getCurrentUTC()
@@ -637,6 +671,16 @@ export function getAttendanceService(
       }
       if (punishment !== null) {
         reservationActiveAt = addHours(reservationActiveAt, punishment.delay)
+      }
+
+      if (eventCause !== null) {
+        return {
+          success: false,
+          eventCause,
+          userCause: null,
+          pool: applicablePool,
+          reservationActiveAt,
+        }
       }
 
       return {
@@ -1843,14 +1887,15 @@ export function buildRegistrationAvailabilityView(
   punishment: Punishment | null,
   attendance: Attendance
 ): RegistrationAvailabilityView {
-  if (!result.success) {
+  if (!result.success && result.userCause !== null) {
     return {
       userId,
       punishment,
       pool: null,
       registration: {
         canRegister: false,
-        rejectionCause: result.cause,
+        eventRejectionCause: result.eventCause,
+        userRejectionCause: result.userCause,
         reservationActiveAt: null,
         willBeUnreserved: false,
         hasMergeDelay: false,
@@ -1874,8 +1919,9 @@ export function buildRegistrationAvailabilityView(
       isPoolFull,
     },
     registration: {
-      canRegister: true,
-      rejectionCause: null,
+      canRegister: result.success,
+      eventRejectionCause: result.success ? null : result.eventCause,
+      userRejectionCause: null,
       reservationActiveAt,
       willBeUnreserved,
       hasMergeDelay,

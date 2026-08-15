@@ -166,10 +166,11 @@ export const AttendanceSummarySchema = AttendanceBaseSchema.extend({
 })
 export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>
 
-export const RegistrationRejectionCauseSchema = z.enum([
+export const RegistrationWindowCauseSchema = z.enum(["TOO_EARLY", "TOO_LATE"])
+export type RegistrationWindowCause = z.infer<typeof RegistrationWindowCauseSchema>
+
+export const RegistrationUserCauseSchema = z.enum([
   "SUSPENDED",
-  "TOO_EARLY",
-  "TOO_LATE",
   "ALREADY_REGISTERED",
   "MISSING_PARENT_REGISTRATION",
   "MISSING_PARENT_RESERVATION",
@@ -177,6 +178,9 @@ export const RegistrationRejectionCauseSchema = z.enum([
   "NO_MATCHING_POOL",
   "INVALID_TURNSTILE_TOKEN",
 ])
+export type RegistrationUserCause = z.infer<typeof RegistrationUserCauseSchema>
+
+export const RegistrationRejectionCauseSchema = z.union([RegistrationWindowCauseSchema, RegistrationUserCauseSchema])
 export type RegistrationRejectionCause = z.infer<typeof RegistrationRejectionCauseSchema>
 
 export const RegistrationAvailabilityPoolViewSchema = z.object({
@@ -206,7 +210,8 @@ export type RegistrationAvailabilityDeregistrationView = z.infer<
 
 export const RegistrationAvailabilityRegistrationViewSchema = z.object({
   canRegister: z.boolean(),
-  rejectionCause: RegistrationRejectionCauseSchema.nullable(),
+  eventRejectionCause: RegistrationWindowCauseSchema.nullable(),
+  userRejectionCause: RegistrationUserCauseSchema.nullable(),
   reservationActiveAt: z.date().nullable(),
   willBeUnreserved: z.boolean(),
   hasMergeDelay: z.boolean(),

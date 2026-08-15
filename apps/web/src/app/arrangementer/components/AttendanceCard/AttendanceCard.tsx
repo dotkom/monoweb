@@ -13,7 +13,7 @@ import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconEdit } from "@tabler/icons-react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
-import { differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
+import { differenceInMilliseconds, differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import Turnstile from "react-turnstile"
 import { useEffect, useState } from "react"
@@ -91,8 +91,21 @@ export const AttendanceCard = ({
   )
 
   useEffect(() => {
-    if (attendance) {
-      setAttendanceStatus(getAttendanceStatus(attendance))
+    setAttendanceStatus(getAttendanceStatus(attendance))
+
+    if (!isBefore(getCurrentUTC(), attendance.registerStart)) {
+      return
+    }
+
+    const timeoutId = setTimeout(
+      () => {
+        setAttendanceStatus(getAttendanceStatus(attendance))
+      },
+      differenceInMilliseconds(attendance.registerStart, getCurrentUTC())
+    )
+
+    return () => {
+      clearTimeout(timeoutId)
     }
   }, [attendance])
 
@@ -298,12 +311,6 @@ export const AttendanceCard = ({
   const isRegisterActionPending = registerMutation.isPending || deregisterMutation.isPending
 
   const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
-
-  if (isBefore(getCurrentUTC(), attendance.registerStart)) {
-    setTimeout(() => {
-      setAttendanceStatus("OPEN")
-    }, attendance.registerStart.getTime() - Date.now())
-  }
 
   return (
     <section className="flex flex-col gap-4 min-h-[6rem] sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">

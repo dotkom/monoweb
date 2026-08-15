@@ -23,7 +23,11 @@ import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, 
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { buildDeregistrationAvailabilityView, buildRegistrationAvailabilityView } from "./attendance-service"
+import {
+  buildDeregistrationAvailabilityView,
+  buildRegistrationAvailabilityView,
+  getRegistrationAvailabilityFailureCause,
+} from "./attendance-service"
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -110,7 +114,7 @@ const adminRegisterForEventProcedure = procedure
       }
     )
     if (!result.success) {
-      throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
+      throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
     return await ctx.attendanceService.registerAttendee(ctx.handle, result)
   })
@@ -227,7 +231,7 @@ const registerForEventProcedure = procedure
       }
     )
     if (!result.success) {
-      throw new FailedPreconditionError(`Failed to register: ${result.cause}`)
+      throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
     return await ctx.attendanceService.registerAttendee(ctx.handle, result)
   })

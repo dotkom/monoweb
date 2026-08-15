@@ -193,7 +193,7 @@ describe("attendance integration tests", async () => {
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
       })
-    ).toEqual({ success: false, cause: "NO_MATCHING_POOL" })
+    ).toEqual({ success: false, eventCause: null, userCause: "NO_MATCHING_POOL" })
   })
 
   it("should throw an error if the user has no active membership", async () => {
@@ -214,7 +214,7 @@ describe("attendance integration tests", async () => {
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
       })
-    ).toEqual({ success: false, cause: "MISSING_MEMBERSHIP" })
+    ).toEqual({ success: false, eventCause: null, userCause: "MISSING_MEMBERSHIP" })
   })
 
   it("should throw an error if the user is suspended", async () => {
@@ -261,7 +261,7 @@ describe("attendance integration tests", async () => {
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
       })
-    ).toEqual({ success: false, cause: "SUSPENDED" })
+    ).toEqual({ success: false, eventCause: null, userCause: "SUSPENDED" })
   })
 
   it("should not allow registration outside of the registration window", async () => {
@@ -290,16 +290,23 @@ describe("attendance integration tests", async () => {
     expect(findActiveMembership(user)).not.toBeNull()
 
     // Attempt to registrer before the registration window opens
-    expect(
-      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      {
         immediateReservation: false,
         immediatePayment: false,
         ignoreRegistrationWindow: false,
         overriddenAttendancePoolId: null,
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
-      })
-    ).toEqual({ success: false, cause: "TOO_EARLY" })
+      }
+    )
+    expect(availability).toMatchObject({ success: false, eventCause: "TOO_EARLY", userCause: null })
+    invariant(!availability.success && availability.userCause === null)
+    expect(availability.pool).toBeDefined()
     // But bypassing the registration window, it should succeed
     const registration = await core.attendanceService.getRegistrationAvailability(
       dbClient,
@@ -359,7 +366,7 @@ describe("attendance integration tests", async () => {
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
       })
-    ).toEqual({ success: false, cause: "ALREADY_REGISTERED" })
+    ).toEqual({ success: false, eventCause: null, userCause: "ALREADY_REGISTERED" })
   })
 
   it("should add a reservation time if the user has a punishment", async () => {
@@ -592,7 +599,7 @@ describe("attendance integration tests", async () => {
         ignoreRegisteredToParent: false,
         overrideTurnstileCheck: true,
       })
-    ).toEqual({ success: false, cause: "NO_MATCHING_POOL" })
+    ).toEqual({ success: false, eventCause: null, userCause: "NO_MATCHING_POOL" })
     // But if an admin registers the user with an forceAttendancePoolId, it should succeed
     const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
       immediateReservation: true,
@@ -835,7 +842,8 @@ describe("attendance integration tests", async () => {
 
     expect(view.registration?.canRegister).toBe(true)
     expect(view.deregistration).toBeNull()
-    expect(view.registration?.rejectionCause).toBeNull()
+    expect(view.registration?.eventRejectionCause).toBeNull()
+    expect(view.registration?.userRejectionCause).toBeNull()
   })
 
   it("should build deregistration availability view for registered attendee", async () => {
