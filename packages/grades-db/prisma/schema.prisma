@@ -161,7 +161,11 @@ model Department {
 }
 
 model CourseAlias {
-  alias String @map("alias")
+  alias String  @map("alias")
+
+  /// Whether the alias is used for SEO purposes, i.e. shown on the course page and used in metadata.
+  /// Necessary because some aliases are not guaranteed to be correct.
+  useForSEO Boolean @default(false) @map("use_for_seo")
 
   courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)

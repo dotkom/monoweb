@@ -1,24 +1,23 @@
 import { env } from "@/env"
 import type { Locale } from "@/i18n/locale"
 import { server } from "@/utils/trpc/server"
-import { getCourseLocalizedTextFields, type Course } from "@dotkomonline/grades-backend/course"
+import { getCourseLocalizedTextFields, type Course, type CourseAlias } from "@dotkomonline/grades-backend/course"
 import { cn, Text, Title } from "@dotkomonline/ui"
 import { Separator } from "@dotkomonline/ui/components/separator"
+import { createAbsoluteCoursePageUrl } from "@dotkomonline/utils"
 import type { Metadata } from "next"
 import { getFormatter, getLocale, getTranslations } from "next-intl/server"
+import { redirect } from "next/navigation"
+import { cache } from "react"
 import { ComparisonSelect } from "./components/ComparisonSelect"
 import { CourseAbout } from "./components/CourseAbout/CourseAbout"
 import { CourseBarChartCard } from "./components/CourseBarChart/CourseBarChartCard"
 import { CourseKpiCard } from "./components/CourseKpiCard/CourseKpiCard"
 import { CourseLineChartCard } from "./components/CourseLineChart/CourseLineChartCard"
 import { CourseNoGradesState } from "./components/CourseNoGradesState"
+import { CourseNotFound } from "./components/CourseNotFound"
 import { SemesterTabs } from "./components/SemesterTabs"
 import { buildCourseMetaItems } from "./utils"
-
-import { createAbsoluteCoursePageUrl } from "@dotkomonline/utils"
-import { redirect } from "next/navigation"
-import { CourseNotFound } from "./components/CourseNotFound"
-import { cache } from "react"
 
 // Cache course data to avoid re-fetching for CoursePage and generateMetadata
 const getCourse = cache(async (code: string) => {
@@ -62,7 +61,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   return (
     <div className="flex flex-col gap-10">
-      <Hero course={course} locale={locale} />
+      <Hero course={course} locale={locale} aliases={course.aliases} />
       <div className="flex flex-col gap-4">
         {courseHasGradeData ? (
           <>
@@ -112,17 +111,25 @@ export default async function CoursePage({ params }: CoursePageProps) {
   )
 }
 
-const Hero = async ({ course, locale }: { course: Course; locale: Locale }) => {
+interface HeroProps {
+  course: Course
+  locale: Locale
+  aliases: CourseAlias[]
+}
+
+const Hero = async ({ course, locale, aliases }: HeroProps) => {
   const t = await getTranslations()
   const format = await getFormatter({ locale })
 
   const metaItems = buildCourseMetaItems(course, t, format)
+  const alias = aliases.find((alias) => alias.useForSEO)?.alias
 
   return (
     <div className="flex flex-col gap-2">
       <div>
         <Title element="p" className="font-medium text-base text-neutral-600 dark:text-stone-300">
           {course.code}
+          {alias && <span className="text-sm font-normal text-neutral-500 dark:text-stone-400">{` (${alias})`}</span>}
         </Title>
         <Title element="h1" className="text-xl font-bold sm:text-2xl lg:text-3xl">
           {getCourseLocalizedTextFields(course, locale).name}
@@ -160,10 +167,12 @@ export async function generateMetadata({ params }: CoursePageProps): Promise<Met
   }
 
   const localizedTextFields = getCourseLocalizedTextFields(course, locale)
+  const alias = course.aliases.find((alias) => alias.useForSEO)?.alias
 
   const title = t("title", {
     courseCode: course.code,
     courseName: localizedTextFields.name,
+    aliasSuffix: alias ? ` (${alias})` : "",
   })
   const description = t("description", {
     courseCode: course.code,
