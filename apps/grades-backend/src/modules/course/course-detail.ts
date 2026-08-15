@@ -3,7 +3,7 @@ import { GradeDistributionSchema } from "../grade-distribution/grade-distributio
 import { CourseSchema, DepartmentSchema, FacultySchema } from "./course-types"
 
 export const CourseDetailSchema = CourseSchema.extend({
-  courseCodeAbbreviations: z.array(z.string()),
+  aliases: z.array(z.string()),
   faculty: FacultySchema.nullable(),
   department: DepartmentSchema.nullable(),
   gradeDistributions: z.array(GradeDistributionSchema),

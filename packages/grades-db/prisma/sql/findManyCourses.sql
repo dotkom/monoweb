@@ -29,9 +29,9 @@ WITH search_ids AS (
     AND "name_en" ILIKE $4
   UNION
   SELECT "course_id" AS "id"
-  FROM "course_code_abbreviation"
+  FROM "course_alias"
   WHERE $4::text IS NOT NULL
-    AND "abbreviation" ILIKE $4
+    AND "alias" ILIKE $4
 )
 SELECT
   matched."id",
@@ -120,7 +120,7 @@ FROM (
     course."taught_semesters",
     course."teaching_languages",
     course."campuses",
-    ARRAY[]::text[] AS abbreviations
+    ARRAY[]::text[] AS aliases
   FROM "course" course
   WHERE $4::text IS NULL
     AND (
@@ -156,14 +156,14 @@ FROM (
     course."taught_semesters",
     course."teaching_languages",
     course."campuses",
-    COALESCE(abbr.abbreviations, ARRAY[]::text[]) AS abbreviations
+    COALESCE(abbr.aliases, ARRAY[]::text[]) AS aliases
   FROM "course" course
   INNER JOIN search_ids ON search_ids."id" = course."id"
   LEFT JOIN (
     SELECT
       course_id,
-      array_agg(abbreviation) AS abbreviations
-    FROM "course_code_abbreviation"
+      array_agg(alias) AS aliases
+    FROM "course_alias"
     GROUP BY course_id
   ) abbr ON abbr.course_id = course."id"
   WHERE $4::text IS NOT NULL
@@ -191,7 +191,7 @@ ORDER BY
     WHEN $3::text IS NULL OR btrim($3) = '' THEN NULL
     ELSE course_rank_score(
       matched."code",
-      matched.abbreviations,
+      matched.aliases,
       matched."name_no",
       matched."name_en",
       $3
