@@ -230,5 +230,8 @@
         "dataLastUpdated": "Data oppdatert"
       }
     }
+  },
+  "ScrollToTop": {
+    "ariaLabel": "Til toppen"
   }
 }
