@@ -34,6 +34,7 @@ export const CourseCard = ({ course, className }: Props) => {
 
   return (
     <Link
+      prefetch={false}
       href={`/emner/${course.code}`}
       className={cn(
         "rounded-xl shadow-sm p-4 sm:p-6 grid grid-cols-[1fr_auto] gap-4 sm:gap-8 w-full border",
