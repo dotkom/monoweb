@@ -39,6 +39,8 @@
     "migrate:prod-grades": "doppler run --config prd --project grades-backend -- pnpm migrate:deploy-grades",
     "grades:sync:dev": "doppler run --config dev --project grades-backend --preserve-env -- pnpm -F @dotkomonline/grades-backend sync-grades",
     "grades:migrate-old-grades-data:dev": "doppler run --config dev --project grades-backend --preserve-env -- pnpm -F @dotkomonline/grades-backend migrate-old-grades-data",
+    "grades:seed-aliases:dev": "doppler run --config dev --project grades-backend --preserve-env -- pnpm -F @dotkomonline/grades-backend seed-aliases",
+    "grades:seed-aliases:prod": "doppler run --config prd --project grades-backend --preserve-env -- pnpm -F @dotkomonline/grades-backend seed-aliases",
     "storybook": "pnpm run -r --filter=storybook storybook",
     "type-check": "pnpm run -r type-check",
     "docker:login": "aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 891459268445.dkr.ecr.eu-north-1.amazonaws.com",
