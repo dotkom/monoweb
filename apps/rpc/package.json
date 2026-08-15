@@ -107,7 +107,7 @@
     "date-fns": "^4.1.0",
     "fastify": "^5.3.3",
     "fastify-raw-body": "^5.0.0",
-    "googleapis-common": "8.0.2",
+    "googleapis-common": "8.0.3",
     "import-in-the-middle": "^3.0.1",
     "jose": "^6.0.11",
     "lru-cache": "^11.1.0",
