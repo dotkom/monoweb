@@ -230,5 +230,8 @@
         "dataLastUpdated": "Last updated"
       }
     }
+  },
+  "ScrollToTop": {
+    "ariaLabel": "Scroll to top"
   }
 }

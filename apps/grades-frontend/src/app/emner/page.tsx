@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server"
 import { createLoader } from "nuqs/server"
 import { CourseListControls } from "./components/CourseListControls"
 import { Title } from "@dotkomonline/ui"
+import { ScrollToTop } from "./components/ScrollToTop"
 
 const loadSearchParams = createLoader(CourseFilterParsers)
 
@@ -30,6 +31,7 @@ export default async function CourseListPage({
         {t("heading")}
       </Title>
       <CourseListControls defaultValues={filterQuery} initialPage={initialPage} />
+      <ScrollToTop />
     </div>
   )
 }
