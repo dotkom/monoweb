@@ -141,15 +141,15 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
 
             <Link
               href={`/emner?bySearch=${searchValue}`}
-              className="text-sm flex gap-1 p-3 font-medium border-t border-neutral-200 dark:border-stone-700 text-neutral-700 hover:text-neutral-900 rounded-b-lg group outline-none focus:text-neutral-900 transition-colors hover:bg-neutral-100 dark:hover:bg-stone-700 focus:bg-neutral-100 dark:focus:bg-stone-700"
+              className="text-sm flex gap-1 px-2 py-3 border-t border-neutral-200 dark:border-stone-700 rounded-b-lg group outline-none transition-colors hover:bg-neutral-100 dark:hover:bg-stone-700 focus:bg-neutral-100 dark:focus:bg-stone-700"
               onClick={() => setIsOpen(false)}
             >
-              <Text className="leading-none text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200">
+              <Text className="leading-none text-neutral-500 dark:text-stone-400 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200">
                 {t("seeAllResults")}
               </Text>
               <IconArrowRight
                 size={16}
-                className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1 motion-safe:group-focus:translate-x-1 text-neutral-900 dark:text-stone-300 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200"
+                className="motion-safe:transition-transform motion-safe:group-hover:translate-x-1 motion-safe:group-focus:translate-x-1 text-neutral-500 dark:text-stone-400 group-hover:text-black group-focus:text-black dark:group-hover:text-stone-200 dark:group-focus:text-stone-200"
               />
             </Link>
           </>
@@ -173,9 +173,9 @@ const CourseAutocompleteSkeleton = () => {
       </div>
       <div
         aria-hidden
-        className="flex p-3 border-t border-neutral-200 dark:border-stone-700 text-neutral-700 rounded-b-lg"
+        className="flex items-center px-2 py-3 border-t border-neutral-200 dark:border-stone-700 rounded-b-lg"
       >
-        <div className="h-4 w-1/4 rounded bg-neutral-200 dark:bg-stone-600 motion-safe:animate-pulse" />
+        <div className="h-4 w-36 rounded bg-neutral-200 dark:bg-stone-600 motion-safe:animate-pulse" />
       </div>
     </>
   )
