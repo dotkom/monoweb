@@ -537,8 +537,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       googleapis-common:
-        specifier: 8.0.2
-        version: 8.0.2
+        specifier: 8.0.3
+        version: 8.0.3
       import-in-the-middle:
         specifier: ^3.0.1
         version: 3.0.2
@@ -6246,9 +6246,9 @@ packages:
     resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
     engines: {node: '>=14'}
 
-  googleapis-common@8.0.2:
-    resolution: {integrity: sha512-5MXeQzIZaqCH7B+HJWqhQm946VARpZep6acbWSr/fcgF2cQANq7allgX+i/G0EqF0WyUxB277gtWMzRYHMl9tg==}
-    engines: {node: '>=18.0.0'}
+  googleapis-common@8.0.3:
+    resolution: {integrity: sha512-7g1yzQKx0mmNTjiK0H9dJ8eqKqDBveES9vLHeg5neb3BMQy/d1oQefIMhIpOVT8a+f+LOcixMEdRbFIW/cQUJw==}
+    engines: {node: '>=18'}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -10135,13 +10135,13 @@ snapshots:
 
   '@googleapis/admin@30.4.0':
     dependencies:
-      googleapis-common: 8.0.2
+      googleapis-common: 8.0.3
     transitivePeerDependencies:
       - supports-color
 
   '@googleapis/sheets@13.0.2':
     dependencies:
-      googleapis-common: 8.0.2
+      googleapis-common: 8.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -14437,7 +14437,7 @@ snapshots:
 
   google-logging-utils@1.1.3: {}
 
-  googleapis-common@8.0.2:
+  googleapis-common@8.0.3:
     dependencies:
       extend: 3.0.2
       gaxios: 7.1.3
