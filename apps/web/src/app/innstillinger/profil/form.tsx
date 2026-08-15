@@ -25,11 +25,12 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconAlertTriangle, IconCheck, IconLoader, IconX } from "@tabler/icons-react"
+import { IconAlertTriangle, IconCheck, IconLoader, IconLoader2, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
+import imageCompression from "browser-image-compression"
 import { secondsToMilliseconds } from "date-fns"
 import Image from "next/image"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import type { z } from "zod"
@@ -85,6 +86,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const username = useWatch({ control, name: "username" })
   const [debouncedSlug] = useDebounce(username, 500)
+  const [isCompressing, setIsCompressing] = useState(false)
 
   const trpc = useTRPC()
 
@@ -120,7 +122,26 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
       return
     }
 
-    if (file.size > USER_IMAGE_MAX_SIZE_KIB * 1024) {
+    let compressedFile: File | null = null
+    try {
+      // We don't compress GIFs because they would lose their animation.
+      if (file.type === "image/gif") {
+        compressedFile = file
+      } else {
+        setIsCompressing(true)
+        compressedFile = await imageCompression(file, { maxSizeMB: USER_IMAGE_MAX_SIZE_KIB / 1024 })
+      }
+    } catch {
+      setError("imageUrl", {
+        type: "manual",
+        message: "Kunne ikke behandle bildet. Prøv et annet bildeformat.",
+      })
+      return
+    } finally {
+      setIsCompressing(false)
+    }
+
+    if (compressedFile.size > USER_IMAGE_MAX_SIZE_KIB * 1024) {
       setError("imageUrl", {
         type: "manual",
         message: `Filen er for stor. Maks filstørrelse er ${USER_IMAGE_MAX_SIZE_KIB / 1024} MiB.`,
@@ -130,7 +151,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
     clearErrors("imageUrl")
 
-    const result = await fileUpload(file).catch(() => null)
+    const result = await fileUpload(compressedFile).catch(() => null)
 
     if (!result) {
       setError("imageUrl", {
@@ -220,7 +241,18 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
                 accept="image/*"
                 onChange={(event) => onFileChange(event, onChange)}
                 placeholder="https://example.com/image.jpg"
+                disabled={isCompressing}
               />
+              {isCompressing && (
+                <div
+                  className="flex items-center gap-1 text-gray-600 dark:text-stone-400"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <IconLoader2 className="size-4 motion-safe:animate-spin motion-reduce:hidden" aria-hidden />
+                  <Text className="text-xs">Komprimerer bildet</Text>
+                </div>
+              )}
               {errors.imageUrl && (
                 <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
                   {errors.imageUrl?.message ?? "En feil oppstod"}
