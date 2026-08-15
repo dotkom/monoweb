@@ -64,5 +64,8 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   webpack: {
     reactComponentAnnotation: true,
     treeshake: { removeDebugLogging: true },
+    unstable_sentryWebpackPluginOptions: {
+      applicationKey: "grades-frontend",
+    },
   },
 })

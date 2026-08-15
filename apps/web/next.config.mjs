@@ -63,5 +63,8 @@ export default withSentryConfig(config, {
     treeshake: {
       removeDebugLogging: true,
     },
+    unstable_sentryWebpackPluginOptions: {
+      applicationKey: "monoweb-web",
+    },
   },
 })

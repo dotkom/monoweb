@@ -11,6 +11,12 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN !== undefined) {
     sendDefaultPii: false,
     debug: false,
     skipOpenTelemetrySetup: true,
+    integrations: [
+      Sentry.thirdPartyErrorFilterIntegration({
+        filterKeys: ["monoweb-dashboard"],
+        behaviour: "drop-error-if-exclusively-contains-third-party-frames",
+      }),
+    ],
   })
 }
 
