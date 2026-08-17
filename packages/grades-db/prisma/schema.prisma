@@ -84,7 +84,7 @@ model Course {
   campuses           Campus[]            @default([])
   gradeDistributions GradeDistribution[]
 
-  courseCodeAbbreviations CourseCodeAbbreviation[]
+  aliases CourseAlias[]
 
   facultyId String?  @map("faculty_id")
   faculty   Faculty? @relation(fields: [facultyId], references: [id])
@@ -160,12 +160,12 @@ model Department {
   @@map("department")
 }
 
-model CourseCodeAbbreviation {
-  abbreviation String @map("abbreviation")
+model CourseAlias {
+  alias String @map("alias")
 
   courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  @@id([courseId, abbreviation])
-  @@map("course_code_abbreviation")
+  @@id([courseId, alias])
+  @@map("course_alias")
 }

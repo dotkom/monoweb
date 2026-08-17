@@ -85,7 +85,7 @@ export function getCourseRepository(): CourseRepository {
           faculty: true,
           department: true,
           gradeDistributions: true,
-          courseCodeAbbreviations: true,
+          aliases: true,
         },
       })
 
