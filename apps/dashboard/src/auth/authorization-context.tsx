@@ -17,6 +17,7 @@ import {
   canEditUserProfile,
   canManageGroupMembership,
   canManageGroupRoles,
+  canManageFeatures,
   canManageUserMemberships,
   canUpdateGroup,
   hasAnyGroupAffiliation,
@@ -80,6 +81,7 @@ export function useAuthorization() {
       hasGroupRole: (groupId: GroupId, role: GroupRoleType) => hasGroupRole(state, groupId, role),
       hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
       canAccessAuditLog: () => canAccessAuditLog(state),
+      canManageFeatures: () => canManageFeatures(state),
       canManageUserMemberships: () => canManageUserMemberships(state),
       canEditUserProfile: (userId: UserId, currentUserId: UserId | null) =>
         canEditUserProfile(state, userId, currentUserId),

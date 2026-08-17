@@ -112,6 +112,10 @@ export function canAccessAuditLog(state: AuthorizationState): boolean {
   return state.isAdministrator
 }
 
+export function canManageFeatures(state: AuthorizationState): boolean {
+  return state.isAdministrator
+}
+
 /**
  * `user.createMembership`, `user.updateMembership`, `user.deleteMembership`
  */

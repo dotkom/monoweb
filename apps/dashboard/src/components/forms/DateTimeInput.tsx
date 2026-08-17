@@ -7,6 +7,10 @@ import { useRef } from "react"
 import { Controller, type FieldPath, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "./types"
 
+export function DateTimeInput(props: DateTimePickerProps) {
+  return <DateTimePicker valueFormat="YYYY-MM-DD HH:mm" locale="nb" {...props} />
+}
+
 export function createDateTimeInput<
   FieldValue extends FieldValues,
   TTransformedValues extends FieldValues | undefined = FieldValue,
@@ -24,10 +28,8 @@ export function createDateTimeInput<
         control={control}
         name={name}
         render={({ field }) => (
-          <DateTimePicker
+          <DateTimeInput
             {...props}
-            valueFormat="YYYY-MM-DD HH:mm"
-            locale="nb"
             style={{ flexGrow: 1, ...props.style }}
             defaultValue={defaultValue ?? roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })}
             value={field.value}

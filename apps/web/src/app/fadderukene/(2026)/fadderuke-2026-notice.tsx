@@ -1,17 +1,11 @@
 import { server } from "@/utils/trpc/server"
 import type { ContestantDetail, ContestResultOrder } from "@dotkomonline/rpc/contest"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import { type Interval, isWithinInterval } from "date-fns"
 import { cookies } from "next/headers"
 import { Fadderuke2026NoticeBanner, type NoticeContestantSlot } from "./fadderuke-2026-notice-banner"
 
 const COOKIE_NAME = "Fadderuke2026BannerHidden"
 
-export async function Fadderuke2026Notice({ start, end }: Interval) {
-  if (!isWithinInterval(getCurrentUTC(), { start, end })) {
-    return null
-  }
-
+export async function Fadderuke2026Notice() {
   const cookieStore = await cookies()
   const hidden = cookieStore.get(COOKIE_NAME)?.value === "1"
 

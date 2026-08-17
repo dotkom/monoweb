@@ -40,6 +40,7 @@ import {
   IconPhoto,
   IconPhotoShare,
   IconSkull,
+  IconToggleLeft,
   IconUserMinus,
   IconUsersGroup,
   IconWheelchair,
@@ -119,6 +120,12 @@ const navigations = [
     icon: IconClipboardList,
     href: "/logg",
     canAccess: (authorization) => authorization.canAccessAuditLog(),
+  },
+  {
+    label: "Funksjoner",
+    icon: IconToggleLeft,
+    href: "/funksjoner",
+    canAccess: (authorization) => authorization.canManageFeatures(),
   },
 ] satisfies {
   label: string

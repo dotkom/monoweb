@@ -28,6 +28,8 @@ import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-a
 import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
 import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
 import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
+import { getFeatureRepository } from "./feature/feature-repository"
+import { getFeatureService } from "./feature/feature-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
@@ -188,6 +190,7 @@ export async function createServiceLayer(
   const feideGroupsRepository = getFeideGroupsRepository()
   const feedbackFormRepository = getFeedbackFormRepository()
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
+  const featureRepository = getFeatureRepository()
   const contestRepository = getContestRepository()
   const fadderukeRepository = getFadderukeRepository()
 
@@ -220,6 +223,7 @@ export async function createServiceLayer(
     attendanceRepository
   )
   const feedbackFormAnswerService = getFeedbackFormAnswerService(feedbackFormAnswerRepository, feedbackFormService)
+  const featureService = getFeatureService(featureRepository)
   const taskDiscoveryService = getLocalTaskDiscoveryService(clients.prisma, taskService, recurringTaskService)
   const attendanceService = getAttendanceService(
     eventEmitter,
@@ -291,6 +295,7 @@ export async function createServiceLayer(
     taskSchedulingService,
     feedbackFormService,
     feedbackFormAnswerService,
+    featureService,
     authorizationService,
     paymentWebhookService,
     contestService,

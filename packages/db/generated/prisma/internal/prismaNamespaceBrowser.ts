@@ -90,7 +90,8 @@ export const ModelName = {
   Contest: 'Contest',
   Fadderuke: 'Fadderuke',
   Contestant: 'Contestant',
-  ContestTeam: 'ContestTeam'
+  ContestTeam: 'ContestTeam',
+  Feature: 'Feature'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -659,6 +660,19 @@ export const ContestTeamScalarFieldEnum = {
 } as const
 
 export type ContestTeamScalarFieldEnum = (typeof ContestTeamScalarFieldEnum)[keyof typeof ContestTeamScalarFieldEnum]
+
+
+export const FeatureScalarFieldEnum = {
+  key: 'key',
+  enabled: 'enabled',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  configuration: 'configuration',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeatureScalarFieldEnum = (typeof FeatureScalarFieldEnum)[keyof typeof FeatureScalarFieldEnum]
 
 
 export const SortOrder = {
