@@ -159,6 +159,7 @@ export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof
 
 export const CourseAliasScalarFieldEnum = {
   alias: 'alias',
+  useForSEO: 'useForSEO',
   courseId: 'courseId'
 } as const
 

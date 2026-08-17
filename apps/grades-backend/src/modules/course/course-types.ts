@@ -126,6 +126,12 @@ export const CourseListItemSchema = CourseSchema.pick({
 })
 export type CourseListItem = z.infer<typeof CourseListItemSchema>
 
+export const CourseAliasSchema = z.object({
+  alias: z.string(),
+  useForSEO: z.boolean(),
+})
+export type CourseAlias = z.infer<typeof CourseAliasSchema>
+
 export type CourseFilterSort = z.infer<typeof CourseFilterSortSchema>
 export const CourseFilterSortSchema = z.enum(["AVERAGE_GRADE", "PASS_RATE", "CANDIDATE_COUNT"])
 

@@ -85,7 +85,11 @@ export function getCourseRepository(): CourseRepository {
           faculty: true,
           department: true,
           gradeDistributions: true,
-          aliases: true,
+          aliases: {
+            orderBy: {
+              alias: "asc",
+            },
+          },
         },
       })
 

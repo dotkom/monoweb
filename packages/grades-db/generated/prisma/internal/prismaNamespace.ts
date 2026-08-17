@@ -906,6 +906,7 @@ export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof
 
 export const CourseAliasScalarFieldEnum = {
   alias: 'alias',
+  useForSEO: 'useForSEO',
   courseId: 'courseId'
 } as const
 
@@ -1065,6 +1066,13 @@ export type ListEnumCampusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'Campus'
  */
 export type EnumCampusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Campus'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 /**

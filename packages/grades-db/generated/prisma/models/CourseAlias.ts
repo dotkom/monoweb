@@ -26,16 +26,19 @@ export type AggregateCourseAlias = {
 
 export type CourseAliasMinAggregateOutputType = {
   alias: string | null
+  useForSEO: boolean | null
   courseId: string | null
 }
 
 export type CourseAliasMaxAggregateOutputType = {
   alias: string | null
+  useForSEO: boolean | null
   courseId: string | null
 }
 
 export type CourseAliasCountAggregateOutputType = {
   alias: number
+  useForSEO: number
   courseId: number
   _all: number
 }
@@ -43,16 +46,19 @@ export type CourseAliasCountAggregateOutputType = {
 
 export type CourseAliasMinAggregateInputType = {
   alias?: true
+  useForSEO?: true
   courseId?: true
 }
 
 export type CourseAliasMaxAggregateInputType = {
   alias?: true
+  useForSEO?: true
   courseId?: true
 }
 
 export type CourseAliasCountAggregateInputType = {
   alias?: true
+  useForSEO?: true
   courseId?: true
   _all?: true
 }
@@ -131,6 +137,7 @@ export type CourseAliasGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type CourseAliasGroupByOutputType = {
   alias: string
+  useForSEO: boolean
   courseId: string
   _count: CourseAliasCountAggregateOutputType | null
   _min: CourseAliasMinAggregateOutputType | null
@@ -157,12 +164,14 @@ export type CourseAliasWhereInput = {
   OR?: Prisma.CourseAliasWhereInput[]
   NOT?: Prisma.CourseAliasWhereInput | Prisma.CourseAliasWhereInput[]
   alias?: Prisma.StringFilter<"CourseAlias"> | string
+  useForSEO?: Prisma.BoolFilter<"CourseAlias"> | boolean
   courseId?: Prisma.StringFilter<"CourseAlias"> | string
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
 }
 
 export type CourseAliasOrderByWithRelationInput = {
   alias?: Prisma.SortOrder
+  useForSEO?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
   course?: Prisma.CourseOrderByWithRelationInput
 }
@@ -173,12 +182,14 @@ export type CourseAliasWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CourseAliasWhereInput[]
   NOT?: Prisma.CourseAliasWhereInput | Prisma.CourseAliasWhereInput[]
   alias?: Prisma.StringFilter<"CourseAlias"> | string
+  useForSEO?: Prisma.BoolFilter<"CourseAlias"> | boolean
   courseId?: Prisma.StringFilter<"CourseAlias"> | string
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
 }, "courseId_alias">
 
 export type CourseAliasOrderByWithAggregationInput = {
   alias?: Prisma.SortOrder
+  useForSEO?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
   _count?: Prisma.CourseAliasCountOrderByAggregateInput
   _max?: Prisma.CourseAliasMaxOrderByAggregateInput
@@ -190,40 +201,48 @@ export type CourseAliasScalarWhereWithAggregatesInput = {
   OR?: Prisma.CourseAliasScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CourseAliasScalarWhereWithAggregatesInput | Prisma.CourseAliasScalarWhereWithAggregatesInput[]
   alias?: Prisma.StringWithAggregatesFilter<"CourseAlias"> | string
+  useForSEO?: Prisma.BoolWithAggregatesFilter<"CourseAlias"> | boolean
   courseId?: Prisma.StringWithAggregatesFilter<"CourseAlias"> | string
 }
 
 export type CourseAliasCreateInput = {
   alias: string
+  useForSEO?: boolean
   course: Prisma.CourseCreateNestedOneWithoutAliasesInput
 }
 
 export type CourseAliasUncheckedCreateInput = {
   alias: string
+  useForSEO?: boolean
   courseId: string
 }
 
 export type CourseAliasUpdateInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
   course?: Prisma.CourseUpdateOneRequiredWithoutAliasesNestedInput
 }
 
 export type CourseAliasUncheckedUpdateInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CourseAliasCreateManyInput = {
   alias: string
+  useForSEO?: boolean
   courseId: string
 }
 
 export type CourseAliasUpdateManyMutationInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CourseAliasUncheckedUpdateManyInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -244,16 +263,19 @@ export type CourseAliasCourseIdAliasCompoundUniqueInput = {
 
 export type CourseAliasCountOrderByAggregateInput = {
   alias?: Prisma.SortOrder
+  useForSEO?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
 }
 
 export type CourseAliasMaxOrderByAggregateInput = {
   alias?: Prisma.SortOrder
+  useForSEO?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
 }
 
 export type CourseAliasMinOrderByAggregateInput = {
   alias?: Prisma.SortOrder
+  useForSEO?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
 }
 
@@ -299,12 +321,18 @@ export type CourseAliasUncheckedUpdateManyWithoutCourseNestedInput = {
   deleteMany?: Prisma.CourseAliasScalarWhereInput | Prisma.CourseAliasScalarWhereInput[]
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type CourseAliasCreateWithoutCourseInput = {
   alias: string
+  useForSEO?: boolean
 }
 
 export type CourseAliasUncheckedCreateWithoutCourseInput = {
   alias: string
+  useForSEO?: boolean
 }
 
 export type CourseAliasCreateOrConnectWithoutCourseInput = {
@@ -338,51 +366,60 @@ export type CourseAliasScalarWhereInput = {
   OR?: Prisma.CourseAliasScalarWhereInput[]
   NOT?: Prisma.CourseAliasScalarWhereInput | Prisma.CourseAliasScalarWhereInput[]
   alias?: Prisma.StringFilter<"CourseAlias"> | string
+  useForSEO?: Prisma.BoolFilter<"CourseAlias"> | boolean
   courseId?: Prisma.StringFilter<"CourseAlias"> | string
 }
 
 export type CourseAliasCreateManyCourseInput = {
   alias: string
+  useForSEO?: boolean
 }
 
 export type CourseAliasUpdateWithoutCourseInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CourseAliasUncheckedUpdateWithoutCourseInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CourseAliasUncheckedUpdateManyWithoutCourseInput = {
   alias?: Prisma.StringFieldUpdateOperationsInput | string
+  useForSEO?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
 
 export type CourseAliasSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   alias?: boolean
+  useForSEO?: boolean
   courseId?: boolean
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["courseAlias"]>
 
 export type CourseAliasSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   alias?: boolean
+  useForSEO?: boolean
   courseId?: boolean
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["courseAlias"]>
 
 export type CourseAliasSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   alias?: boolean
+  useForSEO?: boolean
   courseId?: boolean
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["courseAlias"]>
 
 export type CourseAliasSelectScalar = {
   alias?: boolean
+  useForSEO?: boolean
   courseId?: boolean
 }
 
-export type CourseAliasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"alias" | "courseId", ExtArgs["result"]["courseAlias"]>
+export type CourseAliasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"alias" | "useForSEO" | "courseId", ExtArgs["result"]["courseAlias"]>
 export type CourseAliasInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
 }
@@ -400,6 +437,11 @@ export type $CourseAliasPayload<ExtArgs extends runtime.Types.Extensions.Interna
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     alias: string
+    /**
+     * Whether the alias is used for SEO purposes, i.e. shown on the course page and used in metadata.
+     * Necessary because some aliases are not guaranteed to be correct.
+     */
+    useForSEO: boolean
     courseId: string
   }, ExtArgs["result"]["courseAlias"]>
   composites: {}
@@ -826,6 +868,7 @@ export interface Prisma__CourseAliasClient<T, Null = never, ExtArgs extends runt
  */
 export interface CourseAliasFieldRefs {
   readonly alias: Prisma.FieldRef<"CourseAlias", 'String'>
+  readonly useForSEO: Prisma.FieldRef<"CourseAlias", 'Boolean'>
   readonly courseId: Prisma.FieldRef<"CourseAlias", 'String'>
 }
     
