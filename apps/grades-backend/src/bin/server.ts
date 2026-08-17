@@ -1,4 +1,3 @@
-import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
 import fastifyCors from "@fastify/cors"
 import { captureException } from "@sentry/node"
@@ -8,6 +7,7 @@ import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { createConfiguration } from "../configuration"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
+import "../instrumentation"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import { createTrpcContext } from "../trpc"
 
@@ -57,6 +57,12 @@ server.register(fastifyTRPCPlugin, {
 })
 
 registerObservabilityProbeRoutes(server)
+
+// Prevent indexing of the backend server
+server.addHook("onSend", async (_request, reply, payload) => {
+  reply.header("X-Robots-Tag", "noindex, nofollow")
+  return payload
+})
 
 await server.listen({ port: 5555, host: "0.0.0.0" })
 
