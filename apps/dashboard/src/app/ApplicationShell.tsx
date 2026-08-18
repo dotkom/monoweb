@@ -113,6 +113,7 @@ const navigations = [
     label: "Varslinger",
     icon: IconBell,
     href: "/varslinger",
+    canAccess: (authorization) => authorization.canManageNotifications(),
   },
   {
     label: "Plakatbestilling",
