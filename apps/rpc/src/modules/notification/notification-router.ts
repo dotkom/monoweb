@@ -7,6 +7,7 @@ import { procedure, t } from "../../trpc"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import {
   NotificationDTOSchema,
+  NotificationPayloadTypeSchema,
   NotificationSchema,
   NotificationWriteSchema,
   UserNotificationDTOSchema,
@@ -151,6 +152,28 @@ const onNewNotificationProcedure = procedure.use(withAuthentication()).subscript
   }
 })
 
+export type FindNotificationsByPayloadInput = inferProcedureInput<typeof findNotificationsByPayloadProcedure>
+export type FindNotificationsByPayloadOutput = inferProcedureOutput<typeof findNotificationsByPayloadProcedure>
+const findNotificationsByPayloadProcedure = procedure
+  .input(
+    BasePaginateInputSchema.extend({
+      payloadType: NotificationPayloadTypeSchema,
+      payload: z.string(),
+    })
+  )
+  .output(z.object({ items: z.array(NotificationDTOSchema), nextCursor: NotificationSchema.shape.id.optional() }))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const { payloadType, payload, ...page } = input
+    const items = await ctx.notificationService.findManyByPayload(ctx.handle, payloadType, payload, page)
+    return {
+      items,
+      nextCursor: items.at(-1)?.id,
+    }
+  })
+
 export const notificationRouter = t.router({
   get: getNotificationProcedure,
   create: createNotificationProcedure,
@@ -162,4 +185,5 @@ export const notificationRouter = t.router({
   markAllAsRead: markAllAsReadProcedure,
   findMany: findNotificationsProcedure,
   onNewNotification: onNewNotificationProcedure,
+  findManyByPayload: findNotificationsByPayloadProcedure,
 })
