@@ -24,7 +24,8 @@ import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { EventDescription } from "../../components/EventDescription"
 import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
-import { TimeLocationBox } from "../../components/TimeLocationBox/TimeLocationBox"
+import { LocationBox } from "../../components/TimeLocationBox/LocationBox"
+import { TimeBox } from "../../components/TimeLocationBox/TimeBox"
 
 const createOrganizerPageUrl = (item: Group | Company) => {
   if ("type" in item) {
@@ -32,29 +33,6 @@ const createOrganizerPageUrl = (item: Group | Company) => {
   }
 
   return `/bedrifter/${item.slug}`
-}
-
-const mapToImageAndName = (item: Group | Company) => {
-  const displayName = "type" in item ? getGroupDisplayName(item) : item.name
-
-  return (
-    <Link
-      href={createOrganizerPageUrl(item)}
-      key={item.name}
-      className="flex flex-row gap-2 items-center px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 dark:border-stone-700 dark:hover:bg-stone-800"
-    >
-      {item.imageUrl && (
-        <GroupLogo
-          src={item.imageUrl}
-          alt={displayName}
-          width={22}
-          height={22}
-          containerClassName="rounded-sm p-0.5 size-5.5"
-        />
-      )}
-      <Text>{displayName}</Text>
-    </Link>
-  )
 }
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
@@ -181,13 +159,9 @@ const EventContent = ({
   registrationAvailability,
   user,
 }: EventContentProps) => {
-  const hostingGroups = event.hostingGroups.map((group) => mapToImageAndName(group))
-  const companyList = event.companies.map((company) => mapToImageAndName(company))
-  const organizers = [...companyList, ...hostingGroups]
-
   return (
     <div className="flex w-full flex-col gap-8 md:flex-row text-base">
-      <div className="w-full flex flex-col gap-4 md:w-[60%]">
+      <div className="w-full flex flex-col gap-6 md:w-[60%]">
         {parentEvent && (
           <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-800">
             <Title element="h4" size="sm" className="text-base">
@@ -197,8 +171,26 @@ const EventContent = ({
           </div>
         )}
 
-        {organizers.length > 0 ? (
-          <div className="flex flex-row gap-2">{organizers}</div>
+        <section>
+          <Title element="h2" className="sr-only">
+            Oppmøte
+          </Title>
+          <div className="grid min-w-0 grid-cols-1 gap-x-8 gap-y-3 min-[1150px]:grid-cols-2">
+            <TimeBox event={event} />
+            <LocationBox event={event} />
+          </div>
+        </section>
+
+        {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
+          <div className="flex flex-row gap-6 items-center">
+            {event.hostingGroups.map((group) => (
+              <OrganizerPill key={group.slug} item={group} />
+            ))}
+
+            {event.companies.map((company) => (
+              <OrganizerPill key={company.id} item={company} />
+            ))}
+          </div>
         ) : (
           <Text className="text-gray-900 dark:text-stone-400">Ingen arrangører</Text>
         )}
@@ -207,8 +199,6 @@ const EventContent = ({
       </div>
 
       <div className="flex flex-1 flex-col gap-8 sm:gap-4 md:min-w-88 lg:min-w-104">
-        <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
-        <TimeLocationBox event={event} />
         {attendance !== null && (
           <>
             <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
@@ -224,6 +214,36 @@ const EventContent = ({
         )}
       </div>
     </div>
+  )
+}
+
+interface OrganizerPillProps {
+  item: Group | Company
+}
+
+function OrganizerPill({ item }: OrganizerPillProps) {
+  const displayName = "type" in item ? getGroupDisplayName(item) : item.name
+
+  return (
+    <Link
+      href={createOrganizerPageUrl(item)}
+      key={item.name}
+      className="group/organizer-pill flex flex-row gap-2.5 items-center p-1.5 -mx-1.5 rounded-md transition-colors border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+    >
+      {item.imageUrl && (
+        <GroupLogo
+          src={item.imageUrl}
+          alt={displayName}
+          width={22}
+          height={22}
+          containerClassName="rounded-sm p-0.5 size-5.5"
+        />
+      )}
+
+      <Text className="text-sm font-medium text-muted-foreground group-hover/organizer-pill:text-foreground">
+        {displayName}
+      </Text>
+    </Link>
   )
 }
 
