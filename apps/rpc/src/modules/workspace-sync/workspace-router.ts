@@ -97,9 +97,7 @@ const linkWorkspaceUserProcedure = procedure
     const user = await ctx.userService.getById(ctx.handle, input.userId)
     const workspaceUser = await workspaceService.getWorkspaceUser(ctx.handle, input.userId, input.customKey)
 
-    const updateResult = await ctx.userService.update(ctx.handle, user.id, { workspaceUserId: workspaceUser.id })
-
-    return updateResult.user
+    return await ctx.userService.update(ctx.handle, user.id, { workspaceUserId: workspaceUser.id })
   })
 
 export type LinkWorkspaceGroupInput = inferProcedureInput<typeof linkWorkspaceGroupProcedure>

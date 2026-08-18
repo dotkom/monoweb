@@ -100,10 +100,6 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const fileUpload = useUserFileUploadMutation()
 
-  const { data: profileProgress } = useQuery(trpc.fadderuke.getMyContestProfileProgress.queryOptions())
-
-  const showContestProfilePoints = profileProgress?.isContestTeamMember === true
-
   // Clear the success/error message after x seconds
   useEffect(() => {
     if (!saveSuccess) {
@@ -170,15 +166,9 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <div className="flex flex-col gap-6">
         <div className="w-full flex flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <Label htmlFor="username" className="text-base">
-              Brukernavn
-            </Label>
-            {showContestProfilePoints ? <ProfilePointsPill claimed={profileProgress.hasSetUsername} /> : null}
-          </div>
           <TextInput
-            id="username"
             description={`Dette brukes i din profil-URL: https://online.ntnu.no/profil/${username || "..."}`}
+            label="Brukernavn"
             placeholder="supermann99"
             required
             {...register("username")}
@@ -226,12 +216,9 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           name="imageUrl"
           render={({ field: { onChange, value } }) => (
             <div className="w-full flex flex-col gap-1">
-              <div className="flex flex-wrap items-center gap-3">
-                <Label htmlFor="pfp" className="text-sm">
-                  Profilbilde
-                </Label>
-                {showContestProfilePoints ? <ProfilePointsPill claimed={profileProgress.hasSetProfilePicture} /> : null}
-              </div>
+              <Label htmlFor="pfp" className="text-sm">
+                Profilbilde
+              </Label>
               <Text className="text-xs text-gray-500 dark:text-stone-500">
                 Maksstørrelse er {(USER_IMAGE_MAX_SIZE_KIB / 1024).toFixed(1).replace(".", ",")} MiB.
               </Text>
@@ -377,34 +364,5 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         )}
       </div>
     </form>
-  )
-}
-
-function ProfilePointsPill({ claimed }: { claimed: boolean }) {
-  if (claimed) {
-    return (
-      <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-2 py-1 text-green-800 dark:bg-green-950/50 dark:text-green-300">
-        <IconCheck className="size-3.5" />
-        <Text element="span" className="text-xs font-medium">
-          Poeng mottatt
-        </Text>
-      </span>
-    )
-  }
-
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-2 py-1 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
-      <Image
-        src="/fadderuke-2026-torch.svg"
-        alt=""
-        width={16}
-        height={16}
-        draggable={false}
-        className="size-4 object-contain select-none"
-      />
-      <Text element="span" className="text-xs font-medium">
-        Gir poeng
-      </Text>
-    </span>
   )
 }

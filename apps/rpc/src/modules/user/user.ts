@@ -65,13 +65,6 @@ export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
 export type Username = User["username"]
 
-export const UserUpdateResultSchema = z.object({
-  user: UserSchema,
-  fadderukeContestPointsAwarded: z.number().int(),
-  fadderukeTeamBonusAwarded: z.number().int(),
-})
-export type UserUpdateResult = z.infer<typeof UserUpdateResultSchema>
-
 export const NAME_REGEX = /^[\p{L}\p{M}\s'-]+$/u
 export const PHONE_REGEX = /^[0-9-+\s]*$/
 export const PROFILE_SLUG_REGEX = /^[a-z0-9-]+$/

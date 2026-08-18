@@ -4,10 +4,6 @@ import { isAdministrator, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { FadderukeSchema, FadderukeWriteSchema } from "./fadderuke"
-import {
-  FadderukeContestProfileProgressStatusSchema,
-  getFadderukeContestProfileProgressStatusForUser,
-} from "./fadderuke-contest-profile-progress"
 import { CommitteeGroupSlug } from "../authorization-service"
 
 export type FindFadderukeByYearInput = inferProcedureInput<typeof findByYearProcedure>
@@ -18,15 +14,6 @@ const findByYearProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     return ctx.fadderukeService.findByYear(ctx.handle, input)
-  })
-
-export type GetMyContestProfileProgressOutput = inferProcedureOutput<typeof getMyContestProfileProgressProcedure>
-const getMyContestProfileProgressProcedure = procedure
-  .output(FadderukeContestProfileProgressStatusSchema)
-  .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return getFadderukeContestProfileProgressStatusForUser(ctx.handle, ctx.principal.subject)
   })
 
 export type FindManyFadderukerOutput = inferProcedureOutput<typeof findManyProcedure>
@@ -77,7 +64,6 @@ const deleteProcedure = procedure
 
 export const fadderukeRouter = t.router({
   findByYear: findByYearProcedure,
-  getMyContestProfileProgress: getMyContestProfileProgressProcedure,
   findMany: findManyProcedure,
   create: createProcedure,
   update: updateProcedure,
