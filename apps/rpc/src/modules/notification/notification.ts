@@ -34,10 +34,30 @@ export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSche
 
 export const NotificationRecipientSchema = z.object({
   id: z.string(),
+  userId: z.string(),
   readAt: z.coerce.date().nullable(),
 })
 
 export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
+
+export const NotificationRecipientListItemSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  user: z.object({
+    id: z.string(),
+    name: z.string().nullable(),
+  }),
+})
+
+export type NotificationRecipientListItem = z.infer<typeof NotificationRecipientListItemSchema>
+
+export const NotificationRecipientsSchema = z.object({
+  recipients: z.array(NotificationRecipientListItemSchema),
+  readCount: z.number(),
+  unreadCount: z.number(),
+})
+
+export type NotificationRecipients = z.infer<typeof NotificationRecipientsSchema>
 
 export const NotificationSchema = z.object({
   id: z.string(),
@@ -76,6 +96,13 @@ export const NotificationWriteSchema = NotificationSchema.pick({
 })
 
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
+
+/** User-initiated creates must include an actor group; system/tasks may omit it via the service. */
+export const NotificationCreateSchema = NotificationWriteSchema.extend({
+  actorGroupId: z.string().min(1, "Sendt av er påkrevd"),
+})
+
+export type NotificationCreate = z.infer<typeof NotificationCreateSchema>
 
 // ---- Additional Types ----
 

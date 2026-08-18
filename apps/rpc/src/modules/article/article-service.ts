@@ -77,12 +77,14 @@ export function getArticleService(
       const createdArticle = await articleRepository.create(handle, data)
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "NEW_ARTICLE")
+      const shortDescription = `En ny artikkel "${data.title}" har blitt publisert.`
       await notificationService.create(
         handle,
         recipients,
         "NEW_ARTICLE",
         `Ny artikkel: ${data.title}`,
-        `En ny artikkel "${data.title}" har blitt publisert.`,
+        shortDescription,
+        shortDescription,
         null,
         "ARTICLE",
         data.slug
