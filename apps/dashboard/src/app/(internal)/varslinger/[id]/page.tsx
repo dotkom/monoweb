@@ -1,17 +1,24 @@
 "use client"
 
 import { Box, CloseButton, Group, Tabs, Title } from "@mantine/core"
-import { IconPhoto } from "@tabler/icons-react"
+import { IconListDetails, IconUsers } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { NotificationEditCard } from "./edit-card"
+import { NotificationRecipientsPage } from "./recipients-page"
 import { useNotificationDetailsContext } from "./provider"
 
 const SIDEBAR_LINKS = [
   {
-    icon: IconPhoto,
+    icon: IconListDetails,
     label: "Info",
     slug: "info",
     component: NotificationEditCard,
+  },
+  {
+    icon: IconUsers,
+    label: "Mottakere",
+    slug: "mottakere",
+    component: NotificationRecipientsPage,
   },
 ] as const
 
@@ -25,7 +32,7 @@ export default function NotificationDetailsPage() {
   const handleTabChange = (value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
-    router.replace(`/varsler/${notification.id}?${params.toString()}`)
+    router.replace(`/varslinger/${notification.id}?${params.toString()}`)
   }
 
   return (
