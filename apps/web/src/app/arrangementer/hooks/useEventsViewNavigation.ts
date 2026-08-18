@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback } from "react"
-import type { EventsView } from "./useEventsView"
+import { persistEventView, type EventsView } from "./useEventsView"
 
 const clearEventFilterParameters = (queryParameters: URLSearchParams) => {
   queryParameters.delete("q")
@@ -24,6 +24,7 @@ export const useEventsViewNavigation = () => {
   const navigateToView = useCallback(
     (nextView: EventsView) => {
       const queryParameters = new URLSearchParams(searchParams.toString())
+      persistEventView(nextView)
 
       if (nextView === "month") {
         queryParameters.set("view", "month")

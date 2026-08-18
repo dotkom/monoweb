@@ -1,24 +1,28 @@
-import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import { ActionIcon, Group, TextInput } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { IconX } from "@tabler/icons-react"
-import { useEffect } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { useEffect, useState } from "react"
 
 interface Props {
-  onChange(filters: EventFilterQuery): void
+  value: string
+  onChange(searchTerm: string): void
 }
 
-export const EventFilters = ({ onChange }: Props) => {
-  const form = useForm<EventFilterQuery>()
-  const data = useWatch(form) as EventFilterQuery
-  const [debouncedData] = useDebouncedValue(data, 300)
+export const EventFilters = ({ value, onChange }: Props) => {
+  const [searchTerm, setSearchTerm] = useState(value)
+  const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 300)
 
   useEffect(() => {
-    onChange(debouncedData)
-  }, [onChange, debouncedData])
+    setSearchTerm(value)
+  }, [value])
 
-  const hasSearchTerm = Boolean(data.bySearchTerm)
+  useEffect(() => {
+    if (debouncedSearchTerm !== value) {
+      onChange(debouncedSearchTerm)
+    }
+  }, [debouncedSearchTerm, onChange, value])
+
+  const hasSearchTerm = Boolean(searchTerm)
 
   return (
     <form
@@ -29,17 +33,12 @@ export const EventFilters = ({ onChange }: Props) => {
       <Group gap={4}>
         <TextInput
           placeholder="Søk etter arrangementer..."
-          {...form.register("bySearchTerm")}
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.currentTarget.value)}
           style={{ width: 200 }}
           rightSection={
             hasSearchTerm && (
-              <ActionIcon
-                size="input-sm"
-                variant="subtle"
-                color="gray"
-                type="reset"
-                onClick={() => form.resetField("bySearchTerm")}
-              >
+              <ActionIcon size="input-sm" variant="subtle" color="gray" type="reset" onClick={() => setSearchTerm("")}>
                 <IconX size={16} />
               </ActionIcon>
             )

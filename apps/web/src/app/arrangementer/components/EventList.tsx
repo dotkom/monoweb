@@ -14,8 +14,8 @@ import z from "zod"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 
-export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
-export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
+export const EventListOrderSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
+export type EventListOrder = z.infer<typeof EventListOrderSchema>
 export type EventListDisplayMode = "cards" | "list"
 
 type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
@@ -26,7 +26,7 @@ interface EventListProps {
   userId?: UserId
   onLoadMore?(): void
   alwaysShowChildEvents?: boolean
-  viewMode?: EventListViewMode
+  viewMode?: EventListOrder
   displayMode?: EventListDisplayMode
 }
 

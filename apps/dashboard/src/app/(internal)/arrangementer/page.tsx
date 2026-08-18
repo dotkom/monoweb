@@ -7,39 +7,16 @@ import { Button, Group, SegmentedControl, Skeleton, Stack, Text, Title } from "@
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo } from "react"
 import { EventFilters } from "./components/event-filters"
 import { EventTable } from "./components/events-table"
+import { useEventFilters } from "./hooks/use-event-filters"
 import { useEventAllInfiniteQuery } from "./queries"
 import { interval, isWithinInterval, compareAsc } from "date-fns"
 
-type TimeTab = "kommende" | "tidligere"
-type ScopeFilter = "alle" | "mine"
-
-function parseTimeTab(value: string | null): TimeTab {
-  if (value === "tidligere") {
-    return "tidligere"
-  }
-
-  return "kommende"
-}
-
-function parseScopeFilter(value: string | null): ScopeFilter {
-  if (value === "mine") {
-    return "mine"
-  }
-
-  return "alle"
-}
-
 export default function EventPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [searchFilter, setSearchFilter] = useState<EventFilterQuery>({})
-
-  const timeTab = parseTimeTab(searchParams.get("tab"))
-  const scopeFilterFromQuery = parseScopeFilter(searchParams.get("scope"))
+  const { filters, updateFilters } = useEventFilters()
+  const { search: searchTerm, timeTab, scope: scopeFilterFromQuery } = filters
 
   const authorization = useAuthorization()
   const { canCreateEvents, isAdministrator, affiliations } = authorization
@@ -50,18 +27,23 @@ export default function EventPage() {
   const scopeFilter = canUseMineFilter ? scopeFilterFromQuery : "alle"
 
   const handleTimeTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("tab", value)
-
-    router.replace(`/arrangementer?${params.toString()}`)
+    if (value === "kommende" || value === "tidligere") {
+      updateFilters({ timeTab: value })
+    }
   }
 
   const handleScopeFilterChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("scope", value)
-
-    router.replace(`/arrangementer?${params.toString()}`)
+    if (value === "alle" || value === "mine") {
+      updateFilters({ scope: value })
+    }
   }
+
+  const handleSearchFilterChange = useCallback(
+    (search: string) => {
+      updateFilters({ search })
+    },
+    [updateFilters]
+  )
 
   const filter = useMemo((): EventFilterQuery => {
     const now = getCurrentUTC()
@@ -76,11 +58,11 @@ export default function EventPage() {
         : {}
 
     return {
-      ...searchFilter,
+      bySearchTerm: searchTerm || undefined,
       ...timeFilter,
       ...mineFilter,
     }
-  }, [affiliationSlugs, isAdministrator, scopeFilter, searchFilter, timeTab])
+  }, [affiliationSlugs, isAdministrator, scopeFilter, searchTerm, timeTab])
 
   const { events, isLoading: isEventsLoading, fetchNextPage } = useEventAllInfiniteQuery({ filter })
 
@@ -108,7 +90,7 @@ export default function EventPage() {
           />
 
           <Group wrap="wrap">
-            <EventFilters onChange={setSearchFilter} />
+            <EventFilters value={searchTerm} onChange={handleSearchFilterChange} />
 
             {canUseMineFilter && (
               <SegmentedControl

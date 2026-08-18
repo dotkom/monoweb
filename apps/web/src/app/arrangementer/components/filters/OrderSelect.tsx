@@ -10,27 +10,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@dotkomonline/ui"
-import type { EventListViewMode } from "../EventList"
+import type { EventListOrder } from "../EventList"
 import { IconCalendar, IconUsersPlus } from "@tabler/icons-react"
 
-const sortOptions = [
+const orderingOptions = [
   { value: "ATTENDANCE", label: "Påmelding", icon: IconUsersPlus },
   { value: "CHRONOLOGICAL", label: "Dato", icon: IconCalendar },
 ] as const
 
-interface SortFilterProps {
-  value: EventListViewMode
-  onChange: (mode: EventListViewMode) => void
+interface OrderSelectProps {
+  value: EventListOrder
+  onChange: (mode: EventListOrder) => void
   className?: string
 }
 
-export const SortFilter = ({ value, onChange, className }: SortFilterProps) => {
+export const OrderSelect = ({ value, onChange, className }: OrderSelectProps) => {
   return (
     <div className={cn("h-full self-stretch", className)}>
       <Select
-        items={sortOptions}
+        items={orderingOptions}
         value={value}
-        onValueChange={(selectedValue) => onChange(selectedValue as EventListViewMode)}
+        onValueChange={(selectedValue) => onChange(selectedValue as EventListOrder)}
       >
         <SelectTrigger className="rounded-lg min-w-43 font-normal h-10 md:h-full!">
           <span className="flex items-center gap-1.5">
@@ -41,7 +41,7 @@ export const SortFilter = ({ value, onChange, className }: SortFilterProps) => {
         <SelectContent position="popper" className="rounded-lg shadow-md">
           <SelectGroup>
             <SelectLabel className="font-medium">Sorter etter</SelectLabel>
-            {sortOptions.map((option) => (
+            {orderingOptions.map((option) => (
               <SelectItem key={option.value} value={option.value} className="h-9">
                 <option.icon className="size-4.5" />
                 <span className="text-sm font-medium">{option.label}</span>

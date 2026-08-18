@@ -3,6 +3,7 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./persistent-filters": "./src/persistent-filters.ts",
     "./text": "./src/text.ts"
   },
   "types": "./src/index.ts",

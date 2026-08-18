@@ -5,7 +5,7 @@ import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Button, cn, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import type { EventListViewMode } from "../EventList"
+import type { EventListOrder } from "../EventList"
 
 type FilterType = "search" | "type" | "group" | "sort"
 
@@ -13,7 +13,7 @@ interface FilterChipsProps {
   searchTerm: string
   typeFilter: string[]
   groupFilters: string[]
-  viewMode: EventListViewMode
+  viewMode: EventListOrder
   groups: Group[]
   onRemoveFilter: (filterType: FilterType, value?: string) => void
   onResetAll: () => void

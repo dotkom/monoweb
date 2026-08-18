@@ -35,7 +35,7 @@ import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/Event
 import { FilterChips } from "./components/filters/FilterChips"
 import { GroupFilter } from "./components/filters/GroupFilter"
 import { SearchInput } from "./components/filters/SearchInput"
-import { SortFilter } from "./components/filters/SortFilter"
+import { OrderSelect } from "./components/filters/OrderSelect"
 import { TypeFilter } from "./components/filters/TypeFilter"
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "./components/queries"
@@ -97,10 +97,9 @@ const EventPage = () => {
   })
 
   const hasActiveFilters =
-    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewModeSort !== "ATTENDANCE"
+    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.order !== "ATTENDANCE"
 
-  const activeFilterCount =
-    filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
+  const activeFilterCount = filters.types.length + filters.groups.length + (filters.order !== "ATTENDANCE" ? 1 : 0)
 
   const tabValue = isCalendar ? "calendar" : view
 
@@ -191,10 +190,7 @@ const EventPage = () => {
                           <Text element="span" className="h-5.5 font-medium text-sm">
                             Sorter
                           </Text>
-                          <SortFilter
-                            value={filters.viewModeSort}
-                            onChange={(viewModeSort) => updateFilters({ viewModeSort })}
-                          />
+                          <OrderSelect value={filters.order} onChange={(order) => updateFilters({ order })} />
                         </div>
                         <div className="mt-6">
                           <TypeFilter
@@ -232,9 +228,9 @@ const EventPage = () => {
                 className="max-sm:hidden w-full max-w-90"
               />
 
-              <SortFilter
-                value={filters.viewModeSort}
-                onChange={(viewModeSort) => updateFilters({ viewModeSort })}
+              <OrderSelect
+                value={filters.order}
+                onChange={(order) => updateFilters({ order })}
                 className="max-md:hidden"
               />
             </div>
@@ -310,7 +306,7 @@ const EventPage = () => {
                 searchTerm={filters.search}
                 typeFilter={filters.types}
                 groupFilters={filters.groups}
-                viewMode={filters.viewModeSort}
+                viewMode={filters.order}
                 groups={groups ?? []}
                 onRemoveFilter={(type, value) => {
                   if (type === "search") {
@@ -330,7 +326,7 @@ const EventPage = () => {
                   }
 
                   if (type === "sort") {
-                    updateFilters({ viewModeSort: "ATTENDANCE" })
+                    updateFilters({ order: "ATTENDANCE" })
                   }
                 }}
                 onResetAll={resetFilters}
@@ -343,7 +339,7 @@ const EventPage = () => {
                   futureEventWithAttendances={futureEventWithAttendances}
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
-                  viewMode={filters.viewModeSort}
+                  viewMode={filters.order}
                   displayMode={isCards ? "cards" : "list"}
                 />
               )}
