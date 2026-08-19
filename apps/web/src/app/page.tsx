@@ -78,7 +78,13 @@ export default async function App() {
                 <EventCard key={event.id} event={event} attendance={attendance} userId={user?.id} />
               ))}
 
-              <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+              <Tilt
+                tiltMaxAngleX={0.25}
+                tiltMaxAngleY={0.25}
+                scale={1.005}
+                glareBorderRadius="var(--radius-xl)"
+                className="h-full"
+              >
                 <Button
                   variant="unstyled"
                   element={Link}
@@ -104,7 +110,13 @@ export default async function App() {
                 ))}
 
                 <div className="snap-center pr-4">
-                  <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+                  <Tilt
+                    tiltMaxAngleX={0.25}
+                    tiltMaxAngleY={0.25}
+                    scale={1.005}
+                    glareBorderRadius="var(--radius-xl)"
+                    className="h-full"
+                  >
                     <Button
                       element={Link}
                       href="/arrangementer"
@@ -143,7 +155,13 @@ export default async function App() {
                 <EventCard key={event.id} event={event} attendance={attendance} userId={user.id} />
               ))}
 
-              <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+              <Tilt
+                tiltMaxAngleX={0.25}
+                tiltMaxAngleY={0.25}
+                scale={1.005}
+                glareBorderRadius="var(--radius-xl)"
+                className="h-full"
+              >
                 <Button
                   variant="unstyled"
                   element={Link}
@@ -169,7 +187,13 @@ export default async function App() {
                 ))}
 
                 <div className="snap-center pr-4">
-                  <Tilt tiltMaxAngleX={0.25} tiltMaxAngleY={0.25} scale={1.005} className="h-full">
+                  <Tilt
+                    tiltMaxAngleX={0.25}
+                    tiltMaxAngleY={0.25}
+                    scale={1.005}
+                    glareBorderRadius="var(--radius-xl)"
+                    className="h-full"
+                  >
                     <Button
                       element={Link}
                       href="/arrangementer"
