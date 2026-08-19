@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback } from "react"
+import type { EventsListViewMode } from "./eventViewCookie"
 import type { EventsView } from "./useEventsView"
 
 const clearEventFilterParameters = (queryParameters: URLSearchParams) => {
@@ -17,7 +18,7 @@ const clearCalendarParameters = (queryParameters: URLSearchParams) => {
   queryParameters.delete("week")
 }
 
-export const useEventsViewNavigation = () => {
+export const useEventsViewNavigation = (onListViewModeChange: (mode: EventsListViewMode) => void) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -37,14 +38,16 @@ export const useEventsViewNavigation = () => {
       } else if (nextView === "list") {
         queryParameters.set("view", "list")
         clearCalendarParameters(queryParameters)
+        onListViewModeChange("list")
       } else {
         queryParameters.delete("view")
         clearCalendarParameters(queryParameters)
+        onListViewModeChange("cards")
       }
 
       router.replace(`?${queryParameters.toString()}`, { scroll: false })
     },
-    [router, searchParams]
+    [router, searchParams, onListViewModeChange]
   )
 
   return {
