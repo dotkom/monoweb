@@ -1,39 +1,9 @@
 import type { EventType } from "@dotkomonline/rpc/event"
-import { Badge, Tilt, cn, type BadgeColor } from "@dotkomonline/ui"
+import { Badge, Tilt, cn } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
-
-const EVENTS = {
-  ACADEMIC: {
-    label: "Kurs",
-    backgroundColor: "blue",
-  },
-  GENERAL_ASSEMBLY: {
-    label: "Genfors",
-    backgroundColor: "amber",
-  },
-  INTERNAL: {
-    label: "Intern",
-    backgroundColor: "amber",
-  },
-  OTHER: {
-    label: "Annet",
-    backgroundColor: "amber",
-  },
-  COMPANY: {
-    label: "Bedpres",
-    backgroundColor: "red",
-  },
-  SOCIAL: {
-    label: "Sosialt",
-    backgroundColor: "green",
-  },
-  WELCOME: {
-    label: "Fadderuke",
-    backgroundColor: "amber",
-  },
-} as const satisfies Record<EventType, { label: string; backgroundColor: BadgeColor }>
+import { EVENT_TYPE_CONFIG } from "./eventTypeConfig"
 
 interface EventListItemThumbnailProps {
   imageUrl?: string | null
@@ -43,7 +13,7 @@ interface EventListItemThumbnailProps {
 }
 
 export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, startInPast, eventType }) => {
-  const { label, backgroundColor } = EVENTS[eventType]
+  const { label, backgroundColor } = EVENT_TYPE_CONFIG[eventType]
 
   return (
     <Tilt>
