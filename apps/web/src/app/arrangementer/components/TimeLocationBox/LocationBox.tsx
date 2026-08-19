@@ -1,8 +1,8 @@
 import type { Event } from "@dotkomonline/rpc/event"
 import { cn, Text } from "@dotkomonline/ui"
-import { IconMapPin } from "@tabler/icons-react"
+import { IconArrowUpRight, IconMapPin } from "@tabler/icons-react"
+import Link from "next/link"
 import type { FC } from "react"
-import { LocationLink } from "./LocationLink"
 
 interface LocationBoxProps {
   event: Event
@@ -15,18 +15,40 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
     return null
   }
 
-  return (
-    <section className="flex flex-row gap-4 items-center">
-      <IconMapPin className="shrink-0 size-6 text-gray-600 dark:text-stone-400" />
+  const content = (
+    <>
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-md border border-gray-200 dark:border-stone-700 dark:bg-stone-800">
+        <IconMapPin className="size-6 shrink-0 text-muted-foreground" />
+      </div>
 
-      <div className="flex flex-col grow justify-center">
-        {locationTitle && <Text>{locationTitle}</Text>}
+      <div className="flex min-w-0 flex-col justify-center">
+        {locationTitle && <Text className="truncate">{locationTitle}</Text>}
         {locationAddress && (
-          <Text className={cn(locationTitle && "text-gray-600 dark:text-stone-400")}>{locationAddress}</Text>
+          <Text className={cn("truncate", locationTitle && "text-muted-foreground")}>{locationAddress}</Text>
         )}
       </div>
 
-      {locationLink && <LocationLink link={locationLink} />}
-    </section>
+      {locationLink && (
+        <IconArrowUpRight
+          aria-hidden
+          className="size-5 shrink-0 text-muted-foreground transition-[transform,color] group-hover/location-box:scale-120 group-hover/location-box:text-foreground"
+        />
+      )}
+    </>
   )
+
+  const boxClassName = cn(
+    "flex w-full min-w-0 flex-row items-center gap-3 p-2 -mx-2 rounded-xl sm:gap-4",
+    locationLink && "group/location-box transition-colors hover:bg-gray-100 dark:hover:bg-stone-800"
+  )
+
+  if (locationLink) {
+    return (
+      <Link className={boxClassName} href={locationLink} target="_blank" rel="noopener noreferrer">
+        {content}
+      </Link>
+    )
+  }
+
+  return <section className={boxClassName}>{content}</section>
 }
