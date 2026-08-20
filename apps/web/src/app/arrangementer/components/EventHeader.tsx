@@ -27,6 +27,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         tiltMaxAngleX={0.25}
         tiltMaxAngleY={0.25}
         glareMaxOpacity={0.1}
+        glareBorderRadius="var(--radius-xl)"
         className="rounded-xl bg-gray-100 dark:bg-stone-800/50"
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">

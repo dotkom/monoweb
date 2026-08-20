@@ -37,7 +37,7 @@ export const EventImage: FC<EventImageProps> = ({
   const eventHasEnded = isPast(end)
 
   return (
-    <Tilt>
+    <Tilt glareBorderRadius="var(--radius-lg)">
       <div className={cn("relative", className)}>
         <div className={cn("relative bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden", imageClassName)}>
           {imageUrl ? (
