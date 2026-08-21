@@ -68,6 +68,33 @@ const vanityVerifiedAttendee = createPlateAttendee(
   })
 )
 
+const distinguishedAttendee = createPlateAttendee(
+  createMockUser({
+    id: "00000000-0000-4000-8000-000000000103",
+    username: "utmerket",
+    name: "Siri Særskilt",
+    flags: [
+      createFlag(FlagName.EXCEPTIONALLY_DISTINGUISHED, {
+        description: "Tildelt for ekstraordinær innsats for linjeforeningen.",
+      }),
+    ],
+  })
+)
+
+const distinguishedAndVanityAttendee = createPlateAttendee(
+  createMockUser({
+    id: "00000000-0000-4000-8000-000000000107",
+    username: "sirivera",
+    name: "Siri Vera",
+    flags: [
+      createFlag(FlagName.EXCEPTIONALLY_DISTINGUISHED, {
+        description: "Tildelt for ekstraordinær innsats for linjeforeningen.",
+      }),
+      createFlag(FlagName.VANITY_VERIFIED),
+    ],
+  })
+)
+
 const noGradeAttendee = createPlateAttendee(
   createMockUser({
     id: "00000000-0000-4000-8000-000000000109",
@@ -82,6 +109,8 @@ export const AllStates = () => (
     <LabeledPlate label="Generic" attendee={genericAttendee} />
     <LabeledPlate label="Generic (deg)" attendee={currentUserAttendee} />
     <LabeledPlate label="OW Verified" attendee={vanityVerifiedAttendee} />
+    <LabeledPlate label="Særskilt utmerket" attendee={distinguishedAttendee} />
+    <LabeledPlate label="Særskilt + OW Verified" attendee={distinguishedAndVanityAttendee} />
     <LabeledPlate label="Ingen klasse" attendee={noGradeAttendee} />
   </div>
 )
@@ -91,7 +120,14 @@ export const InList = () => (
     <AttendeeList
       user={viewer}
       maxNumberOfAttendees={10}
-      attendees={[genericAttendee, currentUserAttendee, vanityVerifiedAttendee, noGradeAttendee]}
+      attendees={[
+        genericAttendee,
+        currentUserAttendee,
+        vanityVerifiedAttendee,
+        distinguishedAttendee,
+        distinguishedAndVanityAttendee,
+        noGradeAttendee,
+      ]}
     />
   </div>
 )
