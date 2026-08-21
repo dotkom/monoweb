@@ -1,7 +1,7 @@
 "use client"
 
 import { roundAverageGrade } from "@/app/lib/format-stats"
-import type { GradeDistribution } from "@dotkomonline/grades-backend/grade-distribution"
+import { calculateCourseStatistics, type GradeDistribution } from "@dotkomonline/grades-backend/grade-distribution"
 import { cn, Text } from "@dotkomonline/ui"
 import { useFormatter, useTranslations } from "next-intl"
 import { useCoursePeriodView } from "../../useCoursePeriodView"
@@ -31,6 +31,11 @@ export const CourseKpiCard = ({ gradeDistributions, className }: Props) => {
     <CourseSectionCard
       className={className}
       title={<Text className="font-medium text-sm dark:text-stone-200">{t("CoursePage.kpiCard.title")}</Text>}
+      action={
+        <Text className="text-sm dark:text-stone-200 tabular-nums mr-3">
+          {t("CoursePage.kpiCard.candidateCount", { count: calculateCourseStatistics(selectedRows).candidateCount })}
+        </Text>
+      }
     >
       <div
         className={cn(

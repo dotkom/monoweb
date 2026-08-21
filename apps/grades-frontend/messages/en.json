@@ -207,6 +207,7 @@
       "passRateDiff": "{count, number} points",
       "diffEqual": "same",
       "compareSelectAriaLabel": "Compare against",
+      "candidateCount": "{count, number} candidates",
       "rangeBar": {
         "minAverage": "Lowest average: {semester}",
         "maxAverage": "Highest average: {semester}",

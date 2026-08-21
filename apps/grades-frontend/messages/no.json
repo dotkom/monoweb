@@ -207,6 +207,7 @@
       "passRateDiff": "{count, number} poeng",
       "diffEqual": "likt",
       "compareSelectAriaLabel": "Sammenlign med",
+      "candidateCount": "{count, number} kandidater",
       "rangeBar": {
         "minAverage": "Laveste snitt: {semester}",
         "maxAverage": "Høyeste snitt: {semester}",
