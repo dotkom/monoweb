@@ -1,7 +1,28 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { AuditLog, AuditLogFilterQuery, AuditLogId } from "./audit-log"
+import { AuditLogSchema, type AuditLog, type AuditLogFilterQuery, type AuditLogId } from "./audit-log"
+import { normalizeDbUser } from "../user/user"
 import type { UserId } from "../user/user"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { parseOrReport } from "../../invariant"
+
+function normalizeAuditLog<T extends { user: Parameters<typeof normalizeDbUser>[0] | null; [key: string]: unknown }>(
+  auditLog: T
+) {
+  const { user, ...rest } = auditLog
+
+  return {
+    ...rest,
+    user: user ? normalizeDbUser(user) : null,
+  }
+}
+
+const userInclude = {
+  userFlagLinks: {
+    include: {
+      userFlag: true,
+    },
+  },
+} as const
 
 export interface AuditLogRepository {
   findById(handle: DBHandle, auditLogId: AuditLogId): Promise<AuditLog | null>
@@ -14,16 +35,17 @@ export function getAuditLogRepository(): AuditLogRepository {
     async findById(handle, auditLogId) {
       const auditLog = await handle.auditLog.findUnique({
         where: { id: auditLogId },
-        include: { user: true },
+        include: { user: { include: userInclude } },
       })
-      return auditLog
+
+      return parseOrReport(AuditLogSchema.nullable(), auditLog ? normalizeAuditLog(auditLog) : null)
     },
 
     async findMany(handle, query, page) {
       const auditLogs = await handle.auditLog.findMany({
         ...pageQuery(page),
         include: {
-          user: true,
+          user: { include: userInclude },
         },
         orderBy: {
           createdAt: "desc",
@@ -94,18 +116,19 @@ export function getAuditLogRepository(): AuditLogRepository {
         },
       })
 
-      return auditLogs
+      return parseOrReport(AuditLogSchema.array(), auditLogs.map(normalizeAuditLog))
     },
 
     async findManyByUserId(handle, userId, page) {
       const auditLogs = await handle.auditLog.findMany({
         where: { userId },
         include: {
-          user: true,
+          user: { include: userInclude },
         },
         ...pageQuery(page),
       })
-      return auditLogs
+
+      return parseOrReport(AuditLogSchema.array(), auditLogs.map(normalizeAuditLog))
     },
   }
 }
