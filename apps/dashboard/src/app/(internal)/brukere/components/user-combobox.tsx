@@ -117,7 +117,12 @@ export function UserCombobox(props: UserComboboxProps) {
     }
 
     return (
-      <MultiSelect {...sharedInputProps} onChange={handleMultiChange} value={props.value.map((member) => member.id)} />
+      <MultiSelect
+        {...sharedInputProps}
+        hidePickedOptions
+        onChange={handleMultiChange}
+        value={props.value.map((member) => member.id)}
+      />
     )
   }
 
