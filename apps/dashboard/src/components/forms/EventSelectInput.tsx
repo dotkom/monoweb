@@ -1,9 +1,7 @@
-import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
+import { EventSelect } from "@/app/(internal)/arrangementer/components/event-select"
 import type { EventId } from "@dotkomonline/rpc/event"
-import { Select, type SelectProps } from "@mantine/core"
-import { useDebouncedValue } from "@mantine/hooks"
-import { useState } from "react"
-import { Controller, type FieldValues, useController } from "react-hook-form"
+import type { SelectProps } from "@mantine/core"
+import { Controller, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "./types"
 
 interface Props extends Omit<SelectProps, "error"> {
@@ -17,50 +15,19 @@ export function createEventSelectInput<F extends FieldValues, TTransformedValues
   ...props
 }: Props): InputProducerResult<F, TTransformedValues> {
   return function FormSelectInput({ name, state, control, disabled }) {
-    const [searchQuery, setSearchQuery] = useState("")
-    const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 300)
-
-    const { events: data } = useEventAllQuery({
-      filter: {
-        bySearchTerm: debouncedSearchQuery,
-        excludingChildEvents: excludeChildEvents,
-      },
-    })
-
-    const { field } = useController({ name, control })
-    const { data: selectedEvent } = useEventWithAttendancesGetQuery(field.value, Boolean(field.value))
-
-    const options = data
-      .filter(({ event }) => !excludeEventIds?.some((excludeId) => event.id === excludeId))
-      .map(({ event }) => ({ label: event.title, value: event.id }))
-
-    // Always include the selected event in the list
-    if (selectedEvent?.event && !options.some((o) => o.value === selectedEvent.event.id)) {
-      options.push({
-        value: selectedEvent.event.id,
-        label: selectedEvent.event.title,
-      })
-    }
-
-    const handleEventSearch = (query: string) => {
-      setSearchQuery(query)
-    }
-
     return (
       <Controller
         control={control}
         name={name}
         render={({ field }) => (
-          <Select
+          <EventSelect
             {...props}
             value={field.value}
             onChange={field.onChange}
-            searchValue={searchQuery}
-            onSearchChange={handleEventSearch}
-            searchable={true}
             disabled={disabled ?? props.disabled}
             error={getErrorMessage(state, name)}
-            data={options}
+            excludeChildEvents={excludeChildEvents}
+            excludeEventIds={excludeEventIds}
           />
         )}
       />

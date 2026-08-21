@@ -4,7 +4,6 @@ import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
-import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
@@ -13,7 +12,6 @@ import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import {
   EVENT_IMAGE_MAX_SIZE_KIB,
-  EventSchema,
   type EventStatus,
   EventTypeSchema,
   EventWriteSchema,
@@ -36,7 +34,6 @@ const EVENT_FORM_DATA_STATUS = [
 const FormValidationSchema = EventWriteSchema.extend({
   hostingGroupIds: z.array(z.string()),
   companyIds: z.array(z.string()),
-  parentId: EventSchema.shape.id.nullable(),
 }).superRefine((data, ctx) => {
   const issues = [...validateEventWrite(data), ...validateEventOrganizers(data.hostingGroupIds)]
   for (const issue of issues) {
@@ -62,7 +59,6 @@ const DEFAULT_VALUES = {
   imageUrl: null,
   hostingGroupIds: [],
   companyIds: [],
-  parentId: null,
   contestId: null,
   markForMissedAttendance: true,
 } as const satisfies FormValidationResult
@@ -156,12 +152,6 @@ export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps
         placeholder: "Velg type",
         data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
-      }),
-      parentId: createEventSelectInput({
-        label: "Forelderarrangement",
-        placeholder: "Søk etter arrangement...",
-        clearable: true,
-        excludeChildEvents: true,
       }),
       contestId: createSelectInput({
         label: "Konkurranse",
