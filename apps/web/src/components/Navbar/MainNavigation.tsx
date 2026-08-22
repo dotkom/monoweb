@@ -1,6 +1,6 @@
 "use client"
 
-import type { MenuLink } from "@/components/Navbar/Navbar"
+import type { MenuLink } from "@/components/Navbar/NavbarContent"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowUpRight } from "@tabler/icons-react"
 import Link from "next/link"

@@ -1,5 +1,5 @@
 import { DropdownMenuItem, Text, cn } from "@dotkomonline/ui"
-import type { MenuIcon } from "@/components/Navbar/Navbar"
+import type { MenuIcon } from "@/components/Navbar/NavbarContent"
 import { IconChevronRight } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"

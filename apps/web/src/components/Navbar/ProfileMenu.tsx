@@ -1,10 +1,9 @@
 "use client"
 
-import { env } from "@/env"
 import { SessionRecoveryDropdown } from "@/components/auth/SessionRecoveryDropdown"
-import { getSessionRecoveryMessages } from "@dotkomonline/utils"
+import { env } from "@/env"
+import type { AuthState } from "@/utils/authenticated-user-state"
 import { useTRPC } from "@/utils/trpc/client"
-import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { UserRouter } from "@dotkomonline/rpc"
 import {
@@ -21,9 +20,8 @@ import {
   DropdownMenuTrigger,
   Text,
   Title,
-  cn,
 } from "@dotkomonline/ui"
-import { createLogoutUrl } from "@dotkomonline/utils"
+import { createLogoutUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import type { Icon } from "@tabler/icons-react"
 import {
   IconAdjustments,
@@ -40,33 +38,19 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
-import { useTheme } from "next-themes"
 import Link from "next/link"
-import { type FC, Fragment, useEffect, useState } from "react"
+import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
 
-const getThemeIcon = (theme: string | undefined, resolvedTheme: string | undefined): Icon => {
-  if (theme === "system") {
-    return resolvedTheme === "dark" ? IconMoon : IconSun
-  }
-  return theme === "dark" ? IconMoon : IconSun
-}
-
 const ThemeDropdown: FC = () => {
-  const { theme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
-
-  const ThemeIcon = mounted ? getThemeIcon(theme, resolvedTheme) : IconSun
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
-        <ThemeIcon width={22} height={22} />
+        <IconSun width={22} height={22} className="dark:hidden" />
+        <IconMoon width={22} height={22} className="hidden dark:block" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -204,18 +188,9 @@ const linkGroups: LinkGroup[] = [
   },
 ]
 
-export const ProfileMenu: FC = () => {
+export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   const fullPathname = useFullPathname()
-  const {
-    sessionUser,
-    isLoading,
-    isInvalid,
-    isSessionInvalid,
-    isMissingDbUser,
-    isDbUserFetchError,
-    dbUser,
-    dbUserQuery,
-  } = useAuthenticatedUser()
+  const { sessionUser, isLoading, isInvalid, isSessionInvalid, isMissingDbUser, isDbUserFetchError, dbUser } = authState
 
   if (isLoading) {
     return null
@@ -239,17 +214,16 @@ export const ProfileMenu: FC = () => {
   return (
     <div className="flex gap-2">
       <ContactDebugDropdown />
-      <AvatarDropdown dbUser={dbUser} dbUserIsLoading={dbUserQuery.isLoading} />
+      <AvatarDropdown dbUser={dbUser} />
     </div>
   )
 }
 
 type AvatarDropdownProps = {
   dbUser: UserRouter.GetMeOutput | null
-  dbUserIsLoading: boolean
 }
 
-export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoading: isDbUserLoading }) => {
+export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
   const trpc = useTRPC()
 
@@ -284,12 +258,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser, dbUserIsLoadin
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback
-              className={cn(
-                "bg-gradient-to-br from-blue-400 to-blue-800 text-white",
-                isDbUserLoading && "animate-pulse"
-              )}
-            >
+            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
               <IconUser className="size-5" />
             </AvatarFallback>
           </Avatar>
