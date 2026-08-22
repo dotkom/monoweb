@@ -38,7 +38,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-4 sm:gap-6 w-full min-w-0">
           <Link
             href="/"
-            className="group inline-flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/20 py-0.5 px-2"
+            className="group inline-flex items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring/20 py-0.5 px-2 -ml-2"
           >
             <Title
               element="span"
