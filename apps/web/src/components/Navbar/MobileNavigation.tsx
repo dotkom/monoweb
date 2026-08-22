@@ -15,7 +15,7 @@ import { IconArrowUpRight, IconChevronDown, IconHome } from "@tabler/icons-react
 import Link from "next/link"
 import { type FC, useEffect, useRef, useState } from "react"
 
-import type { MenuItem, MenuLink } from "@/components/Navbar/Navbar"
+import type { MenuItem, MenuLink } from "@/components/Navbar/NavbarContent"
 import { env } from "@/env"
 import { isExternal } from "../../utils/is-link-external"
 import { Hamburger } from "./Hamburger"
