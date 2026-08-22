@@ -43,7 +43,7 @@ runs:
     - name: Login to AWS ECR
       uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
     - name: Check out provided ref
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       with:
         fetch-depth: 1
         ref: ${{ inputs.git-hash }}
