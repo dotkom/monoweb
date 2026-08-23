@@ -58,13 +58,21 @@ const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, us
   ))
 }
 
-const Divider = ({ text }: { text: string }) => (
+const EventListDivider = ({ text }: { text: string }) => (
   <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:-my-1">
     <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
     <Text className="shrink-0 select-none text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-stone-600">
       {text}
     </Text>
     <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
+  </div>
+)
+
+export const EventListDividerSkeleton = () => (
+  <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:-my-1">
+    <span className="h-[2px] grow rounded-full bg-gray-300 dark:bg-stone-600" />
+    <span className="h-4 w-40 shrink-0 motion-safe:animate-pulse rounded-sm bg-gray-300 dark:bg-stone-600" />
+    <span className="h-[2px] grow rounded-full bg-gray-300 dark:bg-stone-600" />
   </div>
 )
 
@@ -229,7 +237,7 @@ export const EventList: FC<EventListProps> = ({
 
         return (
           <Fragment key={eventSection.key}>
-            {eventSection.title && <Divider text={eventSection.title} />}
+            {eventSection.title && <EventListDivider text={eventSection.title} />}
             <EventItems
               eventsWithAttendance={eventSection.eventsWithAttendance}
               displayMode={displayMode}
