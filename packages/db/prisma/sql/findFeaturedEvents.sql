@@ -1,101 +1,268 @@
 -- @param {Int} $1:offset
 -- @param {Int} $2:limit
+-- @param {DateTime} $4:byStartDateMin?
+-- @param {DateTime} $5:byStartDateMax?
+-- @param {DateTime} $6:byEndDateMin?
+-- @param {DateTime} $7:byEndDateMax?
+-- @param {String} $8:bySearchTerm?
+-- @param {Boolean} $11:excludingChildEvents
+-- @param {Boolean} $16:byHasFeedbackForm?
+
+-- IMPORTANT: This expects EMPTY arrays and NOT null for array values. Giving null will break things.
+-- Array params are not in the list above due to Prisma limitations.
 
 -- DOCS: https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/typedsql
 
 -- This SQL query is used in EventRepository#findFeaturedEvents to find featured events, as this is too complex to do
 -- with Prisma's normal query API.
 
--- Events will primarily be ranked by their type in the following order (lower number is higher ranking):
---   1. GENERAL_ASSEMBLY
---   2. COMPANY, ACADEMIC
---   3. SOCIAL, INTERNAL, OTHER, WELCOME
+-- Featured events are ranked to balance relevance, urgency, and strategic importance (general assemblies and
+-- company-backed events are important for the organization). Events should generally rise as they become more timely or
+-- actionable, while still allowing important event types to surface even when they are further away.
 --
--- Within each bucket they will be ranked like this:
---   1. Event in future, registration open and not full AND attendance capacities is limited (>0)
---   2. Event in future, registration not started yet (attendance capacities does not matter)
---   3. Event in future, no attendance registration OR attendance capacities is unlimited (=0)
---   4. Event in future, registration full (registration status does not matter)
+-- The scoring is designed so that registration availability matters, approaching deadlines create urgency, and
+-- proximity becomes increasingly important as the event gets closer. Events that can no longer be acted on are
+-- deprioritized, while events without meaningful registration requirements are treated neutrally rather than penalized.
 --
--- Past events are not featured. We would rather have no featured events than "stale" events.
+-- An event's featured score is the sum of:
+--
+--   Proximity:
+--     * Up to 50 points before it starts, halving every 7 days
+--
+--   Registration:
+--     a) 28 for open registration with space
+--     b) 24 when registration is not required
+--     c) 10 when full
+--     d) 8 when closed
+--     e) up to 20 while waiting for registration to open
+--
+--   Registration deadline:
+--     Up to 8 points when registration is open and space remains.
+--
+--   Strategic priority:
+--     * 15 flat points for general assemblies
+--     * 6 flat points for company-backed company or academic events
+--
+--   Company last chance:
+--     Up to 10 points, rising sharply as the registration deadline approaches.
+--
+-- Attendance records without any attendance pools are treated as if the event does not require registration.
+--
+-- Events that have ended are not featured.
 
 WITH
-  capacities AS (
-    SELECT
-      attendance_id,
-      SUM("capacity") AS sum
-    FROM attendance_pool
-    GROUP BY attendance_id
+  candidate_events AS (
+    SELECT *
+    FROM event
+    WHERE
+      event.status = ANY($3::event_status[])
+      AND event.end > NOW()
+      AND ($4::timestamptz IS NULL OR event.start >= $4)
+      AND ($5::timestamptz IS NULL OR event.start <= $5)
+      AND ($6::timestamptz IS NULL OR event.end >= $6)
+      AND ($7::timestamptz IS NULL OR event.end <= $7)
+      AND ($8::text IS NULL OR event.title ILIKE '%' || $8 || '%')
+      AND (cardinality($9::text[]) = 0 OR event.id = ANY($9))
+      AND (cardinality($10::event_type[]) = 0 OR event.type = ANY($10))
+      AND (NOT $11::boolean OR event.parent_id IS NULL)
+      AND (
+        (
+          cardinality($12::text[]) = 0
+          AND cardinality($13::text[]) = 0
+        )
+        OR EXISTS (
+          SELECT 1
+          FROM event_company
+          WHERE
+            event_company.event_id = event.id
+            AND event_company.company_id = ANY($12)
+        )
+        OR EXISTS (
+          SELECT 1
+          FROM event_hosting_group
+          WHERE
+            event_hosting_group.event_id = event.id
+            AND event_hosting_group.group_id = ANY($13)
+        )
+      )
+      AND (
+        cardinality($14::text[]) = 0
+        OR NOT EXISTS (
+          SELECT 1
+          FROM event_hosting_group
+          WHERE
+            event_hosting_group.event_id = event.id
+            AND event_hosting_group.group_id = ANY($14)
+        )
+      )
+      AND (
+        cardinality($15::event_type[]) = 0
+        OR event.type <> ALL($15)
+      )
+      AND (
+        $16::boolean IS NULL
+        OR $16 = EXISTS (
+          SELECT 1
+          FROM feedback_form
+          WHERE feedback_form.event_id = event.id
+        )
+      )
   ),
 
-  attendees AS (
+  candidate_attendances AS (
+    SELECT DISTINCT attendance_id
+    FROM candidate_events
+    WHERE attendance_id IS NOT NULL
+  ),
+
+  reserved_attendees AS (
     SELECT
-      attendance_id,
-      COUNT(*) AS count
+      attendee.attendance_pool_id,
+      COUNT(*) AS reserved_count
     FROM attendee
-    GROUP BY attendance_id
+    INNER JOIN candidate_attendances
+      ON candidate_attendances.attendance_id = attendee.attendance_id
+    WHERE attendee.reserved = TRUE
+    GROUP BY attendee.attendance_pool_id
+  ),
+
+  attendance_availability AS (
+    SELECT
+      attendance_pool.attendance_id,
+      BOOL_OR(
+        attendance_pool.capacity = 0
+        OR COALESCE(reserved_attendees.reserved_count, 0) < attendance_pool.capacity
+      ) AS has_available_pool
+    FROM attendance_pool
+    INNER JOIN candidate_attendances
+      ON candidate_attendances.attendance_id = attendance_pool.attendance_id
+    LEFT JOIN reserved_attendees
+      ON reserved_attendees.attendance_pool_id = attendance_pool.id
+    GROUP BY attendance_pool.attendance_id
+  ),
+
+  event_features AS (
+    SELECT
+      candidate_events.*,
+
+      (
+        candidate_events.attendance_id IS NOT NULL
+        AND attendance_availability.attendance_id IS NOT NULL
+      ) AS has_attendance,
+
+      attendance.register_start,
+      attendance.register_end,
+      COALESCE(attendance_availability.has_available_pool, FALSE) AS has_available_pool,
+
+      (
+        candidate_events.type IN ('COMPANY', 'ACADEMIC')
+        AND EXISTS (
+          SELECT 1
+          FROM event_company
+          WHERE event_company.event_id = candidate_events.id
+        )
+      ) AS is_company_backed,
+
+      GREATEST(
+        EXTRACT(EPOCH FROM (candidate_events.start - NOW())) / 86400.0,
+        0
+      ) AS days_until_event,
+
+      GREATEST(
+        EXTRACT(EPOCH FROM (attendance.register_start - NOW())) / 86400.0,
+        0
+      ) AS days_until_registration_opens,
+
+      GREATEST(
+        EXTRACT(EPOCH FROM (attendance.register_end - NOW())) / 86400.0,
+        0
+      ) AS days_until_registration_closes
+
+    FROM candidate_events
+
+    LEFT JOIN attendance
+      ON attendance.id = candidate_events.attendance_id
+
+    LEFT JOIN attendance_availability
+      ON attendance_availability.attendance_id = candidate_events.attendance_id
+  ),
+
+  score_components AS (
+    SELECT
+      event_features.*,
+
+      -- 50 points if the event starts now, halving every 7 days
+      CASE
+        WHEN NOW() >= start THEN 50.0 -- Event is ongoing
+        ELSE 50.0 * POWER(2.0, -days_until_event / 7.0)
+      END AS proximity_score,
+
+      -- 24 points if no registration is required, including attendance without any attendance pools
+      -- 20 points if registration is not yet open, halving every 7 days
+      -- 28 points if registration is open and space is available
+      -- 10 points if registration is open and full
+      -- 8 points if registration is closed
+      CASE
+        WHEN NOT has_attendance THEN 24.0
+        WHEN NOW() < register_start
+          THEN 20.0 * POWER(2.0, -days_until_registration_opens / 7.0)
+        WHEN NOW() < register_end AND has_available_pool THEN 28.0
+        WHEN NOW() < register_end THEN 10.0
+        ELSE 8.0
+      END AS registration_score,
+
+      -- 8 points if registration is open and space is available, doubling every 2 days until the registration end
+      -- 0 points if registration is closed or no usable attendance exists
+      CASE
+        WHEN has_attendance
+          AND NOW() >= register_start
+          AND NOW() < register_end
+          AND has_available_pool
+          THEN 8.0 * POWER(2.0, -days_until_registration_closes / 2.0)
+        ELSE 0.0
+      END AS registration_deadline_score,
+
+      -- 15 flat points for general assemblies
+      -- 6 flat points for company-backed company or academic events
+      CASE
+        WHEN type = 'GENERAL_ASSEMBLY' THEN 15.0
+        WHEN is_company_backed THEN 6.0
+        ELSE 0.0
+      END AS strategic_priority_score,
+
+      -- Up to 10 points if a company-backed event is open for registration and has space available before the
+      -- registration end
+      CASE
+        WHEN is_company_backed
+          AND has_attendance
+          AND NOW() >= register_start
+          AND NOW() < register_end
+          AND has_available_pool
+          THEN 10.0 * POWER(4.0, -days_until_registration_closes / 2.0)
+        ELSE 0.0
+      END AS company_last_chance_score
+
+    FROM event_features
+  ),
+
+  scored_events AS (
+    SELECT
+      score_components.*,
+
+      proximity_score
+        + registration_score
+        + registration_deadline_score
+        + strategic_priority_score
+        + company_last_chance_score AS featured_score
+
+    FROM score_components
   )
 
-SELECT
-  event.*,
-  COALESCE(capacities.sum, 0) AS total_capacity,
-  COALESCE(attendees.count, 0) AS attendee_count,
-
-  -- 1,2,3: event type buckets
-  CASE event."type"
-    WHEN 'GENERAL_ASSEMBLY' THEN 1
-    WHEN 'COMPANY'          THEN 2
-    WHEN 'ACADEMIC'         THEN 2
-    ELSE 3
-  END AS type_rank,
-
-  -- 1-4: registration buckets
-  CASE
-    -- 1. Future, registration open and not full AND capacities limited (> 0)
-    WHEN event.attendance_id IS NOT NULL
-      AND NOW() BETWEEN attendance.register_start AND attendance.register_end
-      AND COALESCE(capacities.sum, 0) > 0
-      AND COALESCE(attendees.count, 0) < COALESCE(capacities.sum, 0)
-    THEN 1
-
-    -- 2. Future, registration not started yet (capacities doesn't matter)
-    WHEN event.attendance_id IS NOT NULL
-      AND NOW() < attendance.register_start
-    THEN 2
-
-    -- 3. Future, no registration OR unlimited capacities (total capacities = 0)
-    WHEN event.attendance_id IS NULL
-      OR COALESCE(capacities.sum, 0) = 0
-    THEN 3
-
-    -- 4. Future, registration full (status doesn't matter)
-    WHEN event.attendance_id IS NOT NULL
-      AND COALESCE(capacities.sum, 0) > 0
-      AND COALESCE(attendees.count, 0) >= COALESCE(capacities.sum, 0)
-    THEN 4
-
-    -- Fallback: treat as bucket 4
-    ELSE 4
-  END AS registration_bucket
-
-FROM event
-LEFT JOIN "attendance"
-  ON "attendance"."id" = event.attendance_id
-LEFT JOIN capacities
-  ON capacities.attendance_id = event.attendance_id
-LEFT JOIN attendees
-  ON attendees.attendance_id = event.attendance_id
-
-WHERE
-  event.status = 'PUBLIC'
-  -- Past events are not featured
-  AND event.start > NOW()
-
+SELECT *
+FROM scored_events
 ORDER BY
-  type_rank ASC,
-  registration_bucket ASC,
-  -- Tie breaker with earlier events first
-  event."start" ASC
-
+  featured_score DESC,
+  start ASC,
+  id ASC
 OFFSET $1
 LIMIT $2;

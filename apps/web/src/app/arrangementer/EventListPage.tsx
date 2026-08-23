@@ -1,6 +1,7 @@
 "use client"
 
 import { GridIcon } from "@/components/icons/GridIcon"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import {
@@ -28,18 +29,23 @@ import {
 } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
-import { useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { EventList, EventListSkeleton } from "./components/EventList"
+import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
 import { FilterChips } from "./components/filters/FilterChips"
 import { GroupFilter } from "./components/filters/GroupFilter"
 import { SearchInput } from "./components/filters/SearchInput"
 import { SortFilter } from "./components/filters/SortFilter"
 import { TypeFilter } from "./components/filters/TypeFilter"
-import { useEventAllSummariesInfiniteQuery, useEventAllSummariesQuery } from "./components/queries"
+import {
+  useEventAllSummariesByAttendingUserIdInfiniteQuery,
+  useEventAllSummariesInfiniteQuery,
+  useFeaturedEventsInfiniteQuery,
+} from "./components/queries"
 import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
@@ -63,9 +69,11 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
 
   const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
   const { data: groups } = useQuery(trpc.group.all.queryOptions())
+  const { dbUser } = useAuthenticatedUser()
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchBarOpen, setSearchBarOpen] = useState(filters.search.length > 0)
+  const [registeredEventsOpen, setRegisteredEventsOpen] = useState(false)
 
   const queryFilter: EventFilterQuery = useMemo(
     () => ({
@@ -76,7 +84,33 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
     [filters.search, filters.types, filters.groups]
   )
 
-  const { eventDetails: futureEventWithAttendances, isLoading } = useEventAllSummariesQuery({
+  const isAttendanceSort = filters.viewModeSort === "ATTENDANCE"
+
+  const {
+    eventDetails: featuredEventWithAttendances,
+    fetchNextPage: fetchNextFeaturedPage,
+    hasNextPage: hasNextFeaturedPage,
+    isFetchingNextPage: isFetchingNextFeaturedPage,
+    isLoading: isFeaturedLoading,
+  } = useFeaturedEventsInfiniteQuery({
+    filter: {
+      ...queryFilter,
+      byEndDate: {
+        max: null,
+        min: now,
+      },
+    },
+    limit: 20,
+    enabled: isAttendanceSort && isEventListView,
+  })
+
+  const {
+    eventDetails: futureEventSummaries,
+    fetchNextPage: fetchNextFutureSummaryPage,
+    hasNextPage: hasNextFutureSummaryPage,
+    isFetchingNextPage: isFetchingNextFutureSummaryPage,
+    isLoading: isFutureSummariesLoading,
+  } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
       byEndDate: {
@@ -86,11 +120,53 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
       orderBy: "asc",
     },
     page: {
-      take: 1000,
+      take: 20,
     },
+    enabled: !isAttendanceSort && isEventListView,
   })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesInfiniteQuery({
+  const futureEventWithAttendances = isAttendanceSort ? featuredEventWithAttendances : futureEventSummaries
+  const hasNextFuturePage = isAttendanceSort ? hasNextFeaturedPage : hasNextFutureSummaryPage
+  const isFetchingNextFuturePage = isAttendanceSort ? isFetchingNextFeaturedPage : isFetchingNextFutureSummaryPage
+  const isFutureLoading = isAttendanceSort ? isFeaturedLoading : isFutureSummariesLoading
+
+  const {
+    eventDetails: registeredEvents,
+    fetchNextPage: fetchNextRegisteredPage,
+    hasNextPage: hasNextRegisteredPage,
+    isFetchingNextPage: isFetchingNextRegisteredPage,
+  } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
+    id: dbUser?.id ?? "",
+    filter: {
+      ...queryFilter,
+      byEndDate: {
+        max: null,
+        min: now,
+      },
+      orderBy: "asc",
+    },
+    page: {
+      take: 20,
+    },
+    enabled: Boolean(dbUser) && isEventListView,
+  })
+
+  useEffect(() => {
+    if (!registeredEventsOpen || !hasNextRegisteredPage || isFetchingNextRegisteredPage) {
+      return
+    }
+
+    void fetchNextRegisteredPage()
+  }, [fetchNextRegisteredPage, hasNextRegisteredPage, isFetchingNextRegisteredPage, registeredEventsOpen])
+
+  const shouldLoadPastEvents = isEventListView && !isFutureLoading && hasNextFuturePage === false
+  const {
+    eventDetails: pastEventWithAttendances,
+    fetchNextPage: fetchNextPastPage,
+    hasNextPage: hasNextPastPage,
+    isFetchingNextPage: isFetchingNextPastPage,
+    isLoading: isPastLoading,
+  } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
       byEndDate: {
@@ -99,7 +175,33 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
       },
       orderBy: "desc",
     },
+    page: {
+      take: 20,
+    },
+    enabled: shouldLoadPastEvents,
   })
+
+  const fetchNextPage = useCallback(() => {
+    if (hasNextFuturePage && !isFetchingNextFuturePage) {
+      void (isAttendanceSort ? fetchNextFeaturedPage() : fetchNextFutureSummaryPage())
+      return
+    }
+
+    if (hasNextPastPage && !isFetchingNextPastPage) {
+      void fetchNextPastPage()
+    }
+  }, [
+    fetchNextFeaturedPage,
+    fetchNextFutureSummaryPage,
+    fetchNextPastPage,
+    hasNextFuturePage,
+    hasNextPastPage,
+    isAttendanceSort,
+    isFetchingNextFuturePage,
+    isFetchingNextPastPage,
+  ])
+
+  const isLoading = isFutureLoading || (futureEventWithAttendances.length === 0 && isPastLoading)
 
   const hasActiveFilters =
     filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewModeSort !== "ATTENDANCE"
@@ -342,13 +444,24 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
               />
             )}
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-4">
+              {dbUser && (
+                <RegisteredEventsCard
+                  eventsWithAttendance={registeredEvents}
+                  displayMode={isCards ? "cards" : "list"}
+                  userId={dbUser.id}
+                  hasMoreEvents={hasNextRegisteredPage ?? false}
+                  open={registeredEventsOpen}
+                  onOpenChange={setRegisteredEventsOpen}
+                />
+              )}
+
               {!isLoading && (
                 <EventList
                   futureEventWithAttendances={futureEventWithAttendances}
                   pastEventWithAttendances={pastEventWithAttendances}
                   onLoadMore={fetchNextPage}
-                  viewMode={filters.viewModeSort}
+                  viewMode="CHRONOLOGICAL"
                   displayMode={isCards ? "cards" : "list"}
                 />
               )}

@@ -92,7 +92,7 @@ export interface EventRepository {
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
-  findFeaturedEvents(handle: DBHandle, offset: number, limit: number): Promise<BaseEvent[]>
+  findFeaturedEvents(handle: DBHandle, query: EventFilterQuery, offset: number, limit: number): Promise<BaseEvent[]>
 
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
@@ -422,23 +422,27 @@ export function getEventRepository(): EventRepository {
       return attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
     },
 
-    async findFeaturedEvents(handle, offset, limit) {
-      /*
-        Events will primarily be ranked by their type in the following order (lower number is higher ranking):
-          1. GENERAL_ASSEMBLY
-          2. COMPANY, ACADEMIC
-          3. SOCIAL, INTERNAL, OTHER, WELCOME
-
-        Within each bucket they will be ranked like this (lower number is higher ranking):
-          1. Event in future, registration open and not full, AND attendance capacity is limited (>0)
-          2. Event in future, AND registration not started yet (attendance capacity does not matter)
-          3. Event in future, AND (no attendance registration OR attendance capacity is unlimited (=0))
-          4. Event in future, AND registration full (registration status (open/closed etc.) does not matter)
-
-        Past events are not featured. We would rather have no featured events than "stale" events.
-       */
-
-      const events = await handle.$queryRawTyped(sql.findFeaturedEvents(offset, limit))
+    async findFeaturedEvents(handle, query, offset, limit) {
+      const events = await handle.$queryRawTyped(
+        sql.findFeaturedEvents(
+          offset,
+          limit,
+          query.byStatus?.length ? query.byStatus : ["PUBLIC"],
+          query.byStartDate?.min ?? null,
+          query.byStartDate?.max ?? null,
+          query.byEndDate?.min ?? null,
+          query.byEndDate?.max ?? null,
+          query.bySearchTerm ?? null,
+          query.byId ?? [],
+          query.byType ?? [],
+          query.excludingChildEvents ?? false,
+          query.byOrganizingCompany ?? [],
+          query.byOrganizingGroup ?? [],
+          query.excludingOrganizingGroup ?? [],
+          query.excludingType ?? ["INTERNAL"],
+          query.byHasFeedbackForm ?? null
+        )
+      )
 
       return parseOrReport(
         z.preprocess((data) => snakeCaseToCamelCase(data), BaseEventSchema.array()),

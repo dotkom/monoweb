@@ -9,11 +9,25 @@ import { type $DbEnums } from "./$DbEnums"
 /**
  * @param offset
  * @param limit
+ * @param _event_status
+ * @param byStartDateMin
+ * @param byStartDateMax
+ * @param byEndDateMin
+ * @param byEndDateMax
+ * @param bySearchTerm
+ * @param _text
+ * @param _event_type
+ * @param excludingChildEvents
+ * @param _text
+ * @param _text
+ * @param _text
+ * @param _event_type
+ * @param byHasFeedbackForm
  */
-export const findFeaturedEvents = $runtime.makeTypedQueryFactory("\n\n\n\nWITH\ncapacities AS (\nSELECT\nattendance_id,\nSUM(\"capacity\") AS sum\nFROM attendance_pool\nGROUP BY attendance_id\n),\n\nattendees AS (\nSELECT\nattendance_id,\nCOUNT(*) AS count\nFROM attendee\nGROUP BY attendance_id\n)\n\nSELECT\nevent.*,\nCOALESCE(capacities.sum, 0) AS total_capacity,\nCOALESCE(attendees.count, 0) AS attendee_count,\n\nCASE event.\"type\"\nWHEN 'GENERAL_ASSEMBLY' THEN 1\nWHEN 'COMPANY'          THEN 2\nWHEN 'ACADEMIC'         THEN 2\nELSE 3\nEND AS type_rank,\n\nCASE\nWHEN event.attendance_id IS NOT NULL\nAND NOW() BETWEEN attendance.register_start AND attendance.register_end\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) < COALESCE(capacities.sum, 0)\nTHEN 1\n\nWHEN event.attendance_id IS NOT NULL\nAND NOW() < attendance.register_start\nTHEN 2\n\nWHEN event.attendance_id IS NULL\nOR COALESCE(capacities.sum, 0) = 0\nTHEN 3\n\nWHEN event.attendance_id IS NOT NULL\nAND COALESCE(capacities.sum, 0) > 0\nAND COALESCE(attendees.count, 0) >= COALESCE(capacities.sum, 0)\nTHEN 4\n\nELSE 4\nEND AS registration_bucket\n\nFROM event\nLEFT JOIN \"attendance\"\nON \"attendance\".\"id\" = event.attendance_id\nLEFT JOIN capacities\nON capacities.attendance_id = event.attendance_id\nLEFT JOIN attendees\nON attendees.attendance_id = event.attendance_id\n\nWHERE\nevent.status = 'PUBLIC'\nAND event.start > NOW()\n\nORDER BY\ntype_rank ASC,\nregistration_bucket ASC,\nevent.\"start\" ASC\n\nOFFSET $1\nLIMIT $2;") as (offset: number, limit: number) => $runtime.TypedSql<findFeaturedEvents.Parameters, findFeaturedEvents.Result>
+export const findFeaturedEvents = $runtime.makeTypedQueryFactory("\n\n\n\n\nWITH\ncandidate_events AS (\nSELECT *\nFROM event\nWHERE\nevent.status = ANY($3::event_status[])\nAND event.end > NOW()\nAND ($4::timestamptz IS NULL OR event.start >= $4)\nAND ($5::timestamptz IS NULL OR event.start <= $5)\nAND ($6::timestamptz IS NULL OR event.end >= $6)\nAND ($7::timestamptz IS NULL OR event.end <= $7)\nAND ($8::text IS NULL OR event.title ILIKE '%' || $8 || '%')\nAND (cardinality($9::text[]) = 0 OR event.id = ANY($9))\nAND (cardinality($10::event_type[]) = 0 OR event.type = ANY($10))\nAND (NOT $11::boolean OR event.parent_id IS NULL)\nAND (\n(\ncardinality($12::text[]) = 0\nAND cardinality($13::text[]) = 0\n)\nOR EXISTS (\nSELECT 1\nFROM event_company\nWHERE\nevent_company.event_id = event.id\nAND event_company.company_id = ANY($12)\n)\nOR EXISTS (\nSELECT 1\nFROM event_hosting_group\nWHERE\nevent_hosting_group.event_id = event.id\nAND event_hosting_group.group_id = ANY($13)\n)\n)\nAND (\ncardinality($14::text[]) = 0\nOR NOT EXISTS (\nSELECT 1\nFROM event_hosting_group\nWHERE\nevent_hosting_group.event_id = event.id\nAND event_hosting_group.group_id = ANY($14)\n)\n)\nAND (\ncardinality($15::event_type[]) = 0\nOR event.type <> ALL($15)\n)\nAND (\n$16::boolean IS NULL\nOR $16 = EXISTS (\nSELECT 1\nFROM feedback_form\nWHERE feedback_form.event_id = event.id\n)\n)\n),\n\ncandidate_attendances AS (\nSELECT DISTINCT attendance_id\nFROM candidate_events\nWHERE attendance_id IS NOT NULL\n),\n\nreserved_attendees AS (\nSELECT\nattendee.attendance_pool_id,\nCOUNT(*) AS reserved_count\nFROM attendee\nINNER JOIN candidate_attendances\nON candidate_attendances.attendance_id = attendee.attendance_id\nWHERE attendee.reserved = TRUE\nGROUP BY attendee.attendance_pool_id\n),\n\nattendance_availability AS (\nSELECT\nattendance_pool.attendance_id,\nBOOL_OR(\nattendance_pool.capacity = 0\nOR COALESCE(reserved_attendees.reserved_count, 0) < attendance_pool.capacity\n) AS has_available_pool\nFROM attendance_pool\nINNER JOIN candidate_attendances\nON candidate_attendances.attendance_id = attendance_pool.attendance_id\nLEFT JOIN reserved_attendees\nON reserved_attendees.attendance_pool_id = attendance_pool.id\nGROUP BY attendance_pool.attendance_id\n),\n\nevent_features AS (\nSELECT\ncandidate_events.*,\n\n(\ncandidate_events.attendance_id IS NOT NULL\nAND attendance_availability.attendance_id IS NOT NULL\n) AS has_attendance,\n\nattendance.register_start,\nattendance.register_end,\nCOALESCE(attendance_availability.has_available_pool, FALSE) AS has_available_pool,\n\n(\ncandidate_events.type IN ('COMPANY', 'ACADEMIC')\nAND EXISTS (\nSELECT 1\nFROM event_company\nWHERE event_company.event_id = candidate_events.id\n)\n) AS is_company_backed,\n\nGREATEST(\nEXTRACT(EPOCH FROM (candidate_events.start - NOW())) / 86400.0,\n0\n) AS days_until_event,\n\nGREATEST(\nEXTRACT(EPOCH FROM (attendance.register_start - NOW())) / 86400.0,\n0\n) AS days_until_registration_opens,\n\nGREATEST(\nEXTRACT(EPOCH FROM (attendance.register_end - NOW())) / 86400.0,\n0\n) AS days_until_registration_closes\n\nFROM candidate_events\n\nLEFT JOIN attendance\nON attendance.id = candidate_events.attendance_id\n\nLEFT JOIN attendance_availability\nON attendance_availability.attendance_id = candidate_events.attendance_id\n),\n\nscore_components AS (\nSELECT\nevent_features.*,\n\nCASE\nWHEN NOW() >= start THEN 50.0 -- Event is ongoing\nELSE 50.0 * POWER(2.0, -days_until_event / 7.0)\nEND AS proximity_score,\n\nCASE\nWHEN NOT has_attendance THEN 24.0\nWHEN NOW() < register_start\nTHEN 20.0 * POWER(2.0, -days_until_registration_opens / 7.0)\nWHEN NOW() < register_end AND has_available_pool THEN 28.0\nWHEN NOW() < register_end THEN 10.0\nELSE 8.0\nEND AS registration_score,\n\nCASE\nWHEN has_attendance\nAND NOW() >= register_start\nAND NOW() < register_end\nAND has_available_pool\nTHEN 8.0 * POWER(2.0, -days_until_registration_closes / 2.0)\nELSE 0.0\nEND AS registration_deadline_score,\n\nCASE\nWHEN type = 'GENERAL_ASSEMBLY' THEN 15.0\nWHEN is_company_backed THEN 6.0\nELSE 0.0\nEND AS strategic_priority_score,\n\nCASE\nWHEN is_company_backed\nAND has_attendance\nAND NOW() >= register_start\nAND NOW() < register_end\nAND has_available_pool\nTHEN 10.0 * POWER(4.0, -days_until_registration_closes / 2.0)\nELSE 0.0\nEND AS company_last_chance_score\n\nFROM event_features\n),\n\nscored_events AS (\nSELECT\nscore_components.*,\n\nproximity_score\n+ registration_score\n+ registration_deadline_score\n+ strategic_priority_score\n+ company_last_chance_score AS featured_score\n\nFROM score_components\n)\n\nSELECT *\nFROM scored_events\nORDER BY\nfeatured_score DESC,\nstart ASC,\nid ASC\nOFFSET $1\nLIMIT $2;") as (offset: number, limit: number, _event_status: string[], byStartDateMin: Date | null, byStartDateMax: Date | null, byEndDateMin: Date | null, byEndDateMax: Date | null, bySearchTerm: string | null, _text: string[], _event_type: string[], excludingChildEvents: boolean, _text: string[], _text: string[], _text: string[], _event_type: string[], byHasFeedbackForm: boolean | null) => $runtime.TypedSql<findFeaturedEvents.Parameters, findFeaturedEvents.Result>
 
 export namespace findFeaturedEvents {
-  export type Parameters = [offset: number, limit: number]
+  export type Parameters = [offset: number, limit: number, _event_status: string[], byStartDateMin: Date | null, byStartDateMax: Date | null, byEndDateMin: Date | null, byEndDateMax: Date | null, bySearchTerm: string | null, _text: string[], _event_type: string[], excludingChildEvents: boolean, _text: string[], _text: string[], _text: string[], _event_type: string[], byHasFeedbackForm: boolean | null]
   export type Result = {
     id: string
     title: string
@@ -34,9 +48,19 @@ export namespace findFeaturedEvents {
     parent_id: string | null
     mark_for_missed_attendance: boolean
     contest_id: string | null
-    total_capacity: bigint | null
-    attendee_count: bigint | null
-    type_rank: number | null
-    registration_bucket: number | null
+    has_attendance: boolean | null
+    register_start: Date
+    register_end: Date
+    has_available_pool: boolean | null
+    is_company_backed: boolean | null
+    days_until_event: $runtime.Decimal | null
+    days_until_registration_opens: $runtime.Decimal | null
+    days_until_registration_closes: $runtime.Decimal | null
+    proximity_score: $runtime.Decimal | null
+    registration_score: $runtime.Decimal | null
+    registration_deadline_score: $runtime.Decimal | null
+    strategic_priority_score: $runtime.Decimal | null
+    company_last_chance_score: $runtime.Decimal | null
+    featured_score: $runtime.Decimal | null
   }
 }
