@@ -18,7 +18,7 @@ export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 export type EventListDisplayMode = "cards" | "list"
 
-type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
+export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
 
 interface EventListProps {
   futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
@@ -42,7 +42,7 @@ interface EventSection {
   eventsWithAttendance: EventWithAttendanceDetails[]
 }
 
-const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, userId }) => {
+export const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, userId }) => {
   if (displayMode === "cards") {
     return (
       <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
@@ -60,11 +60,11 @@ const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, us
 
 const Divider = ({ text }: { text: string }) => (
   <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:-my-1">
-    <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
+    <span className="h-0.5 grow rounded-full bg-gray-200 dark:bg-stone-700" />
     <Text className="shrink-0 select-none text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-stone-600">
       {text}
     </Text>
-    <span className="h-[2px] grow rounded-full bg-gray-200 dark:bg-stone-700" />
+    <span className="h-0.5 grow rounded-full bg-gray-200 dark:bg-stone-700" />
   </div>
 )
 

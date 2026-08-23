@@ -559,15 +559,41 @@ const findFeaturedEventsProcedure = procedure
   .input(
     z
       .object({
-        offset: z.number().min(0).default(0),
-        limit: z.number().min(1).max(100).default(10),
+        offset: z.int().min(0).default(0),
+        cursor: z.int().min(0).optional(),
+        limit: z.int().min(1).max(100).default(10),
+        filter: EventFilterQuerySchema.optional(),
       })
       .default({ offset: 0, limit: 1 })
   )
-  .output(z.object({ event: BaseEventSchema, attendance: AttendanceSummarySchema.nullable() }).array())
+  .output(
+    z
+      .object({
+        event: BaseEventSchema,
+        attendance: AttendanceSummarySchema.nullable(),
+      })
+      .array()
+  )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.findFeaturedEvents(ctx.handle, input.offset, input.limit)
+    const principal = ctx.principal
+    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+
+    let excludingType = input.filter?.excludingType ?? []
+
+    if (!isStaff && !excludingType.includes("INTERNAL")) {
+      excludingType = [...excludingType, "INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findFeaturedEvents(
+      ctx.handle,
+      {
+        ...input.filter,
+        excludingType,
+      },
+      input.cursor ?? input.offset,
+      input.limit
+    )
 
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,

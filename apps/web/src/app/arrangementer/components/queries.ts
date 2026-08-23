@@ -34,17 +34,47 @@ export const useEventAllSummariesQuery = ({ filter, page, enabled }: UseEventAll
 
 export const useEventAllSummariesInfiniteQuery = ({ filter, page, enabled }: UseEventAllSummariesQueryProps) => {
   const trpc = useTRPC()
+  const take = page?.take ?? 20
 
   const { data, ...query } = useInfiniteQuery({
     ...trpc.event.allSummaries.infiniteQueryOptions({
       filter,
       ...page,
     }),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => (lastPage.items.length < take ? undefined : lastPage.nextCursor),
     enabled,
   })
 
   const eventDetails = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
+
+  return { eventDetails, ...query }
+}
+
+interface UseFeaturedEventsInfiniteQueryProps {
+  filter?: EventFilterQuery
+  limit?: number
+  enabled?: boolean
+}
+
+export const useFeaturedEventsInfiniteQuery = ({
+  filter,
+  limit = 20,
+  enabled,
+}: UseFeaturedEventsInfiniteQueryProps = {}) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.findFeaturedEvents.infiniteQueryOptions({
+      filter,
+      cursor: 0,
+      offset: 0,
+      limit,
+    }),
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length < limit ? undefined : pages.reduce((total, page) => total + page.length, 0),
+    enabled,
+  })
+
+  const eventDetails = useMemo(() => data?.pages.flat() ?? [], [data])
 
   return { eventDetails, ...query }
 }
@@ -56,6 +86,7 @@ export const useEventAllSummariesByAttendingUserIdInfiniteQuery = ({
   enabled,
 }: UseEventAllByAttendingUserIdQueryProps) => {
   const trpc = useTRPC()
+  const take = page?.take ?? 20
 
   const { data, ...query } = useInfiniteQuery({
     ...trpc.event.allSummariesByAttendingUserId.infiniteQueryOptions({
@@ -63,7 +94,7 @@ export const useEventAllSummariesByAttendingUserIdInfiniteQuery = ({
       filter,
       ...page,
     }),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => (lastPage.items.length < take ? undefined : lastPage.nextCursor),
     enabled,
   })
 
