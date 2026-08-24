@@ -1,7 +1,7 @@
 import { Text, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
-import { formatDate, isSameDay, isSameMonth, isSameYear } from "date-fns"
+import { formatDate, isSameDay, isSameMonth, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
 
 interface CalendarBoxProps {
@@ -118,6 +118,8 @@ export const CalendarBox = ({
   arrowClassName,
   includeWeekday = false,
 }: CalendarBoxProps) => {
+  const thisYear = isThisYear(start) && isThisYear(end)
+
   const startDate = getCalendarDateParts(start)
   const endDate = getCalendarDateParts(end)
 
@@ -134,11 +136,15 @@ export const CalendarBox = ({
     includeWeekday,
   }
 
+  const showYear = !isSameYear(start, end) || !thisYear
+  const startMonthLabel = showYear ? `${startDate.month} ${startDate.year}` : startDate.month
+  const endMonthLabel = showYear ? `${endDate.month} ${endDate.year}` : endDate.month
+
   if (isSameDay(start, end)) {
     return (
       <CalendarPage
         {...sharedPageProps}
-        monthLabel={startDate.month}
+        monthLabel={startMonthLabel}
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
         className={cn("min-w-11 dark:border-stone-800", className)}
@@ -151,7 +157,7 @@ export const CalendarBox = ({
     return (
       <CalendarPage
         {...sharedPageProps}
-        monthLabel={startDate.month}
+        monthLabel={startMonthLabel}
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
         endDay={endDate.day}
@@ -163,10 +169,6 @@ export const CalendarBox = ({
     )
   }
 
-  const datesShareYear = isSameYear(start, end)
-  const startMonthLabel = datesShareYear ? startDate.month : `${startDate.month} ${startDate.year}`
-  const endMonthLabel = datesShareYear ? endDate.month : `${endDate.month} ${endDate.year}`
-
   return (
     <div className={cn("flex flex-row items-center gap-0.5", containerClassName)}>
       <CalendarPage
@@ -175,8 +177,8 @@ export const CalendarBox = ({
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
         className={cn("dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", !datesShareYear && "px-1", titleClassName)}
-        titleTextClassName={cn(!datesShareYear && "text-nowrap", titleTextClassName)}
+        titleClassName={cn("dark:bg-stone-800", showYear && "px-1", titleClassName)}
+        titleTextClassName={cn(showYear && "text-nowrap", titleTextClassName)}
       />
 
       <IconArrowRight className={cn("size-3.5 text-muted-foreground", arrowClassName)} />
@@ -187,8 +189,8 @@ export const CalendarBox = ({
         startDay={endDate.day}
         startDayWeekday={endDayWeekday}
         className={cn("dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", !datesShareYear && "px-1", titleClassName)}
-        titleTextClassName={cn(!datesShareYear && "text-nowrap", titleTextClassName)}
+        titleClassName={cn("dark:bg-stone-800", showYear && "px-1", titleClassName)}
+        titleTextClassName={cn(showYear && "text-nowrap", titleTextClassName)}
       />
     </div>
   )
