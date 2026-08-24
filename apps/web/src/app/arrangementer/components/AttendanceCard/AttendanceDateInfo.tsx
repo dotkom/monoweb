@@ -1,5 +1,6 @@
 import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
 import { Text, cn } from "@dotkomonline/ui"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconLock, IconLockOpen2, IconSquareX } from "@tabler/icons-react"
 import { format as formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -7,7 +8,9 @@ import React from "react"
 
 const dateComponent = (label: string, date: Date, time: string, showNotice?: boolean, icon?: React.ReactNode) => {
   const shortDateStr = formatDate(date, isThisYear(date) ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
-  const longDateStr = formatDate(date, isThisYear(date) ? "dd. MMMM" : "dd.MM.yyyy", { locale: nb })
+  const longDateStr = capitalizeFirstLetter(
+    formatDate(date, isThisYear(date) ? "EEE dd. MMM" : "dd.MM.yyyy", { locale: nb })
+  )
 
   return (
     <div className="flex flex-col gap-0">

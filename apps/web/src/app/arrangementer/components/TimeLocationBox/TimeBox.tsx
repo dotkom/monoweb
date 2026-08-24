@@ -29,7 +29,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
   const isSame = isSameDay(start, end)
 
   const shortDate = (date: Date) => formatDate(date, "dd. MMM", { locale: nb })
-  const longDate = (date: Date) => capitalizeFirstLetter(formatDate(date, "cccc dd. MMMM", { locale: nb }))
+  const longDate = (date: Date) => capitalizeFirstLetter(formatDate(date, "EEEE dd. MMMM", { locale: nb }))
 
   return (
     <Link
@@ -59,14 +59,16 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
       ) : (
         <div className="flex min-w-0 flex-row items-center gap-x-2 sm:gap-x-4">
           <div className="flex min-w-0 flex-col">
-            <Text className="truncate">{shortDate(start)}</Text>
+            <Text className="truncate text-xs text-muted-foreground">{shortDate(start)}</Text>
+            <Text className="truncate">{capitalizeFirstLetter(formatDate(start, "EEEE", { locale: nb }))}</Text>
             <Text className="truncate">kl. {formatDate(start, "HH:mm", { locale: nb })}</Text>
           </div>
 
-          <IconArrowRight className="size-5 shrink-0 text-gray-600 dark:text-stone-400 sm:size-6" />
+          <IconArrowRight className="size-5 shrink-0 text-muted-foreground sm:size-6" />
 
           <div className="flex min-w-0 flex-col">
-            <Text className="truncate">{shortDate(end)}</Text>
+            <Text className="truncate text-xs text-muted-foreground">{shortDate(end)}</Text>
+            <Text className="truncate">{capitalizeFirstLetter(formatDate(end, "EEEE", { locale: nb }))}</Text>
             <Text className="truncate">kl. {formatDate(end, "HH:mm", { locale: nb })}</Text>
           </div>
         </div>
