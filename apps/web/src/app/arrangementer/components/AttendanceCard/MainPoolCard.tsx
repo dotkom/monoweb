@@ -17,7 +17,7 @@ import {
   IconArrowForward,
   IconArrowUpRight,
   IconCheck,
-  IconClock,
+  IconCircleDashedCheck,
   IconCoins,
   IconHourglassEmpty,
   IconUserX,
@@ -303,7 +303,7 @@ const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
 
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconClock className="size-[1.25em] dark:text-indigo-400" />
+      <IconCircleDashedCheck className="size-[1.25em] dark:text-indigo-400" />
       <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
     </div>
   )
