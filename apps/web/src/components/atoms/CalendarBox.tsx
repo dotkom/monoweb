@@ -1,4 +1,5 @@
 import { Text, cn } from "@dotkomonline/ui"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { formatDate, isSameDay, isSameMonth, isSameYear } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -12,7 +13,9 @@ interface CalendarBoxProps {
   titleTextClassName?: string
   dayClassName?: string
   dayTextClassName?: string
+  weekdayTextClassName?: string
   arrowClassName?: string
+  includeWeekday?: boolean
 }
 
 interface CalendarDateParts {
@@ -25,12 +28,16 @@ interface CalendarPageProps {
   monthLabel: string
   startDay: string
   endDay?: string
+  startDayWeekday?: string
+  endDayWeekday?: string
   className?: string
   titleClassName?: string
   titleTextClassName?: string
   dayClassName?: string
   dayTextClassName?: string
+  weekdayTextClassName?: string
   arrowClassName?: string
+  includeWeekday?: boolean
 }
 
 const getCalendarDateParts = (date: Date): CalendarDateParts => ({
@@ -43,12 +50,16 @@ const CalendarPage = ({
   monthLabel,
   startDay,
   endDay,
+  startDayWeekday,
+  endDayWeekday,
   className,
   titleClassName,
   titleTextClassName,
   dayClassName,
   dayTextClassName,
+  weekdayTextClassName,
   arrowClassName,
+  includeWeekday,
 }: CalendarPageProps) => (
   <div
     className={cn(
@@ -69,13 +80,25 @@ const CalendarPage = ({
       </Text>
     </div>
 
-    <div className={cn("flex flex-row items-center px-1 py-0.5", dayClassName)}>
-      <Text className={cn("text-base", dayTextClassName)}>{startDay}</Text>
+    <div className={cn("flex flex-row items-baseline px-1 py-0.5", dayClassName)}>
+      <div className="flex flex-col items-center">
+        <Text className={cn("text-base/4", dayTextClassName)}>{startDay}</Text>
+        {includeWeekday && (
+          <Text className={cn("text-[0.625rem]/3 text-muted-foreground", weekdayTextClassName)}>{startDayWeekday}</Text>
+        )}
+      </div>
 
       {endDay && (
         <>
           <IconArrowRight className={cn("size-3 text-muted-foreground", arrowClassName)} />
-          <Text className={cn("text-base", dayTextClassName)}>{endDay}</Text>
+          <div className="flex flex-col items-center">
+            <Text className={cn("text-base/4", dayTextClassName)}>{endDay}</Text>
+            {includeWeekday && (
+              <Text className={cn("text-[0.625rem]/3 text-muted-foreground", weekdayTextClassName)}>
+                {endDayWeekday}
+              </Text>
+            )}
+          </div>
         </>
       )}
     </div>
@@ -91,17 +114,24 @@ export const CalendarBox = ({
   titleTextClassName,
   dayClassName,
   dayTextClassName,
+  weekdayTextClassName,
   arrowClassName,
+  includeWeekday = false,
 }: CalendarBoxProps) => {
   const startDate = getCalendarDateParts(start)
   const endDate = getCalendarDateParts(end)
+
+  const startDayWeekday = capitalizeFirstLetter(formatDate(start, "EEE", { locale: nb }))
+  const endDayWeekday = capitalizeFirstLetter(formatDate(end, "EEE", { locale: nb }))
 
   const sharedPageProps = {
     titleClassName,
     titleTextClassName,
     dayClassName,
     dayTextClassName,
+    weekdayTextClassName,
     arrowClassName,
+    includeWeekday,
   }
 
   if (isSameDay(start, end)) {
@@ -110,6 +140,7 @@ export const CalendarBox = ({
         {...sharedPageProps}
         monthLabel={startDate.month}
         startDay={startDate.day}
+        startDayWeekday={startDayWeekday}
         className={cn("min-w-11 dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
@@ -122,7 +153,9 @@ export const CalendarBox = ({
         {...sharedPageProps}
         monthLabel={startDate.month}
         startDay={startDate.day}
+        startDayWeekday={startDayWeekday}
         endDay={endDate.day}
+        endDayWeekday={endDayWeekday}
         className={cn("min-w-11 dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
         dayClassName={cn("px-2", dayClassName)}
@@ -140,6 +173,7 @@ export const CalendarBox = ({
         {...sharedPageProps}
         monthLabel={startMonthLabel}
         startDay={startDate.day}
+        startDayWeekday={startDayWeekday}
         className={cn("dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", !datesShareYear && "px-1", titleClassName)}
         titleTextClassName={cn(!datesShareYear && "text-nowrap", titleTextClassName)}
@@ -151,6 +185,7 @@ export const CalendarBox = ({
         {...sharedPageProps}
         monthLabel={endMonthLabel}
         startDay={endDate.day}
+        startDayWeekday={endDayWeekday}
         className={cn("dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", !datesShareYear && "px-1", titleClassName)}
         titleTextClassName={cn(!datesShareYear && "text-nowrap", titleTextClassName)}
