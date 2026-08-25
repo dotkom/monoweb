@@ -3,7 +3,7 @@
 import type { Event } from "@dotkomonline/rpc/event"
 import { cn, Text } from "@dotkomonline/ui"
 import { IconArrowRight, IconArrowUpRight } from "@tabler/icons-react"
-import { format as formatDate, isSameDay } from "date-fns"
+import { format as formatDate, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { createGoogleCalendarLink } from "./utils"
@@ -26,10 +26,12 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
     end,
   })
 
-  const isSame = isSameDay(start, end)
+  const sameDay = isSameDay(start, end)
+  const showYear = !isSameYear(start, end) || !isThisYear(start) || !isThisYear(end)
 
-  const shortDate = (date: Date) => formatDate(date, "dd. MMM", { locale: nb })
-  const longDate = (date: Date) => capitalizeFirstLetter(formatDate(date, "EEEE dd. MMMM", { locale: nb }))
+  const shortDate = (date: Date) => formatDate(date, showYear ? "dd.MM.yyyy" : "dd. MMM", { locale: nb })
+  const longDate = (date: Date) =>
+    capitalizeFirstLetter(formatDate(date, showYear ? "dd.MM.yyyy" : "EEEE dd. MMMM", { locale: nb }))
 
   return (
     <Link
@@ -49,7 +51,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
         titleClassName="transition-colors"
       />
 
-      {isSame ? (
+      {sameDay ? (
         <div className="flex min-w-0 flex-col">
           <Text className="truncate">{longDate(start)}</Text>
           <Text className="truncate">

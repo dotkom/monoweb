@@ -1,6 +1,7 @@
 "use client"
 
 import { Text, cn } from "@dotkomonline/ui"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarEvent } from "@tabler/icons-react"
 import { differenceInDays, formatDate, isPast, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -15,14 +16,18 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
   const withinAWeek = Math.abs(differenceInDays(start, new Date())) < 7
   const excludeYear = isSameYear(start, end) && isThisYear(start)
   const past = isPast(end)
-
-  const singleDay = isSameDay(start, end)
   const showTime = withinAWeek && !past
+  const singleDay = isSameDay(start, end)
+  const ongoing = isPast(start) && !past
+
   const startDate = formatDate(start, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
   const endDate = formatDate(end, excludeYear ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
   const startTime = formatDate(start, "HH:mm", { locale: nb })
   const endTime = formatDate(end, "HH:mm", { locale: nb })
-  const ongoing = isPast(start) && !past
+
+  const startDateWithWeekday = capitalizeFirstLetter(
+    formatDate(start, excludeYear ? "EEE dd. MMM" : "dd.MM.yyyy", { locale: nb })
+  )
 
   if (singleDay || ongoing) {
     return (
@@ -39,7 +44,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end }) =
           <Text>Pågår nå</Text>
         ) : (
           <div className="flex flex-col md:flex-row md:gap-1">
-            <Text>{startDate}</Text>
+            <Text>{startDateWithWeekday}</Text>
 
             {showTime && (
               <Text>
