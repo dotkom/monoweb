@@ -1,3 +1,4 @@
+import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
 import { Text } from "@dotkomonline/ui"
 import {
   createAttendanceWithPaymentCountdown,
@@ -13,6 +14,56 @@ export default {
   component: AttendanceStatus,
 }
 
+const sizeOptions = [
+  { size: "sm", label: "Small" },
+  { size: "default", label: "Default" },
+  { size: "lg", label: "Large" },
+] as const
+
+interface StateShowcaseProps {
+  label: string
+  withCapacityAttendance: Attendance
+  withCapacityAttendee: Attendee | null
+  withoutCapacityAttendance: Attendance
+  withoutCapacityAttendee: Attendee | null
+  eventEndInPast: boolean
+}
+
+const StateShowcase = ({
+  label,
+  withCapacityAttendance,
+  withCapacityAttendee,
+  withoutCapacityAttendance,
+  withoutCapacityAttendee,
+  eventEndInPast,
+}: StateShowcaseProps) => (
+  <div className="flex flex-col gap-3">
+    <Text className="text-sm text-muted-foreground">{label}</Text>
+
+    {sizeOptions.map((sizeOption) => (
+      <div key={sizeOption.size} className="flex flex-row items-start gap-4">
+        <Text className="text-xs text-muted-foreground w-16 shrink-0 pt-1">{sizeOption.label}</Text>
+
+        <div className="flex flex-col gap-2">
+          <AttendanceStatus
+            attendance={withCapacityAttendance}
+            attendee={withCapacityAttendee}
+            eventEndInPast={eventEndInPast}
+            size={sizeOption.size}
+          />
+
+          <AttendanceStatus
+            attendance={withoutCapacityAttendance}
+            attendee={withoutCapacityAttendee}
+            eventEndInPast={eventEndInPast}
+            size={sizeOption.size}
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+)
+
 export const AllStates = () => {
   const user = createMockUser()
   const reservedAttendee = createMockAttendee({ user, reserved: true })
@@ -21,166 +72,81 @@ export const AllStates = () => {
   const { attendance: lockedAttendance, attendee: lockedAttendee } = createLockedDeregisterAttendance()
 
   const paymentAttendance = createAttendanceWithPaymentCountdown()
-  const paymentAttendee = paymentAttendance.attendees[0]
+  const paymentAttendee = paymentAttendance.attendees[0] ?? null
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl">
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Open</Text>
+      <StateShowcase
+        label="Open"
+        withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
+        withCapacityAttendee={null}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
+        withoutCapacityAttendee={null}
+        eventEndInPast={false}
+      />
 
-        <AttendanceStatus
-          attendance={createMockAttendance({ status: "OPEN" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
+      <StateShowcase
+        label="Not opened"
+        withCapacityAttendance={createMockAttendance({ status: "NOT_OPENED" })}
+        withCapacityAttendee={null}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "NOT_OPENED" })}
+        withoutCapacityAttendee={null}
+        eventEndInPast={false}
+      />
 
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
-      </div>
+      <StateShowcase
+        label="Closed"
+        withCapacityAttendance={createMockAttendance({ status: "CLOSED" })}
+        withCapacityAttendee={null}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "CLOSED" })}
+        withoutCapacityAttendee={null}
+        eventEndInPast={false}
+      />
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Not opened</Text>
+      <StateShowcase
+        label="Reserved attendee"
+        withCapacityAttendance={createMockAttendance({ attendees: [reservedAttendee] })}
+        withCapacityAttendee={reservedAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [reservedAttendee] })}
+        withoutCapacityAttendee={reservedAttendee}
+        eventEndInPast={false}
+      />
 
-        <AttendanceStatus
-          attendance={createMockAttendance({ status: "NOT_OPENED" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
+      <StateShowcase
+        label="Waitlist attendee"
+        withCapacityAttendance={createMockAttendance({ attendees: [waitlistAttendee] })}
+        withCapacityAttendee={waitlistAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [waitlistAttendee] })}
+        withoutCapacityAttendee={waitlistAttendee}
+        eventEndInPast={false}
+      />
 
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, status: "NOT_OPENED" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
-      </div>
+      <StateShowcase
+        label="After deregister deadline"
+        withCapacityAttendance={lockedAttendance}
+        withCapacityAttendee={lockedAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [lockedAttendee] })}
+        withoutCapacityAttendee={lockedAttendee}
+        eventEndInPast={false}
+      />
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Closed</Text>
+      <StateShowcase
+        label="Payment countdown"
+        withCapacityAttendance={paymentAttendance}
+        withCapacityAttendee={paymentAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [paymentAttendee] })}
+        withoutCapacityAttendee={paymentAttendee}
+        eventEndInPast={false}
+      />
 
-        <AttendanceStatus
-          attendance={createMockAttendance({ status: "CLOSED" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, status: "CLOSED" })}
-          attendee={null}
-          eventEndInPast={false}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Reserved attendee</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
-          attendee={reservedAttendee}
-          eventEndInPast={false}
-        />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, attendees: [reservedAttendee] })}
-          attendee={reservedAttendee}
-          eventEndInPast={false}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Waitlist attendee</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ attendees: [waitlistAttendee] })}
-          attendee={waitlistAttendee}
-          eventEndInPast={false}
-        />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, attendees: [waitlistAttendee] })}
-          attendee={waitlistAttendee}
-          eventEndInPast={false}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">After deregister deadline</Text>
-
-        <AttendanceStatus attendance={lockedAttendance} attendee={lockedAttendee} eventEndInPast={false} />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, attendees: [lockedAttendee] })}
-          attendee={lockedAttendee}
-          eventEndInPast={false}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Payment countdown</Text>
-
-        <AttendanceStatus attendance={paymentAttendance} attendee={paymentAttendee} eventEndInPast={false} />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, attendees: [paymentAttendee] })}
-          attendee={paymentAttendee}
-          eventEndInPast={false}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Past event</Text>
-
-        <AttendanceStatus attendance={createMockAttendance({ status: "OPEN" })} attendee={null} eventEndInPast={true} />
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
-          attendee={null}
-          eventEndInPast={true}
-        />
-      </div>
-    </div>
-  )
-}
-
-export const Sizes = () => {
-  const reservedAttendee = createMockAttendee({ user: createMockUser(), reserved: true })
-
-  return (
-    <div className="flex flex-col gap-8 max-w-2xl">
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Small</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
-          attendee={reservedAttendee}
-          eventEndInPast={false}
-          size="sm"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Default</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
-          attendee={reservedAttendee}
-          eventEndInPast={false}
-          size="default"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Large</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ attendees: [reservedAttendee] })}
-          attendee={reservedAttendee}
-          eventEndInPast={false}
-          size="lg"
-        />
-      </div>
+      <StateShowcase
+        label="Past event"
+        withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
+        withCapacityAttendee={null}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
+        withoutCapacityAttendee={null}
+        eventEndInPast={true}
+      />
     </div>
   )
 }

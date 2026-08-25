@@ -68,8 +68,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   const isSm = size === "sm"
   const isLg = size === "lg"
-  const iconClassName = isSm ? "size-3.5" : isLg ? "size-5" : "size-4"
-  const labelClassName = isSm ? "text-xs" : isLg ? "text-sm md:text-base" : "text-xs md:text-sm"
+  const iconSizeClassName = isSm ? "size-3.5" : isLg ? "size-5" : "size-4"
+  const textSizeClassName = isSm ? "text-xs" : isLg ? "text-sm md:text-base" : "text-xs md:text-sm"
 
   return (
     <div
@@ -80,7 +80,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
         classNames?.root
       )}
     >
-      <IconUsers className={cn(iconClassName, !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
+      <IconUsers className={cn(iconSizeClassName, !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
 
       <div className="flex flex-row gap-1">
         <div
@@ -94,7 +94,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             classNames?.count
           )}
         >
-          <Text className={labelClassName}>
+          <Text className={textSizeClassName}>
             <span className="font-mono">{numberOfAttendees}</span>
 
             {hasCapacity && (
@@ -105,9 +105,9 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           </Text>
 
           {isReserved ? (
-            <IconCheck className={iconClassName} />
+            <IconCheck className={iconSizeClassName} />
           ) : isUnreserved ? (
-            <IconCircleDashedCheck className={iconClassName} />
+            <IconCircleDashedCheck className={iconSizeClassName} />
           ) : null}
         </div>
 
@@ -122,7 +122,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                   classNames?.lock
                 )}
               >
-                <IconLock className={iconClassName} />
+                <IconLock className={iconSizeClassName} />
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -140,8 +140,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                   classNames?.notOpened
                 )}
               >
-                <IconPennant className={cn(iconClassName, "text-gray-700 dark:text-stone-200")} />
-                <Text className="text-sm text-foreground" suppressHydrationWarning>
+                <IconPennant className={cn(iconSizeClassName, "text-gray-700 dark:text-stone-200")} />
+                <Text className={cn(textSizeClassName, "text-foreground")} suppressHydrationWarning>
                   Om {formatCompactTimeUntil(attendance.registerStart, now)}
                 </Text>
               </div>
@@ -168,8 +168,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                   classNames?.payment
                 )}
               >
-                <IconCoins className={iconClassName} />
-                <span className={cn("tracking-wider", labelClassName)} suppressHydrationWarning>
+                <IconCoins className={iconSizeClassName} />
+                <span className={cn("tracking-wider", textSizeClassName)} suppressHydrationWarning>
                   {paymentCountdownText}
                 </span>
               </div>
