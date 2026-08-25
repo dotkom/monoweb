@@ -1,6 +1,7 @@
 "use client"
 
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
+import { formatCompactTimeUntil } from "@/utils/countdown/formatCompactTimeUntil"
 import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
@@ -12,8 +13,9 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconCheck, IconClock, IconClockDollar, IconLock, IconUsers } from "@tabler/icons-react"
-import { formatDistanceToNowStrict, interval, isFuture, isWithinInterval } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { IconCheck, IconCircleDashedCheck, IconCoins, IconLock, IconPennant, IconUsers } from "@tabler/icons-react"
+import { formatDistanceToNow, interval, isAfter, isFuture, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
@@ -22,6 +24,7 @@ interface AttendanceStatusClassNames {
   count?: string
   lock?: string
   payment?: string
+  notOpened?: string
 }
 
 interface EventListItemAttendanceStatusProps {
@@ -29,7 +32,6 @@ interface EventListItemAttendanceStatusProps {
   attendee: Attendee | null
   eventEndInPast: boolean
   size?: "default" | "sm" | "lg"
-  showNotOpenedLabel?: boolean
   classNames?: AttendanceStatusClassNames
 }
 
@@ -38,12 +40,13 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   attendee,
   eventEndInPast,
   size = "default",
-  showNotOpenedLabel = true,
   classNames,
 }) => {
-  const attendanceStatus = getAttendanceStatus(attendance)
+  const now = getCurrentUTC()
+  const attendanceStatus = getAttendanceStatus(attendance, now)
   const isReserved = attendee?.reserved === true
   const isUnreserved = attendee?.reserved === false
+  const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, now)
   const numberOfAttendees =
     "reservedAttendeeCount" in attendance ? attendance.reservedAttendeeCount : getReservedAttendeeCount(attendance)
   const capacity = getAttendanceCapacity(attendance)
@@ -57,7 +60,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
   const isWithinPaymentCountdown =
     paymentCountdownInterval && hasAttendeePaid(attendee, attendance.attendancePrice) === false
-      ? isWithinInterval(new Date(), paymentCountdownInterval)
+      ? isWithinInterval(now, paymentCountdownInterval)
       : false
   const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
 
@@ -104,17 +107,17 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           {isReserved ? (
             <IconCheck className={iconClassName} />
           ) : isUnreserved ? (
-            <IconClock className={iconClassName} />
+            <IconCircleDashedCheck className={iconClassName} />
           ) : null}
         </div>
 
         {showLock && (
-          <Tooltip delayDuration={100}>
+          <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <div
                 className={cn(
                   "flex flex-row gap-1 items-center px-0.75 py-0.5",
-                  "rounded-sm bg-gray-100 dark:bg-stone-700 text-gray-700 dark:text-stone-200",
+                  "rounded-sm bg-muted text-gray-700 dark:text-stone-200",
                   !isReserved && !isUnreserved && "ml-0.5",
                   classNames?.lock
                 )}
@@ -128,8 +131,36 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           </Tooltip>
         )}
 
+        {showRegistrationOpensSoon && (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <div
+                className={cn(
+                  "flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm bg-muted",
+                  classNames?.notOpened
+                )}
+              >
+                <IconPennant className={cn(iconClassName, "text-gray-700 dark:text-stone-200")} />
+                <Text className="text-sm text-foreground" suppressHydrationWarning>
+                  Om {formatCompactTimeUntil(attendance.registerStart, now)}
+                </Text>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <Text suppressHydrationWarning>
+                Påmeldingen åpner{" "}
+                {formatDistanceToNow(attendance.registerStart, {
+                  locale: nb,
+                  addSuffix: true,
+                })}
+                .
+              </Text>
+            </TooltipContent>
+          </Tooltip>
+        )}
+
         {showPaymentCountdown && (
-          <Tooltip delayDuration={100}>
+          <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <div
                 className={cn(
@@ -137,7 +168,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                   classNames?.payment
                 )}
               >
-                <IconClockDollar className={iconClassName} />
+                <IconCoins className={iconClassName} />
                 <span className={cn("tracking-wider", labelClassName)} suppressHydrationWarning>
                   {paymentCountdownText}
                 </span>
@@ -149,12 +180,6 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           </Tooltip>
         )}
       </div>
-
-      {showNotOpenedLabel && attendanceStatus === "NOT_OPENED" && (
-        <Text className="hidden md:block text-sm text-black dark:text-stone-300">
-          Åpner {formatDistanceToNowStrict(attendance.registerStart, { addSuffix: true, locale: nb })}
-        </Text>
-      )}
     </div>
   )
 }

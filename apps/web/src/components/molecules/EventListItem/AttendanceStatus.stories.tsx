@@ -140,17 +140,6 @@ export const AllStates = () => {
           eventEndInPast={true}
         />
       </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Not opened without label</Text>
-
-        <AttendanceStatus
-          attendance={createMockAttendance({ status: "NOT_OPENED" })}
-          attendee={null}
-          eventEndInPast={false}
-          showNotOpenedLabel={false}
-        />
-      </div>
     </div>
   )
 }
