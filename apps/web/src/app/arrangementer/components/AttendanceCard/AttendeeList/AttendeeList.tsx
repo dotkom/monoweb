@@ -42,7 +42,8 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
 }
 
 function getMinWidth(maxNumberOfAttendees: number) {
-  const value = maxNumberOfAttendees.toString().length
+  const digitCount = maxNumberOfAttendees.toString().length
+  const periodCount = 1
 
-  return `${value}ch`
+  return `${digitCount + periodCount}ch`
 }
