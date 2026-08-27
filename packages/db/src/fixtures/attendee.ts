@@ -19,8 +19,10 @@ type AttendeeAssignment = {
 }
 
 const attendeeAssignments: AttendeeAssignment[] = [
+  // Kurs i å lage fixtures
   { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 0, registeredDaysAgo: 12 },
   { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 9, registeredDaysAgo: 11 },
+  { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 1, registeredDaysAgo: 10 },
   { attendanceIndex: 2, poolTitle: "Alle", userIndex: 1, registeredDaysAgo: 18 },
   { attendanceIndex: 2, poolTitle: "Alle", userIndex: 2, registeredDaysAgo: 17 },
   { attendanceIndex: 2, poolTitle: "Alle", userIndex: 5, registeredDaysAgo: 16 },
