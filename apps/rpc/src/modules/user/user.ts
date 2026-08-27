@@ -165,6 +165,30 @@ export const UserFilterQuerySchema = z
   .partial()
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
+export const FlagNameSchema = z.enum(["VANITY_VERIFIED", "EXCEPTIONALLY_DISTINGUISHED"])
+export type FlagName = z.infer<typeof FlagNameSchema>
+
+export function getFlagLabel(name: FlagName) {
+  switch (name) {
+    case FlagNameSchema.enum.VANITY_VERIFIED:
+      return "OW Verified"
+    case FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED:
+      return "Særskilt utmerket"
+  }
+}
+
+export function isKnight(user: User) {
+  return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
+}
+
+export function isVanityVerified(user: User) {
+  return user.flags.some(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
+}
+
+export function isExceptionallyDistinguished(user: User) {
+  return user.flags.some(({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED)
+}
+
 export function isMembershipActive(
   membership: Membership | MembershipWrite,
   now: TZDate | Date = getCurrentUTC()
