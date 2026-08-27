@@ -51,6 +51,8 @@ function makeUserFlag(overrides: Partial<UserFlag> = {}): UserFlag {
     updatedAt: new Date(),
     description: null,
     imageUrl: null,
+    awardedAt: new Date(),
+    awardedReason: null,
     ...overrides,
   }
 }

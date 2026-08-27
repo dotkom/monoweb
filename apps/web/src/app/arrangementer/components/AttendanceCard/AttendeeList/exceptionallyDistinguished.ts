@@ -7,7 +7,7 @@ export function getExceptionallyDistinguishedFlag(flags: UserFlag[]) {
 }
 
 export function formatExceptionallyDistinguishedCreatedAtYear(flag: UserFlag) {
-  const date = new TZDate(flag.createdAt, "Europe/Oslo")
+  const date = new TZDate(flag.awardedAt, "Europe/Oslo")
 
   return formatDate(date, "yyyy")
 }

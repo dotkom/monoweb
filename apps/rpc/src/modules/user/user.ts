@@ -49,6 +49,8 @@ export const UserFlagSchema = z.object({
   updatedAt: z.date(),
   description: z.string().nullable(),
   imageUrl: z.string().nullable(),
+  awardedAt: z.date(),
+  awardedReason: z.string().nullable(),
 })
 export type UserFlag = z.infer<typeof UserFlagSchema>
 export type UserFlagId = UserFlag["id"]
@@ -90,16 +92,27 @@ export const UserUpdateResultSchema = z.object({
 })
 export type UserUpdateResult = z.infer<typeof UserUpdateResultSchema>
 
-export function normalizeDbUser(user: { userFlagLinks: { userFlag: UserFlag }[]; [key: string]: unknown }) {
+export function normalizeDbUser(user: {
+  userFlagLinks: Array<{
+    awardedAt: Date
+    reason: string | null
+    userFlag: Omit<UserFlag, "awardedAt" | "awardedReason">
+  }>
+  [key: string]: unknown
+}) {
   const { userFlagLinks, ...rest } = user
 
   return {
     ...rest,
-    flags: userFlagLinks.map((l) => l.userFlag),
+    flags: userFlagLinks.map((link) => ({
+      ...link.userFlag,
+      awardedAt: link.awardedAt,
+      awardedReason: link.reason,
+    })),
   }
 }
 
-export const UserFlagWithUsersSchema = UserFlagSchema.extend({
+export const UserFlagWithUsersSchema = UserFlagSchema.omit({ awardedAt: true, awardedReason: true }).extend({
   users: UserSchema.pick({
     id: true,
     name: true,

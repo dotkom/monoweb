@@ -32,6 +32,8 @@ function createFlag(name: FlagName, overrides: Partial<UserFlag> = {}): UserFlag
     updatedAt: viewer.updatedAt,
     description,
     imageUrl,
+    awardedAt: viewer.createdAt,
+    awardedReason: null,
     ...overrides,
   }
 }
@@ -108,7 +110,7 @@ const distinguishedAttendee = createPlateAttendee(
     name: "Siri Særskilt",
     flags: [
       createFlag(FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED, {
-        createdAt: new Date("2025-04-01T12:00:00Z"),
+        awardedAt: new Date("2025-04-01T12:00:00Z"),
         description: "Tildelt for ekstraordinær innsats for linjeforeningen.",
       }),
     ],
