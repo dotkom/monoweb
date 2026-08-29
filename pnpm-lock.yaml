@@ -145,7 +145,7 @@ importers:
         version: 3.0.2
       jose:
         specifier: ^6.0.11
-        version: 6.2.9
+        version: 6.2.10
       next:
         specifier: ^15.3.6
         version: 15.5.23(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -544,7 +544,7 @@ importers:
         version: 3.0.2
       jose:
         specifier: ^6.0.11
-        version: 6.2.9
+        version: 6.2.10
       lru-cache:
         specifier: ^11.1.0
         version: 11.2.6
@@ -734,7 +734,7 @@ importers:
         version: 3.0.0(@noble/hashes@1.8.0)
       jose:
         specifier: ^6.0.11
-        version: 6.2.9
+        version: 6.2.10
       jsdom:
         specifier: 28.1.0
         version: 28.1.0(@noble/hashes@1.8.0)
@@ -1175,7 +1175,7 @@ importers:
         version: 9.0.5
       jose:
         specifier: ^6.0.11
-        version: 6.2.9
+        version: 6.2.10
       slugify:
         specifier: ^1.6.6
         version: 1.6.9
@@ -6652,9 +6652,6 @@ packages:
   jose@6.2.10:
     resolution: {integrity: sha512-iiW7J9qRFlGxvCOIBDBDxFePQSn7ZMAnrYGhrrOo6siO/MIqwfyilLR27pkfDgUk+raLuzADS8A3S/KLBisc0g==}
 
-  jose@6.2.9:
-    resolution: {integrity: sha512-XrchZOFZUl/T3vTwRe8XK+cJrGtMF4th1ARnDfwbBXFKThGhlsxEE4Zu03AD/bjJSt/9jT/mxrOCkJWOg77aPA==}
-
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -9223,7 +9220,7 @@ snapshots:
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
-      jose: 6.2.9
+      jose: 6.2.10
       next: 15.5.23(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       oauth4webapi: 3.8.7
       openid-client: 6.8.7
@@ -14917,8 +14914,6 @@ snapshots:
 
   jose@6.2.10: {}
 
-  jose@6.2.9: {}
-
   js-tokens@4.0.0: {}
 
   js-tokens@9.0.1: {}
@@ -15908,7 +15903,7 @@ snapshots:
 
   openid-client@6.8.7:
     dependencies:
-      jose: 6.2.9
+      jose: 6.2.10
       oauth4webapi: 3.8.7
 
   ora@8.2.0:
