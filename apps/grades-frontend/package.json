@@ -57,7 +57,7 @@
     "@types/cors": "2.8.19",
     "@types/node": "22.19.3",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "cva": "npm:class-variance-authority@0.7.1",
     "postcss": "8.5.26",
     "tailwindcss": "4.3.0",
