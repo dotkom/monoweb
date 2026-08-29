@@ -276,32 +276,41 @@ const RatingQuestion = ({ question, index, control }: QuestionProps) => (
     }}
     render={({ field: { onChange, value }, fieldState }) => (
       <InputWrapper error={fieldState.error?.message}>
-        <RadioGroup className="flex sm:flex-row flex-col gap-2" required={question.required} id={question.id}>
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-            <Label
-              key={`${question.id}.${n}`}
-              htmlFor={`${question.id}.${n}`}
-              className={cn(
-                "items-center justify-center w-10 h-10 hover:bg-gray-200 dark:hover:bg-stone-300 active:bg-gray-300 dark:active:bg-stone-400 rounded-full border border-gray-600 dark:border-stone-300 cursor-pointer",
-                Number(value) === n &&
-                  "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-300 active:bg-gray-500 dark:active:bg-stone-400"
-              )}
-            >
-              <RadioGroupItem
-                value={n.toString()}
-                id={`${question.id}.${n}`}
-                className="hidden"
-                onClick={() => {
-                  if (!question.required && value === n) {
-                    onChange(null)
-                  } else {
-                    onChange(n)
-                  }
-                }}
-              />
-              <Text className="dark:text-white">{n}</Text>
-            </Label>
-          ))}
+        <RadioGroup
+          className="flex sm:flex-row flex-col gap-2"
+          required={question.required}
+          value={value == null ? "" : String(value)}
+          onValueChange={(v) => onChange(Number(v))}
+        >
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => {
+            const isChecked = Number(value) === n
+
+            return (
+              <div key={`${question.id}.${n}`} className="relative">
+                <RadioGroupItem
+                  value={n.toString()}
+                  className={cn(
+                    "size-10 rounded-full border border-gray-600 dark:border-stone-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-stone-300 active:bg-gray-300 dark:active:bg-stone-400 [&_[data-slot=radio-group-indicator]]:hidden",
+                    isChecked &&
+                      "bg-brand text-white hover:bg-gray-400 dark:hover:bg-stone-300 active:bg-gray-500 dark:active:bg-stone-400"
+                  )}
+                  onClick={() => {
+                    if (!question.required && isChecked) {
+                      onChange(null)
+                    }
+                  }}
+                />
+                <Text
+                  className={cn(
+                    "pointer-events-none absolute inset-0 flex items-center justify-center dark:text-white",
+                    isChecked && "text-white"
+                  )}
+                >
+                  {n}
+                </Text>
+              </div>
+            )
+          })}
         </RadioGroup>
       </InputWrapper>
     )}
