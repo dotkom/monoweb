@@ -20,7 +20,7 @@ import { TRPCError } from "@trpc/server"
 import { addHours, addMilliseconds, isPast } from "date-fns"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
-import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError, UnauthorizedError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import {
@@ -82,6 +82,37 @@ const deletePoolProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     return ctx.attendanceService.deleteAttendancePool(ctx.handle, input.id)
+  })
+
+export type DeleteAttendanceInput = inferProcedureInput<typeof deleteAttendanceProcedure>
+export type DeleteAttendanceOutput = inferProcedureOutput<typeof deleteAttendanceProcedure>
+const deleteAttendanceProcedure = procedure
+  .input(
+    z.object({
+      id: AttendanceSchema.shape.id,
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.id)
+
+    if (event.hostingGroups.length > 0) {
+      const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
+        ctx.principal.affiliations,
+        event.hostingGroups.map((group) => group.slug)
+      )
+
+      if (organizerGroups.size === 0) {
+        throw new UnauthorizedError(
+          `User(ID=${ctx.principal.subject}) is not authorized to delete Attendance(ID=${input.id}) for Event(ID=${event.id},Title=${event.title})`
+        )
+      }
+    }
+
+    return ctx.attendanceService.deleteAttendance(ctx.handle, input.id)
   })
 
 export type AdminRegisterForEventInput = inferProcedureInput<typeof adminRegisterForEventProcedure>
@@ -491,6 +522,7 @@ export const attendanceRouter = t.router({
   createPool: createPoolProcedure,
   updatePool: updatePoolProcedure,
   deletePool: deletePoolProcedure,
+  deleteAttendance: deleteAttendanceProcedure,
   adminRegisterForEvent: adminRegisterForEventProcedure,
   updateAttendancePayment: updateAttendancePaymentProcedure,
   getSelectionsResults: getSelectionsResultsProcedure,
