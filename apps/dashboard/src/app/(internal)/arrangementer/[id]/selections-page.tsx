@@ -1,50 +1,29 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
-import { ActionIcon, Box, Button, Divider, Paper, Table, Title } from "@mantine/core"
+import { ActionIcon, Box, Button, Divider, Paper, Table, Text, Title } from "@mantine/core"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import type { FC } from "react"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
-import { useAttendanceForm } from "../components/attendance-form"
 import { useCreateAttendanceSelectionsModal } from "../components/create-event-selections-modal"
 import { useEditSelectionsModal } from "../components/edit-event-selections-modal"
-import { useAddAttendanceMutation, useUpdateAttendanceMutation } from "../mutations"
+import { useUpdateAttendanceMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
 export const SelectionsPage: FC = () => {
-  const { event, attendance } = useEventContext()
+  const { attendance } = useEventContext()
   if (!attendance) {
-    return <NoAttendanceFallback eventId={event.id} />
+    return (
+      <Box>
+        <Title order={5}>Ingen påmelding</Title>
+        <Text mt="sm">Opprett en påmelding før du kan legge til valg.</Text>
+      </Box>
+    )
   }
 
   return <SelectionsPageDetail attendance={attendance} />
 }
 
-const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
-  const { canEdit } = useEventEditPermission()
-  const mutation = useAddAttendanceMutation()
-
-  const AttendanceForm = useAttendanceForm({
-    label: "Opprett",
-    disabled: !canEdit,
-    defaultValues: {
-      registerStart: new Date(),
-      registerEnd: new Date(),
-      deregisterDeadline: new Date(),
-      selections: [],
-    },
-    onSubmit: (values) => {
-      mutation.mutate({ eventId, values })
-    },
-  })
-
-  return (
-    <Box>
-      <Title order={5}>Ingen påmelding</Title>
-      <AttendanceForm />
-    </Box>
-  )
-}
 interface Props {
   attendance: Attendance
 }
