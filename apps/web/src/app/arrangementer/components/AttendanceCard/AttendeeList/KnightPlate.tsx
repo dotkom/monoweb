@@ -18,7 +18,7 @@ export function KnightPlate(props: PlateProps) {
       <KnightPlateEffects />
       <Plate.IdentityArea className="p-1.75">
         <Plate.Avatar fallbackClassName="bg-white/25 text-white" />
-        <Plate.AttendeeDetails nameClassName="font-medium text-white" gradeClassName="text-white" />
+        <Plate.AttendeeDetails nameClassName="font-medium text-white" subtitleClassName="text-white" />
       </Plate.IdentityArea>
       <Plate.AccessoryArea className="self-stretch overflow-hidden py-1.75 pr-1.75">
         <div className="absolute inset-0 mask-[linear-gradient(to_right,transparent_0,transparent_--spacing(2),black_--spacing(15))]">

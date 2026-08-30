@@ -19,7 +19,7 @@ export function VanityVerifiedPlate(props: PlateProps) {
           className="outline-2 -outline-offset-1 outline-yellow-500 dark:outline-yellow-600"
           fallbackClassName="bg-yellow-400 dark:bg-yellow-700"
         />
-        <Plate.AttendeeDetails nameClassName="dark:text-black" gradeClassName="dark:text-black" />
+        <Plate.AttendeeDetails nameClassName="dark:text-black" subtitleClassName="dark:text-black" />
       </Plate.IdentityArea>
       <Plate.AccessoryArea>
         <Plate.BigIcon />
