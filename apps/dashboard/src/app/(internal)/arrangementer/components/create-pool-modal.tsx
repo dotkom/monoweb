@@ -3,7 +3,7 @@ import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreatePoolMutation } from "../mutations"
 import { useAttendanceGetQuery } from "../queries"
-import { PoolForm } from "./pool-form"
+import { getAvailablePoolYears, PoolForm } from "./pool-form"
 
 interface CreatePoolModalProps {
   attendanceId: AttendanceId
@@ -37,7 +37,7 @@ export const CreatePoolModal: FC<ContextModalProps<CreatePoolModalProps>> = ({
   return pools ? (
     <PoolForm
       defaultValues={{
-        yearCriteria: [],
+        yearCriteria: getAvailablePoolYears(disabledYears),
         capacity: 0,
         title: "",
         mergeDelayHours: null,

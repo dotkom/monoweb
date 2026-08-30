@@ -1,13 +1,15 @@
 import { createLabelledCheckboxGroupInput } from "@/components/forms/CheckboxGroup"
 import { createNumberInput } from "@/components/forms/NumberInput"
 import { createTextInput } from "@/components/forms/TextInput"
+import { getErrorMessage, type InputFieldContext } from "@/components/forms/types"
 import { notifyFail } from "@/lib/notifications"
+import { MAX_MERGE_DELAY_HOURS } from "@dotkomonline/rpc/attendance"
 import { createPoolName } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ActionIcon, Box, Button, Flex, Stack } from "@mantine/core"
+import { ActionIcon, Box, Button, Flex, NumberInput } from "@mantine/core"
 import { IconX } from "@tabler/icons-react"
-import { type FC, useEffect, useMemo } from "react"
-import { useForm } from "react-hook-form"
+import { type FC, useEffect, useMemo, useState } from "react"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 
 const yearEntries = [
@@ -18,6 +20,18 @@ const yearEntries = [
   { label: "5. klasse", key: 5 },
 ]
 
+export function getAvailablePoolYears(disabledYears: number[]) {
+  return yearEntries.map((entry) => entry.key).filter((year) => !disabledYears.includes(year))
+}
+
+function getCapacityMax(hasMergeDelay: boolean) {
+  if (hasMergeDelay) {
+    return 0
+  }
+
+  return undefined
+}
+
 export interface PoolFormProps {
   onSubmit(values: PoolForm): void
   disabledYears: number[]
@@ -27,27 +41,114 @@ export interface PoolFormProps {
   minCapacity?: number
 }
 
-export const PoolFormSchema = z.object({
-  yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
-  capacity: z.number().min(0),
-  title: z.string().min(1),
-  mergeDelayHours: z.preprocess((val) => {
-    if (typeof val === "number") {
-      const num = Number(val)
-      if (num === 0) {
-        return null
+export const PoolFormSchema = z
+  .object({
+    yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
+    capacity: z.int().min(0),
+    title: z.string().min(1),
+    mergeDelayHours: z.preprocess((val) => {
+      if (typeof val === "number") {
+        const num = Number(val)
+
+        if (num === 0) {
+          return null
+        }
+
+        return num
       }
-      return num
+
+      return null
+    }, z
+      .int()
+      .min(0, `Utsettelse må være mellom 0 og ${MAX_MERGE_DELAY_HOURS} timer.`)
+      .max(MAX_MERGE_DELAY_HOURS, `Utsettelse må være mellom 0 og ${MAX_MERGE_DELAY_HOURS} timer.`)
+      .nullable()),
+  })
+  .superRefine((values, context) => {
+    if (values.mergeDelayHours === null || values.mergeDelayHours === 0) {
+      return
     }
-    return null
-  }, z
-    .int()
-    .min(0, "Utsettelse må være mellom 0 og 96 timer (4 dager).")
-    .max(96, "Utsettelse må være mellom 0 og 96 timer (4 dager).")
-    .nullable()),
-})
+
+    if (values.capacity === 0) {
+      return
+    }
+
+    context.addIssue({
+      code: "custom",
+      message: "Kapasitet må være ubegrenset når gruppen har utsettelse",
+      path: ["capacity"],
+    })
+  })
 export type PoolForm = z.infer<typeof PoolFormSchema>
 type PoolFormInput = z.input<typeof PoolFormSchema>
+
+function getCapacityDisplayValue(capacity: number, isFocused: boolean): string | number {
+  if (capacity === 0 && !isFocused) {
+    return ""
+  }
+
+  return capacity
+}
+
+function CapacityInput({
+  name,
+  state,
+  control,
+  setValue,
+  disabled,
+  min,
+}: InputFieldContext<PoolFormInput, PoolForm> & { min: number }) {
+  const [isFocused, setIsFocused] = useState(false)
+  const mergeDelayHours = useWatch({ control, name: "mergeDelayHours" })
+  const hasMergeDelay = typeof mergeDelayHours === "number" && mergeDelayHours > 0
+
+  useEffect(() => {
+    if (!hasMergeDelay) {
+      return
+    }
+
+    setValue("capacity", 0, { shouldValidate: true, shouldDirty: true })
+  }, [hasMergeDelay, setValue])
+
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => {
+        const capacity = typeof field.value === "number" ? field.value : 0
+
+        return (
+          <NumberInput
+            label="Kapasitet"
+            description={
+              <>
+                Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet dersom
+                du admin-påmelder dem.
+                <br />
+                Kapasitet må være ubegrenset når gruppen har utsettelse.
+              </>
+            }
+            min={min}
+            max={getCapacityMax(hasMergeDelay)}
+            withAsterisk
+            value={getCapacityDisplayValue(capacity, isFocused)}
+            placeholder="Ubegrenset"
+            onChange={(value) => field.onChange({ target: { value: value === "" ? 0 : value } })}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            disabled={disabled || hasMergeDelay}
+            error={getErrorMessage(state, name)}
+            styles={{
+              input: {
+                "--input-placeholder-color": "var(--mantine-color-text)",
+              },
+            }}
+          />
+        )
+      }}
+    />
+  )
+}
 
 export const usePoolForm = (props: PoolFormProps) => {
   const form = useForm<PoolFormInput, unknown, PoolForm>({
@@ -100,36 +201,29 @@ export const usePoolForm = (props: PoolFormProps) => {
         },
         {
           name: "capacity",
-          component: createNumberInput<PoolFormInput, PoolForm>({
-            label: "Kapasitet",
-            description: (
-              <Stack gap="xs">
-                <span>
-                  Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet.
-                </span>
-                <span>Sett til 0 for ubegrenset kapasitet.</span>
-              </Stack>
-            ),
-            min: props.minCapacity ?? 0,
-            required: true,
-          }),
+          component: (fieldContext: InputFieldContext<PoolFormInput, PoolForm>) => (
+            <CapacityInput {...fieldContext} min={props.minCapacity ?? 0} />
+          ),
         },
         {
           name: "mergeDelayHours",
           component: createNumberInput<PoolFormInput, PoolForm>({
             label: "Utsettelse i timer",
             description: (
-              <Stack gap="xs">
-                <span>Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.</span>
-                <span>
-                  Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut.
-                  Dette gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
-                </span>
-                <span>Kapasiteten bør være 0 dersom gruppen har utsettelse.</span>
-              </Stack>
+              <>
+                Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.
+                <br />
+                Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut.
+                Dette gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
+                <br />
+                Kapasiteten må være ubegrenset dersom gruppen har utsettelse.
+              </>
             ),
             placeholder: "Ingen utsettelse",
             min: 0,
+            max: MAX_MERGE_DELAY_HOURS,
+            suffix: " timer",
+            startValue: 1,
           }),
         },
       ] as const,

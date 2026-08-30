@@ -153,6 +153,57 @@ describe("attendance integration tests", async () => {
     ).rejects.toThrow(InvalidArgumentError)
   })
 
+  it("should require unlimited capacity when pool has a merge delay", async () => {
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+
+    await expect(
+      core.attendanceService.createAttendancePool(
+        dbClient,
+        attendance.id,
+        getMockAttendancePool({
+          mergeDelayHours: 24,
+          capacity: 10,
+        })
+      )
+    ).rejects.toThrow(InvalidArgumentError)
+
+    await expect(
+      core.attendanceService.createAttendancePool(
+        dbClient,
+        attendance.id,
+        getMockAttendancePool({
+          mergeDelayHours: 24,
+          capacity: 0,
+          yearCriteria: [1],
+        })
+      )
+    ).resolves.toBeDefined()
+  })
+
+  it("should require unlimited capacity when updating a pool with a merge delay", async () => {
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    const pool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        capacity: 10,
+        yearCriteria: [1],
+      })
+    )
+
+    await expect(
+      core.attendanceService.updateAttendancePool(
+        dbClient,
+        pool.id,
+        getMockAttendancePool({
+          mergeDelayHours: 24,
+          capacity: 10,
+          yearCriteria: [1],
+        })
+      )
+    ).rejects.toThrow(InvalidArgumentError)
+  })
+
   it("should allow temporary overlap when updating", async () => {
     const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
     const pool = await core.attendanceService.createAttendancePool(
@@ -433,6 +484,7 @@ describe("attendance integration tests", async () => {
       attendance.id,
       getMockAttendancePool({
         mergeDelayHours: 24,
+        capacity: 0,
         yearCriteria: [1],
       })
     )
@@ -582,6 +634,7 @@ describe("attendance integration tests", async () => {
       attendance.id,
       getMockAttendancePool({
         mergeDelayHours: 24,
+        capacity: 0,
         yearCriteria: [5],
       })
     )

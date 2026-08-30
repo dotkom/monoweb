@@ -100,6 +100,9 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentCheckoutUrl: true,
 })
 
+// The 96-hour limit is arbitrary
+export const MAX_MERGE_DELAY_HOURS = 96
+
 const AttendancePoolBaseSchema = z.object({
   id: z.string(),
   title: z.string(),

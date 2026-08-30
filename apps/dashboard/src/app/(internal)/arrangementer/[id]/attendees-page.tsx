@@ -77,6 +77,7 @@ const Page: FC<Props> = ({ event, attendance, feedbackAnswers }) => {
           onSubmit={(values) => {
             openManualCreateUserAttendModal({
               attendanceId: attendance.id,
+              eventId: event.id,
               userId: values.id,
             })
           }}
