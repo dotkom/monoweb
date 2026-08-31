@@ -21,8 +21,8 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconCalendarMonth,
   IconFilter2,
-  IconLayout2,
   IconLayoutColumns,
+  IconLayoutGrid,
   IconLayoutList,
   IconSearch,
   IconX,
@@ -242,28 +242,43 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
           >
             <ToggleGroupItem
               value="cards"
-              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+              className={cn(
+                "flex flex-row items-center gap-2 h-full border-field-border",
+                isCalendar
+                  ? "max-[450px]:justify-center max-[450px]:w-12"
+                  : "max-[390px]:justify-center max-[390px]:w-12"
+              )}
             >
-              <IconLayout2 className="size-4.5" />
-              <Text element="span" className="max-[390px]:hidden">
+              <IconLayoutGrid className="size-4.5" />
+              <Text element="span" className={cn(isCalendar ? "max-[450px]:hidden" : "max-[390px]:hidden")}>
                 Kort
               </Text>
             </ToggleGroupItem>
             <ToggleGroupItem
               value="list"
-              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+              className={cn(
+                "flex flex-row items-center gap-2 h-full border-field-border",
+                isCalendar
+                  ? "max-[450px]:justify-center max-[450px]:w-12"
+                  : "max-[390px]:justify-center max-[390px]:w-12"
+              )}
             >
               <IconLayoutList className="size-4.5" />
-              <Text element="span" className="max-[390px]:hidden">
+              <Text element="span" className={cn(isCalendar ? "max-[450px]:hidden" : "max-[390px]:hidden")}>
                 Liste
               </Text>
             </ToggleGroupItem>
             <ToggleGroupItem
               value="calendar"
-              className="flex flex-row items-center gap-2 h-full border-field-border max-[390px]:justify-center"
+              className={cn(
+                "flex flex-row items-center gap-2 h-full border-field-border",
+                isCalendar
+                  ? "max-[450px]:justify-center max-[450px]:w-12"
+                  : "max-[390px]:justify-center max-[390px]:w-12"
+              )}
             >
               <IconCalendarMonth className="size-4.5" />
-              <Text element="span" className="max-[390px]:hidden">
+              <Text element="span" className={cn(isCalendar ? "max-[450px]:hidden" : "max-[390px]:hidden")}>
                 Kalender
               </Text>
             </ToggleGroupItem>
