@@ -1,7 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Flex } from "@mantine/core"
 import { useCallback, useRef } from "react"
-import { type DefaultValues, type FieldPath, type FieldValue, type UseFormReturn, useForm } from "react-hook-form"
+import {
+  type DefaultValues,
+  type FieldPath,
+  type FieldValue,
+  FormProvider,
+  type UseFormReturn,
+  useForm,
+} from "react-hook-form"
 import type { z } from "zod"
 import type { InputProducerResult } from "./types"
 
@@ -89,23 +96,25 @@ export function useFormBuilder<T extends z.ZodRawShape>({
     const configuration = formComponentConfigurationReference.current
 
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          return configuration.form.handleSubmit((values) => {
-            return configuration.onSubmit(values, configuration.form)
-          })(e)
-        }}
-      >
-        <Flex direction="column" gap="md">
-          {configuration.components}
-          <div>
-            <Button type="submit" disabled={configuration.disabled}>
-              {configuration.label}
-            </Button>
-          </div>
-        </Flex>
-      </form>
+      <FormProvider {...configuration.form}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            return configuration.form.handleSubmit((values) => {
+              return configuration.onSubmit(values, configuration.form)
+            })(e)
+          }}
+        >
+          <Flex direction="column" gap="md">
+            {configuration.components}
+            <div>
+              <Button type="submit" disabled={configuration.disabled}>
+                {configuration.label}
+              </Button>
+            </div>
+          </Flex>
+        </form>
+      </FormProvider>
     )
   }, [])
 }

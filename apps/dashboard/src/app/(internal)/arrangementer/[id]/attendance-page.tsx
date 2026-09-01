@@ -5,7 +5,8 @@ import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import type { FC } from "react"
-import { useAttendanceForm } from "../components/attendance-form"
+import { EventScheduleSummary, useAttendanceForm } from "../components/attendance-form"
+import { getDefaultAttendanceDates } from "../components/attendance-dates"
 import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
 import {
@@ -26,17 +27,20 @@ export const AttendancePage: FC = () => {
 }
 
 const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
+  const { event } = useEventContext()
   const { canEdit } = useEventEditPermission()
   const mutation = useAddAttendanceMutation()
+  const defaultAttendanceDates = getDefaultAttendanceDates(event.start)
   const AttendanceForm = useAttendanceForm({
     defaultValues: {
-      registerStart: new Date(),
-      registerEnd: new Date(),
-      deregisterDeadline: new Date(),
+      registerStart: defaultAttendanceDates.registerStart,
+      registerEnd: defaultAttendanceDates.registerEnd,
+      deregisterDeadline: defaultAttendanceDates.deregisterDeadline,
       selections: [],
     },
     label: "Opprett",
     disabled: !canEdit,
+    eventStart: event.start,
     onSubmit: (values) => {
       mutation.mutate({ eventId, values })
     },
@@ -45,9 +49,10 @@ const NoAttendanceFallback: FC<{ eventId: string }> = ({ eventId }) => {
   return (
     <Stack gap="md">
       <Title order={5}>Lag påmelding</Title>
-      <Box mb="md">
+      <Box>
         <MarkForMissedAttendanceCheckbox />
       </Box>
+      <EventScheduleSummary eventStart={event.start} eventEnd={event.end} />
       <AttendanceForm />
     </Stack>
   )
@@ -58,6 +63,7 @@ interface AttendancePageDetailProps {
 }
 
 const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
+  const { event } = useEventContext()
   const { canEdit } = useEventEditPermission()
   const updateAttendanceMut = useUpdateAttendanceMutation()
 
@@ -65,6 +71,7 @@ const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
     defaultValues: attendance,
     label: "Oppdater",
     disabled: !canEdit,
+    eventStart: event.start,
     onSubmit: (values) => {
       updateAttendanceMut.mutate({
         id: attendance.id,
@@ -90,6 +97,9 @@ const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
         </Title>
         <Box mb="md">
           <MarkForMissedAttendanceCheckbox />
+        </Box>
+        <Box mb="md">
+          <EventScheduleSummary eventStart={event.start} eventEnd={event.end} />
         </Box>
         <AttendanceForm />
         <Box mt="md">
