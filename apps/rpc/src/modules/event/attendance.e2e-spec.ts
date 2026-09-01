@@ -890,4 +890,29 @@ describe("attendance integration tests", async () => {
       })
     )
   })
+
+  it("should delete an empty attendance and unlink it from the event", async () => {
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+
+    await core.attendanceService.deleteAttendance(dbClient, attendance.id)
+
+    const updatedEvent = await core.eventService.getEventById(dbClient, event.id)
+    expect(updatedEvent.attendanceId).toBeNull()
+    await expect(core.attendanceService.getAttendanceById(dbClient, attendance.id)).rejects.toThrow(NotFoundError)
+  })
+
+  it("should not delete an attendance that has pools", async () => {
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.attendanceService.createAttendancePool(dbClient, attendance.id, getMockAttendancePool())
+
+    await expect(core.attendanceService.deleteAttendance(dbClient, attendance.id)).rejects.toThrow(
+      FailedPreconditionError
+    )
+
+    const remainingAttendance = await core.attendanceService.getAttendanceById(dbClient, attendance.id)
+    expect(remainingAttendance.id).toBe(attendance.id)
+    expect(remainingAttendance.pools).toHaveLength(1)
+  })
 })

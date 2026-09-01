@@ -101,6 +101,27 @@ export const useDeleteEventMutation = () => {
   )
 }
 
+export const useDeleteAttendanceMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.event.attendance.deleteAttendance.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+      },
+    })
+  )
+}
+
 export const useDeletePoolMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

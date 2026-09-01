@@ -1,11 +1,19 @@
 import type { Attendance } from "@dotkomonline/rpc/attendance"
-import { Box, Checkbox, Divider, Stack, Title } from "@mantine/core"
+import { Box, Button, Checkbox, Divider, Stack, Title } from "@mantine/core"
+import { IconTrash } from "@tabler/icons-react"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import type { FC } from "react"
 import { useAttendanceForm } from "../components/attendance-form"
 import { PoolBox } from "../components/pools-box"
 import { usePoolsForm } from "../components/pools-form"
-import { useAddAttendanceMutation, useUpdateAttendanceMutation, useUpdateEventMutation } from "../mutations"
+import {
+  useAddAttendanceMutation,
+  useDeleteAttendanceMutation,
+  useUpdateAttendanceMutation,
+  useUpdateEventMutation,
+} from "../mutations"
 import { useEventContext } from "./provider"
 
 export const AttendancePage: FC = () => {
@@ -84,6 +92,9 @@ const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
           <MarkForMissedAttendanceCheckbox />
         </Box>
         <AttendanceForm />
+        <Box mt="md">
+          <AttendanceDeleteButton attendance={attendance} />
+        </Box>
       </Box>
       <Divider my={32} />
       <Box>
@@ -92,6 +103,48 @@ const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
         <PoolsForm />
       </Box>
     </Box>
+  )
+}
+
+function getAttendanceDeleteDisabledReason(canEdit: boolean, hasPools: boolean): string | null {
+  if (!canEdit) {
+    return "Du har ikke redigeringstilgang til dette"
+  }
+
+  if (hasPools) {
+    return "Påmeldingen har påmeldingsgrupper og kan derfor ikke slettes"
+  }
+
+  return null
+}
+
+function AttendanceDeleteButton({ attendance }: { attendance: Attendance }) {
+  const { canEdit } = useEventEditPermission()
+  const deleteAttendance = useDeleteAttendanceMutation()
+  const hasPools = attendance.pools.length > 0
+  const deleteDisabledReason = getAttendanceDeleteDisabledReason(canEdit, hasPools)
+  const canDeleteAttendance = deleteDisabledReason === null
+
+  const openDeleteModal = useConfirmDeleteModal({
+    title: "Slett påmelding",
+    text: "Er du sikker på at du vil slette påmeldingen?",
+    onConfirm: () => {
+      deleteAttendance.mutate({ id: attendance.id })
+    },
+  })
+
+  return (
+    <PermissionTooltip allowed={canDeleteAttendance} label={deleteDisabledReason ?? undefined}>
+      <Button
+        color="red"
+        variant="light"
+        disabled={!canDeleteAttendance || deleteAttendance.isPending}
+        onClick={openDeleteModal}
+        leftSection={<IconTrash height={14} width={14} />}
+      >
+        Slett påmelding
+      </Button>
+    </PermissionTooltip>
   )
 }
 

@@ -34,6 +34,13 @@ function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [k: str
 
 export interface AttendanceRepository {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
+  deleteAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
+  updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
+  updateAttendancePaymentPrice(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    priceNok: number | null
+  ): Promise<Attendance>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
   findAttendancesByIds(handle: DBHandle, attendanceIds: AttendanceId[]): Promise<Attendance[]>
   findAttendanceSummariesByIds(handle: DBHandle, eventIds: EventId[], userId?: UserId): Promise<AttendanceSummary[]>
@@ -41,12 +48,6 @@ export interface AttendanceRepository {
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
   findAttendanceByAttendeePaymentId(handle: DBHandle, attendeePaymentId: string): Promise<Attendance | null>
   findAttendanceByEventId(handle: DBHandle, eventId: EventId): Promise<Attendance | null>
-  updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
-  updateAttendancePaymentPrice(
-    handle: DBHandle,
-    attendanceId: AttendanceId,
-    priceNok: number | null
-  ): Promise<Attendance>
 
   createAttendee(
     handle: DBHandle,
@@ -561,6 +562,17 @@ export function getAttendanceRepository(): AttendanceRepository {
             in: attendancePoolIds,
           },
         },
+      })
+    },
+
+    async deleteAttendanceById(handle, attendanceId) {
+      await handle.event.updateMany({
+        where: { attendanceId },
+        data: { attendanceId: null },
+      })
+
+      await handle.attendance.delete({
+        where: { id: attendanceId },
       })
     },
   }

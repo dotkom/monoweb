@@ -198,6 +198,7 @@ function registrationAvailabilityFailure(
  */
 export interface AttendanceService {
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
+  deleteAttendance(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   findAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<Attendance | null>
   findAttendanceByPoolId(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<Attendance | null>
   findAttendanceByAttendeeId(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendance | null>
@@ -518,6 +519,16 @@ export function getAttendanceService(
 
     async deleteAttendancePool(handle, attendancePoolId) {
       await attendanceRepository.deleteAttendancePoolById(handle, attendancePoolId)
+    },
+
+    async deleteAttendance(handle, attendanceId) {
+      const attendance = await this.getAttendanceById(handle, attendanceId)
+
+      if (attendance.pools.length > 0) {
+        throw new FailedPreconditionError(`Cannot delete Attendance(ID=${attendanceId}) because it still has pools`)
+      }
+
+      await attendanceRepository.deleteAttendanceById(handle, attendanceId)
     },
 
     async getRegistrationAvailability(handle, attendanceId, turnstileToken, userId, options) {
