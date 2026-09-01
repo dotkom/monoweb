@@ -88,26 +88,37 @@ function PlateAvatar({ className, fallbackClassName }: PlateAvatarProps) {
 
 interface AttendeeDetailsProps {
   nameClassName?: string
-  gradeClassName?: string
+  subtitleClassName?: string
 }
 
-function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps) {
+function getSubtitleItem(attendee: Attendee, subtitleClassName?: string) {
+  if (isKnight(attendee.user)) {
+    return (
+      <>
+        <Text className={cn("min-w-0 truncate text-xs max-sm:hidden", subtitleClassName)}>
+          Ridder av det Indre Lager
+        </Text>
+        <Text className={cn("min-w-0 truncate text-xs sm:hidden", subtitleClassName)}>Ridder</Text>
+      </>
+    )
+  }
+
+  const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(attendee.user.flags)
+
+  if (exceptionallyDistinguishedFlag === null) {
+    return null
+  }
+
+  const awardedAtYear = formatExceptionallyDistinguishedCreatedAtYear(exceptionallyDistinguishedFlag)
+
+  return <Text className={cn("min-w-0 truncate text-xs", subtitleClassName)}>Særskilt utmerket {awardedAtYear}</Text>
+}
+
+function AttendeeDetails({ nameClassName, subtitleClassName }: AttendeeDetailsProps) {
   const { attendee, smallIcons } = usePlateContext()
 
   const hasGrade = attendee.userGrade !== null
-
-  const knight = isKnight(attendee.user)
-
-  const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(attendee.user.flags)
-  const exceptionallyDistinguished = exceptionallyDistinguishedFlag !== null
-
-  let exceptionallyDistinguishedText = "Særskilt utmerket"
-
-  if (exceptionallyDistinguishedFlag !== null) {
-    const createdAtYear = formatExceptionallyDistinguishedCreatedAtYear(exceptionallyDistinguishedFlag)
-
-    exceptionallyDistinguishedText = `${exceptionallyDistinguishedText} ${createdAtYear}`
-  }
+  const subtitleItem = getSubtitleItem(attendee, subtitleClassName)
 
   return (
     <div className="flex w-fit max-w-full min-w-0 shrink flex-col gap-0.5">
@@ -121,23 +132,12 @@ function AttendeeDetails({ nameClassName, gradeClassName }: AttendeeDetailsProps
 
       <div className="flex min-w-0 items-center gap-2">
         {hasGrade && (
-          <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{attendee.userGrade}. klasse</Text>
+          <Text className={cn("min-w-0 truncate text-xs", subtitleClassName)}>{attendee.userGrade}. klasse</Text>
         )}
 
-        {hasGrade && exceptionallyDistinguished && <Text className={cn("text-xs", gradeClassName)}>•</Text>}
+        {hasGrade && subtitleItem !== null && <Text className={cn("text-xs", subtitleClassName)}>•</Text>}
 
-        {knight && (
-          <>
-            <Text className={cn("min-w-0 truncate text-xs max-sm:hidden", gradeClassName)}>
-              Ridder av det Indre Lager
-            </Text>
-            <Text className={cn("min-w-0 truncate text-xs sm:hidden", gradeClassName)}>Ridder</Text>
-          </>
-        )}
-
-        {exceptionallyDistinguished && !knight && (
-          <Text className={cn("min-w-0 truncate text-xs", gradeClassName)}>{exceptionallyDistinguishedText}</Text>
-        )}
+        {subtitleItem}
       </div>
     </div>
   )

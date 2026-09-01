@@ -25,7 +25,7 @@ export function ExceptionallyDistinguishedPlate(props: PlateProps) {
 
       <Plate.IdentityArea className="p-1.75">
         <Plate.Avatar fallbackClassName="bg-white/25 text-white" />
-        <Plate.AttendeeDetails nameClassName="font-medium text-orange-200" gradeClassName="text-white" />
+        <Plate.AttendeeDetails nameClassName="font-medium text-orange-200" subtitleClassName="text-white" />
       </Plate.IdentityArea>
       <Plate.AccessoryArea className="py-1.75 pr-1.75">
         <Plate.BigIcon />
