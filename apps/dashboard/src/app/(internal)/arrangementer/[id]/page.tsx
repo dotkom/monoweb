@@ -16,6 +16,7 @@ import {
   IconSelector,
   IconTrash,
   IconUser,
+  TablerIcon,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
@@ -30,6 +31,7 @@ import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
+import { ComponentType } from "react"
 
 const SIDEBAR_LINKS = [
   {
@@ -37,38 +39,64 @@ const SIDEBAR_LINKS = [
     label: "Info",
     slug: "info",
     component: EventEditCard,
-  },
-  {
-    icon: IconForms,
-    label: "Tilbakemeldingsskjema",
-    slug: "tilbakemeldingsskjema",
-    component: FeedbackPage,
+    requiresAttendance: false,
   },
   {
     icon: IconCalendarEvent,
     label: "Påmelding",
     slug: "pamelding",
     component: AttendancePage,
+    requiresAttendance: false,
   },
   {
     icon: IconUser,
     label: "Påmeldte",
     slug: "pameldte",
     component: AttendeesPage,
+    requiresAttendance: true,
   },
   {
     icon: IconSelector,
     label: "Valg",
     slug: "valg",
     component: SelectionsPage,
+    requiresAttendance: true,
   },
   {
     icon: IconCreditCard,
     label: "Betaling",
     slug: "betaling",
     component: PaymentPage,
+    requiresAttendance: true,
   },
-]
+  {
+    icon: IconForms,
+    label: "Tilbakemeldingsskjema",
+    slug: "tilbakemeldingsskjema",
+    component: FeedbackPage,
+    requiresAttendance: true,
+  },
+] as const satisfies {
+  icon: TablerIcon
+  label: string
+  slug: string
+  component: ComponentType
+  requiresAttendance: boolean
+}[]
+
+function getActiveTabSlug(requestedSlug: string, hasAttendance: boolean): string {
+  const requestedTab = SIDEBAR_LINKS.find((link) => link.slug === requestedSlug)
+
+  if (requestedTab === undefined) {
+    return SIDEBAR_LINKS[0].slug
+  }
+
+  if (requestedTab.requiresAttendance && !hasAttendance) {
+    return "pamelding"
+  }
+
+  return requestedSlug
+}
 
 export default function EventWithAttendancesPage() {
   const { event, attendance } = useEventContext()
@@ -79,10 +107,11 @@ export default function EventWithAttendancesPage() {
   const [opened, { open, close }] = useDisclosure(false)
 
   const searchParams = useSearchParams()
-  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
+  const requestedTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
 
   const hasAttendance = Boolean(attendance)
   const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
+  const currentTab = getActiveTabSlug(requestedTab, hasAttendance)
 
   const { data: feedbackForm, isLoading: feedbackFormIsLoading } = useEventFeedbackFormGetQuery(event.id)
 
@@ -92,8 +121,15 @@ export default function EventWithAttendancesPage() {
   const hasEventEnded = event.end < now
 
   const handleTabChange = (value: string | null) => {
+    const nextTabSlug = value ?? SIDEBAR_LINKS[0].slug
+    const nextTab = SIDEBAR_LINKS.find((link) => link.slug === nextTabSlug)
+
+    if (nextTab?.requiresAttendance && !hasAttendance) {
+      return
+    }
+
     const params = new URLSearchParams(searchParams.toString())
-    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
+    params.set("tab", nextTabSlug)
     router.replace(`/arrangementer/${event.id}?${params.toString()}`)
   }
 
@@ -169,13 +205,17 @@ export default function EventWithAttendancesPage() {
         />
       )}
 
-      <Tabs defaultValue={currentTab} onChange={handleTabChange} keepMounted={false}>
+      <Tabs value={currentTab} onChange={handleTabChange} keepMounted={false}>
         <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
-            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
-              {label}
-            </Tabs.Tab>
-          ))}
+          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug, requiresAttendance }) => {
+            const isDisabled = requiresAttendance && !hasAttendance
+
+            return (
+              <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />} disabled={isDisabled}>
+                {label}
+              </Tabs.Tab>
+            )
+          })}
         </Tabs.List>
         {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
           <Tabs.Panel mt="md" key={slug} value={slug}>
