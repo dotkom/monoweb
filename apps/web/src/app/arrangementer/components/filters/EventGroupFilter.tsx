@@ -7,13 +7,13 @@ import { AvatarFallback, Button, Text, TextInput, cn } from "@dotkomonline/ui"
 import { IconCheck, IconQuestionMark, IconSearch } from "@tabler/icons-react"
 import { useMemo, useState } from "react"
 
-interface GroupFilterProps {
+interface EventGroupFilterProps {
   value: GroupId[]
   onChange: (groups: GroupId[]) => void
   groups: Group[]
 }
 
-export const GroupFilter = ({ value, onChange, groups }: GroupFilterProps) => {
+export const EventGroupFilter = ({ value, onChange, groups }: EventGroupFilterProps) => {
   const [search, setSearch] = useState("")
 
   const handleToggle = (slug: GroupId) => {

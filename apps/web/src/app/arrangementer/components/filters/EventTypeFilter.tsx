@@ -4,13 +4,13 @@ import { type EventType, EventTypeSchema, mapEventTypeToLabel } from "@dotkomonl
 import { Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Label, Text, cn } from "@dotkomonline/ui"
 import { IconChevronDown } from "@tabler/icons-react"
 
-interface TypeFilterProps {
+interface EventTypeFilterProps {
   value: EventType[]
   onChange: (types: EventType[]) => void
   isStaff: boolean
 }
 
-export const TypeFilter = ({ value, onChange, isStaff }: TypeFilterProps) => {
+export const EventTypeFilter = ({ value, onChange, isStaff }: EventTypeFilterProps) => {
   const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.enum)
     .filter((type) => isStaff || type !== "INTERNAL")
     .map((type) => ({

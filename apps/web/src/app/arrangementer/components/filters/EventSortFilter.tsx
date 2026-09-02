@@ -18,13 +18,13 @@ const sortOptions = [
   { value: "CHRONOLOGICAL", label: "Dato", icon: IconCalendar },
 ] as const
 
-interface SortFilterProps {
+interface EventSortFilterProps {
   value: EventListViewMode
   onChange: (mode: EventListViewMode) => void
   className?: string
 }
 
-export const SortFilter = ({ value, onChange, className }: SortFilterProps) => {
+export const EventSortFilter = ({ value, onChange, className }: EventSortFilterProps) => {
   return (
     <div className={cn("h-full self-stretch", className)}>
       <Select
