@@ -2,6 +2,7 @@ import { Text } from "@dotkomonline/ui"
 import { useEffect, useState } from "react"
 import {
   createAttendanceOpeningSoon,
+  createAttendanceOpeningSoonWithPrice,
   createAttendanceWithFullPool,
   createAttendanceWithPaymentCountdown,
   createAttendanceWithReservedUser,
@@ -143,6 +144,11 @@ export const AllStates = () => {
       <div className="flex flex-col gap-2">
         <Text className="text-sm text-muted-foreground">Register countdown</Text>
         <MainPoolCard attendance={createAttendanceOpeningSoon()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Text className="text-sm text-muted-foreground">Register countdown with price</Text>
+        <MainPoolCard attendance={createAttendanceOpeningSoonWithPrice()} user={user} authorizeUrl={AUTHORIZE_URL} />
       </div>
 
       <div className="flex flex-col gap-2">
