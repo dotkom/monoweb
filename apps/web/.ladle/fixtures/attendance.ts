@@ -291,6 +291,12 @@ export const createAttendanceOpeningSoon = (): Attendance =>
     registerStartOffsetMinutes: 10,
   })
 
+export const createAttendanceOpeningSoonWithPrice = (): Attendance =>
+  createMockAttendance({
+    registerStartOffsetMinutes: 10,
+    attendancePrice: 100,
+  })
+
 export const createAttendanceWithFullPool = (): Attendance => {
   const attendees = [
     createMockAttendee({

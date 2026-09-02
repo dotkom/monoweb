@@ -215,6 +215,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
           </div>
         )}
 
+        {showRegisterCountdown && attendance.attendancePrice !== null && (
+          <div className="flex flex-row gap-2 items-center">
+            <IconCoins className="size-[1.25em]" />
+            <Text>{attendance.attendancePrice} kr</Text>
+          </div>
+        )}
+
         {showPaymentCountdown && attendee?.paymentLink && (
           <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
             <Stripes
