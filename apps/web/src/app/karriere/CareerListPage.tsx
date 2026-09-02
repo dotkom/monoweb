@@ -82,12 +82,22 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
       })
       .toSorted((jobListing1, jobListing2) => {
         if (filters.sort === "PUBLISHED") {
-          return jobListing2.createdAt.getTime() - jobListing1.createdAt.getTime()
+          return jobListing2.start.getTime() - jobListing1.start.getTime()
         }
 
-        if (jobListing1.deadline == null) return 1
-        if (jobListing2.deadline == null) return -1
-        return jobListing1.deadline.getTime() - jobListing2.deadline.getTime()
+        const getDeadlineRank = (jobListing: JobListing) => {
+          if (jobListing.deadline != null && !jobListing.rollingAdmission) return 0
+          if (jobListing.rollingAdmission) return 1
+          return 2
+        }
+
+        const rank1 = getDeadlineRank(jobListing1)
+        const rank2 = getDeadlineRank(jobListing2)
+
+        if (rank1 !== rank2) return rank1 - rank2
+        if (rank1 !== 0) return 0
+
+        return (jobListing1.deadline as Date).getTime() - (jobListing2.deadline as Date).getTime()
       })
       .toSorted((jobListing1, jobListing2) => {
         if (jobListing1.featured && !jobListing2.featured) return -1

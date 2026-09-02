@@ -37,12 +37,12 @@ export const JobListingCard: FC<JobListingCardProps> = ({ jobListing, className 
       />
 
       <div className="flex flex-col gap-3 w-full min-w-0">
-        <div className="flex flex-col w-full min-w-0">
+        <div className="flex flex-col gap-0.5 w-full min-w-0">
           <Title
             element="h3"
             size="lg"
             title={title}
-            className="max-md:text-lg text-xl font-semibold line-clamp-2 wrap-break-word transition-colors"
+            className="max-md:text-lg text-xl font-semibold leading-tight line-clamp-2 wrap-break-word transition-colors"
           >
             {title}
           </Title>
