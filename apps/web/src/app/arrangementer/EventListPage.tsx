@@ -36,9 +36,9 @@ import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
-import { FilterChips } from "./components/filters/FilterChips"
+import { EventListFilterChips } from "./components/filters/EventListFilterChips"
 import { GroupFilter } from "./components/filters/GroupFilter"
-import { SearchInput } from "./components/filters/SearchInput"
+import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
 import { SortFilter } from "./components/filters/SortFilter"
 import { TypeFilter } from "./components/filters/TypeFilter"
 import {
@@ -428,7 +428,7 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
 
           <div className="mt-2 min-w-0">
             {hasActiveFilters && (
-              <FilterChips
+              <EventListFilterChips
                 searchTerm={filters.search}
                 typeFilter={filters.types}
                 groupFilters={filters.groups}
