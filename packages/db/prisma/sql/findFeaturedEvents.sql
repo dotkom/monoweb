@@ -7,6 +7,7 @@
 -- @param {String} $8:bySearchTerm?
 -- @param {Boolean} $11:excludingChildEvents
 -- @param {Boolean} $16:byHasFeedbackForm?
+-- @param {String} $17:userId?
 
 -- IMPORTANT: This expects EMPTY arrays and NOT null for array values. Giving null will break things.
 -- Array params are not in the list above due to Prisma limitations.
@@ -47,6 +48,9 @@
 --     Up to 10 points, rising sharply as the registration deadline approaches.
 --
 -- Attendance records without any attendance pools are treated as if the event does not require registration.
+--
+-- Child events of a parent that has attendance are only featured if the viewing user is reserved on that parent.
+-- Parents without attendance, and events without a parent, are unaffected. Anonymous viewers never see gated children.
 --
 -- Events that have ended are not featured.
 
@@ -106,6 +110,24 @@ WITH
           FROM feedback_form
           WHERE feedback_form.event_id = event.id
         )
+      )
+      AND NOT EXISTS (
+        SELECT 1
+        FROM event AS parent_event
+        WHERE
+          parent_event.id = event.parent_id
+          AND parent_event.attendance_id IS NOT NULL
+          AND (
+            $17::text IS NULL
+            OR NOT EXISTS (
+              SELECT 1
+              FROM attendee
+              WHERE
+                attendee.attendance_id = parent_event.attendance_id
+                AND attendee.user_id = $17
+                AND attendee.reserved = TRUE
+            )
+          )
       )
   ),
 

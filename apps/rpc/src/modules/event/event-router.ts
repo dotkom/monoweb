@@ -592,7 +592,8 @@ const findFeaturedEventsProcedure = procedure
         excludingType,
       },
       input.cursor ?? input.offset,
-      input.limit
+      input.limit,
+      principal?.subject ?? null
     )
 
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
