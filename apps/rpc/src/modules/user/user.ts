@@ -85,13 +85,6 @@ export type User = z.infer<typeof UserSchema>
 export type UserId = User["id"]
 export type Username = User["username"]
 
-export const UserUpdateResultSchema = z.object({
-  user: UserSchema,
-  fadderukeContestPointsAwarded: z.number().int(),
-  fadderukeTeamBonusAwarded: z.number().int(),
-})
-export type UserUpdateResult = z.infer<typeof UserUpdateResultSchema>
-
 export function normalizeDbUser(user: {
   userFlagLinks: Array<{
     awardedAt: Date

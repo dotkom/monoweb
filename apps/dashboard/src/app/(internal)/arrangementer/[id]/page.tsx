@@ -16,7 +16,7 @@ import {
   IconSelector,
   IconTrash,
   IconUser,
-  TablerIcon,
+  type TablerIcon,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
@@ -31,7 +31,7 @@ import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import { ComponentType } from "react"
+import type { ComponentType } from "react"
 
 const SIDEBAR_LINKS = [
   {

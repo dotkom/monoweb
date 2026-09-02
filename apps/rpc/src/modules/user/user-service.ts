@@ -19,7 +19,6 @@ import {
   type MembershipService,
 } from "./membership-service"
 import type { UserRepository } from "./user-repository"
-import { awardFadderukeContestProfilePointsOnUserUpdate } from "../fadderuke/fadderuke-contest-profile-progress"
 import {
   Auth0UserProfileAppMetadataSchema,
   Auth0UserProfileUserMetadataSchema,
@@ -35,7 +34,6 @@ import {
   type UserFilterQuery,
   type UserId,
   type Username,
-  type UserUpdateResult,
   type UserWrite,
   UserWriteSchema,
   findActiveMembership,
@@ -46,7 +44,7 @@ import {
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
-  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<UserUpdateResult>
+  update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
    * Update the user's email in Auth0 and trigger a verification email to the new address.
    *
@@ -665,14 +663,9 @@ export function getUserService(
       const currentUser = await this.getById(handle, userId)
       const updatedUser = await userRepository.update(handle, userId, data)
 
-      const fadderukeContestPoints = await awardFadderukeContestProfilePointsOnUserUpdate(handle, userId, data)
       await syncProfileToAuth0(userId, currentUser, updatedUser, data)
 
-      return {
-        user: updatedUser,
-        fadderukeContestPointsAwarded: fadderukeContestPoints.pointsAwarded,
-        fadderukeTeamBonusAwarded: fadderukeContestPoints.teamBonusAwarded,
-      }
+      return updatedUser
     },
 
     async requestEmailChange(handle, userId, newEmail) {
