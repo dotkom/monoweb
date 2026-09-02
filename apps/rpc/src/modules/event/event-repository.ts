@@ -92,7 +92,13 @@ export interface EventRepository {
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
-  findFeaturedEvents(handle: DBHandle, query: EventFilterQuery, offset: number, limit: number): Promise<BaseEvent[]>
+  findFeaturedEvents(
+    handle: DBHandle,
+    query: EventFilterQuery,
+    offset: number,
+    limit: number,
+    userId: UserId | null
+  ): Promise<BaseEvent[]>
 
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
   deleteEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
@@ -422,7 +428,7 @@ export function getEventRepository(): EventRepository {
       return attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
     },
 
-    async findFeaturedEvents(handle, query, offset, limit) {
+    async findFeaturedEvents(handle, query, offset, limit, userId) {
       const events = await handle.$queryRawTyped(
         sql.findFeaturedEvents(
           offset,
@@ -440,7 +446,8 @@ export function getEventRepository(): EventRepository {
           query.byOrganizingGroup ?? [],
           query.excludingOrganizingGroup ?? [],
           query.excludingType ?? ["INTERNAL"],
-          query.byHasFeedbackForm ?? null
+          query.byHasFeedbackForm ?? null,
+          userId
         )
       )
 
