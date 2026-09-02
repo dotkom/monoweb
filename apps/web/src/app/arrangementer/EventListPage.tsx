@@ -409,7 +409,7 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
 
       {isEventListView && searchBarOpen && (
         <div className="sm:hidden">
-          <EventSearchInput
+          <SearchInput
             initialValue={filters.search}
             onDebouncedChange={(value) => updateFilters({ search: value })}
           />
