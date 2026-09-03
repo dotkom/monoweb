@@ -29,7 +29,7 @@ import { JobSortFilter } from "./components/filters/JobSortFilter"
 import { useJobListingFilters } from "./hooks/useJobListingFilters"
 import type { JobListingViewMode } from "./hooks/jobListingViewCookie"
 import { useJobListingsView } from "./hooks/useJobListingsView"
-import { compareAsc } from "date-fns"
+import { compareAsc, compareDesc } from "date-fns"
 
 interface Props {
   initialViewMode: JobListingViewMode
@@ -87,19 +87,33 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
     return filteredJobListings
       .toSorted((jobListing1, jobListing2) => {
         if (filters.sort === "PUBLISHED") {
-          return compareAsc(jobListing1.start, jobListing2.start)
+          return compareDesc(jobListing1.start, jobListing2.start)
         }
 
-        if (jobListing1.deadline !== null && jobListing2.deadline === null) {
+        const hasDeadline1 = jobListing1.deadline !== null && !jobListing1.rollingAdmission
+        const hasDeadline2 = jobListing2.deadline !== null && !jobListing2.rollingAdmission
+
+        if (hasDeadline1 && !hasDeadline2) {
           return -1
         }
 
-        if (jobListing1.deadline === null && jobListing2.deadline !== null) {
+        if (!hasDeadline1 && hasDeadline2) {
           return 1
         }
 
-        if (jobListing1.deadline !== null && jobListing2.deadline !== null) {
-          return compareAsc(jobListing1.deadline, jobListing2.deadline)
+        if (hasDeadline1 && hasDeadline2) {
+          return compareAsc(jobListing1.deadline as Date, jobListing2.deadline as Date)
+        }
+
+        const hasRollingAdmission1 = jobListing1.rollingAdmission
+        const hasRollingAdmission2 = jobListing2.rollingAdmission
+
+        if (hasRollingAdmission1 && !hasRollingAdmission2) {
+          return -1
+        }
+
+        if (!hasRollingAdmission1 && hasRollingAdmission2) {
+          return 1
         }
 
         return 0
