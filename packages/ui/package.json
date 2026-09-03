@@ -45,7 +45,7 @@
     "vaul": "^1.1.2"
   },
   "peerDependencies": {
-    "next": "^15"
+    "next": "^15 || ^16"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",

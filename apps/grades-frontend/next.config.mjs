@@ -61,11 +61,10 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  webpack: {
-    reactComponentAnnotation: true,
-    treeshake: { removeDebugLogging: true },
-    unstable_sentryWebpackPluginOptions: {
-      applicationKey: "grades-frontend",
-    },
+  // Turbopack is the default bundler in Next.js 16, so the `webpack` options have no effect.
+  // These are the Turbopack equivalents; `treeshake.removeDebugLogging` has no counterpart.
+  _experimental: {
+    turbopackReactComponentAnnotation: { enabled: true },
+    turbopackApplicationKey: "grades-frontend",
   },
 })
