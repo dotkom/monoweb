@@ -29,6 +29,7 @@ import { JobSortFilter } from "./components/filters/JobSortFilter"
 import { useJobListingFilters } from "./hooks/useJobListingFilters"
 import type { JobListingViewMode } from "./hooks/jobListingViewCookie"
 import { useJobListingsView } from "./hooks/useJobListingsView"
+import { compareAsc } from "date-fns"
 
 interface Props {
   initialViewMode: JobListingViewMode
@@ -58,16 +59,17 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
   const availableLocations = useMemo(() => getLocations(jobListings ?? []), [jobListings])
 
   const filteredJobListings = useMemo(() => {
-    if (!jobListings) {
+    if (jobListings === undefined) {
       return []
     }
 
     const searchValue = filters.search.trim().toLowerCase()
 
-    return jobListings
-      .filter((jobListing) => {
+    let filteredJobListings = jobListings
+
+    if (searchValue.length > 0) {
+      filteredJobListings = jobListings.filter((jobListing) => {
         const matchesSearch =
-          !searchValue ||
           jobListing.title.toLowerCase().includes(searchValue) ||
           jobListing.company.name.toLowerCase().includes(searchValue)
 
@@ -80,28 +82,37 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
 
         return matchesSearch && matchesEmployment && matchesLocation
       })
+    }
+
+    return filteredJobListings
       .toSorted((jobListing1, jobListing2) => {
         if (filters.sort === "PUBLISHED") {
-          return jobListing2.start.getTime() - jobListing1.start.getTime()
+          return compareAsc(jobListing1.start, jobListing2.start)
         }
 
-        const getDeadlineRank = (jobListing: JobListing) => {
-          if (jobListing.deadline != null && !jobListing.rollingAdmission) return 0
-          if (jobListing.rollingAdmission) return 1
-          return 2
+        if (jobListing1.deadline !== null && jobListing2.deadline === null) {
+          return -1
         }
 
-        const rank1 = getDeadlineRank(jobListing1)
-        const rank2 = getDeadlineRank(jobListing2)
+        if (jobListing1.deadline === null && jobListing2.deadline !== null) {
+          return 1
+        }
 
-        if (rank1 !== rank2) return rank1 - rank2
-        if (rank1 !== 0) return 0
+        if (jobListing1.deadline !== null && jobListing2.deadline !== null) {
+          return compareAsc(jobListing1.deadline, jobListing2.deadline)
+        }
 
-        return (jobListing1.deadline as Date).getTime() - (jobListing2.deadline as Date).getTime()
+        return 0
       })
       .toSorted((jobListing1, jobListing2) => {
-        if (jobListing1.featured && !jobListing2.featured) return -1
-        if (!jobListing1.featured && jobListing2.featured) return 1
+        if (jobListing1.featured && !jobListing2.featured) {
+          return -1
+        }
+
+        if (!jobListing1.featured && jobListing2.featured) {
+          return 1
+        }
+
         return 0
       })
   }, [jobListings, filters])
