@@ -153,7 +153,7 @@ export const createAbsoluteEventPageUrl = (
 }
 
 export const createAbsoluteCoursePageUrl = (origin: string, courseCode: string): string => {
-  return `${origin}/emner/${courseCode}`
+  return `${origin}/emner/${encodeURIComponent(courseCode)}`
 }
 
 export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string => {

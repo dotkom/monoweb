@@ -1,13 +1,11 @@
+import { hasLocale } from "next-intl"
 import { getRequestConfig } from "next-intl/server"
-import { cookies } from "next/headers"
-import { DEFAULT_LOCALE, type Locale } from "./locale"
+import { routing } from "./routing"
 
 // biome-ignore lint/style/noDefaultExport: required by next-intl
-export default getRequestConfig(async () => {
-  const store = await cookies()
-
-  const storedLocale = store.get("locale")?.value
-  const locale: Locale = storedLocale === "no" || storedLocale === "en" ? storedLocale : DEFAULT_LOCALE
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
 
   return {
     locale,
