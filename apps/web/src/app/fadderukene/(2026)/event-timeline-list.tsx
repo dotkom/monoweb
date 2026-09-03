@@ -23,7 +23,7 @@ import { IconMapPin, IconMapPinShare } from "@tabler/icons-react"
 import { format, isBefore, isPast, startOfToday } from "date-fns"
 import { nb } from "date-fns/locale"
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { Fragment, useState } from "react"
 
 type EventTimelineListProps = {

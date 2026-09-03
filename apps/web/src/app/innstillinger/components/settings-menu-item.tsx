@@ -1,6 +1,6 @@
 import { Button, cn, Text } from "@dotkomonline/ui"
 import type { Icon } from "@tabler/icons-react"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { usePathname } from "next/navigation"
 import type { FC } from "react"
 

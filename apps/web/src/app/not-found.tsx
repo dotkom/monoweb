@@ -1,5 +1,5 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
-import Link from "next/link"
+import { Link } from "@/components/link"
 
 const NotFound = async () => {
   return (

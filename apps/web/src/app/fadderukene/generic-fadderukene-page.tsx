@@ -1,6 +1,6 @@
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconBarrierBlock, IconExternalLink } from "@tabler/icons-react"
-import Link from "next/link"
+import { Link } from "@/components/link"
 
 export function GenericFadderukenePage() {
   return (

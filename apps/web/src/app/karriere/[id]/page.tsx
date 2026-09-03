@@ -15,7 +15,7 @@ import {
 import { formatDate } from "date-fns"
 import type { Metadata } from "next"
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { notFound } from "next/navigation"
 
 interface JobListingProps {

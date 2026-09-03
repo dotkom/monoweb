@@ -55,7 +55,7 @@ import {
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { notFound, redirect, useParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
