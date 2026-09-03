@@ -127,7 +127,7 @@ export function getCourseRepository(): CourseRepository {
 
     async findManySitemapEntries(handle) {
       const courses = await handle.course.findMany({
-        select: { code: true, updatedAt: true },
+        select: { code: true, updatedAt: true, nameEn: true },
         orderBy: { code: "asc" },
       })
 

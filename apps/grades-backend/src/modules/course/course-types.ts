@@ -158,6 +158,7 @@ export type SerializedSemesterKey = `${number}-${Semester}`
 export const CourseSitemapEntrySchema = CourseSchema.pick({
   code: true,
   updatedAt: true,
+  nameEn: true,
 })
 export type CourseSitemapEntry = z.infer<typeof CourseSitemapEntrySchema>
 
