@@ -1,5 +1,3 @@
-"use client"
-
 import { FilterChips, type FilterChip } from "@/components/molecules/ListFilters/FilterChips"
 import type { EventType } from "@dotkomonline/rpc/event"
 import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
@@ -27,11 +25,6 @@ export const EventListFilterChips = ({
   onRemoveFilter,
   onResetAll,
 }: EventListFilterChipsProps) => {
-  const getGroupName = (slug: string) => {
-    const group = groups.find((g) => g.slug === slug)
-    return group ? getGroupDisplayName(group) : slug
-  }
-
   const chips: FilterChip[] = []
 
   if (searchTerm) {
@@ -47,9 +40,10 @@ export const EventListFilterChips = ({
   }
 
   for (const groupSlug of groupFilters) {
+    const group = groups.find((g) => g.slug === groupSlug)
     chips.push({
       key: `group-${groupSlug}`,
-      label: getGroupName(groupSlug),
+      label: group ? getGroupDisplayName(group) : groupSlug,
       onRemove: () => onRemoveFilter("group", groupSlug),
     })
   }

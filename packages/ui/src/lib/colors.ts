@@ -15,7 +15,7 @@ const defaultColorClasses: Record<Color, string> = {
   green: "border-transparent bg-green-500/10 text-green-700 dark:bg-green-500/15 dark:text-green-300",
   yellow: "border-transparent bg-yellow-500/10 text-yellow-800 dark:bg-yellow-500/15 dark:text-yellow-300",
   amber: "border-transparent bg-amber-500/10 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
-  orange: "border-transparent bg-orange-500/10 text-orange-800 dark:bg-orange-900/60 dark:text-orange-300",
+  orange: "border-transparent bg-orange-500/10 text-orange-800 dark:bg-orange-500/15 dark:text-orange-300",
   red: "border-transparent bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-300",
   gray: "border-transparent bg-gray-500/10 text-gray-700 dark:bg-stone-500/25 dark:text-stone-300",
 }
