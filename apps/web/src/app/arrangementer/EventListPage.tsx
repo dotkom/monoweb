@@ -36,11 +36,11 @@ import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
-import { FilterChips } from "./components/filters/FilterChips"
-import { GroupFilter } from "./components/filters/GroupFilter"
-import { SearchInput } from "./components/filters/SearchInput"
-import { SortFilter } from "./components/filters/SortFilter"
-import { TypeFilter } from "./components/filters/TypeFilter"
+import { EventListFilterChips } from "./components/filters/EventFilterChips"
+import { EventGroupFilter } from "./components/filters/EventGroupFilter"
+import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
+import { EventSortFilter } from "./components/filters/EventSortFilter"
+import { EventTypeFilter } from "./components/filters/EventTypeFilter"
 import {
   useEventAllSummariesByAttendingUserIdInfiniteQuery,
   useEventAllSummariesInfiniteQuery,
@@ -313,13 +313,13 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
                           <Text element="span" className="h-5.5 font-medium text-sm">
                             Sorter
                           </Text>
-                          <SortFilter
+                          <EventSortFilter
                             value={filters.viewModeSort}
                             onChange={(viewModeSort) => updateFilters({ viewModeSort })}
                           />
                         </div>
                         <div className="mt-6">
-                          <TypeFilter
+                          <EventTypeFilter
                             value={filters.types}
                             onChange={(types) => updateFilters({ types })}
                             isStaff={isStaff}
@@ -328,7 +328,7 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
                       </div>
 
                       <div className="mt-6 sm:mt-0">
-                        <GroupFilter
+                        <EventGroupFilter
                           value={filters.groups}
                           onChange={(groups) => updateFilters({ groups })}
                           groups={groups ?? []}
@@ -354,7 +354,7 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
                 className="max-sm:hidden w-full max-w-90"
               />
 
-              <SortFilter
+              <EventSortFilter
                 value={filters.viewModeSort}
                 onChange={(viewModeSort) => updateFilters({ viewModeSort })}
                 className="max-md:hidden"
@@ -416,9 +416,9 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
       {isEventListView && (
         <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0">
           <div className="max-md:hidden mt-4">
-            <TypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
+            <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
             <div className="mt-6">
-              <GroupFilter
+              <EventGroupFilter
                 value={filters.groups}
                 onChange={(groups) => updateFilters({ groups })}
                 groups={groups ?? []}
@@ -428,7 +428,7 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
 
           <div className="mt-2 min-w-0">
             {hasActiveFilters && (
-              <FilterChips
+              <EventListFilterChips
                 searchTerm={filters.search}
                 typeFilter={filters.types}
                 groupFilters={filters.groups}
