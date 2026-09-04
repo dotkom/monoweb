@@ -14,6 +14,4 @@ export const routing = defineRouting({
 
   // Don't add a prefix for "no" which is the default locale
   localePrefix: "as-needed",
-
-  localeDetection: false,
 })
