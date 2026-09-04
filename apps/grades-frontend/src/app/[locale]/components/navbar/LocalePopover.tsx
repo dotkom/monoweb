@@ -25,7 +25,7 @@ export const LocalePopover = () => {
     }
 
     // @ts-expect-error params is valid for dynamic routes but missing from types
-    router.replace({ pathname, params }, { locale: newLocale })
+    router.replace({ pathname, params }, { locale: newLocale, scroll: false })
     setLanguagePopoverOpen(false)
   }
 
