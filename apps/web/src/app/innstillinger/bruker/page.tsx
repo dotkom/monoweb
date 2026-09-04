@@ -1,11 +1,13 @@
 "use client"
 
+import { FeideLinkNudgeHighlight } from "@/app/innstillinger/bruker/FeideLinkNudgeHighlight"
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
 import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
+import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl, resolveAuthErrorMessage } from "@dotkomonline/utils"
@@ -42,6 +44,11 @@ export default function MinBrukerPage() {
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
     ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
     enabled: sessionUser != null && !isInvalid,
+  })
+
+  const { showNudge: showFeideLinkNudge, dismissNudge: dismissFeideLinkNudge } = useFeideLinkNudge({
+    auth0Connections,
+    auth0ConnectionsIsLoading,
   })
 
   const user = dbUser
@@ -263,23 +270,25 @@ export default function MinBrukerPage() {
             )}
           </div>
 
-          <div className="flex gap-2 items-center">
-            <FeideIcon size={22} />
-            <Text>FEIDE</Text>
-          </div>
+          <FeideLinkNudgeHighlight show={showFeideLinkNudge} onDismiss={dismissFeideLinkNudge}>
+            <div className="flex gap-2 items-center">
+              <FeideIcon size={22} />
+              <Text>FEIDE</Text>
+            </div>
 
-          <div className="flex flex-row gap-2">
-            <Button className="w-fit" {...feideLinkButtonProps}>
-              <IconLink className="size-4" />
-              <Text className="text-sm">Tilknytt</Text>
-            </Button>
-            {isFeideLinked && (
-              <div className="flex flex-row gap-1 items-center text-xs text-green-600">
-                <IconCheck size="1.15em" />
-                <Text>Tilkoblet</Text>
-              </div>
-            )}
-          </div>
+            <div className="flex flex-row gap-2">
+              <Button className="w-fit" {...feideLinkButtonProps}>
+                <IconLink className="size-4" />
+                <Text className="text-sm">Tilknytt</Text>
+              </Button>
+              {isFeideLinked && (
+                <div className="flex flex-row gap-1 items-center text-xs text-green-600">
+                  <IconCheck size="1.15em" />
+                  <Text>Tilkoblet</Text>
+                </div>
+              )}
+            </div>
+          </FeideLinkNudgeHighlight>
         </div>
       </div>
     </div>
