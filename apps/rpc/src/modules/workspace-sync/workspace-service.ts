@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { type Group, type GroupId, type GroupMember, getActiveGroupMembership } from "../group/group"
+import { type Group, type GroupId, type GroupMember, getActiveGroupMembership, GroupRoleTypeEnum } from "../group/group"
 import type { User, UserId } from "../user/user"
 import type {
   WorkspaceGroup,
@@ -12,13 +12,16 @@ import type {
   WorkspaceMemberSyncState,
   WorkspaceUser,
 } from "./workspace"
-import { slugify } from "@dotkomonline/utils"
-import { isAfter } from "date-fns"
+import { slugify, type SlugifyOptions } from "@dotkomonline/utils"
+import { compareAsc, isAfter } from "date-fns"
 import type { admin_directory_v1 } from "@googleapis/admin"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
 import invariant from "tiny-invariant"
 import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
 import { NotFoundError } from "../../error"
+import { CommitteeGroupSlug } from "../authorization-service"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { GroupService } from "../group/group-service"
 import type { UserService } from "../user/user-service"
 
@@ -29,18 +32,19 @@ const SLUGIFY_OPTIONS = {
   replacement: ".",
   strict: false,
   remove: /[^a-zA-Z0-9-\s]/g,
-}
+} as const satisfies SlugifyOptions
 
 export interface WorkspaceService {
   // User
   createWorkspaceUser(
     handle: DBHandle,
-    userId: UserId
+    userId: UserId,
+    contactCommittee: CommitteeGroupSlug
   ): Promise<{
     user: User
     workspaceUser: WorkspaceUser
     recoveryCodes: string[] | null
-    password: string
+    password: string | null
   }>
   resetWorkspaceUserPassword(
     handle: DBHandle,
@@ -65,10 +69,13 @@ export interface WorkspaceService {
   synchronizeWorkspaceGroup(handle: DBHandle, groupSlug: GroupId): Promise<boolean>
 }
 
+const DOTKOM_LEADER_EMAIL = "dotkom-leder@online.ntnu.no"
+
 export function getWorkspaceService(
   directory: admin_directory_v1.Admin,
   userService: UserService,
   groupService: GroupService,
+  emailService: EmailService,
   configuration: ConfigurationWithGoogleWorkspace
 ): WorkspaceService {
   const logger = getLogger("workspace-sync-service")
@@ -113,13 +120,15 @@ export function getWorkspaceService(
     return [...leftJoin.values()].concat(rightJoin)
   }
 
-  async function createRecoveryCodes(user: User): Promise<string[] | null> {
+  async function createRecoveryCodes(user: User, userKey?: string): Promise<string[] | null> {
+    const key = userKey ?? getKey(user)
+
     await directory.verificationCodes.generate({
-      userKey: getKey(user),
+      userKey: key,
     })
 
     const response = await directory.verificationCodes.list({
-      userKey: user.workspaceUserId ?? getKey(user),
+      userKey: key,
     })
 
     if (!response.data.items) {
@@ -127,6 +136,18 @@ export function getWorkspaceService(
     }
 
     return response.data.items.map((code) => code.verificationCode).filter(Boolean) as string[]
+  }
+
+  async function addMemberEmailToWorkspaceGroup(group: Group, memberEmail: string): Promise<WorkspaceMember> {
+    const response = await directory.members.insert({
+      groupKey: getKey(group),
+      requestBody: {
+        email: memberEmail,
+        role: "MEMBER",
+      },
+    })
+
+    return response.data
   }
 
   async function removeFromWorkspaceGroup(groupKey: string, memberKey: string): Promise<boolean> {
@@ -188,12 +209,17 @@ export function getWorkspaceService(
 
   function getKeys(keyResolvable: User | Group | string, domain = configuration.googleWorkspace.domain): string[] {
     const linkedId = getLinkedWorkspaceId(keyResolvable)
+    const keys = new Set<string>()
 
     if (linkedId) {
-      return [linkedId]
+      keys.add(linkedId)
     }
 
-    const keys = new Set<string>()
+    const canResolveEmail = typeof keyResolvable === "string" || "type" in keyResolvable || Boolean(keyResolvable.name)
+
+    if (!canResolveEmail) {
+      return [...keys]
+    }
 
     const emailKey = getEmail(keyResolvable, domain)
 
@@ -246,6 +272,98 @@ export function getWorkspaceService(
     return randomBytes(TEMPORARY_PASSWORD_LENGTH).toString("base64").slice(0, TEMPORARY_PASSWORD_LENGTH)
   }
 
+  async function getLeaderName(handle: DBHandle, groupSlug: GroupId, fallback: string): Promise<string> {
+    const leaders = await groupService.findLeadersBySlug(handle, groupSlug)
+    const leader = leaders
+      .values()
+      .filter((leader) => {
+        const membership = getActiveGroupMembership(leader, groupSlug)
+
+        return membership?.end === null
+      })
+      .toArray()
+      .toSorted((a, b) => {
+        const membershipA = getActiveGroupMembership(a, groupSlug)
+        const membershipB = getActiveGroupMembership(b, groupSlug)
+
+        // sanity check -- they should never be null
+        if (membershipA == null || membershipB == null) {
+          return 0
+        }
+
+        return compareAsc(membershipA.start, membershipB.start)
+      })
+      .at(0)
+
+    if (leader?.name == null) {
+      return fallback
+    }
+
+    return leader.name
+  }
+
+  async function sendCommitteeEmailCreatedEmail(
+    handle: DBHandle,
+    user: User,
+    committeeEmail: string,
+    password: string,
+    firstName: string,
+    contactCommittee: CommitteeGroupSlug,
+    twoFactorAuthentication: {
+      enforced: boolean
+      recoveryCode: string | null
+    }
+  ): Promise<void> {
+    if (user.email === null) {
+      logger.warn("User(ID=%s) does not have an email, cannot send committee email created notification", user.id)
+      return
+    }
+
+    const [dotkomLeaderName, committeeLeaderName] = await Promise.all([
+      getLeaderName(handle, CommitteeGroupSlug.DOTKOM, "Dotkomleder"),
+      getLeaderName(handle, contactCommittee, ""),
+    ])
+
+    if (twoFactorAuthentication.enforced) {
+      invariant(twoFactorAuthentication.recoveryCode, "Expected a recovery code to be defined when 2FA is enforced")
+
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        [DOTKOM_LEADER_EMAIL],
+        [user.email],
+        [],
+        [],
+        "(Online) Opprettelse av komité-e-postadresse",
+        emails.COMMITTEE_EMAIL_CREATED_2FA_ENFORCED,
+        {
+          firstName,
+          email: committeeEmail,
+          password,
+          dotkomLeaderName,
+          committeeLeaderName,
+          recoveryCode: twoFactorAuthentication.recoveryCode,
+        }
+      )
+    } else {
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        [DOTKOM_LEADER_EMAIL],
+        [user.email],
+        [],
+        [],
+        "(Online) Opprettelse av komité-e-postadresse",
+        emails.COMMITTEE_EMAIL_CREATED,
+        {
+          firstName,
+          email: committeeEmail,
+          password,
+          dotkomLeaderName,
+          committeeLeaderName,
+        }
+      )
+    }
+  }
+
   function getWorkspaceMemberSyncState(memberLink: Omit<WorkspaceMemberLink, "syncState">): WorkspaceMemberSyncState {
     // Some of the oldest users do not have Workspace accounts, and we do not want to give "Needs linking" warnings for
     // them, since it has been over a decade since their last group membership ended. We do not want to create new
@@ -281,12 +399,66 @@ export function getWorkspaceService(
     return "SYNCED"
   }
 
+  function getCosmeticMemberRole(group: Group) {
+    const namedMemberRole = group.roles.find((role) => {
+      return role.type === GroupRoleTypeEnum.COSMETIC && role.name === "Medlem"
+    })
+
+    if (namedMemberRole) {
+      return namedMemberRole
+    }
+
+    return group.roles.find((role) => role.type === GroupRoleTypeEnum.COSMETIC) ?? null
+  }
+
+  async function startCommitteeMembershipIfNeeded(
+    handle: DBHandle,
+    userId: UserId,
+    contactCommittee: CommitteeGroupSlug
+  ): Promise<void> {
+    const group = await groupService.getBySlug(handle, contactCommittee)
+    const members = await groupService.findMembersBySlug(handle, contactCommittee)
+    const existingMember = members.get(userId) ?? null
+    const activeMembership = getActiveGroupMembership(existingMember, contactCommittee)
+
+    if (activeMembership !== null) {
+      return
+    }
+
+    const memberRole = getCosmeticMemberRole(group)
+
+    if (memberRole === null) {
+      throw new Error(`Group(Slug=${contactCommittee}) does not have a member role`)
+    }
+
+    await groupService.startMembership(handle, userId, contactCommittee, new Set([memberRole.id]))
+  }
+
   return {
-    async createWorkspaceUser(handle, userId) {
+    async createWorkspaceUser(handle, userId, contactCommittee) {
       const user = await userService.getById(handle, userId)
 
       if (user.workspaceUserId) {
-        throw new Error("User already has a workspace user ID")
+        await startCommitteeMembershipIfNeeded(handle, userId, contactCommittee)
+
+        try {
+          await this.addUserIntoWorkspaceGroup(handle, contactCommittee, userId)
+        } catch (error) {
+          if (!(error instanceof GaxiosError) || error.response?.status !== 409) {
+            throw error
+          }
+
+          logger.info("User(ID=%s) is already a member of WorkspaceGroup(Slug=%s)", userId, contactCommittee)
+        }
+
+        const workspaceUser = await this.getWorkspaceUser(handle, userId)
+
+        return {
+          user,
+          workspaceUser,
+          recoveryCodes: null,
+          password: null,
+        }
       }
 
       if (!user.name) {
@@ -301,9 +473,10 @@ export function getWorkspaceService(
       const password = getTemporaryPassword()
 
       const firstName = user.name.split(" ").slice(0, -1).join(" ")
+      const firstFirstName = firstName.split(" ").at(0)
       const lastName = user.name.split(" ").at(-1)
 
-      if (!firstName || !lastName) {
+      if (!firstName || !firstFirstName || !lastName) {
         throw new Error("Failed to split user name into first and last name")
       }
 
@@ -316,7 +489,6 @@ export function getWorkspaceService(
             familyName: lastName,
           },
           recoveryEmail: user.email,
-          recoveryPhone: user.phone,
           changePasswordAtNextLogin: true,
         },
       })
@@ -330,12 +502,34 @@ export function getWorkspaceService(
 
       const is2faEnforced = response.data.isEnforcedIn2Sv ?? false
       const is2faEnabled = response.data.isEnrolledIn2Sv ?? false
+      const isGroup2faEnforced =
+        configuration.googleWorkspace.twoFactorAuthenticationRequiredGroups?.includes(contactCommittee)
 
       let recoveryCodes: string[] | null = null
 
-      if (is2faEnforced && !is2faEnabled) {
-        recoveryCodes = await createRecoveryCodes(user)
+      if ((is2faEnforced && !is2faEnabled) || isGroup2faEnforced) {
+        recoveryCodes = await createRecoveryCodes(newUser, primaryEmail)
       }
+
+      const recoveryCode = recoveryCodes?.at(0) ?? null
+
+      await startCommitteeMembershipIfNeeded(handle, userId, contactCommittee)
+
+      try {
+        const group = await groupService.getBySlug(handle, contactCommittee)
+        await addMemberEmailToWorkspaceGroup(group, primaryEmail)
+      } catch (error) {
+        if (!(error instanceof GaxiosError) || error.response?.status !== 409) {
+          throw error
+        }
+
+        logger.info("User(ID=%s) is already a member of WorkspaceGroup(Slug=%s)", userId, contactCommittee)
+      }
+
+      await sendCommitteeEmailCreatedEmail(handle, newUser, primaryEmail, password, firstFirstName, contactCommittee, {
+        enforced: is2faEnforced || isGroup2faEnforced,
+        recoveryCode,
+      })
 
       return {
         user: newUser,
@@ -425,22 +619,19 @@ export function getWorkspaceService(
 
     async addUserIntoWorkspaceGroup(handle, groupSlug, userId) {
       const group = await groupService.getBySlug(handle, groupSlug)
-      const _user = await userService.getById(handle, userId)
-      const workspaceUser = await this.getWorkspaceUser(handle, userId)
+      const user = await userService.getById(handle, userId)
+      const workspaceUser = await this.findWorkspaceUser(handle, userId)
+      let memberEmail = workspaceUser?.primaryEmail ?? null
 
-      if (!workspaceUser.primaryEmail) {
+      if (memberEmail === null && user.name) {
+        memberEmail = getCommitteeEmail(user.name)
+      }
+
+      if (memberEmail === null) {
         throw new NotFoundError("Workspace user does not have a primary email")
       }
 
-      const res = await directory.members.insert({
-        groupKey: getKey(group),
-        requestBody: {
-          email: workspaceUser.primaryEmail,
-          role: "MEMBER",
-        },
-      })
-
-      return res.data
+      return await addMemberEmailToWorkspaceGroup(group, memberEmail)
     },
 
     async removeUserFromWorkspaceGroup(handle, groupSlug, userId) {
