@@ -2,7 +2,7 @@ import { OnlineLogo } from "@/components/atoms/OnlineLogo"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconExternalLink, IconMessageReport } from "@tabler/icons-react"
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/components/link"
 
 export function Welcome() {
   return (

@@ -41,7 +41,7 @@ import {
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { useTheme } from "next-themes"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { type FC, Fragment, useEffect, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
 

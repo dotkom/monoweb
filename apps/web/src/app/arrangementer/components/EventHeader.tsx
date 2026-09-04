@@ -6,7 +6,7 @@ import type { Event } from "@dotkomonline/rpc/event"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import type { FC } from "react"
 import { useState } from "react"
 

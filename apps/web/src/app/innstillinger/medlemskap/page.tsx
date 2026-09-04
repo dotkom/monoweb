@@ -12,7 +12,7 @@ import { Button, Text, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconArrowUpRight } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { redirect, usePathname, useSearchParams } from "next/navigation"
 
 function LoadingCard({ className = "h-36" }: { className?: string }) {

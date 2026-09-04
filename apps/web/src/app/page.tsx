@@ -10,7 +10,7 @@ import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { Fadderuke2026Notice } from "./fadderukene/(2026)/fadderuke-2026-notice"
 
 export default async function App() {

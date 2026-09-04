@@ -9,6 +9,7 @@
       "!**/dist",
       "!**/out",
       "!**/.next",
+      "!**/next-env.d.ts",
       "!**/.react-email",
       "!**/db.generated.d.ts"
     ]

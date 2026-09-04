@@ -5,7 +5,7 @@ import { Button, Stripes, Text, Title, cn } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconEye, IconEyeOff, IconHandClick, IconMoodPuzzled } from "@tabler/icons-react"
 import { addMonths } from "date-fns"
 import Image from "next/image"
-import Link from "next/link"
+import { Link } from "@/components/link"
 import { useEffect, useState } from "react"
 import { ScrollingClouds } from "./clouds"
 
