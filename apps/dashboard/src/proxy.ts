@@ -17,8 +17,8 @@ function redirectToClearSession(request: NextRequest): NextResponse {
   return NextResponse.redirect(new URL(clearSessionPath, request.url))
 }
 
-export async function middleware(request: NextRequest) {
-  // The Auth0 middleware creates the authorize, callback, logout and access-token endpoints for us. On normal requests
+export async function proxy(request: NextRequest) {
+  // The Auth0 SDK creates the authorize, callback, logout and access-token endpoints for us. On normal requests
   // it also extends the session cookie lifetime when the user has a session.
   const authResponse = await auth0.middleware(request)
 
@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
     // token from the request, and the browser stores it from the response.
     await auth0.getAccessToken(request, authResponse)
   } catch (error) {
-    console.error("[dashboard:middleware] failed to refresh session tokens", error)
+    console.error("[dashboard:proxy] failed to refresh session tokens", error)
 
     if (isAccessTokenFetchFailure(error)) {
       // A missing or rejected refresh token marks the local session as stale. The clear-session route deletes its
@@ -65,10 +65,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Route the SDK's authorize, callback, logout and access-token endpoints through middleware.
+    // Route the SDK's authorize, callback, logout and access-token endpoints through the proxy
     "/api/auth/:path*",
     {
-      // Run middleware for normal page requests while omitting static files and Next.js prefetch requests.
+      // Run proxy for normal page requests while omitting static files and Next.js prefetch requests
       source: "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
