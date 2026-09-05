@@ -105,7 +105,7 @@ export function useFormBuilder<T extends z.ZodRawShape>({
             })(e)
           }}
         >
-          <Flex direction="column" gap="md">
+          <Flex direction="column" gap="lg">
             {configuration.components}
             <div>
               <Button type="submit" disabled={configuration.disabled}>

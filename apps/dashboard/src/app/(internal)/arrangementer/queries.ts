@@ -52,6 +52,12 @@ export const useEventWithAttendancesGetQuery = (id: EventId, enabled?: boolean) 
   return useQuery(trpc.event.get.queryOptions(id, { enabled }))
 }
 
+export const useFindParentEventQuery = (eventId: EventId) => {
+  const trpc = useTRPC()
+
+  return useQuery(trpc.event.findParentEvent.queryOptions({ eventId }))
+}
+
 export const useEventAllByAttendingUserInfiniteQuery = (id: UserId, page?: Pageable) => {
   const trpc = useTRPC()
   const { data, ...query } = useInfiniteQuery({

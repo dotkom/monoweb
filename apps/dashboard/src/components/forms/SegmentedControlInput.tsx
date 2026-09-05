@@ -1,4 +1,4 @@
-import { Input, SegmentedControl, type SegmentedControlProps } from "@mantine/core"
+import { Input, SegmentedControl, Stack, type SegmentedControlProps } from "@mantine/core"
 import type { ReactNode } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "./types"
@@ -30,20 +30,21 @@ export function createSegmentedControlInput<
         required={required}
         error={getErrorMessage(state, name)}
       >
-        <Controller
-          control={control}
-          name={name}
-          render={({ field }) => (
-            <SegmentedControl
-              {...props}
-              fullWidth={fullWidth}
-              mt={label || description ? "xs" : undefined}
-              value={field.value}
-              onChange={field.onChange}
-              disabled={disabled ?? props.disabled}
-            />
-          )}
-        />
+        <Stack gap={0} mt={label || description ? "xs" : undefined} w={fullWidth ? "100%" : "fit-content"}>
+          <Controller
+            control={control}
+            name={name}
+            render={({ field }) => (
+              <SegmentedControl
+                {...props}
+                fullWidth={fullWidth}
+                value={field.value}
+                onChange={field.onChange}
+                disabled={disabled ?? props.disabled}
+              />
+            )}
+          />
+        </Stack>
       </Input.Wrapper>
     )
   }

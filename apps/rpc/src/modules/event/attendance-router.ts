@@ -115,6 +115,13 @@ const deleteAttendanceProcedure = procedure
     return ctx.attendanceService.deleteAttendance(ctx.handle, input.id)
   })
 
+const ADMIN_REGISTER_DEFAULT_OPTIONS = {
+  ignoreRegisteredToParent: true,
+  immediateReservation: false,
+  immediatePayment: false,
+  overrideTurnstileCheck: true,
+} as const
+
 export type AdminRegisterForEventInput = inferProcedureInput<typeof adminRegisterForEventProcedure>
 export type AdminRegisterForEventOutput = inferProcedureOutput<typeof adminRegisterForEventProcedure>
 const adminRegisterForEventProcedure = procedure
@@ -123,6 +130,14 @@ const adminRegisterForEventProcedure = procedure
       attendanceId: AttendanceSchema.shape.id,
       attendancePoolId: AttendancePoolSchema.shape.id,
       userId: UserSchema.shape.id,
+      options: z
+        .object({
+          ignoreRegisteredToParent: z.boolean().default(ADMIN_REGISTER_DEFAULT_OPTIONS.ignoreRegisteredToParent),
+          immediateReservation: z.boolean().default(ADMIN_REGISTER_DEFAULT_OPTIONS.immediateReservation),
+          immediatePayment: z.boolean().default(ADMIN_REGISTER_DEFAULT_OPTIONS.immediatePayment),
+          overrideTurnstileCheck: z.boolean().default(ADMIN_REGISTER_DEFAULT_OPTIONS.overrideTurnstileCheck),
+        })
+        .default(ADMIN_REGISTER_DEFAULT_OPTIONS),
     })
   )
   .use(withAuthentication())
@@ -137,11 +152,11 @@ const adminRegisterForEventProcedure = procedure
       input.userId,
       {
         ignoreRegistrationWindow: true,
-        immediateReservation: true,
-        immediatePayment: false,
+        ignoreRegisteredToParent: input.options.ignoreRegisteredToParent,
+        immediateReservation: input.options.immediateReservation,
+        immediatePayment: input.options.immediatePayment,
         overriddenAttendancePoolId: input.attendancePoolId,
-        ignoreRegisteredToParent: true,
-        overrideTurnstileCheck: true,
+        overrideTurnstileCheck: input.options.overrideTurnstileCheck,
       }
     )
     if (!result.success) {

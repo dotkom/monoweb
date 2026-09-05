@@ -27,6 +27,7 @@ import {
   getReservedAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
+  MAX_MERGE_DELAY_HOURS,
 } from "./attendance"
 import { type Event, findFirstHostingGroupEmail } from "./event"
 import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
@@ -1774,15 +1775,21 @@ function validateAttendanceWrite(data: AttendanceWrite) {
 }
 
 function validateAttendancePoolWrite(data: AttendancePoolWrite) {
-  if (data.mergeDelayHours !== null && (data.mergeDelayHours < 0 || data.mergeDelayHours > 48)) {
-    throw new InvalidArgumentError("Merge delay for pool must be between 0 and 48 hours")
-  }
-
   if (data.capacity < 0) {
     throw new InvalidArgumentError("Capacity for pool must be zero or positive")
   }
 
-  if (data.yearCriteria.some((v) => v < 1 || v > 5)) {
+  if (data.mergeDelayHours !== null && (data.mergeDelayHours < 0 || data.mergeDelayHours > MAX_MERGE_DELAY_HOURS)) {
+    throw new InvalidArgumentError(`Merge delay for pool must be between 0 and ${MAX_MERGE_DELAY_HOURS} hours`)
+  }
+
+  const hasMergeDelay = data.mergeDelayHours !== null && data.mergeDelayHours > 0
+
+  if (hasMergeDelay && data.capacity !== 0) {
+    throw new InvalidArgumentError("Capacity for pool must be unlimited (0) when the pool has a merge delay")
+  }
+
+  if (data.yearCriteria.some((year) => year < 1 || year > 5)) {
     throw new InvalidArgumentError("Year criteria must be between 1 and 5")
   }
 }

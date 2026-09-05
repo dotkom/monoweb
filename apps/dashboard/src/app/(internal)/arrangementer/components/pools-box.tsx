@@ -32,7 +32,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
           <Text>
             {reservedAttendeeCount} {pool.capacity > 0 ? `/ ${pool.capacity} påmeldte` : "påmeldte (ledige plasser)"}
           </Text>
-          {unreservedAttendeeCount > 0 && <Text>{unreservedAttendeeCount} på venteliste</Text>}
+          {unreservedAttendeeCount > 0 && <Text>{unreservedAttendeeCount} i kø</Text>}
           <Space h="xs" />
           <Text size="sm">Årstrinn: {formatPoolYearCriterias(pool.yearCriteria)}</Text>
           <Text size="sm">

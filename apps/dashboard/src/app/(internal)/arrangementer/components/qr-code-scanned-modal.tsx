@@ -5,9 +5,8 @@ import {
   getAttendeeQueuePosition,
   getUnreservedAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
-import { type User, findActiveMembership, getMembershipTypeName, getGenderName } from "@dotkomonline/rpc/user"
-import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
-import { Button, Flex, Group, Image, Stack, Text, Title, useComputedColorScheme } from "@mantine/core"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { Button, Group, Stack, Text, Title } from "@mantine/core"
 import { useMediaQuery } from "@mantine/hooks"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import { IconAlertTriangle, IconCheck, IconX } from "@tabler/icons-react"
@@ -15,6 +14,7 @@ import { formatDate, formatDistanceToNow } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { useUpdateEventAttendanceMutation } from "../mutations"
+import { UserBox } from "./user-box"
 
 interface ModalProps {
   attendance: Attendance
@@ -152,42 +152,6 @@ export const QRCodeScannedModal: FC<ContextModalProps<ModalProps>> = ({
           </Button>
         </Group>
       </Stack>
-    </Stack>
-  )
-}
-
-interface UserBoxProps {
-  user: User
-  isMobile: boolean
-}
-
-const UserBox = ({ user, isMobile }: UserBoxProps) => {
-  const isLightMode = useComputedColorScheme() === "light"
-
-  const membership = findActiveMembership(user)
-  const grade = membership?.semester != null ? getStudyGrade(membership.semester) : null
-  const membershipType = membership && getMembershipTypeName(membership.type)
-
-  return (
-    <Stack>
-      <Flex
-        direction={isMobile ? "column" : "row"}
-        gap="md"
-        p="sm"
-        bg={isLightMode ? "gray.1" : "dark.5"}
-        style={{ borderRadius: 16 }}
-        align="flex-start"
-        wrap="nowrap"
-      >
-        <Image src={user.imageUrl} alt={user.name ?? user.username} radius="md" w={100} h={100} />
-        <Stack gap={2}>
-          <Title order={4}>{user.name}</Title>
-          <Text size="sm">{membership ? `Medlemskap: ${membershipType}` : "Ingen aktivt medlemskap"}</Text>
-          <Text size="sm">{membership ? (grade ? `Klasse: ${grade}` : "Ingen klassetrinn") : "-"}</Text>
-          <Text size="sm">Kjønn: {getGenderName(user.gender)}</Text>
-          <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
-        </Stack>
-      </Flex>
     </Stack>
   )
 }
