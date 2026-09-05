@@ -1,10 +1,11 @@
 "use client"
 
+import { setLocalePreferenceCookie } from "@/i18n/locale-preference"
 import { usePathname, useRouter } from "@/i18n/navigation"
+import type { Locale } from "@/i18n/routing"
 import { cn, Popover, PopoverContent, PopoverPortal, PopoverTrigger, Text } from "@dotkomonline/ui"
 import { IconWorld } from "@tabler/icons-react"
 import { useLocale, useTranslations } from "next-intl"
-import { useParams } from "next/navigation"
 import { useState } from "react"
 import { ActionButton } from "../action-button/ActionButton"
 import { PopoverOptionButton } from "./PopoverOptionButton"
@@ -15,17 +16,16 @@ export const LocalePopover = () => {
 
   const router = useRouter()
   const pathname = usePathname()
-  const params = useParams()
 
   const [languagePopoverOpen, setLanguagePopoverOpen] = useState(false)
 
-  const onLocaleChange = (newLocale: "no" | "en") => {
+  const onLocaleChange = (newLocale: Locale) => {
     if (newLocale === locale) {
       return
     }
 
-    // @ts-expect-error params is valid for dynamic routes but missing from types
-    router.replace({ pathname, params }, { locale: newLocale, scroll: false })
+    setLocalePreferenceCookie(newLocale)
+    router.replace({ pathname }, { locale: newLocale, scroll: false })
     setLanguagePopoverOpen(false)
   }
 
