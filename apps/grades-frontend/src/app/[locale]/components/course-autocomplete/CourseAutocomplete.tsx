@@ -1,15 +1,15 @@
 "use client"
 
 import { CourseFilterParsers } from "@/app/[locale]/emner/course-filter-parsers"
+import { Link, useRouter } from "@/i18n/navigation"
 import { useTRPC } from "@/utils/trpc/client"
 import type { CourseFilterQuery } from "@dotkomonline/grades-backend/course"
 import { cn, Popover, PopoverAnchor, PopoverContent, Text } from "@dotkomonline/ui"
 import { IconArrowRight } from "@tabler/icons-react"
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useTranslations } from "next-intl"
-import { Link, useRouter } from "@/i18n/navigation"
 import { createSerializer } from "nuqs"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import { SearchInput } from "../SearchInput"
@@ -31,7 +31,6 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
   const t = useTranslations("CourseAutocomplete")
 
   const [isOpen, setIsOpen] = useState(false)
-  const [shouldResetSuggestions, setShouldResetSuggestions] = useState(true)
   const anchorRef = useRef<HTMLDivElement | null>(null)
 
   const { register, handleSubmit, getValues, watch } = useForm<CourseFilterQuery>({
@@ -40,12 +39,6 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
 
   const searchValue = watch("bySearch")?.trim() ?? ""
   const [debouncedSearch] = useDebounce(searchValue, 200)
-
-  useEffect(() => {
-    if (searchValue.length === 0) {
-      setShouldResetSuggestions(true)
-    }
-  }, [searchValue])
 
   const { data: suggestionsPage, isLoading } = useQuery(
     trpc.course.findCourses.queryOptions(
@@ -58,21 +51,13 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
         limit: 5,
       },
       {
-        enabled: debouncedSearch.length > 0,
-        placeholderData: shouldResetSuggestions ? undefined : keepPreviousData,
+        placeholderData: keepPreviousData,
       }
     )
   )
 
   const suggestions = useMemo(() => suggestionsPage?.items ?? undefined, [suggestionsPage])
 
-  useEffect(() => {
-    if (debouncedSearch.length > 0 && suggestions !== undefined) {
-      setShouldResetSuggestions(false)
-    }
-  }, [debouncedSearch, suggestions])
-
-  const shouldShowPopover = isOpen && searchValue.length > 0
   const resolvedPlaceholder = placeholder ?? t("placeholder")
 
   const onSubmit = () => {
@@ -84,7 +69,7 @@ export const CourseAutocomplete = ({ className, inputClassName, placeholder, def
 
   return (
     <Popover
-      open={shouldShowPopover}
+      open={isOpen}
       onOpenChange={(nextOpen, details) => {
         if (!nextOpen) {
           if (details.reason === "focus-out") {
