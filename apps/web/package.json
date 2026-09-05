@@ -71,7 +71,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.11",
     "@dotkomonline/config": "workspace:*",
     "@fontsource-variable/figtree": "5.2.10",
     "@fontsource-variable/google-sans-code": "5.2.4",
