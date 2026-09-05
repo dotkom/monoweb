@@ -15,4 +15,4 @@ export type * as WorkspaceRouter from "./modules/workspace-sync/workspace-router
 export type * as UserRouter from "./modules/user/user-router"
 export type * as NotificationRouter from "./modules/notification/notification-router"
 
-
+export * from "./modules/notification/notification"
