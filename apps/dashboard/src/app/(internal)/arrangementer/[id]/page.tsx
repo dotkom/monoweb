@@ -17,6 +17,7 @@ import {
   IconTrash,
   IconUser,
   type TablerIcon,
+  IconBell,
 } from "@tabler/icons-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
@@ -32,6 +33,7 @@ import { useEventContext } from "./provider"
 import { SelectionsPage } from "./selections-page"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import type { ComponentType } from "react"
+import { NotificationsPage } from "./notification-page"
 
 const SIDEBAR_LINKS = [
   {
@@ -68,6 +70,13 @@ const SIDEBAR_LINKS = [
     slug: "betaling",
     component: PaymentPage,
     requiresAttendance: true,
+  },
+  {
+    icon: IconBell,
+    label: "Varslinger",
+    slug: "varslinger",
+    component: NotificationsPage,
+    requiresAttendance: false,
   },
   {
     icon: IconForms,
