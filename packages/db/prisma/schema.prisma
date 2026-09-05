@@ -844,13 +844,14 @@ enum NotificationType {
   EVENT_REMINDER       @map("EVENT_REMINDER")
   EVENT_UPDATE         @map("EVENT_UPDATE")
   JOB_LISTING_REMINDER @map("JOB_LISTING_REMINDER")
+  MARK_UPDATE          @map("MARK_UPDATE")
   NEW_ARTICLE          @map("NEW_ARTICLE")
   NEW_EVENT            @map("NEW_EVENT")
+  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
   NEW_INTEREST_GROUP   @map("NEW_INTEREST_GROUP")
   NEW_JOB_LISTING      @map("NEW_JOB_LISTING")
-  NEW_OFFLINE          @map("NEW_OFFLINE")
   NEW_MARK             @map("NEW_MARK")
-  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
+  NEW_OFFLINE          @map("NEW_OFFLINE")
 }
 
 model Notification {
@@ -863,7 +864,7 @@ model Notification {
   /// The full rich text content of the notification.
   content          String
   type             NotificationType
-  /// Can be an ID or a URL depending on the payload type.
+  /// Can be an id or a URL depending on the payload type.
   payload          String?
   payloadType      NotificationPayloadType @map("payload_type")
 

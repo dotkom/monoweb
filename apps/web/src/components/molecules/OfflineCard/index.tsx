@@ -5,11 +5,18 @@ import Link from "next/link"
 
 interface OfflineCardProps {
   offline: Offline
+  highlighted?: boolean
 }
 
-export const OfflineCard = ({ offline }: OfflineCardProps) => {
+export const OfflineCard = ({ offline, highlighted = false }: OfflineCardProps) => {
   return (
-    <div className="flex flex-col gap-3 text-wrap max-w-56">
+    <div
+      id={`offline-${offline.id}`}
+      className={cn(
+        "flex flex-col gap-3 text-wrap max-w-56",
+        highlighted && "rounded-md ring-2 ring-blue-500 ring-offset-2 ring-offset-background p-2"
+      )}
+    >
       {offline.imageUrl && offline.fileUrl && (
         <Link href={offline.fileUrl}>
           <div className="perspective-[1000px] bg-gray-300 rounded-r-md">

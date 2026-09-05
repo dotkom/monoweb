@@ -1,9 +1,8 @@
-import { ErrorMessage } from "@hookform/error-message"
 import { Loader, MultiSelect, type MultiSelectProps, Select, type SelectProps } from "@mantine/core"
 import { useDebouncedValue } from "@mantine/hooks"
 import { useRef, useState } from "react"
 import { Controller, type FieldValues, useController } from "react-hook-form"
-import type { InputProducerResult } from "./types"
+import { getErrorMessage, type InputProducerResult } from "./types"
 
 export interface SelectOption {
   value: string
@@ -141,7 +140,7 @@ export function createSearchableSelectInput<F extends FieldValues, T>({
               onSearchChange={handleSearch}
               searchable={true}
               rightSection={isLoading ? <Loader size="xs" /> : undefined}
-              error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+              error={getErrorMessage(state, name)}
             />
           )}
         />
@@ -163,7 +162,7 @@ export function createSearchableSelectInput<F extends FieldValues, T>({
             onSearchChange={handleSearch}
             searchable={true}
             rightSection={isLoading ? <Loader size="xs" /> : undefined}
-            error={state.errors[name] && <ErrorMessage errors={state.errors} name={name} />}
+            error={getErrorMessage(state, name)}
           />
         )}
       />

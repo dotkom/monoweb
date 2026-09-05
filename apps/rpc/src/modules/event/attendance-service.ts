@@ -1547,14 +1547,17 @@ export function getAttendanceService(
             dateStyle: "short",
             timeStyle: "short",
           })
+          const shortDescription = `Tilbakemeldingsskjema for ${event.title} er nå tilgjengelig. Gi din tilbakemelding før ${formattedDeadline}.`
           await notificationService.create(
             handle,
             notificationRecipientIds,
             "NEW_FEEDBACK_FORM",
             "Nytt tilbakemeldingsskjema tilgjengelig",
-            `Tilbakemeldingsskjema for ${event.title} er nå tilgjengelig. Gi din tilbakemelding før ${formattedDeadline}.`,
-            `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
-            "URL"
+            shortDescription,
+            shortDescription,
+            event.hostingGroups[0]?.slug ?? null,
+            "URL",
+            `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`
           )
         }
 
