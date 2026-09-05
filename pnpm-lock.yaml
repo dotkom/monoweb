@@ -94,7 +94,7 @@ importers:
         version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.26))
       '@tabler/icons-react':
         specifier: ^3.34.1
-        version: 3.44.0(react@19.2.8)
+        version: 3.46.0(react@19.2.8)
       '@tanstack/react-query':
         specifier: ^5.79.0
         version: 5.101.4(react@19.2.8)
@@ -342,7 +342,7 @@ importers:
         version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.4(@opentelemetry/api@1.9.1)(@types/node@22.19.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(postcss@8.5.26))
       '@tabler/icons-react':
         specifier: ^3.35.0
-        version: 3.44.0(react@19.2.8)
+        version: 3.46.0(react@19.2.8)
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.20(tailwindcss@4.3.0)
@@ -689,7 +689,7 @@ importers:
         version: 1.12.98
       '@tabler/icons-react':
         specifier: ^3.35.0
-        version: 3.44.0(react@19.2.8)
+        version: 3.46.0(react@19.2.8)
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.20(tailwindcss@4.3.0)
@@ -1084,7 +1084,7 @@ importers:
         version: 5.2.8
       '@tabler/icons-react':
         specifier: ^3.35.0
-        version: 3.44.0(react@19.2.8)
+        version: 3.46.0(react@19.2.8)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -4178,13 +4178,13 @@ packages:
   '@swc/types@0.1.26':
     resolution: {integrity: sha512-lyMwd7WGgG79RS7EERZV3T8wMdmPq3xwyg+1nmAM64kIhx5yl+juO2PYIHb7vTiPgPCj8LYjsNV2T5wiQHUEaw==}
 
-  '@tabler/icons-react@3.44.0':
-    resolution: {integrity: sha512-8+rvzBbVm/1Z3sG3x7GUNAaxIKxwgz8xaMhRs23nrCnMTKRFAhEC+82zAIFeAA0seXdrAGX5HFCkaLpGK2rVHg==}
+  '@tabler/icons-react@3.46.0':
+    resolution: {integrity: sha512-CCm7xJWhDT2PH4ZIFkP6AgYKtVhq0gpYkjUN+GVh1AzmIQaa77OW0bQPBPQiTE0PsXMR9oSxFqA3qBglzPyrVQ==}
     peerDependencies:
       react: '>= 16'
 
-  '@tabler/icons@3.44.0':
-    resolution: {integrity: sha512-Wn0AOZG9sg0L+bjfMqq4eNhC6pQjIrk94LvvWYNYkY8KH8wC3YILRzQlrnVJc4FUeMxH/AK97QsYCX35H3LndA==}
+  '@tabler/icons@3.46.0':
+    resolution: {integrity: sha512-f2RYFl3fzPwj5WO82x6en0dmkjefxEfOm16D1ByM6cj/McNiwOkL4VaPUoP9VVIrXAD9WnTSVFr70px703b//A==}
 
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
@@ -12229,12 +12229,12 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@tabler/icons-react@3.44.0(react@19.2.8)':
+  '@tabler/icons-react@3.46.0(react@19.2.8)':
     dependencies:
-      '@tabler/icons': 3.44.0
+      '@tabler/icons': 3.46.0
       react: 19.2.8
 
-  '@tabler/icons@3.44.0': {}
+  '@tabler/icons@3.46.0': {}
 
   '@tailwindcss/node@4.1.18':
     dependencies:
