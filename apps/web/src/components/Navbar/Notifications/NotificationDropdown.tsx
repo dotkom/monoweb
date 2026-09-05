@@ -6,6 +6,7 @@ import { cn } from "@dotkomonline/ui"
 import { useTRPC } from "@/utils/trpc/client"
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import type { UserNotificationDTO } from "@dotkomonline/rpc"
+import { useSubscription } from "@trpc/tanstack-react-query"
 
 interface NotificationDropdownProps extends ComponentProps<typeof DropdownMenu.Root> {
   open?: boolean
@@ -15,6 +16,17 @@ interface NotificationDropdownProps extends ComponentProps<typeof DropdownMenu.R
 export const NotificationDropdown = ({ open, amountUnread, ...props }: NotificationDropdownProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+
+  useSubscription(
+    trpc.notification.onNewNotification.subscriptionOptions(undefined, {
+      onData: () => {
+        queryClient.invalidateQueries(trpc.notification.getUnreadCount.queryOptions())
+        queryClient.invalidateQueries({
+          queryKey: trpc.notification.getMyNotifications.infiniteQueryOptions({ take: 10 }).queryKey,
+        })
+      },
+    })
+  )
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     ...trpc.notification.getMyNotifications.infiniteQueryOptions({ take: 10 }),
@@ -109,7 +121,7 @@ export const NotificationDropdown = ({ open, amountUnread, ...props }: Notificat
             "mx-4 xs:ml-4 xs:w-102 xs:-mr-16 lg:-mr-4",
             "rounded-3xl shadow-sm",
             "bg-blue-50 border border-blue-100",
-            "dark:border-white/10 dark:bg-stone-700"
+            "dark:border-white/10 dark:bg-stone-800"
           )}
         >
           <div className="p-5 border-b border-black/10 dark:border-white/10">

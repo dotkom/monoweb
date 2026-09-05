@@ -616,6 +616,11 @@ export type GroupScalarRelationFilter = {
   isNot?: Prisma.GroupWhereInput
 }
 
+export type GroupNullableScalarRelationFilter = {
+  is?: Prisma.GroupWhereInput | null
+  isNot?: Prisma.GroupWhereInput | null
+}
+
 export type GroupListRelationFilter = {
   every?: Prisma.GroupWhereInput
   some?: Prisma.GroupWhereInput
@@ -708,10 +713,12 @@ export type GroupCreateNestedOneWithoutNotificationsInput = {
   connect?: Prisma.GroupWhereUniqueInput
 }
 
-export type GroupUpdateOneRequiredWithoutNotificationsNestedInput = {
+export type GroupUpdateOneWithoutNotificationsNestedInput = {
   create?: Prisma.XOR<Prisma.GroupCreateWithoutNotificationsInput, Prisma.GroupUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.GroupCreateOrConnectWithoutNotificationsInput
   upsert?: Prisma.GroupUpsertWithoutNotificationsInput
+  disconnect?: Prisma.GroupWhereInput | boolean
+  delete?: Prisma.GroupWhereInput | boolean
   connect?: Prisma.GroupWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutNotificationsInput, Prisma.GroupUpdateWithoutNotificationsInput>, Prisma.GroupUncheckedUpdateWithoutNotificationsInput>
 }
