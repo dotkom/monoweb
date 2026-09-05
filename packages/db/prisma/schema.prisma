@@ -812,12 +812,12 @@ model DeregisterReason {
 }
 
 model NotificationRecipient {
-  id     String   @id @default(uuid())
-  readAt DateTime @map("read_at") @db.Timestamptz(3)
+  id     String    @id @default(uuid())
+  readAt DateTime? @map("read_at") @db.Timestamptz(3)
 
   notificationId String       @map("notification_id")
-  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   userId         String       @map("user_id")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_recipient")
@@ -866,16 +866,16 @@ model Notification {
 
   /// The group that created the notification or the system created on behalf of.
   actorGroupId    String  @map("actor_group_id")
-  actorGroup      Group   @relation(fields: [actorGroupId], references: [slug])
   /// The specific user that created the notification. This is meant for logging purposes. Nullable because the system
   /// can create notifications without a specific user to link it to, for example with recurring tasks.
   createdById     String? @map("created_by_id")
-  createdBy       User?   @relation("created_by", fields: [createdById], references: [id])
   lastUpdatedById String? @map("last_updated_by_id")
-  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
   /// The task that created the notification. Useful for tracing and retrieving deadlines that could be useful for the
   /// notification.
   taskId          String? @map("task_id")
+  actorGroup      Group   @relation(fields: [actorGroupId], references: [slug])
+  createdBy       User?   @relation("created_by", fields: [createdById], references: [id])
+  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
   task            Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   recipients NotificationRecipient[]
