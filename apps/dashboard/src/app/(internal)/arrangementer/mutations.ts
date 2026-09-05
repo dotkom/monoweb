@@ -57,7 +57,11 @@ export const useUpdateEventMutation = () => {
           message: `Arrangementet "${data.event.title}" har blitt oppdatert.`,
         })
 
-        await queryClient.invalidateQueries(trpc.event.get.queryOptions(data.event.id))
+        await Promise.all([
+          queryClient.invalidateQueries(trpc.event.get.queryOptions(data.event.id)),
+          queryClient.invalidateQueries(trpc.event.findParentEvent.queryOptions({ eventId: data.event.id })),
+          queryClient.invalidateQueries({ queryKey: trpc.event.findChildEvents.queryKey() }),
+        ])
       },
       onError: (err) => {
         notification.fail({

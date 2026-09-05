@@ -1,7 +1,6 @@
 import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutations"
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
-import { createEventSelectInput } from "@/components/forms/EventSelectInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
@@ -140,13 +139,6 @@ export const useEventEditForm = ({
         placeholder: "Velg type",
         data: EVENT_FORM_DATA_TYPE,
         withAsterisk: true,
-      }),
-      parentId: createEventSelectInput({
-        label: "Forelderarrangement",
-        placeholder: "Søk etter arrangement...",
-        clearable: true,
-        excludeEventIds: defaultValues?.id ? [defaultValues.id] : [],
-        excludeChildEvents: true,
       }),
       contestId: createSelectInput({
         label: "Konkurranse",

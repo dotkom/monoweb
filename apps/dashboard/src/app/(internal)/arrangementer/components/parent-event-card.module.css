@@ -1,0 +1,16 @@
+.card {
+  margin-inline: calc(var(--mantine-spacing-xs) * -1);
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 120ms ease;
+}
+
+.cardWithParent,
+.cardWithoutParent:focus-within {
+  background-color: var(--mantine-color-gray-light);
+}
+
+.cardWithoutParent {
+  margin-block: calc(var(--mantine-spacing-xs) * -1);
+  background-color: transparent;
+}
