@@ -1,18 +1,17 @@
-import { auth0 } from "@/auth"
-import { getServerAccessToken } from "@/lib/server-access-token"
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
+import { getAuthenticatedUser } from "@/utils/get-authenticated-user"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { cn } from "@dotkomonline/ui"
-import { ThemeProvider } from "next-themes"
-import { Figtree, Inter, Google_Sans_Code, Marcellus } from "next/font/google"
-import type { PropsWithChildren } from "react"
-import "../globals.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
+import { ThemeProvider } from "next-themes"
+import { Figtree, Google_Sans_Code, Inter, Marcellus } from "next/font/google"
+import type { PropsWithChildren } from "react"
+import "../globals.css"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -37,10 +36,9 @@ const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono",
 const fontMarcellus = Marcellus({ subsets: ["latin"], variable: "--font-marcellus", weight: ["400"] })
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await auth0.getSession()
-  const accessToken = await getServerAccessToken()
+  const authState = await getAuthenticatedUser()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
-  const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
+  const auth0User = authState.sessionUser ?? undefined
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app

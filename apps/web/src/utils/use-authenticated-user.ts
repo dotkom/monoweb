@@ -1,48 +1,42 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import { isTrpcErrorCode } from "@/utils/trpc-errors"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import { useQuery } from "@tanstack/react-query"
+import { getAuthState, type AuthState } from "./authenticated-user-state"
 
-/**
- * Combines the Auth0 session with the database user from `user.getMe`.
- *
- * Error conditions:
- * - `isSessionInvalid`: Auth0 session exists but the access token is rejected (UNAUTHORIZED).
- * - `isMissingDbUser`: token is valid but no local user exists (NOT_FOUND).
- * - `isDbUserFetchError`: any other `getMe` failure (network, 5xx, etc.).
- */
-export function useAuthenticatedUser() {
-  const { user: sessionUser, isLoading: sessionLoading } = useUser()
+export function useAuthenticatedUser(initial?: AuthState) {
+  const { user: sessionUser, isLoading: isSessionLoading } = useUser()
   const trpc = useTRPC()
 
   const dbUserQuery = useQuery({
     ...trpc.user.getMe.queryOptions(),
-    enabled: Boolean(sessionUser) && !sessionLoading,
+    enabled: Boolean(sessionUser) && !isSessionLoading,
+    initialData: initial?.dbUser ?? undefined,
     retry: false,
   })
 
-  const dbUserQuerySettled = Boolean(sessionUser) && !sessionLoading && !dbUserQuery.isLoading
+  const dbUserQuerySettled = Boolean(sessionUser) && !isSessionLoading && !dbUserQuery.isLoading
 
-  const isSessionInvalid = dbUserQuerySettled && isTrpcErrorCode(dbUserQuery.error, "UNAUTHORIZED")
+  const derivedAuthState = getAuthState({
+    sessionUser,
+    isSessionLoading,
+    dbUserQuerySettled,
+    dbUserQueryError: dbUserQuery.error,
+    isDbUserQueryLoading: dbUserQuery.isLoading,
+    dbUser: dbUserQuery.data ?? null,
+  })
 
-  const isMissingDbUser = dbUserQuerySettled && isTrpcErrorCode(dbUserQuery.error, "NOT_FOUND")
-
-  const isDbUserFetchError = dbUserQuerySettled && dbUserQuery.isError && !isSessionInvalid && !isMissingDbUser
-
-  const isInvalid = isSessionInvalid || isMissingDbUser || isDbUserFetchError
-
-  const isLoading = sessionLoading || (Boolean(sessionUser) && dbUserQuery.isLoading)
+  if (initial !== undefined && derivedAuthState.isLoading) {
+    return {
+      ...initial,
+      isLoading: false,
+      dbUserQuery,
+    }
+  }
 
   return {
-    sessionUser,
-    dbUser: dbUserQuery.data ?? null,
+    ...derivedAuthState,
     dbUserQuery,
-    isLoading,
-    isSessionInvalid,
-    isMissingDbUser,
-    isDbUserFetchError,
-    isInvalid,
   }
 }
