@@ -1,5 +1,6 @@
 "use client"
 
+import { setLocalePreferenceCookie } from "@/i18n/locale-preference"
 import { Link, usePathname, useRouter } from "@/i18n/navigation"
 import type { Locale } from "@/i18n/routing"
 import {
@@ -13,7 +14,6 @@ import {
 import { IconDeviceMobile, IconMenu2, IconMoon, IconPalette, IconSun, IconWorld } from "@tabler/icons-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
-import { useParams } from "next/navigation"
 import { useState } from "react"
 import { IconActionButton, PillActionButton } from "../action-button/ActionButton"
 
@@ -27,7 +27,6 @@ export const MobileNavigation = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const router = useRouter()
-  const params = useParams()
 
   const isCourseListPageRoute = pathname === "/emner"
 
@@ -44,8 +43,8 @@ export const MobileNavigation = () => {
       return
     }
 
-    // @ts-expect-error params is valid for dynamic routes but missing from types
-    router.replace({ pathname, params }, { locale: newLocale, scroll: false })
+    setLocalePreferenceCookie(newLocale)
+    router.replace({ pathname }, { locale: newLocale, scroll: false })
   }
 
   return (

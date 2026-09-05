@@ -14,4 +14,8 @@ export const routing = defineRouting({
 
   // Don't add a prefix for "no" which is the default locale
   localePrefix: "as-needed",
+
+  // Preference is owned by the locale switcher, not by whichever URL was last served
+  localeCookie: false,
+  localeDetection: false,
 })
