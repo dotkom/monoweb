@@ -19,7 +19,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.27.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1119.0
@@ -626,7 +626,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.27.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1119.0
@@ -1237,8 +1237,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@auth0/nextjs-auth0@4.27.0':
-    resolution: {integrity: sha512-QS3fxhRa/dspkUMDdzuZwCdBnN2pHYoBqNlibKFwlRhyUnh2eqGtKXf01TTD38cLXTxg/Cx6+nJhjxBjiVv5Yw==}
+  '@auth0/nextjs-auth0@4.28.0':
+    resolution: {integrity: sha512-bxEdFBWYUMeJO5fkmaR3TKNpx2jWAlYeKXlrxv20GnzzQCP/DuZ2twfgDrUrzGAsOspNtUExcKtObPI67VtGVw==}
     peerDependencies:
       next: ^14.2.35 || ~15.0.7 || ~15.1.11 || ~15.2.8 || ~15.3.8 || ~15.4.10 || ~15.5.9 || ^16.0.10
       react: ^18.0.0 || ~19.0.1 ||  ~19.1.2 || ^19.2.1
@@ -6612,6 +6612,9 @@ packages:
   jose@6.2.10:
     resolution: {integrity: sha512-iiW7J9qRFlGxvCOIBDBDxFePQSn7ZMAnrYGhrrOo6siO/MIqwfyilLR27pkfDgUk+raLuzADS8A3S/KLBisc0g==}
 
+  jose@6.2.12:
+    resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -7298,6 +7301,9 @@ packages:
   oauth4webapi@3.8.7:
     resolution: {integrity: sha512-4RxcKxXjuItDFZ20RRPf4YTw3kpeXJyCgJFxVzJ068A7PNJ18st2Dg90tlC1LkSDS0GecroagCLHYEIVUhCAkw==}
 
+  oauth4webapi@3.8.8:
+    resolution: {integrity: sha512-8N28E+a/oxfXWBgOMt+ZP/JUf/XR+IFbvkAEPP3gznXOMv9BpAAwiIj0TFNz3tGTPc0ZQ8zmWBNgN1nAys0gng==}
+
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
@@ -7353,8 +7359,8 @@ packages:
     resolution: {integrity: sha512-smsWv2LzFjP03xmvFoJ331ss6h+jixfA4UUV/Bsiyuu4YJPfN+FIQGOIiv4w9/+MoHkfkJ22UIaQWRVFRfH6Vw==}
     engines: {node: '>=20'}
 
-  openid-client@6.8.7:
-    resolution: {integrity: sha512-gtKthNu7evSBvTdrrlHb4F3Fi9dcwlb5QaITlCs+9mfpvuOi0Q3qtBf5+iY4sEP8hy1qCoAdxBNPDcmZeVSDzQ==}
+  openid-client@6.8.8:
+    resolution: {integrity: sha512-ZsucJA5Ad04Uv7YN4ql+s4GXNmb9uAYQwyJTsJx7CH/MX3JZioLE2pVKi1SC+YrbSLA4Px3Gi30dMjgOZtb6pA==}
 
   ora@8.2.0:
     resolution: {integrity: sha512-weP+BZ8MVNnlCm8c0Qdc1WSWq4Qn7I+9CJGm7Qali6g44e/PUzbjNqJX5NJ9ljlNMosfJvg1fKEGILklK9cwnw==}
@@ -9206,14 +9212,14 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@auth0/nextjs-auth0@4.27.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@auth0/nextjs-auth0@4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
       jose: 6.2.10
       next: 16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      oauth4webapi: 3.8.7
-      openid-client: 6.8.7
+      oauth4webapi: 3.8.8
+      openid-client: 6.8.8
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       swr: 2.5.1(react@19.2.8)
@@ -10554,7 +10560,7 @@ snapshots:
       express: 5.2.1
       express-rate-limit: 8.5.2(express@5.2.1)
       hono: 4.12.18
-      jose: 6.2.10
+      jose: 6.2.12
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -14874,6 +14880,8 @@ snapshots:
 
   jose@6.2.10: {}
 
+  jose@6.2.12: {}
+
   js-tokens@4.0.0: {}
 
   js-tokens@9.0.1: {}
@@ -15849,6 +15857,8 @@ snapshots:
 
   oauth4webapi@3.8.7: {}
 
+  oauth4webapi@3.8.8: {}
+
   object-assign@4.1.1: {}
 
   object-inspect@1.13.4: {}
@@ -15901,10 +15911,10 @@ snapshots:
       powershell-utils: 0.1.0
       wsl-utils: 0.3.1
 
-  openid-client@6.8.7:
+  openid-client@6.8.8:
     dependencies:
-      jose: 6.2.10
-      oauth4webapi: 3.8.7
+      jose: 6.2.12
+      oauth4webapi: 3.8.8
 
   ora@8.2.0:
     dependencies:
