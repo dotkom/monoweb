@@ -32,79 +32,11 @@ WITH search_ids AS (
   FROM "course_alias"
   WHERE $4::text IS NOT NULL
     AND "alias" ILIKE $4
-)
-SELECT
-  matched."id",
-  matched."code",
-  matched."name_no" AS "nameNo",
-  matched."name_en" AS "nameEn",
-  matched."credits",
-  matched."study_level" AS "studyLevel",
-  matched."grade_type" AS "gradeType",
-  matched."last_year_taught" AS "lastYearTaught",
-  matched."candidate_count" AS "candidateCount",
-  matched."average_grade" AS "averageGrade",
-  matched."pass_rate" AS "passRate",
-  to_jsonb(matched."taught_semesters") AS "taughtSemesters",
-  to_jsonb(matched."teaching_languages") AS "teachingLanguages",
-  to_jsonb(matched."campuses") AS "campuses",
-  -- Subquery to count the total number of courses that match the filter, regardless of limit and offset.
-  -- Uses exactly the same filter as the main query, but without the expensive course_rank_score function.
-  (
-    SELECT COUNT(*)::int
-    -- Two branches, first runs if search is null, second runs if search is not null. This is so that indexes are used for the search term.
-    -- 1. If search is null, we count all courses that match the filter.
-    -- 2. If search is not null, we count all courses that match the filter and the search term.
-    FROM (
-      SELECT 1
-      FROM "course" counted
-      WHERE $4::text IS NULL
-        AND (
-          cardinality($5::"semester"[]) = 0
-          OR counted."taught_semesters" && $5::"semester"[]
-        )
-        AND (
-          cardinality($6::"teaching_language"[]) = 0
-          OR counted."teaching_languages" && $6::"teaching_language"[]
-        )
-        AND (
-          cardinality($7::"campus"[]) = 0
-          OR counted."campuses" && $7::"campus"[]
-        )
-        AND (
-          $8::double precision IS NULL
-          OR counted."average_grade" >= $8
-        )
-        AND counted."candidate_count" > 0
-      UNION ALL
-      SELECT 1
-      FROM "course" counted
-      INNER JOIN search_ids ON search_ids."id" = counted."id"
-      WHERE $4::text IS NOT NULL
-        AND (
-          cardinality($5::"semester"[]) = 0
-          OR counted."taught_semesters" && $5::"semester"[]
-        )
-        AND (
-          cardinality($6::"teaching_language"[]) = 0
-          OR counted."teaching_languages" && $6::"teaching_language"[]
-        )
-        AND (
-          cardinality($7::"campus"[]) = 0
-          OR counted."campuses" && $7::"campus"[]
-        )
-        AND (
-          $8::double precision IS NULL
-          OR counted."average_grade" >= $8
-        )
-        AND counted."candidate_count" > 0
-    ) counted
-  ) AS "totalCount"
-  -- Main query to fetch the courses.
-  -- Two branches, first runs if search is null, second runs if search is not null. This is so that indexes are used for the search term.
-  -- 1. If search is null, we fetch all courses that match the filter.
-  -- 2. If search is not null, we fetch all courses that match the filter and the search term.
-FROM (
+),
+-- Filter once. Two branches so indexes are used when searching.
+-- 1. search is null: all courses matching filters
+-- 2. search is not null: courses matching filters and search_ids
+filtered AS (
   SELECT
     course."id",
     course."code",
@@ -184,65 +116,101 @@ FROM (
       OR course."average_grade" >= $8
     )
     AND course."candidate_count" > 0
-) matched
-ORDER BY
-  (matched."last_year_taught" IS NULL) DESC,
-  CASE
-    WHEN $3::text IS NULL OR btrim($3) = '' THEN NULL
-    ELSE course_rank_score(
-      matched."code",
-      matched.aliases,
-      matched."name_no",
-      matched."name_en",
-      $3
-    )
-  END DESC,
+),
+page AS (
+  SELECT
+    filtered."id",
+    filtered."code",
+    filtered."name_no",
+    filtered."name_en",
+    filtered."credits",
+    filtered."study_level",
+    filtered."grade_type",
+    filtered."last_year_taught",
+    filtered."candidate_count",
+    filtered."average_grade",
+    filtered."pass_rate",
+    filtered."taught_semesters",
+    filtered."teaching_languages",
+    filtered."campuses",
+    COUNT(*) OVER()::int AS total_count
+  FROM filtered
+  ORDER BY
+    (filtered."last_year_taught" IS NULL) DESC,
+    CASE
+      WHEN $3::text IS NULL OR btrim($3) = '' THEN NULL
+      ELSE course_rank_score(
+        filtered."code",
+        filtered.aliases,
+        filtered."name_no",
+        filtered."name_en",
+        $3
+      )
+    END DESC,
 
-  CASE WHEN $9 = 'asc' THEN
-    CASE $10
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' THEN
-    CASE $10
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END DESC NULLS LAST,
+    CASE WHEN $9 = 'asc' THEN
+      CASE $10
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END ASC NULLS LAST,
+    CASE WHEN $9 = 'desc' THEN
+      CASE $10
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END DESC NULLS LAST,
 
-  CASE WHEN $9 = 'asc' THEN
-    CASE $11
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' THEN
-    CASE $11
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END DESC NULLS LAST,
+    CASE WHEN $9 = 'asc' THEN
+      CASE $11
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END ASC NULLS LAST,
+    CASE WHEN $9 = 'desc' THEN
+      CASE $11
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END DESC NULLS LAST,
 
-  CASE WHEN $9 = 'asc' THEN
-    CASE $12
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END ASC NULLS LAST,
-  CASE WHEN $9 = 'desc' THEN
-    CASE $12
-      WHEN 'AVERAGE_GRADE' THEN matched."average_grade"
-      WHEN 'PASS_RATE' THEN matched."pass_rate"
-      WHEN 'CANDIDATE_COUNT' THEN matched."candidate_count"::double precision
-    END
-  END DESC NULLS LAST,
+    CASE WHEN $9 = 'asc' THEN
+      CASE $12
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END ASC NULLS LAST,
+    CASE WHEN $9 = 'desc' THEN
+      CASE $12
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
+      END
+    END DESC NULLS LAST,
 
-  matched."id" DESC
-OFFSET $1
-LIMIT $2;
+    filtered."id" DESC
+  OFFSET $1
+  LIMIT $2
+)
+SELECT
+  page."id",
+  page."code",
+  page."name_no" AS "nameNo",
+  page."name_en" AS "nameEn",
+  page."credits",
+  page."study_level" AS "studyLevel",
+  page."grade_type" AS "gradeType",
+  page."last_year_taught" AS "lastYearTaught",
+  page."candidate_count" AS "candidateCount",
+  page."average_grade" AS "averageGrade",
+  page."pass_rate" AS "passRate",
+  to_jsonb(page."taught_semesters") AS "taughtSemesters",
+  to_jsonb(page."teaching_languages") AS "teachingLanguages",
+  to_jsonb(page."campuses") AS "campuses",
+  page.total_count AS "totalCount"
+FROM page;
