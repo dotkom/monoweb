@@ -34,7 +34,8 @@
     }
   },
   "Common": {
-    "Semester": "Semester"
+    "Semester": "Semester",
+    "credits": "{credits} <unit>sp</unit>"
   },
   "Metadata": {
     "layout": {
@@ -167,9 +168,6 @@
         "semester": "Mot {label}"
       }
     },
-    "hero": {
-      "credits": "{credits, number} stp"
-    },
     "noGrades": {
       "title": "Ingen karakterstatistikk ennå",
       "hint": "Vi har ikke karakterdata for dette emnet ennå. Statistikk kan dukke opp når resultater er offentliggjort."
@@ -221,6 +219,12 @@
       "learningOutcomes": "Læringsmål",
       "teachingMethods": "Læringsformer og aktiviteter",
       "title": "Om emnet",
+      "CreditReductions": {
+        "title": "Studiepoengreduksjon",
+        "description": "{code} gir {credits} sp, men færre hvis du allerede har tatt noen av emnene under.",
+        "descriptionWithoutCredits": "{code} gir færre studiepoeng hvis du allerede har tatt noen av emnene under.",
+        "fullOverlap": "Full overlapp"
+      },
       "Meta": {
         "studyLevel": "Nivå",
         "examType": "Vurderingsform",

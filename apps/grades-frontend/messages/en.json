@@ -34,7 +34,8 @@
     }
   },
   "Common": {
-    "Semester": "Semester"
+    "Semester": "Semester",
+    "credits": "{credits} <unit>ECTS</unit>"
   },
   "Metadata": {
     "layout": {
@@ -167,9 +168,6 @@
         "semester": "vs {label}"
       }
     },
-    "hero": {
-      "credits": "{credits, number} ECTS"
-    },
     "noGrades": {
       "title": "No grade statistics yet",
       "hint": "We don't have grade data for this course yet. Statistics may appear once results are published."
@@ -221,6 +219,12 @@
       "learningOutcomes": "Learning outcomes",
       "teachingMethods": "Teaching methods",
       "title": "About this course",
+      "CreditReductions": {
+        "title": "Credit reductions",
+        "description": "{code} is worth {credits} ECTS, but fewer if you have already taken any of the courses below.",
+        "descriptionWithoutCredits": "{code} gives fewer credits if you have already taken any of the courses below.",
+        "fullOverlap": "Full overlap"
+      },
       "Meta": {
         "studyLevel": "Study level",
         "examType": "Assessment form",

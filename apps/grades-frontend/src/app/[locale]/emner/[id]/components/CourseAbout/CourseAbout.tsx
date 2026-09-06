@@ -1,11 +1,13 @@
 import {
   type Course,
+  type CreditReductionDetail,
   type Department,
   type Faculty,
   getCourseLocalizedTextFields,
 } from "@dotkomonline/grades-backend/course"
-import { RichText, Title } from "@dotkomonline/ui"
+import { cn, RichText, Title } from "@dotkomonline/ui"
 import { useLocale, useTranslations } from "next-intl"
+import { CreditReductionsCard } from "../CreditReductionsCard"
 import { CourseAboutMeta } from "./CourseAboutMeta"
 
 type TextSection = { title: string; text: string }
@@ -14,9 +16,10 @@ interface Props {
   course: Course
   faculty: Faculty | null
   department: Department | null
+  creditReductions: CreditReductionDetail[]
 }
 
-export const CourseAbout = ({ course, faculty, department }: Props) => {
+export const CourseAbout = ({ course, faculty, department, creditReductions }: Props) => {
   const locale = useLocale()
   const t = useTranslations()
   const { content, learningOutcomes, teachingMethods } = getCourseLocalizedTextFields(course, locale)
@@ -27,19 +30,38 @@ export const CourseAbout = ({ course, faculty, department }: Props) => {
     { title: t("CoursePage.CourseAbout.teachingMethods"), text: teachingMethods },
   ].filter((section): section is TextSection => section.text != null)
 
+  const hasProse = textSections.length > 0
+  const hasCreditReductions = creditReductions.length > 0
+
   return (
     <section className="flex flex-col gap-8">
       <Title element="h2" className="font-semibold text-2xl text-neutral-950 dark:text-stone-200">
         {t("CoursePage.CourseAbout.title")}
       </Title>
-      <div className="flex flex-col gap-8 lg:flex-row lg:gap-16">
-        <div className="flex min-w-0 flex-1 flex-col gap-8 lg:gap-10">
-          {textSections.map((section) => (
-            <TextSection key={section.title} title={section.title} text={section.text} />
-          ))}
+
+      {hasProse ? (
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-16">
+          <div className="flex min-w-0 flex-1 flex-col gap-8 lg:gap-10">
+            {textSections.map((section) => (
+              <TextSection key={section.title} title={section.title} text={section.text} />
+            ))}
+          </div>
+          <div className="flex flex-col gap-6 lg:max-w-96">
+            <CourseAboutMeta course={course} faculty={faculty} department={department} variant="sidebar" />
+            {hasCreditReductions && <CreditReductionsCard creditReductions={creditReductions} course={course} />}
+          </div>
         </div>
-        <CourseAboutMeta course={course} faculty={faculty} department={department} />
-      </div>
+      ) : (
+        <div className={cn("grid gap-6", hasCreditReductions ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1")}>
+          <CourseAboutMeta
+            course={course}
+            faculty={faculty}
+            department={department}
+            variant={hasCreditReductions ? "grid" : "full"}
+          />
+          {hasCreditReductions && <CreditReductionsCard creditReductions={creditReductions} course={course} />}
+        </div>
+      )}
     </section>
   )
 }

@@ -84,6 +84,9 @@ model Course {
   campuses           Campus[]            @default([])
   gradeDistributions GradeDistribution[]
 
+  creditReductions        CreditReduction[] @relation("course_credit_reductions")
+  creditReductionsAsOverlap CreditReduction[] @relation("course_as_overlap")
+
   aliases CourseAlias[]
 
   facultyId String?  @map("faculty_id")
@@ -172,4 +175,21 @@ model CourseAlias {
 
   @@id([courseId, alias])
   @@map("course_alias")
+}
+
+/// If a student has taken `overlapCourse`, they will get reduced credits by `reductionAmount` when taking `course`.
+model CreditReduction {
+  reductionAmount Float @map("reduction_amount")
+
+  courseId String @map("course_id")
+  course   Course @relation("course_credit_reductions", fields: [courseId], references: [id], onDelete: Cascade)
+
+  overlapCourseId String @map("overlap_course_id")
+  overlapCourse   Course @relation("course_as_overlap", fields: [overlapCourseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@id([courseId, overlapCourseId])
+  @@map("credit_reduction")
 }
