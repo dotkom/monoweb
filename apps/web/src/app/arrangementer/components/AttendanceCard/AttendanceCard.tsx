@@ -319,12 +319,7 @@ export const AttendanceCard = ({
         <Title element="h2" size="lg">
           Påmelding
         </Title>
-        <AttendanceCalendarButton
-          event={event}
-          attendance={attendance}
-          attendee={attendee}
-          chargeScheduleDate={chargeScheduleDate}
-        />
+        <AttendanceCalendarButton event={event} attendance={attendance} />
       </div>
 
       {attendee && deregistration?.requiresDeregisterReason && (
