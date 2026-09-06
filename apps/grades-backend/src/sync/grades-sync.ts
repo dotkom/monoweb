@@ -3,7 +3,15 @@ import pLimit from "p-limit"
 import { createConfiguration } from "../configuration"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
 import type { CourseService } from "../modules/course/course-service"
-import type { Course, CourseCode, CourseId, Department, Faculty, GradeType } from "../modules/course/course-types"
+import type {
+  Course,
+  CourseCode,
+  CourseCreditReductionWrite,
+  CourseId,
+  Department,
+  Faculty,
+  GradeType,
+} from "../modules/course/course-types"
 import type { GradeDistributionService } from "../modules/grade-distribution/grade-distribution-service"
 import {
   calculateCourseGradeType,
@@ -21,9 +29,11 @@ import {
   getDbhGradeType,
   getPreferredNtnuTaughtSemesters,
   mapDbhSemesterToSummer,
+  mergeNtnuCreditReductions,
   parseDbhGradeResultsToGradeDistributionWrites,
   type CourseSyncData,
 } from "./grades-sync-utils"
+import type { CreditsReduction } from "./ntnu/ntnu-course-parser"
 import { scrapeNtnuCourse, type NtnuCourseScrapeResult } from "./ntnu/ntnu-scraper"
 
 type CourseSyncContext = {
@@ -76,6 +86,8 @@ const validCourseCodes = new Set(
   allDbhGradeResults.map((result) => result.code).filter((code) => validateCourseCode(code))
 )
 
+const ntnuCreditReductions: Record<CourseCode, CreditsReduction[]> = {}
+
 const ctx: CourseSyncContext = {
   courseService,
   gradeDistributionService,
@@ -100,6 +112,16 @@ await Promise.all(
   )
 )
 
+const creditReductionCount = Object.values(ntnuCreditReductions).flatMap((reductions) =>
+  reductions.map((reduction) => reduction.overlapCourseCode)
+).length
+
+console.log(`Syncing ${creditReductionCount} credit reductions...`)
+
+// We sync credit reductions for all courses after all courses are synced to make sure both courses in the relation exist
+const allCoursesAfterSync = await courseService.findAll(prisma)
+await syncNtnuCreditReductions(ntnuCreditReductions, allCoursesAfterSync)
+
 async function syncCourse(code: CourseCode, ctx: CourseSyncContext) {
   const sourceData = await buildCourseSourceData(code, ctx)
   if (!sourceData) {
@@ -110,6 +132,11 @@ async function syncCourse(code: CourseCode, ctx: CourseSyncContext) {
   if (!syncedCourse) {
     return
   }
+
+  ntnuCreditReductions[code] = mergeNtnuCreditReductions(
+    sourceData.ntnuScrapeResult.no?.creditReductions ?? [],
+    sourceData.ntnuScrapeResult.en?.creditReductions ?? []
+  )
 
   const allGradesForCourse = await syncSemesterResults(sourceData, syncedCourse, ctx)
   await syncCourseStatistics(syncedCourse, ctx, allGradesForCourse)
@@ -257,4 +284,39 @@ async function syncCourseStatistics(
   const patch = { ...courseStatistics, gradeType }
 
   await ctx.courseService.update(ctx.dbClient, syncedCourse.id, patch)
+}
+
+async function syncNtnuCreditReductions(
+  creditReductions: Record<CourseCode, CreditsReduction[]>,
+  allCoursesAfterSync: Course[]
+) {
+  const coursesByCode = new Map(allCoursesAfterSync.map((course) => [course.code, course]))
+
+  const creditReductionWrites: CourseCreditReductionWrite[] = Object.entries(creditReductions).flatMap(
+    ([code, reductions]) => {
+      const course = coursesByCode.get(code)
+      if (course === undefined) {
+        return []
+      }
+
+      return reductions
+        .map((reduction) => {
+          const overlapCourse = coursesByCode.get(reduction.overlapCourseCode)
+          if (overlapCourse === undefined) {
+            return null
+          }
+
+          return {
+            courseId: course.id,
+            overlapCourseId: overlapCourse.id,
+            reductionAmount: reduction.reductionCredits,
+          }
+        })
+        .filter((write) => write !== null)
+    }
+  )
+
+  for (const write of creditReductionWrites) {
+    await ctx.courseService.upsertCreditReduction(ctx.dbClient, write)
+  }
 }

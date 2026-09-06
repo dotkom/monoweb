@@ -76,6 +76,31 @@ export type CourseId = Course["id"]
 export type CourseCode = Course["code"]
 export type Course = z.infer<typeof CourseSchema>
 
+export const CreditReductionSchema = z.object({
+  courseId: z.string(),
+  overlapCourseId: z.string(),
+  reductionAmount: z.number(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+export type CreditReduction = z.infer<typeof CreditReductionSchema>
+
+export const CourseCreditReductionWriteSchema = z.object({
+  courseId: z.string(),
+  overlapCourseId: z.string(),
+  reductionAmount: z.number(),
+})
+export type CourseCreditReductionWrite = z.infer<typeof CourseCreditReductionWriteSchema>
+
+export const CreditReductionDetailSchema = CreditReductionSchema.extend({
+  overlapCourse: CourseSchema.pick({
+    code: true,
+    nameNo: true,
+    nameEn: true,
+  }),
+})
+export type CreditReductionDetail = z.infer<typeof CreditReductionDetailSchema>
+
 export const CourseWriteSchema = CourseSchema.pick({
   code: true,
   nameNo: true,

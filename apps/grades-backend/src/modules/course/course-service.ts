@@ -1,7 +1,9 @@
 import type { DBHandle } from "@dotkomonline/grades-db"
+import type { CourseDetail } from "./course-detail"
 import type { CourseRepository } from "./course-repository"
 import type {
   Course,
+  CourseCreditReductionWrite,
   CourseFilterQuery,
   CourseId,
   CourseListItem,
@@ -9,8 +11,8 @@ import type {
   CourseWrite,
   Department,
   Faculty,
+  CreditReduction,
 } from "./course-types"
-import type { CourseDetail } from "./course-detail"
 
 export interface CourseService {
   findMany(
@@ -26,6 +28,7 @@ export interface CourseService {
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
   findManyDepartments(handle: DBHandle): Promise<Department[]>
   findManySitemapEntries(handle: DBHandle): Promise<CourseSitemapEntry[]>
+  upsertCreditReduction(handle: DBHandle, data: CourseCreditReductionWrite): Promise<CreditReduction>
 }
 
 export function getCourseService(courseRepository: CourseRepository): CourseService {
@@ -60,6 +63,10 @@ export function getCourseService(courseRepository: CourseRepository): CourseServ
 
     async findManySitemapEntries(handle) {
       return courseRepository.findManySitemapEntries(handle)
+    },
+
+    async upsertCreditReduction(handle, data) {
+      return courseRepository.upsertCreditReduction(handle, data)
     },
   }
 }

@@ -14,6 +14,7 @@ import {
   type GradeDistributionWrite,
 } from "../modules/grade-distribution/grade-distribution-types"
 import type { DbhCourseRecord, DbhSemesterGrade } from "./dbh/dbh-types"
+import type { CreditsReduction } from "./ntnu/ntnu-course-parser"
 import type { NtnuCourseScrapeResult } from "./ntnu/ntnu-scraper"
 
 /**
@@ -448,4 +449,24 @@ function getHistoricalSummerMapping(existingGradesForCourse: GradeDistribution[]
     summerRepresentsSpring,
     summerRepresentsAutumn,
   }
+}
+
+/**
+ * Merges credit reductions from Norwegian and English NTNU course pages, prioritizing Norwegian data
+ */
+export function mergeNtnuCreditReductions(no: CreditsReduction[], en: CreditsReduction[]): CreditsReduction[] {
+  const byCode = new Map<string, number>()
+
+  for (const reduction of en) {
+    byCode.set(reduction.overlapCourseCode, reduction.reductionCredits)
+  }
+
+  for (const reduction of no) {
+    byCode.set(reduction.overlapCourseCode, reduction.reductionCredits)
+  }
+
+  return [...byCode.entries()].map(([overlapCourseCode, reductionCredits]) => ({
+    overlapCourseCode,
+    reductionCredits,
+  }))
 }

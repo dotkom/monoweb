@@ -44,7 +44,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     notFound()
   }
 
-  const { faculty, department, gradeDistributions, ...course } = courseDetail
+  const { faculty, department, gradeDistributions, creditReductions, ...course } = courseDetail
 
   if (courseId !== course.code) {
     redirect({ href: `/emner/${encodeURIComponent(course.code)}`, locale })
@@ -53,13 +53,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const showLetterLineChart = course.gradeType !== "PASS_FAIL"
 
   const courseHasGradeData = course.candidateCount > 0
-  const courseHasAboutData =
-    course.contentNo !== null ||
-    course.contentEn !== null ||
-    course.teachingMethodsNo !== null ||
-    course.teachingMethodsEn !== null ||
-    course.learningOutcomesNo !== null ||
-    course.learningOutcomesEn !== null
 
   return (
     <div className="flex flex-col gap-10">
@@ -88,24 +81,26 @@ export default async function CoursePage({ params }: CoursePageProps) {
                 />
               </div>
 
-              {courseHasAboutData && (
-                <>
-                  <Separator />
-                  <CourseAbout course={course} faculty={faculty} department={department} />
-                </>
-              )}
+              <Separator />
+              <CourseAbout
+                course={course}
+                faculty={faculty}
+                department={department}
+                creditReductions={creditReductions}
+              />
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-6">
             <CourseNoGradesState />
 
-            {courseHasAboutData && (
-              <>
-                <Separator />
-                <CourseAbout course={course} faculty={faculty} department={department} />
-              </>
-            )}
+            <Separator />
+            <CourseAbout
+              course={course}
+              faculty={faculty}
+              department={department}
+              creditReductions={creditReductions}
+            />
           </div>
         )}
       </div>

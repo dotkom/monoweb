@@ -132,7 +132,7 @@ const STUDY_LEVEL_MAPPINGS: Record<Locale, Record<string, StudyLevel>> = {
   },
 }
 
-type CreditsReduction = {
+export type CreditsReduction = {
   overlapCourseCode: string
   reductionCredits: number
 }
