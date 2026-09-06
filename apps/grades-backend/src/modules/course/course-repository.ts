@@ -85,6 +85,12 @@ export function getCourseRepository(): CourseRepository {
           faculty: true,
           department: true,
           gradeDistributions: true,
+          creditReductions: {
+            orderBy: [{ reductionAmount: "desc" }, { overlapCourse: { code: "asc" } }],
+            include: {
+              overlapCourse: true,
+            },
+          },
           aliases: {
             orderBy: {
               alias: "asc",

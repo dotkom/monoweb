@@ -42,3 +42,8 @@ export type Department = Prisma.DepartmentModel
  * 
  */
 export type CourseAlias = Prisma.CourseAliasModel
+/**
+ * Model CreditReduction
+ * If a student has taken `overlapCourse`, they will get reduced credits by `reductionAmount` when taking `course`.
+ */
+export type CreditReduction = Prisma.CreditReductionModel
