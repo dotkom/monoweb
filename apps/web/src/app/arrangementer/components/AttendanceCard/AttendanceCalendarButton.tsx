@@ -1,12 +1,12 @@
 "use client"
 
 import { env } from "@/env"
-import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@dotkomonline/ui"
 import { createAbsoluteEventPageUrl, slugify } from "@dotkomonline/utils"
 import { IconChevronDown, IconDownload } from "@tabler/icons-react"
-import { addMinutes, isPast, min } from "date-fns"
+import { addMinutes, isPast } from "date-fns"
 import { createGoogleCalendarLink } from "../TimeLocationBox/utils"
 import { createIcsBody, downloadIcsFile, openIcsFile } from "../ics"
 import Image from "next/image"
@@ -14,30 +14,19 @@ import Image from "next/image"
 interface AttendanceCalendarButtonProps {
   event: Event
   attendance: Attendance
-  attendee: Attendee | null
-  chargeScheduleDate?: Date | null
 }
 
-export function AttendanceCalendarButton({
-  event,
-  attendance,
-  attendee,
-  chargeScheduleDate,
-}: AttendanceCalendarButtonProps) {
-  const isAttending = attendee !== null
-  const reminderDate = getAttendanceReminderDate(attendance, chargeScheduleDate, isAttending)
+export function AttendanceCalendarButton({ event, attendance }: AttendanceCalendarButtonProps) {
+  const reminderDate = attendance.registerStart
+  const reminderEnd = addMinutes(reminderDate, 15)
 
   if (isPast(reminderDate)) {
     return null
   }
 
   const eventUrl = createAbsoluteEventPageUrl(env.NEXT_PUBLIC_ORIGIN, event.id, event.title)
-  const title = isAttending ? `Avmeldingsfrist: ${event.title}` : `Påmelding åpner: ${event.title}`
-  const reminderEnd = addMinutes(reminderDate, 15)
-
-  const description = isAttending
-    ? `Siste frist for å melde deg av ${event.title}.\n\n${eventUrl}`
-    : `Påmeldingen til ${event.title} åpner.\n\n${eventUrl}`
+  const title = `Påmelding åpner: ${event.title}`
+  const description = `Påmeldingen til ${event.title} åpner.\n\n${eventUrl}`
 
   const googleCalendarUrl = createGoogleCalendarLink({
     title,
@@ -56,8 +45,6 @@ export function AttendanceCalendarButton({
     end: reminderEnd,
   })
 
-  const mainActionLabel = isAttending ? "Legg avmeldingsfrist i Google Kalender" : "Legg påmelding i Google Kalender"
-
   return (
     <div className="inline-flex">
       <Button
@@ -67,7 +54,7 @@ export function AttendanceCalendarButton({
         rel="noopener noreferrer"
         variant="outline"
         size="icon-lg"
-        aria-label={mainActionLabel}
+        aria-label="Legg påmelding i Google Kalender"
         className="rounded-r-none"
       >
         <Image src="/logo-google-calendar.svg" alt="Google Calendar" width={16} height={16} />
@@ -99,20 +86,4 @@ export function AttendanceCalendarButton({
       </DropdownMenu>
     </div>
   )
-}
-
-function getAttendanceReminderDate(
-  attendance: Attendance,
-  chargeScheduleDate: Date | null | undefined,
-  isAttending: boolean
-) {
-  if (!isAttending) {
-    return attendance.registerStart
-  }
-
-  if (chargeScheduleDate) {
-    return min([attendance.deregisterDeadline, chargeScheduleDate])
-  }
-
-  return attendance.deregisterDeadline
 }
