@@ -17,6 +17,8 @@ import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role
 import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
 import { FADDERUKE_EVENT_ID } from "./fixtures/event"
 import { getFadderukeFixture } from "./fixtures/fadderuke"
+import { getFeedbackFormFixture } from "./fixtures/feedback-form"
+import { compareAsc, isFuture } from "date-fns"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -73,6 +75,10 @@ const attendeeInput = getAttendeeFixtures(attendancePoolMap, attendanceIds, user
 await db.attendee.createMany({ data: attendeeInput })
 const eventHostingGroupInput = getEventHostingGroupFixtures(events.map((e) => e.id))
 await db.eventHostingGroup.createManyAndReturn({ data: eventHostingGroupInput })
+
+const nearestEvent = events.filter((event) => isFuture(event.start)).toSorted((a, b) => compareAsc(a.start, b.start))[0]
+const feedbackFormInput = getFeedbackFormFixture(nearestEvent)
+await db.feedbackForm.create({ data: feedbackFormInput })
 
 const markInput = getMarkFixtures()
 await db.mark.createManyAndReturn({ data: markInput })
