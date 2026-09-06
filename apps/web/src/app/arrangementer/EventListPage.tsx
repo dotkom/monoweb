@@ -1,9 +1,10 @@
 "use client"
 
 import { GridIcon } from "@/components/icons/GridIcon"
+import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
-import { useTRPC } from "@/utils/trpc/client"
 import type { EventFilterQuery } from "@dotkomonline/rpc/event"
+import type { Group } from "@dotkomonline/rpc/group"
 import {
   Button,
   Drawer,
@@ -27,7 +28,6 @@ import {
   IconSearch,
   IconX,
 } from "@tabler/icons-react"
-import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
@@ -35,10 +35,8 @@ import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/Eve
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { EventList, EventListSkeleton } from "./components/EventList"
-import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
 import { EventListFilterChips } from "./components/filters/EventFilterChips"
 import { EventGroupFilter } from "./components/filters/EventGroupFilter"
-import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
 import { EventSortFilter } from "./components/filters/EventSortFilter"
 import { EventTypeFilter } from "./components/filters/EventTypeFilter"
 import {
@@ -46,17 +44,20 @@ import {
   useEventAllSummariesInfiniteQuery,
   useFeaturedEventsInfiniteQuery,
 } from "./components/queries"
+import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
+import type { EventsListViewMode } from "./hooks/eventViewCookie"
 import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
-import type { EventsListViewMode } from "./hooks/eventViewCookie"
 
 interface Props {
   initialListViewMode: EventsListViewMode
+  groups: Group[]
+  isStaff: boolean
 }
 
-export const EventListPage = ({ initialListViewMode }: Props) => {
+export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) => {
   const { view, isCards, isCalendar, setListViewMode } = useEventsView(initialListViewMode)
   const { navigateToView } = useEventsViewNavigation(setListViewMode)
   const isEventListView = !isCalendar
@@ -64,11 +65,8 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
   const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
 
-  const trpc = useTRPC()
   const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
 
-  const { data: isStaff = false } = useQuery(trpc.user.isStaff.queryOptions())
-  const { data: groups } = useQuery(trpc.group.all.queryOptions())
   const { dbUser } = useAuthenticatedUser()
 
   const [drawerOpen, setDrawerOpen] = useState(false)
