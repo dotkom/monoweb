@@ -4,6 +4,7 @@ import {
   BaseEventSchema,
   EventFilterQuerySchema,
   EventSchema,
+  type EventType,
   EventWithAttendanceSchema,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
@@ -328,6 +329,55 @@ const allByAttendingUserIdProcedure = procedure
     }
   })
 
+const allByAttendingUserIdForCalendarProcedure = procedure
+  .input(
+    BasePaginateInputSchema.extend({
+      id: UserSchema.shape.id,
+    })
+  )
+  .output(
+    z.object({
+      items: EventWithAttendanceSchema.array(),
+      nextCursor: EventSchema.shape.id.optional(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const expectedServiceSubject = `${ctx.configuration.AUTH0_WEB_CLIENT_ID}@clients`
+
+    if (ctx.principal.subject !== expectedServiceSubject || !ctx.principal.scopes.has("read:calendar_feed")) {
+      throw new ForbiddenError("Only the web calendar service can access personal calendar feeds")
+    }
+
+    const { id, ...page } = input
+
+    const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.handle, id)
+    const isStaff = ctx.authorizationService.isCommitteeMember(userAffiliations)
+
+    let excludingType: EventType[] = []
+
+    if (!isStaff) {
+      excludingType = ["INTERNAL"]
+    }
+
+    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingType }, page)
+    const attendances = await ctx.attendanceService.getAttendancesByIds(
+      ctx.handle,
+      events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null)
+    )
+
+    const eventsWithAttendance = events.map((event) => ({
+      event,
+      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
+    }))
+
+    return {
+      items: eventsWithAttendance,
+      nextCursor: events.at(-1)?.id,
+    }
+  })
+
 export type AllSummariesByAttendingUserIdInput = inferProcedureInput<typeof allSummariesByAttendingUserIdProcedure>
 export type AllSummariesByAttendingUserIdOutput = inferProcedureOutput<typeof allSummariesByAttendingUserIdProcedure>
 const allSummariesByAttendingUserIdProcedure = procedure
@@ -631,6 +681,7 @@ export const eventRouter = t.router({
   delete: deleteEventProcedure,
   all: allEventsProcedure,
   allByAttendingUserId: allByAttendingUserIdProcedure,
+  allByAttendingUserIdForCalendar: allByAttendingUserIdForCalendarProcedure,
   allSummaries: allEventSummariesProcedure,
   allSummariesByAttendingUserId: allSummariesByAttendingUserIdProcedure,
   addAttendance: addAttendanceProcedure,

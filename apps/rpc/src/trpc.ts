@@ -28,6 +28,7 @@ export type Principal = {
   /** Auth0 Subject for user tokens, or Auth0 Client ID for machine tokens */
   subject: UserId
   affiliations: Map<GroupId, Set<GroupRoleType>>
+  scopes: Set<string>
 }
 
 export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer) => {
