@@ -1,3 +1,11 @@
+// 2023-02-23T11:40:00.000Z -> 20230223T114000Z
+// https://support.google.com/calendar/thread/108492403/google-calendar-links-and-wrong-start-end-times?hl=en
+const formatGoogleCalendarDateTime = (date: Date) =>
+  date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "")
+
 export const createGoogleCalendarLink = ({
   title,
   location,
@@ -6,23 +14,25 @@ export const createGoogleCalendarLink = ({
   end,
 }: {
   title: string
-  location: string
+  location?: string | null
   description: string
   start: Date
   end: Date
 }) => {
-  // 2023-02-23T11:40:00.000Z -> 20230223T114000Z
-  // https://support.google.com/calendar/thread/108492403/google-calendar-links-and-wrong-start-end-times?hl=en
-  const gcalDateTimeFormat = (date: Date) =>
-    date
-      .toISOString()
-      .replace(/[-:]/g, "")
-      .replace(/\.\d{3}/, "")
+  const dates = `${formatGoogleCalendarDateTime(start)}/${formatGoogleCalendarDateTime(end)}`
 
-  const gcalStart = gcalDateTimeFormat(start)
-  const gcalEnd = gcalDateTimeFormat(end)
+  const googleCalendarUrl = new URL("https://www.google.com/calendar/render")
 
-  return encodeURI(
-    `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${gcalStart}/${gcalEnd}&details=${description}&location=${location}&sf=true&output=xml`
-  )
+  googleCalendarUrl.searchParams.set("action", "TEMPLATE")
+  googleCalendarUrl.searchParams.set("text", title)
+  googleCalendarUrl.searchParams.set("dates", dates)
+  googleCalendarUrl.searchParams.set("details", description)
+  googleCalendarUrl.searchParams.set("sf", "true")
+  googleCalendarUrl.searchParams.set("output", "xml")
+
+  if (location) {
+    googleCalendarUrl.searchParams.set("location", location)
+  }
+
+  return googleCalendarUrl.toString()
 }

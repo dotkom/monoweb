@@ -21,6 +21,7 @@ import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { DeregisterModal } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
+import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { EventRules } from "./EventRules"
 import { MainPoolCard } from "./MainPoolCard"
@@ -314,9 +315,17 @@ export const AttendanceCard = ({
 
   return (
     <section className="flex flex-col gap-4 min-h-[6rem] sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
-      <Title element="h2" size="lg">
-        Påmelding
-      </Title>
+      <div className="flex flex-row items-center justify-between gap-3">
+        <Title element="h2" size="lg">
+          Påmelding
+        </Title>
+        <AttendanceCalendarButton
+          event={event}
+          attendance={attendance}
+          attendee={attendee}
+          chargeScheduleDate={chargeScheduleDate}
+        />
+      </div>
 
       {attendee && deregistration?.requiresDeregisterReason && (
         <DeregisterModal
