@@ -48,6 +48,7 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
                 const tolerance = 0.05
                 setHasCorrectAspectRatio(Math.abs(ratio - target) < tolerance)
               }}
+              loading="eager"
             />
           ) : (
             <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
