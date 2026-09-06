@@ -1,15 +1,13 @@
 export const ALL_EVENTS_CALENDAR_PATH = "/api/calendar/all.ics"
 export const PERSONAL_CALENDAR_TOKEN_PATH = "/api/calendar/me"
-export const PERSONAL_CALENDAR_SUBSCRIPTION_PATH = "/api/calendar/subscription.ics"
+export const PERSONAL_CALENDAR_SUBSCRIPTION_PATH = "/api/calendar/u"
 
 export function createAllEventsCalendarUrl(origin: string) {
   return new URL(ALL_EVENTS_CALENDAR_PATH, origin).toString()
 }
 
 export function createPersonalCalendarSubscriptionUrl(origin: string, token: string) {
-  const url = new URL(PERSONAL_CALENDAR_SUBSCRIPTION_PATH, origin)
-  url.searchParams.set("key", token)
-  return url.toString()
+  return new URL(`${PERSONAL_CALENDAR_SUBSCRIPTION_PATH}/${token}/calendar.ics`, origin).toString()
 }
 
 export function createWebcalUrl(calendarUrl: string) {
@@ -26,6 +24,14 @@ export function createGoogleCalendarSubscribeUrl(calendarUrl: string) {
   const googleCalendarUrl = new URL("https://calendar.google.com/calendar/r")
   googleCalendarUrl.searchParams.set("cid", createWebcalUrl(calendarUrl))
   return googleCalendarUrl.toString()
+}
+
+export function createOutlookCalendarSubscribeUrl(calendarUrl: string, name: string) {
+  const outlookCalendarUrl = new URL("https://outlook.office.com/calendar/0/addfromweb")
+  outlookCalendarUrl.searchParams.set("url", calendarUrl)
+  outlookCalendarUrl.searchParams.set("name", name)
+
+  return outlookCalendarUrl.toString()
 }
 
 export async function fetchPersonalCalendarToken() {

@@ -6,8 +6,11 @@ const ACCESS_TOKEN_EXPIRY_BUFFER_SECONDS = 30
 
 const AccessTokenResponse = z.object({
   access_token: z.string().min(1),
-  expires_in: z.int().positive(),
-  token_type: z.literal("Bearer"),
+  expires_in: z.coerce.number().int().positive(),
+  token_type: z
+    .string()
+    .transform((tokenType) => tokenType.toLowerCase())
+    .pipe(z.literal("bearer")),
 })
 
 type CachedAccessToken = {

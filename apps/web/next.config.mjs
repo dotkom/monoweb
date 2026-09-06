@@ -29,8 +29,8 @@ const config = {
         destination: "/api/calendar/all",
       },
       {
-        source: "/api/calendar/subscription.ics",
-        destination: "/api/calendar/subscription",
+        source: "/api/calendar/u/:token/calendar.ics",
+        destination: "/api/calendar/u/:token",
       },
     ]
   },

@@ -2,7 +2,7 @@ import { env } from "@/env"
 import type { Event } from "@dotkomonline/rpc/event"
 import { richTextToPlainText, slugify } from "@dotkomonline/utils"
 import { hoursToSeconds } from "date-fns"
-import ical, { type ICalEventData } from "ical-generator"
+import ical, { ICalCalendarMethod, type ICalEventData } from "ical-generator"
 import { NextResponse } from "next/server"
 
 const CALENDAR_PRODUCT_ID = {
@@ -12,6 +12,7 @@ const CALENDAR_PRODUCT_ID = {
 } as const
 
 const CALENDAR_REFRESH_INTERVAL_SECONDS = hoursToSeconds(1)
+const CALENDAR_FEED_CACHE_MAX_AGE_SECONDS = 300
 
 /** Map a domain Event to an icalendar event */
 export function createCalendarEvent(event: Event) {
@@ -38,17 +39,21 @@ export function createCalendar(name: string) {
   return ical({
     name,
     prodId: CALENDAR_PRODUCT_ID,
+    method: ICalCalendarMethod.PUBLISH,
     ttl: CALENDAR_REFRESH_INTERVAL_SECONDS,
   })
 }
 
-export function createCalendarFeedResponse(calendarBody: string): NextResponse {
+export function createCalendarFeedResponse(
+  calendarBody: string,
+  cacheVisibility: "public" | "private" = "public"
+): NextResponse {
   return new NextResponse(calendarBody, {
     status: 200,
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="online.ics"',
-      "Cache-Control": "public, max-age=300",
+      "Content-Disposition": 'inline; filename="online.ics"',
+      "Cache-Control": `${cacheVisibility}, max-age=${CALENDAR_FEED_CACHE_MAX_AGE_SECONDS}`,
     },
   })
 }
