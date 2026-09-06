@@ -30,7 +30,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { type ReactNode, useState } from "react"
 import {
   createAllEventsCalendarUrl,
   createGoogleCalendarSubscribeUrl,
@@ -42,7 +42,13 @@ import Image from "next/image"
 
 type CalendarFeed = "personal" | "all"
 
-export function CalendarSubscriptionDialog({ triggerVariant = "ghost" }: { triggerVariant?: ButtonProps["variant"] }) {
+export function CalendarSubscriptionDialog({
+  triggerVariant = "ghost",
+  trigger,
+}: {
+  triggerVariant?: ButtonProps["variant"]
+  trigger?: ReactNode
+}) {
   const [open, setOpen] = useState(false)
   const { dbUser } = useAuthenticatedUser()
   const isLoggedIn = Boolean(dbUser)
@@ -67,6 +73,25 @@ export function CalendarSubscriptionDialog({ triggerVariant = "ghost" }: { trigg
       : "Logg inn for å abonnere på arrangementene du er påmeldt."
     : "Offentlige arrangementer fra Online."
 
+  let dialogTrigger = trigger
+  if (!dialogTrigger) {
+    dialogTrigger = (
+      <Button
+        variant={triggerVariant}
+        className="h-10 rounded-lg shrink-0"
+        icon={<IconCalendarPlus className="size-4" />}
+        onClick={() => setOpen(true)}
+      >
+        <Text element="span" className="max-sm:hidden">
+          Abonner på kalender
+        </Text>
+        <Text element="span" className="sm:hidden">
+          Abonner
+        </Text>
+      </Button>
+    )
+  }
+
   return (
     <AlertDialog
       open={open}
@@ -78,21 +103,7 @@ export function CalendarSubscriptionDialog({ triggerVariant = "ghost" }: { trigg
         }
       }}
     >
-      <AlertDialogTrigger asChild>
-        <Button
-          variant={triggerVariant}
-          className="h-10 rounded-lg shrink-0"
-          icon={<IconCalendarPlus className="size-4" />}
-          onClick={() => setOpen(true)}
-        >
-          <Text element="span" className="max-sm:hidden">
-            Abonner på kalender
-          </Text>
-          <Text element="span" className="sm:hidden">
-            Abonner
-          </Text>
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{dialogTrigger}</AlertDialogTrigger>
       <AlertDialogContent
         size="lg"
         className="max-h-[90dvh] min-w-0 overflow-x-hidden overflow-y-auto"

@@ -17,7 +17,6 @@ import {
 } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import type { Metadata } from "next"
-import Link from "next/link"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
@@ -26,6 +25,7 @@ import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
 import { LocationBox } from "../../components/TimeLocationBox/LocationBox"
 import { TimeBox } from "../../components/TimeLocationBox/TimeBox"
+import Link from "next/link"
 
 const createOrganizerPageUrl = (item: Group | Company) => {
   if ("type" in item) {
@@ -172,14 +172,22 @@ const EventContent = ({
           </div>
         )}
 
-        <section>
+        <section className="flex flex-col gap-0.5">
           <Title element="h2" className="sr-only">
             Oppmøte
           </Title>
+
           <div className="grid min-w-0 grid-cols-1 gap-x-8 gap-y-3 min-[1150px]:grid-cols-2">
             <TimeBox event={event} />
             <LocationBox event={event} />
           </div>
+
+          <Link
+            href="/innstillinger/bruker#kalender"
+            className="w-fit text-sm sm:text-xs font-normal text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Vil du ha arrangementer i kalenderen?
+          </Link>
         </section>
 
         {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
