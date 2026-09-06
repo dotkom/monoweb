@@ -44,10 +44,7 @@ export function createCalendar(name: string) {
   })
 }
 
-export function createCalendarFeedResponse(
-  calendarBody: string,
-  cacheVisibility: "public" | "private" = "public"
-): NextResponse {
+export function createCalendarFeedResponse(calendarBody: string, cacheVisibility: "public" | "private"): NextResponse {
   return new NextResponse(calendarBody, {
     status: 200,
     headers: {
