@@ -1,8 +1,8 @@
 import { type EventId, getDefaultFeedbackAnswerDeadline } from "@dotkomonline/rpc/event"
 import type { FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/rpc/feedback-form"
 import { Box, Button, Group, Select, Stack, Title, Text } from "@mantine/core"
-import type { FC } from "react"
-import { FeedbackFormEditForm } from "../components/feedback-form-edit-form"
+import { type FC, useEffect, useRef, useState } from "react"
+import { FeedbackFormEditForm, toFeedbackFormValues } from "../components/feedback-form-edit-form"
 import {
   useCreateFeedbackFormCopyMutation,
   useCreateFeedbackFormMutation,
@@ -20,29 +20,40 @@ export const FeedbackPage: FC = () => {
   const createMutation = useCreateFeedbackFormMutation()
   const createCopyMutation = useCreateFeedbackFormCopyMutation()
   const updateMutation = useUpdateFeedbackFormMutation()
+  const [isDrafting, setIsDrafting] = useState(false)
+
+  const formIdRef = useRef<FeedbackFormId | undefined>(feedbackFormQuery.data?.id)
   const { events: eventsWithFeedbackForms } = useEventAllQuery({
     page: { take: 999 },
     filter: { byHasFeedbackForm: true },
   })
 
   const defaultAnswerDeadline = getDefaultFeedbackAnswerDeadline(event.end)
+  const feedbackFormId = feedbackFormQuery.data?.id
+  const showEditor = Boolean(feedbackFormId) || isDrafting
 
-  const onSubmit = (id: FeedbackFormId, feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]) => {
-    updateMutation.mutate({
-      id,
+  useEffect(() => {
+    formIdRef.current = feedbackFormId
+    if (feedbackFormId) {
+      setIsDrafting(false)
+    }
+  }, [feedbackFormId])
+
+  const onSave = async (feedbackForm: FeedbackFormWrite, questions: FeedbackQuestionWrite[]) => {
+    if (formIdRef.current) {
+      return await updateMutation.mutateAsync({
+        id: formIdRef.current,
+        feedbackForm,
+        questions,
+      })
+    }
+
+    const created = await createMutation.mutateAsync({
       feedbackForm,
       questions,
     })
-  }
-
-  const createEmptyFeedbackForm = () => {
-    createMutation.mutate({
-      feedbackForm: {
-        eventId: event.id,
-        answerDeadline: defaultAnswerDeadline,
-      },
-      questions: [],
-    })
+    formIdRef.current = created.id
+    return created
   }
 
   const createFeedbackFormCopy = (eventIdToCopyFrom: EventId) => {
@@ -52,13 +63,15 @@ export const FeedbackPage: FC = () => {
     })
   }
 
-  const defaultValues = {
-    feedbackForm: {
-      eventId: event.id,
-      answerDeadline: feedbackFormQuery?.data?.answerDeadline ?? defaultAnswerDeadline,
-    },
-    questions: feedbackFormQuery?.data?.questions ?? [],
-  }
+  const defaultValues = feedbackFormQuery.data
+    ? toFeedbackFormValues(feedbackFormQuery.data)
+    : {
+        feedbackForm: {
+          eventId: event.id,
+          answerDeadline: defaultAnswerDeadline,
+        },
+        questions: [],
+      }
 
   const now = getCurrentUTC()
   const canCreateFeedbackForm = event.end > now
@@ -70,11 +83,11 @@ export const FeedbackPage: FC = () => {
       </Title>
 
       {!feedbackFormQuery.isLoading &&
-        (feedbackFormQuery.data?.id ? (
+        (showEditor ? (
           <FeedbackFormEditForm
-            onSubmit={onSubmit}
+            onSave={onSave}
             defaultValues={defaultValues}
-            feedbackFormId={feedbackFormQuery.data?.id}
+            feedbackFormId={feedbackFormId}
             eventId={event.id}
             readOnly={!canEdit}
           />
@@ -92,7 +105,7 @@ export const FeedbackPage: FC = () => {
 
             <Title order={5}>Opprett blankt tilbakemeldingsskjema</Title>
             <Group>
-              <Button onClick={createEmptyFeedbackForm} disabled={!canCreateFeedbackForm || !canEdit}>
+              <Button onClick={() => setIsDrafting(true)} disabled={!canCreateFeedbackForm || !canEdit}>
                 Opprett
               </Button>
             </Group>

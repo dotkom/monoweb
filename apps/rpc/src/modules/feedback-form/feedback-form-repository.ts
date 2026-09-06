@@ -179,6 +179,9 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
 
 const QUERY_WITH_QUESTIONS = {
   questions: {
+    orderBy: {
+      order: "asc",
+    },
     include: {
       options: true,
     },
