@@ -1,9 +1,13 @@
 import { createSecretKey } from "node:crypto"
-import { CALENDAR_ISSUER, createCalendarEvent, createCalendarFeedResponse } from "@/app/api/calendar/ical"
+import {
+  CALENDAR_ISSUER,
+  createCalendar,
+  createCalendarEvent,
+  createCalendarFeedResponse,
+} from "@/app/api/calendar/ical"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import { getLogger } from "@dotkomonline/logger"
-import ical from "ical-generator"
 import { jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTInvalid } from "jose/errors"
 import { type NextRequest, NextResponse } from "next/server"
@@ -34,7 +38,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       id: sub,
     })
 
-    const calendar = ical({ name: "Mine Online-arrangementer", prodId: "online.ntnu.no" })
+    const calendar = createCalendar("Mine Online-arrangementer")
 
     for (const { event } of eventDetails) {
       calendar.createEvent(createCalendarEvent(event))

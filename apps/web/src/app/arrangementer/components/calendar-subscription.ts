@@ -1,6 +1,6 @@
-export const ALL_EVENTS_CALENDAR_PATH = "/api/calendar/all"
+export const ALL_EVENTS_CALENDAR_PATH = "/api/calendar/all.ics"
 export const PERSONAL_CALENDAR_TOKEN_PATH = "/api/calendar/me"
-export const PERSONAL_CALENDAR_SUBSCRIPTION_PATH = "/api/calendar/subscription"
+export const PERSONAL_CALENDAR_SUBSCRIPTION_PATH = "/api/calendar/subscription.ics"
 
 export function createAllEventsCalendarUrl(origin: string) {
   return new URL(ALL_EVENTS_CALENDAR_PATH, origin).toString()
@@ -14,13 +14,17 @@ export function createPersonalCalendarSubscriptionUrl(origin: string, token: str
 
 export function createWebcalUrl(calendarUrl: string) {
   const url = new URL(calendarUrl)
-  url.protocol = "webcal:"
-  return url.toString()
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Calendar URL must use HTTP or HTTPS")
+  }
+
+  return `webcal://${url.host}${url.pathname}${url.search}${url.hash}`
 }
 
 export function createGoogleCalendarSubscribeUrl(calendarUrl: string) {
-  const googleCalendarUrl = new URL("https://calendar.google.com/calendar/render")
-  googleCalendarUrl.searchParams.set("cid", calendarUrl)
+  const googleCalendarUrl = new URL("https://calendar.google.com/calendar/r")
+  googleCalendarUrl.searchParams.set("cid", createWebcalUrl(calendarUrl))
   return googleCalendarUrl.toString()
 }
 

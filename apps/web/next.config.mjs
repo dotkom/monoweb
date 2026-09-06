@@ -22,6 +22,18 @@ const config = {
       },
     ]
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/calendar/all.ics",
+        destination: "/api/calendar/all",
+      },
+      {
+        source: "/api/calendar/subscription.ics",
+        destination: "/api/calendar/subscription",
+      },
+    ]
+  },
 
   // This is to help with version mismatches for `import-in-the-middle` and `require-in-the-middle` in OTEL packages
   transpilePackages: [

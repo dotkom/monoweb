@@ -12,7 +12,6 @@ export async function GET(_: NextRequest): Promise<NextResponse> {
   }
   const token = await new SignJWT({ sub: session.sub })
     .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
     .setIssuer(CALENDAR_ISSUER)
     .sign(createSecretKey(Buffer.from(env.SIGNING_KEY)))
   return NextResponse.json({ token }, { status: 200 })
