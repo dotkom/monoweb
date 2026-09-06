@@ -111,6 +111,16 @@ resource "auth0_resource_server" "online" {
   token_lifetime                                  = 600 # 10 minutes
   token_lifetime_for_web                          = 600 # 10 minutes
   verification_location                           = null
+
+  lifecycle {
+    ignore_changes = [scopes]
+  }
+}
+
+resource "auth0_resource_server_scope" "read_calendar_feed" {
+  resource_server_identifier = auth0_resource_server.online.identifier
+  scope                      = "read:calendar_feed"
+  description                = "Read personal event data for calendar subscriptions"
 }
 
 resource "auth0_connection" "feide" {
@@ -425,6 +435,12 @@ resource "auth0_client_grant" "monoweb_web_mgmt" {
   scopes = [
     "update:users"
   ]
+}
+
+resource "auth0_client_grant" "monoweb_web_calendar_feed" {
+  audience  = auth0_resource_server.online.identifier
+  client_id = auth0_client.monoweb_web.client_id
+  scopes    = [auth0_resource_server_scope.read_calendar_feed.scope]
 }
 
 resource "auth0_client" "monoweb_web" {

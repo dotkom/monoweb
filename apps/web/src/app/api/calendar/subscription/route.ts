@@ -6,7 +6,8 @@ import {
   createCalendarFeedResponse,
 } from "@/app/api/calendar/ical"
 import { env } from "@/env"
-import { server } from "@/utils/trpc/server"
+import { getRpcServiceAccessToken } from "@/lib/rpc-service-access-token"
+import { createServerClientWithAccessToken } from "@/utils/trpc/server"
 import { getLogger } from "@dotkomonline/logger"
 import { jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTInvalid } from "jose/errors"
@@ -34,7 +35,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       throw new Error("subject was not present in signed token")
     }
 
-    const { items: eventDetails } = await server.event.allByAttendingUserId.query({
+    const serviceAccessToken = await getRpcServiceAccessToken()
+    const serviceClient = createServerClientWithAccessToken(serviceAccessToken)
+    const { items: eventDetails } = await serviceClient.event.allByAttendingUserIdForCalendar.query({
       id: sub,
     })
 

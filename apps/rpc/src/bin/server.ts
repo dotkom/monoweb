@@ -68,6 +68,17 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
       return createTrpcContext(null, serviceLayer)
     }
 
+    const scopes = new Set<string>()
+    const scopeClaim = principal.payload.scope
+
+    if (typeof scopeClaim === "string") {
+      for (const scope of scopeClaim.split(" ")) {
+        if (scope !== "") {
+          scopes.add(scope)
+        }
+      }
+    }
+
     // User routes `isStaff` (~isCommitteeMember) and `isAdmin` rely on the editor roles set here to determine admin or staff
     // status. Therefore, if `isAuthorizationUnsafelyDisabled === true`, we assign their principal admin permissions
     // regardless of their actual roles, in addition to disabling all authorization checks further downstream (see
@@ -80,6 +91,7 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
       {
         subject,
         affiliations,
+        scopes,
       },
       serviceLayer
     )
