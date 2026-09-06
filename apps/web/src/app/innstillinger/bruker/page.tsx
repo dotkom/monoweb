@@ -4,10 +4,12 @@ import { env } from "@/env"
 import {
   createAllEventsCalendarUrl,
   createGoogleCalendarSubscribeUrl,
+  createOutlookCalendarSubscribeUrl,
   createPersonalCalendarSubscriptionUrl,
   createWebcalUrl,
   fetchPersonalCalendarToken,
 } from "@/app/arrangementer/components/calendar-subscription"
+import { AppleCalendarLogo } from "@/app/arrangementer/components/AppleCalendarLogo"
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
 import { getSessionRecoveryMessages } from "@dotkomonline/utils"
@@ -175,12 +177,16 @@ export default function MinBrukerPage() {
     selectedCalendarFeedDescription = "Arrangementer du er påmeldt. Lenken er personlig, så ikke del den."
   }
 
+  const selectedCalendarName = isPersonalCalendarFeed ? "Dine arrangementer" : "Alle arrangementer"
+
   let googleCalendarSubscribeUrl = ""
-  let webcalCalendarUrl = ""
+  let outlookCalendarSubscribeUrl = ""
+  let appleCalendarSubscribeUrl = ""
 
   if (selectedCalendarUrl) {
     googleCalendarSubscribeUrl = createGoogleCalendarSubscribeUrl(selectedCalendarUrl)
-    webcalCalendarUrl = createWebcalUrl(selectedCalendarUrl)
+    outlookCalendarSubscribeUrl = createOutlookCalendarSubscribeUrl(selectedCalendarUrl, selectedCalendarName)
+    appleCalendarSubscribeUrl = createWebcalUrl(selectedCalendarUrl)
   }
 
   return (
@@ -418,9 +424,14 @@ export default function MinBrukerPage() {
                 Google Kalender
               </Button>
 
-              <Button element="a" href={webcalCalendarUrl}>
+              <Button element="a" href={outlookCalendarSubscribeUrl} target="_blank" rel="noopener noreferrer">
                 <Image src="/logo-microsoft-outlook.svg" alt="Microsoft Outlook" width={16} height={16} />
-                Outlook og Apple
+                Outlook
+              </Button>
+
+              <Button element="a" href={appleCalendarSubscribeUrl}>
+                <AppleCalendarLogo />
+                Apple Kalender
               </Button>
 
               <Button

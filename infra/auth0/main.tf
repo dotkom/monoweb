@@ -111,10 +111,6 @@ resource "auth0_resource_server" "online" {
   token_lifetime                                  = 600 # 10 minutes
   token_lifetime_for_web                          = 600 # 10 minutes
   verification_location                           = null
-
-  lifecycle {
-    ignore_changes = [scopes]
-  }
 }
 
 resource "auth0_resource_server_scope" "read_calendar_feed" {

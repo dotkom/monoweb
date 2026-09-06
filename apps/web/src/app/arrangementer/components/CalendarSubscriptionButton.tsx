@@ -34,10 +34,12 @@ import { useState } from "react"
 import {
   createAllEventsCalendarUrl,
   createGoogleCalendarSubscribeUrl,
+  createOutlookCalendarSubscribeUrl,
   createPersonalCalendarSubscriptionUrl,
   createWebcalUrl,
   fetchPersonalCalendarToken,
 } from "./calendar-subscription"
+import { AppleCalendarLogo } from "./AppleCalendarLogo"
 import Image from "next/image"
 
 type CalendarFeed = "personal" | "all"
@@ -185,7 +187,7 @@ export function CalendarSubscriptionButton({ triggerVariant = "outline" }: Calen
           )}
 
           {selectedCalendarUrl && !(isPersonalFeed && personalCalendarTokenQuery.isLoading) && (
-            <CalendarFeedActions calendarUrl={selectedCalendarUrl} />
+            <CalendarFeedActions calendarName={shortLabel} calendarUrl={selectedCalendarUrl} />
           )}
         </div>
       </PopoverContent>
@@ -204,14 +206,15 @@ function UserProfileAvatar({ imageUrl, name }: { imageUrl?: string | null; name?
   )
 }
 
-function CalendarFeedActions({ calendarUrl }: { calendarUrl: string }) {
+function CalendarFeedActions({ calendarName, calendarUrl }: { calendarName: string; calendarUrl: string }) {
   const { icon: copiedIcon, copy } = useCopyToClipboard()
   const hasCopied = copiedIcon === "check"
   const CopyIcon = hasCopied ? IconCheck : IconCopy
   const copyIconClassName = hasCopied ? "size-4 text-green-600 dark:text-green-400" : "size-4 text-muted-foreground"
 
   const googleCalendarUrl = createGoogleCalendarSubscribeUrl(calendarUrl)
-  const webcalUrl = createWebcalUrl(calendarUrl)
+  const outlookCalendarUrl = createOutlookCalendarSubscribeUrl(calendarUrl, calendarName)
+  const appleCalendarUrl = createWebcalUrl(calendarUrl)
 
   return (
     <div className="flex flex-col gap-2">
@@ -220,9 +223,14 @@ function CalendarFeedActions({ calendarUrl }: { calendarUrl: string }) {
         Google Kalender
       </Button>
 
-      <Button element="a" href={webcalUrl}>
+      <Button element="a" href={outlookCalendarUrl} target="_blank" rel="noopener noreferrer">
         <Image src="/logo-microsoft-outlook.svg" alt="Microsoft Outlook" width={16} height={16} />
-        Outlook og Apple
+        Outlook
+      </Button>
+
+      <Button element="a" href={appleCalendarUrl}>
+        <AppleCalendarLogo />
+        Apple Kalender
       </Button>
 
       <Button
