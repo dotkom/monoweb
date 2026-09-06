@@ -30,10 +30,12 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { roundToNearestMinutes } from "date-fns"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
+import { CalendarSubscriptionButton } from "./components/CalendarSubscriptionButton"
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
 import { EventListFilterChips } from "./components/filters/EventFilterChips"
@@ -213,9 +215,14 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <Title element="h1" size="xl">
-        Arrangementer
-      </Title>
+      <div className="flex flex-row flex-wrap items-center justify-between gap-3">
+        <Title element="h1" size="xl">
+          Arrangementer
+        </Title>
+        <div className="max-sm:hidden">
+          <CalendarSubscriptionButton />
+        </div>
+      </div>
 
       <div className={cn("flex min-w-0 justify-between gap-x-2 gap-y-3", isCalendar && "flex-wrap")}>
         <div className={cn("flex min-w-0 gap-2", isCalendar ? "flex-wrap" : "w-full")}>
@@ -406,6 +413,13 @@ export const EventListPage = ({ initialListViewMode }: Props) => {
           />
         )}
       </div>
+
+      <Link
+        href="/innstillinger/bruker#kalender"
+        className="sm:hidden w-fit text-sm font-normal text-muted-foreground/75 underline-offset-4 hover:underline"
+      >
+        Vil du ha arrangementer i kalenderen?
+      </Link>
 
       {isEventListView && searchBarOpen && (
         <div className="sm:hidden">
