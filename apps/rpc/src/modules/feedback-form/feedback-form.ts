@@ -47,6 +47,20 @@ export const FeedbackQuestionWriteSchema = FeedbackQuestionSchema.omit({
 })
 export type FeedbackQuestionWrite = z.infer<typeof FeedbackQuestionWriteSchema>
 
+export const FeedbackQuestionsWriteSchema = FeedbackQuestionWriteSchema.array()
+  .min(1, "Tilbakemeldingsskjema må ha minst ett spørsmål")
+  .superRefine((questions, ctx) => {
+    for (const [index, question] of questions.entries()) {
+      if ((question.type === "SELECT" || question.type === "MULTISELECT") && question.options.length < 1) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Flervalgspørsmål må ha minst ett alternativ",
+          path: [index, "options"],
+        })
+      }
+    }
+  })
+
 const FeedbackFormBaseSchema = z.object({
   id: z.string(),
   publicResultsToken: z.string(),

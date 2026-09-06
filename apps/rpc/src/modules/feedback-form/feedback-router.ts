@@ -5,7 +5,7 @@ import {
   FeedbackPublicResultsTokenSchema,
   FeedbackQuestionAnswerSchema,
   FeedbackQuestionAnswerWriteSchema,
-  FeedbackQuestionWriteSchema,
+  FeedbackQuestionsWriteSchema,
 } from "./feedback-form"
 import { AttendeeSchema } from "../event/attendance"
 import { EventSchema } from "../event/event"
@@ -48,7 +48,7 @@ const createFormProcedure = procedure
   .input(
     z.object({
       feedbackForm: FeedbackFormWriteSchema,
-      questions: FeedbackQuestionWriteSchema.array(),
+      questions: FeedbackQuestionsWriteSchema,
     })
   )
   .use(withAuthentication())
@@ -81,7 +81,7 @@ const updateFormProcedure = procedure
     z.object({
       id: FeedbackFormIdSchema,
       feedbackForm: FeedbackFormWriteSchema,
-      questions: FeedbackQuestionWriteSchema.array(),
+      questions: FeedbackQuestionsWriteSchema,
     })
   )
   .use(withAuthentication())
