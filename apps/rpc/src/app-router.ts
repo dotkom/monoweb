@@ -9,6 +9,7 @@ import { invoicificationRouter } from "./modules/invoicification/invoicification
 import { jobListingRouter } from "./modules/job-listing/job-listing-router"
 import { markRouter } from "./modules/mark/mark-router"
 import { personalMarkRouter } from "./modules/mark/personal-mark-router"
+import { notificationRouter } from "./modules/notification/notification-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { rifRouter } from "./modules/rif/rif-router"
 import { userRouter } from "./modules/user/user-router"
@@ -24,6 +25,7 @@ export const appRouter = t.router({
   fadderuke: fadderukeRouter,
   mark: markRouter,
   personalMark: personalMarkRouter,
+  notification: notificationRouter,
   jobListing: jobListingRouter,
   offline: offlineRouter,
   article: articleRouter,
