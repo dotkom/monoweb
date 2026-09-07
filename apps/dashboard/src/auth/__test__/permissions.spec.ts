@@ -90,8 +90,14 @@ describe("canEditUserProfile", () => {
 })
 
 describe("canEditOffline", () => {
-  it("allows prokom editors", () => {
-    const state = createState({ prokom: [GroupRoleTypeEnum.EDITOR_IN_CHIEF] })
+  it("allows redaksjonen leaders", () => {
+    const state = createState({ redaksjonen: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditOffline(state)).toBe(true)
+  })
+
+  it("allows redaksjonen deputy leaders", () => {
+    const state = createState({ redaksjonen: [GroupRoleTypeEnum.DEPUTY_LEADER] })
 
     expect(canEditOffline(state)).toBe(true)
   })

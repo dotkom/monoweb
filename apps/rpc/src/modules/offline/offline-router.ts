@@ -17,9 +17,8 @@ const createOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.DEPUTY_LEADER),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.EDITOR_IN_CHIEF)
+        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
+        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
       )
     )
   )
@@ -43,9 +42,8 @@ const editOfflineProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.DEPUTY_LEADER),
-        hasGroupRole(CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.EDITOR_IN_CHIEF)
+        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
+        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
       )
     )
   )

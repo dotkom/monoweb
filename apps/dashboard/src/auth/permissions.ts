@@ -154,9 +154,8 @@ export function canEditContest(state: AuthorizationState, groupIds: readonly Gro
 export function canEditOffline(state: AuthorizationState): boolean {
   return (
     state.isAdministrator ||
-    hasGroupRole(state, CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.DEPUTY_LEADER) ||
-    hasGroupRole(state, CommitteeGroupSlug.PROKOM, GroupRoleTypeEnum.EDITOR_IN_CHIEF)
+    hasGroupRole(state, CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER) ||
+    hasGroupRole(state, CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
   )
 }
 
