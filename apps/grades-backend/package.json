@@ -27,7 +27,8 @@
     "type-check": "tsc --noEmit",
     "sync-grades": "dotenv -o -- tsx --import ./runtime.mjs src/sync/grades-sync.ts",
     "migrate-old-grades-data": "dotenv -o -- tsx --import ./runtime.mjs src/scripts/migrate-old-grades-data.ts",
-    "seed-aliases": "dotenv -o -- tsx --import ./runtime.mjs src/scripts/seed-aliases.ts"
+    "seed-aliases": "dotenv -o -- tsx --import ./runtime.mjs src/scripts/seed-aliases.ts",
+    "recalculate-course-statistics": "dotenv -o -- tsx --import ./runtime.mjs src/scripts/recalculate-course-statistics.ts"
   },
   "dependencies": {
     "@date-fns/tz": "^1.2.0",
