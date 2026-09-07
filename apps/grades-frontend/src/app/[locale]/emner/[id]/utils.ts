@@ -7,6 +7,7 @@ import {
   sortGradeDistributionsByYearAndSemester,
   type GradeDistribution,
   type GradeDistributionCountFields,
+  getLastThreeYearsGradeDistributions,
 } from "@dotkomonline/grades-backend/grade-distribution"
 import type { useFormatter, useTranslations } from "next-intl"
 import type { PeriodPreset, PeriodSelection } from "./course-page-params"
@@ -52,8 +53,7 @@ export function getGradeDistributionsForSelection(
 
       // Anchored at the latest year and includes full years
       case "LAST_THREE_YEARS": {
-        const latestYear = sortedNewestFirst[0]?.year ?? 0
-        return sortedNewestFirst.filter((gd) => gd.year >= latestYear - 2)
+        return getLastThreeYearsGradeDistributions(sortedNewestFirst)
       }
     }
   }

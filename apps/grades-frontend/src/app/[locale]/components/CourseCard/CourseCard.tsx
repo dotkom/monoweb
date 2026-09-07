@@ -26,7 +26,7 @@ export const CourseCard = ({ course, className }: Props) => {
 
   const metaItems = buildCourseMetaItems(course, t, format)
 
-  const passRateDisplay = roundPassRate(course.passRate)
+  const passRateDisplay = roundPassRate(course.passRateLastThreeYears)
   const passRateParts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
@@ -78,7 +78,7 @@ export const CourseCard = ({ course, className }: Props) => {
 
         <Text className="text-5xl font-bold leading-none tracking-tight tabular-nums text-neutral-950 dark:text-stone-50">
           {isLetterGrade
-            ? mapAverageGradeToLetterGrade(course.averageGrade)
+            ? mapAverageGradeToLetterGrade(course.averageGradeLastThreeYears)
             : passRateParts.map((part) =>
                 part.type === "percentSign" || part.type === "literal" ? (
                   <span

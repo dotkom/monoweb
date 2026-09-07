@@ -16,6 +16,7 @@ import type { GradeDistributionService } from "../modules/grade-distribution/gra
 import {
   calculateCourseGradeType,
   calculateCourseStatistics,
+  getLastThreeYearsGradeDistributions,
   type GradeDistribution,
   type GradeDistributionWrite,
 } from "../modules/grade-distribution/grade-distribution-types"
@@ -279,11 +280,19 @@ async function syncCourseStatistics(
   ctx: CourseSyncContext,
   allGradesForCourse: GradeDistribution[]
 ) {
-  const courseStatistics = calculateCourseStatistics(allGradesForCourse)
-  const gradeType = calculateCourseGradeType(allGradesForCourse)
-  const patch = { ...courseStatistics, gradeType }
+  const courseStatisticsAllYears = calculateCourseStatistics(allGradesForCourse)
+  const courseStatisticsLastThreeYears = calculateCourseStatistics(
+    getLastThreeYearsGradeDistributions(allGradesForCourse)
+  )
 
-  await ctx.courseService.update(ctx.dbClient, syncedCourse.id, patch)
+  const gradeType = calculateCourseGradeType(allGradesForCourse)
+
+  await ctx.courseService.update(ctx.dbClient, syncedCourse.id, {
+    candidateCount: courseStatisticsAllYears.candidateCount,
+    averageGradeLastThreeYears: courseStatisticsLastThreeYears.averageGrade,
+    passRateLastThreeYears: courseStatisticsLastThreeYears.passRate,
+    gradeType,
+  })
 }
 
 async function syncNtnuCreditReductions(

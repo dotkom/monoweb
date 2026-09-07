@@ -47,8 +47,8 @@ filtered AS (
     course."grade_type",
     course."last_year_taught",
     course."candidate_count",
-    course."average_grade",
-    course."pass_rate",
+    course."average_grade_last_three_years",
+    course."pass_rate_last_three_years",
     course."taught_semesters",
     course."teaching_languages",
     course."campuses",
@@ -69,7 +69,7 @@ filtered AS (
     )
     AND (
       $8::double precision IS NULL
-      OR course."average_grade" >= $8
+      OR course."average_grade_last_three_years" >= $8
     )
     AND course."candidate_count" > 0
   UNION ALL
@@ -83,8 +83,8 @@ filtered AS (
     course."grade_type",
     course."last_year_taught",
     course."candidate_count",
-    course."average_grade",
-    course."pass_rate",
+    course."average_grade_last_three_years",
+    course."pass_rate_last_three_years",
     course."taught_semesters",
     course."teaching_languages",
     course."campuses",
@@ -113,7 +113,7 @@ filtered AS (
     )
     AND (
       $8::double precision IS NULL
-      OR course."average_grade" >= $8
+      OR course."average_grade_last_three_years" >= $8
     )
     AND course."candidate_count" > 0
 ),
@@ -128,8 +128,8 @@ page AS (
     filtered."grade_type",
     filtered."last_year_taught",
     filtered."candidate_count",
-    filtered."average_grade",
-    filtered."pass_rate",
+    filtered."average_grade_last_three_years",
+    filtered."pass_rate_last_three_years",
     filtered."taught_semesters",
     filtered."teaching_languages",
     filtered."campuses",
@@ -150,45 +150,45 @@ page AS (
 
     CASE WHEN $9 = 'asc' THEN
       CASE $10
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END ASC NULLS LAST,
     CASE WHEN $9 = 'desc' THEN
       CASE $10
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END DESC NULLS LAST,
 
     CASE WHEN $9 = 'asc' THEN
       CASE $11
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END ASC NULLS LAST,
     CASE WHEN $9 = 'desc' THEN
       CASE $11
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END DESC NULLS LAST,
 
     CASE WHEN $9 = 'asc' THEN
       CASE $12
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END ASC NULLS LAST,
     CASE WHEN $9 = 'desc' THEN
       CASE $12
-        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade"
-        WHEN 'PASS_RATE' THEN filtered."pass_rate"
+        WHEN 'AVERAGE_GRADE' THEN filtered."average_grade_last_three_years"
+        WHEN 'PASS_RATE' THEN filtered."pass_rate_last_three_years"
         WHEN 'CANDIDATE_COUNT' THEN filtered."candidate_count"::double precision
       END
     END DESC NULLS LAST,
@@ -207,8 +207,8 @@ SELECT
   page."grade_type" AS "gradeType",
   page."last_year_taught" AS "lastYearTaught",
   page."candidate_count" AS "candidateCount",
-  page."average_grade" AS "averageGrade",
-  page."pass_rate" AS "passRate",
+  page."average_grade_last_three_years" AS "averageGradeLastThreeYears",
+  page."pass_rate_last_three_years" AS "passRateLastThreeYears",
   to_jsonb(page."taught_semesters") AS "taughtSemesters",
   to_jsonb(page."teaching_languages") AS "teachingLanguages",
   to_jsonb(page."campuses") AS "campuses",
