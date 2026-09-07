@@ -21,10 +21,7 @@ export const SettingsMenuItem: FC<SettingsMenuItemProps> = ({ title, slug, icon:
       icon={<Icon className="shrink-0 size-5" />}
       variant="ghost"
       size="lg"
-      className={cn(
-        "justify-start px-3 -ml-3 py-2 rounded-md gap-2.5",
-        isCurrent ? "text-foreground font-semibold" : "text-muted-foreground font-normal"
-      )}
+      className={cn("justify-start px-3 -ml-3 py-2 rounded-md gap-2.5", isCurrent ? "font-semibold" : "font-normal")}
     >
       <Text element="span" className="text-base">
         {title}

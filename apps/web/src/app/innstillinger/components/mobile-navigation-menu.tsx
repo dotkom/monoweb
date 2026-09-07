@@ -75,7 +75,7 @@ export const MobileProfileNavigationMenu = () => {
                   href={item.slug}
                   className={cn(
                     "flex w-full cursor-pointer items-center gap-3 rounded-md p-3",
-                    isCurrent ? "bg-gray-100 dark:bg-stone-700/50" : "text-gray-500 dark:text-stone-500"
+                    isCurrent && "bg-gray-100 dark:bg-stone-700/50"
                   )}
                 >
                   <ItemIcon className="size-5 shrink-0" aria-hidden />
