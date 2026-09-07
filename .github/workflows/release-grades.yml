@@ -40,7 +40,7 @@ jobs:
         with:
           project: grades-backend
           config: prd
-      - run: pnpm run migrate:deploy-grades
+      - run: pnpm run grades:migrate:deploy
         name: Apply Prisma migrations against prod
 
   build-grades-backend:
