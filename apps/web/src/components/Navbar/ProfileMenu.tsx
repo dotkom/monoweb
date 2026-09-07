@@ -40,6 +40,7 @@ import {
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type FC, Fragment, useState } from "react"
+import { NotificationDropdown } from "./NotificationDropdown"
 import { ThemeToggle } from "./ThemeToggle"
 
 const DEBUG_CONTACT_URL =
@@ -122,6 +123,7 @@ const ContactDebugDropdown: FC = () => (
 const UnauthenticatedActions: FC = () => {
   return (
     <div className="flex items-center">
+      <NotificationDropdown isAuthenticated={false} />
       <ContactDebugDropdown />
       <ThemeDropdown />
     </div>
@@ -205,6 +207,7 @@ export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   if (isInvalid && sessionRecoveryMessages !== null) {
     return (
       <div className="flex gap-2">
+        <NotificationDropdown isAuthenticated={false} />
         <ContactDebugDropdown />
         <SessionRecoveryDropdown {...sessionRecoveryMessages} returnTo={fullPathname} />
       </div>
@@ -213,6 +216,7 @@ export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
 
   return (
     <div className="flex gap-2">
+      <NotificationDropdown isAuthenticated />
       <ContactDebugDropdown />
       <AvatarDropdown dbUser={dbUser} />
     </div>

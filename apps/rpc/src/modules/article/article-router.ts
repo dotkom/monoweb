@@ -77,6 +77,13 @@ const findArticleProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.handle, input))
 
+export type FindArticleBySlugInput = inferProcedureInput<typeof findArticleBySlugProcedure>
+export type FindArticleBySlugOutput = inferProcedureOutput<typeof findArticleBySlugProcedure>
+const findArticleBySlugProcedure = procedure
+  .input(ArticleSchema.shape.slug)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.articleService.findBySlug(ctx.handle, input))
+
 export type GetArticleInput = inferProcedureInput<typeof getArticleProcedure>
 export type GetArticleOutput = inferProcedureOutput<typeof getArticleProcedure>
 const getArticleProcedure = procedure
@@ -169,6 +176,7 @@ export const articleRouter = t.router({
   all: allArticlesProcedure,
   findArticles: findArticlesProcedure,
   find: findArticleProcedure,
+  findBySlug: findArticleBySlugProcedure,
   get: getArticleProcedure,
   related: findRelatedArticlesProcedure,
   featured: findFeaturedArticlesProcedure,
