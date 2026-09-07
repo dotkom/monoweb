@@ -12,6 +12,7 @@ import {
   IconCancel,
   IconCreditCard,
   IconForms,
+  IconBell,
   IconListDetails,
   IconSelector,
   IconTrash,
@@ -26,6 +27,7 @@ import { useEventFeedbackFormGetQuery } from "../queries"
 import { AttendancePage } from "./attendance-page"
 import { AttendeesPage } from "./attendees-page"
 import { EventEditCard } from "./edit-card"
+import { EventNotificationsPage } from "./notifications-page"
 import { FeedbackPage } from "./feedback-page"
 import { PaymentPage } from "./payment-page"
 import { useEventContext } from "./provider"
@@ -54,6 +56,13 @@ const SIDEBAR_LINKS = [
     slug: "pameldte",
     component: AttendeesPage,
     requiresAttendance: true,
+  },
+  {
+    icon: IconBell,
+    label: "Varsler",
+    slug: "varsler",
+    component: EventNotificationsPage,
+    requiresAttendance: false,
   },
   {
     icon: IconSelector,
