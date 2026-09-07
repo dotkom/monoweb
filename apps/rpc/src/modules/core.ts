@@ -37,6 +37,10 @@ import { getMarkRepository } from "./mark/mark-repository"
 import { getMarkService } from "./mark/mark-service"
 import { getPersonalMarkRepository } from "./mark/personal-mark-repository"
 import { getPersonalMarkService } from "./mark/personal-mark-service"
+import { getNotificationAudienceRepository } from "./notification/notification-audience-repository"
+import { getNotificationAudienceResolver } from "./notification/notification-audience-resolver"
+import { getNotificationRepository } from "./notification/notification-repository"
+import { getNotificationService } from "./notification/notification-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
@@ -180,6 +184,8 @@ export async function createServiceLayer(
   const attendanceRepository = getAttendanceRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
+  const notificationRepository = getNotificationRepository()
+  const notificationAudienceRepository = getNotificationAudienceRepository()
   const offlineRepository = getOfflineRepository()
   const auditLogRepository = getAuditLogRepository()
   const articleRepository = getArticleRepository()
@@ -245,6 +251,8 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
+  const notificationAudienceResolver = getNotificationAudienceResolver(notificationAudienceRepository)
+  const notificationService = getNotificationService(notificationRepository, notificationAudienceResolver, eventEmitter)
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
   const userMergeService = getUserMergingService(
@@ -295,6 +303,7 @@ export async function createServiceLayer(
     paymentWebhookService,
     contestService,
     fadderukeService,
+    notificationService,
     recurringTaskService,
     workspaceService,
 
