@@ -73,8 +73,8 @@ model Course {
   examTypeEn         String? @map("exam_type_en")
 
   candidateCount Int   @map("candidate_count")
-  averageGrade   Float @map("average_grade")
-  passRate       Float @map("pass_rate")
+  averageGradeLastThreeYears   Float @map("average_grade_last_three_years")
+  passRateLastThreeYears       Float @map("pass_rate_last_three_years")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)

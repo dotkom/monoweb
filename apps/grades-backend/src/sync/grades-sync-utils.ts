@@ -179,8 +179,8 @@ export function buildCourseCreateWrite(data: CourseSyncData): CourseWrite | null
     lastYearTaught: data.taughtTo,
     gradeType: data.gradeType,
 
-    averageGrade: 0,
-    passRate: 0,
+    averageGradeLastThreeYears: 0,
+    passRateLastThreeYears: 0,
     candidateCount: 0,
 
     credits: resolved.credits ?? null,

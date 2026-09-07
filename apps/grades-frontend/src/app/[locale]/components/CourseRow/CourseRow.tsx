@@ -22,7 +22,7 @@ export const CourseRow = ({ course, className }: Props) => {
   const isLetterGrade = course.gradeType === "LETTER"
   const name = getCourseLocalizedName(course, locale)
 
-  const passRateDisplay = roundPassRate(course.passRate)
+  const passRateDisplay = roundPassRate(course.passRateLastThreeYears)
   const passRateParts = new Intl.NumberFormat(locale, {
     style: "percent",
     maximumFractionDigits: 0,
@@ -73,7 +73,7 @@ export const CourseRow = ({ course, className }: Props) => {
           )}
         >
           {isLetterGrade
-            ? mapAverageGradeToLetterGrade(course.averageGrade)
+            ? mapAverageGradeToLetterGrade(course.averageGradeLastThreeYears)
             : passRateParts.map((part) =>
                 part.type === "percentSign" || part.type === "literal" ? (
                   <span

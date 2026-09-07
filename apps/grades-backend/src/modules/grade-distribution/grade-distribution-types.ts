@@ -178,3 +178,11 @@ export const sortGradeDistributionsByYearAndSemester = (gradeDistributions: Grad
     return semesterOrder[b.semester] - semesterOrder[a.semester]
   })
 }
+
+export function getLastThreeYearsGradeDistributions(gradeDistributions: GradeDistribution[]): GradeDistribution[] {
+  const sortedNewestFirst = sortGradeDistributionsByYearAndSemester(gradeDistributions)
+
+  const latestYear = sortedNewestFirst[0]?.year ?? 0
+  const gradesFromLastThreeYears = sortedNewestFirst.filter((gd) => gd.year >= latestYear - 2)
+  return gradesFromLastThreeYears
+}

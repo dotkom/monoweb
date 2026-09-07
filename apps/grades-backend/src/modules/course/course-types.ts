@@ -60,8 +60,8 @@ export const CourseSchema = z.object({
   examTypeNo: z.string().nullable(),
   examTypeEn: z.string().nullable(),
   candidateCount: z.int(),
-  averageGrade: z.number(),
-  passRate: z.number(),
+  averageGradeLastThreeYears: z.number(),
+  passRateLastThreeYears: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
   taughtSemesters: z.array(SemesterSchema),
@@ -110,8 +110,8 @@ export const CourseWriteSchema = CourseSchema.pick({
   firstYearTaught: true,
   lastYearTaught: true,
   candidateCount: true,
-  averageGrade: true,
-  passRate: true,
+  averageGradeLastThreeYears: true,
+  passRateLastThreeYears: true,
   taughtSemesters: true,
   campuses: true,
   teachingLanguages: true,
@@ -143,8 +143,8 @@ export const CourseListItemSchema = CourseSchema.pick({
   gradeType: true,
   lastYearTaught: true,
   candidateCount: true,
-  averageGrade: true,
-  passRate: true,
+  averageGradeLastThreeYears: true,
+  passRateLastThreeYears: true,
   taughtSemesters: true,
   teachingLanguages: true,
   campuses: true,
@@ -187,7 +187,7 @@ export const CourseSitemapEntrySchema = CourseSchema.pick({
 })
 export type CourseSitemapEntry = z.infer<typeof CourseSitemapEntrySchema>
 
-export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGrade"]) => {
+export const mapAverageGradeToLetterGrade = (averageGrade: Course["averageGradeLastThreeYears"]) => {
   const roundedAverage = Math.round(averageGrade)
 
   switch (roundedAverage) {

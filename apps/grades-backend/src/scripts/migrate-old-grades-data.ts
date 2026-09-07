@@ -289,8 +289,8 @@ async function migrateCourses(prisma: DBClient, faculties: Faculty[], department
       gradeType: gradeType,
       campuses: campuses,
       candidateCount: course.attendee_count,
-      averageGrade: course.average,
-      passRate: course.pass_rate,
+      averageGradeLastThreeYears: course.average,
+      passRateLastThreeYears: course.pass_rate,
       latestYearCheckedForNtnuData: null,
     }
 

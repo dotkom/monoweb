@@ -31,8 +31,8 @@ export type CourseAvgAggregateOutputType = {
   firstYearTaught: number | null
   lastYearTaught: number | null
   candidateCount: number | null
-  averageGrade: number | null
-  passRate: number | null
+  averageGradeLastThreeYears: number | null
+  passRateLastThreeYears: number | null
   latestYearCheckedForNtnuData: number | null
 }
 
@@ -41,8 +41,8 @@ export type CourseSumAggregateOutputType = {
   firstYearTaught: number | null
   lastYearTaught: number | null
   candidateCount: number | null
-  averageGrade: number | null
-  passRate: number | null
+  averageGradeLastThreeYears: number | null
+  passRateLastThreeYears: number | null
   latestYearCheckedForNtnuData: number | null
 }
 
@@ -65,8 +65,8 @@ export type CourseMinAggregateOutputType = {
   examTypeNo: string | null
   examTypeEn: string | null
   candidateCount: number | null
-  averageGrade: number | null
-  passRate: number | null
+  averageGradeLastThreeYears: number | null
+  passRateLastThreeYears: number | null
   createdAt: Date | null
   updatedAt: Date | null
   facultyId: string | null
@@ -93,8 +93,8 @@ export type CourseMaxAggregateOutputType = {
   examTypeNo: string | null
   examTypeEn: string | null
   candidateCount: number | null
-  averageGrade: number | null
-  passRate: number | null
+  averageGradeLastThreeYears: number | null
+  passRateLastThreeYears: number | null
   createdAt: Date | null
   updatedAt: Date | null
   facultyId: string | null
@@ -121,8 +121,8 @@ export type CourseCountAggregateOutputType = {
   examTypeNo: number
   examTypeEn: number
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt: number
   updatedAt: number
   taughtSemesters: number
@@ -140,8 +140,8 @@ export type CourseAvgAggregateInputType = {
   firstYearTaught?: true
   lastYearTaught?: true
   candidateCount?: true
-  averageGrade?: true
-  passRate?: true
+  averageGradeLastThreeYears?: true
+  passRateLastThreeYears?: true
   latestYearCheckedForNtnuData?: true
 }
 
@@ -150,8 +150,8 @@ export type CourseSumAggregateInputType = {
   firstYearTaught?: true
   lastYearTaught?: true
   candidateCount?: true
-  averageGrade?: true
-  passRate?: true
+  averageGradeLastThreeYears?: true
+  passRateLastThreeYears?: true
   latestYearCheckedForNtnuData?: true
 }
 
@@ -174,8 +174,8 @@ export type CourseMinAggregateInputType = {
   examTypeNo?: true
   examTypeEn?: true
   candidateCount?: true
-  averageGrade?: true
-  passRate?: true
+  averageGradeLastThreeYears?: true
+  passRateLastThreeYears?: true
   createdAt?: true
   updatedAt?: true
   facultyId?: true
@@ -202,8 +202,8 @@ export type CourseMaxAggregateInputType = {
   examTypeNo?: true
   examTypeEn?: true
   candidateCount?: true
-  averageGrade?: true
-  passRate?: true
+  averageGradeLastThreeYears?: true
+  passRateLastThreeYears?: true
   createdAt?: true
   updatedAt?: true
   facultyId?: true
@@ -230,8 +230,8 @@ export type CourseCountAggregateInputType = {
   examTypeNo?: true
   examTypeEn?: true
   candidateCount?: true
-  averageGrade?: true
-  passRate?: true
+  averageGradeLastThreeYears?: true
+  passRateLastThreeYears?: true
   createdAt?: true
   updatedAt?: true
   taughtSemesters?: true
@@ -348,8 +348,8 @@ export type CourseGroupByOutputType = {
   examTypeNo: string | null
   examTypeEn: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt: Date
   updatedAt: Date
   taughtSemesters: $Enums.Semester[]
@@ -402,8 +402,8 @@ export type CourseWhereInput = {
   examTypeNo?: Prisma.StringNullableFilter<"Course"> | string | null
   examTypeEn?: Prisma.StringNullableFilter<"Course"> | string | null
   candidateCount?: Prisma.IntFilter<"Course"> | number
-  averageGrade?: Prisma.FloatFilter<"Course"> | number
-  passRate?: Prisma.FloatFilter<"Course"> | number
+  averageGradeLastThreeYears?: Prisma.FloatFilter<"Course"> | number
+  passRateLastThreeYears?: Prisma.FloatFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   taughtSemesters?: Prisma.EnumSemesterNullableListFilter<"Course">
@@ -439,8 +439,8 @@ export type CourseOrderByWithRelationInput = {
   examTypeNo?: Prisma.SortOrderInput | Prisma.SortOrder
   examTypeEn?: Prisma.SortOrderInput | Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   taughtSemesters?: Prisma.SortOrder
@@ -479,8 +479,8 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   examTypeNo?: Prisma.StringNullableFilter<"Course"> | string | null
   examTypeEn?: Prisma.StringNullableFilter<"Course"> | string | null
   candidateCount?: Prisma.IntFilter<"Course"> | number
-  averageGrade?: Prisma.FloatFilter<"Course"> | number
-  passRate?: Prisma.FloatFilter<"Course"> | number
+  averageGradeLastThreeYears?: Prisma.FloatFilter<"Course"> | number
+  passRateLastThreeYears?: Prisma.FloatFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   taughtSemesters?: Prisma.EnumSemesterNullableListFilter<"Course">
@@ -516,8 +516,8 @@ export type CourseOrderByWithAggregationInput = {
   examTypeNo?: Prisma.SortOrderInput | Prisma.SortOrder
   examTypeEn?: Prisma.SortOrderInput | Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   taughtSemesters?: Prisma.SortOrder
@@ -555,8 +555,8 @@ export type CourseScalarWhereWithAggregatesInput = {
   examTypeNo?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   examTypeEn?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   candidateCount?: Prisma.IntWithAggregatesFilter<"Course"> | number
-  averageGrade?: Prisma.FloatWithAggregatesFilter<"Course"> | number
-  passRate?: Prisma.FloatWithAggregatesFilter<"Course"> | number
+  averageGradeLastThreeYears?: Prisma.FloatWithAggregatesFilter<"Course"> | number
+  passRateLastThreeYears?: Prisma.FloatWithAggregatesFilter<"Course"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Course"> | Date | string
   taughtSemesters?: Prisma.EnumSemesterNullableListFilter<"Course">
@@ -586,8 +586,8 @@ export type CourseCreateInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -621,8 +621,8 @@ export type CourseUncheckedCreateInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -656,8 +656,8 @@ export type CourseUpdateInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -691,8 +691,8 @@ export type CourseUncheckedUpdateInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -726,8 +726,8 @@ export type CourseCreateManyInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -757,8 +757,8 @@ export type CourseUpdateManyMutationInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -786,8 +786,8 @@ export type CourseUncheckedUpdateManyInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -841,8 +841,8 @@ export type CourseCountOrderByAggregateInput = {
   examTypeNo?: Prisma.SortOrder
   examTypeEn?: Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   taughtSemesters?: Prisma.SortOrder
@@ -858,8 +858,8 @@ export type CourseAvgOrderByAggregateInput = {
   firstYearTaught?: Prisma.SortOrder
   lastYearTaught?: Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   latestYearCheckedForNtnuData?: Prisma.SortOrder
 }
 
@@ -882,8 +882,8 @@ export type CourseMaxOrderByAggregateInput = {
   examTypeNo?: Prisma.SortOrder
   examTypeEn?: Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   facultyId?: Prisma.SortOrder
@@ -910,8 +910,8 @@ export type CourseMinOrderByAggregateInput = {
   examTypeNo?: Prisma.SortOrder
   examTypeEn?: Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   facultyId?: Prisma.SortOrder
@@ -924,8 +924,8 @@ export type CourseSumOrderByAggregateInput = {
   firstYearTaught?: Prisma.SortOrder
   lastYearTaught?: Prisma.SortOrder
   candidateCount?: Prisma.SortOrder
-  averageGrade?: Prisma.SortOrder
-  passRate?: Prisma.SortOrder
+  averageGradeLastThreeYears?: Prisma.SortOrder
+  passRateLastThreeYears?: Prisma.SortOrder
   latestYearCheckedForNtnuData?: Prisma.SortOrder
 }
 
@@ -1182,8 +1182,8 @@ export type CourseCreateWithoutGradeDistributionsInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1216,8 +1216,8 @@ export type CourseUncheckedCreateWithoutGradeDistributionsInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1266,8 +1266,8 @@ export type CourseUpdateWithoutGradeDistributionsInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1300,8 +1300,8 @@ export type CourseUncheckedUpdateWithoutGradeDistributionsInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1334,8 +1334,8 @@ export type CourseCreateWithoutFacultyInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1368,8 +1368,8 @@ export type CourseUncheckedCreateWithoutFacultyInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1431,8 +1431,8 @@ export type CourseScalarWhereInput = {
   examTypeNo?: Prisma.StringNullableFilter<"Course"> | string | null
   examTypeEn?: Prisma.StringNullableFilter<"Course"> | string | null
   candidateCount?: Prisma.IntFilter<"Course"> | number
-  averageGrade?: Prisma.FloatFilter<"Course"> | number
-  passRate?: Prisma.FloatFilter<"Course"> | number
+  averageGradeLastThreeYears?: Prisma.FloatFilter<"Course"> | number
+  passRateLastThreeYears?: Prisma.FloatFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   taughtSemesters?: Prisma.EnumSemesterNullableListFilter<"Course">
@@ -1462,8 +1462,8 @@ export type CourseCreateWithoutDepartmentInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1496,8 +1496,8 @@ export type CourseUncheckedCreateWithoutDepartmentInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1556,8 +1556,8 @@ export type CourseCreateWithoutAliasesInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1590,8 +1590,8 @@ export type CourseUncheckedCreateWithoutAliasesInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1640,8 +1640,8 @@ export type CourseUpdateWithoutAliasesInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1674,8 +1674,8 @@ export type CourseUncheckedUpdateWithoutAliasesInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1708,8 +1708,8 @@ export type CourseCreateWithoutCreditReductionsInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1742,8 +1742,8 @@ export type CourseUncheckedCreateWithoutCreditReductionsInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1781,8 +1781,8 @@ export type CourseCreateWithoutCreditReductionsAsOverlapInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1815,8 +1815,8 @@ export type CourseUncheckedCreateWithoutCreditReductionsAsOverlapInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -1865,8 +1865,8 @@ export type CourseUpdateWithoutCreditReductionsInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1899,8 +1899,8 @@ export type CourseUncheckedUpdateWithoutCreditReductionsInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1944,8 +1944,8 @@ export type CourseUpdateWithoutCreditReductionsAsOverlapInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -1978,8 +1978,8 @@ export type CourseUncheckedUpdateWithoutCreditReductionsAsOverlapInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2012,8 +2012,8 @@ export type CourseCreateManyFacultyInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -2042,8 +2042,8 @@ export type CourseUpdateWithoutFacultyInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2076,8 +2076,8 @@ export type CourseUncheckedUpdateWithoutFacultyInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2110,8 +2110,8 @@ export type CourseUncheckedUpdateManyWithoutFacultyInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2140,8 +2140,8 @@ export type CourseCreateManyDepartmentInput = {
   examTypeNo?: string | null
   examTypeEn?: string | null
   candidateCount: number
-  averageGrade: number
-  passRate: number
+  averageGradeLastThreeYears: number
+  passRateLastThreeYears: number
   createdAt?: Date | string
   updatedAt?: Date | string
   taughtSemesters?: Prisma.CourseCreatetaughtSemestersInput | $Enums.Semester[]
@@ -2170,8 +2170,8 @@ export type CourseUpdateWithoutDepartmentInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2204,8 +2204,8 @@ export type CourseUncheckedUpdateWithoutDepartmentInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2238,8 +2238,8 @@ export type CourseUncheckedUpdateManyWithoutDepartmentInput = {
   examTypeNo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   examTypeEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   candidateCount?: Prisma.IntFieldUpdateOperationsInput | number
-  averageGrade?: Prisma.FloatFieldUpdateOperationsInput | number
-  passRate?: Prisma.FloatFieldUpdateOperationsInput | number
+  averageGradeLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
+  passRateLastThreeYears?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   taughtSemesters?: Prisma.CourseUpdatetaughtSemestersInput | $Enums.Semester[]
@@ -2326,8 +2326,8 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   examTypeNo?: boolean
   examTypeEn?: boolean
   candidateCount?: boolean
-  averageGrade?: boolean
-  passRate?: boolean
+  averageGradeLastThreeYears?: boolean
+  passRateLastThreeYears?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taughtSemesters?: boolean
@@ -2364,8 +2364,8 @@ export type CourseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   examTypeNo?: boolean
   examTypeEn?: boolean
   candidateCount?: boolean
-  averageGrade?: boolean
-  passRate?: boolean
+  averageGradeLastThreeYears?: boolean
+  passRateLastThreeYears?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taughtSemesters?: boolean
@@ -2397,8 +2397,8 @@ export type CourseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   examTypeNo?: boolean
   examTypeEn?: boolean
   candidateCount?: boolean
-  averageGrade?: boolean
-  passRate?: boolean
+  averageGradeLastThreeYears?: boolean
+  passRateLastThreeYears?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taughtSemesters?: boolean
@@ -2430,8 +2430,8 @@ export type CourseSelectScalar = {
   examTypeNo?: boolean
   examTypeEn?: boolean
   candidateCount?: boolean
-  averageGrade?: boolean
-  passRate?: boolean
+  averageGradeLastThreeYears?: boolean
+  passRateLastThreeYears?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taughtSemesters?: boolean
@@ -2442,7 +2442,7 @@ export type CourseSelectScalar = {
   latestYearCheckedForNtnuData?: boolean
 }
 
-export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "nameNo" | "nameEn" | "credits" | "studyLevel" | "gradeType" | "firstYearTaught" | "lastYearTaught" | "contentNo" | "contentEn" | "teachingMethodsNo" | "teachingMethodsEn" | "learningOutcomesNo" | "learningOutcomesEn" | "examTypeNo" | "examTypeEn" | "candidateCount" | "averageGrade" | "passRate" | "createdAt" | "updatedAt" | "taughtSemesters" | "teachingLanguages" | "campuses" | "facultyId" | "departmentId" | "latestYearCheckedForNtnuData", ExtArgs["result"]["course"]>
+export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "nameNo" | "nameEn" | "credits" | "studyLevel" | "gradeType" | "firstYearTaught" | "lastYearTaught" | "contentNo" | "contentEn" | "teachingMethodsNo" | "teachingMethodsEn" | "learningOutcomesNo" | "learningOutcomesEn" | "examTypeNo" | "examTypeEn" | "candidateCount" | "averageGradeLastThreeYears" | "passRateLastThreeYears" | "createdAt" | "updatedAt" | "taughtSemesters" | "teachingLanguages" | "campuses" | "facultyId" | "departmentId" | "latestYearCheckedForNtnuData", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   gradeDistributions?: boolean | Prisma.Course$gradeDistributionsArgs<ExtArgs>
   creditReductions?: boolean | Prisma.Course$creditReductionsArgs<ExtArgs>
@@ -2490,8 +2490,8 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     examTypeNo: string | null
     examTypeEn: string | null
     candidateCount: number
-    averageGrade: number
-    passRate: number
+    averageGradeLastThreeYears: number
+    passRateLastThreeYears: number
     createdAt: Date
     updatedAt: Date
     taughtSemesters: $Enums.Semester[]
@@ -2950,8 +2950,8 @@ export interface CourseFieldRefs {
   readonly examTypeNo: Prisma.FieldRef<"Course", 'String'>
   readonly examTypeEn: Prisma.FieldRef<"Course", 'String'>
   readonly candidateCount: Prisma.FieldRef<"Course", 'Int'>
-  readonly averageGrade: Prisma.FieldRef<"Course", 'Float'>
-  readonly passRate: Prisma.FieldRef<"Course", 'Float'>
+  readonly averageGradeLastThreeYears: Prisma.FieldRef<"Course", 'Float'>
+  readonly passRateLastThreeYears: Prisma.FieldRef<"Course", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Course", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Course", 'DateTime'>
   readonly taughtSemesters: Prisma.FieldRef<"Course", 'Semester[]'>
