@@ -12,20 +12,13 @@ import {
 } from "./exceptionallyDistinguished"
 
 export interface PlateProps {
-  attendee: Attendee
-  user: User
+  attendee: Pick<Attendee, "userGrade" | "userId">
+  user: Pick<User, "id" | "name" | "username" | "imageUrl" | "flags" | "memberships">
   smallIcons: JSX.Element[]
   largeIcon: JSX.Element | null
 }
 
-interface PlateContextValue {
-  attendee: Attendee
-  user: User
-  smallIcons: JSX.Element[]
-  largeIcon: JSX.Element | null
-}
-
-const PlateContext = createContext<PlateContextValue | null>(null)
+const PlateContext = createContext<PlateProps | null>(null)
 
 function usePlateContext() {
   const context = useContext(PlateContext)
@@ -43,9 +36,9 @@ interface PlateRootProps extends PlateProps {
 }
 
 function PlateRoot({ attendee, user, smallIcons, largeIcon, className, children }: PlateRootProps) {
-  const contextValue: PlateContextValue = { attendee, user, smallIcons, largeIcon }
-  const profileHref = `/profil/${attendee.user.username}`
-  const profileLabel = attendee.user.name ?? attendee.user.username
+  const contextValue: PlateProps = { attendee, user, smallIcons, largeIcon }
+  const profileHref = `/profil/${user.username}`
+  const profileLabel = user.name ?? user.username
 
   return (
     <PlateContext.Provider value={contextValue}>
@@ -74,11 +67,11 @@ interface PlateAvatarProps {
 }
 
 function PlateAvatar({ className, fallbackClassName }: PlateAvatarProps) {
-  const { attendee } = usePlateContext()
+  const { user } = usePlateContext()
 
   return (
     <Avatar className={cn("size-10 shrink-0", className)}>
-      <AvatarImage src={attendee.user.imageUrl ?? undefined} />
+      <AvatarImage src={user.imageUrl ?? undefined} />
       <AvatarFallback className={fallbackClassName}>
         <IconUser className="size-[1.25em]" />
       </AvatarFallback>
@@ -91,8 +84,8 @@ interface AttendeeDetailsProps {
   subtitleClassName?: string
 }
 
-function getSubtitleItem(attendee: Attendee, subtitleClassName?: string) {
-  if (isKnight(attendee.user)) {
+function getSubtitleItem(user: PlateProps["user"], subtitleClassName?: string) {
+  if (isKnight(user)) {
     return (
       <>
         <Text className={cn("min-w-0 truncate text-xs max-sm:hidden", subtitleClassName)}>
@@ -103,7 +96,7 @@ function getSubtitleItem(attendee: Attendee, subtitleClassName?: string) {
     )
   }
 
-  const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(attendee.user.flags)
+  const exceptionallyDistinguishedFlag = getExceptionallyDistinguishedFlag(user.flags)
 
   if (exceptionallyDistinguishedFlag === null) {
     return null
@@ -115,16 +108,16 @@ function getSubtitleItem(attendee: Attendee, subtitleClassName?: string) {
 }
 
 function AttendeeDetails({ nameClassName, subtitleClassName }: AttendeeDetailsProps) {
-  const { attendee, smallIcons } = usePlateContext()
+  const { attendee, user, smallIcons } = usePlateContext()
 
   const hasGrade = attendee.userGrade !== null
-  const subtitleItem = getSubtitleItem(attendee, subtitleClassName)
+  const subtitleItem = getSubtitleItem(user, subtitleClassName)
 
   return (
     <div className="flex w-fit max-w-full min-w-0 shrink flex-col gap-0.5">
       <div className="flex min-w-0 items-center gap-2">
-        <Text className={cn("min-w-0 truncate text-sm", nameClassName)} title={attendee.user.name ?? undefined}>
-          {attendee.user.name}
+        <Text className={cn("min-w-0 truncate text-sm", nameClassName)} title={user.name ?? undefined}>
+          {user.name}
         </Text>
 
         {smallIcons.length > 0 && <span className="pointer-events-auto flex items-center gap-2">{smallIcons}</span>}
