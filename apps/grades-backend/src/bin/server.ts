@@ -64,6 +64,11 @@ server.addHook("onSend", async (_request, reply, payload) => {
   return payload
 })
 
+server.get("/robots.txt", (_request, reply) => {
+  reply.header("Content-Type", "text/plain; charset=utf-8")
+  return "User-agent: *\nDisallow: /\n"
+})
+
 await server.listen({ port: 5555, host: "0.0.0.0" })
 
 logger.info("Started backend server on http://0.0.0.0:5555")
