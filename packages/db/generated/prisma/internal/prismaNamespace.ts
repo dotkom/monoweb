@@ -4163,6 +4163,7 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   payload: 'payload',
   payloadType: 'payloadType',
+  initialRecipientSelection: 'initialRecipientSelection',
   actorGroupId: 'actorGroupId',
   createdById: 'createdById',
   lastUpdatedById: 'lastUpdatedById',
