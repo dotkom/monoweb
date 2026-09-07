@@ -1,3 +1,5 @@
+"use client"
+
 import type { Event } from "@dotkomonline/rpc/event"
 import { Text } from "@dotkomonline/ui"
 import { IconArrowRight } from "@tabler/icons-react"
