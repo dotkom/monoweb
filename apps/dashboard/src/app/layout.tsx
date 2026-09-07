@@ -66,15 +66,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <QueryProvider>
               <MantineProvider defaultColorScheme="auto" theme={theme}>
                 <Notifications />
-                <ModalProvider>
-                  <AuthorizationProvider
-                    isAdministrator={isAdministrator}
-                    isCommitteeMember={isCommitteeMember}
-                    affiliations={affiliations}
-                  >
+                <AuthorizationProvider
+                  isAdministrator={isAdministrator}
+                  isCommitteeMember={isCommitteeMember}
+                  affiliations={affiliations}
+                >
+                  <ModalProvider>
                     <ApplicationShell>{children}</ApplicationShell>
-                  </AuthorizationProvider>
-                </ModalProvider>
+                  </ModalProvider>
+                </AuthorizationProvider>
               </MantineProvider>
             </QueryProvider>
           </Auth0Provider>
