@@ -69,8 +69,8 @@ function createPlateAttendee(user: User, overrides: Partial<Attendee> = {}): Att
 }
 
 function PlatePreview({ attendee, user }: { attendee: Attendee; user: User }) {
-  const Plate = getAttendeePlate(attendee)
-  const { smallIcons, largeIcon } = getAttendeeIcons(attendee)
+  const Plate = getAttendeePlate(user)
+  const { smallIcons, largeIcon } = getAttendeeIcons(user)
 
   return <Plate attendee={attendee} user={user} smallIcons={smallIcons} largeIcon={largeIcon} />
 }
