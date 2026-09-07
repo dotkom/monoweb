@@ -1,7 +1,6 @@
 import type { FC, JSX } from "react"
 import { GenericPlate } from "./GenericPlate"
 import { getVanityVerifiedSmallIcon, VanityVerifiedPlate } from "./VanityVerifiedPlate"
-import type { Attendee } from "@dotkomonline/rpc/attendance"
 import { FlagNameSchema, isVanityVerified, isExceptionallyDistinguished, isKnight } from "@dotkomonline/rpc/user"
 import type { PlateProps } from "./Plate"
 import {
@@ -13,27 +12,27 @@ import { getKnightLargeIcon, getKnightSmallIcon, KnightPlate } from "./KnightPla
 
 export type { PlateProps }
 
-export function getAttendeePlate(attendee: Attendee): FC<PlateProps> {
-  if (isKnight(attendee.user)) {
+export function getAttendeePlate(user: PlateProps["user"]): FC<PlateProps> {
+  if (isKnight(user)) {
     return KnightPlate
   }
 
-  if (isExceptionallyDistinguished(attendee.user)) {
+  if (isExceptionallyDistinguished(user)) {
     return ExceptionallyDistinguishedPlate
   }
 
-  if (isVanityVerified(attendee.user)) {
+  if (isVanityVerified(user)) {
     return VanityVerifiedPlate
   }
 
   return GenericPlate
 }
 
-export function getAttendeeIcons(attendee: Attendee) {
+export function getAttendeeIcons(user: PlateProps["user"]) {
   const smallIcons: JSX.Element[] = []
   let largeIcon: JSX.Element | null = null
 
-  if (isKnight(attendee.user)) {
+  if (isKnight(user)) {
     if (largeIcon === null) {
       largeIcon = getKnightLargeIcon()
     } else {
@@ -41,7 +40,7 @@ export function getAttendeeIcons(attendee: Attendee) {
     }
   }
 
-  const exceptionallyDistinguishedFlags = attendee.user.flags.filter(
+  const exceptionallyDistinguishedFlags = user.flags.filter(
     ({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED
   )
 
@@ -53,10 +52,10 @@ export function getAttendeeIcons(attendee: Attendee) {
     }
   }
 
-  const vanityVerifiedFlag = attendee.user.flags.find(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
+  const vanityVerifiedFlag = user.flags.find(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
 
   if (vanityVerifiedFlag !== undefined) {
-    const withWhiteBackground = isKnight(attendee.user) || isExceptionallyDistinguished(attendee.user)
+    const withWhiteBackground = isKnight(user) || isExceptionallyDistinguished(user)
 
     smallIcons.push(
       getVanityVerifiedSmallIcon({
