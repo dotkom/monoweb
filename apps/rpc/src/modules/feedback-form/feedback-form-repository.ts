@@ -41,6 +41,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
           ...feedbackFormData,
           questions: {
             create: questionsData.map((question) => ({
+              id: question.id,
               label: question.label,
               order: question.order,
               type: question.type,
@@ -49,6 +50,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
               options: {
                 create: question.options.map(
                   (option): Prisma.FeedbackQuestionOptionCreateWithoutQuestionInput => ({
+                    id: option.id,
                     name: option.name,
                   })
                 ),
@@ -77,13 +79,14 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
             upsert: questionsData.map((q) => ({
               where: { id: q.id ?? "" },
               create: {
+                id: q.id,
                 label: q.label,
                 order: q.order,
                 type: q.type,
                 required: q.required,
                 showInPublicResults: q.showInPublicResults,
                 options: {
-                  create: q.options.map((opt) => ({ name: opt.name })),
+                  create: q.options.map((opt) => ({ id: opt.id, name: opt.name })),
                 },
               },
               update: {
@@ -102,7 +105,7 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
                   upsert: q.options.map((opt) => ({
                     where: { id: opt.id ?? "" },
                     update: { name: opt.name },
-                    create: { name: opt.name },
+                    create: { id: opt.id, name: opt.name },
                   })),
                 },
               },
@@ -179,6 +182,9 @@ export function getFeedbackFormRepository(): FeedbackFormRepository {
 
 const QUERY_WITH_QUESTIONS = {
   questions: {
+    orderBy: {
+      order: "asc",
+    },
     include: {
       options: true,
     },

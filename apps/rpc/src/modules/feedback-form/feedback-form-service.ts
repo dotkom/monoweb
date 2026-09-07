@@ -93,7 +93,15 @@ export function getFeedbackFormService(
         eventId,
         answerDeadline: getDefaultFeedbackAnswerDeadline(event.end),
       }
-      const questions = formToCopy.questions
+
+      const questions: FeedbackQuestionWrite[] = formToCopy.questions.map((question) => ({
+        label: question.label,
+        required: question.required,
+        showInPublicResults: question.showInPublicResults,
+        type: question.type,
+        order: question.order,
+        options: question.options.map((option) => ({ name: option.name })),
+      }))
 
       return await this.create(handle, feedbackForm, questions)
     },
