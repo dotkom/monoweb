@@ -603,6 +603,7 @@ export const NotificationScalarFieldEnum = {
   type: 'type',
   payload: 'payload',
   payloadType: 'payloadType',
+  audience: 'audience',
   actorGroupId: 'actorGroupId',
   createdById: 'createdById',
   lastUpdatedById: 'lastUpdatedById',
