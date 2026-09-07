@@ -1,6 +1,10 @@
 import { isTrpcErrorCode } from "@/lib/trpc-errors"
 import { useTRPC } from "@/lib/trpc-client"
-import type { NotificationRecipientSelection, NotificationType } from "@dotkomonline/rpc/notification"
+import type {
+  NotificationFilterQuery,
+  NotificationRecipientSelection,
+  NotificationType,
+} from "@dotkomonline/rpc/notification"
 import { useDebouncedValue } from "@mantine/hooks"
 import { skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
@@ -71,5 +75,20 @@ export function useRecipientSelectionPreviewInfinite(
     recipients,
     isPending: serializedRecipientSelection === null || isDebouncing || query.isPending,
     isForbidden: isTrpcErrorCode(query.error, "FORBIDDEN"),
+  }
+}
+
+export function useNotificationsInfiniteQuery(filters: NotificationFilterQuery = {}) {
+  const trpc = useTRPC()
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.notification.findMany.infiniteQueryOptions({
+      filters,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  return {
+    notifications: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]),
+    ...query,
   }
 }
