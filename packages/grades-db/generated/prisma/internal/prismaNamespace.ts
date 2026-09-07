@@ -388,7 +388,8 @@ export const ModelName = {
   GradeDistribution: 'GradeDistribution',
   Faculty: 'Faculty',
   Department: 'Department',
-  CourseAlias: 'CourseAlias'
+  CourseAlias: 'CourseAlias',
+  CreditReduction: 'CreditReduction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "course" | "gradeDistribution" | "faculty" | "department" | "courseAlias"
+    modelProps: "course" | "gradeDistribution" | "faculty" | "department" | "courseAlias" | "creditReduction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CreditReduction: {
+      payload: Prisma.$CreditReductionPayload<ExtArgs>
+      fields: Prisma.CreditReductionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditReductionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditReductionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        findFirst: {
+          args: Prisma.CreditReductionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditReductionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        findMany: {
+          args: Prisma.CreditReductionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>[]
+        }
+        create: {
+          args: Prisma.CreditReductionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        createMany: {
+          args: Prisma.CreditReductionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditReductionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>[]
+        }
+        delete: {
+          args: Prisma.CreditReductionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        update: {
+          args: Prisma.CreditReductionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditReductionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditReductionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditReductionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditReductionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditReductionPayload>
+        }
+        aggregate: {
+          args: Prisma.CreditReductionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCreditReduction>
+        }
+        groupBy: {
+          args: Prisma.CreditReductionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditReductionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditReductionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditReductionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -911,6 +986,17 @@ export const CourseAliasScalarFieldEnum = {
 } as const
 
 export type CourseAliasScalarFieldEnum = (typeof CourseAliasScalarFieldEnum)[keyof typeof CourseAliasScalarFieldEnum]
+
+
+export const CreditReductionScalarFieldEnum = {
+  reductionAmount: 'reductionAmount',
+  courseId: 'courseId',
+  overlapCourseId: 'overlapCourseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditReductionScalarFieldEnum = (typeof CreditReductionScalarFieldEnum)[keyof typeof CreditReductionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1190,6 +1276,7 @@ export type GlobalOmitConfig = {
   faculty?: Prisma.FacultyOmit
   department?: Prisma.DepartmentOmit
   courseAlias?: Prisma.CourseAliasOmit
+  creditReduction?: Prisma.CreditReductionOmit
 }
 
 /* Types for Logging */

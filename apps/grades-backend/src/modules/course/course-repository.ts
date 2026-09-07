@@ -3,6 +3,7 @@ import { parseOrReport } from "../../invariant"
 import { type CourseDetail, CourseDetailSchema } from "./course-detail"
 import {
   type Course,
+  type CourseCreditReductionWrite,
   type CourseFilterQuery,
   type CourseId,
   type CourseListItem,
@@ -11,6 +12,8 @@ import {
   type CourseSitemapEntry,
   CourseSitemapEntrySchema,
   type CourseWrite,
+  type CreditReduction,
+  CreditReductionSchema,
   type Department,
   DepartmentSchema,
   type Faculty,
@@ -32,6 +35,7 @@ export interface CourseRepository {
   findManyFaculties(handle: DBHandle): Promise<Faculty[]>
   findManyDepartments(handle: DBHandle): Promise<Department[]>
   findManySitemapEntries(handle: DBHandle): Promise<CourseSitemapEntry[]>
+  upsertCreditReduction(handle: DBHandle, data: CourseCreditReductionWrite): Promise<CreditReduction>
 }
 
 export function getCourseRepository(): CourseRepository {
@@ -85,6 +89,12 @@ export function getCourseRepository(): CourseRepository {
           faculty: true,
           department: true,
           gradeDistributions: true,
+          creditReductions: {
+            orderBy: [{ reductionAmount: "desc" }, { overlapCourse: { code: "asc" } }],
+            include: {
+              overlapCourse: true,
+            },
+          },
           aliases: {
             orderBy: {
               alias: "asc",
@@ -132,6 +142,27 @@ export function getCourseRepository(): CourseRepository {
       })
 
       return parseOrReport(CourseSitemapEntrySchema.array(), courses)
+    },
+
+    async upsertCreditReduction(handle, data: CourseCreditReductionWrite): Promise<CreditReduction> {
+      const creditReduction = await handle.creditReduction.upsert({
+        where: {
+          courseId_overlapCourseId: {
+            courseId: data.courseId,
+            overlapCourseId: data.overlapCourseId,
+          },
+        },
+        create: {
+          courseId: data.courseId,
+          overlapCourseId: data.overlapCourseId,
+          reductionAmount: data.reductionAmount,
+        },
+        update: {
+          reductionAmount: data.reductionAmount,
+        },
+      })
+
+      return parseOrReport(CreditReductionSchema, creditReduction)
     },
   }
 }

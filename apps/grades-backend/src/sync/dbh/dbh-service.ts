@@ -43,7 +43,7 @@ const QuerySchema = z.object({
   kodetekst: z.string().default(CODE_TEXT ? "J" : "N"),
   desimal_seperator: z.string().default(DECIMAL_SEPERATOR),
   sortBy: z.array(z.string()).default([]),
-  variabler: z.array(z.string()).default(["*"]).optional(),
+  variabler: z.array(z.string()).optional(),
   filter: z.array(filterSchema).default([]),
   groupBy: z.array(z.string()).optional(),
   begrensning: z.coerce.string().optional(),
@@ -59,15 +59,12 @@ const fetchData = async (
 ) => {
   const tableId = dataSource === "course" ? 208 : 308
 
-  // Grades table doesn't accept "variabler" parameter
-  const variables = dataSource === "course" ? ["*"] : undefined
-
   const query = QuerySchema.parse({
     tabell_id: tableId,
     sortBy,
     ...(options?.filters !== undefined ? { filter: options.filters } : {}),
     ...(options?.groupBy !== undefined ? { groupBy: options.groupBy } : {}),
-    variabler: variables,
+    ...(dataSource === "course" ? { variabler: ["*"] } : {}),
   })
 
   const res = await fetch(TABLE_BASE_URL, {

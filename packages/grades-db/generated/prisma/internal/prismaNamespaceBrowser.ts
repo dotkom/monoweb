@@ -55,7 +55,8 @@ export const ModelName = {
   GradeDistribution: 'GradeDistribution',
   Faculty: 'Faculty',
   Department: 'Department',
-  CourseAlias: 'CourseAlias'
+  CourseAlias: 'CourseAlias',
+  CreditReduction: 'CreditReduction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -164,6 +165,17 @@ export const CourseAliasScalarFieldEnum = {
 } as const
 
 export type CourseAliasScalarFieldEnum = (typeof CourseAliasScalarFieldEnum)[keyof typeof CourseAliasScalarFieldEnum]
+
+
+export const CreditReductionScalarFieldEnum = {
+  reductionAmount: 'reductionAmount',
+  courseId: 'courseId',
+  overlapCourseId: 'overlapCourseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditReductionScalarFieldEnum = (typeof CreditReductionScalarFieldEnum)[keyof typeof CreditReductionScalarFieldEnum]
 
 
 export const SortOrder = {
