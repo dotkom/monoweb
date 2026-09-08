@@ -1,6 +1,5 @@
 import { GroupListItem } from "@/components/molecules/GroupListItem"
 import type { Group } from "@dotkomonline/rpc/group"
-import { compareAsc } from "date-fns"
 import type { FC } from "react"
 
 interface GroupListProps {
@@ -12,14 +11,13 @@ export const GroupList: FC<GroupListProps> = ({ groups }) => {
     // Inactive groups last
     if (a.deactivatedAt !== null && b.deactivatedAt === null) return 1
     if (b.deactivatedAt !== null && a.deactivatedAt === null) return -1
-    // Most events first
-    if ((b.eventCount ?? 0) !== (a.eventCount ?? 0)) return (b.eventCount ?? 0) - (a.eventCount ?? 0)
-    // Then by creation time (oldest first)
-    return compareAsc(a.createdAt, b.createdAt)
+
+    // Then by name (alphabetical)
+    return a.name?.localeCompare(b.name ?? "") ?? 0
   })
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
       {orderedGroups.map((group) => (
         <GroupListItem key={group.slug} group={group} />
       ))}
