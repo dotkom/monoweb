@@ -6,7 +6,7 @@ import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
 import type { UserService } from "../user/user-service"
 import type { MarkService } from "./mark-service"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
@@ -149,7 +149,7 @@ export function getPersonalMarkService(
 
       await emailService.send(
         DEFAULT_EMAIL_SOURCE,
-        organizerEmails,
+        getReplyToAddresses(organizerEmails),
         [user.email],
         [],
         [],

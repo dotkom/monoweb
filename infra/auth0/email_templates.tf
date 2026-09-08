@@ -11,7 +11,7 @@ resource "auth0_email_template" "verify_email" {
 
   template                = "verify_email"
   enabled                 = true
-  from                    = "Linjeforeningen Online <online@online.ntnu.no>"
+  from                    = "Linjeforeningen Online <varslinger@online.ntnu.no>"
   subject                 = "(Online) Bekreft e-postadressen din"
   syntax                  = "liquid"
   result_url              = "${local.web_origin}/innstillinger/bruker?email_verified=1"

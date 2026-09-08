@@ -9,8 +9,16 @@ import z from "zod"
 import type { ConfigurationWithAmazonSesEmail } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import { InvalidArgumentError } from "../../error"
-import { emails } from "./email-template"
+import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
+
+function formatSesSourceAddress(source: string): string {
+  if (source !== DEFAULT_EMAIL_SOURCE) {
+    return source
+  }
+
+  return DEFAULT_EMAIL_FROM
+}
 
 const EmailMessageSchema = z.object({
   source: z.email(),
@@ -113,7 +121,7 @@ export function getEmailService(
 
         const html = mustache.render(template, payload.data.data)
         const sendEmailCommand = new SendEmailCommand({
-          Source: payload.data.source,
+          Source: formatSesSourceAddress(payload.data.source),
           ReplyToAddresses: payload.data.replyTo,
           Destination: {
             ToAddresses: payload.data.to,

@@ -32,7 +32,16 @@ export function createEmailTemplate<const TData, const TType extends EmailType>(
 
 const templates = path.resolve(new URL("../../../resources/email", import.meta.url).pathname)
 
-export const DEFAULT_EMAIL_SOURCE = "noreply@online.ntnu.no"
+export const DEFAULT_EMAIL_SOURCE = "varslinger@online.ntnu.no"
+export const DEFAULT_EMAIL_FROM = `Linjeforeningen Online <${DEFAULT_EMAIL_SOURCE}>`
+
+export function getReplyToAddresses(addresses: string[]): string[] {
+  if (addresses.length > 0) {
+    return addresses
+  }
+
+  return [DEFAULT_EMAIL_SOURCE]
+}
 
 export const emails = {
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
