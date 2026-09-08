@@ -52,6 +52,7 @@ import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
+import { usePlausible } from "next-plausible"
 
 interface Props {
   initialListViewMode: EventsListViewMode
@@ -60,9 +61,15 @@ interface Props {
 }
 
 export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) => {
+  const plausible = usePlausible()
   const { view, isCards, isCalendar, setListViewMode } = useEventsView(initialListViewMode)
   const { navigateToView } = useEventsViewNavigation(setListViewMode)
   const isEventListView = !isCalendar
+
+  useEffect(() => {
+    const mode = isCalendar ? `calendar_${view}` : view
+    plausible("EventsView", { props: { view: mode } })
+  }, [view, isCalendar, plausible])
 
   const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
