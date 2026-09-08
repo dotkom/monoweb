@@ -266,7 +266,7 @@ export async function createServiceLayer(
 
   const workspaceService =
     isGoogleWorkspaceFeatureEnabled(configuration) && clients.workspaceDirectory !== null
-      ? getWorkspaceService(clients.workspaceDirectory, userService, groupService, configuration)
+      ? getWorkspaceService(clients.workspaceDirectory, userService, groupService, emailService, configuration)
       : null
 
   const authorizationService = getAuthorizationService()

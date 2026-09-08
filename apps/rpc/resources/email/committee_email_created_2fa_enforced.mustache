@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="nb">
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>(Online) Opprettelse av komité-e-postadresse</title>
+  </head>
+
+  <body style="background-color: rgb(255, 255, 255);">
+    <table
+      align="center"
+      width="100%"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      role="presentation"
+      style="max-width: 37.5em"
+    >
+      <tbody>
+        <tr style="width: 100%">
+          <td>
+            <p>Hei {{ firstName }},</p>
+
+            <p>
+              Velkommen til komité! Vi har opprettet en
+              komité-e-postadresse for deg.
+            </p>
+
+            <p>
+              For å aktivere kontoen må du logge inn på Google (Gmail) med
+              informasjonen nedenfor. Du vil bli bedt om å endre passordet når
+              du logger inn.
+            </p>
+
+            <p>
+              <strong>Viktig!</strong> Tofaktorautentisering er påkrevd kontoen din. Du <strong>må</strong> sette opp
+              en autentiseringsapp som Google Authenticator eller 1Password <strong>med en gang</strong> du logger inn.
+              Det er vedlagt en engangsnøkkel du kan bruke ved første innlogging. Kontakt dotkomleder om du får
+              problemer.
+            </p>
+
+            <p>
+              <strong>E-postadresse:</strong>
+              {{ email }}
+            </p>
+
+            <p>
+              <strong>Passord:</strong>
+              {{ password }}
+            </p>
+
+            <p>
+              <strong>Engangsnøkkel:</strong>
+              {{ recoveryCode }}
+            </p>
+
+            <p>
+              Om det oppstår feil, kan du kontakte dotkomleder {{ dotkomLeaderName }} (dotkom-leder@online.ntnu.no)
+              eller komitélederen din {{ committeeLeaderName }}.
+            </p>
+          </td>
+        </tr>
+
+        <tr style="width: 100%">
+          <td>
+            <h3 style="font-size: 0.9em; margin-top: 3rem">
+              Linjeforeningen Online
+            </h3>
+
+            <p style="font-size: 0.75em; color: gray">
+              Du mottar denne e-posten fordi det er opprettet en
+              komité-e-postadresse for deg.
+            </p>
+
+            <p style="font-size: 0.75em; color: gray">
+              Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -42,6 +42,7 @@ export const createConfiguration = () =>
       serviceAccount: config(process.env.WORKSPACE_SERVICE_ACCOUNT, null),
       userAccountEmail: config(process.env.WORKSPACE_USER_ACCOUNT_EMAIL, null),
       domain: config(process.env.WORKSPACE_DOMAIN, "online.ntnu.no"),
+      twoFactorAuthenticationRequiredGroups: config(process.env.WORKSPACE_2FA_REQUIRED_GROUP_SLUGS, null),
     },
     email: {
       awsSqsQueueUrl: config(process.env.EMAIL_AWS_SQS_QUEUE_URL, null),
