@@ -101,8 +101,12 @@ export default function MinBrukerPage() {
 
   const requestEmailChange = useMutation(
     trpc.user.requestEmailChange.mutationOptions({
-      onSuccess: () => {
+      onSuccess: async (result) => {
         setNewEmail("")
+
+        if (!result.verificationSent) {
+          await queryClient.invalidateQueries(trpc.user.getMe.queryOptions())
+        }
       },
     })
   )
@@ -134,12 +138,13 @@ export default function MinBrukerPage() {
     )
   }
 
-  if (authLoading || sessionUser === null || user === null) {
+  if (authLoading || sessionUser == null || user === null) {
     return null
   }
 
   const isFeideLinked = auth0Connections?.hasFeide === true
   const isUsernamePasswordLinked = auth0Connections?.hasUsernamePassword === true
+  const canVerifyEmailViaAuth0 = sessionUser.sub?.startsWith("auth0|") === true
 
   const linkFeideUrl = createLinkIdentityAuthorizeUrl({
     connection: "FEIDE",
@@ -296,11 +301,11 @@ export default function MinBrukerPage() {
               disabled={requestEmailChange.isPending || !newEmail}
             >
               <IconMail className="size-4" />
-              <Text className="text-sm">Send bekreftelse</Text>
+              <Text className="text-sm">{canVerifyEmailViaAuth0 ? "Send bekreftelse" : "Lagre e-post"}</Text>
             </Button>
           </form>
         </div>
-        {requestEmailChange.isSuccess && (
+        {requestEmailChange.isSuccess && requestEmailChange.data.verificationSent && (
           <div className="flex items-center gap-2">
             <IconCheck className="size-4 text-green-600 dark:text-green-400" />
             <Text className="text-sm">
@@ -308,10 +313,16 @@ export default function MinBrukerPage() {
             </Text>
           </div>
         )}
+        {requestEmailChange.isSuccess && !requestEmailChange.data.verificationSent && (
+          <div className="flex items-center gap-2">
+            <IconCheck className="size-4 text-green-600 dark:text-green-400" />
+            <Text className="text-sm">E-posten er oppdatert.</Text>
+          </div>
+        )}
         {requestEmailChange.isError && (
           <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <IconAlertTriangle className="size-4" />
-            <Text className="text-sm">Kunne ikke sende bekreftelse. Prøv igjen senere.</Text>
+            <Text className="text-sm">Kunne ikke oppdatere e-posten. Prøv igjen senere.</Text>
           </div>
         )}
 
