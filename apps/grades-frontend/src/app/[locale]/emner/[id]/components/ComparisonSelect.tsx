@@ -19,7 +19,7 @@ type Props = {
 }
 
 export function ComparisonSelect({ gradeDistributions }: Props) {
-  const { periodSelection, comparisonPeriodSelection, setParams } = useCoursePeriodView(gradeDistributions)
+  const { periodSelection, comparisonPeriodSelection, setCompare } = useCoursePeriodView(gradeDistributions)
 
   const t = useTranslations()
   const periodLabel = usePeriodLabel()
@@ -45,7 +45,7 @@ export function ComparisonSelect({ gradeDistributions }: Props) {
           return
         }
 
-        setParams({ compare: selection })
+        setCompare(selection)
       }}
     >
       <SelectTrigger
