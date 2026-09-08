@@ -1,6 +1,6 @@
 "use client"
 
-import { Checkbox, Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from "@dotkomonline/ui"
+import { Checkbox, Popover, PopoverContent, PopoverTrigger } from "@dotkomonline/ui"
 import { IconQuestionMark } from "@tabler/icons-react"
 import type { FC, ReactNode } from "react"
 import { Controller, useFormContext } from "react-hook-form"
@@ -23,15 +23,19 @@ export const CheckboxWithTooltip: FC<CheckboxWithTooltipProps> = ({ label, name,
         <div className="inline-flex gap-3">
           <Checkbox label={label} onCheckedChange={field.onChange} checked={field.value as boolean} />
 
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger className="p-0.5 border border-gray-200 bg-gray-50 dark:border-stone-700 dark:bg-stone-800 h-fit w-fit aspect-square rounded-full">
+          <Popover>
+            <PopoverTrigger
+              openOnHover
+              delay={0}
+              className="p-0.5 border border-gray-200 bg-gray-50 dark:border-stone-700 dark:bg-stone-800 h-fit w-fit aspect-square rounded-full"
+            >
               <IconQuestionMark className="size-4" />
-            </TooltipTrigger>
+            </PopoverTrigger>
 
-            <TooltipPortal>
-              <TooltipContent className="text-sm/6">{tooltip}</TooltipContent>
-            </TooltipPortal>
-          </Tooltip>
+            <PopoverContent className="text-sm/6 w-80 sm:w-96 max-w-[calc(100dvw-2rem)] dark:bg-stone-800">
+              {tooltip}
+            </PopoverContent>
+          </Popover>
         </div>
       )}
     />
