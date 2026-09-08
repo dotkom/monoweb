@@ -65,7 +65,7 @@ import {
   ResourceExhaustedError,
 } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import type { MarkService } from "../mark/mark-service"
@@ -317,7 +317,7 @@ export function getAttendanceService(
 
     void emailService.send(
       DEFAULT_EMAIL_SOURCE,
-      [],
+      [DEFAULT_EMAIL_SOURCE],
       [attendee.user.email],
       [],
       [],
@@ -342,7 +342,7 @@ export function getAttendanceService(
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
     void emailService.send(
       DEFAULT_EMAIL_SOURCE,
-      organizerEmails,
+      getReplyToAddresses(organizerEmails),
       [attendee.user.email],
       [],
       [],
