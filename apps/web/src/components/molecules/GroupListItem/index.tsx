@@ -46,7 +46,11 @@ export const GroupListItem: FC<GroupListItemProps> = ({ group }: GroupListItemPr
         <Title element="h3" className="text-xl">
           {displayName}
         </Title>
-        <RichText content={group.description} hideToggleButton className="sm:line-clamp-4 line-clamp-2" />
+        <RichText
+          content={group.description}
+          hideToggleButton
+          className="[&_p:empty]:hidden [&_p]:my-0 sm:line-clamp-4 line-clamp-2"
+        />
       </div>
     </Link>
   )
