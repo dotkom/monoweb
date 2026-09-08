@@ -1,5 +1,7 @@
 "use client"
 
+import { JobListingCard } from "@/components/molecules/JobListingItem/JobListingCard"
+import { JobListingListItem } from "@/components/molecules/JobListingItem/JobListingListItem"
 import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
 import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
@@ -18,18 +20,16 @@ import {
 } from "@dotkomonline/ui"
 import { IconFilter2, IconLayoutGrid, IconLayoutList, IconMoodConfuzed, IconSearch, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
+import { compareAsc, compareDesc } from "date-fns"
 import { useMemo, useState } from "react"
-import { JobListingCard } from "@/components/molecules/JobListingItem/JobListingCard"
-import { JobListingListItem } from "@/components/molecules/JobListingItem/JobListingListItem"
 import { JobListingSkeletonList } from "./components/JobListingSkeletonList"
 import { JobEmploymentFilter } from "./components/filters/JobEmploymentFilter"
 import { JobFilterChips } from "./components/filters/JobFilterChips"
 import { JobLocationFilter } from "./components/filters/JobLocationFilter"
 import { JobSortFilter } from "./components/filters/JobSortFilter"
-import { useJobListingFilters } from "./hooks/useJobListingFilters"
 import type { JobListingViewMode } from "./hooks/jobListingViewCookie"
+import { useJobListingFilters } from "./hooks/useJobListingFilters"
 import { useJobListingsView } from "./hooks/useJobListingsView"
-import { compareAsc, compareDesc } from "date-fns"
 
 interface Props {
   initialViewMode: JobListingViewMode
@@ -68,20 +68,23 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
     let filteredJobListings = jobListings
 
     if (searchValue.length > 0) {
-      filteredJobListings = jobListings.filter((jobListing) => {
-        const matchesSearch =
+      filteredJobListings = filteredJobListings.filter(
+        (jobListing) =>
           jobListing.title.toLowerCase().includes(searchValue) ||
           jobListing.company.name.toLowerCase().includes(searchValue)
+      )
+    }
 
-        const matchesEmployment =
-          filters.employments.length === 0 || filters.employments.includes(jobListing.employment)
+    if (filters.employments.length > 0) {
+      filteredJobListings = filteredJobListings.filter((jobListing) =>
+        filters.employments.includes(jobListing.employment)
+      )
+    }
 
-        const matchesLocation =
-          filters.locations.length === 0 ||
-          jobListing.locations.some((location) => filters.locations.includes(location.name))
-
-        return matchesSearch && matchesEmployment && matchesLocation
-      })
+    if (filters.locations.length > 0) {
+      filteredJobListings = filteredJobListings.filter((jobListing) =>
+        jobListing.locations.some((location) => filters.locations.includes(location.name))
+      )
     }
 
     return filteredJobListings
