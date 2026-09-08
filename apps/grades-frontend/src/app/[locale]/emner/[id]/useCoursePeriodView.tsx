@@ -1,4 +1,8 @@
-import type { GradeDistribution } from "@dotkomonline/grades-backend/grade-distribution"
+import {
+  sortGradeDistributionsByYearAndSemester,
+  type GradeDistribution,
+} from "@dotkomonline/grades-backend/grade-distribution"
+import { usePlausible } from "next-plausible"
 import { useQueryStates } from "nuqs"
 import { useEffect } from "react"
 import { CoursePageParsers, type PeriodSelection } from "./course-page-params"
@@ -10,6 +14,8 @@ import {
 } from "./utils"
 
 export function useCoursePeriodView(gradeDistributions: GradeDistribution[]) {
+  const plausible = usePlausible()
+
   const [params, setParams] = useQueryStates(CoursePageParsers)
 
   const periodSelection = resolvePeriodSelection(params.period, gradeDistributions)
@@ -29,6 +35,32 @@ export function useCoursePeriodView(gradeDistributions: GradeDistribution[]) {
       : comparisonPeriodSelection
 
     setParams({ period, compare: nextCompare })
+
+    plausible("Course Period Changed", {
+      props: {
+        period: periodSelectionToPlausibleProp(period, gradeDistributions),
+      },
+    })
+  }
+
+  const setCompare = (compare: PeriodSelection) => {
+    setParams({ compare })
+
+    plausible("Course Compare Changed", {
+      props: {
+        compare: periodSelectionToPlausibleProp(compare, gradeDistributions),
+      },
+    })
+  }
+
+  const setOverlay = (overlay: boolean) => {
+    setParams({ overlay })
+
+    plausible("Course Overlay Changed", {
+      props: {
+        overlay: overlay ? "enabled" : "disabled",
+      },
+    })
   }
 
   // If the period or comparison period is changed during resolution, update the query params
@@ -51,11 +83,31 @@ export function useCoursePeriodView(gradeDistributions: GradeDistribution[]) {
 
   return {
     params,
-    setParams,
     setPeriod,
+    setCompare,
+    setOverlay,
     periodSelection,
     comparisonPeriodSelection,
     selectedRows,
     comparisonRows,
   }
+}
+
+function periodSelectionToPlausibleProp(period: PeriodSelection, gradeDistributions: GradeDistribution[]): string {
+  if (period.kind === "preset") {
+    return period.preset.toLowerCase()
+  }
+
+  const latestGradeDistribution = sortGradeDistributionsByYearAndSemester(gradeDistributions).at(0)
+
+  if (
+    period.semester === null ||
+    latestGradeDistribution === undefined ||
+    (period.semester.year === latestGradeDistribution.year &&
+      period.semester.semester === latestGradeDistribution.semester)
+  ) {
+    return "latest_semester"
+  }
+
+  return "other_semester"
 }

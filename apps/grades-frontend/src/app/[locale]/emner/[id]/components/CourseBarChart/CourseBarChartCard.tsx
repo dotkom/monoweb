@@ -20,7 +20,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
   const tBar = useTranslations("CoursePage.barChart")
   const periodLabel = usePeriodLabel()
   const formatComparePeriodLabel = useFormatComparePeriodLabel()
-  const { params, setParams, periodSelection, comparisonPeriodSelection, selectedRows, comparisonRows } =
+  const { params, setOverlay, periodSelection, comparisonPeriodSelection, selectedRows, comparisonRows } =
     useCoursePeriodView(gradeDistributions)
 
   const primary = useMemo(() => toAggregatedGradeDistribution(selectedRows), [selectedRows])
@@ -58,7 +58,7 @@ export const CourseBarChartCard = ({ gradeDistributions, className }: Props) => 
                     : "text-foreground hover:bg-neutral-100 dark:hover:bg-stone-700"
                 )}
                 disabled={!canCompare}
-                onClick={() => setParams({ overlay: !params.overlay })}
+                onClick={() => setOverlay(!params.overlay)}
                 variant="ghost"
                 icon={<Layers2Icon className="size-4 transition-colors" />}
                 aria-label={tBar("showComparison")}
