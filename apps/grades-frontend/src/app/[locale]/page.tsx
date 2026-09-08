@@ -1,37 +1,23 @@
 import { Link } from "@/i18n/navigation"
 import { server } from "@/utils/trpc/server"
-import {
-  CourseFilterQuerySchema,
-  type CourseCampus,
-  type CourseListItem,
-  type Semester,
-  type TeachingLanguage,
-} from "@dotkomonline/grades-backend/course"
+import type { CourseCampus, CourseListItem, Semester, TeachingLanguage } from "@dotkomonline/grades-backend/course"
 import { cn, Title } from "@dotkomonline/ui"
 import { IconArrowRight } from "@tabler/icons-react"
 import { getTranslations } from "next-intl/server"
-import { createLoader, createSerializer } from "nuqs/server"
+import { createSerializer } from "nuqs/server"
 import { CourseAutocomplete } from "./components/course-autocomplete/CourseAutocomplete"
 import { CourseRow } from "./components/CourseRow/CourseRow"
 import { CourseFilterParsers } from "./emner/course-filter-parsers"
 
 const serialize = createSerializer(CourseFilterParsers)
-const loadSearchParams = createLoader(CourseFilterParsers)
 
 type FilterChip =
   | { label: string; key: "bySemester"; value: Semester }
   | { label: string; key: "byCampus"; value: CourseCampus }
   | { label: string; key: "byTeachingLanguage"; value: TeachingLanguage }
 
-export default async function App({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
+export default async function App() {
   const t = await getTranslations()
-  const sp = await searchParams
-  const parsed = loadSearchParams(sp)
-  const filterQuery = CourseFilterQuerySchema.parse(parsed)
 
   const filterChips = [
     { label: t(`Enums.Semester.SPRING`), key: "bySemester", value: "SPRING" },
@@ -54,7 +40,7 @@ export default async function App({
 
         <div className="flex flex-col gap-2.5 max-w-2xl">
           <CourseAutocomplete
-            defaultValues={filterQuery}
+            defaultValues={{}}
             placeholder={t("Frontpage.searchPlaceholder")}
             className="w-full"
             inputClassName="h-11 text-base md:text-base!"
