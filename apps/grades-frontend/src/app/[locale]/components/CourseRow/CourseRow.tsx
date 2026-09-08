@@ -30,6 +30,7 @@ export const CourseRow = ({ course, className }: Props) => {
 
   return (
     <Link
+      prefetch={false}
       href={`/emner/${encodeURIComponent(course.code)}`}
       className={cn(
         "flex items-center gap-3 sm:gap-4 px-3 py-3 sm:px-4 sm:py-3.5",
