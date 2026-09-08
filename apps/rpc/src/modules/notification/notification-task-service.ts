@@ -44,12 +44,14 @@ export function getNotificationTaskService(
       if (!event) return
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "EVENT_REGISTRATION")
+      const shortDescription = `Påmeldingen til arrangementet "${event.title}" er nå åpen.`
       await notificationService.create(
         handle,
         recipients,
         "EVENT_REGISTRATION",
         `Påmelding åpnet: ${event.title}`,
-        `Påmeldingen til arrangementet "${event.title}" er nå åpen.`,
+        shortDescription,
+        shortDescription,
         event.hostingGroups[0]?.slug ?? null,
         "EVENT",
         `${createEventSlug(event.title)}/${event.id}`
@@ -67,12 +69,14 @@ export function getNotificationTaskService(
       if (isBefore(event.start, windowStart) || isAfter(event.start, windowEnd)) return
 
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "EVENT_REMINDER", eventId)
+      const shortDescription = `Arrangementet "${event.title}" starter i morgen.`
       await notificationService.create(
         handle,
         recipients,
         "EVENT_REMINDER",
         `Påminnelse: ${event.title}`,
-        `Arrangementet "${event.title}" starter i morgen.`,
+        shortDescription,
+        shortDescription,
         event.hostingGroups[0]?.slug ?? null,
         "EVENT",
         `${createEventSlug(event.title)}/${event.id}`
@@ -81,12 +85,14 @@ export function getNotificationTaskService(
 
     async executeJobListingReminderNotificationTask(handle, { jobListingId, title }) {
       const recipients = await notificationService.retrieveIntendedRecipientIds(handle, "JOB_LISTING_REMINDER")
+      const shortDescription = `Fristen for stillingsutlysningen "${title}" nærmer seg.`
       await notificationService.create(
         handle,
         recipients,
         "JOB_LISTING_REMINDER",
         `Frist nærmer seg: ${title}`,
-        `Fristen for stillingsutlysningen "${title}" nærmer seg.`,
+        shortDescription,
+        shortDescription,
         null,
         "JOB_LISTING",
         jobListingId

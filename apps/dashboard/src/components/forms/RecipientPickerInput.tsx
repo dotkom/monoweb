@@ -1,14 +1,26 @@
 "use client"
 
+import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
+import { useGroupMembersAllQuery } from "@/app/(internal)/grupper/queries"
 import { useTRPC } from "@/lib/trpc-client"
-import { ActionIcon, Button, Group, Loader, Select, Stack, Text } from "@mantine/core"
-import { useDebouncedValue } from "@mantine/hooks"
-import { IconX } from "@tabler/icons-react"
-import { useState } from "react"
+import { getActiveGroupMembership } from "@dotkomonline/rpc/group"
+import { Button, Group, Input, Loader, Select, Stack, Text } from "@mantine/core"
 import { skipToken, useQuery } from "@tanstack/react-query"
-import { useUserSearch } from "./hooks/useUserSearch"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { FieldValues } from "react-hook-form"
 import { useController } from "react-hook-form"
+import { openRecipientSelectionModal } from "./RecipientSelectionModal"
+import {
+  appendDirectMember,
+  appendEventMembers,
+  appendGroupMembers,
+  arrayEqual,
+  flattenRecipientIds,
+  getRecipientPreview,
+  selectionFromFlatIds,
+  type RecipientMember,
+  type RecipientSelection,
+} from "./recipient-selection"
 import type { InputFieldContext, InputProducerResult } from "./types"
 
 interface RecipientPickerProps {
@@ -17,16 +29,39 @@ interface RecipientPickerProps {
   disabled?: boolean
 }
 
+function useManagedRecipientSelection(value: string[], onChange: (ids: string[]) => void) {
+  const [selection, setSelection] = useState<RecipientSelection>(() => selectionFromFlatIds(value))
+  const lastEmittedValue = useRef(value)
+
+  useEffect(() => {
+    if (arrayEqual(value, lastEmittedValue.current)) {
+      return
+    }
+
+    setSelection(selectionFromFlatIds(value))
+    lastEmittedValue.current = value
+  }, [value])
+
+  const updateSelection = useCallback(
+    (nextSelection: RecipientSelection) => {
+      setSelection(nextSelection)
+      const flatIds = flattenRecipientIds(nextSelection)
+      lastEmittedValue.current = flatIds
+      onChange(flatIds)
+    },
+    [onChange]
+  )
+
+  return { selection, updateSelection }
+}
+
 export function RecipientPickerInput({ value, onChange, disabled }: RecipientPickerProps) {
-  const [userSearch, setUserSearch] = useState("")
-  const [debouncedSearch] = useDebouncedValue(userSearch, 300)
   const [selectedGroupSlug, setSelectedGroupSlug] = useState<string | null>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   const [eventsEnabled, setEventsEnabled] = useState(false)
 
-  const append = (ids: string[]) => {
-    onChange(Array.from(new Set([...value, ...ids])))
-  }
+  const { selection, updateSelection } = useManagedRecipientSelection(value, onChange)
+  const { count, previewNames, remainingCount } = getRecipientPreview(selection)
 
   const trpc = useTRPC()
 
@@ -37,108 +72,151 @@ export function RecipientPickerInput({ value, onChange, disabled }: RecipientPic
     enabled: eventsEnabled,
   })
   const eventItems = events?.items ?? []
-  const selectedEvent = eventItems.find((e) => e.event.id === selectedEventId)
+  const selectedEvent = eventItems.find((eventItem) => eventItem.event.id === selectedEventId)
   const attendanceId = selectedEvent?.event.attendanceId ?? null
 
-  const { data: groupUserIds, isLoading: groupUserIdsLoading } = useQuery(
-    trpc.group.getActiveMemberUserIds.queryOptions(selectedGroupSlug ?? skipToken)
-  )
-  const { data: attendeeUserIds, isLoading: attendeeUserIdsLoading } = useQuery(
-    trpc.event.attendance.getAttendeeUserIds.queryOptions(attendanceId ?? skipToken)
+  const { members: groupMembers, isLoading: groupMembersLoading } = useGroupMembersAllQuery(
+    selectedGroupSlug ?? "",
+    selectedGroupSlug !== null
   )
 
-  const { data: searchedUsers, isLoading: usersLoading } = useUserSearch(debouncedSearch)
-  const userOptions = (searchedUsers ?? []).map((u) => ({ value: u.id, label: `${u.name} (${u.email})` }))
+  const { data: attendance, isLoading: attendanceLoading } = useQuery(
+    trpc.event.attendance.getAttendance.queryOptions(
+      attendanceId !== null ? { id: attendanceId } : skipToken
+    )
+  )
+
+  const handleAddDirectMember = (user: { id: string; name: string | null }) => {
+    updateSelection(
+      appendDirectMember(selection, {
+        userId: user.id,
+        name: user.name,
+      })
+    )
+  }
+
+  const handleAddGroupMembers = () => {
+    if (selectedGroupSlug === null) {
+      return
+    }
+
+    const groupLabel = groups.find((group) => group.slug === selectedGroupSlug)?.abbreviation ?? selectedGroupSlug
+    const members: RecipientMember[] = Array.from(groupMembers.entries())
+      .filter(([, member]) => getActiveGroupMembership(member, selectedGroupSlug) !== null)
+      .map(([userId, member]) => ({
+        userId,
+        name: member.name,
+      }))
+
+    updateSelection(appendGroupMembers(selection, selectedGroupSlug, groupLabel, members))
+  }
+
+  const handleAddEventMembers = () => {
+    if (selectedEvent === undefined || attendance === undefined) {
+      return
+    }
+
+    const members: RecipientMember[] = attendance.attendees.map((attendee) => ({
+      userId: attendee.user.id,
+      name: attendee.user.name,
+    }))
+
+    updateSelection(
+      appendEventMembers(selection, selectedEvent.event.id, selectedEvent.event.title, members)
+    )
+  }
 
   return (
     <Stack gap="sm">
-      <Select
-        label="Enkeltperson"
-        data={userOptions}
-        value={null}
-        onChange={(id) => {
-          if (id) {
-            append([id])
-            setUserSearch("")
-          }
-        }}
-        searchValue={userSearch}
-        onSearchChange={setUserSearch}
-        searchable
-        placeholder="Søk etter navn eller e-post"
-        rightSection={usersLoading ? <Loader size="xs" /> : undefined}
-        nothingFoundMessage={debouncedSearch.length > 0 ? "Ingen brukere funnet" : "Søk for å finne brukere"}
-        disabled={disabled}
-      />
-
-      <Group align="flex-end" gap="xs">
-        <Select
-          style={{ flex: 1 }}
-          label="Gruppe"
-          placeholder="Søk etter gruppe"
-          data={groups.map((g) => ({ value: g.slug, label: g.abbreviation }))}
-          value={selectedGroupSlug}
-          onChange={setSelectedGroupSlug}
-          searchable
-          clearable
-          disabled={disabled}
-        />
-        <Button
-          variant="light"
-          disabled={disabled || selectedGroupSlug === null || groupUserIdsLoading}
-          onClick={() => append(groupUserIds ?? [])}
-        >
-          {groupUserIdsLoading ? <Loader size="xs" /> : "Legg til aktive"}
-        </Button>
-      </Group>
-
-      <Group align="flex-end" gap="xs">
-        <Select
-          style={{ flex: 1 }}
-          label="Arrangement"
-          placeholder="Søk etter arrangement"
-          data={eventItems.map((e) => ({ value: e.event.id, label: e.event.title }))}
-          value={selectedEventId}
-          onChange={setSelectedEventId}
-          onDropdownOpen={() => setEventsEnabled(true)}
-          searchable
-          clearable
-          rightSection={eventsLoading ? <Loader size="xs" /> : undefined}
-          disabled={disabled}
-        />
-        <Button
-          variant="light"
-          disabled={disabled || attendanceId === null || attendeeUserIdsLoading}
-          onClick={() => append(attendeeUserIds ?? [])}
-        >
-          {attendeeUserIdsLoading ? <Loader size="xs" /> : "Legg til påmeldte"}
-        </Button>
-      </Group>
-
-      {value.length > 0 && (
-        <Group justify="space-between">
-          <Text size="sm" c="dimmed">
-            {value.length} mottaker(e) valgt
-          </Text>
-          <ActionIcon
-            variant="subtle"
-            color="red"
-            size="sm"
-            onClick={() => onChange([])}
+        <Input.Wrapper label="Enkeltperson">
+          <UserSearch
+            placeholder="Søk etter navn eller e-post"
             disabled={disabled}
+            onSubmit={handleAddDirectMember}
+          />
+        </Input.Wrapper>
+
+        <Group align="flex-end" gap="xs">
+          <Select
+            style={{ flex: 1 }}
+            label="Gruppe"
+            placeholder="Søk etter gruppe"
+            data={groups.map((group) => ({ value: group.slug, label: group.abbreviation }))}
+            value={selectedGroupSlug}
+            onChange={setSelectedGroupSlug}
+            searchable
+            clearable
+            disabled={disabled}
+          />
+          <Button
+            type="button"
+            variant="light"
+            disabled={disabled || selectedGroupSlug === null || groupMembersLoading}
+            onClick={handleAddGroupMembers}
           >
-            <IconX size={14} />
-          </ActionIcon>
+            {groupMembersLoading ? <Loader size="xs" /> : "Legg til aktive"}
+          </Button>
         </Group>
-      )}
+
+        <Group align="flex-end" gap="xs">
+          <Select
+            style={{ flex: 1 }}
+            label="Arrangement"
+            placeholder="Søk etter arrangement"
+            data={eventItems.map((eventItem) => ({ value: eventItem.event.id, label: eventItem.event.title }))}
+            value={selectedEventId}
+            onChange={setSelectedEventId}
+            onDropdownOpen={() => setEventsEnabled(true)}
+            searchable
+            clearable
+            rightSection={eventsLoading ? <Loader size="xs" /> : undefined}
+            disabled={disabled}
+          />
+          <Button
+            type="button"
+            variant="light"
+            disabled={disabled || attendanceId === null || attendanceLoading}
+            onClick={handleAddEventMembers}
+          >
+            {attendanceLoading ? <Loader size="xs" /> : "Legg til påmeldte"}
+          </Button>
+        </Group>
+
+        {count > 0 && (
+          <Group justify="space-between" align="flex-start">
+            <Stack gap={4} style={{ minWidth: 0 }}>
+              <Text size="sm">{count} mottaker(e) valgt</Text>
+              <Text size="sm" c="dimmed" truncate="end">
+                {previewNames.join(", ")}
+                {remainingCount > 0 ? ` og ${remainingCount} til` : ""}
+              </Text>
+            </Stack>
+            <Button
+              type="button"
+              variant="light"
+              size="compact-sm"
+              onClick={() => {
+                openRecipientSelectionModal({
+                  selection,
+                  onChange: updateSelection,
+                  disabled,
+                })
+              }}
+              disabled={disabled}
+            >
+              Vis mottakere
+            </Button>
+          </Group>
+        )}
     </Stack>
   )
 }
 
-// Form-field adapter — used when RecipientPickerInput is wired into a useFormBuilder field map
-function RecipientPickerFormField({ name, control }: InputFieldContext<FieldValues>) {
+function RecipientPickerFormField({ name, control, disabled }: InputFieldContext<FieldValues>) {
   const { field } = useController({ name, control })
-  return <RecipientPickerInput value={field.value ?? []} onChange={field.onChange} />
+  return (
+    <RecipientPickerInput value={field.value ?? []} onChange={field.onChange} disabled={disabled} />
+  )
 }
 
 export function createRecipientPickerInput<F extends FieldValues>(): InputProducerResult<F> {

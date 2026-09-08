@@ -12,9 +12,7 @@ export const useUserSearch = (searchQuery: string) => {
         byEmail: searchQuery,
       },
     },
-    {
-      enabled: searchQuery.length > 0, // Only fetch when there is a search query
-    }
+    searchQuery.length > 0
   )
 
   return { data: users, isLoading }

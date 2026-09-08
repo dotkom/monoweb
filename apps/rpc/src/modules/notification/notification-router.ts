@@ -2,16 +2,20 @@ import { on } from "node:events"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
+import { ForbiddenError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import {
+  NotificationCreateSchema,
   NotificationDTOSchema,
   NotificationPayloadTypeSchema,
+  NotificationRecipientsSchema,
   NotificationSchema,
   NotificationWriteSchema,
   UserNotificationDTOSchema,
   UserNotificationSchema,
+  type Notification,
 } from "./notification"
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
@@ -27,22 +31,34 @@ const getNotificationProcedure = procedure
 export type CreateNotificationInput = inferProcedureInput<typeof createNotificationProcedure>
 export type CreateNotificationOutput = inferProcedureOutput<typeof createNotificationProcedure>
 const createNotificationProcedure = procedure
-  .input(NotificationWriteSchema)
+  .input(NotificationCreateSchema)
   .output(NotificationDTOSchema)
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(({ input, ctx }) => {
+    const allowedActorGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [
+      input.actorGroupId,
+    ])
+
+    if (allowedActorGroups.size === 0) {
+      throw new ForbiddenError(
+        `User(ID=${ctx.principal.subject}) is not authorized to create a notification as Group(ID=${input.actorGroupId})`
+      )
+    }
+
     return ctx.notificationService.create(
       ctx.handle,
       input.recipientIds,
       input.type,
       input.title,
       input.shortDescription ?? input.title,
+      input.content,
       input.actorGroupId,
       input.payloadType,
-      input.payload
+      input.payload,
+      ctx.principal.subject
     )
   })
 
@@ -136,7 +152,7 @@ const findNotificationsProcedure = procedure
 
     return {
       items,
-      nextCursor: items.at(-1)?.id,
+      nextCursor: items.length === input.take ? items.at(-1)?.id : undefined,
     }
   })
 
@@ -170,7 +186,7 @@ const findNotificationsByPayloadProcedure = procedure
     const items = await ctx.notificationService.findManyByPayload(ctx.handle, payloadType, payload, page)
     return {
       items,
-      nextCursor: items.at(-1)?.id,
+      nextCursor: items.length === page.take ? items.at(-1)?.id : undefined,
     }
   })
 
@@ -178,16 +194,7 @@ export type GetRecipientsByNotificationInput = inferProcedureInput<typeof getRec
 export type GetRecipientsByNotificationOutput = inferProcedureOutput<typeof getRecipientsByNotificationProcedure>
 const getRecipientsByNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
-  .output(
-    z.array(
-      z.object({
-        id: z.string().uuid(),
-        readAt: z.coerce.date().nullable(),
-        userId: z.string(),
-        user: z.object({ id: z.string(), name: z.string().nullable() }),
-      })
-    )
-  )
+  .output(NotificationRecipientsSchema)
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())

@@ -2,7 +2,7 @@ import { useEffect, useState, type ComponentProps } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { NotificationItem } from "./NotificationItem"
 import { IconBell, IconLoader2 } from "@tabler/icons-react"
-import { cn } from "@dotkomonline/ui"
+import { Button, cn, Text, Title } from "@dotkomonline/ui"
 import { useTRPC } from "@/utils/trpc/client"
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import type { UserNotificationDTO } from "@dotkomonline/rpc"
@@ -104,9 +104,15 @@ export const NotificationDropdown = ({ open, amountUnread, ...props }: Notificat
         >
           <IconBell width={24} height={24} />
           {amountUnread !== undefined && amountUnread > 0 && (
-            <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1 text-white bg-red-500 rounded-full text-xs font-bold">
+            <Text
+              element="span"
+              className={cn(
+                "absolute -top-0.5 -right-0.5 flex items-center justify-center h-4.5 min-w-4.5 w-fit px-1 rounded-full",
+                "bg-red-500 ring-2 ring-blue-100 dark:ring-stone-800 text-white text-[11px]"
+              )}
+            >
               {amountUnread > 99 ? "99+" : amountUnread}
-            </span>
+            </Text>
           )}
         </button>
       </DropdownMenu.Trigger>
@@ -117,25 +123,18 @@ export const NotificationDropdown = ({ open, amountUnread, ...props }: Notificat
           className={cn(
             "animate-in data-[side=right]:slide-in-from-left-2 data-[side=left]:slide-in-from-right-2",
             "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 z-50",
-            "w-[calc(100vw-2rem)] overflow-hidden",
-            "mx-4 xs:ml-4 xs:w-102 xs:-mr-16 lg:-mr-4",
-            "rounded-3xl shadow-sm",
+            "rounded-3xl shadow-sm p-6",
             "bg-blue-50 border border-blue-100",
             "dark:border-white/10 dark:bg-stone-800"
           )}
         >
-          <div className="p-5 border-b border-black/10 dark:border-white/10">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-black dark:text-white">Varslinger</h3>
-              <button
-                type="button"
-                className="text-brand dark:text-blue-300/80 hover:text-brand/80 dark:hover:text-blue-300/60 text-sm font-semibold transition-colors"
-                onClick={handleMarkAllAsRead}
-              >
-                Marker alle som lest
-              </button>
-            </div>
-            <p className="text-black/60 dark:text-white/60 text-xs tracking-wider font-semibold">SISTE OPPDATERINGER</p>
+          <div className="flex items-center justify-between mb-3">
+            <Title size="md" element="h2">
+              Varslinger
+            </Title>
+            <Button variant="ghost" onClick={handleMarkAllAsRead}>
+              Marker alle som lest
+            </Button>
           </div>
 
           <div className="max-h-[min(32rem,50vh)] overflow-y-auto">
