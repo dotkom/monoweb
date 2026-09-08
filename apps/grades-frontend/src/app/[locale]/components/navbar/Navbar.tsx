@@ -1,30 +1,21 @@
 "use client"
 
-import { CourseFilterParsers } from "../../emner/course-filter-parsers"
-import { CourseFilterQuerySchema } from "@dotkomonline/grades-backend/course"
+import { Link, usePathname } from "@/i18n/navigation"
 import { cn, Title } from "@dotkomonline/ui"
 import { useTranslations } from "next-intl"
-import { Link, usePathname } from "@/i18n/navigation"
-import { useSearchParams, useSelectedLayoutSegments } from "next/navigation"
-import { createLoader } from "nuqs"
+import { useSelectedLayoutSegments } from "next/navigation"
 import { CourseAutocomplete } from "../course-autocomplete/CourseAutocomplete"
 import { LocalePopover } from "./LocalePopover"
 import { MobileNavigation } from "./MobileNavigation"
 import { ThemePopover } from "./ThemePopover"
 
-const loadSearchParams = createLoader(CourseFilterParsers)
-
 export const Navbar = () => {
-  const searchParams = useSearchParams()
   const t = useTranslations("Navbar")
   const pathname = usePathname()
 
   const segments = useSelectedLayoutSegments()
   const isCourseListPageRoute = pathname === "/emner"
   const showCourseSearch = segments?.[0] === "emner" && segments?.[1] != null
-
-  const parsed = loadSearchParams(searchParams)
-  const filterQuery = CourseFilterQuerySchema.parse(parsed)
 
   return (
     <header
@@ -69,7 +60,7 @@ export const Navbar = () => {
 
           {showCourseSearch && (
             <div className="min-w-0 flex-1 max-w-96">
-              <CourseAutocomplete defaultValues={filterQuery} />
+              <CourseAutocomplete defaultValues={{}} />
             </div>
           )}
         </div>
