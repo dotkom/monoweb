@@ -52,7 +52,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
         )}
       >
-        <PlausibleProvider domain="online.ntnu.no">
+        <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
