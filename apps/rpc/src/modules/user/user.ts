@@ -381,6 +381,23 @@ export const Auth0ProviderSchema = z.enum(PostIdentitiesRequestProviderEnum).ext
 
 export type Auth0Provider = z.infer<typeof Auth0ProviderSchema>
 
+/**
+ * Auth0 user ids are the subject of the primary identity.
+ *
+ * Regular database users begin with `auth0|`. We call this connection "Username-Password-Authentication"
+ * SSO/federated connections begin with `oauth2|<connection name>|`, for example `oauth2|FEIDE|<uuid>`. `oauth2` is the
+ * provider and `FEIDE` is the connection name.
+ *
+ * Auth0 only allows updating `email` on the database (`auth0|`) and passwordless email (`email|`) providers (per 2026,
+ * we don't use email-only connections). SSO/federated providers own the email and reject Management API updates with
+ * `operation_not_supported`.
+ */
+const NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA = Auth0ProviderSchema.extract(["auth0"])
+
+export function canUpdateEmailForAuth0Provider(provider: Auth0Provider): boolean {
+  return NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA.safeParse(provider).success
+}
+
 export const BirthdayPartyGuessSchema = z.object({
   id: z.string(),
   createdAt: z.date(),

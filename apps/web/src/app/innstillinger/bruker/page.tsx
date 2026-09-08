@@ -13,7 +13,7 @@ import { AppleCalendarLogo } from "@/app/arrangementer/components/AppleCalendarL
 import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { findActiveMembership, type User } from "@dotkomonline/rpc/user"
+import { Auth0ProviderSchema, findActiveMembership, type User } from "@dotkomonline/rpc/user"
 import { getSessionRecoveryMessages, getStudyGrade } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
@@ -120,8 +120,12 @@ export default function MinBrukerPage() {
 
   const requestEmailChange = useMutation(
     trpc.user.requestEmailChange.mutationOptions({
-      onSuccess: () => {
+      onSuccess: async (result) => {
         setNewEmail("")
+
+        if (!result.verificationSent) {
+          await queryClient.invalidateQueries(trpc.user.getMe.queryOptions())
+        }
       },
     })
   )
@@ -157,13 +161,14 @@ export default function MinBrukerPage() {
     )
   }
 
-  if (authLoading || sessionUser === null || user === null) {
+  if (authLoading || sessionUser == null || user === null) {
     return null
   }
 
   const showPasswordLinkNudge = showFeideLinkNudge && hasLoadedAuth0Connections && !isUsernamePasswordLinked
   const showFeideLinkHighlight = showFeideLinkNudge && hasLoadedAuth0Connections && !isFeideLinked
   const showDuplicateAccountNotice = showFeideLinkNudge && !bothLoginMethodsLinked
+  const canVerifyEmailViaAuth0 = sessionUser.sub?.startsWith(Auth0ProviderSchema.enum.auth0) === true
 
   const linkFeideUrl = createLinkIdentityAuthorizeUrl({
     connection: "FEIDE",
@@ -320,11 +325,11 @@ export default function MinBrukerPage() {
               disabled={requestEmailChange.isPending || !newEmail}
             >
               <IconMail className="size-4" />
-              <Text className="text-sm">Send bekreftelse</Text>
+              <Text className="text-sm">{canVerifyEmailViaAuth0 ? "Send bekreftelse" : "Lagre e-post"}</Text>
             </Button>
           </form>
         </div>
-        {requestEmailChange.isSuccess && (
+        {requestEmailChange.isSuccess && requestEmailChange.data.verificationSent && (
           <div className="flex items-center gap-2">
             <IconCheck className="size-4 text-green-600 dark:text-green-400" />
             <Text className="text-sm">
@@ -332,10 +337,16 @@ export default function MinBrukerPage() {
             </Text>
           </div>
         )}
+        {requestEmailChange.isSuccess && !requestEmailChange.data.verificationSent && (
+          <div className="flex items-center gap-2">
+            <IconCheck className="size-4 text-green-600 dark:text-green-400" />
+            <Text className="text-sm">E-posten er oppdatert.</Text>
+          </div>
+        )}
         {requestEmailChange.isError && (
           <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <IconAlertTriangle className="size-4" />
-            <Text className="text-sm">Kunne ikke sende bekreftelse. Prøv igjen senere.</Text>
+            <Text className="text-sm">Kunne ikke oppdatere e-posten. Prøv igjen senere.</Text>
           </div>
         )}
 
