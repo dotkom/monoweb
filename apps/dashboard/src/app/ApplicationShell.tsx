@@ -32,6 +32,7 @@ import { useDisclosure } from "@mantine/hooks"
 import {
   IconAward,
   IconBan,
+  IconBell,
   IconBriefcase,
   IconCampfire,
   IconClipboardList,
@@ -55,6 +56,11 @@ const navigations = [
     label: "Arrangementer",
     icon: IconWheelchair,
     href: "/arrangementer",
+  },
+  {
+    label: "Varslinger",
+    icon: IconBell,
+    href: "/varslinger",
   },
   {
     label: "Grupper",
