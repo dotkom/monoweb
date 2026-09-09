@@ -125,7 +125,10 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
         compressedFile = file
       } else {
         setIsCompressing(true)
-        compressedFile = await imageCompression(file, { maxSizeMB: USER_IMAGE_MAX_SIZE_KIB / 1024 })
+        compressedFile = await imageCompression(file, {
+          maxSizeMB: USER_IMAGE_MAX_SIZE_KIB / 1024,
+          maxWidthOrHeight: 1024,
+        })
       }
     } catch {
       setError("imageUrl", {
