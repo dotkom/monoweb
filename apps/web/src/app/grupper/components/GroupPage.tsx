@@ -1,6 +1,6 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { getServerSession } from "@/auth"
+import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { server } from "@/utils/trpc/server"
 import {
   type GroupMember,
@@ -22,10 +22,10 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
-import { WanderingMascot } from "./WanderingMascot"
+import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
 import { GroupEmailLink } from "./GroupEmailLink"
-import { notFound } from "next/navigation"
+import { WanderingMascot } from "./WanderingMascot"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
@@ -168,6 +168,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
             {group.contactUrl && (
               <Link
+                prefetch={false}
                 href={group.contactUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -186,6 +187,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             {(!hasContactInfo || group.showLeaderAsContact) &&
               (leader ? (
                 <Link
+                  prefetch={false}
                   href={`/profil/${leader.username}`}
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
@@ -269,6 +271,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
 
   return (
     <Link
+      prefetch={false}
       key={member.id}
       href={`/profil/${member.username}`}
       className={cn(
