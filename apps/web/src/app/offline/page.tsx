@@ -2,6 +2,8 @@ import { OfflineCard } from "@/components/molecules/OfflineCard"
 import { server } from "@/utils/trpc/server"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text, Title } from "@dotkomonline/ui"
+import { IconArrowUpRight } from "@tabler/icons-react"
+import Link from "next/link"
 
 const OfflinePage = async () => {
   const offlines = await server.offline.all.query({ take: 1000 })
@@ -9,14 +11,28 @@ const OfflinePage = async () => {
 
   return (
     <div>
-      <div className="border-gray-600 border-b flex flex-col pb-5">
-        <Title element="h1" className="text-3xl">
-          Offline
-        </Title>
-        <Text className="pt-2">
-          Offline er Online sitt eget tidsskrift. Det gis ut to ganger i semesteret og inneholder en fin blanding av
-          underholdende og opplysende saker for informatikkstudenter.
-        </Text>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Title element="h1" className="text-3xl">
+            Offline
+          </Title>
+
+          <Text className="text-gray-600 dark:text-stone-300">
+            Offline er Online sitt eget tidsskrift. Det gis ut to ganger i semesteret og inneholder en fin blanding av
+            underholdende og opplysende saker for informatikkstudenter.
+          </Text>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-stone-300 flex-wrap">
+          <span>Offline blir utgitt av Redaksjonen.</span>
+          <Link
+            href="/grupper/redaksjonen"
+            className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-4 transition-colors"
+          >
+            <span>Les mer om Redaksjonen her</span>
+            <IconArrowUpRight className="size-4" />
+          </Link>
+        </div>
       </div>
 
       {Object.entries(offlinesByYear)
