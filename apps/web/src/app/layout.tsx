@@ -12,6 +12,7 @@ import { ThemeProvider } from "next-themes"
 import { Figtree, Google_Sans_Code, Inter, Marcellus } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
+import ExplosionHandler from "./explosion-handler"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -52,6 +53,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
         )}
       >
+        <ExplosionHandler />
+        
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>
