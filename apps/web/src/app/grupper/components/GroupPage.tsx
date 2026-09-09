@@ -184,6 +184,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
             {group.contactUrl && (
               <Link
+                prefetch={false}
                 href={group.contactUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -202,6 +203,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
             {(!hasContactInfo || group.showLeaderAsContact) &&
               (leader ? (
                 <Link
+                  prefetch={false}
                   href={`/profil/${leader.username}`}
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
@@ -284,6 +286,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
 
   return (
     <Link
+      prefetch={false}
       key={member.id}
       href={`/profil/${member.username}`}
       className={cn(
