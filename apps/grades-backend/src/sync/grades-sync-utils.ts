@@ -154,7 +154,10 @@ export function buildCourseUpdatePatch(data: CourseSyncData): Partial<CourseWrit
     lastYearTaught: data.taughtTo,
     facultyId: data.faculty?.id,
     departmentId: data.department?.id,
-    latestYearCheckedForNtnuData: data.ntnuCourse.latestYearCheckedForNtnuData,
+  }
+
+  if (data.ntnuCourse.latestYearCheckedForNtnuData !== undefined) {
+    updatePatch.latestYearCheckedForNtnuData = data.ntnuCourse.latestYearCheckedForNtnuData
   }
 
   return updatePatch
@@ -198,7 +201,7 @@ export function buildCourseCreateWrite(data: CourseSyncData): CourseWrite | null
     examTypeNo: resolved.examTypeNo ?? null,
     examTypeEn: resolved.examTypeEn ?? null,
 
-    latestYearCheckedForNtnuData: data.ntnuCourse.latestYearCheckedForNtnuData,
+    latestYearCheckedForNtnuData: data.ntnuCourse.latestYearCheckedForNtnuData ?? null,
   }
 }
 

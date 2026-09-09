@@ -28,8 +28,6 @@ import {
   calculateTaughtFrom,
   calculateTaughtTo,
   getDbhGradeType,
-  getPreferredNtnuTaughtSemesters,
-  mapDbhSemesterToSummer,
   mergeNtnuCreditReductions,
   parseDbhGradeResultsToGradeDistributionWrites,
   type CourseSyncData,
@@ -173,20 +171,22 @@ async function buildCourseSourceData(code: CourseCode, ctx: CourseSyncContext): 
     taughtTo ?? undefined
   )
 
-  const ntnuTaughtSemesters = getPreferredNtnuTaughtSemesters(ntnuScrapeResult)
-
+  // TODO: Temporarily disabled until we heuristic is improved
+  /* 
+  const ntnuTaughtSemesters = getPreferredNtnuTaughtSemesters(ntnuScrapeResult) */
+  /* 
   const mappedDbhSemesterGrades = dbhSemesterGrades.map((dbhGrade) => ({
     ...dbhGrade,
     semester: mapDbhSemesterToSummer(dbhGrade, existingSemesterGrades, ntnuTaughtSemesters),
-  }))
+  })) */
 
-  const gradeType = getDbhGradeType(mappedDbhSemesterGrades)
+  const gradeType = getDbhGradeType(dbhSemesterGrades)
 
   return {
     code,
     existingCourse,
     dbhCourseRecords,
-    dbhSemesterGrades: mappedDbhSemesterGrades,
+    dbhSemesterGrades: dbhSemesterGrades,
     existingSemesterGrades,
     faculty,
     department,

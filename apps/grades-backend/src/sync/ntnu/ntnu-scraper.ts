@@ -17,7 +17,8 @@ const limitNtnuFetch = pLimit(NTNU_FETCH_CONCURRENCY)
 export type NtnuCourseScrapeResult = {
   no: NtnuCourse | null
   en: NtnuCourse | null
-  latestYearCheckedForNtnuData: number
+  /** Set only when we successfully completed a scrape attempt (found data or exhausted years without fetch errors). */
+  latestYearCheckedForNtnuData?: number
 }
 
 export async function scrapeNtnuCourse(
@@ -68,7 +69,8 @@ export async function scrapeNtnuCourse(
       }
     } catch (error) {
       console.error(`Failed scraping Norwegian course page for ${courseCode} (${year ?? "latest"}):`, error)
-      break
+      // Do not record latestYearCheckedForNtnuData on failed scrapes. Keep prior value so we retry the same years next time.
+      return fallbackResult ?? { no: null, en: null }
     }
   }
 
