@@ -1,6 +1,6 @@
 import { EventList } from "@/app/arrangementer/components/EventList"
-import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { getServerSession } from "@/auth"
+import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { server } from "@/utils/trpc/server"
 import {
   type GroupMember,
@@ -11,7 +11,21 @@ import {
   getGroupTypeName,
 } from "@dotkomonline/rpc/group"
 import { type UserId, isVanityVerified } from "@dotkomonline/rpc/user"
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  RichText,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Text,
+  Title,
+  cn,
+} from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconArrowUpRight,
@@ -22,10 +36,10 @@ import {
 } from "@tabler/icons-react"
 import { compareDesc } from "date-fns"
 import Link from "next/link"
-import { WanderingMascot } from "./WanderingMascot"
+import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
 import { GroupEmailLink } from "./GroupEmailLink"
-import { notFound } from "next/navigation"
+import { WanderingMascot } from "./WanderingMascot"
 
 interface CommitteePageProps {
   params: Promise<{ slug: string }>
@@ -118,6 +132,8 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       return compareDesc(left.start, right.start)
     })
+
+  const inactiveMembers = membersToShow.filter((member) => !activeMembers.includes(member))
 
   const leader = [...members.values()]
     .filter((member) => getLatestActiveMembership(member) !== undefined)
@@ -217,22 +233,21 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2">
             <Title>Medlemmer</Title>
-            {members.size > 0 && (
-              <Text className="text-lg font-semibold text-gray-500 dark:text-stone-400">({activeMembers.length})</Text>
-            )}
           </div>
 
-          {activeMembers.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {Array.from(
-                activeMembers.map((member) => (
-                  <GroupMemberEntry key={member.id} userId={session?.sub} member={member} />
-                ))
-              )}
-            </div>
-          ) : (
-            <Text className="text-gray-500 dark:text-stone-400">Ingen aktive medlemmer</Text>
-          )}
+          <Tabs defaultValue="active">
+            <TabsList variant="default" className="h-12!">
+              <GroupMemberListTabTrigger value="active" label="Nåværende medlemmer" count={activeMembers.length} />
+              <GroupMemberListTabTrigger value="inactive" label="Tidligere medlemmer" count={inactiveMembers.length} />
+            </TabsList>
+
+            <TabsContent value="active">
+              <GroupMemberList members={activeMembers} type="active" currentUserId={session?.sub} />
+            </TabsContent>
+            <TabsContent value="inactive">
+              <GroupMemberList members={inactiveMembers} type="inactive" currentUserId={session?.sub} />
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 
@@ -328,4 +343,46 @@ function getRolePriority(role: GroupRole) {
     default:
       return 0
   }
+}
+
+interface GroupMemberListProps {
+  members: GroupMember[]
+  type: "active" | "inactive"
+  currentUserId: UserId | null | undefined
+}
+
+const GroupMemberList = ({ members, type, currentUserId }: GroupMemberListProps) => {
+  if (members.length > 0) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {Array.from(
+          members.map((member) => <GroupMemberEntry key={member.id} userId={currentUserId} member={member} />)
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <Text className="text-gray-500 dark:text-stone-400">
+      Ingen {type === "active" ? "nåværende" : "tidligere"} medlemmer
+    </Text>
+  )
+}
+
+interface GroupMemberListTabTriggerProps {
+  value: string
+  label: string
+  count: number
+}
+
+const GroupMemberListTabTrigger = ({ value, label, count }: GroupMemberListTabTriggerProps) => {
+  return (
+    <TabsTrigger
+      value={value}
+      className="data-active:bg-gray-100 dark:data-active:bg-stone-700 not-data-active:hover:bg-gray-100 dark:not-data-active:hover:bg-stone-800 text-gray-700 dark:text-stone-300 py-4 px-8"
+    >
+      {label}
+      <span className="max-md:hidden text-gray-500 dark:text-stone-400 text-sm">({count})</span>
+    </TabsTrigger>
+  )
 }
