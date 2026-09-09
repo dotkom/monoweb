@@ -143,6 +143,9 @@ importers:
       import-in-the-middle:
         specifier: ^3.0.1
         version: 3.0.2
+      isomorphic-dompurify:
+        specifier: ^3.0.0
+        version: 3.19.0(@noble/hashes@1.8.0)
       jose:
         specifier: ^6.0.11
         version: 6.2.12
