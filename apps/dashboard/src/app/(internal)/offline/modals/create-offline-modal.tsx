@@ -1,4 +1,5 @@
 import type { OfflineWrite } from "@dotkomonline/rpc/offline"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { type ContextModalProps, modals } from "@mantine/modals"
 import type { FC } from "react"
 import { useCreateOfflineMutation } from "../mutations/use-create-offline-mutation"
@@ -22,6 +23,9 @@ export const CreateOfflineModal: FC<ContextModalProps> = ({ context, id }) => {
         ...toSave,
       })
       close()
+    },
+    defaultValues: {
+      publishedAt: getCurrentUTC(),
     },
   })
   return <FormComponent />

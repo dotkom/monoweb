@@ -51,6 +51,9 @@ export const useOfflineWriteForm = ({
         placeholder: "Last opp",
         required: true,
         onFileUpload: fileUpload,
+        warnSizeKiB: 5 * 1024, // 5 MiB
+        warnSizeDescription:
+          "Filen er over 5 MiB. En stor fil vil ta lang tid å laste inn for brukere. Prøv å gjøre den mindre før opplasting.",
       }),
       imageUrl: createModalImageInput({
         label: "Bilde",
