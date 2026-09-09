@@ -344,6 +344,9 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
   const rawGrades = await fsp.readFile(path.resolve(pathOfThisScript, "./grades.json"), "utf-8")
   const oldGrades = OldGradesGradeSchema.array().parse(JSON.parse(rawGrades))
 
+  // Only import Karstat grades (2021 and earlier). Later years are synced from DBH data.
+  const importableGrades = oldGrades.filter((grade) => grade.year <= 2021)
+
   const courseByCode = courses.reduce(
     (acc, course) => {
       acc[course.code] = course
@@ -352,7 +355,7 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
     {} as Record<string, Course>
   )
 
-  const data: GradeDistributionWrite[] = oldGrades.map((grade) => {
+  const data: GradeDistributionWrite[] = importableGrades.map((grade) => {
     const course = courseByCode[grade.course_code]
     if (!course) {
       throw new Error(`Course not found for code ${grade.course_code}`)
@@ -361,12 +364,15 @@ async function migrateGrades(prisma: DBClient, courses: Course[]) {
     let gradeFCount = 0
     let failedCount = 0
 
-    if (grade.average_grade > 0) {
+    // The old Grades DB didn't differentiate between failed and grade F. Instead it showed a semester as pass/fail only if passed > 0.
+    // This heuristic won't work for pass/fail semesters where no candidates passed, as they will get counted as letter grades instead,
+    // but it's as close as we can get without deleting old data from Karstat.
+    if (grade.passed > 0) {
+      failedCount = grade.f
+      gradeFCount = 0
+    } else {
       gradeFCount = grade.f
       failedCount = 0
-    } else {
-      gradeFCount = 0
-      failedCount = grade.f
     }
 
     const gradeWrite: GradeDistributionWrite = {
