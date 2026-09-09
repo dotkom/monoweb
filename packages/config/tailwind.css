@@ -140,11 +140,6 @@
   }
 }
 
-@font-face {
-  font-family: Glass;
-  src: url("fonts/Glass_TTY_VT220.ttf");
-}
-
 /* Easter egg: Animated gold border - requires @property for angle animation */
 @property --border-angle {
   syntax: "<angle>";
@@ -153,7 +148,6 @@
 }
 
 @theme {
-  --font-glass: Glass, "sans-serif";
   --font-marcellus: Marcellus, "serif";
 
   --breakpoint-xs: 30rem;
