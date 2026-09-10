@@ -12,7 +12,7 @@ import { ThemeProvider } from "next-themes"
 import { Figtree, Google_Sans_Code, Inter, Marcellus } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
-import ExplosionHandler from "./explosion-handler"
+import ExplosionEasterEgg from "./explosion-easter-egg"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -53,7 +53,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
         )}
       >
-        <ExplosionHandler />
+        <ExplosionEasterEgg />
         
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
