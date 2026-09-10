@@ -9,17 +9,22 @@ import { captureException } from "@sentry/node"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
+import type { NotificationTaskService } from "../notification/notification-task-service"
 import type { RecurringTaskService } from "./recurring-task-service"
 import {
   type ChargeAttendeeTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
+  type SendNotificationEventRegistrationTaskDefinition,
+  type SendNotificationEventReminderTaskDefinition,
+  type SendNotificationJobListingReminderTaskDefinition,
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
+
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import type { TaskSchedulingService } from "./task-scheduling-service"
 import type { TaskService } from "./task-service"
@@ -34,6 +39,7 @@ export function getLocalTaskExecutor(
   taskDiscoveryService: TaskDiscoveryService,
   taskSchedulingService: TaskSchedulingService,
   attendanceService: AttendanceService,
+  notificationTaskService: NotificationTaskService,
   configuration: Configuration
 ): TaskExecutor {
   const logger = getLogger("task-executor")
@@ -94,10 +100,29 @@ export function getLocalTaskExecutor(
               )
 
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
-              return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
+              return await attendanceService.executeSendFeedbackFormLinkEmailsAndNotifications(handle)
 
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
               return await attendanceService.executeVerifyAttendeeAttendedTask(handle)
+
+            case tasks.SEND_NOTIFICATION_EVENT_REGISTRATION.type:
+              return await notificationTaskService.executeEventRegistrationNotificationTask(
+                handle,
+                payload as InferTaskData<SendNotificationEventRegistrationTaskDefinition>
+              )
+
+            case tasks.SEND_NOTIFICATION_EVENT_REMINDER.type:
+              return await notificationTaskService.executeEventReminderNotificationTask(
+                handle,
+                payload as InferTaskData<SendNotificationEventReminderTaskDefinition>
+              )
+
+            case tasks.SEND_NOTIFICATION_JOB_LISTING_REMINDER.type:
+              return await notificationTaskService.executeJobListingReminderNotificationTask(
+                handle,
+                payload as InferTaskData<SendNotificationJobListingReminderTaskDefinition>
+              )
+
           }
 
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We

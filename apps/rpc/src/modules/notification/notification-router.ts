@@ -1,3 +1,4 @@
+import { on } from "node:events"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
@@ -32,7 +33,16 @@ const createNotificationProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(({ input, ctx }) => {
-    return ctx.notificationService.createWithRecipients(ctx.handle, input)
+    return ctx.notificationService.create(
+      ctx.handle,
+      input.recipientIds,
+      input.type,
+      input.title,
+      input.shortDescription ?? input.title,
+      input.actorGroupId,
+      input.payloadType,
+      input.payload
+    )
   })
 
 export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
@@ -129,6 +139,18 @@ const findNotificationsProcedure = procedure
     }
   })
 
+export type OnNewNotificationInput = inferProcedureInput<typeof onNewNotificationProcedure>
+export type OnNewNotificationOutput = inferProcedureOutput<typeof onNewNotificationProcedure>
+const onNewNotificationProcedure = procedure.use(withAuthentication()).subscription(async function* ({ ctx, signal }) {
+  for await (const [data] of on(ctx.eventEmitter, "notification:new", { signal })) {
+    const { userId, notification } = data as { userId: string; notification: Notification }
+    if (userId !== ctx.principal.subject) {
+      continue
+    }
+    yield notification
+  }
+})
+
 export const notificationRouter = t.router({
   get: getNotificationProcedure,
   create: createNotificationProcedure,
@@ -139,4 +161,5 @@ export const notificationRouter = t.router({
   markAsRead: markAsReadProcedure,
   markAllAsRead: markAllAsReadProcedure,
   findMany: findNotificationsProcedure,
+  onNewNotification: onNewNotificationProcedure,
 })
