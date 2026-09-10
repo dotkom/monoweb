@@ -1,7 +1,7 @@
 import { useCompanyFileUploadMutation } from "@/app/(internal)/bedrifter/mutations"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { COMPANY_IMAGE_MAX_SIZE_KIB, type CompanyWrite, CompanyWriteSchema } from "@dotkomonline/rpc/company"
 import { z } from "zod"
@@ -41,7 +41,7 @@ export const useCompanyWriteForm = ({
         placeholder: "bekk",
         withAsterisk: true,
       }),
-      description: createRichTextInput({
+      description: useRichTextInput({
         label: "Beskrivelse",
         required: true,
         onFileUpload: fileUpload,

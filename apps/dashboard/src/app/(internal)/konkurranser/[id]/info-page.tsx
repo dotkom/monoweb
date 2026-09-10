@@ -13,7 +13,7 @@ import type { z } from "zod"
 import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
 import { useUpdateContestMutation } from "../mutations"
 import { useContestContext } from "./provider"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 
 const RESULT_TYPE_OPTIONS = [
   { value: "SCORE", label: "Poeng" },
@@ -66,7 +66,7 @@ export const InfoPage = () => {
         label: "Navn",
         withAsterisk: true,
       }),
-      description: createRichTextInput({
+      description: useRichTextInput({
         label: "Beskrivelse",
         required: false,
       }),
