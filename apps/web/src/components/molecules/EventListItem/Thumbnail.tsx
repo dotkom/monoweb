@@ -10,15 +10,27 @@ interface EventListItemThumbnailProps {
   alt: string
   startInPast: boolean
   eventType: EventType
+  compact?: boolean
 }
 
-export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, startInPast, eventType }) => {
+export const Thumbnail: FC<EventListItemThumbnailProps> = ({
+  imageUrl,
+  alt,
+  startInPast,
+  eventType,
+  compact = false,
+}) => {
   const { label, backgroundColor } = EVENT_TYPE_CONFIG[eventType]
 
   return (
     <Tilt>
       <div className="relative w-max">
-        <div className="relative aspect-[16/9] h-22 sm:h-28 bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden">
+        <div
+          className={cn(
+            "relative aspect-[16/9] h-22 sm:h-28 bg-gray-100 dark:bg-stone-800 rounded-lg overflow-hidden",
+            compact && "h-16 sm:h-16"
+          )}
+        >
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -45,7 +57,9 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({ imageUrl, alt, star
           <Badge
             color={backgroundColor}
             className={cn(
-              "px-1 py-0.5 text-xs rounded-sm flex",
+              "rounded-sm flex",
+              !compact && "px-1 py-0.5 text-xs",
+              compact && "px-0.5 h-4 text-[0.625rem]",
               startInPast && "grayscale group-hover:grayscale-50 transition-all"
             )}
           >
