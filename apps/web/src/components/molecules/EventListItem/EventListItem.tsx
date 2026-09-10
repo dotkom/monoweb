@@ -14,10 +14,11 @@ export interface EventListItemProps {
   attendance: Attendance | AttendanceSummary | null
   userId?: string | null
   className?: string
+  compact?: boolean
 }
 
 export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps) => {
-  const { event, attendance, className } = props
+  const { event, attendance, className, compact = false } = props
   const { id, title, type, imageUrl: customImageUrl } = event
   const userId = "userId" in props ? props.userId : undefined
   const attendee = getAttendee(attendance, userId ?? null)
@@ -32,26 +33,38 @@ export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps)
         "group flex flex-row gap-3 sm:gap-4 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
         past && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
+        compact && "sm:gap-3",
         className
       )}
     >
-      <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} />
+      <Thumbnail imageUrl={customImageUrl} alt={title} startInPast={past} eventType={type} compact={compact} />
 
-      <div className="flex flex-col gap-1">
+      <div className="flex min-w-0 flex-col gap-1">
         <div className="flex flex-row gap-1">
           <Title
             element="h3"
             size="sm"
-            className="font-normal text-base md:text-lg line-clamp-1 sm:line-clamp-2 break-all"
+            className={cn(
+              "font-normal",
+              !compact && "text-base md:text-lg line-clamp-1 sm:line-clamp-2 break-all",
+              compact && "text-xs sm:text-sm font-medium"
+            )}
           >
             {title}
           </Title>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <DateAndTime start={event.start} end={event.end} />
+        <div className={cn("flex flex-col gap-2", compact && "gap-0.5")}>
+          <DateAndTime start={event.start} end={event.end} compact={compact} />
 
-          {attendance && <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={past} />}
+          {attendance && (
+            <AttendanceStatus
+              attendance={attendance}
+              attendee={attendee}
+              eventEndInPast={past}
+              size={compact ? "sm" : undefined}
+            />
+          )}
         </div>
       </div>
     </Link>
