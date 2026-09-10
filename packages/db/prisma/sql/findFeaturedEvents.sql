@@ -52,6 +52,9 @@
 -- Child events of a parent that has attendance are only featured if the viewing user is reserved on that parent.
 -- Parents without attendance, and events without a parent, are unaffected. Anonymous viewers never see gated children.
 --
+-- INTERNAL events are only featured for users with an active committee or node-committee membership.
+-- Anonymous viewers never see them, even if INTERNAL is omitted from excludingType.
+--
 -- Events that have ended are not featured.
 
 WITH
@@ -100,8 +103,25 @@ WITH
         )
       )
       AND (
+        event.type <> 'INTERNAL'
+        OR (
+          $17::text IS NOT NULL
+          AND EXISTS (
+            SELECT 1
+            FROM group_membership
+            INNER JOIN "group" AS member_group
+              ON member_group.slug = group_membership.group_id
+            WHERE
+              group_membership.user_id = $17
+              AND group_membership.end IS NULL
+              AND member_group.type IN ('COMMITTEE', 'NODE_COMMITTEE')
+          )
+        )
+      )
+      AND (
         cardinality($15::event_type[]) = 0
         OR event.type <> ALL($15)
+        OR event.type = 'INTERNAL'
       )
       AND (
         $16::boolean IS NULL
