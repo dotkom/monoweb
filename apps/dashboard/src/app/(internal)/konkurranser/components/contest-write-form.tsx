@@ -8,7 +8,7 @@ import { ContestWriteSchema } from "@dotkomonline/rpc/contest"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { z } from "zod"
 import { validateContestWrite } from "../validation"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 
 const RESULT_TYPE_OPTIONS = [
   { value: "SCORE", label: "Poeng" },
@@ -59,7 +59,7 @@ export const useContestWriteForm = ({ onSubmit, disabled }: UseContestWriteFormP
         placeholder: "Fadderkonkurranse 2026",
         withAsterisk: true,
       }),
-      description: createRichTextInput({
+      description: useRichTextInput({
         label: "Beskrivelse",
         required: false,
       }),

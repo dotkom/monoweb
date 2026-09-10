@@ -3,7 +3,7 @@ import { useTagsAllQuery } from "@/app/(internal)/artikler/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createTagInput } from "@/components/forms/TagInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import { ARTICLE_IMAGE_MAX_SIZE_KIB, ArticleTagSchema, ArticleWriteSchema } from "@dotkomonline/rpc/article"
@@ -75,11 +75,11 @@ export const useArticleWriteForm = ({
       isFeatured: createCheckboxInput({
         label: "Fremhevet",
       }),
-      excerpt: createRichTextInput({
+      excerpt: useRichTextInput({
         label: "Ingress",
         required: true,
       }),
-      content: createRichTextInput({
+      content: useRichTextInput({
         label: "Innhold",
         required: true,
         onFileUpload: fileUpload,

@@ -4,7 +4,7 @@ import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
 import { createMultipleSelectInput } from "@/components/forms/MultiSelectInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
 import type { Company } from "@dotkomonline/rpc/company"
@@ -73,7 +73,7 @@ export const useEventEditForm = ({
         placeholder: "Silent Disco",
         withAsterisk: true,
       }),
-      description: createRichTextInput({
+      description: useRichTextInput({
         label: "Beskrivelse",
         required: true,
         onFileUpload: uploadFile,

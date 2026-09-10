@@ -2,7 +2,7 @@ import { useGroupFileUploadMutation } from "@/app/(internal)/grupper/mutations"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { useFormBuilder } from "@/components/forms/Form"
 import { createModalImageInput } from "@/components/forms/ImageInput"
-import { createRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
 import { createSegmentedControlInput } from "@/components/forms/SegmentedControlInput"
 import { createSelectInput } from "@/components/forms/SelectInput"
 import { createTextInput } from "@/components/forms/TextInput"
@@ -104,7 +104,7 @@ export const useGroupWriteForm = ({
         required: true,
       }),
       preferredDisplayName: createPreferredDisplayNameField(),
-      description: createRichTextInput({
+      description: useRichTextInput({
         label: "Beskrivelse",
         required: true,
         onFileUpload: fileUpload,
