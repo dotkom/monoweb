@@ -292,6 +292,7 @@ export interface AttendanceService {
   executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
 
   notifyAttendees(handle: DBHandle, attendanceId: AttendanceId, message: string): Promise<void>
+  getAttendeeUserIds(handle: DBHandle, attendanceId: AttendanceId): Promise<UserId[]>
 }
 
 export function getAttendanceService(
@@ -1783,6 +1784,10 @@ export function getAttendanceService(
           }
         )
       }
+    },
+
+    async getAttendeeUserIds(handle, attendanceId) {
+      return attendanceRepository.findAttendeeUserIdsByAttendanceId(handle, attendanceId)
     },
   }
 }
