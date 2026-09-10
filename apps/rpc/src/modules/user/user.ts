@@ -183,15 +183,15 @@ export function getFlagLabel(name: FlagName) {
   }
 }
 
-export function isKnight(user: User) {
+export function isKnight(user: Pick<User, "memberships">) {
   return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
 }
 
-export function isVanityVerified(user: User) {
+export function isVanityVerified(user: Pick<User, "flags">) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
 }
 
-export function isExceptionallyDistinguished(user: User) {
+export function isExceptionallyDistinguished(user: Pick<User, "flags">) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED)
 }
 

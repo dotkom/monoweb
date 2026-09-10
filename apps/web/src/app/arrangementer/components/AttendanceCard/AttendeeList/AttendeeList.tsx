@@ -17,9 +17,9 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
   return (
     <div className="flex flex-col gap-2">
       {attendees.map((attendee, index) => {
-        const Plate = getAttendeePlate(attendee)
+        const Plate = getAttendeePlate(attendee.user)
         const minWidth = getMinWidth(maxNumberOfAttendees)
-        const { smallIcons, largeIcon } = getAttendeeIcons(attendee)
+        const { smallIcons, largeIcon } = getAttendeeIcons(attendee.user)
 
         return (
           <div key={attendee.id} className="flex flex-row gap-1 items-center group">
