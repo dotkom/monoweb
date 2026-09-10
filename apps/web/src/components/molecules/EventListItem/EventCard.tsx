@@ -51,7 +51,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
           size="lg"
           title={title}
           className={cn(
-            "max-md:text-lg text-xl font-semibold line-clamp-2 wrap-break-word transition-colors",
+            "max-md:text-lg text-xl font-medium line-clamp-2 wrap-break-word transition-colors",
             eventHasEnded &&
               "text-gray-600 dark:text-stone-400 group-hover:text-gray-800 dark:group-hover:text-stone-300"
           )}
