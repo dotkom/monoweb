@@ -46,19 +46,24 @@ export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
-   * Update the user's email in Auth0 and trigger a verification email to the new address.
+   * Request a change of the user's contact email.
    *
-   * NOTE: We do not update `User#email` until the user verifies the new email address. Call
-   * {@link UserService#syncEmailFromAuth0} after the user has clicked the verification link to update the DB user.
+   * Auth0 can only change email for database (and passwordless email) identities. For those users the email is updated
+   * in Auth0 and a verification email is sent. `User#email` is not updated until the user verifies the new address via
+   * {@link UserService#syncEmailFromAuth0}.
+   *
+   * Federated users (e.g. Feide) cannot have their Auth0 email changed. Their contact email is updated in the database
+   * immediately, and Auth0 is left unchanged.
    *
    * @throws {InvalidArgumentError} if the new email is identical to the current one.
    * @throws {AlreadyExistsError} if another user in the database already has this email.
    */
-  requestEmailChange(handle: DBHandle, userId: UserId, newEmail: string): Promise<void>
+  requestEmailChange(handle: DBHandle, userId: UserId, newEmail: string): Promise<{ verificationSent: boolean }>
   /**
    * Synchronizes the DB user's email with the email in Auth0.
    *
-   * The DB user is mutated if and only if the email is verified in Auth0 AND it differs from the current DB user email.
+   * The DB user is mutated if and only if Auth0 can manage the user's email, the email is verified in Auth0, AND it
+   * differs from the current DB user email. Federated identities keep the database email as the contact address.
    */
   syncEmailFromAuth0(handle: DBHandle, userId: UserId): Promise<User>
   /**
@@ -184,6 +189,31 @@ export function getUserService(
     }
 
     return value.trim() || null
+  }
+
+  // Auth0 only allows updating `email` on database connections (`auth0`) and passwordless email (`email`).
+  // Feide and other federated identities own the email and reject Management API updates with operation_not_supported.
+  const AUTH0_EMAIL_UPDATE_PROVIDERS = new Set(["auth0", "email"])
+
+  function canUpdateEmailInAuth0(identities: Auth0UserProfile["identities"]): boolean {
+    const primaryIdentity = identities?.[0]
+
+    if (primaryIdentity === undefined || primaryIdentity.provider === undefined) {
+      return false
+    }
+
+    return AUTH0_EMAIL_UPDATE_PROVIDERS.has(primaryIdentity.provider)
+  }
+
+  function isAuth0EmailUpdateUnsupported(error: unknown): boolean {
+    if (typeof error !== "object" || error === null) {
+      return false
+    }
+
+    const hasUnsupportedErrorCode = "errorCode" in error && error.errorCode === "operation_not_supported"
+    const hasEmailUpdateMessage = error instanceof Error && error.message === "Cannot update email for this user"
+
+    return hasUnsupportedErrorCode && hasEmailUpdateMessage
   }
 
   function getUserSubmittedFullName(metadata: Auth0ProfileMetadata): string | null {
@@ -317,9 +347,24 @@ export function getUserService(
       const email = normalizeText(newUser.email)
 
       if (email !== null) {
-        patch.email = email
-        patch.email_verified = false
-        patch.verify_email = true
+        const auth0UserResponse = await managementClient.users.get({ id: userId })
+
+        if (auth0UserResponse.status !== 200) {
+          throw new IllegalStateError(
+            `Received HTTP ${auth0UserResponse.status} (${auth0UserResponse.statusText}) when fetching User(ID=${userId}) from Auth0`
+          )
+        }
+
+        if (canUpdateEmailInAuth0(auth0UserResponse.data.identities)) {
+          patch.email = email
+          patch.email_verified = false
+          patch.verify_email = true
+        } else {
+          logger.info(
+            "Skipping Auth0 email sync for User(ID=%s) because the primary identity does not support email updates",
+            userId
+          )
+        }
       }
     }
 
@@ -342,7 +387,12 @@ export function getUserService(
 
     const auth0Email = normalizeText(auth0User.email)
 
-    if (auth0User.email_verified && auth0Email !== null && auth0Email !== user.email) {
+    if (
+      canUpdateEmailInAuth0(auth0User.identities) &&
+      auth0User.email_verified &&
+      auth0Email !== null &&
+      auth0Email !== user.email
+    ) {
       data.email = auth0Email
     }
 
@@ -684,18 +734,46 @@ export function getUserService(
         throw new AlreadyExistsError(`Email=${newEmail} is already in use by another user`)
       }
 
-      const response = await managementClient.users.update(
-        { id: userId },
-        { email: newEmail, email_verified: false, verify_email: true }
-      )
+      const connections = await this.getAuth0Connections(userId)
 
-      if (response.status !== 200) {
-        throw new IllegalStateError(
-          `Received HTTP ${response.status} (${response.statusText}) when updating Email for User(ID=${userId}) in Auth0`
+      if (!canUpdateEmailInAuth0(connections.identities)) {
+        await userRepository.update(handle, userId, { email: newEmail })
+        logger.info(
+          "Updated contact email for federated User(ID=%s) in the database because Auth0 cannot change emails for this identity",
+          userId
         )
+
+        return { verificationSent: false }
+      }
+
+      try {
+        const response = await managementClient.users.update(
+          { id: userId },
+          { email: newEmail, email_verified: false, verify_email: true }
+        )
+
+        if (response.status !== 200) {
+          throw new IllegalStateError(
+            `Received HTTP ${response.status} (${response.statusText}) when updating Email for User(ID=${userId}) in Auth0`
+          )
+        }
+      } catch (error) {
+        if (!isAuth0EmailUpdateUnsupported(error)) {
+          throw error
+        }
+
+        await userRepository.update(handle, userId, { email: newEmail })
+        logger.warn(
+          "Auth0 rejected email update for User(ID=%s) despite a database identity; updated the database instead",
+          userId
+        )
+
+        return { verificationSent: false }
       }
 
       logger.info("Requested email change for User(ID=%s). Auth0 will send a verification email.", userId)
+
+      return { verificationSent: true }
     },
 
     async syncEmailFromAuth0(handle, userId) {
