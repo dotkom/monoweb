@@ -3,8 +3,8 @@ import { Anchor } from "@mantine/core"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"
 import { useMemo } from "react"
-import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, Notification } from "node_modules/@dotkomonline/rpc/src/modules/notification/notification"
 import { DateTooltip } from "@/components/DateTooltip"
+import { mapNotificationPayloadTypeToLabel, mapNotificationTypeToLabel, type Notification } from "@dotkomonline/rpc"
 
 interface AllNotificationsTableProps {
   notifications: Notification[]
@@ -25,7 +25,7 @@ export const AllNotificationsTable = ({ notifications }: AllNotificationsTablePr
         ),
       }),
 
-     columnHelper.accessor((notification) => notification.shortDescription, {
+      columnHelper.accessor((notification) => notification.shortDescription, {
         id: "shortDescription",
         header: () => "Kort beskrivelse",
         cell: (info) => info.getValue(),
@@ -52,7 +52,6 @@ export const AllNotificationsTable = ({ notifications }: AllNotificationsTablePr
       }),
     ],
     [columnHelper]
-    
   )
 
   const tableOptions = useMemo(
@@ -65,9 +64,5 @@ export const AllNotificationsTable = ({ notifications }: AllNotificationsTablePr
   )
 
   const table = useReactTable(tableOptions)
-  return (
-    <GenericTable
-      table = {table} 
-    />
-  )
+  return <GenericTable table={table} />
 }
