@@ -343,7 +343,7 @@ export function createModalImageInput<F extends FieldValues, TTransformedValues 
           return (
             <Input.Wrapper label={label} description={description}>
               <Stack gap="0.5rem">
-                {field.value && <Image src={field.value} radius="md" maw="max(20dvw, 32rem)" />}
+                {field.value && <Image src={field.value} radius="md" maw="max(20dvw, 32rem)" bg="white" />}
                 <Group gap="xs" mt="0.25rem">
                   <Button
                     variant="default"
