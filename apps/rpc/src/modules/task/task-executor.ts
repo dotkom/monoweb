@@ -122,7 +122,6 @@ export function getLocalTaskExecutor(
                 handle,
                 payload as InferTaskData<SendNotificationJobListingReminderTaskDefinition>
               )
-
           }
 
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
