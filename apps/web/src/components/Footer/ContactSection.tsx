@@ -1,12 +1,16 @@
 "use client"
 
+import { BugReportButton } from "@/components/BugReportButton";
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { Text } from "@dotkomonline/ui"
 import { IconCheck, IconClipboard } from "@tabler/icons-react"
+import { useState } from "react"
 
 export const ContactSection = () => {
   const { icon: copyKontaktEmailIcon, copy: copyKontaktEmail } = useCopyToClipboard()
   const { icon: copyOkonomiEmailIcon, copy: copyOkonomiEmail } = useCopyToClipboard()
+
+  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:flex lg:flex-row lg:gap-24">
@@ -16,16 +20,6 @@ export const ContactSection = () => {
         </Text>
 
         <div>
-          <Text>Oppdaget en feil på nettsiden?</Text>
-          <Text>
-            Ta kontakt med{" "}
-            <a className="underline" href="mailto:dotkom@online.ntnu.no" target="_blank" rel="noopener noreferrer">
-              Dotkom
-            </a>
-          </Text>
-        </div>
-
-        <div>
           <Text>Har du lyst til å bidra?</Text>
           <Text>
             Kildekoden finner du på{" "}
@@ -33,6 +27,20 @@ export const ContactSection = () => {
               Github
             </a>
           </Text>
+        </div>
+
+        <div>
+          <Text>Oppdaget en feil på nettsiden?</Text>
+          <BugReportButton
+            bugReportFormOpen={bugReportFormOpen}
+            setBugReportFormOpen={setBugReportFormOpen}
+          />
+          {/*<Text>
+            Ta kontakt med{" "}
+            <a className="underline" href="mailto:dotkom@online.ntnu.no" target="_blank" rel="noopener noreferrer">
+              Dotkom
+            </a>
+          </Text>*/}
         </div>
       </div>
 
