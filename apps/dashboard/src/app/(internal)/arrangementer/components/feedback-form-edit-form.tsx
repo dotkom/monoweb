@@ -212,7 +212,7 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSave, defaultValues, feedbac
     },
   })
 
-  const resultsPageUrl = new URL(`tilbakemelding/${eventId}/svar`, env.NEXT_PUBLIC_WEB_URL)
+  const resultsPageUrl = new URL(`tilbakemelding/${eventId}/svar/`, env.NEXT_PUBLIC_WEB_URL)
   const publicResultsPageUrl = new URL(`${publicResultsTokenQuery.data}`, resultsPageUrl)
   const previewPageUrl = new URL(`tilbakemelding/${eventId}`, env.NEXT_PUBLIC_WEB_URL)
   previewPageUrl.searchParams.append("preview", "true")
