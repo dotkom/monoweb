@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from 'next/image'
 import { isExplodeMode, isExplodeModeStartAnimation, getRandomExplosionSize, getRandomExplosionPosition } from "@/utils/explosion-easter-egg"
-import { Text } from "@dotkomonline/ui";
+import { Text } from "@dotkomonline/ui"
 
 const GIF_DURATION = 1200 // Time I just guessed
 
@@ -76,7 +76,7 @@ export function ExplosionEasterEgg() {
 
             {[...Array(5)].map((_, i) => ( // Make 5 explosions appear together with the spinning text
               <div
-                key={i}
+                key={getRandomExplosionSize()}
                 style={{
                   position: "fixed",
                   top: getRandomExplosionPosition(),

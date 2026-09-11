@@ -4,7 +4,7 @@ const themeChangeCountTracker = {
   explosionEnabled: false,
   doStartAnimation: false,
   explosionModeStartTime: 0,
-};
+}
 
 export function incrementThemeChangeCounter() {
   const now = Date.now()
