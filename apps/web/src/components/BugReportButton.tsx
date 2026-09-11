@@ -1,6 +1,17 @@
 import { useState } from "react"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, AlertDialogTrigger, Button, Text, Textarea, TextInput, Title } from "@dotkomonline/ui";
-import { IconCheck, IconClipboard, IconEmailStamp, IconMail, IconX } from "@tabler/icons-react";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Button,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from "@dotkomonline/ui"
+import { IconMail, IconX } from "@tabler/icons-react"
 import { Section } from "@/app/bedrift/faktura/components/section"
 
 interface BugReportButtonProps {
@@ -8,10 +19,7 @@ interface BugReportButtonProps {
   setBugReportFormOpen: (open: boolean) => void
 }
 
-export const BugReportButton = ({
-  bugReportFormOpen,
-  setBugReportFormOpen,
-}: BugReportButtonProps) => {
+export const BugReportButton = ({ bugReportFormOpen, setBugReportFormOpen }: BugReportButtonProps) => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
 
@@ -53,7 +61,7 @@ export const BugReportButton = ({
         </div>
         <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
           <div className="flex flex-col gap-2">
-             <Section as="fieldset" className="gap-8">
+            <Section as="fieldset" className="gap-8">
               <Section>
                 <Text>Beskriv feilen kort og tydelig</Text>
                 <Section>
