@@ -1,13 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { hasPassedThemeChangeThreshold, getRandomExplosionSize } from "@/utils/explosion-easter-egg"
+import { isExplodeMode, isExplodeModeStartAnimation, getRandomExplosionSize, getRandomExplosionPosition } from "@/utils/explosion-easter-egg"
+import { Text } from "@dotkomonline/ui";
 
-const GIF_DURATION = 1200
+const GIF_DURATION = 1200 // Time I just guessed
 
 interface Explosion {
   x: number
   y: number
+  size: number
   gifUrl: string
 }
 
@@ -15,10 +17,10 @@ export default function ExplosionEasterEgg() {
   const [explosion, setExplosion] = useState<Explosion | null>(null)
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>
+    let timeoutId: NodeJS.Timeout
 
     const handleGlobalClick = (event: PointerEvent) => {
-      if (!hasPassedThemeChangeThreshold()) {
+      if (!isExplodeMode()) {
         return
       }
 
@@ -30,6 +32,7 @@ export default function ExplosionEasterEgg() {
       setExplosion({
         x: event.clientX,
         y: event.clientY,
+        size: getRandomExplosionSize(),
         gifUrl: freshGifUrl,
       })
 
@@ -51,27 +54,73 @@ export default function ExplosionEasterEgg() {
     }
   }, [])
 
-  return (
-    <>
-      {explosion && (
-        <div
-          style={{
+    return (
+      <>
+        {isExplodeModeStartAnimation() && (
+          <div style={{
             position: "fixed",
-            top: explosion.y,
-            left: explosion.x,
+            top: "50%",
+            left: "50%",
             transform: "translate(-50%, -50%)",
             zIndex: 9999,
-            pointerEvents: "none",
-          }}
-        >
-          <img
-            src={explosion.gifUrl}
-            alt=""
-            width={getRandomExplosionSize()}  // burde har noko storleik variasjon, random idk korleis
-            height={getRandomExplosionSize()} // burde har noko storleik variasjon, random idk korleis
-          />
-        </div>
-      )}
-    </>
-  )
+          }}>
+            <Text style={{
+              fontSize: "100px",
+              fontWeight: "bolder",
+              textWrapMode: "nowrap",
+              display: "inline-block",
+              animation: "spin 0.5s linear infinite",
+            }}
+            >EXPLOSIONS!!</Text>
+
+            {[...Array(5)].map((_, i) => ( // Make 5 explosions appear together with the spinning text
+              <div
+                key={i}
+                style={{
+                  position: "fixed",
+                  top: getRandomExplosionPosition(),
+                  left: getRandomExplosionPosition(),
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 9999,
+                  pointerEvents: "none",
+                }}>
+                <img
+                  src={"/explosion.gif?t=" + Date.now()}
+                  width={getRandomExplosionSize()}
+                  height={getRandomExplosionSize()}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {explosion && (
+          <div
+            style={{
+              position: "fixed",
+              top: explosion.y,
+              left: explosion.x,
+              transform: "translate(-50%, -50%)",
+              zIndex: 9999,
+              pointerEvents: "none",
+            }}
+          >
+            <img
+              src={explosion.gifUrl}
+              width={explosion.size}
+              height={explosion.size}
+            />
+          </div>
+        )}
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </>
+    )
 }
