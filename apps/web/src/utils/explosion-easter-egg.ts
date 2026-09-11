@@ -8,7 +8,8 @@ const themeChangeCountTracker = {
 
 export function incrementThemeChangeCounter() {
   const now = Date.now()
-  if (now - themeChangeCountTracker.lastClickTime > 500) { // Requires at most 500 ms between each click
+  if (now - themeChangeCountTracker.lastClickTime > 500) {
+    // Requires at most 500 ms between each click
     themeChangeCountTracker.count = 0
   }
 
@@ -17,7 +18,7 @@ export function incrementThemeChangeCounter() {
 }
 
 export function isExplodeMode(): boolean {
-  if (themeChangeCountTracker.count >= 20 ) {
+  if (themeChangeCountTracker.count >= 20) {
     themeChangeCountTracker.count = 0
     themeChangeCountTracker.explosionEnabled = !themeChangeCountTracker.explosionEnabled
 
