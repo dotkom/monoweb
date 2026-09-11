@@ -20,6 +20,11 @@ export const ContactSection = () => {
         </Text>
 
         <div>
+          <Text>Oppdaget en feil på nettsiden?</Text>
+          <BugReportButton bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+        </div>
+
+        <div>
           <Text>Har du lyst til å bidra?</Text>
           <Text>
             Kildekoden finner du på{" "}
@@ -27,17 +32,6 @@ export const ContactSection = () => {
               Github
             </a>
           </Text>
-        </div>
-
-        <div>
-          <Text>Oppdaget en feil på nettsiden?</Text>
-          <BugReportButton bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
-          {/*<Text>
-            Ta kontakt med{" "}
-            <a className="underline" href="mailto:dotkom@online.ntnu.no" target="_blank" rel="noopener noreferrer">
-              Dotkom
-            </a>
-          </Text>*/}
         </div>
       </div>
 
