@@ -1,6 +1,6 @@
 "use client"
 
-import { BugReportButton } from "@/components/BugReportButton";
+import { BugReportButton } from "@/components/BugReportButton"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { Text } from "@dotkomonline/ui"
 import { IconCheck, IconClipboard } from "@tabler/icons-react"
@@ -31,10 +31,7 @@ export const ContactSection = () => {
 
         <div>
           <Text>Oppdaget en feil på nettsiden?</Text>
-          <BugReportButton
-            bugReportFormOpen={bugReportFormOpen}
-            setBugReportFormOpen={setBugReportFormOpen}
-          />
+          <BugReportButton bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
           {/*<Text>
             Ta kontakt med{" "}
             <a className="underline" href="mailto:dotkom@online.ntnu.no" target="_blank" rel="noopener noreferrer">
