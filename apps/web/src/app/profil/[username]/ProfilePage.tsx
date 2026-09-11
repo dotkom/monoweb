@@ -2,6 +2,7 @@
 
 import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
+import { GroupMemberListTabTrigger } from "@/app/grupper/components/GroupMemberListTabTrigger"
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
@@ -11,7 +12,7 @@ import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
-import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { type GroupByMember, createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { findActiveMembership, getGenderName, getMembershipTypeName } from "@dotkomonline/rpc/user"
 import {
   Avatar,
@@ -25,6 +26,9 @@ import {
   RadialProgress,
   ReadMore,
   RichText,
+  Tabs,
+  TabsContent,
+  TabsList,
   Text,
   Title,
   Tooltip,
@@ -206,15 +210,16 @@ export function ProfilePage() {
   const allGroups = useMemo(
     () =>
       groups
-        ? [
-            ...groups.map((group) => ({
-              ...group,
-              pageUrl: createGroupPageUrl(group),
-            })),
-          ]
+        ? groups.map((group) => ({
+            ...group,
+            pageUrl: createGroupPageUrl(group),
+          }))
         : [],
     [groups]
   )
+
+  const activeGroups = useMemo(() => allGroups.filter((group) => group.hasActiveMembership), [allGroups])
+  const inactiveGroups = useMemo(() => allGroups.filter((group) => !group.hasActiveMembership), [allGroups])
 
   const { isAdmin } = useIsAdminQuery()
 
@@ -452,39 +457,19 @@ export function ProfilePage() {
         <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
           <Title>Grupper</Title>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {allGroups.map((group) => {
-              const displayName = getGroupDisplayName(group)
+          <Tabs defaultValue={activeGroups.length > 0 ? "active" : "inactive"}>
+            <TabsList variant="default" className="h-12!">
+              <GroupMemberListTabTrigger value="active" label="Nåværende grupper" count={activeGroups.length} />
+              <GroupMemberListTabTrigger value="inactive" label="Tidligere grupper" count={inactiveGroups.length} />
+            </TabsList>
 
-              return (
-                <Link
-                  key={group.slug}
-                  href={group.pageUrl}
-                  className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
-                >
-                  <GroupLogoAvatar
-                    src={group.imageUrl}
-                    alt={displayName}
-                    className="w-14 h-14 p-0.75 shrink-0"
-                    fallback={
-                      <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
-                        <IconQuestionMark className="size-8 text-muted-foreground" />
-                      </AvatarFallback>
-                    }
-                  />
-                  <div className="flex flex-col gap-0.5 grow min-w-0">
-                    <Text className="text-lg">{displayName}</Text>
-                    <RichText
-                      maxLines={3}
-                      className="line-clamp-2 text-muted-foreground"
-                      hideToggleButton={true}
-                      content={group.description}
-                    />
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
+            <TabsContent value="active">
+              <ProfileGroupList groups={activeGroups} type="active" />
+            </TabsContent>
+            <TabsContent value="inactive">
+              <ProfileGroupList groups={inactiveGroups} type="inactive" />
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 
@@ -514,6 +499,59 @@ export function ProfilePage() {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+type ProfileGroup = GroupByMember & { pageUrl: string }
+
+interface ProfileGroupListProps {
+  groups: ProfileGroup[]
+  type: "active" | "inactive"
+}
+
+const ProfileGroupList = ({ groups, type }: ProfileGroupListProps) => {
+  if (groups.length === 0) {
+    return (
+      <Text className="text-gray-500 dark:text-stone-400">
+        Ingen {type === "active" ? "nåværende" : "tidligere"} grupper
+      </Text>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {groups.map((group) => {
+        const displayName = getGroupDisplayName(group)
+
+        return (
+          <Link
+            key={group.slug}
+            href={group.pageUrl}
+            className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
+          >
+            <GroupLogoAvatar
+              src={group.imageUrl}
+              alt={displayName}
+              className="w-14 h-14 p-0.75 shrink-0"
+              fallback={
+                <AvatarFallback className="bg-gray-200 dark:bg-stone-500">
+                  <IconQuestionMark className="size-8 text-muted-foreground" />
+                </AvatarFallback>
+              }
+            />
+            <div className="flex flex-col gap-0.5 grow min-w-0">
+              <Text className="text-lg">{displayName}</Text>
+              <RichText
+                maxLines={3}
+                className="line-clamp-2 text-muted-foreground"
+                hideToggleButton={true}
+                content={group.description}
+              />
+            </div>
+          </Link>
+        )
+      })}
     </div>
   )
 }
