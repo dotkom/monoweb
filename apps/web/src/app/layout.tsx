@@ -12,7 +12,7 @@ import { ThemeProvider } from "next-themes"
 import { Figtree, Google_Sans_Code, Inter, Marcellus } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
-import ExplosionEasterEgg from "./explosion-easter-egg"
+import { ExplosionEasterEgg } from "./explosion-easter-egg";
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         )}
       >
         <ExplosionEasterEgg />
-        
+
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>

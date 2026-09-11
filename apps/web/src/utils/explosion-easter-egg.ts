@@ -41,5 +41,5 @@ export function getRandomExplosionSize(): number {
 }
 
 export function getRandomExplosionPosition(): string {
-  return (Math.random() * 100) + "%"
+  return `${Math.random() * 100}%`
 }

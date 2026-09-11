@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from 'next/image'
 import { isExplodeMode, isExplodeModeStartAnimation, getRandomExplosionSize, getRandomExplosionPosition } from "@/utils/explosion-easter-egg"
 import { Text } from "@dotkomonline/ui";
 
@@ -13,7 +14,7 @@ interface Explosion {
   gifUrl: string
 }
 
-export default function ExplosionEasterEgg() {
+export function ExplosionEasterEgg() {
   const [explosion, setExplosion] = useState<Explosion | null>(null)
 
   useEffect(() => {
@@ -84,8 +85,9 @@ export default function ExplosionEasterEgg() {
                   zIndex: 9999,
                   pointerEvents: "none",
                 }}>
-                <img
-                  src={"/explosion.gif?t=" + Date.now()}
+                <Image
+                  src={`/explosion.gif?t=${Date.now()}`}
+                  alt=""
                   width={getRandomExplosionSize()}
                   height={getRandomExplosionSize()}
                 />
@@ -104,8 +106,9 @@ export default function ExplosionEasterEgg() {
               pointerEvents: "none",
             }}
           >
-            <img
+            <Image
               src={explosion.gifUrl}
+              alt=""
               width={explosion.size}
               height={explosion.size}
             />
