@@ -41,6 +41,7 @@ import {
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
+import { BugReportForm } from "../BugReportForm"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -134,59 +135,13 @@ interface LinkDetail {
   href?: string
   openInNewTab?: boolean
   adminOnly?: boolean
+  onClick?: () => void
 }
 
 interface LinkGroup {
   id: string
   links: LinkDetail[]
 }
-
-const linkGroups: LinkGroup[] = [
-  {
-    id: "profile",
-    links: [
-      {
-        icon: IconUser,
-        label: "Min profil",
-        href: "/profil",
-      },
-      {
-        icon: IconSettings,
-        label: "Innstillinger",
-        href: "/innstillinger/bruker",
-      },
-    ],
-  },
-  {
-    id: "admin",
-    links: [
-      {
-        icon: IconAdjustments,
-        label: "Dashboard",
-        href: env.NEXT_PUBLIC_DASHBOARD_URL,
-        openInNewTab: true,
-        adminOnly: true,
-      },
-    ],
-  },
-  {
-    id: "support",
-    links: [
-      {
-        icon: IconMailForward,
-        label: "Kontakt oss",
-        href: "mailto:hovedstyret@online.ntnu.no",
-        openInNewTab: true,
-      },
-      {
-        icon: IconBug,
-        label: "Rapporter en feil",
-        href: "mailto:dotkom@online.ntnu.no",
-        openInNewTab: true,
-      },
-    ],
-  },
-]
 
 export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   const fullPathname = useFullPathname()
@@ -225,6 +180,7 @@ type AvatarDropdownProps = {
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
+  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
   const trpc = useTRPC()
 
   const isStaffResponse = useQuery({
@@ -239,6 +195,52 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
     trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
   )
 
+  const linkGroups: LinkGroup[] = [
+    {
+      id: "profile",
+      links: [
+        {
+          icon: IconUser,
+          label: "Min profil",
+          href: "/profil",
+        },
+        {
+          icon: IconSettings,
+          label: "Innstillinger",
+          href: "/innstillinger/bruker",
+        },
+      ],
+    },
+    {
+      id: "admin",
+      links: [
+        {
+          icon: IconAdjustments,
+          label: "Dashboard",
+          href: env.NEXT_PUBLIC_DASHBOARD_URL,
+          openInNewTab: true,
+          adminOnly: true,
+        },
+      ],
+    },
+    {
+      id: "support",
+      links: [
+        {
+          icon: IconMailForward,
+          label: "Kontakt oss",
+          href: "mailto:hovedstyret@online.ntnu.no",
+          openInNewTab: true,
+        },
+        {
+          icon: IconBug,
+          label: "Rapporter en feil",
+          onClick: () => setBugReportFormOpen(true),
+        },
+      ],
+    },
+  ]
+
   const filteredLinkGroups = linkGroups
     .map((group) => ({
       ...group,
@@ -249,119 +251,127 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const showFeedbackFormPing = eventsMissingFeedback && eventsMissingFeedback.length > 0
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Åpne profilmeny"
-          className="relative rounded-full transition-all duration-200 focus:outline-none"
+    <>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label="Åpne profilmeny"
+            className="relative rounded-full transition-all duration-200 focus:outline-none"
+          >
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
+              <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
+                <IconUser className="size-5" />
+              </AvatarFallback>
+            </Avatar>
+            {showFeedbackFormPing && !open && (
+              <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />
+            )}
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
+          sideOffset={24}
+          positionMethod="fixed"
         >
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
-              <IconUser className="size-5" />
-            </AvatarFallback>
-          </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
-        sideOffset={24}
-        positionMethod="fixed"
-      >
-        <DropdownMenuLabel className="font-normal p-3 mb-2">
-          <div className="flex flex-col min-w-0 flex-1">
-            <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-              {user?.name || "Bruker"}
-            </Text>
-            <Text className="text-xs text-gray-600 dark:text-stone-400 truncate">{user?.email || ""}</Text>
-          </div>
-        </DropdownMenuLabel>
+          <DropdownMenuLabel className="font-normal p-3 mb-2">
+            <div className="flex flex-col min-w-0 flex-1">
+              <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                {user?.name || "Bruker"}
+              </Text>
+              <Text className="text-xs text-gray-600 dark:text-stone-400 truncate">{user?.email || ""}</Text>
+            </div>
+          </DropdownMenuLabel>
 
-        {filteredLinkGroups.map((group, i, { length }) => {
-          const notLast = i !== length - 1
+          {filteredLinkGroups.map((group, i, { length }) => {
+            const notLast = i !== length - 1
 
-          return (
-            <Fragment key={group.id}>
-              <DropdownMenuGroup className="space-y-1">
-                {group.links.map((link) => {
-                  const isProfile = link.href === "/profil"
-                  const IconComponent = link.icon
+            return (
+              <Fragment key={group.id}>
+                <DropdownMenuGroup className="space-y-1">
+                  {group.links.map((link) => {
+                    const isProfile = link.href === "/profil"
+                    const IconComponent = link.icon
 
-                  return (
-                    <DropdownMenuItem
-                      asChild
-                      variant="uncolored"
-                      onClick={() => setOpen(false)}
-                      key={link.label}
-                      className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
-                    >
-                      <Link
-                        className="flex items-center gap-3 min-h-9 px-3"
-                        href={link.href ?? "#"}
-                        target={link.openInNewTab ? "_blank" : undefined}
-                        rel="noreferrer"
+                    return (
+                      <DropdownMenuItem
+                        asChild
+                        variant="uncolored"
+                        onClick={() => setOpen(false)}
+                        key={link.label}
+                        className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
                       >
-                        <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+                        <Link
+                          className="flex items-center gap-3 min-h-9 px-3"
+                          href={link.href ?? "#"}
+                          target={link.openInNewTab ? "_blank" : undefined}
+                          rel="noreferrer"
+                          onClick={() => {
+                            link.onClick?.()
+                          }}
+                        >
+                          <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
 
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex flex-row gap-2 items-center">
-                            <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
-                            {showFeedbackFormPing && open && isProfile && (
-                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex flex-row gap-2 items-center">
+                              <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
+                              {showFeedbackFormPing && open && isProfile && (
+                                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                              )}
+                            </div>
+
+                            {link.adminOnly && (
+                              <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
+                                <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
+                                <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                              </div>
                             )}
                           </div>
 
-                          {link.adminOnly && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                              <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                            </div>
+                          {link.openInNewTab && (
+                            <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                           )}
-                        </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </DropdownMenuGroup>
 
-                        {link.openInNewTab && (
-                          <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
-                        )}
-                      </Link>
-                    </DropdownMenuItem>
-                  )
-                })}
-              </DropdownMenuGroup>
+                {notLast && <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />}
+              </Fragment>
+            )
+          })}
 
-              {notLast && <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />}
-            </Fragment>
-          )
-        })}
+          <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
-        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
-
-        <div className="flex items-center justify-between px-3">
-          <div className="flex gap-3 items-center">
-            <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
-            <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
+          <div className="flex items-center justify-between px-3">
+            <div className="flex gap-3 items-center">
+              <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
+            </div>
+            <div>
+              <ThemeToggle />
+            </div>
           </div>
-          <div>
-            <ThemeToggle />
-          </div>
-        </div>
 
-        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
+          <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
-        <DropdownMenuItem
-          asChild
-          onClick={() => setOpen(false)}
-          variant="destructive"
-          className="rounded-lg cursor-pointer px-3"
-        >
-          <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
-            <IconLogout2 className="size-5" />
-            <Text className="text-sm font-medium">Logg ut</Text>
-          </a>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuItem
+            asChild
+            onClick={() => setOpen(false)}
+            variant="destructive"
+            className="rounded-lg cursor-pointer px-3"
+          >
+            <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
+              <IconLogout2 className="size-5" />
+              <Text className="text-sm font-medium">Logg ut</Text>
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <BugReportForm bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+    </>
   )
 }
