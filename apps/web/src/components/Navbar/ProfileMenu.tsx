@@ -180,7 +180,7 @@ type AvatarDropdownProps = {
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
-  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
+  const [isBugReportFormOpen, setIsBugReportFormOpen] = useState(false)
   const trpc = useTRPC()
 
   const isStaffResponse = useQuery({
@@ -231,11 +231,6 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           label: "Kontakt oss",
           href: "mailto:hovedstyret@online.ntnu.no",
           openInNewTab: true,
-        },
-        {
-          icon: IconBug,
-          label: "Rapporter en feil",
-          onClick: () => setBugReportFormOpen(true),
         },
       ],
     },
@@ -344,6 +339,20 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             )
           })}
 
+          <DropdownMenuItem
+            variant="uncolored"
+            className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+            onClick={() => {
+              setOpen(false)
+              setIsBugReportFormOpen(true)
+            }}
+          >
+            <div className="flex items-center gap-3 min-h-9 px-3">
+              <IconBug className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-white">Rapporter en feil</Text>
+            </div>
+          </DropdownMenuItem>
+
           <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
           <div className="flex items-center justify-between px-3">
@@ -371,7 +380,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <BugReportForm bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+      <BugReportForm isBugReportFormOpen={isBugReportFormOpen} setIsBugReportFormOpen={setIsBugReportFormOpen} />
     </>
   )
 }

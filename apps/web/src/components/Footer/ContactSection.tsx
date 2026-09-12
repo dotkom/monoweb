@@ -10,7 +10,7 @@ export const ContactSection = () => {
   const { icon: copyKontaktEmailIcon, copy: copyKontaktEmail } = useCopyToClipboard()
   const { icon: copyOkonomiEmailIcon, copy: copyOkonomiEmail } = useCopyToClipboard()
 
-  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
+  const [isBugReportFormOpen, setIsBugReportFormOpen] = useState(false)
 
   return (
     <>
@@ -26,7 +26,7 @@ export const ContactSection = () => {
               type="button"
               aria-label="Send bugreport via e-post"
               className="group relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-stone-800 px-1 -mx-1 py-0.25 -my-0.25 rounded-md hover:-ml-6 hover:pl-6"
-              onClick={() => setBugReportFormOpen(true)}
+              onClick={() => setIsBugReportFormOpen(true)}
             >
               <Text className="underline">Ta kontakt med Dotkom</Text>
               <div
@@ -125,7 +125,7 @@ export const ContactSection = () => {
           </div>
         </div>
       </div>
-      <BugReportForm bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+      <BugReportForm isBugReportFormOpen={isBugReportFormOpen} setIsBugReportFormOpen={setIsBugReportFormOpen} />
     </>
   )
 }
