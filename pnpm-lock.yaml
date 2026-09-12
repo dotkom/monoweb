@@ -746,7 +746,7 @@ importers:
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       oauth4webapi:
         specifier: ^3.8.6
-        version: 3.8.7
+        version: 3.8.8
       qrcode.react:
         specifier: ^4.0.0
         version: 4.2.0(react@19.2.8)
@@ -7298,9 +7298,6 @@ packages:
         optional: true
       react-router-dom:
         optional: true
-
-  oauth4webapi@3.8.7:
-    resolution: {integrity: sha512-4RxcKxXjuItDFZ20RRPf4YTw3kpeXJyCgJFxVzJ068A7PNJ18st2Dg90tlC1LkSDS0GecroagCLHYEIVUhCAkw==}
 
   oauth4webapi@3.8.8:
     resolution: {integrity: sha512-8N28E+a/oxfXWBgOMt+ZP/JUf/XR+IFbvkAEPP3gznXOMv9BpAAwiIj0TFNz3tGTPc0ZQ8zmWBNgN1nAys0gng==}
@@ -15858,8 +15855,6 @@ snapshots:
       react: 19.2.8
     optionalDependencies:
       next: 16.3.4(@opentelemetry/api@1.9.1)(@types/node@22.19.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-
-  oauth4webapi@3.8.7: {}
 
   oauth4webapi@3.8.8: {}
 
