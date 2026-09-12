@@ -214,4 +214,38 @@ describe("useRichTextInput", () => {
     })
     expect(replacementEditor.commandChain.run).toHaveBeenCalledOnce()
   })
+
+  it("returns a stable field component across form owner rerenders", () => {
+    const fieldComponents: Array<ReturnType<typeof useRichTextInput<{ content: string }>>> = []
+    testState.currentEditor = createTestEditor()
+
+    function RichTextInputHarness() {
+      const form = useForm<{ content: string }>({
+        defaultValues: { content: "<p>Existing content</p>" },
+      })
+      const RichTextInput = useRichTextInput<{ content: string }>({
+        label: "Content",
+        required: false,
+      })
+      fieldComponents.push(RichTextInput)
+
+      return createElement(RichTextInput, {
+        name: "content",
+        control: form.control,
+        state: form.formState,
+        defaultValue: "<p>Existing content</p>",
+        register: form.register,
+        setValue: form.setValue,
+        getValues: form.getValues,
+        setError: form.setError,
+        clearErrors: form.clearErrors,
+      })
+    }
+
+    act(() => root.render(createElement(RichTextInputHarness)))
+    act(() => root.render(createElement(RichTextInputHarness)))
+
+    expect(fieldComponents.length).toBeGreaterThanOrEqual(2)
+    expect(fieldComponents.every((fieldComponent) => fieldComponent === fieldComponents[0])).toBe(true)
+  })
 })
