@@ -2,6 +2,7 @@ import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib
 import { useTRPC } from "@/lib/trpc-client"
 
 import { env } from "@/lib/env"
+import type { UserId } from "@dotkomonline/rpc/user"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -213,6 +214,27 @@ export const useUpdateGroupMembershipMutation = () => {
         await queryClient.invalidateQueries(
           trpc.group.getMember.queryOptions({ groupId: data.groupId, userId: data.userId })
         )
+      },
+    })
+  )
+}
+
+export const useDeleteGroupMembershipMutation = (userId: UserId) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.group.deleteGroupMembership.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async (_, input) => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.group.getMembers.queryOptions(input.groupId))
+        await queryClient.invalidateQueries(trpc.group.getMember.queryOptions({ groupId: input.groupId, userId }))
       },
     })
   )

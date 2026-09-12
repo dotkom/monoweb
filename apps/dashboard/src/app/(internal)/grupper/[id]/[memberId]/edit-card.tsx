@@ -2,6 +2,7 @@ import { GenericTable } from "@/components/GenericTable"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { useGroupPermissions } from "@/hooks/use-group-permissions"
+import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
   Button,
   Divider,
@@ -16,7 +17,6 @@ import {
   Title,
   useComputedColorScheme,
 } from "@mantine/core"
-import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { differenceInHours, formatDate, formatDistanceToNowStrict } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link"
@@ -54,9 +54,9 @@ export const GroupMemberEditCard: FC = () => {
   })
 
   const openEndMembershipModal = useConfirmDeleteModal({
-    title: "Avslutt medlemskap",
-    text: `Er du sikker på at du vil avslutte medlemskapet for ${groupMember?.name}?`,
-    confirmText: "Avslutt medlemskap",
+    title: "Avslutt gruppemedlemskap",
+    text: `Er du sikker på at du vil avslutte gruppemedlemskapet for ${groupMember?.name}?`,
+    confirmText: "Avslutt gruppemedlemskap",
     cancelText: "Avbryt",
     onConfirm: () => {
       endMembership.mutate({ groupId: group.slug, userId: groupMember.id })
@@ -68,16 +68,32 @@ export const GroupMemberEditCard: FC = () => {
       <Stack gap="xs">
         <Group gap={6}>
           Gruppe:
-          {group.imageUrl && (
-            <Image
-              src={group.imageUrl}
-              alt={getGroupDisplayName(group)}
-              height={24}
-              width={24}
-              style={{ borderRadius: "var(--mantine-radius-sm)" }}
-            />
-          )}
-          <Link href={`/grupper/${group.slug}`}>{getGroupDisplayName(group)}</Link>
+          <Link href={`/grupper/${group.slug}`} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {group.imageUrl && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  backgroundColor: "white",
+                  borderRadius: "var(--mantine-radius-sm)",
+                  padding: "2px",
+                  width: "20px",
+                  height: "20px",
+                }}
+              >
+                <Image
+                  src={group.imageUrl}
+                  alt={getGroupDisplayName(group)}
+                  height={20}
+                  width={20}
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
+            )}
+            {getGroupDisplayName(group)}
+          </Link>
         </Group>
         <Group gap={6}>
           Bruker:
@@ -157,7 +173,7 @@ export const GroupMemberEditCard: FC = () => {
                   onClick={() => openEndMembershipModal()}
                   disabled={!canManageMembership}
                 >
-                  Avslutt medlemskapet
+                  Avslutt gruppemedlemskapet
                 </Button>
               </PermissionTooltip>
             </Group>

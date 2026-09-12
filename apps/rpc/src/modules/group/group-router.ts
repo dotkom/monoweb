@@ -288,6 +288,41 @@ const updateMembershipProcedure = procedure
     return ctx.groupService.updateMembership(ctx.handle, input.id, input.data, new Set(input.roleIds))
   })
 
+export type DeleteMembershipInput = inferProcedureInput<typeof deleteMembershipProcedure>
+export type DeleteMembershipOutput = inferProcedureOutput<typeof deleteMembershipProcedure>
+const deleteMembershipProcedure = procedure
+  .input(z.object({ id: GroupMembershipSchema.shape.id, groupId: GroupMembershipSchema.shape.groupId }))
+  .output(z.void())
+  .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
+      )
+    )
+  )
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
+
+    // If this is not an interest group, deny Backlog from deleting
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          isGroupMember(() => group.slug)
+        ),
+        input
+      )
+    }
+
+    return ctx.groupService.deleteManyGroupMemberships(ctx.handle, [input.id])
+  })
+
 export type CreateRoleInput = inferProcedureInput<typeof createRoleProcedure>
 export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
 const createRoleProcedure = procedure
@@ -394,6 +429,7 @@ export const groupRouter = t.router({
   startMembership: startMembershipProcedure,
   endMembership: endMembershipProcedure,
   updateMembership: updateMembershipProcedure,
+  deleteGroupMembership: deleteMembershipProcedure,
   createRole: createRoleProcedure,
   updateRole: updateRoleProcedure,
   createFileUpload: createFileUploadProcedure,

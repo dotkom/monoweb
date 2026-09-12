@@ -37,7 +37,7 @@ export default function GroupMemberDetailsPage() {
     <Stack>
       <Group>
         <CloseButton onClick={() => router.back()} />
-        <Title>Oppdater medlemskap</Title>
+        <Title>Oppdater gruppemedlemskap</Title>
       </Group>
 
       {!canManageMembership && (
