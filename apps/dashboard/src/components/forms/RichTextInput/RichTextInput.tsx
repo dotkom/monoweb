@@ -26,7 +26,7 @@ import TableRow from "@tiptap/extension-table-row"
 import Underline from "@tiptap/extension-underline"
 import { type Editor, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { type RefObject, useEffect, useRef } from "react"
+import { type RefObject, useCallback, useEffect, useRef } from "react"
 import { Controller, type FieldValues } from "react-hook-form"
 import { getErrorMessage, type InputProducerResult } from "../types"
 import "@mantine/tiptap/styles.css"
@@ -214,10 +214,28 @@ export function useRichTextInput<F extends FieldValues, TTransformedValues exten
     },
   })
 
-  return function RichTextInput({ name, state, control, disabled }) {
+  const fieldConfigurationReference = useRef({
+    editorProps: props,
+    hasImageUpload: Boolean(onFileUpload),
+    label,
+    openImageUploadModal,
+    required,
+  })
+
+  fieldConfigurationReference.current = {
+    editorProps: props,
+    hasImageUpload: Boolean(onFileUpload),
+    label,
+    openImageUploadModal,
+    required,
+  }
+
+  return useCallback(function RichTextInput({ name, state, control, disabled }) {
+    const fieldConfiguration = fieldConfigurationReference.current
+
     return (
       <Input.Wrapper error={getErrorMessage(state, name)}>
-        <Input.Label required={required}>{label}</Input.Label>
+        <Input.Label required={fieldConfiguration.required}>{fieldConfiguration.label}</Input.Label>
         <Controller
           control={control}
           name={name}
@@ -226,15 +244,15 @@ export function useRichTextInput<F extends FieldValues, TTransformedValues exten
               disabled={disabled}
               value={field.value}
               onChange={field.onChange}
-              editorProps={props}
+              editorProps={fieldConfiguration.editorProps}
               editorReference={editorReference}
               imageInsertionSelectionReference={imageInsertionSelectionReference}
-              openImageUploadModal={openImageUploadModal}
-              hasImageUpload={Boolean(onFileUpload)}
+              openImageUploadModal={fieldConfiguration.openImageUploadModal}
+              hasImageUpload={fieldConfiguration.hasImageUpload}
             />
           )}
         />
       </Input.Wrapper>
     )
-  }
+  }, [])
 }
