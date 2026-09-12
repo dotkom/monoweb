@@ -4,40 +4,23 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTitle,
-  AlertDialogTrigger,
   Button,
   Text,
   Textarea,
   TextInput,
   Title,
 } from "@dotkomonline/ui"
-import { IconMail, IconX } from "@tabler/icons-react"
+import { IconX } from "@tabler/icons-react"
 import { Section } from "@/app/bedrift/faktura/components/section"
 
-interface BugReportButtonProps {
+export interface BugReportFormProps {
   bugReportFormOpen: boolean
   setBugReportFormOpen: (open: boolean) => void
 }
 
-export const BugReportButton = ({ bugReportFormOpen, setBugReportFormOpen }: BugReportButtonProps) => {
+export const BugReportForm = ({ bugReportFormOpen, setBugReportFormOpen }: BugReportFormProps) => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-
-  const button = (
-    <button
-      type="button"
-      aria-label="Send bugreport via e-post"
-      className="group relative flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-stone-800 px-1 -mx-1 py-0.25 -my-0.25 rounded-md hover:-ml-6 hover:pl-6"
-    >
-      <Text>Ta kontakt med Dotkom</Text>
-      <div
-        className="pointer-events-none absolute top-1/2 left-1 -translate-y-1/2 invisible group-hover:visible"
-        aria-hidden
-      >
-        <IconMail className="shrink-0 size-4" />
-      </div>
-    </button>
-  )
 
   const sendEmail = () => {
     const subject = encodeURIComponent(title)
@@ -47,7 +30,6 @@ export const BugReportButton = ({ bugReportFormOpen, setBugReportFormOpen }: Bug
 
   return (
     <AlertDialog open={bugReportFormOpen} onOpenChange={setBugReportFormOpen}>
-      <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
       <AlertDialogContent size="lg" className="p-0!" onOutsideClick={() => setBugReportFormOpen(false)}>
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <AlertDialogTitle asChild>
