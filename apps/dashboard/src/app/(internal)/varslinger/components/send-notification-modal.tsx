@@ -35,6 +35,7 @@ import {
   getSendNotificationModalTitle,
   type NotificationLaunchContext,
 } from "../notification-launch-context"
+import { AudienceBuilder } from "./audience-builder"
 import { AudienceSummary } from "./audience-summary"
 
 const FormSchema = z.object({
@@ -361,9 +362,7 @@ export const SendNotificationModal: FC<ContextModalProps<NotificationLaunchConte
         )}
 
         {launchContext.kind === "GLOBAL" && (
-          <Text size="sm" c="dimmed">
-            Mottakerbyggeren kommer i et senere steg.
-          </Text>
+          <AudienceBuilder value={audience} onChange={setAudience} type={notificationType} />
         )}
 
         <Divider />
@@ -419,7 +418,7 @@ export function openSendNotificationModal(launchContext: NotificationLaunchConte
   return modals.openContextModal({
     modal: "notification/send",
     title: getSendNotificationModalTitle(launchContext),
-    size: "lg",
+    size: launchContext.kind === "GLOBAL" ? "xl" : "lg",
     innerProps: launchContext,
   })
 }
