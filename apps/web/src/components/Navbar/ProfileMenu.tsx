@@ -30,6 +30,7 @@ import {
   IconBug,
   IconLock,
   IconLogout2,
+  IconMail,
   IconMailForward,
   IconMessageReport,
   IconMoon,
@@ -41,7 +42,7 @@ import {
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
-import { BugReportForm } from "../BugReportForm"
+import { BugReportForm, BugReportModal } from "../BugReportModal"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -135,13 +136,53 @@ interface LinkDetail {
   href?: string
   openInNewTab?: boolean
   adminOnly?: boolean
-  onClick?: () => void
 }
 
 interface LinkGroup {
   id: string
   links: LinkDetail[]
 }
+
+const linkGroups: LinkGroup[] = [
+  {
+    id: "profile",
+    links: [
+      {
+        icon: IconUser,
+        label: "Min profil",
+        href: "/profil",
+      },
+      {
+        icon: IconSettings,
+        label: "Innstillinger",
+        href: "/innstillinger/bruker",
+      },
+    ],
+  },
+  {
+    id: "admin",
+    links: [
+      {
+        icon: IconAdjustments,
+        label: "Dashboard",
+        href: env.NEXT_PUBLIC_DASHBOARD_URL,
+        openInNewTab: true,
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    id: "support",
+    links: [
+      {
+        icon: IconMailForward,
+        label: "Kontakt oss",
+        href: "mailto:hovedstyret@online.ntnu.no",
+        openInNewTab: true,
+      },
+    ],
+  },
+]
 
 export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   const fullPathname = useFullPathname()
@@ -180,7 +221,7 @@ type AvatarDropdownProps = {
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
-  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
+  const [isBugReportFormOpen, setIsBugReportFormOpen] = useState(false)
   const trpc = useTRPC()
 
   const isStaffResponse = useQuery({
@@ -194,52 +235,6 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const { data: eventsMissingFeedback } = useQuery(
     trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
   )
-
-  const linkGroups: LinkGroup[] = [
-    {
-      id: "profile",
-      links: [
-        {
-          icon: IconUser,
-          label: "Min profil",
-          href: "/profil",
-        },
-        {
-          icon: IconSettings,
-          label: "Innstillinger",
-          href: "/innstillinger/bruker",
-        },
-      ],
-    },
-    {
-      id: "admin",
-      links: [
-        {
-          icon: IconAdjustments,
-          label: "Dashboard",
-          href: env.NEXT_PUBLIC_DASHBOARD_URL,
-          openInNewTab: true,
-          adminOnly: true,
-        },
-      ],
-    },
-    {
-      id: "support",
-      links: [
-        {
-          icon: IconMailForward,
-          label: "Kontakt oss",
-          href: "mailto:hovedstyret@online.ntnu.no",
-          openInNewTab: true,
-        },
-        {
-          icon: IconBug,
-          label: "Rapporter en feil",
-          onClick: () => setBugReportFormOpen(true),
-        },
-      ],
-    },
-  ]
 
   const filteredLinkGroups = linkGroups
     .map((group) => ({
@@ -308,9 +303,6 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                           href={link.href ?? "#"}
                           target={link.openInNewTab ? "_blank" : undefined}
                           rel="noreferrer"
-                          onClick={() => {
-                            link.onClick?.()
-                          }}
                         >
                           <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
 
@@ -343,6 +335,24 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               </Fragment>
             )
           })}
+          <DropdownMenuItem
+            asChild
+            variant="uncolored"
+            onClick={() => {
+              setIsBugReportFormOpen(true)
+            }}
+            key="Rapporter en feil"
+            className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-3 min-h-9 px-3">
+              <IconBug className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <div className="flex items-center justify-between w-full">
+                <div className="flex flex-row gap-2 items-center">
+                  <Text className="text-sm font-medium text-gray-900 dark:text-white">Rapporter en feil</Text>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
@@ -371,7 +381,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <BugReportForm bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+      <BugReportModal open={isBugReportFormOpen} setOpen={setIsBugReportFormOpen} />
     </>
   )
 }
