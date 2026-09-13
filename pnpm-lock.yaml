@@ -19,7 +19,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.29.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1129.0
@@ -626,7 +626,7 @@ importers:
     dependencies:
       '@auth0/nextjs-auth0':
         specifier: ^4.20.0
-        version: 4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.29.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
         version: 3.1129.0
@@ -1237,8 +1237,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@auth0/nextjs-auth0@4.28.0':
-    resolution: {integrity: sha512-bxEdFBWYUMeJO5fkmaR3TKNpx2jWAlYeKXlrxv20GnzzQCP/DuZ2twfgDrUrzGAsOspNtUExcKtObPI67VtGVw==}
+  '@auth0/nextjs-auth0@4.29.0':
+    resolution: {integrity: sha512-FFpQjEfiTWcKFMTQZbQyIeUzJ+A0xAwl57ecp6aN2U/g53dD+BtNVPDYGdJqjLlCHpsmxDe2mUG+//5ICnrLfA==}
     peerDependencies:
       next: ^14.2.35 || ~15.0.7 || ~15.1.11 || ~15.2.8 || ~15.3.8 || ~15.4.10 || ~15.5.9 || ^16.0.10
       react: ^18.0.0 || ~19.0.1 ||  ~19.1.2 || ^19.2.1
@@ -8823,6 +8823,11 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  use-sync-external-store@1.7.0:
+    resolution: {integrity: sha512-6L+EeigHMQhdaIPNIFUKwfWJSwWFQ8gJbJ2DLOs5sDIegTwR9fRxvnM3uciHKjIZhFz+KAv2emhWMRvDmMcY8A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -9210,7 +9215,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@auth0/nextjs-auth0@4.28.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@auth0/nextjs-auth0@4.29.0(next@16.3.4(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.19.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
@@ -17213,7 +17218,7 @@ snapshots:
     dependencies:
       dequal: 2.0.3
       react: 19.2.8
-      use-sync-external-store: 1.6.0(react@19.2.8)
+      use-sync-external-store: 1.7.0(react@19.2.8)
 
   symbol-tree@3.2.4: {}
 
@@ -17599,6 +17604,10 @@ snapshots:
       '@types/react': 19.2.18
 
   use-sync-external-store@1.6.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+
+  use-sync-external-store@1.7.0(react@19.2.8):
     dependencies:
       react: 19.2.8
 
