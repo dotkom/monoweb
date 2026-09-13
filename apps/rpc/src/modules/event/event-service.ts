@@ -1,7 +1,14 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, EventRequest } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
+import type { Pageable } from "@dotkomonline/utils"
+import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
+import type { CompanyId } from "../company/company"
+import type { GroupId } from "../group/group"
+import type { UserId } from "../user/user"
 import type { AttendanceId } from "./attendance"
 import {
   type BaseEvent,
@@ -11,18 +18,15 @@ import {
   type Event,
   type EventFilterQuery,
   type EventId,
+  type EventRequestId,
+  type EventRequestWrite,
+  type EventRequestWithEvent,
   type EventSummary,
   type EventWithFeedbackFormSchema,
   type EventWrite,
   EVENT_IMAGE_MAX_SIZE_KIB,
+  type EventRequestFilterQuery,
 } from "./event"
-import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
-import type { CompanyId } from "../company/company"
-import type { GroupId } from "../group/group"
-import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
-import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
-import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
@@ -80,6 +84,10 @@ export interface EventService {
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+
+  createEventRequest(handle: DBHandle, eventId: EventId, data: EventRequestWrite): Promise<EventRequest>
+  findEventRequestById(handle: DBHandle, eventRequestId: EventRequestId): Promise<EventRequestWithEvent | null>
+  findEventRequests(handle: DBHandle, query: EventRequestFilterQuery): Promise<EventRequestWithEvent[]>
 }
 
 export function getEventService(
@@ -251,6 +259,23 @@ export function getEventService(
         contentType,
         createdByUserId,
       })
+    },
+
+    async createEventRequest(handle, eventId, data) {
+      const event = await this.getEventById(handle, eventId)
+      if (!event) {
+        throw new NotFoundError(`Event(ID=${eventId}) not found`)
+      }
+
+      return await eventRepository.createEventRequest(handle, eventId, data)
+    },
+
+    async findEventRequestById(handle, eventRequestId) {
+      return await eventRepository.findEventRequestById(handle, eventRequestId)
+    },
+
+    async findEventRequests(handle, query) {
+      return await eventRepository.findEventRequests(handle, query)
     },
   }
 }

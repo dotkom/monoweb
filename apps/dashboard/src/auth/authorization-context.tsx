@@ -7,6 +7,7 @@ import type { PropsWithChildren } from "react"
 import type { AuthorizationState } from "./permissions"
 import {
   canAccessAuditLog,
+  canAccessEventRequests,
   canCreateEvents,
   canCreateGroup,
   canDeleteGroup,
@@ -95,6 +96,7 @@ export function useAuthorization() {
       canManageGroupRoles: (groupId: GroupId, isInterestGroup: boolean) =>
         canManageGroupRoles(state, groupId, isInterestGroup),
       canCreateEvents: () => canCreateEvents(state),
+      canAccessEventRequests: () => canAccessEventRequests(state),
     }
   }, [context])
 }

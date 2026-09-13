@@ -251,3 +251,8 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model EventRequest
+ * 
+ */
+export type EventRequest = Prisma.EventRequestModel

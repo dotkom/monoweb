@@ -36,6 +36,7 @@ import {
   IconCampfire,
   IconClipboardList,
   IconConfetti,
+  IconGitPullRequest,
   IconMoneybag,
   IconPhoto,
   IconPhotoShare,
@@ -55,6 +56,12 @@ const navigations = [
     label: "Arrangementer",
     icon: IconWheelchair,
     href: "/arrangementer",
+  },
+  {
+    label: "Arrangement forespørsler",
+    icon: IconGitPullRequest,
+    href: "/arrangement-foresporsler",
+    canAccess: (authorization) => authorization.canAccessEventRequests(),
   },
   {
     label: "Grupper",

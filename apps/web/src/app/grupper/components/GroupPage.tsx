@@ -17,6 +17,9 @@ import {
   AvatarImage,
   Badge,
   Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   RichText,
   Tabs,
   TabsContent,
@@ -38,6 +41,8 @@ import { compareDesc } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
+import { EventRequestModal } from "./EventRequestModal"
+import { EventRequestTable } from "./EventRequestTable"
 import { GroupEmailLink } from "./GroupEmailLink"
 import { WanderingMascot } from "./WanderingMascot"
 
@@ -146,6 +151,14 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
   const secondaryName = getGroupSecondaryName(group)
   const easterEgg = getGroupEasterEgg(displayName)
 
+  const currentUserIsLeader = leader !== undefined && session !== null && leader.id === session.sub
+  const groupIsInterestGroup = group.type === "INTEREST_GROUP"
+  const canCreateEventRequest = groupIsInterestGroup && currentUserIsLeader
+
+  const eventRequests = canCreateEventRequest
+    ? await server.event.findEventRequestsByInterestGroupId.query(group.slug)
+    : []
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:gap-8 rounded-lg">
@@ -230,6 +243,29 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
           )}
         </div>
       </div>
+
+      {canCreateEventRequest && (
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row items-center gap-2">
+            <Title>Administrer gruppe</Title>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <EventRequestModal interestGroupId={group.slug} buttonClassName="w-fit" />
+
+            <Collapsible>
+              <CollapsibleTrigger>
+                <Button className="w-fit" variant="outline">
+                  Se forespørsler
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <EventRequestTable eventRequests={eventRequests} />
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        </div>
+      )}
 
       {showMembers && (
         <div className="flex flex-col gap-2">

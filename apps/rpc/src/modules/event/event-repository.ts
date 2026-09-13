@@ -1,4 +1,11 @@
 import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
+import { getCurrentUTC, type Pageable, pageQuery, snakeCaseToCamelCase } from "@dotkomonline/utils"
+import invariant from "tiny-invariant"
+import z from "zod"
+import { parseOrReport } from "../../invariant"
+import type { CompanyId } from "../company/company"
+import type { GroupId } from "../group/group"
+import type { UserId } from "../user/user"
 import type { AttendanceId } from "./attendance"
 import {
   type BaseEvent,
@@ -11,20 +18,19 @@ import {
   type Event,
   type EventFilterQuery,
   type EventId,
+  type EventRequest,
+  type EventRequestFilterQuery,
+  type EventRequestId,
+  EventRequestSchema,
+  type EventRequestWithEvent,
+  EventRequestWithEventSchema,
+  type EventRequestWrite,
   EventSchema,
   type EventSummary,
   EventSummarySchema,
   EventWithFeedbackFormSchema,
   type EventWrite,
 } from "./event"
-import type { CompanyId } from "../company/company"
-import type { GroupId } from "../group/group"
-import type { UserId } from "../user/user"
-import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
-import invariant from "tiny-invariant"
-import z from "zod"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 const INCLUDE_COMPANY_AND_GROUPS = {
   companies: {
@@ -106,6 +112,10 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
 
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
+
+  createEventRequest(handle: DBHandle, eventId: EventId, data: EventRequestWrite): Promise<EventRequest>
+  findEventRequestById(handle: DBHandle, eventRequestId: EventRequestId): Promise<EventRequestWithEvent | null>
+  findEventRequests(handle: DBHandle, query: EventRequestFilterQuery): Promise<EventRequestWithEvent[]>
 }
 
 export function getEventRepository(): EventRepository {
@@ -616,6 +626,80 @@ export function getEventRepository(): EventRepository {
 
         return parseOrReport(DeregisterReasonWithEventSchema, deregisterReason)
       })
+    },
+
+    async createEventRequest(handle, eventId, data) {
+      const row = await handle.eventRequest.create({
+        data: {
+          ...data,
+          eventId,
+        },
+      })
+
+      return parseOrReport(EventRequestSchema, row)
+    },
+
+    async findEventRequestById(handle, eventRequestId) {
+      const row = await handle.eventRequest.findUnique({
+        where: { id: eventRequestId },
+        include: {
+          event: {
+            include: INCLUDE_COMPANY_AND_GROUPS,
+          },
+        },
+      })
+
+      if (row === null) {
+        return null
+      }
+
+      return parseOrReport(EventRequestWithEventSchema, {
+        ...row,
+        event: {
+          ...row.event,
+          companies: row.event.companies.map((c) => c.company),
+          hostingGroups: row.event.hostingGroups.map((g) => g.group),
+        },
+      })
+    },
+
+    async findEventRequests(handle, query) {
+      const rows = await handle.eventRequest.findMany({
+        where: {
+          AND: [
+            {
+              interestGroupId:
+                query.byInterestGroupId && query.byInterestGroupId.length > 0
+                  ? {
+                      in: query.byInterestGroupId,
+                    }
+                  : undefined,
+              eventId:
+                query.byEventId && query.byEventId.length > 0
+                  ? {
+                      in: query.byEventId,
+                    }
+                  : undefined,
+            },
+          ],
+        },
+        include: {
+          event: {
+            include: INCLUDE_COMPANY_AND_GROUPS,
+          },
+        },
+      })
+
+      return rows.map((row) =>
+        parseOrReport(EventRequestWithEventSchema, {
+          ...row,
+          event: {
+            ...row.event,
+            companies: row.event.companies.map((c) => c.company),
+            hostingGroups: row.event.hostingGroups.map((g) => g.group),
+          },
+        })
+      )
     },
   }
 }
