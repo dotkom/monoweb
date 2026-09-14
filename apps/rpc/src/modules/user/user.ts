@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz"
 import { buildSearchFilter, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import type { GetUsers200ResponseOneOfInnerIdentitiesInner, ManagementClient } from "auth0"
-import { isAfter, isBefore } from "date-fns"
+import { isAfter } from "date-fns"
 import { z } from "zod"
 
 export const MembershipSpecializationSchema = z.enum([
@@ -203,11 +203,11 @@ export function isMembershipActive(
     return false
   }
 
-  if (membership.end && isBefore(membership.end, now)) {
-    return false
+  if (membership.end === null) {
+    return true
   }
 
-  return true
+  return isAfter(membership.end, now)
 }
 
 /**
