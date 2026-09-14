@@ -425,7 +425,8 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  EventRequest: 'EventRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -441,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "eventRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3553,6 +3554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EventRequest: {
+      payload: Prisma.$EventRequestPayload<ExtArgs>
+      fields: Prisma.EventRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EventRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EventRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.EventRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EventRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        findMany: {
+          args: Prisma.EventRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>[]
+        }
+        create: {
+          args: Prisma.EventRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        createMany: {
+          args: Prisma.EventRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EventRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.EventRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        update: {
+          args: Prisma.EventRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.EventRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EventRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EventRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.EventRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.EventRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEventRequest>
+        }
+        groupBy: {
+          args: Prisma.EventRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EventRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventRequestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4169,6 +4244,19 @@ export const UserFlagLinkScalarFieldEnum = {
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
+export const EventRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  rejectedAt: 'rejectedAt',
+  description: 'description',
+  interestGroupId: 'interestGroupId',
+  eventId: 'eventId'
+} as const
+
+export type EventRequestScalarFieldEnum = (typeof EventRequestScalarFieldEnum)[keyof typeof EventRequestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4745,6 +4833,7 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
+  eventRequest?: Prisma.EventRequestOmit
 }
 
 /* Types for Logging */

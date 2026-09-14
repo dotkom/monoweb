@@ -267,6 +267,10 @@ export function canCreateEvents(state: AuthorizationState): boolean {
   return state.isAdministrator || state.affiliations.size > 0
 }
 
+export function canAccessEventRequests(state: AuthorizationState): boolean {
+  return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.BACKLOG)
+}
+
 export function createAuthorizationState(
   authorization: Omit<AuthorizationState, "affiliations"> & {
     affiliations: Record<GroupId, GroupRoleType[]> | Map<GroupId, Set<GroupRoleType>>

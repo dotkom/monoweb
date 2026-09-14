@@ -195,6 +195,79 @@ export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
   userGrade: true,
 })
 
+export type EventRequest = z.infer<typeof EventRequestSchema>
+export const EventRequestSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string(),
+  interestGroupId: z.string(),
+  eventId: z.string(),
+  rejectedAt: z.date().nullable(),
+})
+
+export type EventRequestId = EventRequest["id"]
+
+export type EventRequestWithEvent = z.infer<typeof EventRequestWithEventSchema>
+export const EventRequestWithEventSchema = EventRequestSchema.extend({
+  event: EventSchema,
+})
+
+export type EventRequestWrite = z.infer<typeof EventRequestWriteSchema>
+export const EventRequestWriteSchema = EventRequestSchema.pick({
+  description: true,
+  interestGroupId: true,
+})
+
+export type RequestedEventWrite = z.infer<typeof RequestedEventWriteSchema>
+export const RequestedEventWriteSchema = EventWriteSchema.pick({
+  title: true,
+  start: true,
+  end: true,
+  description: true,
+  imageUrl: true,
+  locationTitle: true,
+  locationAddress: true,
+  locationLink: true,
+}).extend({
+  type: EventTypeSchema.extract(["OTHER", "SOCIAL"]),
+})
+
+export const EventRequestStatusSchema = z.enum(["PENDING", "APPROVED", "REJECTED"])
+export type EventRequestStatus = z.infer<typeof EventRequestStatusSchema>
+
+export const EventRequestFilterQuerySchema = z
+  .object({
+    byInterestGroupId: buildAnyOfFilter(GroupSchema.shape.slug),
+    byEventId: buildAnyOfFilter(EventSchema.shape.id),
+  })
+  .partial()
+export type EventRequestFilterQuery = z.infer<typeof EventRequestFilterQuerySchema>
+
+export function getEventRequestStatus(eventRequestWithEvent: EventRequestWithEvent): EventRequestStatus {
+  const event = eventRequestWithEvent.event
+  if (eventRequestWithEvent.rejectedAt) {
+    return "REJECTED"
+  }
+
+  if (event.status === "DRAFT") {
+    return "PENDING"
+  }
+
+  return "APPROVED"
+}
+
+export const mapEventRequestStatusToLabel = (status: EventRequestStatus) => {
+  switch (status) {
+    case "PENDING":
+      return "Venter på godkjenning"
+    case "APPROVED":
+      return "Godkjent"
+    case "REJECTED":
+      return "Avvist av administrator"
+  }
+}
+
 export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   switch (type) {
     case "SICK":

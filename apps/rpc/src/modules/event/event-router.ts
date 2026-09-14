@@ -1,28 +1,34 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { EventStatus, GroupRoleType } from "@dotkomonline/db"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, isSameSubject, or } from "../../authorization"
+import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
+import { COMMITTEE_AFFILIATIONS, CommitteeGroupSlug } from "../authorization-service"
+import { CompanySchema } from "../company/company"
+import { feedbackRouter } from "../feedback-form/feedback-router"
+import { GroupSchema } from "../group/group"
+import { UserSchema } from "../user/user"
 import { AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
+import { attendanceRouter } from "./attendance-router"
 import {
   BaseEventSchema,
   EventFilterQuerySchema,
+  EventRequestFilterQuerySchema,
+  EventRequestSchema,
+  EventRequestWithEventSchema,
+  EventRequestWriteSchema,
   EventSchema,
   type EventType,
   EventWithAttendanceSchema,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
   EventWriteSchema,
+  RequestedEventWriteSchema,
 } from "./event"
-import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
-import { CompanySchema } from "../company/company"
-import { GroupSchema } from "../group/group"
-import { UserSchema } from "../user/user"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isAdministrator, isCommitteeMember, or, isSameSubject } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
-import { feedbackRouter } from "../feedback-form/feedback-router"
-import { attendanceRouter } from "./attendance-router"
-import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
 
@@ -671,6 +677,83 @@ const createFileUploadProcedure = procedure
     return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
+export type CreateEventRequestInput = inferProcedureInput<typeof createEventRequestProcedure>
+export type CreateEventRequestOutput = inferProcedureOutput<typeof createEventRequestProcedure>
+const createEventRequestProcedure = procedure
+  .input(
+    z.object({
+      eventRequest: EventRequestWriteSchema,
+      event: RequestedEventWriteSchema,
+    })
+  )
+  .output(EventRequestSchema)
+  .use(withDatabaseTransaction())
+  .use(withAuthentication())
+  .mutation(async ({ ctx, input }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.eventRequest.interestGroupId)
+    if (group.type !== "INTEREST_GROUP") {
+      throw new UnauthorizedError(`Group(ID=${input}) is not an interest group`)
+    }
+
+    await ctx.addAuthorizationGuard(
+      or(isAdministrator(), hasGroupRole(input.eventRequest.interestGroupId, GroupRoleType.LEADER)),
+      input
+    )
+
+    const organizerGroups = new Set([group.slug, CommitteeGroupSlug.BACKLOG])
+    const eventWithoutOrganizers = await ctx.eventService.createEvent(ctx.handle, {
+      ...input.event,
+      status: EventStatus.DRAFT,
+      contestId: null,
+      markForMissedAttendance: false,
+    })
+
+    const event = await ctx.eventService.updateEventOrganizers(
+      ctx.handle,
+      eventWithoutOrganizers.id,
+      organizerGroups,
+      new Set()
+    )
+
+    return ctx.eventService.createEventRequest(ctx.handle, event.id, input.eventRequest)
+  })
+
+export type FindEventRequestsByInterestGroupIdInput = inferProcedureInput<
+  typeof findEventRequestsByInterestGroupIdProcedure
+>
+export type FindEventRequestsByInterestGroupIdOutput = inferProcedureOutput<
+  typeof findEventRequestsByInterestGroupIdProcedure
+>
+const findEventRequestsByInterestGroupIdProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .output(EventRequestWithEventSchema.array())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input)
+    if (group.type !== "INTEREST_GROUP") {
+      throw new UnauthorizedError(`Group(ID=${input}) is not an interest group`)
+    }
+
+    await ctx.addAuthorizationGuard(
+      or(isAdministrator(), hasGroupRole(input, GroupRoleType.LEADER), isGroupMember(CommitteeGroupSlug.BACKLOG)),
+      input
+    )
+
+    return ctx.eventService.findEventRequests(ctx.handle, { byInterestGroupId: [input] })
+  })
+
+export type FindEventRequestsInput = inferProcedureInput<typeof findEventRequestsProcedure>
+export type FindEventRequestsOutput = inferProcedureOutput<typeof findEventRequestsProcedure>
+const findEventRequestsProcedure = procedure
+  .input(EventRequestFilterQuerySchema)
+  .output(EventRequestWithEventSchema.array())
+  .use(withDatabaseTransaction())
+  .use(withAuthentication())
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
+  .query(async ({ input, ctx }) => {
+    return ctx.eventService.findEventRequests(ctx.handle, input)
+  })
+
 export const eventRouter = t.router({
   attendance: attendanceRouter,
   feedback: feedbackRouter,
@@ -693,4 +776,7 @@ export const eventRouter = t.router({
   findManyDeregisterReasonsWithEvent: findManyDeregisterReasonsWithEventProcedure,
   createFileUpload: createFileUploadProcedure,
   findFeaturedEvents: findFeaturedEventsProcedure,
+  createEventRequest: createEventRequestProcedure,
+  findEventRequestsByInterestGroupId: findEventRequestsByInterestGroupIdProcedure,
+  findEventRequests: findEventRequestsProcedure,
 })

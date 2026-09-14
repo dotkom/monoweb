@@ -92,7 +92,8 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  EventRequest: 'EventRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -682,6 +683,19 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
+
+
+export const EventRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  rejectedAt: 'rejectedAt',
+  description: 'description',
+  interestGroupId: 'interestGroupId',
+  eventId: 'eventId'
+} as const
+
+export type EventRequestScalarFieldEnum = (typeof EventRequestScalarFieldEnum)[keyof typeof EventRequestScalarFieldEnum]
 
 
 export const SortOrder = {
