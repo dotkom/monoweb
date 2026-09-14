@@ -151,6 +151,7 @@ export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) =
         min: now,
       },
       orderBy: "asc",
+      excludingType: [],
     },
     page: {
       take: 20,
