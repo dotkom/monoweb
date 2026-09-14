@@ -1,6 +1,7 @@
 export * from "./atoms/Badge/Badge"
 export * from "./atoms/Button/Button"
 export * from "./atoms/Checkbox/Checkbox"
+export * from "./atoms/Combobox/Combobox"
 export * from "./atoms/Textarea/Textarea"
 export * from "./atoms/Toggle/Toggle"
 export * from "./atoms/Input/TextInput"
