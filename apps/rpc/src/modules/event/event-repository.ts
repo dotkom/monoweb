@@ -97,7 +97,8 @@ export interface EventRepository {
     query: EventFilterQuery,
     offset: number,
     limit: number,
-    userId: UserId | null
+    userId: UserId | null,
+    excludeAttendedByUser?: boolean
   ): Promise<BaseEvent[]>
 
   addEventHostingGroups(handle: DBHandle, eventId: EventId, hostingGroupIds: Set<GroupId>): Promise<void>
@@ -430,7 +431,7 @@ export function getEventRepository(): EventRepository {
       return attendees.flatMap((attendee) => attendee.attendance.events.map((event) => event.id))
     },
 
-    async findFeaturedEvents(handle, query, offset, limit, userId) {
+    async findFeaturedEvents(handle, query, offset, limit, userId, excludeAttendedByUser = false) {
       const events = await handle.$queryRawTyped(
         sql.findFeaturedEvents(
           offset,
@@ -449,7 +450,8 @@ export function getEventRepository(): EventRepository {
           query.excludingOrganizingGroup ?? [],
           query.excludingType ?? ["INTERNAL"],
           query.byHasFeedbackForm ?? null,
-          userId
+          userId,
+          excludeAttendedByUser
         )
       )
 

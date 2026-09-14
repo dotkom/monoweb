@@ -400,10 +400,12 @@ const allSummariesByAttendingUserIdProcedure = procedure
 
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isViewingOwnEvents = principal.subject === id
 
-    // If the user is not staff, we exclude internal events
     let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
+    const shouldForceExcludeInternal = !isStaff && !isViewingOwnEvents && !excludingType.includes("INTERNAL")
+
+    if (shouldForceExcludeInternal) {
       excludingType = [...excludingType, "INTERNAL"]
     }
 
@@ -613,8 +615,9 @@ const findFeaturedEventsProcedure = procedure
         cursor: z.int().min(0).optional(),
         limit: z.int().min(1).max(100).default(10),
         filter: EventFilterQuerySchema.optional(),
+        excludeAttendedByUser: z.boolean().default(false),
       })
-      .default({ offset: 0, limit: 1 })
+      .default({ offset: 0, limit: 1, excludeAttendedByUser: false })
   )
   .output(
     z
@@ -643,7 +646,8 @@ const findFeaturedEventsProcedure = procedure
       },
       input.cursor ?? input.offset,
       input.limit,
-      principal?.subject ?? null
+      principal?.subject ?? null,
+      input.excludeAttendedByUser
     )
 
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(

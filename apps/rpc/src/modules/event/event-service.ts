@@ -68,7 +68,8 @@ export interface EventService {
     query: EventFilterQuery,
     offset: number,
     limit: number,
-    userId: UserId | null
+    userId: UserId | null,
+    excludeAttendedByUser?: boolean
   ): Promise<BaseEvent[]>
   /**
    * Get an event by its id
@@ -122,8 +123,8 @@ export function getEventService(
       return await eventRepository.findEventsWithUnansweredFeedbackFormByUserId(handle, userId)
     },
 
-    async findFeaturedEvents(handle, query, offset, limit, userId) {
-      return await eventRepository.findFeaturedEvents(handle, query, offset, limit, userId)
+    async findFeaturedEvents(handle, query, offset, limit, userId, excludeAttendedByUser) {
+      return await eventRepository.findFeaturedEvents(handle, query, offset, limit, userId, excludeAttendedByUser)
     },
 
     async getEventById(handle, eventId) {
