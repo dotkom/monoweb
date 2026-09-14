@@ -54,12 +54,14 @@ interface UseFeaturedEventsInfiniteQueryProps {
   filter?: EventFilterQuery
   limit?: number
   enabled?: boolean
+  excludeAttendedByUser?: boolean
 }
 
 export const useFeaturedEventsInfiniteQuery = ({
   filter,
   limit = 20,
   enabled,
+  excludeAttendedByUser = false,
 }: UseFeaturedEventsInfiniteQueryProps = {}) => {
   const trpc = useTRPC()
   const { data, ...query } = useInfiniteQuery({
@@ -68,6 +70,7 @@ export const useFeaturedEventsInfiniteQuery = ({
       cursor: 0,
       offset: 0,
       limit,
+      excludeAttendedByUser,
     }),
     getNextPageParam: (lastPage, pages) =>
       lastPage.length < limit ? undefined : pages.reduce((total, page) => total + page.length, 0),

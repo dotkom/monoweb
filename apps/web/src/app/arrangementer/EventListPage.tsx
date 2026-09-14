@@ -109,6 +109,7 @@ export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) =
     },
     limit: 20,
     enabled: isAttendanceSort && isEventListView,
+    excludeAttendedByUser: true,
   })
 
   const {

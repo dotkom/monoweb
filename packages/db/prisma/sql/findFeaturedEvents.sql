@@ -8,6 +8,7 @@
 -- @param {Boolean} $11:excludingChildEvents
 -- @param {Boolean} $16:byHasFeedbackForm?
 -- @param {String} $17:userId?
+-- @param {Boolean} $18:excludeAttendedByUser
 
 -- IMPORTANT: This expects EMPTY arrays and NOT null for array values. Giving null will break things.
 -- Array params are not in the list above due to Prisma limitations.
@@ -54,6 +55,9 @@
 --
 -- INTERNAL events are only featured for users with an active committee or node-committee membership.
 -- Anonymous viewers never see them, even if INTERNAL is omitted from excludingType.
+--
+-- When excludeAttendedByUser is true, events the viewing user is already registered for are omitted.
+-- Anonymous viewers are unaffected.
 --
 -- Events that have ended are not featured.
 
@@ -148,6 +152,18 @@ WITH
                 AND attendee.reserved = TRUE
             )
           )
+      )
+      AND (
+        NOT $18::boolean
+        OR $17::text IS NULL
+        OR event.attendance_id IS NULL
+        OR NOT EXISTS (
+          SELECT 1
+          FROM attendee
+          WHERE
+            attendee.attendance_id = event.attendance_id
+            AND attendee.user_id = $17
+        )
       )
   ),
 
