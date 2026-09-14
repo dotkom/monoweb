@@ -1,9 +1,15 @@
 "use client"
 
-import { type User, findActiveMembership, getMembershipTypeName, getGenderName } from "@dotkomonline/rpc/user"
+import {
+  type Membership,
+  type User,
+  findActiveMembership,
+  getGenderName,
+  getMembershipTypeName,
+} from "@dotkomonline/rpc/user"
 import { getStudyGrade } from "@dotkomonline/utils"
-import { Avatar, Flex, Stack, Text, Title } from "@mantine/core"
-import { IconUser } from "@tabler/icons-react"
+import { Avatar, Flex, Group, Stack, Text, Title } from "@mantine/core"
+import { IconAlertTriangle, IconUser } from "@tabler/icons-react"
 
 interface UserBoxProps {
   user: User
@@ -11,6 +17,8 @@ interface UserBoxProps {
 }
 
 export function UserBox({ user, isMobile }: UserBoxProps) {
+  const membership = findActiveMembership(user)
+
   return (
     <Stack>
       <Flex
@@ -25,9 +33,21 @@ export function UserBox({ user, isMobile }: UserBoxProps) {
         <Avatar src={user.imageUrl ?? undefined} alt={user.name ?? user.username} radius="sm" size={100}>
           <IconUser size={48} />
         </Avatar>
+
         <Stack gap={2}>
           <Title order={4}>{user.name}</Title>
-          <Text size="sm">{getMembershipDisplayText(user)}</Text>
+
+          {membership === null ? (
+            <Group gap={6}>
+              <IconAlertTriangle color="var(--mantine-color-red-filled)" size={16} />
+              <Text size="sm" c="red">
+                Har ikke aktivt medlemskap
+              </Text>
+            </Group>
+          ) : (
+            <Text size="sm">{getMembershipDisplayText(membership)}</Text>
+          )}
+
           <Text size="sm">Kjønn: {getGenderName(user.gender)}</Text>
           <Text size="sm">Kostholdsrestriksjoner: {user.dietaryRestrictions || "Ingen"}</Text>
         </Stack>
@@ -36,13 +56,7 @@ export function UserBox({ user, isMobile }: UserBoxProps) {
   )
 }
 
-function getMembershipDisplayText(user: User): string {
-  const membership = findActiveMembership(user)
-
-  if (membership === null) {
-    return "Ingen klasseinformasjon"
-  }
-
+function getMembershipDisplayText(membership: Membership): string {
   const membershipType = getMembershipTypeName(membership.type)
   const grade = membership.semester != null ? getStudyGrade(membership.semester) : null
 

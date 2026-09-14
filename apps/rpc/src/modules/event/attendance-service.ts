@@ -126,6 +126,7 @@ export const RegistrationBypassCause = {
   IGNORE_PARENT: "IGNORE_PARENT",
   IGNORE_REGISTRATION_START: "IGNORE_REGISTRATION_START",
   IGNORE_REGISTRATION_END: "IGNORE_REGISTRATION_END",
+  IGNORE_MEMBERSHIP: "IGNORE_MEMBERSHIP",
   OVERRIDDEN_POOL: "OVERRIDDEN_POOL",
   OVERRIDDEN_TURNSTILE_CHECK: "OVERRIDDEN_TURNSTILE_CHECK",
 } as const
@@ -152,7 +153,7 @@ export type RegistrationAvailabilitySuccess = {
   event: Event
   attendance: Attendance
   user: User
-  membership: Membership
+  membership: Membership | null
   /** The AttendancePool the user will be placed into based on the EventRegistrationOptions passed */
   pool: AttendancePool
   bypassedChecks: RegistrationBypassCause[]
@@ -634,7 +635,11 @@ export function getAttendanceService(
       const membership = findActiveMembership(user)
 
       if (membership === null) {
-        return registrationAvailabilityFailure(eventCause, "MISSING_MEMBERSHIP")
+        if (options.overriddenAttendancePoolId === null) {
+          return registrationAvailabilityFailure(eventCause, "MISSING_MEMBERSHIP")
+        }
+
+        bypassedChecks.push("IGNORE_MEMBERSHIP")
       }
 
       // This is a "free" check that does zero roundtrips against the database, despite having a rather large piece of
@@ -732,7 +737,7 @@ export function getAttendanceService(
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
         options.immediateReservation
 
-      const userGrade = membership.semester != null ? getStudyGrade(membership.semester) : null
+      const userGrade = membership?.semester != null ? getStudyGrade(membership.semester) : null
 
       const attendee = await attendanceRepository.createAttendee(
         handle,
@@ -1846,6 +1851,16 @@ function emitRegistrationAvailabilityDiagnostics(
       case "IGNORE_REGISTRATION_END":
         logger.info(
           "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore registration end requirement",
+          event.id,
+          event.title,
+          user.id,
+          user.name
+        )
+        continue diag
+
+      case "IGNORE_MEMBERSHIP":
+        logger.info(
+          "Registration to Event(ID=%s, Title=%s) for User(ID=%s, Name=%s) is permitted to ignore missing membership",
           event.id,
           event.title,
           user.id,

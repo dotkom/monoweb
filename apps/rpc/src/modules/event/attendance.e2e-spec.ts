@@ -671,6 +671,53 @@ describe("attendance integration tests", async () => {
     expect(attendee.reserved).toBe(true)
   })
 
+  it("should allow registering a user through admin even if they have no active membership", async () => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    const pool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+    const user = await core.userService.register(dbClient, subject)
+    expect(findActiveMembership(user)).toBeNull()
+
+    expect(
+      await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+        overrideTurnstileCheck: true,
+      })
+    ).toEqual({ success: false, eventCause: null, userCause: "MISSING_MEMBERSHIP" })
+
+    const result = await core.attendanceService.getRegistrationAvailability(dbClient, attendance.id, null, user.id, {
+      immediateReservation: true,
+      immediatePayment: false,
+      ignoreRegistrationWindow: true,
+      overriddenAttendancePoolId: pool.id,
+      ignoreRegisteredToParent: false,
+      overrideTurnstileCheck: true,
+    })
+    invariant(result.success)
+    expect(result.membership).toBeNull()
+    expect(result.bypassedChecks).toContain("IGNORE_MEMBERSHIP")
+
+    const attendee = await core.attendanceService.registerAttendee(dbClient, result)
+
+    expect(attendee.userId).toEqual(user.id)
+    expect(attendee.userGrade).toBeNull()
+    expect(attendee.reserved).toBe(true)
+  })
+
   it("should try to attend the next user in line after deregistering", async () => {
     const alphaSubject = randomUUID()
     const betaSubject = randomUUID()
