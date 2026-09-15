@@ -181,13 +181,6 @@ const EventContent = ({
             <TimeBox event={event} />
             <LocationBox event={event} />
           </div>
-
-          <Link
-            href="/innstillinger/bruker#kalender"
-            className="w-fit text-sm sm:text-xs font-normal text-muted-foreground underline-offset-4 hover:underline"
-          >
-            Vil du ha arrangementer i kalenderen?
-          </Link>
         </section>
 
         {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
