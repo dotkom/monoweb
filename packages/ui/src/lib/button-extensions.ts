@@ -10,7 +10,7 @@ export type ShadcnButtonVariant = NonNullable<VariantProps<typeof buttonVariants
 
 export type ButtonVariant = ShadcnButtonVariant | ProjectButtonVariant
 
-export const BUTTON_COLORS = ["brand", "brand-accent", "blue", "red", "dark", "gray"] as const
+export const BUTTON_COLORS = ["brand", "brand-accent", "blue", "red", "dark", "gray", "yellow"] as const
 
 export type ButtonColor = (typeof BUTTON_COLORS)[number]
 
@@ -44,6 +44,8 @@ const solid: Record<ButtonColor, string> = {
   red: "border-0 bg-red-600 text-white shadow-surface hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600",
   dark: "border-0 bg-foreground dark:bg-foreground text-background shadow-surface hover:bg-foreground/10 hover:text-foreground dark:hover:text-foreground [a]:hover:bg-foreground/10 dark:hover:bg-foreground/15 dark:[a]:hover:bg-foreground/15",
   gray: "border-0 bg-foreground/10 text-foreground shadow-none hover:bg-foreground/15 dark:bg-foreground/15 dark:hover:bg-foreground/22 aria-expanded:bg-foreground/15 aria-expanded:text-foreground",
+  yellow:
+    "border-0 bg-yellow-500 text-white shadow-surface hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700",
 }
 
 const secondary: Record<ButtonColor, string> = {
@@ -54,6 +56,7 @@ const secondary: Record<ButtonColor, string> = {
   red: "bg-red-500/8 text-red-700 hover:bg-red-500/14 dark:text-red-400 dark:hover:bg-red-500/18",
   dark: "bg-foreground/10 text-foreground hover:bg-foreground hover:text-background dark:bg-foreground/12 dark:hover:bg-foreground dark:hover:text-background",
   gray: "bg-gray-500/8 text-foreground hover:bg-gray-500/14 dark:bg-stone-600/12 dark:hover:bg-stone-600/18",
+  yellow: "bg-yellow-500/8 text-yellow-700 hover:bg-yellow-500/14 dark:text-yellow-400 dark:hover:bg-yellow-500/18",
 }
 
 const outline: Record<ButtonColor, string> = {
@@ -63,6 +66,7 @@ const outline: Record<ButtonColor, string> = {
   red: "border-destructive/25 text-destructive hover:bg-destructive/8",
   dark: "border-foreground/15 hover:bg-foreground dark:hover:bg-foreground hover:text-background dark:hover:text-background",
   gray: "border-border/50 text-foreground hover:bg-muted/60 hover:text-foreground",
+  yellow: "border-yellow-600/25 text-yellow-700 hover:bg-yellow-500/8 dark:text-yellow-400",
 }
 
 const ghost: Record<ButtonColor, string> = {
@@ -73,6 +77,8 @@ const ghost: Record<ButtonColor, string> = {
   red: "text-red-700 hover:text-red-700 dark:text-red-400 dark:hover:text-red-400 hover:bg-red-500/8 dark:hover:bg-red-500/12",
   dark: "hover:bg-foreground hover:text-background dark:hover:bg-foreground dark:hover:text-background",
   gray: "text-foreground hover:bg-muted/70 hover:text-foreground dark:hover:text-foreground dark:hover:bg-muted/80",
+  yellow:
+    "text-yellow-700 hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-400 hover:bg-yellow-500/8 dark:hover:bg-yellow-500/12",
 }
 
 export function resolveShadcnButtonVariant(variant: ButtonVariant): ShadcnButtonVariant | null {
