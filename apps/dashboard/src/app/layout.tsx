@@ -19,6 +19,7 @@ import { AuthorizationProvider } from "@/auth/authorization-context"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
+import { Toaster } from "@dotkomonline/ui"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -79,6 +80,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             </QueryProvider>
           </Auth0Provider>
         </PlausibleProvider>
+        <Toaster />
       </body>
     </html>
   )
