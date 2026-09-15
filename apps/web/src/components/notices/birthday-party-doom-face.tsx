@@ -75,11 +75,11 @@ type PoseKeyframe = {
 
 type AnimationPhase = "entering" | "idle" | "acting" | "reacting" | "exiting"
 
-const BRAGE_CLOSED_LEFT: HandPose = { src: BRAGE_HAND_CLOSED_LEFT }
-const BRAGE_CLOSED_RIGHT: HandPose = { src: BRAGE_HAND_CLOSED_RIGHT }
+const BRAGE_CLOSED_LEFT: HandPose = { src: BRAGE_HAND_CLOSED_LEFT, className: "z-2" }
+const BRAGE_CLOSED_RIGHT: HandPose = { src: BRAGE_HAND_CLOSED_RIGHT, className: "z-2" }
 
-const ANDRE_CLOSED_LEFT: HandPose = { src: ANDRE_HAND_CLOSED_LEFT, className: "top-14 right-5" }
-const ANDRE_CLOSED_RIGHT: HandPose = { src: ANDRE_HAND_CLOSED_RIGHT, className: "top-14 -left-1" }
+const ANDRE_CLOSED_LEFT: HandPose = { src: ANDRE_HAND_CLOSED_LEFT, className: "top-14 right-5 z-2" }
+const ANDRE_CLOSED_RIGHT: HandPose = { src: ANDRE_HAND_CLOSED_RIGHT, className: "top-14 -left-1 z-2" }
 
 export const BRAGE_POSES = {
   enter1: {
@@ -110,7 +110,7 @@ export const BRAGE_POSES = {
   disgusted: {
     faceSrc: BRAGE_FACE_DISGUSTED,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_NAH, className: "top-10 -left-3 z-0" },
+    rightHand: { src: BRAGE_HAND_NAH, className: "top-10 -left-3 z-2" },
   },
   disgusted2: {
     faceSrc: BRAGE_FACE_DISGUSTED_2,
@@ -125,12 +125,12 @@ export const BRAGE_POSES = {
   positive: {
     faceSrc: BRAGE_FACE_POSITIVE,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_THUMBS_UP, className: "top-10" },
+    rightHand: { src: BRAGE_HAND_THUMBS_UP, className: "top-10 z-2" },
   },
   positive2: {
     faceSrc: BRAGE_FACE_POSITIVE,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_OK, className: "top-10" },
+    rightHand: { src: BRAGE_HAND_OK, className: "top-10 z-2" },
   },
   right: {
     faceSrc: BRAGE_FACE_RIGHT,
@@ -183,12 +183,12 @@ export const ANDRE_POSES = {
   positive: {
     faceSrc: ANDRE_FACE_CURIOUS,
     leftHand: ANDRE_CLOSED_LEFT,
-    rightHand: { src: ANDRE_HAND_THUMBS_UP, className: "top-10" },
+    rightHand: { src: ANDRE_HAND_THUMBS_UP, className: "top-10 z-2" },
   },
   disgusted: {
     faceSrc: ANDRE_FACE_DISGUSTED,
     leftHand: ANDRE_CLOSED_LEFT,
-    rightHand: { src: ANDRE_HAND_NAH, className: "top-9 -left-2 z-0" },
+    rightHand: { src: ANDRE_HAND_NAH, className: "top-9 -left-2 z-2" },
   },
   left: {
     faceSrc: ANDRE_FACE_LEFT,
@@ -276,9 +276,9 @@ export function DoomFaceFrame({
 }) {
   return (
     <div aria-hidden="true" className={cn("relative h-37.5 w-43.75", className)}>
-      <div className={cn("absolute top-16 left-0 z-2", rightHandClassName)}>{rightHand}</div>
-      <div className={cn("absolute top-16 right-6 z-2", leftHandClassName)}>{leftHand}</div>
-      <div className={cn("absolute top-0 inset-x-0", faceClassName)}>{face}</div>
+      <div className={cn("absolute top-16 left-0 z-1", rightHandClassName)}>{rightHand}</div>
+      <div className={cn("absolute top-16 right-6 z-1", leftHandClassName)}>{leftHand}</div>
+      <div className={cn("absolute top-0 inset-x-0 z-0", faceClassName)}>{face}</div>
     </div>
   )
 }
@@ -288,11 +288,13 @@ export function DoomFacePose({
   poseName,
   className,
   faceClassName,
+  handsClassName,
 }: {
   character: DoomCharacter
   poseName: DoomPoseName
   className?: string
   faceClassName?: string
+  handsClassName?: string
 }) {
   const pose = getPose(character, poseName)
 
@@ -312,9 +314,9 @@ export function DoomFacePose({
       face={<DoomImage src={pose.faceSrc} size={FACE_SIZE} />}
       faceClassName={faceClassName}
       leftHand={leftHand}
-      leftHandClassName={pose.leftHand.className}
+      leftHandClassName={cn(pose.leftHand.className, handsClassName)}
       rightHand={rightHand}
-      rightHandClassName={pose.rightHand.className}
+      rightHandClassName={cn(pose.rightHand.className, handsClassName)}
     />
   )
 }
@@ -536,16 +538,14 @@ function DoomFigure({
   }, [phase])
 
   const poseNames = character === "brage" ? BRAGE_POSE_NAMES : ANDRE_POSE_NAMES
-  const faceSlideClassName = cn(SLIDE_TRANSITION_CLASS_NAME, isFaceRaised ? "translate-y-0" : "translate-y-23")
+  const figureSlideClassName = cn(SLIDE_TRANSITION_CLASS_NAME, isFigureLowered ? "translate-y-28" : "translate-y-0")
+  const faceSlideClassName = cn(
+    SLIDE_TRANSITION_CLASS_NAME,
+    isFigureLowered ? "translate-y-28" : isFaceRaised ? "translate-y-0" : "translate-y-23"
+  )
 
   return (
-    <div
-      className={cn(
-        "relative h-37.5 w-43.75 pointer-events-none select-none",
-        SLIDE_TRANSITION_CLASS_NAME,
-        isFigureLowered ? "translate-y-28" : "translate-y-0"
-      )}
-    >
+    <div className="relative h-37.5 w-43.75 pointer-events-none select-none">
       {poseNames.map((stackedPoseName) => {
         let visibilityClassName = "absolute inset-0 opacity-0"
         if (stackedPoseName === poseName) {
@@ -554,7 +554,12 @@ function DoomFigure({
 
         return (
           <div key={stackedPoseName} className={visibilityClassName}>
-            <DoomFacePose character={character} poseName={stackedPoseName} faceClassName={faceSlideClassName} />
+            <DoomFacePose
+              character={character}
+              poseName={stackedPoseName}
+              faceClassName={faceSlideClassName}
+              handsClassName={figureSlideClassName}
+            />
           </div>
         )
       })}
