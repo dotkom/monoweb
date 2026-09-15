@@ -76,6 +76,12 @@ export const GroupSchema = z.object({
 export type GroupId = Group["slug"]
 export type Group = z.infer<typeof GroupSchema>
 
+export const GroupByMemberFilterSchema = z.object({
+  includeEmailGroups: z.boolean().optional(),
+  includeEmailOnlyMemberships: z.boolean().optional(),
+})
+export type GroupByMemberFilter = z.infer<typeof GroupByMemberFilterSchema>
+
 export const GroupWriteSchema = GroupSchema.pick({
   type: true,
   name: true,
