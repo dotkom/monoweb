@@ -425,8 +425,7 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink',
-  BirthdayPartyGuess: 'BirthdayPartyGuess'
+  UserFlagLink: 'UserFlagLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -442,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "birthdayPartyGuess"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3554,80 +3553,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    BirthdayPartyGuess: {
-      payload: Prisma.$BirthdayPartyGuessPayload<ExtArgs>
-      fields: Prisma.BirthdayPartyGuessFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.BirthdayPartyGuessFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.BirthdayPartyGuessFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        findFirst: {
-          args: Prisma.BirthdayPartyGuessFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.BirthdayPartyGuessFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        findMany: {
-          args: Prisma.BirthdayPartyGuessFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>[]
-        }
-        create: {
-          args: Prisma.BirthdayPartyGuessCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        createMany: {
-          args: Prisma.BirthdayPartyGuessCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.BirthdayPartyGuessCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>[]
-        }
-        delete: {
-          args: Prisma.BirthdayPartyGuessDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        update: {
-          args: Prisma.BirthdayPartyGuessUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        deleteMany: {
-          args: Prisma.BirthdayPartyGuessDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.BirthdayPartyGuessUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.BirthdayPartyGuessUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>[]
-        }
-        upsert: {
-          args: Prisma.BirthdayPartyGuessUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$BirthdayPartyGuessPayload>
-        }
-        aggregate: {
-          args: Prisma.BirthdayPartyGuessAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateBirthdayPartyGuess>
-        }
-        groupBy: {
-          args: Prisma.BirthdayPartyGuessGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.BirthdayPartyGuessGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.BirthdayPartyGuessCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.BirthdayPartyGuessCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -4244,17 +4169,6 @@ export const UserFlagLinkScalarFieldEnum = {
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
-export const BirthdayPartyGuessScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  guess: 'guess',
-  userId: 'userId'
-} as const
-
-export type BirthdayPartyGuessScalarFieldEnum = (typeof BirthdayPartyGuessScalarFieldEnum)[keyof typeof BirthdayPartyGuessScalarFieldEnum]
-
-
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4831,7 +4745,6 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
-  birthdayPartyGuess?: Prisma.BirthdayPartyGuessOmit
 }
 
 /* Types for Logging */
