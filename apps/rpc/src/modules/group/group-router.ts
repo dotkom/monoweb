@@ -1,5 +1,6 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import {
+  GroupByMemberFilterSchema,
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
   GroupRoleTypeEnum,
@@ -34,10 +35,10 @@ const createGroupProcedure = procedure
 export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
 export type AllGroupsOutput = inferProcedureOutput<typeof allGroupsProcedure>
 const allGroupsProcedure = procedure
-  .input(z.object({ filter: z.object({ includeEmailOnly: z.boolean().optional() }).optional() }).optional())
+  .input(z.object({ filter: z.object({ includeEmailGroups: z.boolean().optional() }).optional() }).optional())
   .use(withDatabaseTransaction())
   .query(async ({ ctx, input }) =>
-    ctx.groupService.findMany(ctx.handle, { includeEmailOnly: input?.filter?.includeEmailOnly ?? false })
+    ctx.groupService.findMany(ctx.handle, { includeEmailGroups: input?.filter?.includeEmailGroups ?? false })
   )
 
 export type AllGroupsByTypeInput = inferProcedureInput<typeof allByTypeProcedure>
@@ -164,13 +165,14 @@ const allByMemberProcedure = procedure
   .input(
     z.object({
       userId: GroupMembershipSchema.shape.userId,
-      filter: z.object({ includeEmailOnly: z.boolean().optional() }).optional(),
+      filter: GroupByMemberFilterSchema.optional(),
     })
   )
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) =>
     ctx.groupService.findManyByMemberUserId(ctx.handle, input.userId, {
-      includeEmailOnly: input.filter?.includeEmailOnly ?? false,
+      includeEmailGroups: input.filter?.includeEmailGroups ?? false,
+      includeEmailOnlyMemberships: input.filter?.includeEmailOnlyMemberships ?? false,
     })
   )
 

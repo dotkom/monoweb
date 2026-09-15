@@ -18,6 +18,7 @@ import {
   GROUP_IMAGE_MAX_SIZE_KIB,
   areGroupRolesEqual,
   type GroupMembershipWriteWithRoles,
+  type GroupByMemberFilter,
 } from "./group"
 import type { UserId } from "../user/user"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
@@ -48,10 +49,10 @@ export interface GroupService {
    * @throws {NotFoundError} if the group does not exist
    */
   getBySlugAndType(handle: DBHandle, groupSlug: GroupId, groupType: GroupType): Promise<Group>
-  findMany(handle: DBHandle, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
+  findMany(handle: DBHandle, filter?: { includeEmailGroups?: boolean }): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByGroupSlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
-  findManyByMemberUserId(handle: DBHandle, userId: UserId, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
+  findManyByMemberUserId(handle: DBHandle, userId: UserId, filter?: GroupByMemberFilter): Promise<Group[]>
 
   getMember(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMember>
   findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>

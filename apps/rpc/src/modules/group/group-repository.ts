@@ -1,6 +1,7 @@
-import type { DBHandle, GroupType } from "@dotkomonline/db"
+import type { DBHandle, GroupType, Prisma } from "@dotkomonline/db"
 import {
   type Group,
+  type GroupByMemberFilter,
   type GroupId,
   type GroupMember,
   GroupMemberSchema,
@@ -27,10 +28,10 @@ export interface GroupRepository {
   findBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group | null>
   findByGroupRoleId(handle: DBHandle, groupRoleId: GroupRoleId): Promise<Group | null>
   findByGroupMembershipId(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<Group | null>
-  findMany(handle: DBHandle, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
+  findMany(handle: DBHandle, filter?: { includeEmailGroups?: boolean }): Promise<Group[]>
   findManyBySlugs(handle: DBHandle, groupSlugs: GroupId[]): Promise<Group[]>
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
-  findManyByUserId(handle: DBHandle, userId: UserId, filter?: { includeEmailOnly?: boolean }): Promise<Group[]>
+  findManyByUserId(handle: DBHandle, userId: UserId, filter?: GroupByMemberFilter): Promise<Group[]>
 
   findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
   findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
@@ -133,7 +134,7 @@ export function getGroupRepository(): GroupRepository {
     async findMany(handle, filter) {
       const groups = await handle.group.findMany({
         where: {
-          ...(filter?.includeEmailOnly ? {} : { NOT: { type: "EMAIL_ONLY" } }),
+          ...(filter?.includeEmailGroups ? {} : { NOT: { type: "EMAIL_ONLY" } }),
         },
         include: QUERY_WITH_ROLES,
       })
@@ -170,13 +171,14 @@ export function getGroupRepository(): GroupRepository {
     },
 
     async findManyByUserId(handle, userId, filter) {
+      const includeEmailGroups = filter?.includeEmailGroups ?? false
+      const includeEmailOnlyMemberships = filter?.includeEmailOnlyMemberships ?? false
+
       const groups = await handle.group.findMany({
         where: {
-          ...(filter?.includeEmailOnly ? {} : { NOT: { type: "EMAIL_ONLY" } }),
+          ...getGroupTypeFilter(includeEmailGroups),
           memberships: {
-            some: {
-              userId,
-            },
+            some: getMembershipFilterForUser(userId, includeEmailOnlyMemberships),
           },
         },
         include: {
@@ -383,3 +385,36 @@ export function getGroupRepository(): GroupRepository {
 const QUERY_WITH_ROLES = {
   roles: true,
 } as const
+
+function getGroupTypeFilter(includeEmailGroups: boolean) {
+  if (includeEmailGroups) {
+    return {} as const satisfies Prisma.GroupWhereInput
+  }
+
+  return {
+    NOT: {
+      type: "EMAIL_ONLY",
+    },
+  } as const satisfies Prisma.GroupWhereInput
+}
+
+function getMembershipFilterForUser(userId: UserId, includeEmailOnlyMemberships: boolean) {
+  if (includeEmailOnlyMemberships) {
+    return {
+      userId,
+    } as const satisfies Prisma.GroupMembershipWhereInput
+  }
+
+  return {
+    userId,
+    roles: {
+      some: {
+        role: {
+          type: {
+            not: "EMAIL_ONLY" as const,
+          },
+        },
+      },
+    },
+  } as const satisfies Prisma.GroupMembershipWhereInput
+}
