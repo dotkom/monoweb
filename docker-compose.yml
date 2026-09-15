@@ -1,7 +1,7 @@
 services:
   db:
     container_name: ow_db
-    image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+    image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
     restart: always
     environment:
       POSTGRES_PASSWORD: owpassword123
@@ -11,7 +11,7 @@ services:
       - "4010:5432"
   grades-db:
     container_name: grades_db
-    image: postgres:16-alpine@sha256:b7587f3cb74f4f4b2a4f9d67f052edbf95eb93f4fec7c5ada3792546caaf7383
+    image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
     restart: always
     environment:
       POSTGRES_PASSWORD: gradespassword123
