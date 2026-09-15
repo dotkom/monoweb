@@ -317,7 +317,7 @@ export const BirthdayPartyGuessForm = ({
 
           <AnimatedReveal isOpen={view === "submitted"}>
             <div className="flex flex-col items-start gap-3">
-              <Title className="text-base font-semibold">Du har gjettet</Title>
+              <Title className="text-base font-semibold">Antall Non Stop du har gjettet er</Title>
 
               <div className="flex flex-row items-center gap-2" aria-live="polite">
                 <Text className="text-3xl font-medium tabular-nums">{storedGuess?.guess}</Text>
