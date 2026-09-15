@@ -8,12 +8,12 @@ import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 const FACE_SIZE = 150
 const HAND_SIZE = 62.5
 
-const ENTER_HAND_FRAME_MS = 80
-const EXIT_SLIDE_MS = 480
-const HIDDEN_PAUSE_MS = secondsToMilliseconds(0.7)
-const REACTION_END_HOLD_MS = secondsToMilliseconds(1.15)
-const IDLE_ACTION_MIN_DELAY_MS = secondsToMilliseconds(2.2)
-const IDLE_ACTION_MAX_DELAY_MS = secondsToMilliseconds(5.4)
+const ENTER_HAND_FRAME_MS = 180
+const EXIT_SLIDE_MS = 1000
+const HIDDEN_PAUSE_MS = secondsToMilliseconds(1.2)
+const REACTION_END_HOLD_MS = secondsToMilliseconds(1.8)
+const IDLE_ACTION_MIN_DELAY_MS = secondsToMilliseconds(8)
+const IDLE_ACTION_MAX_DELAY_MS = secondsToMilliseconds(16)
 
 const BRAGE_FACE = "/birthday-doom/brage-face.png"
 const BRAGE_FACE_CURIOUS = "/birthday-doom/brage-face-curious.png"
@@ -52,7 +52,7 @@ const ANDRE_HAND_NAH = "/birthday-doom/andre-hand-nah.png"
 const ANDRE_HAND_THUMBS_UP = "/birthday-doom/andre-hand-thumbs-up.png"
 
 const SLIDE_TRANSITION_CLASS_NAME =
-  "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+  "transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
 
 export const DOOM_CHARACTERS = ["brage", "andre"] as const
 export type DoomCharacter = (typeof DOOM_CHARACTERS)[number]
@@ -588,39 +588,38 @@ function getPose(character: DoomCharacter, poseName: DoomPoseName): DoomPose {
 function getIdleActionSequence(actionName: string): PoseKeyframe[] {
   if (actionName === "look-around") {
     return [
-      { poseName: "left", durationMs: 420 },
-      { poseName: "idle", durationMs: 160 },
-      { poseName: "right", durationMs: 420 },
-      { poseName: "idle", durationMs: 180 },
+      { poseName: "left", durationMs: 900 },
+      { poseName: "idle", durationMs: 500 },
+      { poseName: "right", durationMs: 900 },
+      { poseName: "idle", durationMs: 400 },
     ]
   }
 
   if (actionName === "sneeze") {
     return [
-      { poseName: "sneeze", durationMs: 110 },
-      { poseName: "sneeze2", durationMs: 170 },
-      { poseName: "sneeze", durationMs: 90 },
-      { poseName: "idle", durationMs: 220 },
+      { poseName: "sneeze", durationMs: 600 },
+      { poseName: "sneeze2", durationMs: 900 },
+      { poseName: "idle", durationMs: 500 },
     ]
   }
 
   if (actionName === "curious") {
     return [
-      { poseName: "curious", durationMs: 720 },
-      { poseName: "idle", durationMs: 160 },
+      { poseName: "curious", durationMs: 1600 },
+      { poseName: "idle", durationMs: 400 },
     ]
   }
 
   if (actionName === "skeptical") {
     return [
-      { poseName: "skeptical", durationMs: 860 },
-      { poseName: "idle", durationMs: 160 },
+      { poseName: "skeptical", durationMs: 1800 },
+      { poseName: "idle", durationMs: 400 },
     ]
   }
 
   return [
-    { poseName: "uncertain", durationMs: 780 },
-    { poseName: "idle", durationMs: 160 },
+    { poseName: "uncertain", durationMs: 1600 },
+    { poseName: "idle", durationMs: 400 },
   ]
 }
 
@@ -631,29 +630,29 @@ function getReactionSequence(
   if (sentiment === "positive") {
     if (character === "brage") {
       return [
-        { poseName: "curious", durationMs: 280 },
-        { poseName: "positive", durationMs: 520 },
-        { poseName: "positive2", durationMs: 900 + REACTION_END_HOLD_MS },
+        { poseName: "curious", durationMs: 600 },
+        { poseName: "positive", durationMs: 800 },
+        { poseName: "positive2", durationMs: 1400 + REACTION_END_HOLD_MS },
       ]
     }
 
     return [
-      { poseName: "curious", durationMs: 320 },
-      { poseName: "positive", durationMs: 1100 + REACTION_END_HOLD_MS },
+      { poseName: "curious", durationMs: 700 },
+      { poseName: "positive", durationMs: 1600 + REACTION_END_HOLD_MS },
     ]
   }
 
   if (character === "brage") {
     return [
-      { poseName: "uncertain", durationMs: 220 },
-      { poseName: "disgusted", durationMs: 480 },
-      { poseName: "disgusted2", durationMs: 820 + REACTION_END_HOLD_MS },
+      { poseName: "uncertain", durationMs: 500 },
+      { poseName: "disgusted", durationMs: 800 },
+      { poseName: "disgusted2", durationMs: 1200 + REACTION_END_HOLD_MS },
     ]
   }
 
   return [
-    { poseName: "skeptical", durationMs: 320 },
-    { poseName: "disgusted", durationMs: 1100 + REACTION_END_HOLD_MS },
+    { poseName: "skeptical", durationMs: 700 },
+    { poseName: "disgusted", durationMs: 1600 + REACTION_END_HOLD_MS },
   ]
 }
 
