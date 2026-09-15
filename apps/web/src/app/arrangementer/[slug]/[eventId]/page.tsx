@@ -178,7 +178,7 @@ const EventContent = ({
           </Title>
 
           <div className="grid min-w-0 grid-cols-1 gap-x-8 gap-y-3 min-[1150px]:grid-cols-2">
-            <TimeBox event={event} />
+            <TimeBox event={event} showAddToCalendar={attendance === null} />
             <LocationBox event={event} />
           </div>
         </section>
