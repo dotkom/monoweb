@@ -78,7 +78,8 @@ export const Animated = () => {
         </div>
       </div>
       <Text className="text-sm text-muted-foreground">
-        The figure enters, idles, and reacts when you submit. After the reaction it leaves and a new one pops up.
+        The figure enters, then plays its first idle animation after a second. After 20–60 seconds it leaves so the
+        other one can come. Submit still makes it react and swap.
       </Text>
     </div>
   )

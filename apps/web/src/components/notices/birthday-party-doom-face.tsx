@@ -13,8 +13,11 @@ const ENTER_HAND_FRAME_MS = 180
 const EXIT_SLIDE_MS = 1000
 const HIDDEN_PAUSE_MS = secondsToMilliseconds(1.2)
 const REACTION_END_HOLD_MS = secondsToMilliseconds(1.8)
-const IDLE_ACTION_MIN_DELAY_MS = secondsToMilliseconds(8)
-const IDLE_ACTION_MAX_DELAY_MS = secondsToMilliseconds(16)
+const FIRST_IDLE_ACTION_DELAY_MS = secondsToMilliseconds(1)
+const IDLE_ACTION_MIN_DELAY_MS = secondsToMilliseconds(6)
+const IDLE_ACTION_MAX_DELAY_MS = secondsToMilliseconds(12)
+const VISIT_MIN_DURATION_MS = secondsToMilliseconds(20)
+const VISIT_MAX_DURATION_MS = secondsToMilliseconds(60)
 
 const BRAGE_FACE = "/birthday-doom/brage-face.png"
 const BRAGE_FACE_CURIOUS = "/birthday-doom/brage-face-curious.png"
@@ -425,7 +428,9 @@ function DoomFigure({
   const onExitCompleteRef = useRef(onExitComplete)
   const seenReactionKeyRef = useRef(reactionKey)
   const pendingReactionRef = useRef(false)
+  const pendingVisitExitRef = useRef(false)
   const previousIdleActionRef = useRef<string | null>(null)
+  const isFirstIdleActionRef = useRef(true)
 
   onExitCompleteRef.current = onExitComplete
 
@@ -459,14 +464,7 @@ function DoomFigure({
     if (prefersReducedMotion) {
       setIsFaceRaised(true)
       setPoseName("idle")
-
-      if (pendingReactionRef.current) {
-        pendingReactionRef.current = false
-        setPhase("reacting")
-        return
-      }
-
-      setPhase("idle")
+      setPhase(resolvePhaseAfterBusy(pendingReactionRef, pendingVisitExitRef))
       return
     }
 
@@ -483,14 +481,7 @@ function DoomFigure({
 
     const stopEnterSequence = playPoseSequence(ENTER_SEQUENCE, setPoseName, () => {
       setPoseName("idle")
-
-      if (pendingReactionRef.current) {
-        pendingReactionRef.current = false
-        setPhase("reacting")
-        return
-      }
-
-      setPhase("idle")
+      setPhase(resolvePhaseAfterBusy(pendingReactionRef, pendingVisitExitRef))
     })
 
     return () => {
@@ -506,7 +497,18 @@ function DoomFigure({
       return
     }
 
-    const delayMs = randomIntegerBetween(IDLE_ACTION_MIN_DELAY_MS, IDLE_ACTION_MAX_DELAY_MS)
+    if (pendingVisitExitRef.current) {
+      pendingVisitExitRef.current = false
+      setPhase("exiting")
+      return
+    }
+
+    let delayMs = randomIntegerBetween(IDLE_ACTION_MIN_DELAY_MS, IDLE_ACTION_MAX_DELAY_MS)
+
+    if (isFirstIdleActionRef.current) {
+      isFirstIdleActionRef.current = false
+      delayMs = FIRST_IDLE_ACTION_DELAY_MS
+    }
     const timeout = window.setTimeout(() => {
       setPhase((currentPhase) => {
         if (currentPhase !== "idle") {
@@ -521,6 +523,28 @@ function DoomFigure({
       window.clearTimeout(timeout)
     }
   }, [phase])
+
+  useEffect(() => {
+    const visitDurationMs = randomIntegerBetween(VISIT_MIN_DURATION_MS, VISIT_MAX_DURATION_MS)
+    const timeout = window.setTimeout(() => {
+      setPhase((currentPhase) => {
+        if (currentPhase === "reacting" || currentPhase === "exiting") {
+          return currentPhase
+        }
+
+        if (currentPhase === "entering" || currentPhase === "acting") {
+          pendingVisitExitRef.current = true
+          return currentPhase
+        }
+
+        return "exiting"
+      })
+    }, visitDurationMs)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [])
 
   useEffect(() => {
     if (phase !== "acting") {
@@ -539,7 +563,7 @@ function DoomFigure({
           return currentPhase
         }
 
-        return "idle"
+        return resolvePhaseAfterBusy(pendingReactionRef, pendingVisitExitRef)
       })
     })
   }, [character, phase])
@@ -705,6 +729,23 @@ function getReactionSequence(
     { poseName: "skeptical", durationMs: 700 },
     { poseName: "disgusted", durationMs: 1600 + REACTION_END_HOLD_MS },
   ]
+}
+
+function resolvePhaseAfterBusy(
+  pendingReactionRef: { current: boolean },
+  pendingVisitExitRef: { current: boolean }
+): AnimationPhase {
+  if (pendingReactionRef.current) {
+    pendingReactionRef.current = false
+    return "reacting"
+  }
+
+  if (pendingVisitExitRef.current) {
+    pendingVisitExitRef.current = false
+    return "exiting"
+  }
+
+  return "idle"
 }
 
 function playPoseSequence(
