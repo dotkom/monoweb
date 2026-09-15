@@ -35,6 +35,7 @@ import {
   getSendNotificationModalTitle,
   type NotificationLaunchContext,
 } from "../notification-launch-context"
+import { RecipientSelectionBuilder } from "./recipient-selection-builder"
 import { RecipientSelectionSummary } from "./recipient-selection-summary"
 
 const FormSchema = z.object({
@@ -365,9 +366,11 @@ export const SendNotificationModal: FC<ContextModalProps<NotificationLaunchConte
         )}
 
         {launchContext.kind === "GLOBAL" && (
-          <Text size="sm" c="dimmed">
-            Mottakerbyggeren kommer i et senere steg.
-          </Text>
+          <RecipientSelectionBuilder
+            value={recipientSelection}
+            onChange={setRecipientSelection}
+            type={notificationType}
+          />
         )}
 
         <Divider />
@@ -423,7 +426,7 @@ export function openSendNotificationModal(launchContext: NotificationLaunchConte
   return modals.openContextModal({
     modal: "notification/send",
     title: getSendNotificationModalTitle(launchContext),
-    size: "lg",
+    size: launchContext.kind === "GLOBAL" ? "xl" : "lg",
     innerProps: launchContext,
   })
 }
