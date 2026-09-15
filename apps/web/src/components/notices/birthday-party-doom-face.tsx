@@ -296,15 +296,9 @@ export function DoomFaceFrame({
 }) {
   return (
     <div aria-hidden="true" className={cn("relative h-37.5 w-43.75", className)}>
-      <div className={cn("pointer-events-none absolute inset-0 overflow-hidden z-1", rightHandZIndexClassName)}>
-        <div className={cn("absolute top-16 left-0", rightHandClassName)}>{rightHand}</div>
-      </div>
-      <div className={cn("pointer-events-none absolute inset-0 overflow-hidden z-1", leftHandZIndexClassName)}>
-        <div className={cn("absolute top-16 right-6", leftHandClassName)}>{leftHand}</div>
-      </div>
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <div className={faceClassName}>{face}</div>
-      </div>
+      <div className={cn("absolute top-16 left-0 z-1", rightHandZIndexClassName, rightHandClassName)}>{rightHand}</div>
+      <div className={cn("absolute top-16 right-6 z-1", leftHandZIndexClassName, leftHandClassName)}>{leftHand}</div>
+      <div className={cn("absolute top-0 inset-x-0 z-0", faceClassName)}>{face}</div>
     </div>
   )
 }

@@ -50,7 +50,7 @@ function FramePreview({ label, children }: { label: string; children: ReactNode 
   return (
     <div className="flex flex-col gap-2">
       <Text className="text-sm text-muted-foreground">{label}</Text>
-      <div className="relative max-w-md mt-22">
+      <div className="relative max-w-md mt-22 [clip-path:inset(-5.5rem_0_0_0)]">
         <div className="absolute -top-22 right-0">{children}</div>
         <div className="relative z-1 min-h-32 p-4 bg-background rounded-sm" />
       </div>
@@ -67,7 +67,7 @@ export const Animated = () => {
 
   return (
     <div className="flex flex-col gap-4 max-w-md">
-      <div className="relative mt-22">
+      <div className="relative mt-22 [clip-path:inset(-5.5rem_0_0_0)]">
         <div className="absolute -top-22 right-0">
           <BirthdayPartyDoomFace reactionKey={reactionKey} />
         </div>
