@@ -227,3 +227,8 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model BirthdayPartyGuess
+ * 
+ */
+export type BirthdayPartyGuess = Prisma.BirthdayPartyGuessModel

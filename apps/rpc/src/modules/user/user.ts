@@ -363,3 +363,13 @@ export const Auth0UserProfileAppMetadataSchema = z
   .partial()
 
 export type Auth0UserProfileAppMetadata = z.infer<typeof Auth0UserProfileAppMetadataSchema>
+
+export const BirthdayPartyGuessSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  guess: z.number(),
+  userId: z.string(),
+})
+export type BirthdayPartyGuess = z.infer<typeof BirthdayPartyGuessSchema>
+export type BirthdayPartyGuessId = BirthdayPartyGuess["id"]
