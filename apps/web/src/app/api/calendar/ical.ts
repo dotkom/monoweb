@@ -1,9 +1,9 @@
-import { env } from "@/env"
-import type { Event } from "@dotkomonline/rpc/event"
-import { richTextToPlainText, slugify } from "@dotkomonline/utils"
+import { createCalendarEvent } from "@/app/arrangementer/components/calendar-event"
 import { hoursToSeconds } from "date-fns"
-import ical, { ICalCalendarMethod, type ICalEventData } from "ical-generator"
+import ical, { ICalCalendarMethod } from "ical-generator"
 import { NextResponse } from "next/server"
+
+export { createCalendarEvent }
 
 const CALENDAR_PRODUCT_ID = {
   company: "online.ntnu.no",
@@ -13,25 +13,6 @@ const CALENDAR_PRODUCT_ID = {
 
 const CALENDAR_REFRESH_INTERVAL_SECONDS = hoursToSeconds(1)
 const CALENDAR_FEED_CACHE_MAX_AGE_SECONDS = 300
-
-/** Map a domain Event to an icalendar event */
-export function createCalendarEvent(event: Event) {
-  const url = new URL(`/arrangementer/${slugify(event.title)}/${event.id}`, env.NEXT_PUBLIC_ORIGIN)
-  const plainDescription = richTextToPlainText(event.description, null)
-  const description = event.locationLink ? `${event.locationLink}\n\n${plainDescription}` : plainDescription
-
-  return {
-    id: `${event.id}@online.ntnu.no`,
-    start: event.start,
-    end: event.end,
-    summary: event.title,
-    description,
-    location: event.locationAddress,
-    url: url.toString(),
-    created: event.createdAt,
-    lastModified: event.updatedAt,
-  } satisfies ICalEventData
-}
 
 export const CALENDAR_ISSUER = "https://online.ntnu.no"
 
