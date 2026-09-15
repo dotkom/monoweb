@@ -229,7 +229,7 @@ export const BirthdayPartyGuessForm = ({
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative [clip-path:inset(-5.5rem_0_0_0)]">
         <div className="absolute -top-22 -right-4 md:right-24 hidden min-[70rem]:block">
           <BirthdayPartyDoomFace reactionKey={doomReactionKey} />
         </div>
