@@ -1,5 +1,6 @@
 "use client"
 
+import { Link } from "@/components/link"
 import { cn } from "@dotkomonline/ui"
 import { secondsToMilliseconds } from "date-fns"
 import Image from "next/image"
@@ -56,6 +57,16 @@ const SLIDE_TRANSITION_CLASS_NAME =
 
 export const DOOM_CHARACTERS = ["brage", "andre"] as const
 export type DoomCharacter = (typeof DOOM_CHARACTERS)[number]
+
+const CHARACTER_PROFILE_HREF: Record<DoomCharacter, string> = {
+  andre: "/profil/andre",
+  brage: "/profil/dotkom",
+}
+
+const CHARACTER_PROFILE_LABEL: Record<DoomCharacter, string> = {
+  andre: "Gå til Andrés profil",
+  brage: "Gå til Brages profil",
+}
 
 type HandPose = {
   src: string | null
@@ -321,8 +332,22 @@ export function DoomFacePose({
   )
 }
 
+function preventBrowserMenu(event: { preventDefault: () => void }) {
+  event.preventDefault()
+}
+
 function DoomImage({ src, size }: { src: string; size: number }) {
-  return <Image src={src} alt="" width={size} height={size} draggable={false} unoptimized />
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={size}
+      height={size}
+      draggable={false}
+      unoptimized
+      className="pointer-events-none select-none [-webkit-user-drag:none]"
+    />
+  )
 }
 
 export function BirthdayPartyDoomFace({ reactionKey = 0 }: { reactionKey?: number }) {
@@ -545,7 +570,14 @@ function DoomFigure({
   )
 
   return (
-    <div className="relative h-37.5 w-43.75 pointer-events-none select-none">
+    <Link
+      href={CHARACTER_PROFILE_HREF[character]}
+      aria-label={CHARACTER_PROFILE_LABEL[character]}
+      draggable={false}
+      onContextMenu={preventBrowserMenu}
+      onDragStart={preventBrowserMenu}
+      className="relative block h-37.5 w-43.75 cursor-pointer pointer-events-auto select-none"
+    >
       {poseNames.map((stackedPoseName) => {
         let visibilityClassName = "absolute inset-0 opacity-0"
         if (stackedPoseName === poseName) {
@@ -563,7 +595,7 @@ function DoomFigure({
           </div>
         )
       })}
-    </div>
+    </Link>
   )
 }
 
