@@ -380,15 +380,6 @@ const getAuth0ConnectionsProcedure = procedure
     return response
   })
 
-export type GetBirthdayPartyGuessInput = inferProcedureInput<typeof getBirthdayPartyGuessProcedure>
-export type GetBirthdayPartyGuessOutput = inferProcedureOutput<typeof getBirthdayPartyGuessProcedure>
-const getBirthdayPartyGuessProcedure = procedure
-  .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return ctx.userService.getBirthdayPartyGuess(ctx.handle, ctx.principal.subject)
-  })
-
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
@@ -411,5 +402,4 @@ export const userRouter = t.router({
   mergeUsers: mergeUsersProcedure,
   hasDuplicateUser: hasDuplicateUserProcedure,
   getAuth0Connections: getAuth0ConnectionsProcedure,
-  getBirthdayPartyGuess: getBirthdayPartyGuessProcedure,
 })

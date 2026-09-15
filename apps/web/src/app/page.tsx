@@ -13,7 +13,6 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
-import { BirthdayPartyNotice } from "@/components/notices/birthday-party-notice"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -65,11 +64,6 @@ export default async function App() {
       <div className="flex flex-col gap-8">
         <AuthNotice />
         <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
-        <BirthdayPartyNotice
-          currentUserId={user?.id ?? null}
-          start={TZDate.tz("Europe/Oslo", 2026, 8, 22, 12, 0, 0)}
-          end={TZDate.tz("Europe/Oslo", 2026, 8, 25, 23, 59, 59)}
-        />
         <OnlineHero />
       </div>
 
