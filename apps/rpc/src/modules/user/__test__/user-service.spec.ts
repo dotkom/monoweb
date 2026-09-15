@@ -46,7 +46,11 @@ function makeMembership(overrides: Partial<Membership> = {}): Membership {
 }
 
 describe("UserService", () => {
-  const handle = {} as DBHandle
+  const handle = {
+    user: {
+      findFirst: vi.fn().mockResolvedValue(null),
+    },
+  } as unknown as DBHandle
 
   function createService() {
     const userRepository = mockDeep<UserRepository>()
@@ -71,8 +75,24 @@ describe("UserService", () => {
     }
   }
 
+  function mockAuth0UserGet(
+    managementClient: ReturnType<typeof createService>["managementClient"],
+    identities: Array<{ connection: string; provider: string }>,
+    overrides: Record<string, unknown> = {}
+  ) {
+    managementClient.users.get.mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+      data: {
+        identities,
+        ...overrides,
+      },
+    } as never)
+  }
+
   afterEach(() => {
     vi.clearAllMocks()
+    vi.mocked(handle.user.findFirst).mockResolvedValue(null)
   })
 
   it("syncs the submitted signup name back to Auth0 when Auth0 still uses the email as name", async () => {
@@ -143,5 +163,68 @@ describe("UserService", () => {
     expect(result).toBe(existingUser)
     expect(userRepository.update).not.toHaveBeenCalled()
     expect(managementClient.users.update).toHaveBeenCalledWith({ id: existingUser.id }, { name: existingUser.name })
+  })
+
+  it("updates contact email in the database for Feide users because Auth0 cannot change federated emails", async () => {
+    const { userRepository, managementClient, userService } = createService()
+    const feideUser = makeUser({
+      id: "oauth2|FEIDE|4ca2080c-537f-4426-bb7f-ca22b15df05a",
+      email: "old@stud.ntnu.no",
+    })
+    const newEmail = "new@example.com"
+
+    userRepository.findById.mockResolvedValue(feideUser)
+    userRepository.update.mockResolvedValue({ ...feideUser, email: newEmail })
+    mockAuth0UserGet(managementClient, [{ connection: "FEIDE", provider: "oauth2" }])
+
+    const result = await userService.requestEmailChange(handle, feideUser.id, newEmail)
+
+    expect(result).toEqual({ verificationSent: false })
+    expect(userRepository.update).toHaveBeenCalledWith(handle, feideUser.id, { email: newEmail })
+    expect(managementClient.users.update).not.toHaveBeenCalled()
+  })
+
+  it("asks Auth0 to verify the new email for database users without updating the database yet", async () => {
+    const { userRepository, managementClient, userService } = createService()
+    const databaseUser = makeUser()
+    const newEmail = "new@example.com"
+
+    userRepository.findById.mockResolvedValue(databaseUser)
+    mockAuth0UserGet(managementClient, [{ connection: "Username-Password-Authentication", provider: "auth0" }])
+    managementClient.users.update.mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+    } as never)
+
+    const result = await userService.requestEmailChange(handle, databaseUser.id, newEmail)
+
+    expect(result).toEqual({ verificationSent: true })
+    expect(userRepository.update).not.toHaveBeenCalled()
+    expect(managementClient.users.update).toHaveBeenCalledWith(
+      { id: databaseUser.id },
+      { email: newEmail, email_verified: false, verify_email: true }
+    )
+  })
+
+  it("does not overwrite a Feide user's database email when Auth0 still has the identity-provider email", async () => {
+    const { userRepository, managementClient, userService } = createService()
+    const feideUser = makeUser({
+      id: "oauth2|FEIDE|4ca2080c-537f-4426-bb7f-ca22b15df05a",
+      email: "personal@example.com",
+      memberships: [makeMembership({ userId: "oauth2|FEIDE|4ca2080c-537f-4426-bb7f-ca22b15df05a" })],
+    })
+
+    userRepository.findById.mockResolvedValue(feideUser)
+    mockAuth0UserGet(managementClient, [{ connection: "FEIDE", provider: "oauth2" }], {
+      user_id: feideUser.id,
+      email: "old@stud.ntnu.no",
+      email_verified: true,
+      name: feideUser.name,
+    })
+
+    const result = await userService.syncEmailFromAuth0(handle, feideUser.id)
+
+    expect(result).toBe(feideUser)
+    expect(userRepository.update).not.toHaveBeenCalled()
   })
 })
