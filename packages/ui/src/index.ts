@@ -44,6 +44,7 @@ export * from "./molecules/ImageUploadModal/ImageUploadModal"
 export * from "./molecules/Progress/RadialProgress"
 export * from "./molecules/Timeline/Timeline"
 export * from "./molecules/Timeline/group-timeline-entries"
+export * from "./molecules/Toast/Toast"
 
 export * from "./components/button-group"
 export * from "./components/toggle-group"
