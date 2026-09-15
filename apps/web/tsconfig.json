@@ -8,9 +8,9 @@
   ],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
+      "*": ["./*"],
       "@/*": ["./src/*"]
     },
     "incremental": true,
