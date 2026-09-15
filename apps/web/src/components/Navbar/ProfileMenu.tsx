@@ -5,6 +5,8 @@ import { Link } from "@/components/link"
 import { env } from "@/env"
 import type { AuthState } from "@/utils/authenticated-user-state"
 import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { UserRouter } from "@dotkomonline/rpc"
 import {
@@ -39,6 +41,7 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
+import { usePathname } from "next/navigation"
 import { type FC, Fragment, useState } from "react"
 import { ThemeToggle } from "./ThemeToggle"
 
@@ -225,11 +228,23 @@ type AvatarDropdownProps = {
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
   const trpc = useTRPC()
+  const { sessionUser } = useAuthenticatedUser()
 
   const isStaffResponse = useQuery({
     ...trpc.user.isStaff.queryOptions(),
     enabled: dbUser !== null,
+  })
+
+  const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
+    ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
+    enabled: sessionUser != null,
+  })
+
+  const { showNudge: showFeideLinkNudge } = useFeideLinkNudge({
+    auth0Connections,
+    auth0ConnectionsIsLoading,
   })
 
   const user = dbUser
@@ -247,6 +262,9 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
     .filter((group) => group.links.length > 0)
 
   const showFeedbackFormPing = eventsMissingFeedback && eventsMissingFeedback.length > 0
+  const isOnSettingsPage = pathname.startsWith("/innstillinger")
+  const showFeideLinkNudgeInNavbar = showFeideLinkNudge && !isOnSettingsPage
+  const showProfilePing = Boolean(showFeedbackFormPing || showFeideLinkNudgeInNavbar)
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -262,7 +280,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               <IconUser className="size-5" />
             </AvatarFallback>
           </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
+          {showProfilePing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -288,6 +306,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               <DropdownMenuGroup className="space-y-1">
                 {group.links.map((link) => {
                   const isProfile = link.href === "/profil"
+                  const isSettings = link.href === "/innstillinger/bruker"
                   const IconComponent = link.icon
 
                   return (
@@ -310,6 +329,9 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                           <div className="flex flex-row gap-2 items-center">
                             <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
                             {showFeedbackFormPing && open && isProfile && (
+                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                            )}
+                            {showFeideLinkNudgeInNavbar && open && isSettings && (
                               <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                             )}
                           </div>
