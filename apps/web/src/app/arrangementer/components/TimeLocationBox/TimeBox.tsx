@@ -8,12 +8,14 @@ import { nb } from "date-fns/locale"
 import type { FC } from "react"
 import { CalendarBox } from "@/components/atoms/CalendarBox"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
+import { EventCalendarButton } from "../EventCalendarButton"
 
 interface TimeBoxProps {
   event: Event
+  showAddToCalendar?: boolean
 }
 
-export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
+export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) => {
   const { start, end } = event
 
   const sameDay = isSameDay(start, end)
@@ -53,6 +55,12 @@ export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
           </div>
         </div>
       )}
+
+      {showAddToCalendar ? (
+        <div className="lg:ml-auto shrink-0">
+          <EventCalendarButton event={event} />
+        </div>
+      ) : null}
     </section>
   )
 }
