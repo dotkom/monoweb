@@ -24,6 +24,8 @@ import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
 import { CreateGroupMemberModal } from "@/app/(internal)/grupper/modals/create-group-member-modal"
+import { AddRecipientsModal } from "@/app/(internal)/varslinger/components/add-recipients-modal"
+import { EditNotificationModal } from "@/app/(internal)/varslinger/components/edit-notification-modal"
 import { SendNotificationModal } from "@/app/(internal)/varslinger/components/send-notification-modal"
 
 const modals = {
@@ -31,6 +33,8 @@ const modals = {
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
   "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
   "notification/send": SendNotificationModal,
+  "notification/edit": EditNotificationModal,
+  "notification/add-recipients": AddRecipientsModal,
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "jobListing/create": CreateJobListingModal,
