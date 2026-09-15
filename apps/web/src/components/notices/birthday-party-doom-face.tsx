@@ -71,6 +71,7 @@ const CHARACTER_PROFILE_LABEL: Record<DoomCharacter, string> = {
 type HandPose = {
   src: string | null
   className?: string
+  zIndexClassName?: string
 }
 
 export type DoomPose = {
@@ -86,22 +87,26 @@ type PoseKeyframe = {
 
 type AnimationPhase = "entering" | "idle" | "acting" | "reacting" | "exiting"
 
-const BRAGE_CLOSED_LEFT: HandPose = { src: BRAGE_HAND_CLOSED_LEFT, className: "z-2" }
-const BRAGE_CLOSED_RIGHT: HandPose = { src: BRAGE_HAND_CLOSED_RIGHT, className: "z-2" }
+const BRAGE_CLOSED_LEFT: HandPose = { src: BRAGE_HAND_CLOSED_LEFT, zIndexClassName: "z-2" }
+const BRAGE_CLOSED_RIGHT: HandPose = { src: BRAGE_HAND_CLOSED_RIGHT, zIndexClassName: "z-2" }
 
-const ANDRE_CLOSED_LEFT: HandPose = { src: ANDRE_HAND_CLOSED_LEFT, className: "top-14 right-5 z-2" }
-const ANDRE_CLOSED_RIGHT: HandPose = { src: ANDRE_HAND_CLOSED_RIGHT, className: "top-14 -left-1 z-2" }
+const ANDRE_CLOSED_LEFT: HandPose = { src: ANDRE_HAND_CLOSED_LEFT, className: "top-14 right-5", zIndexClassName: "z-2" }
+const ANDRE_CLOSED_RIGHT: HandPose = {
+  src: ANDRE_HAND_CLOSED_RIGHT,
+  className: "top-14 -left-1",
+  zIndexClassName: "z-2",
+}
 
 export const BRAGE_POSES = {
   enter1: {
     faceSrc: BRAGE_FACE,
-    leftHand: { src: BRAGE_HAND_OPEN_LEFT, className: "top-10 z-1" },
-    rightHand: { src: BRAGE_HAND_OPEN_RIGHT, className: "top-10 z-1" },
+    leftHand: { src: BRAGE_HAND_OPEN_LEFT, className: "top-10", zIndexClassName: "z-1" },
+    rightHand: { src: BRAGE_HAND_OPEN_RIGHT, className: "top-10", zIndexClassName: "z-1" },
   },
   enter2: {
     faceSrc: BRAGE_FACE,
-    leftHand: { src: BRAGE_HAND_HALF_LEFT, className: "top-14 z-1" },
-    rightHand: { src: BRAGE_HAND_HALF_RIGHT, className: "top-14 z-1" },
+    leftHand: { src: BRAGE_HAND_HALF_LEFT, className: "top-14", zIndexClassName: "z-1" },
+    rightHand: { src: BRAGE_HAND_HALF_RIGHT, className: "top-14", zIndexClassName: "z-1" },
   },
   enter3: {
     faceSrc: BRAGE_FACE,
@@ -121,7 +126,7 @@ export const BRAGE_POSES = {
   disgusted: {
     faceSrc: BRAGE_FACE_DISGUSTED,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_NAH, className: "top-10 -left-3 z-2" },
+    rightHand: { src: BRAGE_HAND_NAH, className: "top-10 -left-3", zIndexClassName: "z-2" },
   },
   disgusted2: {
     faceSrc: BRAGE_FACE_DISGUSTED_2,
@@ -136,12 +141,12 @@ export const BRAGE_POSES = {
   positive: {
     faceSrc: BRAGE_FACE_POSITIVE,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_THUMBS_UP, className: "top-10 z-2" },
+    rightHand: { src: BRAGE_HAND_THUMBS_UP, className: "top-10", zIndexClassName: "z-2" },
   },
   positive2: {
     faceSrc: BRAGE_FACE_POSITIVE,
     leftHand: BRAGE_CLOSED_LEFT,
-    rightHand: { src: BRAGE_HAND_OK, className: "top-10 z-2" },
+    rightHand: { src: BRAGE_HAND_OK, className: "top-10", zIndexClassName: "z-2" },
   },
   right: {
     faceSrc: BRAGE_FACE_RIGHT,
@@ -168,13 +173,13 @@ export const BRAGE_POSES = {
 export const ANDRE_POSES = {
   enter1: {
     faceSrc: ANDRE_FACE,
-    leftHand: { src: ANDRE_HAND_OPEN_LEFT, className: "top-10 right-5 z-1" },
-    rightHand: { src: ANDRE_HAND_OPEN_RIGHT, className: "top-10 -left-1 z-1" },
+    leftHand: { src: ANDRE_HAND_OPEN_LEFT, className: "top-10 right-5", zIndexClassName: "z-1" },
+    rightHand: { src: ANDRE_HAND_OPEN_RIGHT, className: "top-10 -left-1", zIndexClassName: "z-1" },
   },
   enter2: {
     faceSrc: ANDRE_FACE,
-    leftHand: { src: ANDRE_HAND_HALF_LEFT, className: "top-13 right-5 z-1" },
-    rightHand: { src: ANDRE_HAND_HALF_RIGHT, className: "top-13 -left-1 z-1" },
+    leftHand: { src: ANDRE_HAND_HALF_LEFT, className: "top-13 right-5", zIndexClassName: "z-1" },
+    rightHand: { src: ANDRE_HAND_HALF_RIGHT, className: "top-13 -left-1", zIndexClassName: "z-1" },
   },
   enter3: {
     faceSrc: ANDRE_FACE,
@@ -194,12 +199,12 @@ export const ANDRE_POSES = {
   positive: {
     faceSrc: ANDRE_FACE_CURIOUS,
     leftHand: ANDRE_CLOSED_LEFT,
-    rightHand: { src: ANDRE_HAND_THUMBS_UP, className: "top-10 z-2" },
+    rightHand: { src: ANDRE_HAND_THUMBS_UP, className: "top-10", zIndexClassName: "z-2" },
   },
   disgusted: {
     faceSrc: ANDRE_FACE_DISGUSTED,
     leftHand: ANDRE_CLOSED_LEFT,
-    rightHand: { src: ANDRE_HAND_NAH, className: "top-9 -left-2 z-2" },
+    rightHand: { src: ANDRE_HAND_NAH, className: "top-9 -left-2", zIndexClassName: "z-2" },
   },
   left: {
     faceSrc: ANDRE_FACE_LEFT,
@@ -276,6 +281,8 @@ export function DoomFaceFrame({
   faceClassName,
   leftHandClassName,
   rightHandClassName,
+  leftHandZIndexClassName,
+  rightHandZIndexClassName,
 }: {
   face: ReactNode
   leftHand: ReactNode
@@ -284,12 +291,20 @@ export function DoomFaceFrame({
   faceClassName?: string
   leftHandClassName?: string
   rightHandClassName?: string
+  leftHandZIndexClassName?: string
+  rightHandZIndexClassName?: string
 }) {
   return (
     <div aria-hidden="true" className={cn("relative h-37.5 w-43.75", className)}>
-      <div className={cn("absolute top-16 left-0 z-1", rightHandClassName)}>{rightHand}</div>
-      <div className={cn("absolute top-16 right-6 z-1", leftHandClassName)}>{leftHand}</div>
-      <div className={cn("absolute top-0 inset-x-0 z-0", faceClassName)}>{face}</div>
+      <div className={cn("pointer-events-none absolute inset-0 overflow-hidden z-1", rightHandZIndexClassName)}>
+        <div className={cn("absolute top-16 left-0", rightHandClassName)}>{rightHand}</div>
+      </div>
+      <div className={cn("pointer-events-none absolute inset-0 overflow-hidden z-1", leftHandZIndexClassName)}>
+        <div className={cn("absolute top-16 right-6", leftHandClassName)}>{leftHand}</div>
+      </div>
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <div className={faceClassName}>{face}</div>
+      </div>
     </div>
   )
 }
@@ -300,12 +315,14 @@ export function DoomFacePose({
   className,
   faceClassName,
   handsClassName,
+  handsZIndexClassName,
 }: {
   character: DoomCharacter
   poseName: DoomPoseName
   className?: string
   faceClassName?: string
   handsClassName?: string
+  handsZIndexClassName?: string
 }) {
   const pose = getPose(character, poseName)
 
@@ -326,8 +343,10 @@ export function DoomFacePose({
       faceClassName={faceClassName}
       leftHand={leftHand}
       leftHandClassName={cn(pose.leftHand.className, handsClassName)}
+      leftHandZIndexClassName={cn(pose.leftHand.zIndexClassName, handsZIndexClassName)}
       rightHand={rightHand}
       rightHandClassName={cn(pose.rightHand.className, handsClassName)}
+      rightHandZIndexClassName={cn(pose.rightHand.zIndexClassName, handsZIndexClassName)}
     />
   )
 }
@@ -569,6 +588,11 @@ function DoomFigure({
     isFigureLowered ? "translate-y-28" : isFaceRaised ? "translate-y-0" : "translate-y-23"
   )
 
+  let exitingHandZIndexClassName: string | undefined
+  if (isFigureLowered) {
+    exitingHandZIndexClassName = "z-1"
+  }
+
   return (
     <Link
       href={CHARACTER_PROFILE_HREF[character]}
@@ -591,6 +615,7 @@ function DoomFigure({
               poseName={stackedPoseName}
               faceClassName={faceSlideClassName}
               handsClassName={figureSlideClassName}
+              handsZIndexClassName={exitingHandZIndexClassName}
             />
           </div>
         )
