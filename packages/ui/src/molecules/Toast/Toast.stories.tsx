@@ -1,37 +1,64 @@
-import { Toast } from "./Toast"
+import { IconBreadOff, IconThumbDown, IconThumbUp } from "@tabler/icons-react"
+import { Button } from "../../atoms/Button/Button"
+import { toast, Toaster } from "../../components/toast"
 
 export default {
   title: "Toast",
 }
 
-export const Danger = () => <Toast status="danger">Uh oh!</Toast>
+export const Default = () => {
+  function showToast() {
+    const id = toast.add({
+      title: "Arrangement opprettet",
+      description: "Søndag, 3. desember klokken 9:00",
+      actionProps: {
+        children: <Button variant="ghost" size="icon-sm" icon={<IconBreadOff />} />,
+        onClick() {
+          toast.close(id)
+        },
+      },
+    })
+  }
 
-export const ColorlessDanger = () => (
-  <Toast status="danger" monochrome={true}>
-    Uh oh!
-  </Toast>
-)
+  return (
+    <>
+      <Button variant="outline" onClick={showToast}>
+        Vis Toast
+      </Button>
+      <Toaster />
+    </>
+  )
+}
 
-export const Success = () => <Toast status="success">Uh oh!</Toast>
+export const WithPromise = () => {
+  function showToast(succeed: boolean) {
+    toast.promise(
+      new Promise<{ name: string }>((resolve, reject) => {
+        window.setTimeout(() => {
+          if (succeed) {
+            resolve({ name: "Arrangement" })
+          } else {
+            reject(new Error("Kunne ikke opprette arrangement."))
+          }
+        }, 2000)
+      }),
+      {
+        loading: "Oppretter arrangement…",
+        success: (data) => `${data.name} opprettet.`,
+        error: "Kunne ikke opprette arrangement.",
+      }
+    )
+  }
 
-export const ColorlessSuccess = () => (
-  <Toast status="success" monochrome={true}>
-    Uh oh!
-  </Toast>
-)
-
-export const Warning = () => <Toast status="warning">Uh oh!</Toast>
-
-export const ColorlessWarning = () => (
-  <Toast status="warning" monochrome={true}>
-    Uh oh!
-  </Toast>
-)
-
-export const Info = () => <Toast status="info">Uh oh!</Toast>
-
-export const ColorlessInfo = () => (
-  <Toast status="info" monochrome={true}>
-    Uh oh!
-  </Toast>
-)
+  return (
+    <>
+      <Button variant="outline" onClick={() => showToast(true)}>
+        Opprett arrangement <IconThumbUp />
+      </Button>
+      <Button variant="outline" onClick={() => showToast(false)}>
+        Opprett arrangement <IconThumbDown />
+      </Button>
+      <Toaster />
+    </>
+  )
+}
