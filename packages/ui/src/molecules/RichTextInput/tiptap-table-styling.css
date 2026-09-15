@@ -1,0 +1,50 @@
+.ProseMirror table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  vertical-align: top;
+  position: relative;
+  box-sizing: border-box;
+  min-width: 5rem;
+  line-height: 1.5;
+}
+
+.ProseMirror .selectedCell {
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+}
+
+.ProseMirror td > *,
+.ProseMirror th > * {
+  margin-bottom: 0;
+}
+
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  transform: translateX(50%);
+  width: 3px;
+  background-color: var(--primary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.resize-cursor {
+  cursor: col-resize;
+}
