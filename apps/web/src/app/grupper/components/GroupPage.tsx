@@ -79,9 +79,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
     return notFound()
   }
 
-  // We do not show members for ASSOCIATED types because they often have members outside Online, meaning the member list
-  // would be incomplete.
-  const showMembers = group.type !== "ASSOCIATED" && group.memberVisibility !== "NONE"
+  const showMembers = group.memberVisibility !== "NONE"
 
   const members = showMembers ? await server.group.getMembers.query(slug) : new Map<UserId, GroupMember>()
 
