@@ -42,7 +42,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="no" suppressHydrationWarning className="scroll-smooth">
+    <html lang="no" suppressHydrationWarning className="scroll-smooth" data-scroll-behavior="smooth">
       <body
         className={cn(
           fontTitle.variable,
