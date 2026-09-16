@@ -25,6 +25,7 @@ export * from "./atoms/Video/Video"
 export * from "./atoms/Tilt/Tilt"
 export * from "./atoms/Stripes/Stripes"
 export * from "./atoms/Drawer/Drawer"
+export * from "./atoms/InputGroup/InputGroup"
 
 export * from "./molecules/Accordion/Accordion"
 export * from "./molecules/Alert/Alert"
