@@ -2,8 +2,8 @@
 
 import { Checkbox as ShadcnCheckbox } from "#components/checkbox"
 import type { ComponentProps, ReactNode } from "react"
-import { Label } from "../Label/Label"
 import { cn } from "../../utils"
+import { Label } from "../Label/Label"
 
 export type CheckboxProps = ComponentProps<typeof ShadcnCheckbox> & {
   label?: ReactNode
