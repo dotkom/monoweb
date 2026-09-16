@@ -3,6 +3,7 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import {
   type Company,
+  type CompanyFilterQuery,
   type CompanyId,
   type CompanySlug,
   type CompanyWrite,
@@ -29,7 +30,7 @@ export interface CompanyService {
    * @throws {NotFoundError} if the company does not exist
    */
   getBySlug(handle: DBHandle, companySlug: CompanySlug): Promise<Company>
-  findMany(handle: DBHandle, page: Pageable): Promise<Company[]>
+  findMany(handle: DBHandle, filter: CompanyFilterQuery, page: Pageable): Promise<Company[]>
   create(handle: DBHandle, data: CompanyWrite): Promise<Company>
   /**
    * Update an existing company
@@ -72,8 +73,8 @@ export function getCompanyService(
       return company
     },
 
-    async findMany(handle, page) {
-      return await companyRepository.findMany(handle, page)
+    async findMany(handle, filter, page) {
+      return await companyRepository.findMany(handle, filter, page)
     },
 
     async create(handle, payload) {

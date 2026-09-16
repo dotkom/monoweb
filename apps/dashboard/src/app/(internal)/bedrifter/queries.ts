@@ -1,12 +1,24 @@
 import { useTRPC } from "@/lib/trpc-client"
-import type { Company, CompanyId, CompanySlug } from "@dotkomonline/rpc/company"
-import { useQuery } from "@tanstack/react-query"
+import type { CompanyFilterQuery, CompanyId, CompanySlug } from "@dotkomonline/rpc/company"
+import type { Pageable } from "@dotkomonline/utils"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
-export const useCompanyAllQuery = () => {
+interface UseCompanyAllInfiniteQueryProps {
+  filter: CompanyFilterQuery
+  page: Pageable
+}
+
+export const useCompanyAllInfiniteQuery = ({ filter, page }: UseCompanyAllInfiniteQueryProps) => {
   const trpc = useTRPC()
-  const { data: companies, ...query } = useQuery({ ...trpc.company.all.queryOptions({ take: 999 }), initialData: [] })
-  return { companies: companies as Company[], ...query }
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.company.findMany.infiniteQueryOptions({ filter, ...page }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  })
+
+  const companies = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
+
+  return { companies, ...query }
 }
 
 export const useCompanyEventsAllQuery = (id: CompanyId) => {
