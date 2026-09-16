@@ -3,6 +3,7 @@
 import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import { formatCompactTimeUntil } from "@/utils/countdown/formatCompactTimeUntil"
 import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
+import { useAttendanceClock } from "@/utils/countdown/use-attendance-clock"
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import {
   type Attendance,
@@ -13,9 +14,8 @@ import {
   getReservedAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconCheck, IconCircleDashedCheck, IconCoins, IconLock, IconPennant, IconUsers } from "@tabler/icons-react"
-import { formatDistanceToNow, interval, isAfter, isFuture, isWithinInterval } from "date-fns"
+import { formatDistance, interval, isAfter, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
@@ -42,7 +42,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   size = "default",
   classNames,
 }) => {
-  const now = getCurrentUTC()
+  const now = useAttendanceClock(attendance)
   const attendanceStatus = getAttendanceStatus(attendance, now)
   const isReserved = attendee?.reserved === true
   const isUnreserved = attendee?.reserved === false
@@ -53,7 +53,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   const showLock =
     !eventEndInPast &&
-    (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
+    (isReserved || isUnreserved ? !isAfter(attendance.deregisterDeadline, now) : attendanceStatus === "CLOSED")
 
   const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -148,12 +148,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             </TooltipTrigger>
             <TooltipContent>
               <Text suppressHydrationWarning>
-                Påmeldingen åpner{" "}
-                {formatDistanceToNow(attendance.registerStart, {
-                  locale: nb,
-                  addSuffix: true,
-                })}
-                .
+                Påmeldingen åpner {formatDistance(attendance.registerStart, now, { locale: nb, addSuffix: true })}.
               </Text>
             </TooltipContent>
           </Tooltip>
