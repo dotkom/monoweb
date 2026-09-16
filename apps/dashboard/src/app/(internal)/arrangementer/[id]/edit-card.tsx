@@ -1,10 +1,10 @@
+import { useCompanyAllInfiniteQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
-import type { FC } from "react"
+import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { Stack } from "@mantine/core"
-import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
+import type { FC } from "react"
 import { useEventEditForm } from "../components/edit-form"
 import { ParentEventCard } from "../components/parent-event-card"
-import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { useUpdateEventMutation } from "../mutations"
 import { useEventContext } from "./provider"
 
@@ -13,7 +13,7 @@ export const EventEditCard: FC = () => {
   const { canEdit } = useEventEditPermission()
   const edit = useUpdateEventMutation()
   const { groups } = useGroupAllQuery()
-  const { companies } = useCompanyAllQuery()
+  const { companies } = useCompanyAllInfiniteQuery({ page: { take: 1000 }, filter: {} })
 
   const defaultValues = {
     ...event,

@@ -1,3 +1,4 @@
+import { buildSearchFilter, createSortOrder } from "@dotkomonline/utils"
 import { z } from "zod"
 
 export const CompanySchema = z.object({
@@ -32,3 +33,20 @@ export const CompanyWriteSchema = CompanySchema.pick({
 export type CompanyWrite = z.infer<typeof CompanyWriteSchema>
 
 export const COMPANY_IMAGE_MAX_SIZE_KIB = 5 * 1024
+
+export type CompanyFilterSort = z.infer<typeof CompanyFilterSortSchema>
+export const CompanyFilterSortSchema = CompanySchema.pick({
+  name: true,
+  createdAt: true,
+}).keyof()
+
+export const COMPANY_FILTER_SORT_DEFAULT = CompanyFilterSortSchema.enum.name
+
+export type CompanyFilterQuery = z.infer<typeof CompanyFilterQuerySchema>
+export const CompanyFilterQuerySchema = z
+  .object({
+    bySearchTerm: buildSearchFilter(),
+    orderBy: createSortOrder(),
+    sortBy: CompanyFilterSortSchema.default(COMPANY_FILTER_SORT_DEFAULT),
+  })
+  .partial()
