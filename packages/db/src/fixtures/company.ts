@@ -6,7 +6,7 @@ export const getCompanyFixtures = () =>
       createdAt: new Date("2023-02-28 17:23:45.329666+00"),
       name: "Bekk",
       slug: "bekk",
-      description: "Et konsulentselskap som forøvrig er hovedsponsor for Online Linjeforening",
+      description: "Et konsulentselskap som forøvrig var hovedsponsor for Online Linjeforening",
       phone: "+47 123 45 678",
       email: "bekk@bekk.no",
       website: "https://bekk.no",

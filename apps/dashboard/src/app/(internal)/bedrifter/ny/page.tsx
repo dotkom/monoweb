@@ -1,14 +1,10 @@
 "use client"
 
-import { useCompanyWriteForm } from "../components/write-form"
+import { CompanyWriteForm } from "../CompanyWriteForm"
 import { useCreateCompanyMutation } from "../mutations"
 
 export default function Page() {
   const create = useCreateCompanyMutation()
-  const FormComponent = useCompanyWriteForm({
-    onSubmit: (data) => {
-      create.mutate(data)
-    },
-  })
-  return <FormComponent />
+
+  return <CompanyWriteForm onSubmit={create.mutate} submitLabel="Registrer ny bedrift" />
 }

@@ -40,6 +40,7 @@ export const useEditCompanyMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+  const router = useRouter()
 
   return useMutation(
     trpc.company.edit.mutationOptions({
@@ -56,6 +57,9 @@ export const useEditCompanyMutation = () => {
         })
 
         await queryClient.invalidateQueries(trpc.company.getBySlug.queryOptions(data.slug))
+
+        queryClient.setQueryData(trpc.company.getBySlug.queryOptions(data.slug).queryKey, data)
+        router.replace(`/bedrifter/${data.slug}`)
       },
       onError: (err) => {
         notification.fail({

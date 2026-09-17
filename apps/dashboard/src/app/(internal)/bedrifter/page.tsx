@@ -1,25 +1,38 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
-import { Box, Button, Skeleton, Stack } from "@mantine/core"
+import type { CompanyFilterQuery } from "@dotkomonline/rpc/company"
+import { Button } from "@dotkomonline/ui"
 import Link from "next/link"
-import { useCompanyTable } from "./components/use-company-table"
+import { useState } from "react"
+import { CompanyFilters } from "./CompanyFilters"
+import { CompanyTable } from "./CompanyTable"
 import { useCompanyAllInfiniteQuery } from "./queries"
 
 export default function CompanyPage() {
-  const { companies, isLoading: isCompaniesLoading } = useCompanyAllInfiniteQuery({ page: { take: 1000 }, filter: {} })
-  const table = useCompanyTable({ data: companies })
+  const [filter, setFilter] = useState<CompanyFilterQuery>({
+    orderBy: "asc",
+    sortBy: "name",
+  })
+
+  const { companies, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useCompanyAllInfiniteQuery({
+      filter,
+    })
 
   return (
-    <Skeleton visible={isCompaniesLoading}>
-      <Stack>
-        <Box>
-          <Button component={Link} href="/bedrifter/ny">
-            Ny bedrift
-          </Button>
-        </Box>
-        <GenericTable table={table} />
-      </Stack>
-    </Skeleton>
+    <div className="flex flex-col gap-2">
+      <Button variant="default" className="w-fit" element={Link} href="/bedrifter/ny">
+        Ny bedrift
+      </Button>
+      <CompanyFilters onChange={setFilter} defaultValues={filter} />
+      <CompanyTable
+        companies={companies}
+        isLoading={isLoading}
+        isPlaceholderData={isPlaceholderData}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+      />
+    </div>
   )
 }
