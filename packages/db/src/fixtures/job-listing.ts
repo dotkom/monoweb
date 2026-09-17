@@ -19,7 +19,7 @@ export const getJobListingFixtures = (companyIds: string[]) =>
       companyId: companyIds[0],
       title: "Job at Bekk",
       shortDescription: "Join us at Bekk!",
-      description: "Et konsulentselskap som forøvrig er hovedsponsor for Online Linjeforening",
+      description: "I din stilling skal du jobbe for at vi skal bli en elv",
       start: lastYear, // Placeholder date
       end: nextYear, // Placeholder date
       featured: true, // Placeholder value

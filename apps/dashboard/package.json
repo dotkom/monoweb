@@ -66,6 +66,7 @@
     "react-zxing": "^2.1.0",
     "require-in-the-middle": "^8.0.1",
     "superjson": "^2.0.0",
+    "use-debounce": "^10.1.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {

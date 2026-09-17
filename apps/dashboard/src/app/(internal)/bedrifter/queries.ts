@@ -1,38 +1,42 @@
 import { useTRPC } from "@/lib/trpc-client"
 import type { CompanyFilterQuery, CompanyId, CompanySlug } from "@dotkomonline/rpc/company"
 import type { Pageable } from "@dotkomonline/utils"
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
 interface UseCompanyAllInfiniteQueryProps {
   filter: CompanyFilterQuery
-  page: Pageable
+  page?: Pageable
 }
 
 export const useCompanyAllInfiniteQuery = ({ filter, page }: UseCompanyAllInfiniteQueryProps) => {
   const trpc = useTRPC()
   const { data, ...query } = useInfiniteQuery({
     ...trpc.company.findMany.infiniteQueryOptions({ filter, ...page }),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (data) => data.pages.flatMap((page) => page.items),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    placeholderData: keepPreviousData,
   })
 
-  const companies = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data])
+  const companies = useMemo(() => data ?? [], [data])
 
   return { companies, ...query }
 }
 
-export const useCompanyEventsAllQuery = (id: CompanyId) => {
+export const useCompanyEventsAllInfiniteQuery = (id: CompanyId) => {
   const trpc = useTRPC()
-  const { data, ...query } = useQuery({
-    ...trpc.event.all.queryOptions({
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.event.all.infiniteQueryOptions({
       filter: {
         byOrganizingCompany: [id],
         excludingType: [],
       },
     }),
+    select: (data) => data.pages.flatMap((page) => page.items),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
   })
 
-  const events = useMemo(() => data?.items ?? [], [data])
+  const events = useMemo(() => data ?? [], [data])
 
   return { events, ...query }
 }
