@@ -1,6 +1,6 @@
 import { useEventFileUploadMutation } from "@/app/(internal)/arrangementer/mutations"
 import { validateEventOrganizers, validateEventWrite } from "@/app/(internal)/arrangementer/validation"
-import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
+import { useCompanyAllInfiniteQuery } from "@/app/(internal)/bedrifter/queries"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
@@ -70,7 +70,7 @@ interface UseEventWriteFormProps {
 
 export const useEventWriteForm = ({ onSubmit, disabled }: UseEventWriteFormProps) => {
   const { groups } = useGroupAllQuery()
-  const { companies } = useCompanyAllQuery()
+  const { companies } = useCompanyAllInfiniteQuery({ page: { take: 1000 }, filter: {} })
   const { contests } = useContestFindManyQuery()
 
   const uploadFile = useEventFileUploadMutation()

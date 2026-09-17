@@ -1,11 +1,11 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { CompanySchema, CompanyWriteSchema } from "./company"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { CompanyFilterQuerySchema, CompanySchema, CompanyWriteSchema } from "./company"
 
 export type CreateCompanyInput = inferProcedureInput<typeof createCompanyProcedure>
 export type CreateCompanyOutput = inferProcedureOutput<typeof createCompanyProcedure>
@@ -36,12 +36,20 @@ const editCompanyProcedure = procedure
     return ctx.companyService.update(ctx.handle, input.id, input.input)
   })
 
-export type AllCompaniesInput = inferProcedureInput<typeof allCompaniesProcedure>
-export type AllCompaniesOutput = inferProcedureOutput<typeof allCompaniesProcedure>
-const allCompaniesProcedure = procedure
-  .input(PaginateInputSchema)
+export type FindManyCompaniesInput = inferProcedureInput<typeof findManyCompaniesProcedure>
+export type FindManyCompaniesOutput = inferProcedureOutput<typeof findManyCompaniesProcedure>
+const findManyCompaniesProcedure = procedure
+  .input(BasePaginateInputSchema.extend({ filter: CompanyFilterQuerySchema.optional() }).prefault({}))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.findMany(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    const { filter, ...page } = input
+    const companies = await ctx.companyService.findMany(ctx.handle, { ...filter }, page)
+
+    return {
+      items: companies,
+      nextCursor: companies.at(-1)?.id,
+    }
+  })
 
 export type FindCompanyByIdInput = inferProcedureInput<typeof findCompanyByIdProcedure>
 export type FindCompanyByIdOutput = inferProcedureOutput<typeof findCompanyByIdProcedure>
@@ -90,7 +98,7 @@ const createCompanyFileUploadProcedure = procedure
 export const companyRouter = t.router({
   create: createCompanyProcedure,
   edit: editCompanyProcedure,
-  all: allCompaniesProcedure,
+  findMany: findManyCompaniesProcedure,
   findById: findCompanyByIdProcedure,
   getById: getCompanyByIdProcedure,
   findBySlug: findCompanyBySlugProcedure,
