@@ -1,0 +1,84 @@
+.ProseMirror img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin: 0;
+}
+
+.ProseMirror img:hover {
+  cursor: grab;
+}
+
+.ProseMirror img:active {
+  cursor: grabbing;
+}
+
+.ProseMirror [data-resize-state] {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.ProseMirror [data-resize-state] > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+.ProseMirror .ProseMirror-selectednode img {
+  outline: 2px solid var(--primary);
+}
+
+.ProseMirror [data-resize-handle] {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  cursor: pointer;
+  opacity: 0;
+}
+
+.ProseMirror .ProseMirror-selectednode ~ [data-resize-handle],
+.ProseMirror .ProseMirror-selectednode [data-resize-handle] {
+  opacity: 1;
+}
+
+.ProseMirror [data-resize-handle="top-left"] {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+
+.ProseMirror [data-resize-handle="top-right"] {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+
+.ProseMirror [data-resize-handle="bottom-left"] {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, -25%);
+  cursor: nesw-resize;
+}
+
+.ProseMirror [data-resize-handle="bottom-right"] {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, -25%);
+  cursor: nwse-resize;
+}
+
+.ProseMirror [data-resize-state] > img:hover {
+  cursor: grab;
+}
+
+.ProseMirror [data-resize-state] > img:active {
+  cursor: grabbing;
+}
