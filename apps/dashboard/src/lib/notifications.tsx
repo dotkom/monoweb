@@ -1,62 +1,48 @@
 import type { AppRouter } from "@dotkomonline/rpc"
-import { notifications } from "@mantine/notifications"
-import { IconCheck, IconLoader2, IconMoodSadDizzy } from "@tabler/icons-react"
+import { toast, type ToastType } from "@dotkomonline/ui"
 import type { TRPCClientErrorLike } from "@trpc/client"
-import type { ReactNode } from "react"
 import { useState } from "react"
 
 export interface NotificationProps {
   title: string
   message: string
   id?: string
-  method?: "show" | "update"
+  method?: "add" | "update"
   autoClose?: number | false
 }
 
-interface NotificationConfig {
-  color: string
-  icon: ReactNode
-  loading?: boolean
-  autoClose?: number | false
-}
+type NotifyProps =
+  | { method?: "add"; id?: string; title: string; message: string; autoClose?: number | false }
+  | { method: "update"; id: string; title: string; message: string; autoClose?: number | false }
 
 // Factory function to create a notification method
-// Defaults to showing a notification
+// Defaults to adding a notification
 const createNotificationMethod =
-  (config: NotificationConfig) =>
-  ({ title, message, id, method: _method, autoClose }: NotificationProps) => {
-    const method = _method ?? "show"
+  (type: ToastType) =>
+  ({ title, message, id, method, autoClose }: NotifyProps) => {
+    if (method === "update") {
+      return toast.update(id, {
+        type,
+        title,
+        description: message,
+        timeout: getTimeout(autoClose),
+      })
+    }
 
-    return notifications[method]({
-      ...config,
+    return toast.add({
+      type,
       title,
-      message,
+      description: message,
+      timeout: getTimeout(autoClose),
       id,
-      autoClose,
     })
   }
 
-// Notification configurations
-const notificationConfigs: Record<string, NotificationConfig> = {
-  fail: {
-    color: "red",
-    icon: <IconMoodSadDizzy />,
-    autoClose: false, // Never auto close failed notifications
-  },
-  success: {
-    color: "green",
-    icon: <IconCheck />,
-  },
-  loading: {
-    color: "blue",
-    icon: <IconLoader2 />,
-    loading: true,
-  },
-  complete: {
-    color: "green",
-    icon: <IconCheck />,
-    loading: false,
-  },
+const notificationConfigs: Record<string, ToastType> = {
+  fail: "error",
+  success: "success",
+  loading: "loading",
+  complete: "success",
 }
 
 export const useQueryNotification = () => {
@@ -66,7 +52,7 @@ export const useQueryNotification = () => {
   const fail = createNotificationMethod(notificationConfigs.fail)
 
   return {
-    loading: (props: NotificationProps) => loading({ ...props, id, method: "show" }),
+    loading: (props: NotificationProps) => loading({ ...props, id, method: "add" }),
     complete: (props: NotificationProps) => complete({ ...props, id, method: "update" }),
     fail: (props: NotificationProps) => fail({ ...props, id, method: "update" }),
   }
@@ -112,7 +98,7 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
         title: notificationText.loading,
         message: "",
         id,
-        method: "show",
+        method: "add",
       }),
     complete: () =>
       complete({
@@ -132,20 +118,55 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
   }
 }
 
-export const notifyLoading = (props: NotificationProps) =>
-  notifications[props.method ?? "show"]({
-    ...props,
-    ...notificationConfigs.loading,
-  })
+export const notifyLoading = (props: NotifyProps) => {
+  if (props.method === "update") {
+    return toast.update(props.id, {
+      ...props,
+      type: notificationConfigs.loading,
+      timeout: getTimeout(props.autoClose),
+    })
+  }
 
-export const notifyComplete = (props: NotificationProps) =>
-  notifications[props.method ?? "show"]({
+  return toast.add({
     ...props,
-    ...notificationConfigs.complete,
+    type: notificationConfigs.loading,
+    timeout: getTimeout(props.autoClose),
   })
+}
 
-export const notifyFail = (props: NotificationProps) =>
-  notifications[props.method ?? "show"]({
+export const notifyComplete = (props: NotifyProps) => {
+  if (props.method === "update") {
+    return toast.update(props.id, {
+      ...props,
+      type: notificationConfigs.complete,
+      timeout: getTimeout(props.autoClose),
+    })
+  }
+
+  return toast.add({
     ...props,
-    ...notificationConfigs.fail,
+    type: notificationConfigs.complete,
+    timeout: getTimeout(props.autoClose),
   })
+}
+
+export const notifyFail = (props: NotifyProps) => {
+  if (props.method === "update") {
+    return toast.update(props.id, {
+      ...props,
+      type: notificationConfigs.fail,
+      timeout: getTimeout(props.autoClose),
+    })
+  }
+
+  return toast.add({
+    ...props,
+    type: notificationConfigs.fail,
+    timeout: getTimeout(props.autoClose),
+  })
+}
+
+function getTimeout(autoClose: number | false | undefined) {
+  // Timeout of 0 means the notification will never close automatically
+  return autoClose === false ? 0 : autoClose
+}
