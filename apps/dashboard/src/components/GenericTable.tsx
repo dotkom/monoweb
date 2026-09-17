@@ -1,9 +1,10 @@
 import { Card, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core"
+import { cn } from "@dotkomonline/ui"
 import { useInViewport } from "@mantine/hooks"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { type Row, type Table as ReactTable, flexRender } from "@tanstack/react-table"
 import { type CSSProperties, useEffect } from "react"
-import { getTableColumnStyle } from "@/components/table-column-meta"
+import { getTableColumnClassName } from "@/components/table-column-classes"
 
 export interface GenericTableProps<T> {
   readonly table: ReactTable<T>
@@ -33,10 +34,11 @@ export function GenericTable<T>({ table, filterable, onLoadMore, getRowStyle, ge
                   <TableTh
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
+                    className={cn(
+                      getTableColumnClassName(header.column.columnDef.meta),
+                      filterable && header.column.getCanSort() && "cursor-pointer select-none"
+                    )}
                     style={{
-                      ...getTableColumnStyle(header.column.columnDef.meta),
-                      cursor: filterable && header.column.getCanSort() ? "pointer" : undefined,
-                      userSelect: filterable && header.column.getCanSort() ? "none" : undefined,
                       backgroundColor: "var(--mantine-color-default)",
                     }}
                   >
@@ -70,8 +72,8 @@ export function GenericTable<T>({ table, filterable, onLoadMore, getRowStyle, ge
                 {row.getVisibleCells().map((cell, columnIndex) => (
                   <TableTd
                     key={cell.id}
+                    className={getTableColumnClassName(cell.column.columnDef.meta, true)}
                     style={{
-                      ...getTableColumnStyle(cell.column.columnDef.meta, true),
                       ...getCellStyle?.(row, columnIndex),
                     }}
                   >
