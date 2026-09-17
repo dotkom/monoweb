@@ -14,7 +14,7 @@ import {
   useComboboxAnchor,
 } from "../Combobox/Combobox"
 
-type TagInputProps = {
+export type TagInputProps = {
   data: string[]
   value: string[]
   onChange: (value: string[]) => void
