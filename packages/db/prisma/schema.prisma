@@ -630,6 +630,9 @@ enum TaskStatus {
   COMPLETED @map("COMPLETED")
   FAILED    @map("FAILED")
   CANCELED  @map("CANCELED")
+  /// Task ran, but the payload subject no longer exists, so it was skipped rather than marked as failed.
+  /// For example, an attendee deregistered before VERIFY_PAYMENT task executed.
+  SKIPPED   @map("SKIPPED")
 
   @@map("task_status")
 }

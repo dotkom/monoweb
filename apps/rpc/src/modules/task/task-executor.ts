@@ -1,15 +1,15 @@
-import PQueue from "p-queue"
-import { clearInterval, type setInterval } from "node:timers"
 import type { DBClient, Prisma, PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Task } from "./task"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
+import { clearInterval, type setInterval } from "node:timers"
+import PQueue from "p-queue"
 import type { Configuration } from "../../configuration"
-import { IllegalStateError } from "../../error"
+import { IllegalStateError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
+import type { Task } from "./task"
 import {
   type ChargeAttendeeTaskDefinition,
   type InferTaskData,
@@ -44,7 +44,7 @@ export function getLocalTaskExecutor(
   logger.warn("TaskExecutor started with local (postgres) backend")
 
   async function processTask(client: PrismaClient, task: Task): Promise<void> {
-    let isError = false
+    let outcome: "completed" | "failed" | "skipped" = "completed"
 
     // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
     // as running regardless of whether the child transaction commits or rollbacks.
@@ -94,10 +94,10 @@ export function getLocalTaskExecutor(
               )
 
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
-              return await attendanceService.executeSendFeedbackFormLinkEmails(handle)
+              return await attendanceService.executeSendFeedbackFormLinkEmailsRecurringTask(handle)
 
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
-              return await attendanceService.executeVerifyAttendeeAttendedTask(handle)
+              return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(handle)
           }
 
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
@@ -107,7 +107,20 @@ export function getLocalTaskExecutor(
           )
         })
       } catch (error: unknown) {
-        isError = true
+        const isSkippedError = error instanceof TaskSkippedError
+
+        // If the task was skipped we don't capture the error, as it is just the reason why the task was skipped.
+        if (isSkippedError) {
+          outcome = "skipped"
+
+          logger.warn("Job with ID=%s skipped: %o", task.id, error)
+          await taskService.setTaskExecutionStatus(client, task.id, "SKIPPED", "RUNNING")
+          span.setStatus({ code: SpanStatusCode.OK })
+
+          return
+        }
+
+        outcome = "failed"
 
         // Mark the job as failed using the client, so that regardless of whether the child transaction commits or not,
         // status is updated accordingly.
@@ -123,12 +136,12 @@ export function getLocalTaskExecutor(
       } finally {
         // If nothing failed, we mark the job as completed. The reason this is in a finally block is to ensure that
         // regardless of whether the job execution was successful or not, we always update the job status.
-        if (!isError) {
+        if (outcome === "completed") {
           await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
           logger.info("Job with ID=%s completed successfully", task.id)
-        } else {
           span.setStatus({ code: SpanStatusCode.OK })
         }
+
         span.end()
       }
     })
