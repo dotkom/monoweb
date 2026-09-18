@@ -163,7 +163,8 @@ export const TaskStatus = {
   RUNNING: 'RUNNING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
-  CANCELED: 'CANCELED'
+  CANCELED: 'CANCELED',
+  SKIPPED: 'SKIPPED'
 } as const
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
