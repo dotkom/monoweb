@@ -329,7 +329,7 @@ model AttendancePool {
   attendanceId String     @map("attendance_id")
   taskId       String?    @map("task_id")
   attendance   Attendance @relation(fields: [attendanceId], references: [id])
-  task         Task?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task         Task?      @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   attendees Attendee[]
 
