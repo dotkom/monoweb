@@ -119,10 +119,6 @@ jobs:
   build-dashboard:
     name: dashboard
     runs-on: ubuntu-24.04-arm
-    needs:
-      - verify-quality-checks
-      - test-integration
-      - verify-monoweb-prisma-generate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -139,10 +135,6 @@ jobs:
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm
-    needs:
-      - verify-quality-checks
-      - test-integration
-      - verify-monoweb-prisma-generate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -159,10 +151,6 @@ jobs:
   build-web:
     name: web
     runs-on: ubuntu-24.04-arm
-    needs:
-      - verify-quality-checks
-      - test-integration
-      - verify-monoweb-prisma-generate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -179,10 +167,6 @@ jobs:
   build-grades-backend:
     name: grades-backend
     runs-on: ubuntu-24.04-arm
-    needs:
-      - verify-quality-checks
-      - test-integration
-      - verify-grades-prisma-generate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -199,10 +183,6 @@ jobs:
   build-grades-frontend:
     name: grades-frontend
     runs-on: ubuntu-24.04-arm
-    needs:
-      - verify-quality-checks
-      - test-integration
-      - verify-grades-prisma-generate
     steps:
       - name: Install local GitHub Actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
