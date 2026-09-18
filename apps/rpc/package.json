@@ -48,6 +48,10 @@
       "import": "./src/modules/mark/mark.ts",
       "types": "./src/modules/mark/mark.ts"
     },
+    "./notification": {
+      "import": "./src/modules/notification/notification.ts",
+      "types": "./src/modules/notification/notification.ts"
+    },
     "./workspace": {
       "import": "./src/modules/workspace-sync/workspace.ts",
       "types": "./src/modules/workspace-sync/workspace.ts"
