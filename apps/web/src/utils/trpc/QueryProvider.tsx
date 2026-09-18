@@ -11,9 +11,11 @@ import {
   httpBatchLink,
   httpSubscriptionLink,
   loggerLink,
+  retryLink,
   splitLink,
 } from "@trpc/client"
 import { minutesToMilliseconds } from "date-fns"
+import { EventSourcePolyfill } from "event-source-polyfill"
 import {
   type Dispatch,
   type PropsWithChildren,
@@ -43,6 +45,19 @@ let recoveryRedirectScheduled = false
 
 // Deduplicate parallel client-side access token fetches into one in-flight request.
 let accessTokenRequest: Promise<string> | null = null
+
+function scheduleRecoveryRedirect(error: unknown): void {
+  if (!isAccessTokenFetchFailure(error) || recoveryRedirectScheduled) {
+    return
+  }
+
+  recoveryRedirectScheduled = true
+  window.location.assign(
+    createClearSessionUrl({
+      returnTo: toAbsoluteUrl(window.location.origin, `${window.location.pathname}${window.location.search}`),
+    })
+  )
+}
 
 async function fetchSharedAccessToken(): Promise<string | undefined> {
   if (accessTokenRequest === null) {
@@ -80,10 +95,37 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         }),
         splitLink({
           condition: (op) => op.type === "subscription",
-          true: httpSubscriptionLink({
-            transformer: superjson,
-            url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
-          }),
+          true: [
+            retryLink({
+              retry: ({ error }) => {
+                const errorCode = error.data?.code
+
+                return errorCode === "UNAUTHORIZED" || errorCode === "FORBIDDEN"
+              },
+            }),
+            httpSubscriptionLink({
+              transformer: superjson,
+              url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
+              EventSource: EventSourcePolyfill,
+              eventSourceOptions: async () => {
+                try {
+                  const token = await fetchSharedAccessToken()
+
+                  if (token !== undefined) {
+                    return {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  }
+                } catch (error) {
+                  scheduleRecoveryRedirect(error)
+                }
+
+                return {}
+              },
+            }),
+          ],
           false: httpBatchLink({
             transformer: superjson,
             url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
@@ -97,17 +139,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
                   headers.set("Authorization", `Bearer ${token}`)
                 }
               } catch (error) {
-                if (isAccessTokenFetchFailure(error) && recoveryRedirectScheduled === false) {
-                  recoveryRedirectScheduled = true
-                  window.location.assign(
-                    createClearSessionUrl({
-                      returnTo: toAbsoluteUrl(
-                        window.location.origin,
-                        `${window.location.pathname}${window.location.search}`
-                      ),
-                    })
-                  )
-                }
+                scheduleRecoveryRedirect(error)
               }
 
               return fetch(url, {
