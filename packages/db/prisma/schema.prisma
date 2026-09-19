@@ -124,7 +124,6 @@ model User {
   contestants           Contestant[]
   contestTeams          ContestTeam[]           @relation("ContestTeamMember")
   userFlagLinks         UserFlagLink[]
-  birthdayPartyGuess    BirthdayPartyGuess?
 
   @@map("ow_user")
 }
@@ -987,16 +986,4 @@ model UserFlagLink {
   userFlag   UserFlag @relation(fields: [userFlagId], references: [id], onDelete: Cascade)
 
   @@map("user_flag_link")
-}
-
-model BirthdayPartyGuess {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  guess     Int      @map("guess")
-
-  userId String @unique @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("birthday_party_guess")
 }

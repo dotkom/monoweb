@@ -40,7 +40,6 @@ import {
   GenderSchema,
   type UserFlagWithUsers,
   type UserFlagWrite,
-  type BirthdayPartyGuess,
 } from "./user"
 
 export interface UserService {
@@ -141,9 +140,6 @@ export interface UserService {
     userId: UserId,
     createdByUserId: UserId
   ): Promise<PresignedPost>
-
-  getBirthdayPartyGuess(handle: DBHandle, userId: UserId): Promise<BirthdayPartyGuess | null>
-  updateBirthdayPartyGuess(handle: DBHandle, userId: UserId, guess: number): Promise<BirthdayPartyGuess>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -911,14 +907,6 @@ export function getUserService(
         contentType,
         createdByUserId,
       })
-    },
-
-    async getBirthdayPartyGuess(handle, userId) {
-      return userRepository.findBirthdayPartyGuessByUserId(handle, userId)
-    },
-
-    async updateBirthdayPartyGuess(handle, userId, guess) {
-      return userRepository.upsertBirthdayPartyGuess(handle, userId, guess)
     },
   }
 }
