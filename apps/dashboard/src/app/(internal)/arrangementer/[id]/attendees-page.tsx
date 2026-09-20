@@ -8,7 +8,7 @@ import type { FC } from "react"
 import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
 import { AllAttendeesTable } from "../components/all-attendees-table"
 import { openManualCreateUserAttendModal } from "../components/manual-create-user-attend-modal"
-import { openNotifyAttendeesModal } from "../components/notify-attendees-modal"
+import { openEventNotificationModal } from "@/app/(internal)/varslinger/components/send-notification-modal"
 import { QrCodeScanner } from "../components/qr-code-scanner"
 import { useEventFeedbackFormGetQuery, useFeedbackAnswersGetQuery } from "../queries"
 import { useEventContext } from "./provider"
@@ -46,10 +46,10 @@ const Page: FC<Props> = ({ event, attendance, feedbackAnswers }) => {
           <Group>
             <Button
               variant="light"
-              disabled={attendees.length === 0 || !canEdit}
-              onClick={() => openNotifyAttendeesModal({ eventId: event.id, attendees })}
+              disabled={attendance.attendees.length === 0 || !canEdit}
+              onClick={() => openEventNotificationModal(event, attendance)}
             >
-              Send e-post til alle
+              Send melding til påmeldte
             </Button>
           </Group>
           {attendeesWithoutEmail.length > 0 && (
