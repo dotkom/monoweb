@@ -10,6 +10,7 @@ import { env } from "@/lib/env"
 import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconAlertTriangleFilled,
+  IconBell,
   IconCalendarEvent,
   IconCreditCard,
   IconForms,
@@ -93,6 +94,12 @@ export default function EventWithAttendancesLayout({
       href: `${basePath}/pameldte`,
       label: "Påmeldte",
       icon: IconUser,
+      disabled: !hasAttendance,
+    },
+    {
+      href: `${basePath}/varsler`,
+      label: "Varsler",
+      icon: IconBell,
       disabled: !hasAttendance,
     },
     {
