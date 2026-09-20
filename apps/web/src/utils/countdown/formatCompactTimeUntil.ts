@@ -1,41 +1,67 @@
 import { type FormatDistanceFn, formatDistanceStrict, isAfter, type Locale } from "date-fns"
 import { nb } from "date-fns/locale"
 
-const formatCompactDistance: FormatDistanceFn = (token, count) => {
+const formatCompactDistance: FormatDistanceFn = (token, count, options) => {
+  let result: string
+
   switch (token) {
     case "xSeconds": {
-      return ">1 min"
+      result = "<1m"
+      break
     }
 
     case "xMinutes": {
-      return `${count} min`
+      result = `${count}m`
+      break
     }
 
     case "xHours": {
-      return `${count}t`
+      result = `${count}t`
+      break
     }
 
     case "xDays": {
-      return `${count}d`
+      result = `${count}d`
+      break
     }
 
     case "xMonths": {
-      return `${count} mnd`
+      result = `${count} mnd`
+      break
     }
 
     case "xYears": {
-      return `${count} år`
+      result = `${count} år`
+      break
     }
 
     default: {
-      return nb.formatDistance(token, count)
+      return nb.formatDistance(token, count, options)
     }
   }
+
+  if (options?.addSuffix) {
+    if (options.comparison && options.comparison > 0) {
+      return `om ${result}`
+    }
+
+    return `${result} siden`
+  }
+
+  return result
 }
 
-const locale: Locale = {
+export const compactNbLocale: Locale = {
   ...nb,
   formatDistance: formatCompactDistance,
+}
+
+export function formatCompactDistanceToNow(date: Date, now: Date = new Date()): string {
+  return formatDistanceStrict(date, now, {
+    addSuffix: true,
+    locale: compactNbLocale,
+    roundingMethod: "round",
+  })
 }
 
 export function formatCompactTimeUntil(date: Date, now: Date = new Date()): string {
@@ -44,7 +70,7 @@ export function formatCompactTimeUntil(date: Date, now: Date = new Date()): stri
   }
 
   return formatDistanceStrict(date, now, {
-    locale,
+    locale: compactNbLocale,
     roundingMethod: "round",
   })
 }
