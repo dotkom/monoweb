@@ -48,6 +48,7 @@
   --shadow-overlay: var(--overlay-shadow);
   --shadow-popover: var(--popover-shadow);
   --shadow-surface: var(--surface-shadow);
+  --radius-xs: calc(var(--radius) * 0.4);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

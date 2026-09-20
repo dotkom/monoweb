@@ -79,7 +79,7 @@ export function LegendSwatch({ label, variant }: { label: string; variant: "prim
     <div className="flex items-center gap-2">
       <span
         className={cn(
-          "h-3 w-2.5 shrink-0 rounded-xs",
+          "h-3 w-2.5 shrink-0 rounded-[2px]",
           variant === "primary" ? "bg-primary" : "bg-primary/20 dark:bg-primary/35"
         )}
         aria-hidden
