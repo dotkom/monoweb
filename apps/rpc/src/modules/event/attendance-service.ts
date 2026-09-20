@@ -1409,7 +1409,7 @@ export function getAttendanceService(
             details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
             // We do not have a method for indefinite duration yet.
             duration: 100_000,
-            title: "Suspensjon for mangelende betaling",
+            title: "Suspensjon for manglende betaling",
             type: "MISSING_PAYMENT",
             // Immediate suspension
             weight: 6,
