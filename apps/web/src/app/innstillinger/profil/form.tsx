@@ -337,6 +337,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
           <Button
             type="submit"
             className="w-fit"
+            variant="default"
             disabled={isUserFetching || Boolean(fetchedUser && fetchedUser.id !== user.id) || !isDirty}
           >
             Oppdater

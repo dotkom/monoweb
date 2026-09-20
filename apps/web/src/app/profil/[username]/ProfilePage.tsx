@@ -4,14 +4,15 @@ import { EventList } from "@/app/arrangementer/components/EventList"
 import { useEventAllSummariesByAttendingUserIdInfiniteQuery } from "@/app/arrangementer/components/queries"
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
+import { Link } from "@/components/link"
 import { EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { MembershipDisplay } from "@/components/molecules/MembershipDisplay/MembershipDisplay"
 import { env } from "@/env"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
 import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
+import type { VisiblePersonalMarkDetails } from "@dotkomonline/rpc/mark"
 import { findActiveMembership, getGenderName, getMembershipTypeName } from "@dotkomonline/rpc/user"
 import {
   Avatar,
@@ -55,7 +56,6 @@ import {
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
 import { nb } from "date-fns/locale"
-import { Link } from "@/components/link"
 import { notFound, redirect, useParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
@@ -430,12 +430,14 @@ export function ProfilePage() {
                   href={`/tilbakemelding/${event.id}`}
                   className="flex flex-row items-center gap-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700 transition-colors"
                 >
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <Text className="text-lg wrap-break-word">{event.title}</Text>
-                    <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
-                      Gi tilbakemelding på {event.title} som du deltok på{" "}
-                      {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
-                    </Text>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-0.5 min-w-0">
+                      <Text className="text-lg wrap-break-word">{event.title}</Text>
+                      <Text className="text-sm text-wrap overflow-hidden line-clamp-2">
+                        Gi tilbakemelding på {event.title} som du deltok på{" "}
+                        {formatDate(event.start, "dd. MMM yyyy", { locale: nb })}
+                      </Text>
+                    </div>
                     <Text className="text-sm text-red-400">
                       Fristen for å svare er{" "}
                       {formatDate(event.feedbackForm.answerDeadline, "dd. MMM yyyy HH:mm", { locale: nb })}
