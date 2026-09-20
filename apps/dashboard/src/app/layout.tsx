@@ -19,6 +19,7 @@ import { AuthorizationProvider } from "@/auth/authorization-context"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
+import "../globals.css"
 
 setDateFnsDefaultOptions({ locale: nb })
 
