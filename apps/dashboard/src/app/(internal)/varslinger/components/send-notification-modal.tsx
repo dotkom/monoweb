@@ -38,6 +38,7 @@ import { z } from "zod"
 import { useCreateNotificationMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 import { EventAttendeeRecipientFilters } from "./event-attendee-recipient-filters"
+import { RecipientSelectionBuilder } from "./recipient-selection"
 
 const FormSchema = z.object({
   title: z.string().min(1, "Tittel er påkrevd").max(120),
@@ -399,9 +400,11 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
         )}
 
         {source.kind === "GLOBAL" && (
-          <Text size="sm" c="dimmed">
-            Mottakerbyggeren kommer i et senere steg.
-          </Text>
+          <RecipientSelectionBuilder
+            value={recipientSelection}
+            onChange={setRecipientSelection}
+            type={notificationType}
+          />
         )}
 
         {source.kind === "EVENT" && (
@@ -434,16 +437,18 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
 
         <Divider />
 
-        <Group justify="space-between" align="center">
-          {recipientSelection === null && (
+        <Group justify={source.kind === "GLOBAL" ? "flex-end" : "space-between"} align="center">
+          {source.kind !== "GLOBAL" && recipientSelection === null && (
             <Text size="sm" c="dimmed">
               Legg til minst én mottakergruppe
             </Text>
           )}
 
-          {recipientSelection !== null && isPreviewPending && <Skeleton height={16} width={160} />}
+          {source.kind !== "GLOBAL" && recipientSelection !== null && isPreviewPending && (
+            <Skeleton height={16} width={160} />
+          )}
 
-          {recipientSelection !== null && !isPreviewPending && (
+          {source.kind !== "GLOBAL" && recipientSelection !== null && !isPreviewPending && (
             <Text size="sm" c="dimmed">
               {formatRecipientCountLabel(recipientCount)}
             </Text>
