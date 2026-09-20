@@ -9,6 +9,7 @@ import { EditPoolModal } from "@/app/(internal)/arrangementer/components/edit-po
 import { AlreadyAttendedModal } from "@/app/(internal)/arrangementer/components/error-attendance-registered-modal"
 import { ManualCreateUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-create-user-attend-modal"
 import { ManualDeleteUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-delete-user-attend-modal"
+import { NotifyAttendeesModal } from "@/app/(internal)/arrangementer/components/notify-attendees-modal"
 import { CreateGroupModal } from "@/app/(internal)/grupper/modals/create-group-modal"
 import { CreateGroupRoleModal } from "@/app/(internal)/grupper/modals/create-group-role-modal"
 import { EditGroupMembershipModal } from "@/app/(internal)/grupper/modals/edit-group-membership-modal"
@@ -32,6 +33,7 @@ const modals = {
   "event/attendance/attendee/create": ManualCreateUserAttendModal,
   "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
   "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
+  "event/attendance/notify-attendees": NotifyAttendeesModal,
   "notification/send": SendNotificationModal,
   "notification/edit": EditNotificationModal,
   "notification/add-recipients": AddRecipientsModal,
