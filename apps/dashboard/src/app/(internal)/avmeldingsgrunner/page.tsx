@@ -1,18 +1,27 @@
 "use client"
 
-import { Skeleton, Stack, Title } from "@mantine/core"
-import { DeregisterReasonsTable } from "./deregister-reasons-table"
+import { Title } from "@dotkomonline/ui"
+import { DeregisterReasonTable } from "./DeregisterReasonTable"
 import { useDeregisterReasonWithEventAllInfiniteQuery } from "./queries"
 
 export default function DeregisterReasonPage() {
-  const { deregisterReasons, isLoading, fetchNextPage } = useDeregisterReasonWithEventAllInfiniteQuery()
+  const { deregisterReasons, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useDeregisterReasonWithEventAllInfiniteQuery()
 
   return (
-    <Stack>
-      <Title>Avmeldingsgrunner</Title>
-      <Skeleton visible={isLoading}>
-        <DeregisterReasonsTable data={deregisterReasons} onLoadMore={fetchNextPage} />
-      </Skeleton>
-    </Stack>
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="text-4xl">
+        Avmeldingsgrunner
+      </Title>
+
+      <DeregisterReasonTable
+        deregisterReasons={deregisterReasons}
+        isLoading={isLoading}
+        isPlaceholderData={isPlaceholderData}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+      />
+    </div>
   )
 }

@@ -6,15 +6,18 @@ import { useMemo } from "react"
 export const useDeregisterReasonWithEventAllInfiniteQuery = (page?: Pageable) => {
   const trpc = useTRPC()
 
-  const { data: deregisterReasons, ...query } = useInfiniteQuery({
+  const { data, ...query } = useInfiniteQuery({
     ...trpc.event.findManyDeregisterReasonsWithEvent.infiniteQueryOptions({
       ...page,
     }),
+    select: (data) => data.pages.flatMap((page) => page.items),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
+  const deregisterReasons = useMemo(() => data ?? [], [data])
+
   return {
-    deregisterReasons: useMemo(() => deregisterReasons?.pages.flatMap((page) => page.items) ?? [], [deregisterReasons]),
+    deregisterReasons,
     ...query,
   }
 }
