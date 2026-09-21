@@ -86,6 +86,10 @@ export function getArticleRepository(): ArticleRepository {
                 },
               },
             }),
+          ...(query.byIsFeatured !== null &&
+            query.byIsFeatured !== undefined && {
+              isFeatured: query.byIsFeatured,
+            }),
         },
         include: QUERY_WITH_TAGS,
         ...pageQuery(page),

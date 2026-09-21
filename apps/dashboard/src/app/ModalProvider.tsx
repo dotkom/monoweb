@@ -1,6 +1,5 @@
 "use client"
 
-import { CreateArticleModal } from "@/app/(internal)/artikler/modals/create-article"
 import { AttendanceRegisteredModal } from "@/app/(internal)/arrangementer/components/attendance-registered-modal"
 import { CreateAttendanceSelectionsModal } from "@/app/(internal)/arrangementer/components/create-event-selections-modal"
 import { CreatePoolModal } from "@/app/(internal)/arrangementer/components/create-pool-modal"
@@ -43,7 +42,6 @@ const modals = {
   "offline/create": CreateOfflineModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,
   "attendance/selections/update": UpdateAttendanceSelectionsModal,
-  "article/create": CreateArticleModal,
   "group/create": CreateGroupModal,
   "group/role/create": CreateGroupRoleModal,
   "group/role/update": EditGroupRoleModal,

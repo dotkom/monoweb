@@ -1,12 +1,29 @@
 import { useTRPC } from "@/lib/trpc-client"
-import { useQuery } from "@tanstack/react-query"
+import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
+import type { Pageable } from "@dotkomonline/utils"
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
 
-export const useArticleAllQuery = () => {
+export const useArticleBySlugQuery = (slug: string) => {
   const trpc = useTRPC()
-  const { data: articles, ...query } = useQuery({
-    ...trpc.article.all.queryOptions({ take: 999 }),
-    initialData: [],
+  return useQuery({
+    ...trpc.article.getBySlug.queryOptions(slug),
   })
+}
+
+export const useArticleAllInfiniteQuery = ({ filter, page }: { filter: ArticleFilterQuery; page?: Pageable }) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.article.findArticles.infiniteQueryOptions({
+      filters: filter,
+      ...page,
+    }),
+    select: (data) => data.pages.flatMap((page) => page.items),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    placeholderData: keepPreviousData,
+  })
+
+  const articles = useMemo(() => data ?? [], [data])
 
   return { articles, ...query }
 }
