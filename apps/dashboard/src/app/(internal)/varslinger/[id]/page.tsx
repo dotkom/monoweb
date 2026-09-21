@@ -1,6 +1,8 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
 import { useTRPC } from "@/lib/trpc-client"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
@@ -35,18 +37,6 @@ import { NotificationRecipientsTable } from "../components/notification-recipien
 import { useDeleteNotificationMutation } from "../mutations"
 import { useNotificationRecipientStatsQuery, useNotificationRecipientsInfiniteQuery } from "../queries"
 import { useNotificationDetailsContext } from "./provider"
-
-function canManageNotification(
-  notification: NotificationManagement,
-  isAdministrator: boolean,
-  isGroupMember: (groupSlug: string) => boolean
-): boolean {
-  if (notification.actorGroupId === null) {
-    return isAdministrator
-  }
-
-  return isGroupMember(notification.actorGroupId)
-}
 
 function getActorGroupLabel(actorGroup: NotificationManagement["actorGroup"]): string {
   if (actorGroup === null) {
@@ -128,8 +118,8 @@ export default function NotificationDetailsPage() {
   const router = useRouter()
   const trpc = useTRPC()
   const { notification } = useNotificationDetailsContext()
-  const { isAdministrator, isGroupMember } = useAuthorization()
-  const canManage = canManageNotification(notification, isAdministrator, isGroupMember)
+  const { canManageNotification } = useAuthorization()
+  const canManage = canManageNotification(notification.actorGroupId)
   const deleteNotification = useDeleteNotificationMutation()
   const statsQuery = useNotificationRecipientStatsQuery(notification.id, canManage)
 
@@ -175,6 +165,13 @@ export default function NotificationDetailsPage() {
       <Text size="sm" c="dimmed">
         Sendt {formatSentAt(notification.createdAt)} som {actorGroupLabel} av {createdByName}
       </Text>
+
+      {!canManage && (
+        <ReadOnlyNotice
+          title="Du kan ikke redigere varslingen."
+          message="Dette er fordi du ikke er avsender. Kontakt dotkom dersom du mener dette er en feil."
+        />
+      )}
 
       {linkHref === null && (
         <Text size="sm" c="dimmed">
@@ -234,19 +231,23 @@ export default function NotificationDetailsPage() {
         )}
       </Stack>
 
-      {canManage && (
-        <Group>
-          <Button variant="light" onClick={() => openEditNotificationModal(notification)}>
+      <Group>
+        <PermissionTooltip allowed={canManage}>
+          <Button variant="light" onClick={() => openEditNotificationModal(notification)} disabled={!canManage}>
             Rediger
           </Button>
-          <Button variant="light" onClick={() => openAddRecipientsModal(notification)}>
+        </PermissionTooltip>
+        <PermissionTooltip allowed={canManage}>
+          <Button variant="light" onClick={() => openAddRecipientsModal(notification)} disabled={!canManage}>
             Send til flere
           </Button>
-          <Button color="red" variant="light" onClick={openDeleteModal}>
+        </PermissionTooltip>
+        <PermissionTooltip allowed={canManage}>
+          <Button color="red" variant="light" onClick={openDeleteModal} disabled={!canManage}>
             Slett
           </Button>
-        </Group>
-      )}
+        </PermissionTooltip>
+      </Group>
 
       {hasContent && (
         <>

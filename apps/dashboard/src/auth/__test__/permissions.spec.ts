@@ -5,6 +5,7 @@ import {
   canAccessAuditLog,
   canCreateEvents,
   canEditEvent,
+  canManageNotification,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
@@ -58,6 +59,38 @@ describe("canEditEvent", () => {
     const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
 
     expect(canEditEvent(state, ["arrkom"])).toBe(false)
+  })
+})
+
+describe("canManageNotification", () => {
+  it("allows members of the sending group to manage the notification", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageNotification(state, "arrkom")).toBe(true)
+  })
+
+  it("denies management for unrelated committee members", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageNotification(state, "arrkom")).toBe(false)
+  })
+
+  it("allows administrators to manage notifications from any group", () => {
+    const state = createState({}, { isAdministrator: true })
+
+    expect(canManageNotification(state, "arrkom")).toBe(true)
+  })
+
+  it("allows administrators to manage system notifications", () => {
+    const state = createState({}, { isAdministrator: true })
+
+    expect(canManageNotification(state, null)).toBe(true)
+  })
+
+  it("denies system notifications for non-administrators", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageNotification(state, null)).toBe(false)
   })
 })
 

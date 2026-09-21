@@ -1,4 +1,5 @@
 import { DateTooltip } from "@/components/DateTooltip"
+import { EditableRowIndicator } from "@/components/EditableRowIndicator"
 import { GenericTable } from "@/components/GenericTable"
 import { TableCellLink } from "@/components/TableCellLink"
 import { useCanEditByGroups } from "@/hooks/use-can-edit-by-groups"
@@ -11,9 +12,8 @@ import {
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 import { EventHostingGroupList } from "./event-hosting-group-list"
-import { Box, Center, Group, Pill, Tooltip } from "@mantine/core"
-import { IconEye, IconEyeDotted } from "@tabler/icons-react"
-import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { Group, Pill } from "@mantine/core"
+import { IconEyeDotted } from "@tabler/icons-react"
 import { useAuthorization } from "@/auth/authorization-context"
 
 export type EventTableRow = EventWithAttendance & {
@@ -54,7 +54,13 @@ export const EventTable = ({ events, onLoadMore, dimReadOnlyRows = false }: Prop
               cell: (info) => {
                 const canEdit = info.getValue()
 
-                return <EditableRowIndicator canEdit={canEdit} />
+                return (
+                  <EditableRowIndicator
+                    canEdit={canEdit}
+                    readOnlyLabel="Du kan se dette arrangementet, men ikke redigere det"
+                    editableLabel="Du kan redigere dette arrangementet"
+                  />
+                )
               },
             })
           : null,
@@ -140,42 +146,5 @@ export const EventTable = ({ events, onLoadMore, dimReadOnlyRows = false }: Prop
         return undefined
       }}
     />
-  )
-}
-
-interface EditableRowIndicatorProps {
-  canEdit: boolean
-  readOnlyLabel?: string
-  editableLabel?: string
-}
-
-function EditableRowIndicator({
-  canEdit,
-  readOnlyLabel = "Du kan se dette arrangementet, men ikke redigere det",
-  editableLabel = "Du kan redigere dette arrangementet",
-}: EditableRowIndicatorProps) {
-  if (canEdit) {
-    return (
-      <Tooltip label={editableLabel}>
-        <Center w="14px">
-          <Box
-            w="4px"
-            h="20px"
-            style={{
-              borderRadius: "var(--mantine-radius-xl)",
-              backgroundColor: "var(--mantine-color-blue-4)",
-            }}
-          />
-        </Center>
-      </Tooltip>
-    )
-  }
-
-  return (
-    <PermissionTooltip allowed={false} label={readOnlyLabel}>
-      <Center>
-        <IconEye size={14} color="var(--mantine-color-dimmed)" />
-      </Center>
-    </PermissionTooltip>
   )
 }

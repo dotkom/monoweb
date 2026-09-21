@@ -19,7 +19,7 @@ export const EventNotificationsPage: FC = () => {
       </Text>
 
       <Skeleton visible={isLoading}>
-        <NotificationsTable notifications={notifications} onLoadMore={fetchNextPage} />
+        <NotificationsTable notifications={notifications} onLoadMore={fetchNextPage} dimReadOnlyRows />
       </Skeleton>
     </Stack>
   )

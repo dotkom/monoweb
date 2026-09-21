@@ -142,6 +142,17 @@ export function canEditEvent(state: AuthorizationState, hostingGroupIds: readonl
 }
 
 /**
+ * `notification` edit/delete and recipient management procedures
+ */
+export function canManageNotification(state: AuthorizationState, actorGroupId: GroupId | null): boolean {
+  if (actorGroupId === null) {
+    return state.isAdministrator
+  }
+
+  return isGroupMember(state, actorGroupId)
+}
+
+/**
  * `contest` mutations
  */
 export function canEditContest(state: AuthorizationState, groupIds: readonly GroupId[]): boolean {
