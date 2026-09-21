@@ -3,7 +3,6 @@
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { createContext, useContext } from "react"
 
-/** Context consisting of everything required to use and render the form */
 export const OfflineDetailsContext = createContext<{
   offline: Offline
 } | null>(null)

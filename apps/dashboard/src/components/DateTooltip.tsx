@@ -1,5 +1,4 @@
-import { capitalizeFirstLetter } from "@dotkomonline/utils"
-import { Text, Tooltip } from "@mantine/core"
+import { Popover, PopoverContent, PopoverTrigger, Text } from "@dotkomonline/ui"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 
@@ -8,10 +7,12 @@ export const DateTooltip = ({ date }: { date: Date }) => {
   const shortDate = formatDate(date, "dd. MMM yyyy", { locale: nb })
 
   return (
-    <Tooltip label={capitalizeFirstLetter(longDate)}>
-      <Text size="sm" w="fit-content">
-        {shortDate}
-      </Text>
-    </Tooltip>
+    <Popover>
+      <PopoverTrigger openOnHover delay={0}>
+        <Text size="sm">{shortDate}</Text>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-fit">{longDate}</PopoverContent>
+    </Popover>
   )
 }

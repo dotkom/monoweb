@@ -1,32 +1,48 @@
 "use client"
 
-import { useTRPC } from "@/lib/trpc-client"
-import { Loader } from "@mantine/core"
-import { useQuery } from "@tanstack/react-query"
-import { type PropsWithChildren, use, useMemo } from "react"
+import { ResourceDetailError } from "@/components/ResourceDetailLayout/ResourceDetailError"
+import {
+  ResourceDetailLayout,
+  type ResourceDetailNavItem,
+} from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { IconBuildingWarehouse } from "@tabler/icons-react"
+import { useParams } from "next/navigation"
+import type { PropsWithChildren } from "react"
+import { useOfflineByIdQuery } from "../queries"
 import { OfflineDetailsContext } from "./provider"
 
-export default function OfflineDetailsLayout({
-  children,
-  params,
-}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
-  const trpc = useTRPC()
-  const { id } = use(params)
-  const { data, isLoading } = useQuery(trpc.offline.get.queryOptions(id))
+export default function OfflineDetailsLayout({ children }: PropsWithChildren) {
+  const { id: rawId } = useParams<{ id: string }>()
+  const id = decodeURIComponent(rawId)
+  const { data, isLoading, isError, error } = useOfflineByIdQuery(id)
 
-  const value = useMemo(
-    () =>
-      !data || isLoading
-        ? null
-        : {
-            offline: data,
-          },
-    [data, isLoading]
-  )
-
-  if (value === null) {
-    return <Loader />
+  if (isLoading) {
+    return null
   }
 
-  return <OfflineDetailsContext.Provider value={value}>{children}</OfflineDetailsContext.Provider>
+  if (isError || !data) {
+    return (
+      <ResourceDetailError
+        backHref="/offline"
+        title="Feil ved henting av offline"
+        message={error?.message ?? "Ukjent feil"}
+      />
+    )
+  }
+
+  const basePath = `/offline/${id}`
+
+  const navItems: ResourceDetailNavItem[] = [
+    {
+      href: basePath,
+      label: "Info",
+      icon: IconBuildingWarehouse,
+    },
+  ]
+
+  return (
+    <ResourceDetailLayout title={data.title} backHref="/offline" navItems={navItems}>
+      <OfflineDetailsContext.Provider value={{ offline: data }}>{children}</OfflineDetailsContext.Provider>
+    </ResourceDetailLayout>
+  )
 }
