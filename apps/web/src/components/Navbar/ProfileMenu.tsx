@@ -23,7 +23,6 @@ import {
   Title,
 } from "@dotkomonline/ui"
 import { createLogoutUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
-import type { Icon } from "@tabler/icons-react"
 import {
   IconAdjustments,
   IconArrowUpRight,
@@ -40,9 +39,10 @@ import {
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
-import { type FC, Fragment, useState } from "react"
+import { type ComponentType, type FC, Fragment, useState } from "react"
 import { NotificationDropdown } from "./NotificationDropdown"
 import { ThemeToggle } from "./ThemeToggle"
+import { OnlineIcon } from "../atoms/OnlineIcon"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -133,7 +133,7 @@ const UnauthenticatedActions: FC = () => {
 
 interface LinkDetail {
   label: string
-  icon: Icon
+  icon: ComponentType<{ className?: string }>
   href?: string
   openInNewTab?: boolean
   adminOnly?: boolean
@@ -172,6 +172,13 @@ const linkGroups: LinkGroup[] = [
         icon: IconAdjustments,
         label: "Dashboard",
         href: env.NEXT_PUBLIC_DASHBOARD_URL,
+        openInNewTab: true,
+        adminOnly: true,
+      },
+      {
+        icon: OnlineIcon,
+        label: "Komitéwiki",
+        href: "https://spurious-lynx-a5d.notion.site/hjem-b22d657f3c8143ee842f8810cafef1cb",
         openInNewTab: true,
         adminOnly: true,
       },
@@ -292,9 +299,17 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
 
         {filteredLinkGroups.map((group, i, { length }) => {
           const notLast = i !== length - 1
+          const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
 
           return (
             <Fragment key={group.id}>
+              {allLinksAdminOnly && (
+                <div className="flex items-center gap-1 px-1.5 py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
+                  <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
+                  <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                </div>
+              )}
+
               <DropdownMenuGroup className="space-y-1">
                 {group.links.map((link) => {
                   const isProfile = link.href === "/profil"
@@ -324,7 +339,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                             )}
                           </div>
 
-                          {link.adminOnly && (
+                          {link.adminOnly && !allLinksAdminOnly && (
                             <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
                               <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
                               <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
