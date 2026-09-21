@@ -2,6 +2,9 @@ import { EventCard } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { AuthNotice } from "@/components/notices/auth-notice"
+import { IdentityLinkSuccessNotice } from "@/components/notices/identity-link-success-notice"
+import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/link-identity-cookies"
+import { cookies } from "next/headers"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
@@ -23,10 +26,15 @@ export default async function App() {
   }
 
   let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
-  try {
-    user = await server.user.findMe.query()
-  } catch (e) {
-    console.error("Failed to fetch user", e)
+  const cookieStore = await cookies()
+  const showIdentityLinkSuccess = cookieStore.get(IDENTITY_LINK_STATUS_COOKIE)?.value === IDENTITY_LINK_STATUS_VALUE
+
+  if (!showIdentityLinkSuccess) {
+    try {
+      user = await server.user.findMe.query()
+    } catch (e) {
+      console.error("Failed to fetch user", e)
+    }
   }
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
@@ -56,6 +64,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
+        <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
         <BirthdayPartyNotice
           start={TZDate.tz("Europe/Oslo", 2026, 8, 14, 0, 0, 0)}
           end={TZDate.tz("Europe/Oslo", 2026, 8, 20, 23, 59, 59)}

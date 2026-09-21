@@ -137,6 +137,7 @@ resource "auth0_connection" "feide" {
     client_id              = var.FEIDE_CLIENT_ID
     client_secret          = var.FEIDE_CLIENT_SECRET
     scopes                 = ["email", "groups", "openid", "phone_number", "profile", "userid-feide"]
+    set_user_root_attributes = "on_first_login"
     scripts = {
       fetchUserProfile = file("js/fetchUserProfile.js")
     }
@@ -456,8 +457,16 @@ resource "auth0_client" "monoweb_web" {
   }[terraform.workspace]
   allowed_logout_urls = concat(
     {
-      "dev" = ["http://localhost:3000","http://localhost:3000/*"]
-      "prd" = ["https://online.ntnu.no","https://online.ntnu.no/*"]
+      "dev" = [
+        "http://localhost:3000",
+        "http://localhost:3000/innstillinger/bruker",
+        "http://localhost:3000/*",
+      ]
+      "prd" = [
+        "https://online.ntnu.no",
+        "https://online.ntnu.no/innstillinger/bruker",
+        "https://online.ntnu.no/*",
+      ]
     }[terraform.workspace]
   )
 

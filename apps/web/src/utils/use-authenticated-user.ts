@@ -1,6 +1,7 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
+import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import { useQuery } from "@tanstack/react-query"
 import { getAuthState, type AuthState } from "./authenticated-user-state"
@@ -8,10 +9,11 @@ import { getAuthState, type AuthState } from "./authenticated-user-state"
 export function useAuthenticatedUser(initial?: AuthState) {
   const { user: sessionUser, isLoading: isSessionLoading } = useUser()
   const trpc = useTRPC()
+  const identityLinkRequiresLogin = useIdentityLinkRequiresLogin()
 
   const dbUserQuery = useQuery({
     ...trpc.user.getMe.queryOptions(),
-    enabled: Boolean(sessionUser) && !isSessionLoading,
+    enabled: Boolean(sessionUser) && !isSessionLoading && !identityLinkRequiresLogin,
     initialData: initial?.dbUser ?? undefined,
     retry: false,
   })

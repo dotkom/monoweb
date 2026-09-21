@@ -310,11 +310,7 @@ const confirmIdentityLinkProcedure = procedure
       throw new InvalidArgumentError("Cannot link a user to themselves")
     }
 
-    const mergedUser = await ctx.userMergeService.merge(ctx.handle, primaryUserId, secondaryUserId)
-
-    await ctx.userMergeService.linkAuth0IdentitiesWithToken(primaryUserId, input.secondaryIdToken)
-
-    return mergedUser
+    return await ctx.userMergeService.mergeAndLinkIdentities(ctx.handle, primaryUserId, secondaryUserId)
   })
 
 // IMPORTANT: It does not make sense to link Auth0 identities WITHOUT merging the database users, as the user will be
@@ -341,6 +337,12 @@ const mergeUsersProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const { survivorUserId, consumedUserId, mergeInDatabase, linkAuth0Identities } = input
+
+    if (linkAuth0Identities && mergeInDatabase) {
+      const result = await ctx.userMergeService.mergeAndLinkIdentities(ctx.handle, survivorUserId, consumedUserId)
+
+      return result.user
+    }
 
     if (linkAuth0Identities) {
       await ctx.userMergeService.linkAuth0Identities(survivorUserId, consumedUserId)

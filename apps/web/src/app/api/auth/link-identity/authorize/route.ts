@@ -1,12 +1,9 @@
 import { getServerSession } from "@/auth"
 import { env } from "@/env"
+import { applyPkceCookies } from "@/lib/link-identity-cookies"
 import { createLinkIdentityAuthorizeUrl } from "@/lib/link-identity-oauth"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
-import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
-
-const isHttps = env.NEXT_PUBLIC_ORIGIN.startsWith("https://")
-const cookiePrefix = isHttps ? "__Secure-" : ""
 
 export async function GET(request: Request) {
   const session = await getServerSession()
@@ -23,16 +20,8 @@ export async function GET(request: Request) {
     connection: searchParams.get("connection") ?? undefined,
   })
 
-  const cookieHandle = await cookies()
-  const cookieOptions = {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax" as const,
-    maxAge: 300,
-    secure: isHttps,
-  }
-  cookieHandle.set(`${cookiePrefix}monoweb-link-state`, state, cookieOptions)
-  cookieHandle.set(`${cookiePrefix}monoweb-link-verifier`, verifier, cookieOptions)
+  const response = NextResponse.redirect(url)
+  applyPkceCookies(response, state, verifier)
 
-  return NextResponse.redirect(url)
+  return response
 }
