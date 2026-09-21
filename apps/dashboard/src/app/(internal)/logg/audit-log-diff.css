@@ -1,0 +1,13 @@
+/* biome-ignore-all lint/correctness/noUnknownFunction: Tailwind theme() is not a standard CSS function */
+@reference "@dotkomonline/config/tailwind.css";
+
+:root {
+  --diff-added-bg-light: theme("colors.green.100");
+  --diff-added-fg-light: theme("colors.green.900");
+  --diff-added-bg-dark: theme("colors.green.900");
+  --diff-added-fg-dark: theme("colors.green.100");
+  --diff-removed-bg-light: theme("colors.red.100");
+  --diff-removed-fg-light: theme("colors.red.900");
+  --diff-removed-bg-dark: theme("colors.red.900");
+  --diff-removed-fg-dark: theme("colors.red.100");
+}
