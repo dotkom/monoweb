@@ -24,6 +24,16 @@ const findManyProcedure = procedure
     return ctx.fadderukeService.findMany(ctx.handle)
   })
 
+export type GetFadderukeByIdInput = inferProcedureInput<typeof getByIdProcedure>
+export type GetFadderukeByIdOutput = inferProcedureOutput<typeof getByIdProcedure>
+const getByIdProcedure = procedure
+  .input(FadderukeSchema.shape.id)
+  .output(FadderukeSchema)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    return ctx.fadderukeService.getById(ctx.handle, input)
+  })
+
 export type CreateFadderukeInput = inferProcedureInput<typeof createProcedure>
 export type CreateFadderukeOutput = inferProcedureOutput<typeof createProcedure>
 const createProcedure = procedure
@@ -65,6 +75,7 @@ const deleteProcedure = procedure
 export const fadderukeRouter = t.router({
   findByYear: findByYearProcedure,
   findMany: findManyProcedure,
+  getById: getByIdProcedure,
   create: createProcedure,
   update: updateProcedure,
   delete: deleteProcedure,
