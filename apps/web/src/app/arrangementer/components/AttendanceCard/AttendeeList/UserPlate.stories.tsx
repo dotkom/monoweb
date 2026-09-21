@@ -3,10 +3,10 @@ import type { Attendee } from "@dotkomonline/rpc/attendance"
 import { type FlagName, FlagNameSchema, type User, type UserFlag } from "@dotkomonline/rpc/user"
 import { createMockAttendee, createMockUser } from "../../../../../../.ladle/fixtures/attendance"
 import { AttendeeList } from "./AttendeeList"
-import { getAttendeeIcons, getAttendeePlate } from "./AttendeePlate"
+import { getUserIcons, getUserPlate } from "./UserPlate"
 
 export default {
-  title: "Attendee Plates",
+  title: "User Plates",
 }
 
 const viewer = createMockUser()
@@ -69,8 +69,8 @@ function createPlateAttendee(user: User, overrides: Partial<Attendee> = {}): Att
 }
 
 function PlatePreview({ attendee, viewer }: { attendee: Attendee; viewer: User }) {
-  const Plate = getAttendeePlate(attendee.user)
-  const { smallIcons, largeIcon } = getAttendeeIcons(attendee.user)
+  const Plate = getUserPlate(attendee.user)
+  const { smallIcons, largeIcon } = getUserIcons(attendee.user)
   const isCurrentUser = attendee.userId === viewer.id
 
   return (

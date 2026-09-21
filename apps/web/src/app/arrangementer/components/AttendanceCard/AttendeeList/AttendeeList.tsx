@@ -1,5 +1,5 @@
 import { cn, Text } from "@dotkomonline/ui"
-import { getAttendeeIcons, getAttendeePlate } from "./AttendeePlate"
+import { getUserIcons, getUserPlate } from "./UserPlate"
 import type { Attendee } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 
@@ -17,9 +17,9 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
   return (
     <div className="flex flex-col gap-2">
       {attendees.map((attendee, index) => {
-        const Plate = getAttendeePlate(attendee.user)
+        const Plate = getUserPlate(attendee.user)
         const minWidth = getMinWidth(maxNumberOfAttendees)
-        const { smallIcons, largeIcon } = getAttendeeIcons(attendee.user)
+        const { smallIcons, largeIcon } = getUserIcons(attendee.user)
         const isCurrentUser = attendee.userId === user.id
 
         return (
