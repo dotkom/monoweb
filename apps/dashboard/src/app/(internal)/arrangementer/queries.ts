@@ -13,7 +13,11 @@ interface UseEventAllQueryProps {
   page?: Pageable
 }
 
-export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
+export const useEventAllQuery = ({
+  filter,
+  page,
+  shouldKeepPreviousData = false,
+}: UseEventAllQueryProps & { shouldKeepPreviousData?: boolean }) => {
   const trpc = useTRPC()
   const { data, ...query } = useQuery({
     ...trpc.event.all.queryOptions({
@@ -24,6 +28,7 @@ export const useEventAllQuery = ({ filter, page }: UseEventAllQueryProps) => {
       },
       ...page,
     }),
+    placeholderData: shouldKeepPreviousData ? keepPreviousData : undefined,
   })
 
   return { events: useMemo(() => data?.items ?? [], [data]), ...query }
