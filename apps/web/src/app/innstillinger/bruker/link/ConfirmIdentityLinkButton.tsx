@@ -1,9 +1,11 @@
 "use client"
 
 import { Button } from "@dotkomonline/ui"
+import { createLogoutUrl } from "@dotkomonline/utils"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { confirmIdentityLinkAction } from "./actions"
+import { IDENTITY_LINK_REQUIRES_LOGIN_KEY } from "@/components/notices/identity-link-success-notice"
 
 export function ConfirmIdentityLinkButton() {
   const router = useRouter()
@@ -11,11 +13,21 @@ export function ConfirmIdentityLinkButton() {
 
   const onConfirm = () => {
     startTransition(async () => {
-      try {
-        await confirmIdentityLinkAction()
+      sessionStorage.setItem(IDENTITY_LINK_REQUIRES_LOGIN_KEY, "ok")
 
+      try {
+        const result = await confirmIdentityLinkAction()
+
+        if (result.requiresReauthentication) {
+          window.location.assign(createLogoutUrl({ returnTo: window.location.origin }))
+
+          return
+        }
+
+        sessionStorage.removeItem(IDENTITY_LINK_REQUIRES_LOGIN_KEY)
         router.replace("/innstillinger/bruker?link_status=ok")
       } catch (error: unknown) {
+        sessionStorage.removeItem(IDENTITY_LINK_REQUIRES_LOGIN_KEY)
         const errorMessage = error instanceof Error ? error.message : null
         const query = errorMessage ? `&error=${encodeURIComponent(errorMessage)}` : ""
 

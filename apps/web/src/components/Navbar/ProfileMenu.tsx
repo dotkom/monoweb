@@ -1,6 +1,7 @@
 "use client"
 
 import { SessionRecoveryDropdown } from "@/components/auth/SessionRecoveryDropdown"
+import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { Link } from "@/components/link"
 import { env } from "@/env"
 import type { AuthState } from "@/utils/authenticated-user-state"
@@ -198,13 +199,14 @@ const linkGroups: LinkGroup[] = [
 
 export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   const fullPathname = useFullPathname()
+  const identityLinkRequiresLogin = useIdentityLinkRequiresLogin()
   const { sessionUser, isLoading, isInvalid, isSessionInvalid, isMissingDbUser, isDbUserFetchError, dbUser } = authState
 
   if (isLoading) {
     return null
   }
 
-  if (sessionUser === null || sessionUser === undefined) {
+  if (sessionUser === null || sessionUser === undefined || identityLinkRequiresLogin) {
     return <UnauthenticatedActions />
   }
 

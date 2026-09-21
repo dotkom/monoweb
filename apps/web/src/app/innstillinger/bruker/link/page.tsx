@@ -1,6 +1,8 @@
 import { getServerSession } from "@/auth"
+import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/link-identity-cookies"
 import { createAuthorizeUrl, getStudyGrade } from "@dotkomonline/utils"
 import { Avatar, AvatarFallback, AvatarImage, cn, Text, Title } from "@dotkomonline/ui"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { ConfirmIdentityLinkButton } from "./ConfirmIdentityLinkButton"
 import { getIdentityLinkCookies } from "./actions"
@@ -9,6 +11,13 @@ import { findActiveMembership, getMembershipTypeName, type User } from "@dotkomo
 import { IconArrowNarrowLeft, IconUser, IconUserFilled } from "@tabler/icons-react"
 
 export default async function LinkIdentityPage() {
+  const cookieStore = await cookies()
+  const identityLinkStatus = cookieStore.get(IDENTITY_LINK_STATUS_COOKIE)?.value
+
+  if (identityLinkStatus === IDENTITY_LINK_STATUS_VALUE) {
+    return null
+  }
+
   const session = await getServerSession()
 
   if (!session) {

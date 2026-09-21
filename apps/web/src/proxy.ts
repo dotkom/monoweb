@@ -7,6 +7,7 @@ import {
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 import { auth0 } from "@/lib/auth0"
+import { IDENTITY_LINK_STATUS_COOKIE } from "@/lib/link-identity-cookies"
 
 function redirectToClearSession(request: NextRequest): NextResponse {
   const clearSessionPath = createClearSessionUrl({
@@ -23,6 +24,13 @@ export async function proxy(request: NextRequest) {
 
   // Auth0 handles the token lifecycle and callback session creation for its own endpoints.
   if (request.nextUrl.pathname.startsWith("/api/auth/")) {
+    if (request.nextUrl.pathname.startsWith("/api/auth/authorize")) {
+      authResponse.cookies.set(IDENTITY_LINK_STATUS_COOKIE, "", {
+        path: "/",
+        maxAge: 0,
+      })
+    }
+
     return authResponse
   }
 

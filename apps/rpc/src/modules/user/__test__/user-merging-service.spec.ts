@@ -8,7 +8,7 @@ import type { AttendanceService } from "../../event/attendance-service"
 import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
 import type { GroupRepository } from "../../group/group-repository"
 import type { MembershipService } from "../membership-service"
-import { getUserMergingService } from "../user-merging-service"
+import { getUserMergingService, pickAuth0PrimaryUserId } from "../user-merging-service"
 import type { UserRepository } from "../user-repository"
 import { mergeUsers as mergeUsersInDatabase } from "../user-merging"
 import { getUserService } from "../user-service"
@@ -201,5 +201,170 @@ describe("UserMergingService", () => {
       { name: survivorUser.name }
     )
     expect(result.name).toBe(survivorUser.name)
+  })
+
+  it("keeps the current user's database data and makes Username-Password the Auth0 primary", async () => {
+    const transactionHandle = mockDeep<DBHandle>()
+    const { userRepository, managementClient, userMergingService } = createService()
+    const feideUser = makeUser({
+      id: "oauth2|FEIDE|feide-user",
+      name: "FEIDE Name",
+      email: "student@ntnu.no",
+      memberships: [makeMembership({ userId: "oauth2|FEIDE|feide-user" })],
+    })
+    const passwordUser = makeUser({
+      id: "auth0|password-user",
+      name: "Password Name",
+      email: "personal@example.com",
+    })
+    const rekeyedUser = makeUser({
+      ...feideUser,
+      id: passwordUser.id,
+    })
+    const feideAuth0User = {
+      user_id: feideUser.id,
+      email: feideUser.email,
+      email_verified: true,
+      name: feideUser.name,
+      identities: [
+        { connection: "FEIDE", provider: "oauth2", user_id: "feide-user", profileData: { name: feideUser.name } },
+      ],
+    }
+    const passwordAuth0User = {
+      user_id: passwordUser.id,
+      email: passwordUser.email,
+      email_verified: true,
+      name: passwordUser.name,
+      app_metadata: {},
+      user_metadata: {},
+      identities: [
+        { connection: "Username-Password-Authentication", provider: "auth0", user_id: "password-user" },
+        { connection: "FEIDE", provider: "oauth2", user_id: "feide-user", profileData: { name: feideUser.name } },
+      ],
+    }
+
+    userRepository.findById
+      .mockResolvedValueOnce(feideUser)
+      .mockResolvedValueOnce(passwordUser)
+      .mockResolvedValue(rekeyedUser)
+    userRepository.update.mockResolvedValue(rekeyedUser)
+    managementClient.users.get.mockImplementation(async ({ id }) => {
+      if (id === feideUser.id) {
+        return { status: 200, statusText: "OK", data: feideAuth0User }
+      }
+
+      return { status: 200, statusText: "OK", data: passwordAuth0User }
+    })
+    managementClient.users.update.mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+    } as never)
+    managementClient.users.link.mockResolvedValue({} as never)
+
+    const result = await userMergingService.mergeAndLinkIdentities(transactionHandle, feideUser.id, passwordUser.id)
+
+    expect(mergeUsersMock).toHaveBeenCalledWith(transactionHandle, expect.anything(), feideUser, passwordUser)
+    expect(transactionHandle.$executeRaw).toHaveBeenCalledTimes(2)
+    expect(managementClient.users.link).toHaveBeenCalledWith(
+      { id: passwordUser.id },
+      { provider: "oauth2", user_id: "feide-user" }
+    )
+    expect(managementClient.users.update).toHaveBeenCalledWith(
+      { id: passwordUser.id },
+      { email: feideUser.email, email_verified: true }
+    )
+    expect(result.requiresReauthentication).toBe(true)
+    expect(result.user.id).toBe(passwordUser.id)
+    expect(result.user.email).toBe(feideUser.email)
+    expect(result.user.name).toBe(feideUser.name)
+  })
+
+  it("does not reassign the user id when the current user is already Username-Password", async () => {
+    const transactionHandle = mockDeep<DBHandle>()
+    const { userRepository, managementClient, userMergingService } = createService()
+    const passwordUser = makeUser({
+      id: "auth0|password-user",
+      name: "Password Name",
+      email: "personal@example.com",
+      memberships: [makeMembership({ userId: "auth0|password-user" })],
+    })
+    const feideUser = makeUser({
+      id: "oauth2|FEIDE|feide-user",
+      name: "FEIDE Name",
+      email: "student@ntnu.no",
+    })
+    const feideAuth0User = {
+      user_id: feideUser.id,
+      email: feideUser.email,
+      email_verified: true,
+      name: feideUser.name,
+      identities: [
+        { connection: "FEIDE", provider: "oauth2", user_id: "feide-user", profileData: { name: feideUser.name } },
+      ],
+    }
+    const passwordAuth0User = {
+      user_id: passwordUser.id,
+      email: passwordUser.email,
+      email_verified: true,
+      name: passwordUser.name,
+      app_metadata: { initial_full_name: passwordUser.name },
+      user_metadata: { full_name: passwordUser.name },
+      identities: [
+        { connection: "Username-Password-Authentication", provider: "auth0", user_id: "password-user" },
+        { connection: "FEIDE", provider: "oauth2", user_id: "feide-user", profileData: { name: feideUser.name } },
+      ],
+    }
+
+    userRepository.findById.mockImplementation(async (_handle, id) => {
+      if (id === passwordUser.id) {
+        return passwordUser
+      }
+
+      if (id === feideUser.id) {
+        return feideUser
+      }
+
+      return null
+    })
+    userRepository.update.mockResolvedValue(passwordUser)
+    managementClient.users.get.mockImplementation(async ({ id }) => {
+      if (id === feideUser.id) {
+        return { status: 200, statusText: "OK", data: feideAuth0User }
+      }
+
+      return { status: 200, statusText: "OK", data: passwordAuth0User }
+    })
+    managementClient.users.update.mockResolvedValue({
+      status: 200,
+      statusText: "OK",
+    } as never)
+    managementClient.users.link.mockResolvedValue({} as never)
+
+    const result = await userMergingService.mergeAndLinkIdentities(transactionHandle, passwordUser.id, feideUser.id)
+
+    expect(mergeUsersMock).toHaveBeenCalledWith(transactionHandle, expect.anything(), passwordUser, feideUser)
+    expect(transactionHandle.$executeRaw).not.toHaveBeenCalled()
+    expect(managementClient.users.link).toHaveBeenCalledWith(
+      { id: passwordUser.id },
+      { provider: "oauth2", user_id: "feide-user" }
+    )
+    expect(result.requiresReauthentication).toBe(false)
+    expect(result.user.id).toBe(passwordUser.id)
+  })
+})
+
+describe("pickAuth0PrimaryUserId", () => {
+  it("keeps the data survivor when it already has Username-Password", () => {
+    expect(pickAuth0PrimaryUserId("auth0|current", true, "oauth2|FEIDE|other", false)).toBe("auth0|current")
+  })
+
+  it("prefers the consumed Username-Password user when the data survivor is FEIDE-only", () => {
+    expect(pickAuth0PrimaryUserId("oauth2|FEIDE|current", false, "auth0|other", true)).toBe("auth0|other")
+  })
+
+  it("keeps the data survivor when neither account has Username-Password", () => {
+    expect(pickAuth0PrimaryUserId("oauth2|FEIDE|current", false, "oauth2|FEIDE|other", false)).toBe(
+      "oauth2|FEIDE|current"
+    )
   })
 })

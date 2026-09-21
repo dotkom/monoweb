@@ -473,10 +473,17 @@ export function getUserService(
         return user
       }
 
-      // If the user is not found, we will attempt to pull it from Auth0's user directory
-      const response = await managementClient.users.get({ id: userId })
+      // If the user is not found, we will attempt to pull it from Auth0's user directory.
+      // The management client throws on 404 instead of returning a response.
+      const response = await managementClient.users.get({ id: userId }).catch((error: unknown) => {
+        if (!isMissingAuth0User(error)) {
+          throw error
+        }
 
-      if (response.status === 404) {
+        return null
+      })
+
+      if (response === null || response.status === 404) {
         return null
       }
 
@@ -1077,4 +1084,12 @@ function validateKnightMembership(membership: Partial<Membership>) {
   if (membership.end !== undefined && membership.end !== null) {
     throw new InvalidArgumentError("Knight memberships are lifetime memberships and cannot have a value for end")
   }
+}
+
+function isMissingAuth0User(error: unknown): boolean {
+  if (typeof error !== "object" || error === null || !("statusCode" in error)) {
+    return false
+  }
+
+  return error.statusCode === 404
 }

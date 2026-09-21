@@ -15,6 +15,7 @@ import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
 import { getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import {
@@ -64,6 +65,7 @@ export default function MinBrukerPage() {
 
   const [newEmail, setNewEmail] = useState("")
   const [selectedCalendarFeed, setSelectedCalendarFeed] = useState<CalendarFeed>("personal")
+  const identityLinkRequiresLogin = useIdentityLinkRequiresLogin()
 
   const { icon: copyEmailIcon, copy: copyEmail } = useCopyToClipboard()
   const { icon: copyCalendarIcon, copy: copyCalendarUrl } = useCopyToClipboard()
@@ -79,14 +81,14 @@ export default function MinBrukerPage() {
 
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
     ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
-    enabled: sessionUser != null && !isInvalid,
+    enabled: sessionUser != null && !isInvalid && !identityLinkRequiresLogin,
   })
 
   const isPersonalCalendarFeed = selectedCalendarFeed === "personal"
   const personalCalendarTokenQuery = useQuery({
     queryKey: ["calendar", "me"],
     queryFn: fetchPersonalCalendarToken,
-    enabled: sessionUser != null && !isInvalid && isPersonalCalendarFeed,
+    enabled: sessionUser != null && !isInvalid && isPersonalCalendarFeed && !identityLinkRequiresLogin,
   })
 
   const user = dbUser
@@ -110,20 +112,24 @@ export default function MinBrukerPage() {
   // We synchronize the email from Auth0 on mount, so that if the user returns here after clicking a verification link,
   // the DB user also gets updated.
   useEffect(() => {
-    if (sessionUser === null || isInvalid) {
+    if (sessionUser === null || isInvalid || identityLinkRequiresLogin) {
       return
     }
 
     synchronizeEmail()
-  }, [sessionUser, isInvalid, synchronizeEmail])
+  }, [sessionUser, isInvalid, identityLinkRequiresLogin, synchronizeEmail])
 
   if (!authLoading && sessionUser === null) {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
   }
 
+  if (identityLinkRequiresLogin) {
+    return null
+  }
+
   const sessionRecoveryMessages = getSessionRecoveryMessages(isSessionInvalid, isMissingDbUser, isDbUserFetchError)
 
-  if (!authLoading && isInvalid && sessionRecoveryMessages !== null) {
+  if (!authLoading && isInvalid && sessionRecoveryMessages !== null && !identityLinkRequiresLogin) {
     return (
       <div className="flex flex-col gap-6">
         <Title element="h1" size="xl">
