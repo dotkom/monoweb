@@ -12,7 +12,7 @@ import { getKnightLargeIcon, getKnightSmallIcon, KnightPlate } from "./KnightPla
 
 export type { PlateProps }
 
-export function getAttendeePlate(user: PlateProps["user"]): FC<PlateProps> {
+export function getUserPlate(user: PlateProps["user"]): FC<PlateProps> {
   if (isKnight(user)) {
     return KnightPlate
   }
@@ -28,7 +28,7 @@ export function getAttendeePlate(user: PlateProps["user"]): FC<PlateProps> {
   return GenericPlate
 }
 
-export function getAttendeeIcons(user: PlateProps["user"]) {
+export function getUserIcons(user: PlateProps["user"]) {
   const smallIcons: JSX.Element[] = []
   let largeIcon: JSX.Element | null = null
 

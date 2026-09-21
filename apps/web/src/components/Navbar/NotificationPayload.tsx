@@ -2,10 +2,7 @@
 
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import {
-  getAttendeeIcons,
-  getAttendeePlate,
-} from "@/app/arrangementer/components/AttendanceCard/AttendeeList/AttendeePlate"
+import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { useTRPC } from "@/utils/trpc/client"
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Attendance, AttendanceSummary } from "@dotkomonline/rpc/attendance"
@@ -256,12 +253,12 @@ export function NotificationGroupPayload({
 }
 
 export function NotificationUserPayload({ user, userGrade = null }: { user: User; userGrade?: number | null }) {
-  const AttendeePlate = getAttendeePlate(user)
-  const { smallIcons, largeIcon } = getAttendeeIcons(user)
+  const UserPlate = getUserPlate(user)
+  const { smallIcons, largeIcon } = getUserIcons(user)
 
   return (
     <div className="flex min-w-0 items-center gap-3 rounded-full border border-gray-200 p-2 transition-colors bg-white/75 hover:bg-white hover:border-muted-foreground dark:border-white/8 dark:bg-white/8 dark:hover:bg-white/15">
-      <AttendeePlate
+      <UserPlate
         attendee={{ userGrade, userId: user.id }}
         smallIcons={smallIcons}
         largeIcon={largeIcon}
