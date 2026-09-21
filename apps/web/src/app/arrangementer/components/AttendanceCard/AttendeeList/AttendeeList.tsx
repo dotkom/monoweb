@@ -20,6 +20,7 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
         const Plate = getAttendeePlate(attendee.user)
         const minWidth = getMinWidth(maxNumberOfAttendees)
         const { smallIcons, largeIcon } = getAttendeeIcons(attendee.user)
+        const isCurrentUser = attendee.userId === user.id
 
         return (
           <div key={attendee.id} className="flex flex-row gap-1 items-center group">
@@ -33,7 +34,13 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
               {index + 1}.
             </Text>
 
-            <Plate attendee={attendee} user={user} smallIcons={smallIcons} largeIcon={largeIcon} />
+            <Plate
+              attendee={attendee}
+              user={attendee.user}
+              isCurrentUser={isCurrentUser}
+              smallIcons={smallIcons}
+              largeIcon={largeIcon}
+            />
           </div>
         )
       })}

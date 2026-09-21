@@ -68,18 +68,27 @@ function createPlateAttendee(user: User, overrides: Partial<Attendee> = {}): Att
   })
 }
 
-function PlatePreview({ attendee, user }: { attendee: Attendee; user: User }) {
-  const Plate = getAttendeePlate(user)
-  const { smallIcons, largeIcon } = getAttendeeIcons(user)
+function PlatePreview({ attendee, viewer }: { attendee: Attendee; viewer: User }) {
+  const Plate = getAttendeePlate(attendee.user)
+  const { smallIcons, largeIcon } = getAttendeeIcons(attendee.user)
+  const isCurrentUser = attendee.userId === viewer.id
 
-  return <Plate attendee={attendee} user={user} smallIcons={smallIcons} largeIcon={largeIcon} />
+  return (
+    <Plate
+      attendee={attendee}
+      user={attendee.user}
+      isCurrentUser={isCurrentUser}
+      smallIcons={smallIcons}
+      largeIcon={largeIcon}
+    />
+  )
 }
 
 function LabeledPlate({ label, attendee }: { label: string; attendee: Attendee }) {
   return (
     <div className="flex flex-col gap-2">
       <Text className="text-sm text-muted-foreground">{label}</Text>
-      <PlatePreview attendee={attendee} user={viewer} />
+      <PlatePreview attendee={attendee} viewer={viewer} />
     </div>
   )
 }

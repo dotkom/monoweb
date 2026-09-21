@@ -273,6 +273,7 @@ export function NotificationUserPayload({ user, userGrade = null }: { user: User
           flags: user.flags,
           memberships: user.memberships,
         }}
+        isCurrentUser={false}
       />
     </div>
   )
