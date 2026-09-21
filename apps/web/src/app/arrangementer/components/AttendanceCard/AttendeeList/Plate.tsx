@@ -16,6 +16,7 @@ export interface PlateProps {
   user: Pick<User, "id" | "name" | "username" | "imageUrl" | "flags" | "memberships">
   smallIcons: JSX.Element[]
   largeIcon: JSX.Element | null
+  isCurrentUser: boolean
 }
 
 const PlateContext = createContext<PlateProps | null>(null)
@@ -35,8 +36,8 @@ interface PlateRootProps extends PlateProps {
   children: ReactNode
 }
 
-function PlateRoot({ attendee, user, smallIcons, largeIcon, className, children }: PlateRootProps) {
-  const contextValue: PlateProps = { attendee, user, smallIcons, largeIcon }
+function PlateRoot({ attendee, user, smallIcons, largeIcon, isCurrentUser, className, children }: PlateRootProps) {
+  const contextValue: PlateProps = { attendee, user, smallIcons, largeIcon, isCurrentUser }
   const profileHref = `/profil/${user.username}`
   const profileLabel = user.name ?? user.username
 
