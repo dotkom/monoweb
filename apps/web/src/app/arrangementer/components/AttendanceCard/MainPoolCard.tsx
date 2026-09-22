@@ -18,6 +18,7 @@ import {
   IconArrowUpRight,
   IconCheck,
   IconCircleDashedCheck,
+  IconClockCheck,
   IconCoins,
   IconHourglassEmpty,
   IconUserX,
@@ -37,7 +38,7 @@ import {
 } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
@@ -63,11 +64,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const paymentCountdownDisplay = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
+  const paymentIsUnpaid = hasAttendeePaid(attendee, attendance.attendancePrice) === false
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasAttendeePaid(attendee, attendance.attendancePrice) === false
-      ? isWithinInterval(now, paymentCountdownInterval)
-      : false
-  const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
+    paymentCountdownInterval && paymentIsUnpaid ? isWithinInterval(now, paymentCountdownInterval) : false
+  const paymentDeadlineHasPassed = attendee?.paymentDeadline != null && isAfter(now, attendee.paymentDeadline)
+  const showPaymentCountdown =
+    paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 
   const cardClassname = cn(
     "flex flex-col w-full min-h-40 gap-2 p-3 rounded-lg",
@@ -81,7 +83,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         <div className="flex flex-col gap-2">
           <Text>Du er ikke innlogget</Text>
 
-          <div className="flex flex-row gap-1 items-center">
+          <div className="flex gap-[0.5ch] text-sm align-center">
             <Text className="group-hover:underline">Logg inn</Text>
             <IconArrowUpRight className="size-[1.25em]" />
           </div>
@@ -140,21 +142,111 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     isFuture(attendee.earliestReservationAt) &&
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
+  const actionIsRequired = showPaymentCountdown
+  const isReserved = attendee?.reserved === true
+  const isQueued = attendee?.reserved === false
+  const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-600/50")
+  const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/10")
+
+  const cardBody = (
+    <div className="flex flex-col min-h-40 gap-6 p-3 items-center text-center justify-center w-full">
+      {!showRegisterCountdown && (
+        <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+          <div className="flex flex-col gap-1 items-center">
+            <Text
+              className={cn(
+                "text-3xl px-2 py-1",
+                hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
+              )}
+              suppressHydrationWarning
+            >
+              <RollingNumber value={reservedAttendeeCount} />
+              {/* Don't show capacity for merge pools (capacity = 0) */}
+              {pool.capacity > 0 && (
+                <>
+                  /<span className="font-mono">{pool.capacity}</span>
+                </>
+              )}
+            </Text>
+
+            {hasWaitlist && (
+              <Text
+                className={cn(
+                  "text-lg px-2 py-0.5",
+                  attendee?.reserved === false && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-800 rounded-md",
+                  attendee?.reserved === false &&
+                    actionIsRequired &&
+                    "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
+                )}
+                suppressHydrationWarning
+              >
+                +<RollingNumber value={unreservedAttendeeCount} /> i kø
+              </Text>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {servingPunishment ? (
+              <PunishmentStatus attendee={attendee} actionIsRequired={actionIsRequired} />
+            ) : (
+              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={actionIsRequired} />
+            )}
+
+            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+          </div>
+        </div>
+      )}
+
+      {showRegisterCountdown && (
+        <div className="flex flex-col gap-1 items-center">
+          <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
+          <Text className="text-4xl font-medium" suppressHydrationWarning>
+            {registerCountdownDisplay}
+          </Text>
+        </div>
+      )}
+
+      {showRegisterCountdown && attendance.attendancePrice !== null && (
+        <div className="flex flex-row gap-2 items-center">
+          <IconCoins className="size-[1.25em]" />
+          <Text>{attendance.attendancePrice} kr</Text>
+        </div>
+      )}
+
+      <PaymentAction
+        visible={showPaymentCountdown}
+        paymentLink={attendee?.paymentLink ?? null}
+        countdownDisplay={paymentCountdownDisplay}
+      />
+    </div>
+  )
+
+  const body = actionIsRequired ? (
+    <Stripes colorA={stripeColorA} colorB={stripeColorB} stripeWidth={24} speed="2.0s" animated className="h-auto">
+      {cardBody}
+    </Stripes>
+  ) : (
+    cardBody
+  )
+
   return (
     <div
       className={cn(
-        "flex flex-col w-full rounded-lg",
-        !attendee && "bg-gray-100 dark:bg-stone-700/50",
-        attendee?.reserved === true && "bg-green-100 dark:bg-green-900",
-        attendee?.reserved === false && "bg-yellow-100 dark:bg-indigo-900/75"
+        "flex flex-col w-full rounded-lg overflow-hidden",
+        !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
+        !actionIsRequired && isReserved && "bg-green-100 dark:bg-green-900",
+        !actionIsRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
       )}
     >
       <div
         className={cn(
-          "flex flex-row gap-2 px-3 py-2 rounded-t-lg justify-center text-sm font-bold",
+          "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold",
           !attendee && "bg-gray-200 dark:bg-stone-700",
-          attendee?.reserved === true && "bg-green-200 dark:bg-green-800",
-          attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-900"
+          isReserved && "bg-green-200 dark:bg-green-800",
+          isQueued && "bg-indigo-200 dark:bg-indigo-900",
+          actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
+          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-amber-700/50",
+          actionIsRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
         )}
       >
         <Title element="p" className="text-base">
@@ -164,96 +256,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         {pool.mergeDelayHours && pool.mergeDelayHours > 0 && <DelayPill mergeDelayHours={pool.mergeDelayHours} />}
       </div>
 
-      <div className="flex flex-col min-h-40 gap-6 p-3 rounded-lg items-center text-center justify-center w-full">
-        {!showRegisterCountdown && (
-          <div className="flex grow flex-col gap-4 items-center text-center justify-center">
-            <div className="flex flex-col gap-1 items-center">
-              <Text
-                className={cn(
-                  "text-3xl px-2 py-1",
-                  hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
-                )}
-              >
-                <RollingNumber value={reservedAttendeeCount} />
-                {/* Don't show capacity for merge pools (capacity = 0) */}
-                {pool.capacity > 0 && (
-                  <>
-                    /<span className="font-mono">{pool.capacity}</span>
-                  </>
-                )}
-              </Text>
-
-              {hasWaitlist && (
-                <Text
-                  className={cn(
-                    "text-lg px-2 py-0.5",
-                    attendee?.reserved === false && "bg-yellow-200 dark:bg-indigo-800 rounded-md"
-                  )}
-                >
-                  +<RollingNumber value={unreservedAttendeeCount} /> i kø
-                </Text>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              {servingPunishment ? (
-                <PunishmentStatus attendee={attendee} />
-              ) : (
-                <AttendanceStatus attendance={attendance} attendee={attendee} />
-              )}
-              <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
-            </div>
-          </div>
-        )}
-
-        {showRegisterCountdown && (
-          <div className="flex flex-col gap-1 items-center">
-            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
-            <Text className="text-4xl font-medium" suppressHydrationWarning>
-              {registerCountdownDisplay}
-            </Text>
-          </div>
-        )}
-
-        {showRegisterCountdown && attendance.attendancePrice !== null && (
-          <div className="flex flex-row gap-2 items-center">
-            <IconCoins className="size-[1.25em]" />
-            <Text>{attendance.attendancePrice} kr</Text>
-          </div>
-        )}
-
-        {showPaymentCountdown && attendee?.paymentLink && (
-          <Link href={attendee.paymentLink} className="group relative cursor-pointer items-center w-full">
-            <Stripes
-              colorA={cn("dark:bg-amber-600", attendee.reserved !== false ? "bg-amber-200" : "bg-indigo-200")}
-              colorB={cn("dark:bg-amber-700", attendee.reserved !== false ? "bg-amber-300" : "bg-indigo-300")}
-              stripeWidth={24}
-              speed="2.0s"
-              animated
-              className="group flex items-center h-40 px-5 py-4 rounded-md"
-            >
-              <div className="relative flex flex-row justify-between items-center w-full">
-                <div className="flex flex-col gap-1 items-center justify-center w-full">
-                  <Text className="text-lg font-medium">Du må betale innen</Text>
-                  <Text suppressHydrationWarning className="text-4xl font-medium">
-                    {paymentCountdownDisplay}
-                  </Text>
-                </div>
-                <IconArrowUpRight className="size-[1.25em] [@media(min-width:350px)]:absolute [@media(min-width:350px)]:right-0" />
-              </div>
-            </Stripes>
-
-            {/* White/dark overlay */}
-            <span
-              className={cn(
-                "absolute top-0 left-0 inset-0 rounded-md bg-linear-to-t pointer-events-none transition-colors duration-400",
-                "from-white/50 via-white/30 group-hover:via-white/5 group-hover:from-white/15 to-transparent",
-                "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
-              )}
-            />
-          </Link>
-        )}
-      </div>
+      {body}
     </div>
   )
 }
@@ -285,35 +288,66 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
 interface AttendanceStatusProps {
   attendance: Attendance
   attendee: Attendee | null
+  actionIsRequired: boolean
 }
 
-const AttendanceStatus = ({ attendance, attendee }: AttendanceStatusProps) => {
+const NotRegisteredStatus = () => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconUserX className="size-[1.25em]" />
+      <Text>Du er ikke påmeldt</Text>
+    </div>
+  )
+}
+
+const ReservedStatus = () => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconClockCheck className="size-[1.25em]" />
+      <Text>Du har reservert plass</Text>
+    </div>
+  )
+}
+
+const RegisteredStatus = () => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCheck className="size-[1.25em] text-green-700 dark:text-green-200" />
+      <Text>Du er påmeldt</Text>
+    </div>
+  )
+}
+
+interface QueueStatusProps {
+  queuePosition: number | null
+  actionIsRequired: boolean
+}
+
+const QueueStatus = ({ queuePosition, actionIsRequired }: QueueStatusProps) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCircleDashedCheck className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
+      <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
+    </div>
+  )
+}
+
+const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: AttendanceStatusProps) => {
   if (!attendee) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconUserX className="size-[1.25em]" />
-        <Text>Du er ikke påmeldt</Text>
-      </div>
-    )
+    return <NotRegisteredStatus />
   }
 
   if (attendee.reserved === true) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-300" />
-        <Text>Du er påmeldt</Text>
-      </div>
-    )
+    if (actionIsRequired) {
+      return <ReservedStatus />
+    }
+
+    return <RegisteredStatus />
   }
 
   const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
-  return (
-    <div className="flex flex-row items-center gap-2">
-      <IconCircleDashedCheck className="size-[1.25em] dark:text-indigo-400" />
-      <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
-    </div>
-  )
+  return <QueueStatus queuePosition={queuePosition} actionIsRequired={actionIsRequired} />
 }
 
 interface PaymentStatusProps {
@@ -322,91 +356,169 @@ interface PaymentStatusProps {
   chargeScheduleDate?: Date | null
 }
 
+interface PriceStatusProps {
+  price: number
+  registered: boolean
+}
+
+const PriceStatus = ({ price }: PriceStatusProps) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCoins className="size-[1.25em]" />
+      <Text>{price} kr</Text>
+    </div>
+  )
+}
+
+const UnpaidStatus = ({ price, registered }: PriceStatusProps) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm",
+        registered && "bg-orange-200 dark:bg-red-900",
+        !registered && "bg-pink-200 dark:bg-pink-900"
+      )}
+    >
+      <IconX className="size-[1.25em] text-red-700 dark:text-red-200" />
+      <Text>{price} kr ubetalt</Text>
+    </div>
+  )
+}
+
+interface RefundedStatusProps {
+  price: number
+  refundedAt: Date
+}
+
+const RefundedStatus = ({ price, refundedAt }: RefundedStatusProps) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconArrowForward className="size-[1.25em]" />
+
+      <div className="flex flex-col gap-0 items-start">
+        <Text>Du er refundert {price} kr</Text>
+        <Text className="text-xs">
+          Pengene ankommer senest{" "}
+          {formatDate(roundToNearestHours(addDays(refundedAt, MAX_REFUND_PROCESSING_DAYS)), "dd. MMM 'kl.' HH", {
+            locale: nb,
+          })}
+        </Text>
+      </div>
+    </div>
+  )
+}
+
+const PaidStatus = ({ price }: PriceStatusProps) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCheck className="size-[1.25em] text-green-700 dark:text-green-200" />
+      <Text>Du har betalt {price} kr</Text>
+    </div>
+  )
+}
+
+interface ReservedPaymentStatusProps {
+  price: number
+  chargeScheduleDate?: Date | null
+}
+
+const ReservedPaymentStatus = ({ price, chargeScheduleDate }: ReservedPaymentStatusProps) => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCheck className="size-[1.25em] text-green-700 dark:text-green-200" />
+
+      <div className="flex flex-col gap-0 items-start">
+        <Text>Du har reservert {price} kr</Text>
+
+        {chargeScheduleDate && (
+          <Text className="text-xs">
+            Du blir trukket rundt{" "}
+            {formatDate(roundToNearestHours(chargeScheduleDate), "dd. MMM 'kl.' HH", { locale: nb })}
+          </Text>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
+  const price = attendance.attendancePrice
 
-  if (hasPaid === null) {
+  if (hasPaid === null || price === null) {
     return null
   }
 
   if (!attendee) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconCoins className="size-[1.25em]" />
-        <Text>{attendance.attendancePrice} kr</Text>
-      </div>
-    )
+    return <PriceStatus price={price} registered={false} />
   }
 
   if (!hasPaid) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
-        <Text>{attendance.attendancePrice} kr ubetalt</Text>
-      </div>
-    )
+    return <UnpaidStatus price={price} registered={attendee.reserved === true} />
   }
 
   if (attendee.paymentRefundedAt) {
-    return (
-      <>
-        <div className="flex flex-row items-center gap-2">
-          <IconArrowForward className="size-[1.25em]" />
-          <Text>Du er refundert {attendance.attendancePrice} kr</Text>
-        </div>
-        <Text className="text-xs">
-          Pengene ankommer senest{" "}
-          {formatDate(
-            roundToNearestHours(addDays(attendee.paymentRefundedAt, MAX_REFUND_PROCESSING_DAYS)),
-            "dd. MMM 'kl.' HH",
-            { locale: nb }
-          )}{" "}
-        </Text>
-      </>
-    )
+    return <RefundedStatus price={price} refundedAt={attendee.paymentRefundedAt} />
   }
 
   if (attendee.paymentChargedAt) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
-        <Text>Du har betalt {attendance.attendancePrice} kr</Text>
-      </div>
-    )
+    return <PaidStatus price={price} registered={attendee.reserved === true} />
   }
 
   if (attendee.paymentReservedAt) {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <IconCheck className="size-[1.25em] text-green-700 dark:text-green-400" />
-
-        <div className="flex flex-col gap-0 items-start">
-          <Text>Du har reservert {attendance.attendancePrice} kr</Text>
-
-          {chargeScheduleDate && (
-            <Text className="text-xs">
-              Du blir trukket rundt{" "}
-              {formatDate(roundToNearestHours(chargeScheduleDate), "dd. MMM 'kl.' HH", { locale: nb })}
-            </Text>
-          )}
-        </div>
-      </div>
-    )
+    return <ReservedPaymentStatus price={price} chargeScheduleDate={chargeScheduleDate} />
   }
 
   return null
 }
 
-interface PunishmentStatusProps {
-  attendee: Attendee
+interface PaymentActionProps {
+  visible: boolean
+  paymentLink: string | null
+  countdownDisplay: ReactNode
 }
 
-const PunishmentStatus = ({ attendee }: PunishmentStatusProps) => {
+const PaymentAction = ({ visible, paymentLink, countdownDisplay }: PaymentActionProps) => {
+  if (!visible || paymentLink === null) {
+    return null
+  }
+
+  return (
+    <Link
+      href={paymentLink}
+      className="group relative bg-indigo-200 dark:bg-indigo-600 dark:saturate-40 rounded-xs cursor-pointer w-full p-3 shadow-md"
+    >
+      <span
+        className={cn(
+          "absolute top-0 left-0 inset-0 rounded-xs bg-linear-to-t pointer-events-none transition-colors duration-400",
+          "from-indigo-300 via-indigo-300/75 group-hover:via-indigo-300/40 group-hover:from-indigo-300/50 to-transparent",
+          "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
+        )}
+      />
+
+      <div className="relative flex flex-col gap-1 items-center justify-center w-full">
+        <Text className="text-base font-medium">Du må betale innen</Text>
+        <Text suppressHydrationWarning className="text-3xl font-medium">
+          {countdownDisplay}
+        </Text>
+      </div>
+
+      <IconArrowUpRight className="absolute right-3 top-1/2 size-[1.25em] -translate-y-1/2" />
+    </Link>
+  )
+}
+
+interface PunishmentStatusProps {
+  attendee: Attendee
+  actionIsRequired: boolean
+}
+
+const PunishmentStatus = ({ attendee, actionIsRequired }: PunishmentStatusProps) => {
   return (
     <Tooltip delayDuration={100}>
       <TooltipTrigger asChild>
         <div className="flex flex-row gap-2 items-center">
-          <IconHourglassEmpty className="size-[1.25em] text-yellow-600 dark:text-indigo-300" />
+          <IconHourglassEmpty className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
           <Text>
             {formatDistanceToNowStrict(attendee.earliestReservationAt, {
               locale: nb,

@@ -1,13 +1,15 @@
 import { Text } from "@dotkomonline/ui"
-import { useEffect, useState } from "react"
+import { addDays } from "date-fns"
+import { useEffect, useState, type ReactNode } from "react"
 import {
   createAttendanceOpeningSoon,
   createAttendanceOpeningSoonWithPrice,
-  createAttendanceWithFullPool,
   createAttendanceWithPaymentCountdown,
+  createAttendanceWithPaymentRecord,
+  createAttendanceWithQueue,
+  createAttendanceWithQueuedPayment,
   createAttendanceWithReservedUser,
   createAttendanceWithServingPunishment,
-  createAttendanceWithWaitlistedUser,
   createIneligiblePoolAttendance,
   createMockAttendance,
   createMockAttendee,
@@ -69,97 +71,141 @@ export default {
   component: MainPoolCard,
 }
 
+const StatePreview = ({ label, children }: { label: string; children: ReactNode }) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <Text className="text-sm text-muted-foreground">{label}</Text>
+      {children}
+    </div>
+  )
+}
+
 export const AllStates = () => {
   const user = createMockUser()
-  const reservedAttendance = createAttendanceWithReservedUser()
-  const waitlistAttendance = createAttendanceWithWaitlistedUser()
-  const waitlistWithQueueAttendance = createAttendanceWithWaitlistedUser(4)
-  const fullAttendance = createAttendanceWithFullPool()
-  const waitlistedAttendee = createAttendanceWithWaitlistedUser(1).attendees[0]
-  const paymentAttendance = createAttendanceWithPaymentCountdown()
-  const punishmentAttendance = createAttendanceWithServingPunishment()
+  const chargeScheduleDate = addDays(new Date(), 3)
 
   return (
     <div className="flex flex-col gap-8 max-w-md">
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Not logged in</Text>
+      <StatePreview label="Not logged in">
         <MainPoolCard
           attendance={createMockAttendance({ attendancePrice: 100 })}
           user={null}
           authorizeUrl={AUTHORIZE_URL}
         />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">No membership</Text>
+      <StatePreview label="No membership">
         <MainPoolCard
           attendance={createMockAttendance({ attendancePrice: 100 })}
           user={createMockUser({ memberships: [] })}
           authorizeUrl={AUTHORIZE_URL}
         />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Ineligible pool</Text>
+      <StatePreview label="Ineligible pool">
         <MainPoolCard attendance={createIneligiblePoolAttendance()} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Not registered</Text>
+      <StatePreview label="Not registered">
         <MainPoolCard attendance={createMockAttendance()} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Reserved</Text>
+      <StatePreview label="Not registered, others are queued">
         <MainPoolCard
-          attendance={reservedAttendance}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-          chargeScheduleDate={null}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Waitlist</Text>
-        <MainPoolCard attendance={waitlistAttendance} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Waitlist with queue</Text>
-        <MainPoolCard attendance={waitlistWithQueueAttendance} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Full pool with waitlist</Text>
-        <MainPoolCard
-          attendance={{
-            ...fullAttendance,
-            attendees: [...fullAttendance.attendees, waitlistedAttendee],
-          }}
+          attendance={createAttendanceWithQueue({
+            capacity: 2,
+            reservedOtherCount: 2,
+            queuedOtherCount: 3,
+            viewer: "absent",
+          })}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
         />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Register countdown</Text>
+      <StatePreview label="Reserved">
+        <MainPoolCard attendance={createAttendanceWithReservedUser()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </StatePreview>
+
+      <StatePreview label="Reserved, others are queued">
+        <MainPoolCard
+          attendance={createAttendanceWithQueue({
+            capacity: 2,
+            reservedOtherCount: 1,
+            queuedOtherCount: 2,
+            viewer: "reserved",
+          })}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="In queue">
+        <MainPoolCard
+          attendance={createAttendanceWithQueue({
+            capacity: 2,
+            reservedOtherCount: 2,
+            queuedOtherCount: 2,
+            viewer: "queued",
+            viewerQueuePosition: 2,
+          })}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Register countdown">
         <MainPoolCard attendance={createAttendanceOpeningSoon()} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Register countdown with price</Text>
+      <StatePreview label="Register countdown with price">
         <MainPoolCard attendance={createAttendanceOpeningSoonWithPrice()} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Payment countdown</Text>
-        <MainPoolCard attendance={paymentAttendance} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      <StatePreview label="Payment countdown">
+        <MainPoolCard attendance={createAttendanceWithPaymentCountdown()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </StatePreview>
 
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Serving punishment</Text>
-        <MainPoolCard attendance={punishmentAttendance} user={user} authorizeUrl={AUTHORIZE_URL} />
-      </div>
+      <StatePreview label="Payment countdown while queued">
+        <MainPoolCard attendance={createAttendanceWithQueuedPayment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </StatePreview>
+
+      <StatePreview label="Paid">
+        <MainPoolCard
+          attendance={createAttendanceWithPaymentRecord("charged")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Payment reserved">
+        <MainPoolCard
+          attendance={createAttendanceWithPaymentRecord("reserved")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+          chargeScheduleDate={chargeScheduleDate}
+        />
+      </StatePreview>
+
+      <StatePreview label="Refunded">
+        <MainPoolCard
+          attendance={createAttendanceWithPaymentRecord("refunded")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Punishment delay">
+        <MainPoolCard attendance={createAttendanceWithServingPunishment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </StatePreview>
+
+      <StatePreview label="Punishment delay with payment">
+        <MainPoolCard
+          attendance={createAttendanceWithServingPunishment({ withPayment: true })}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
     </div>
   )
 }
