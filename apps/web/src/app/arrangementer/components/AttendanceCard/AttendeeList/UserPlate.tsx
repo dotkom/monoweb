@@ -1,4 +1,4 @@
-import type { FC, JSX } from "react"
+import type { ComponentType, JSX } from "react"
 import { GenericPlate } from "./GenericPlate"
 import { getVanityVerifiedSmallIcon, VanityVerifiedPlate } from "./VanityVerifiedPlate"
 import { FlagNameSchema, isVanityVerified, isExceptionallyDistinguished, isKnight } from "@dotkomonline/rpc/user"
@@ -12,7 +12,7 @@ import { getKnightLargeIcon, getKnightSmallIcon, KnightPlate } from "./KnightPla
 
 export type { PlateProps }
 
-export function getUserPlate(user: PlateProps["user"]): FC<PlateProps> {
+export function getUserPlate(user: PlateProps["user"]): ComponentType<PlateProps> {
   if (isKnight(user)) {
     return KnightPlate
   }

@@ -372,4 +372,3 @@ export const BirthdayPartyGuessSchema = z.object({
   userId: z.string(),
 })
 export type BirthdayPartyGuess = z.infer<typeof BirthdayPartyGuessSchema>
-export type BirthdayPartyGuessId = BirthdayPartyGuess["id"]

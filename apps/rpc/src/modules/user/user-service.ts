@@ -143,7 +143,6 @@ export interface UserService {
   ): Promise<PresignedPost>
 
   getBirthdayPartyGuess(handle: DBHandle, userId: UserId): Promise<BirthdayPartyGuess | null>
-  updateBirthdayPartyGuess(handle: DBHandle, userId: UserId, guess: number): Promise<BirthdayPartyGuess>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -922,10 +921,6 @@ export function getUserService(
 
     async getBirthdayPartyGuess(handle, userId) {
       return userRepository.findBirthdayPartyGuessByUserId(handle, userId)
-    },
-
-    async updateBirthdayPartyGuess(handle, userId, guess) {
-      return userRepository.upsertBirthdayPartyGuess(handle, userId, guess)
     },
   }
 }

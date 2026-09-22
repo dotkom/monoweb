@@ -66,8 +66,9 @@ export default async function App() {
         <AuthNotice />
         <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
         <BirthdayPartyNotice
-          start={TZDate.tz("Europe/Oslo", 2026, 8, 14, 0, 0, 0)}
-          end={TZDate.tz("Europe/Oslo", 2026, 8, 20, 23, 59, 59)}
+          currentUserId={user?.id ?? null}
+          start={TZDate.tz("Europe/Oslo", 2026, 8, 22, 12, 0, 0)}
+          end={TZDate.tz("Europe/Oslo", 2026, 8, 25, 23, 59, 59)}
         />
         <OnlineHero />
       </div>
