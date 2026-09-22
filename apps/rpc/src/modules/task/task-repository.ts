@@ -16,6 +16,7 @@ export interface TaskRepository {
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
+  findVerifySelectionsTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
@@ -129,6 +130,22 @@ export function getTaskRepository(): TaskRepository {
       const task = await handle.task.findFirst({
         where: {
           type: tasks.VERIFY_PAYMENT.type,
+          payload: {
+            path: ["attendeeId"],
+            equals: attendeeId,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+
+      return parseOrReport(TaskSchema.nullable(), task)
+    },
+    async findVerifySelectionsTask(handle, attendeeId) {
+      const task = await handle.task.findFirst({
+        where: {
+          type: tasks.VERIFY_SELECTIONS.type,
           payload: {
             path: ["attendeeId"],
             equals: attendeeId,

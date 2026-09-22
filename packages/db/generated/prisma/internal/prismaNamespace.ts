@@ -3748,6 +3748,7 @@ export const AttendeeScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   paymentDeadline: 'paymentDeadline',
+  selectionDeadline: 'selectionDeadline',
   paymentLink: 'paymentLink',
   paymentId: 'paymentId',
   paymentReservedAt: 'paymentReservedAt',

@@ -1,3 +1,5 @@
+import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
+import { useCountdown } from "@/utils/countdown/use-countdown"
 import type { Attendance, AttendanceSelectionResponse, Attendee } from "@dotkomonline/rpc/attendance"
 import {
   Select,
@@ -7,6 +9,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  Stripes,
   Text,
   cn,
 } from "@dotkomonline/ui"
@@ -44,16 +47,16 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
     reValidateMode: "onChange",
   })
 
-  // This validates the default values without the user having to interact with the form
-  // Makes empty things red immediately
-  useEffect(() => {
-    trigger()
-  }, [trigger])
-
   const { fields: attendeeOptionsFields } = useFieldArray({
     name: "attendeeOptions",
     control,
   })
+
+  // Trigger validation when the form is mounted
+  // Makes the fields red
+  useEffect(() => {
+    trigger()
+  }, [trigger])
 
   const hasError = (index: number) => !disabled && Boolean(errors.attendeeOptions?.[index]?.optionId)
 
@@ -120,5 +123,25 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
         />
       ))}
     </section>
+  )
+}
+
+export function SelectionDeadlineBar({ deadline, reserved }: { deadline: Date; reserved: boolean }) {
+  const countdown = useCountdown(deadline, formatRollingCountdown)
+  const stripeColorA = reserved ? "bg-amber-200" : "bg-indigo-200"
+  const stripeColorB = reserved ? "bg-amber-300" : "bg-indigo-300"
+
+  return (
+    <Stripes
+      colorA={cn("dark:bg-amber-600", stripeColorA)}
+      colorB={cn("dark:bg-amber-700", stripeColorB)}
+      stripeWidth={16}
+      animated
+      className="flex h-5 items-center rounded-md px-1.5 w-fit"
+    >
+      <Text className="text-sm font-medium" suppressHydrationWarning>
+        {countdown}
+      </Text>
+    </Stripes>
   )
 }

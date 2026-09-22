@@ -5,7 +5,12 @@ import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvi
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type Attendance, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
+import {
+  type Attendance,
+  type AttendanceSelectionResponse,
+  getAttendee,
+  hasAttendeeCompletedSelections,
+} from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Text, Title, cn } from "@dotkomonline/ui"
@@ -30,7 +35,7 @@ import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
-import { SelectionsForm } from "./SelectionsForm"
+import { SelectionDeadlineBar, SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
@@ -345,9 +350,15 @@ export const AttendanceCard = ({
 
       {attendee?.reserved && attendance.selections.length > 0 && (
         <div className="flex flex-col gap-2">
-          <Title element="p" size="sm" className="text-base">
-            Valg
-          </Title>
+          <div className="flex flex-row items-center gap-2">
+            <Title element="p" size="sm" className="text-base">
+              Valg
+            </Title>
+            {attendee.selectionDeadline !== null &&
+            !hasAttendeeCompletedSelections(attendance.selections, attendee.selections) ? (
+              <SelectionDeadlineBar deadline={attendee.selectionDeadline} reserved={attendee.reserved} />
+            ) : null}
+          </div>
 
           <SelectionsForm
             attendance={attendance}

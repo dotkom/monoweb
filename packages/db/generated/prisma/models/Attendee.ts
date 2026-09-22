@@ -43,6 +43,7 @@ export type AttendeeMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   paymentDeadline: Date | null
+  selectionDeadline: Date | null
   paymentLink: string | null
   paymentId: string | null
   paymentReservedAt: Date | null
@@ -65,6 +66,7 @@ export type AttendeeMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   paymentDeadline: Date | null
+  selectionDeadline: Date | null
   paymentLink: string | null
   paymentId: string | null
   paymentReservedAt: Date | null
@@ -88,6 +90,7 @@ export type AttendeeCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   paymentDeadline: number
+  selectionDeadline: number
   paymentLink: number
   paymentId: number
   paymentReservedAt: number
@@ -120,6 +123,7 @@ export type AttendeeMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   paymentDeadline?: true
+  selectionDeadline?: true
   paymentLink?: true
   paymentId?: true
   paymentReservedAt?: true
@@ -142,6 +146,7 @@ export type AttendeeMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   paymentDeadline?: true
+  selectionDeadline?: true
   paymentLink?: true
   paymentId?: true
   paymentReservedAt?: true
@@ -165,6 +170,7 @@ export type AttendeeCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   paymentDeadline?: true
+  selectionDeadline?: true
   paymentLink?: true
   paymentId?: true
   paymentReservedAt?: true
@@ -275,6 +281,7 @@ export type AttendeeGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   paymentDeadline: Date | null
+  selectionDeadline: Date | null
   paymentLink: string | null
   paymentId: string | null
   paymentReservedAt: Date | null
@@ -321,6 +328,7 @@ export type AttendeeWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   paymentDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  selectionDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentLink?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentId?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentReservedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
@@ -349,6 +357,7 @@ export type AttendeeOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   paymentDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
+  selectionDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentLink?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentReservedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -381,6 +390,7 @@ export type AttendeeWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   paymentDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  selectionDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentLink?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentId?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentReservedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
@@ -409,6 +419,7 @@ export type AttendeeOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   paymentDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
+  selectionDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentLink?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentReservedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -440,6 +451,7 @@ export type AttendeeScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attendee"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Attendee"> | Date | string
   paymentDeadline?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
+  selectionDeadline?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
   paymentLink?: Prisma.StringNullableWithAggregatesFilter<"Attendee"> | string | null
   paymentId?: Prisma.StringNullableWithAggregatesFilter<"Attendee"> | string | null
   paymentReservedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
@@ -463,6 +475,7 @@ export type AttendeeCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -487,6 +500,7 @@ export type AttendeeUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -511,6 +525,7 @@ export type AttendeeUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -535,6 +550,7 @@ export type AttendeeUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -559,6 +575,7 @@ export type AttendeeCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -582,6 +599,7 @@ export type AttendeeUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -601,6 +619,7 @@ export type AttendeeUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -639,6 +658,7 @@ export type AttendeeCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   paymentDeadline?: Prisma.SortOrder
+  selectionDeadline?: Prisma.SortOrder
   paymentLink?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
   paymentReservedAt?: Prisma.SortOrder
@@ -665,6 +685,7 @@ export type AttendeeMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   paymentDeadline?: Prisma.SortOrder
+  selectionDeadline?: Prisma.SortOrder
   paymentLink?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
   paymentReservedAt?: Prisma.SortOrder
@@ -687,6 +708,7 @@ export type AttendeeMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   paymentDeadline?: Prisma.SortOrder
+  selectionDeadline?: Prisma.SortOrder
   paymentLink?: Prisma.SortOrder
   paymentId?: Prisma.SortOrder
   paymentReservedAt?: Prisma.SortOrder
@@ -901,6 +923,7 @@ export type AttendeeCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -924,6 +947,7 @@ export type AttendeeUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -957,6 +981,7 @@ export type AttendeeCreateWithoutPaymentRefundedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -980,6 +1005,7 @@ export type AttendeeUncheckedCreateWithoutPaymentRefundedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1032,6 +1058,7 @@ export type AttendeeScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   paymentDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
+  selectionDeadline?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   paymentLink?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentId?: Prisma.StringNullableFilter<"Attendee"> | string | null
   paymentReservedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
@@ -1071,6 +1098,7 @@ export type AttendeeCreateWithoutAttendanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1094,6 +1122,7 @@ export type AttendeeUncheckedCreateWithoutAttendanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1143,6 +1172,7 @@ export type AttendeeCreateWithoutAttendancePoolInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1166,6 +1196,7 @@ export type AttendeeUncheckedCreateWithoutAttendancePoolInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1215,6 +1246,7 @@ export type AttendeeCreateWithoutFeedbackFormAnswerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1238,6 +1270,7 @@ export type AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1277,6 +1310,7 @@ export type AttendeeUpdateWithoutFeedbackFormAnswerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1300,6 +1334,7 @@ export type AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1323,6 +1358,7 @@ export type AttendeeCreateManyUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1345,6 +1381,7 @@ export type AttendeeCreateManyPaymentRefundedByInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1367,6 +1404,7 @@ export type AttendeeUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1390,6 +1428,7 @@ export type AttendeeUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1413,6 +1452,7 @@ export type AttendeeUncheckedUpdateManyWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1435,6 +1475,7 @@ export type AttendeeUpdateWithoutPaymentRefundedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1458,6 +1499,7 @@ export type AttendeeUncheckedUpdateWithoutPaymentRefundedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1481,6 +1523,7 @@ export type AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1503,6 +1546,7 @@ export type AttendeeCreateManyAttendanceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1525,6 +1569,7 @@ export type AttendeeUpdateWithoutAttendanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1548,6 +1593,7 @@ export type AttendeeUncheckedUpdateWithoutAttendanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1571,6 +1617,7 @@ export type AttendeeUncheckedUpdateManyWithoutAttendanceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1593,6 +1640,7 @@ export type AttendeeCreateManyAttendancePoolInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentDeadline?: Date | string | null
+  selectionDeadline?: Date | string | null
   paymentLink?: string | null
   paymentId?: string | null
   paymentReservedAt?: Date | string | null
@@ -1615,6 +1663,7 @@ export type AttendeeUpdateWithoutAttendancePoolInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1638,6 +1687,7 @@ export type AttendeeUncheckedUpdateWithoutAttendancePoolInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1661,6 +1711,7 @@ export type AttendeeUncheckedUpdateManyWithoutAttendancePoolInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  selectionDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReservedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1685,6 +1736,7 @@ export type AttendeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   paymentDeadline?: boolean
+  selectionDeadline?: boolean
   paymentLink?: boolean
   paymentId?: boolean
   paymentReservedAt?: boolean
@@ -1713,6 +1765,7 @@ export type AttendeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   paymentDeadline?: boolean
+  selectionDeadline?: boolean
   paymentLink?: boolean
   paymentId?: boolean
   paymentReservedAt?: boolean
@@ -1740,6 +1793,7 @@ export type AttendeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean
   updatedAt?: boolean
   paymentDeadline?: boolean
+  selectionDeadline?: boolean
   paymentLink?: boolean
   paymentId?: boolean
   paymentReservedAt?: boolean
@@ -1767,6 +1821,7 @@ export type AttendeeSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   paymentDeadline?: boolean
+  selectionDeadline?: boolean
   paymentLink?: boolean
   paymentId?: boolean
   paymentReservedAt?: boolean
@@ -1780,7 +1835,7 @@ export type AttendeeSelectScalar = {
   paymentRefundedById?: boolean
 }
 
-export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userGrade" | "selections" | "reserved" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentCheckoutUrl" | "attendanceId" | "userId" | "attendancePoolId" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
+export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userGrade" | "selections" | "reserved" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "selectionDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentCheckoutUrl" | "attendanceId" | "userId" | "attendancePoolId" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
 export type AttendeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
@@ -1826,6 +1881,11 @@ export type $AttendeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     createdAt: Date
     updatedAt: Date
     paymentDeadline: Date | null
+    /**
+     * Set when the attendee is reserved and the event already has selections.
+     * Attendees reserved before selections existed keep this null.
+     */
+    selectionDeadline: Date | null
     paymentLink: string | null
     paymentId: string | null
     paymentReservedAt: Date | null
@@ -2274,6 +2334,7 @@ export interface AttendeeFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly paymentDeadline: Prisma.FieldRef<"Attendee", 'DateTime'>
+  readonly selectionDeadline: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly paymentLink: Prisma.FieldRef<"Attendee", 'String'>
   readonly paymentId: Prisma.FieldRef<"Attendee", 'String'>
   readonly paymentReservedAt: Prisma.FieldRef<"Attendee", 'DateTime'>

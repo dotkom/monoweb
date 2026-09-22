@@ -17,6 +17,7 @@ import {
   type ReserveAttendeeTaskDefinition,
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
+  type VerifySelectionsTaskDefinition,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
@@ -79,6 +80,12 @@ export function getLocalTaskExecutor(
               return await attendanceService.executeVerifyPaymentTask(
                 handle,
                 payload as InferTaskData<VerifyPaymentTaskDefinition>
+              )
+
+            case tasks.VERIFY_SELECTIONS.type:
+              return await attendanceService.executeVerifySelectionsTask(
+                handle,
+                payload as InferTaskData<VerifySelectionsTaskDefinition>
               )
 
             case tasks.CHARGE_ATTENDEE.type:
