@@ -13,8 +13,6 @@ import { CreateGroupModal } from "@/app/(internal)/grupper/modals/create-group-m
 import { CreateGroupRoleModal } from "@/app/(internal)/grupper/modals/create-group-role-modal"
 import { EditGroupMembershipModal } from "@/app/(internal)/grupper/modals/edit-group-membership-modal"
 import { EditGroupRoleModal } from "@/app/(internal)/grupper/modals/edit-group-role-modal"
-import { CreateMarkModal } from "@/app/(internal)/prikker/modals/create-mark-modal"
-import { CreateSuspensionModal } from "@/app/(internal)/prikker/modals/create-suspension-modal"
 import { CreateMembershipModal } from "@/app/(internal)/brukere/components/create-membership-modal"
 import { EditMembershipModal } from "@/app/(internal)/brukere/components/edit-membership-modal"
 import { UploadImageModal } from "@/components/ImageUploadModal"
@@ -45,8 +43,6 @@ const modals = {
   "group/membership/update": EditGroupMembershipModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
-  "punishment/mark/create": CreateMarkModal,
-  "punishment/suspension/create": CreateSuspensionModal,
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
   "image/upload": UploadImageModal,

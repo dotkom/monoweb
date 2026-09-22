@@ -18,11 +18,22 @@ type UserSearchProps = {
   excludeUserIds?: string[]
   placeholder?: string
   disabled?: boolean
+  className?: string
+  listOpen?: boolean
+  autoHightlight?: boolean
 }
 
-export function UserSearch({ placeholder, onSubmit, excludeUserIds, disabled }: UserSearchProps) {
+export function UserSearch({
+  placeholder,
+  onSubmit,
+  excludeUserIds,
+  disabled,
+  className,
+  listOpen,
+  autoHightlight,
+}: UserSearchProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(listOpen ?? false)
 
   const { users, isLoading } = useUserAllQuery({
     filter: {
@@ -36,8 +47,17 @@ export function UserSearch({ placeholder, onSubmit, excludeUserIds, disabled }: 
 
   return (
     <Combobox
+      autoHighlight={autoHightlight}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(next, eventDetails) => {
+        if (!next && listOpen && eventDetails.reason === "item-press") {
+          setSearchQuery("")
+          setOpen(true)
+          return
+        }
+
+        setOpen(next)
+      }}
       disabled={disabled}
       items={items}
       value={null}
@@ -47,15 +67,21 @@ export function UserSearch({ placeholder, onSubmit, excludeUserIds, disabled }: 
         }
 
         setSearchQuery("")
-        setOpen(false)
         onSubmit(user)
       }}
       inputValue={searchQuery}
-      onInputValueChange={setSearchQuery}
+      onInputValueChange={(next, eventDetails) => {
+        if (eventDetails.reason === "item-press") {
+          setSearchQuery("")
+          return
+        }
+
+        setSearchQuery(next)
+      }}
       itemToStringLabel={(user: User) => formatUserLabel(user)}
       isItemEqualToValue={(a: User, b: User) => a.id === b.id}
     >
-      <ComboboxInput placeholder={placeholder ?? "Søk etter bruker..."} />
+      <ComboboxInput placeholder={placeholder ?? "Søk etter bruker..."} className={className} />
       <ComboboxContent>
         <ComboboxEmpty>{isLoading ? "Laster brukere..." : "Ingen brukere funnet"}</ComboboxEmpty>
         <ComboboxList>
