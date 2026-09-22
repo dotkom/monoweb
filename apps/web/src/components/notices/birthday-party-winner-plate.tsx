@@ -14,7 +14,7 @@ export function BirthdayPartyWinnerPlate({ user, isCurrentUser }: { user: User; 
   }
 
   return (
-    <div className="w-fit min-w-72 max-w-full rounded-full bg-white p-1">
+    <div className="w-fit min-w-72 max-w-full rounded-full bg-background p-1">
       <UserPlate
         attendee={{ userId: user.id, userGrade }}
         user={user}

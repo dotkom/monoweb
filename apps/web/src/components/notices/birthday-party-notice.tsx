@@ -72,14 +72,14 @@ export const BirthdayPartyNotice = async ({
     }
 
     let winnerPlate: ReactNode = (
-      <Text className="text-sm text-black">
+      <Text className="text-sm">
         Vinneren gjettet {formattedWinnerGuess}, bare {winnerDistance} Non Stop unna.
       </Text>
     )
     if (winner !== null) {
       winnerPlate = (
         <div className="flex flex-col gap-2">
-          <Text className="text-sm text-black">
+          <Text className="text-sm">
             Vinneren, som gjettet {formattedWinnerGuess} (bare {winnerDistance} unna), er 🎉
           </Text>
           <BirthdayPartyWinnerPlate user={winner} isCurrentUser={winner.id === currentUserId} />
@@ -91,9 +91,9 @@ export const BirthdayPartyNotice = async ({
       <div className="flex flex-col gap-3">
         <div className="flex flex-row items-center gap-4">
           <div className="flex flex-col gap-1">
-            <Text className="text-sm font-medium text-black">Det var</Text>
-            <Text className="text-3xl font-medium text-black">{formattedActualCount}</Text>
-            <Text className="text-sm font-medium text-black">Non Stop i krukka</Text>
+            <Text className="text-sm font-medium">Det var</Text>
+            <Text className="text-3xl font-medium">{formattedActualCount}</Text>
+            <Text className="text-sm font-medium">Non Stop i krukka</Text>
           </div>
 
           <Image
@@ -107,14 +107,16 @@ export const BirthdayPartyNotice = async ({
 
         {winnerPlate}
 
-        {guessSummary && <Text className="text-sm text-black">{guessSummary}</Text>}
+        {guessSummary && <Text className="text-sm">{guessSummary}</Text>}
 
         <div className="flex flex-col gap-1">
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-sm text-muted-foreground dark:text-foreground/75">
             115 personer gjettet, og gjennomsnittet var 1 056 Non Stop.
           </Text>
-          <Text className="text-sm text-muted-foreground">Bare to andre var innenfor 100 Non Stop.</Text>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-sm text-muted-foreground dark:text-foreground/75">
+            Bare to andre var innenfor 100 Non Stop.
+          </Text>
+          <Text className="text-sm text-muted-foreground dark:text-foreground/75">
             Tre gjettet 67, to gjettet 6767, og to gjettet 420. INGEN gjettet 69. Skjerp dere 👺
           </Text>
         </div>
@@ -129,11 +131,11 @@ export const BirthdayPartyNotice = async ({
       </div>
 
       <Stripes
-        colorA="bg-linear-to-b from-[#dbaed7]/50 to-[#8cbfe2]/50"
+        colorA="bg-linear-to-b from-[#dbaed7]/50 dark:from-[#dbaed7]/75 to-[#8cbfe2]/50 dark:to-[#8cbfe2]/50"
         colorB="bg-white/8"
         stripeWidth={16}
         animated
-        className="relative z-1 rounded-lg bg-white p-4"
+        className="relative z-1 rounded-lg bg-background p-4"
       >
         {content}
       </Stripes>
