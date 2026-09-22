@@ -1,12 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import {
-  findActiveMembership,
-  MembershipSchema,
-  MembershipWriteSchema,
-  UserFilterQuerySchema,
-  UserSchema,
-  UserWriteSchema,
-} from "./user"
+import { MembershipSchema, MembershipWriteSchema, UserFilterQuerySchema, UserSchema, UserWriteSchema } from "./user"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
@@ -382,31 +375,7 @@ const getBirthdayPartyGuessProcedure = procedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ ctx }) => {
-    const user = await ctx.userService.getById(ctx.handle, ctx.principal.subject)
-    const membership = findActiveMembership(user)
-
-    if (!membership) {
-      throw new UnauthorizedError(`User(ID=${ctx.principal.subject}) does not have an active membership`)
-    }
-
     return ctx.userService.getBirthdayPartyGuess(ctx.handle, ctx.principal.subject)
-  })
-
-export type UpdateBirthdayPartyGuessInput = inferProcedureInput<typeof updateBirthdayPartyGuessProcedure>
-export type UpdateBirthdayPartyGuessOutput = inferProcedureOutput<typeof updateBirthdayPartyGuessProcedure>
-const updateBirthdayPartyGuessProcedure = procedure
-  .input(z.object({ guess: z.int().positive().max(999999) }))
-  .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .mutation(async ({ input, ctx }) => {
-    const user = await ctx.userService.getById(ctx.handle, ctx.principal.subject)
-    const membership = findActiveMembership(user)
-
-    if (!membership) {
-      throw new UnauthorizedError(`User(ID=${ctx.principal.subject}) does not have an active membership`)
-    }
-
-    return ctx.userService.updateBirthdayPartyGuess(ctx.handle, ctx.principal.subject, input.guess)
   })
 
 export const userRouter = t.router({
@@ -431,5 +400,4 @@ export const userRouter = t.router({
   mergeUsers: mergeUsersProcedure,
   getAuth0Connections: getAuth0ConnectionsProcedure,
   getBirthdayPartyGuess: getBirthdayPartyGuessProcedure,
-  updateBirthdayPartyGuess: updateBirthdayPartyGuessProcedure,
 })

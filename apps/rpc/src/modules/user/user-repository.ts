@@ -50,7 +50,6 @@ export interface UserRepository {
   removeFlagFromUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
 
   findBirthdayPartyGuessByUserId(handle: DBHandle, userId: UserId): Promise<BirthdayPartyGuess | null>
-  upsertBirthdayPartyGuess(handle: DBHandle, userId: UserId, guess: number): Promise<BirthdayPartyGuess>
 }
 
 export function getUserRepository(): UserRepository {
@@ -335,23 +334,6 @@ export function getUserRepository(): UserRepository {
       })
 
       return parseOrReport(BirthdayPartyGuessSchema.nullable(), birthdayPartyGuess)
-    },
-
-    async upsertBirthdayPartyGuess(handle, userId, guess) {
-      const birthdayPartyGuess = await handle.birthdayPartyGuess.upsert({
-        where: {
-          userId,
-        },
-        create: {
-          userId,
-          guess,
-        },
-        update: {
-          guess,
-        },
-      })
-
-      return parseOrReport(BirthdayPartyGuessSchema, birthdayPartyGuess)
     },
   }
 }
