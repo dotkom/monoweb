@@ -2,7 +2,7 @@ import { useTRPC } from "@/lib/trpc-client"
 import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import type { UserFilterQuery, UserId } from "@dotkomonline/rpc/user"
 import type { Pageable } from "@dotkomonline/utils"
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
 export const useUserQuery = (id: AttendanceId) => {
@@ -16,13 +16,22 @@ interface UseUserAllQueryProps {
   page?: Pageable
 }
 
-export const useUserAllQuery = ({ filter, page }: UseUserAllQueryProps) => {
+export const useUserAllQuery = ({
+  filter,
+  page,
+  shouldKeepPreviousData,
+}: UseUserAllQueryProps & { shouldKeepPreviousData?: boolean }) => {
   const trpc = useTRPC()
   const { data, isLoading } = useQuery(
-    trpc.user.all.queryOptions({
-      filter,
-      ...page,
-    })
+    trpc.user.all.queryOptions(
+      {
+        filter,
+        ...page,
+      },
+      {
+        placeholderData: shouldKeepPreviousData ? keepPreviousData : undefined,
+      }
+    )
   )
   return { users: useMemo(() => data?.items ?? [], [data]), isLoading }
 }

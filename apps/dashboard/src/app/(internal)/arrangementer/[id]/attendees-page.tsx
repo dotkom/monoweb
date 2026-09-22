@@ -1,4 +1,4 @@
-import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
+import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
