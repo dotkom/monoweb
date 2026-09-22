@@ -9,6 +9,8 @@ import {
   getAttendeeQueuePosition,
   getReservedAttendeeCount,
   getUnreservedAttendeeCount,
+  attendeeHasPendingSelectionDeadline,
+  hasAttendeeCompletedSelections,
   hasAttendeePaid,
 } from "@dotkomonline/rpc/attendance"
 import { type User, findActiveMembership } from "@dotkomonline/rpc/user"
@@ -70,6 +72,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   const paymentDeadlineHasPassed = attendee?.paymentDeadline != null && isAfter(now, attendee.paymentDeadline)
   const showPaymentCountdown =
     paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
+  const selectionsArePending = attendeeHasPendingSelectionDeadline(attendance.selections, attendee)
 
   const cardClassname = cn(
     "flex flex-col w-full min-h-40 gap-2 p-3 rounded-lg",
@@ -142,7 +145,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     isFuture(attendee.earliestReservationAt) &&
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
-  const actionIsRequired = showPaymentCountdown
+  const actionIsRequired = showPaymentCountdown || selectionsArePending
   const isReserved = attendee?.reserved === true
   const isQueued = attendee?.reserved === false
   const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-600/50")
@@ -197,6 +200,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             )}
 
             <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            <SelectionStatus attendance={attendance} attendee={attendee} />
           </div>
         </div>
       )}
@@ -474,6 +478,40 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   }
 
   return null
+}
+
+interface SelectionStatusProps {
+  attendance: Attendance
+  attendee: Attendee | null
+}
+
+const SelectionStatus = ({ attendance, attendee }: SelectionStatusProps) => {
+  if (attendee === null || attendee.reserved !== true || attendance.selections.length === 0) {
+    return null
+  }
+
+  const hasSelected = hasAttendeeCompletedSelections(attendance.selections, attendee.selections)
+
+  if (!hasSelected) {
+    return (
+      <div
+        className={cn(
+          "flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm",
+          "bg-orange-200 dark:bg-red-900"
+        )}
+      >
+        <IconX className="size-[1.25em] text-red-700 dark:text-red-200" />
+        <Text>Du har ikke valgt</Text>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCheck className="size-[1.25em] text-green-700 dark:text-green-200" />
+      <Text>Du har valgt</Text>
+    </div>
+  )
 }
 
 interface PaymentActionProps {

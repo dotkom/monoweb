@@ -64,6 +64,11 @@ export interface AttendanceRepository {
     attendeeId: AttendeeId,
     data: Partial<AttendeePaymentWrite>
   ): Promise<Attendee>
+  updateAttendeeSelectionDeadline(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    selectionDeadline: Date | null
+  ): Promise<Attendee>
   /** Move all attendees from one of multiple old pools to a new pool. */
   updateAttendeeAttendancePoolIdByAttendancePoolIds(
     handle: DBHandle,
@@ -470,6 +475,31 @@ export function getAttendanceRepository(): AttendanceRepository {
           id: attendeeId,
         },
         data,
+        include: {
+          user: {
+            include: {
+              memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
+    },
+
+    async updateAttendeeSelectionDeadline(handle, attendeeId, selectionDeadline) {
+      const attendee = await handle.attendee.update({
+        where: {
+          id: attendeeId,
+        },
+        data: {
+          selectionDeadline,
+        },
         include: {
           user: {
             include: {

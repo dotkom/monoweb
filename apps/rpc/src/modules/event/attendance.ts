@@ -1,5 +1,5 @@
-import { getStudyGrade } from "@dotkomonline/utils"
-import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
+import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -16,6 +16,19 @@ export const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
  * Clock skew buffer subtracted from grace period end for UI eligibility display.
  */
 export const DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS = secondsToMilliseconds(15)
+
+/**
+ * How long a newly reserved attendee has to answer selections that already exist.
+ *
+ * This matches the immediate payment deadline so paid events can share one countdown.
+ */
+export const SELECTION_DEADLINE_HOURS = 1
+
+/**
+ * Immediate payment deadlines are computed before Stripe responds.
+ * Treat a payment window that is still about one hour long as the same deadline.
+ */
+export const SHARED_DEADLINE_TOLERANCE_MS = secondsToMilliseconds(60)
 
 export type AttendanceStatus = "NOT_OPENED" | "OPEN" | "CLOSED"
 
@@ -52,6 +65,7 @@ const AttendeeBaseSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   paymentDeadline: z.date().nullable(),
+  selectionDeadline: z.date().nullable(),
   paymentLink: z.string().nullable(),
   paymentId: z.string().nullable(),
   paymentReservedAt: z.date().nullable(),
@@ -355,6 +369,63 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
 
   // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
   return index + 1
+}
+
+export function hasAttendeeCompletedSelections(
+  attendanceSelections: AttendanceSelection[],
+  responses: AttendanceSelectionResponse[]
+): boolean {
+  return attendanceSelections.every((selection) => {
+    const response = responses.find((candidate) => candidate.selectionId === selection.id)
+
+    if (response === undefined || response.optionId.length === 0) {
+      return false
+    }
+
+    return selection.options.some((option) => option.id === response.optionId)
+  })
+}
+
+export function attendeeHasPendingSelectionDeadline(
+  attendanceSelections: AttendanceSelection[],
+  attendee: Pick<Attendee, "selectionDeadline" | "selections"> | null
+): boolean {
+  if (attendee === null || attendee.selectionDeadline === null) {
+    return false
+  }
+
+  return !hasAttendeeCompletedSelections(attendanceSelections, attendee.selections)
+}
+
+export function selectionDeadlineMatchesPayment(
+  attendee: Pick<Attendee, "selectionDeadline" | "paymentDeadline">
+): boolean {
+  if (attendee.selectionDeadline === null || attendee.paymentDeadline === null) {
+    return false
+  }
+
+  const deltaMs = Math.abs(attendee.selectionDeadline.getTime() - attendee.paymentDeadline.getTime())
+  return deltaMs <= SHARED_DEADLINE_TOLERANCE_MS
+}
+
+/**
+ * Selection deadlines are one hour. When payment uses that same window, reuse its timestamp
+ * so the attendee sees a single countdown.
+ */
+export function resolveSelectionDeadline(paymentDeadline: Date | null, now = getCurrentUTC()): Date {
+  const oneHourDeadline = addHours(now, SELECTION_DEADLINE_HOURS)
+
+  if (paymentDeadline === null) {
+    return oneHourDeadline
+  }
+
+  const paymentWindowMs = paymentDeadline.getTime() - now.getTime()
+  const deltaMs = Math.abs(paymentWindowMs - hoursToMilliseconds(SELECTION_DEADLINE_HOURS))
+  if (deltaMs <= SHARED_DEADLINE_TOLERANCE_MS) {
+    return paymentDeadline
+  }
+
+  return oneHourDeadline
 }
 
 type AttendeePaymentProps = Pick<
