@@ -9,13 +9,17 @@ interface UseCompanyAllInfiniteQueryProps {
   page?: Pageable
 }
 
-export const useCompanyAllInfiniteQuery = ({ filter, page }: UseCompanyAllInfiniteQueryProps) => {
+export const useCompanyAllInfiniteQuery = ({
+  filter,
+  page,
+  shouldKeepPreviousData,
+}: UseCompanyAllInfiniteQueryProps & { shouldKeepPreviousData?: boolean }) => {
   const trpc = useTRPC()
   const { data, ...query } = useInfiniteQuery({
     ...trpc.company.findMany.infiniteQueryOptions({ filter, ...page }),
     select: (data) => data.pages.flatMap((page) => page.items),
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    placeholderData: keepPreviousData,
+    placeholderData: shouldKeepPreviousData ? keepPreviousData : undefined,
   })
 
   const companies = useMemo(() => data ?? [], [data])
@@ -39,6 +43,11 @@ export const useCompanyEventsAllInfiniteQuery = (id: CompanyId) => {
   const events = useMemo(() => data ?? [], [data])
 
   return { events, ...query }
+}
+
+export const useCompanyByIdQuery = (id: CompanyId, enabled?: boolean) => {
+  const trpc = useTRPC()
+  return useQuery(trpc.company.getById.queryOptions(id, { enabled }))
 }
 
 export const useCompanyBySlugQuery = (slug: CompanySlug) => {

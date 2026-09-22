@@ -1,31 +1,59 @@
 "use client"
 import { useTRPC } from "@/lib/trpc-client"
-import { Loader } from "@mantine/core"
-import { type PropsWithChildren, use, useMemo } from "react"
+import type { PropsWithChildren } from "react"
+
+import { ResourceDetailError } from "@/components/ResourceDetailLayout/ResourceDetailError"
+import {
+  ResourceDetailLayout,
+  type ResourceDetailNavItem,
+} from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { env } from "@/lib/env"
+import { IconBuildingWarehouse } from "@tabler/icons-react"
+import { useParams } from "next/navigation"
 import { JobListingDetailsContext } from "./provider"
 
 import { useQuery } from "@tanstack/react-query"
 
-export default function JobListingDetailsLayout({
-  children,
-  params,
-}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+export default function JobListingDetailsLayout({ children }: PropsWithChildren) {
   const trpc = useTRPC()
-  const { id } = use(params)
-  const { data, isLoading } = useQuery(trpc.jobListing.get.queryOptions(id))
-  const value = useMemo(
-    () =>
-      !data || isLoading
-        ? null
-        : {
-            jobListing: data,
-          },
-    [data, isLoading]
-  )
+  const { id } = useParams<{ id: string }>()
+  const { data, isLoading, isError, error } = useQuery(trpc.jobListing.get.queryOptions(id))
 
-  if (value === null) {
-    return <Loader />
+  if (isLoading) {
+    return null
   }
 
-  return <JobListingDetailsContext.Provider value={value}>{children}</JobListingDetailsContext.Provider>
+  if (isError || !data) {
+    return (
+      <ResourceDetailError
+        backHref="/karriere"
+        title="Feil ved henting av stillingsannonse"
+        message={error?.message ?? "Ukjent feil"}
+      />
+    )
+  }
+
+  const basePath = `/karriere/${id}`
+
+  const navItems: ResourceDetailNavItem[] = [
+    {
+      href: basePath,
+      label: "Info",
+      icon: IconBuildingWarehouse,
+    },
+  ]
+
+  return (
+    <ResourceDetailLayout
+      title={data.title}
+      backHref="/karriere"
+      navItems={navItems}
+      viewInWebProps={{
+        label: "Se stillingsannonse",
+        href: `${env.NEXT_PUBLIC_WEB_URL}/karriere/${encodeURIComponent(data.id)}`,
+      }}
+    >
+      <JobListingDetailsContext.Provider value={{ jobListing: data }}>{children}</JobListingDetailsContext.Provider>
+    </ResourceDetailLayout>
+  )
 }

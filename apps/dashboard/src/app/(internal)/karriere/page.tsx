@@ -1,33 +1,42 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import type { JobListingFilterQuery } from "@dotkomonline/rpc/job-listing"
-import { Box, Button, Group, Skeleton, Stack } from "@mantine/core"
 import { useState } from "react"
-import { JobListingFilters } from "./components/job-listing-filter"
-import { useCreateJobListingModal } from "./modals/create-job-listing-modal"
-import { useJobListingAllQuery } from "./queries/use-job-listing-all-query"
-import { useJobListingTable } from "./use-job-listing-table"
+
+import { Button, Title } from "@dotkomonline/ui"
+import { IconPencil } from "@tabler/icons-react"
+import Link from "next/link"
+import { JobListingFilters } from "./JobListingFilters"
+import { JobListingTable } from "./JobListingTable"
+import { useJobListingAllQuery } from "./queries"
 
 export default function JobListingPage() {
   const [filter, setFilter] = useState<JobListingFilterQuery>({})
-  const { jobListings, isLoading: isJobListingsLoading, fetchNextPage } = useJobListingAllQuery({ filter })
-  const open = useCreateJobListingModal()
-  const table = useJobListingTable({ data: jobListings })
+  const { jobListings, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useJobListingAllQuery({ filter })
 
   return (
-    <Stack>
-      <Group justify="space-between">
-        <JobListingFilters onChange={setFilter} />
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="text-4xl">
+        Stillingsannonser
+      </Title>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <JobListingFilters onChange={setFilter} defaultValues={filter} />
+          <Button variant="default" size="lg" element={Link} href="/karriere/ny" icon={<IconPencil />}>
+            Ny stillingsannonse
+          </Button>
+        </div>
 
-        <Box>
-          <Button onClick={open}>Opprett stillingsannonse</Button>
-        </Box>
-      </Group>
-
-      <Skeleton visible={isJobListingsLoading}>
-        <GenericTable table={table} onLoadMore={fetchNextPage} />
-      </Skeleton>
-    </Stack>
+        <JobListingTable
+          data={jobListings}
+          isLoading={isLoading}
+          isPlaceholderData={isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+        />
+      </div>
+    </div>
   )
 }
