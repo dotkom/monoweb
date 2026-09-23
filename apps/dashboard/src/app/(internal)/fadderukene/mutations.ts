@@ -23,9 +23,10 @@ export const useCreateFadderukeMutation = () => {
           message: `Fadderuken for ${data.year} har blitt opprettet.`,
         })
 
-        await queryClient.invalidateQueries({ queryKey: trpc.fadderuke.findMany.queryKey() })
+        await queryClient.invalidateQueries(trpc.fadderuke.findMany.queryOptions())
+        await queryClient.invalidateQueries(trpc.fadderuke.getById.queryOptions(data.id))
 
-        router.replace("/fadderukene")
+        router.replace(`/fadderukene/${data.id}`)
       },
       onError: (err) => {
         notification.fail({
@@ -56,7 +57,8 @@ export const useUpdateFadderukeMutation = () => {
           message: `Fadderuken for ${data.year} har blitt oppdatert.`,
         })
 
-        await queryClient.invalidateQueries({ queryKey: trpc.fadderuke.findMany.queryKey() })
+        await queryClient.invalidateQueries(trpc.fadderuke.findMany.queryOptions())
+        await queryClient.invalidateQueries(trpc.fadderuke.getById.queryOptions(data.id))
       },
       onError: (err) => {
         notification.fail({
@@ -88,7 +90,7 @@ export const useDeleteFadderukeMutation = () => {
           message: "Fadderuken har blitt slettet.",
         })
 
-        await queryClient.invalidateQueries({ queryKey: trpc.fadderuke.findMany.queryKey() })
+        await queryClient.invalidateQueries(trpc.fadderuke.findMany.queryOptions())
 
         router.replace("/fadderukene")
       },
