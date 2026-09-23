@@ -5,9 +5,10 @@ import Link from "next/link"
 
 interface OfflineCardProps {
   offline: Offline
+  showTitle?: boolean
 }
 
-export const OfflineCard = ({ offline }: OfflineCardProps) => {
+export const OfflineCard = ({ offline, showTitle=true}: OfflineCardProps) => {
   return (
     <div className="flex flex-col gap-3 text-wrap max-w-56">
       {offline.imageUrl && offline.fileUrl && (
@@ -30,7 +31,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
           </div>
         </Link>
       )}
-      <Text className="text-gray-950 dark:text-white">{offline.title}</Text>
+      {showTitle===true && <Text className="text-gray-950 dark:text-white">{offline.title}</Text>}
     </div>
   )
 }

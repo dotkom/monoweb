@@ -14,6 +14,7 @@ import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
 import { BirthdayPartyNotice } from "@/components/notices/birthday-party-notice"
+import { FrontPageOfflineShowcase } from "@/components/frontPageOfflineShowcase"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -59,6 +60,9 @@ export default async function App() {
       console.error("Failed to fetch user attending events", e)
     }
   }
+
+  const offlines = await server.offline.all.query()
+  const featuredOffline = offlines[0]
 
   return (
     <section className="flex flex-col gap-16 w-full">
@@ -143,6 +147,8 @@ export default async function App() {
           <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
         )}
       </div>
+
+      <FrontPageOfflineShowcase offline={featuredOffline}  />
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Dine arrangementer</Title>
