@@ -20,6 +20,7 @@ export function TextField<TFieldValues extends FieldValues>({
   description,
   required,
   fixedWidth = false,
+  onBlur,
   ...inputProps
 }: TextFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
@@ -41,7 +42,10 @@ export function TextField<TFieldValues extends FieldValues>({
         ref={field.ref}
         value={field.value ?? ""}
         onChange={field.onChange}
-        onBlur={field.onBlur}
+        onBlur={(event) => {
+          field.onBlur()
+          onBlur?.(event)
+        }}
         aria-invalid={error ? true : undefined}
         {...inputProps}
         disabled={combineFieldDisabled(field.disabled, inputProps.disabled)}

@@ -18,6 +18,8 @@ type DateTimePickerFieldProps<TFieldValues extends FieldValues> = {
   timeInputClassName?: string
   fixedWidth?: boolean
   syncOffsetTo?: FieldPathByValue<TFieldValues, Date | null | undefined>
+  disabled?: boolean
+  onValueChange?: (value: Date | null) => void
 }
 
 export function DateTimePickerField<TFieldValues extends FieldValues>({
@@ -33,6 +35,8 @@ export function DateTimePickerField<TFieldValues extends FieldValues>({
   timeInputClassName,
   fixedWidth = false,
   syncOffsetTo,
+  disabled,
+  onValueChange,
 }: DateTimePickerFieldProps<TFieldValues>) {
   const { setValue, getValues } = useFormContext<TFieldValues>()
   const { field, fieldState } = useController({ control, name })
@@ -50,13 +54,16 @@ export function DateTimePickerField<TFieldValues extends FieldValues>({
     >
       <DateTimePicker
         value={field.value ?? null}
-        onChange={field.onChange}
+        onChange={(value) => {
+          field.onChange(value)
+          onValueChange?.(value)
+        }}
         placeholder={placeholder}
         withTime={withTime}
         className={className}
         minuteStep={minuteStep}
         timeInputClassName={timeInputClassName}
-        disabled={combineFieldDisabled(field.disabled)}
+        disabled={combineFieldDisabled(field.disabled, disabled)}
         syncOffsetTo={
           syncOffsetTo
             ? {

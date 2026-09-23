@@ -1,239 +1,44 @@
 "use client"
 
-import { env } from "@/lib/env"
-import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { Box, Button, Group, Modal, Stack, Tabs, Text, Title } from "@mantine/core"
-import { useDisclosure } from "@mantine/hooks"
-import {
-  IconAlertTriangleFilled,
-  IconArrowLeft,
-  IconArrowUpRight,
-  IconCalendarEvent,
-  IconCancel,
-  IconCreditCard,
-  IconForms,
-  IconListDetails,
-  IconSelector,
-  IconTrash,
-  IconUser,
-  type TablerIcon,
-} from "@tabler/icons-react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { PermissionTooltip } from "@/components/PermissionTooltip"
-import { useEventEditPermission } from "@/hooks/use-event-edit-permission"
-import { useDeleteEventMutation } from "../mutations"
-import { useEventFeedbackFormGetQuery } from "../queries"
-import { AttendancePage } from "./attendance-page"
-import { AttendeesPage } from "./attendees-page"
-import { EventEditCard } from "./edit-card"
-import { FeedbackPage } from "./feedback-page"
-import { PaymentPage } from "./payment-page"
+import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
+import { EventEditForm } from "../components/EventEditForm"
+import { ParentEventCard } from "../components/ParentEventCard"
+import { useUpdateEventMutation } from "../mutations"
+import { useEventEditPermission } from "../use-event-edit-permission"
 import { useEventContext } from "./provider"
-import { SelectionsPage } from "./selections-page"
-import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import type { ComponentType } from "react"
 
-const SIDEBAR_LINKS = [
-  {
-    icon: IconListDetails,
-    label: "Info",
-    slug: "info",
-    component: EventEditCard,
-    requiresAttendance: false,
-  },
-  {
-    icon: IconCalendarEvent,
-    label: "Påmelding",
-    slug: "pamelding",
-    component: AttendancePage,
-    requiresAttendance: false,
-  },
-  {
-    icon: IconUser,
-    label: "Påmeldte",
-    slug: "pameldte",
-    component: AttendeesPage,
-    requiresAttendance: true,
-  },
-  {
-    icon: IconSelector,
-    label: "Valg",
-    slug: "valg",
-    component: SelectionsPage,
-    requiresAttendance: true,
-  },
-  {
-    icon: IconCreditCard,
-    label: "Betaling",
-    slug: "betaling",
-    component: PaymentPage,
-    requiresAttendance: true,
-  },
-  {
-    icon: IconForms,
-    label: "Tilbakemeldingsskjema",
-    slug: "tilbakemeldingsskjema",
-    component: FeedbackPage,
-    requiresAttendance: true,
-  },
-] as const satisfies {
-  icon: TablerIcon
-  label: string
-  slug: string
-  component: ComponentType
-  requiresAttendance: boolean
-}[]
-
-function getActiveTabSlug(requestedSlug: string, hasAttendance: boolean): string {
-  const requestedTab = SIDEBAR_LINKS.find((link) => link.slug === requestedSlug)
-
-  if (requestedTab === undefined) {
-    return SIDEBAR_LINKS[0].slug
-  }
-
-  if (requestedTab.requiresAttendance && !hasAttendance) {
-    return "pamelding"
-  }
-
-  return requestedSlug
-}
-
-export default function EventWithAttendancesPage() {
-  const { event, attendance } = useEventContext()
+export default function EventPage() {
+  const { event } = useEventContext()
   const { canEdit } = useEventEditPermission()
-  const router = useRouter()
+  const edit = useUpdateEventMutation()
+  const { groups } = useGroupAllQuery()
 
-  const deleteEvent = useDeleteEventMutation()
-  const [opened, { open, close }] = useDisclosure(false)
-
-  const searchParams = useSearchParams()
-  const requestedTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
-
-  const hasAttendance = Boolean(attendance)
-  const hasPools = Boolean(attendance?.pools && attendance.pools.length > 0)
-  const currentTab = getActiveTabSlug(requestedTab, hasAttendance)
-
-  const { data: feedbackForm, isLoading: feedbackFormIsLoading } = useEventFeedbackFormGetQuery(event.id)
-
-  const now = getCurrentUTC()
-  const hasFeedbackForm = Boolean(feedbackForm)
-  const isCompanyEvent = event.type === "COMPANY"
-  const hasEventEnded = event.end < now
-
-  const handleTabChange = (value: string | null) => {
-    const nextTabSlug = value ?? SIDEBAR_LINKS[0].slug
-    const nextTab = SIDEBAR_LINKS.find((link) => link.slug === nextTabSlug)
-
-    if (nextTab?.requiresAttendance && !hasAttendance) {
-      return
-    }
-
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("tab", nextTabSlug)
-    router.replace(`/arrangementer/${event.id}?${params.toString()}`)
+  const defaultValues = {
+    ...event,
+    hostingGroupIds: event.hostingGroups.map((group) => group.slug),
+    companyIds: event.companies.map((company) => company.id),
   }
 
   return (
-    <Stack>
-      {hasAttendance && !hasPools && <WarningBox content="Påmeldingen har ingen påmeldingsgrupper" />}
-      {!feedbackFormIsLoading && isCompanyEvent && !hasFeedbackForm && !hasEventEnded && (
-        <WarningBox content="Arrangementet mangler tilbakemeldingsskjema. Det vil ikke være mulig å opprette tilbakemeldingsskjema etter arrangementet er over" />
-      )}
+    <div className="flex flex-col gap-4">
+      <ParentEventCard eventId={event.id} disabled={!canEdit} />
+      <EventEditForm
+        submitLabel="Oppdater arrangement"
+        hostingGroups={groups}
+        disabled={!canEdit}
+        defaultValues={defaultValues}
+        onSubmit={(data) => {
+          const { hostingGroupIds, companyIds, ...eventData } = data
 
-      <Group align="center">
-        <Group>
-          <Button
-            variant="light"
-            onClick={() => router.push("/arrangementer")}
-            leftSection={<IconArrowLeft height={14} width={14} />}
-          >
-            Tilbake
-          </Button>
-          <Button
-            variant="light"
-            rightSection={<IconArrowUpRight height={14} width={14} />}
-            component="a"
-            href={createAbsoluteEventPageUrl(env.NEXT_PUBLIC_WEB_URL, event.id, event.title)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Se arrangementet
-          </Button>
-        </Group>
-
-        <Group>
-          <Modal opened={opened} onClose={close} title={`Er du sikker på at du vil slette ${event.title}?`} centered>
-            <Group>
-              <Button
-                color="red"
-                onClick={() => {
-                  deleteEvent.mutate({ id: event.id })
-                  router.back()
-                }}
-                leftSection={<IconTrash height={14} width={14} />}
-              >
-                Ja, slett
-              </Button>
-              <Button color="gray" onClick={close} leftSection={<IconCancel height={14} width={14} />}>
-                Nei
-              </Button>
-            </Group>
-          </Modal>
-
-          <PermissionTooltip allowed={canEdit}>
-            <Button
-              color="red"
-              variant="light"
-              onClick={open}
-              disabled={!canEdit}
-              leftSection={<IconTrash height={14} width={14} />}
-            >
-              Slett
-            </Button>
-          </PermissionTooltip>
-        </Group>
-      </Group>
-
-      <Group>
-        <Title>{event.title}</Title>
-      </Group>
-
-      {!canEdit && (
-        <ReadOnlyNotice
-          title="Du kan ikke redigere arrangementet."
-          message="Dette er fordi du ikke er arrangør. Kontakt dotkom dersom du mener dette er en feil."
-        />
-      )}
-
-      <Tabs value={currentTab} onChange={handleTabChange} keepMounted={false}>
-        <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug, requiresAttendance }) => {
-            const isDisabled = requiresAttendance && !hasAttendance
-
-            return (
-              <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />} disabled={isDisabled}>
-                {label}
-              </Tabs.Tab>
-            )
-          })}
-        </Tabs.List>
-        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
-          <Tabs.Panel mt="md" key={slug} value={slug}>
-            <Component />
-          </Tabs.Panel>
-        ))}
-      </Tabs>
-    </Stack>
+          edit.mutate({
+            id: data.id,
+            event: eventData,
+            groupIds: hostingGroupIds,
+            companyIds,
+            parentId: event.parentId,
+          })
+        }}
+      />
+    </div>
   )
 }
-
-const WarningBox = ({ content }: { content: string }) => (
-  <Box style={{ borderRadius: "var(--mantine-radius-md)" }} bg="red.7" mb="lg">
-    <Group p="md" gap="xs">
-      <IconAlertTriangleFilled color="white" size={24} />
-      <Text c="white" size="lg">
-        {content}
-      </Text>
-    </Group>
-  </Box>
-)

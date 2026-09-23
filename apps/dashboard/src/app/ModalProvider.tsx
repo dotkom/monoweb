@@ -1,38 +1,18 @@
 "use client"
 
-import { AttendanceRegisteredModal } from "@/app/(internal)/arrangementer/components/attendance-registered-modal"
-import { CreateAttendanceSelectionsModal } from "@/app/(internal)/arrangementer/components/create-event-selections-modal"
-import { CreatePoolModal } from "@/app/(internal)/arrangementer/components/create-pool-modal"
-import { UpdateAttendanceSelectionsModal } from "@/app/(internal)/arrangementer/components/edit-event-selections-modal"
-import { EditPoolModal } from "@/app/(internal)/arrangementer/components/edit-pool-modal"
-import { AlreadyAttendedModal } from "@/app/(internal)/arrangementer/components/error-attendance-registered-modal"
-import { ManualCreateUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-create-user-attend-modal"
-import { ManualDeleteUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-delete-user-attend-modal"
-import { NotifyAttendeesModal } from "@/app/(internal)/arrangementer/components/notify-attendees-modal"
 import { CreateMembershipModal } from "@/app/(internal)/brukere/components/create-membership-modal"
 import { EditMembershipModal } from "@/app/(internal)/brukere/components/edit-membership-modal"
-import { UploadImageModal } from "@/components/ImageUploadModal"
-import { ModalsProvider } from "@mantine/modals"
-import type { FC, PropsWithChildren } from "react"
-import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
 import { AddRecipientsModal } from "@/app/(internal)/varslinger/components/add-recipients-modal"
 import { EditNotificationModal } from "@/app/(internal)/varslinger/components/edit-notification-modal"
 import { SendNotificationModal } from "@/app/(internal)/varslinger/components/send-notification-modal"
+import { UploadImageModal } from "@/components/ImageUploadModal"
+import { ModalsProvider } from "@mantine/modals"
+import type { FC, PropsWithChildren } from "react"
 
 const modals = {
-  "event/attendance/attendee/create": ManualCreateUserAttendModal,
-  "event/attendance/attendee/delete": ManualDeleteUserAttendModal,
-  "event/attendance/attendee/qr-code-scanned": QRCodeScannedModal,
-  "event/attendance/notify-attendees": NotifyAttendeesModal,
   "notification/send": SendNotificationModal,
   "notification/edit": EditNotificationModal,
   "notification/add-recipients": AddRecipientsModal,
-  "event/attendance/pool/create": CreatePoolModal,
-  "event/attendance/pool/update": EditPoolModal,
-  "attendance/selections/create": CreateAttendanceSelectionsModal,
-  "attendance/selections/update": UpdateAttendanceSelectionsModal,
-  "event/attendance/registered": AttendanceRegisteredModal,
-  "event/attendance/registered-error": AlreadyAttendedModal,
   "user/membership/create": CreateMembershipModal,
   "user/membership/update": EditMembershipModal,
   "image/upload": UploadImageModal,

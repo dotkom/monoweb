@@ -24,6 +24,7 @@ export type TagInputProps = {
   className?: string
   required?: boolean
   creatable?: boolean
+  invalid?: boolean
 }
 
 export function TagInput({
@@ -36,6 +37,7 @@ export function TagInput({
   className,
   required,
   creatable = true,
+  invalid,
 }: TagInputProps) {
   const anchor = useComboboxAnchor()
   const [query, setQuery] = useState("")
@@ -68,7 +70,11 @@ export function TagInput({
               {tags.map((tag) => (
                 <ComboboxChip key={tag}>{tag}</ComboboxChip>
               ))}
-              <ComboboxChipsInput id={id} placeholder={tags.length === 0 ? placeholder : undefined} />
+              <ComboboxChipsInput
+                id={id}
+                placeholder={tags.length === 0 ? placeholder : undefined}
+                aria-invalid={invalid || undefined}
+              />
             </>
           )}
         </ComboboxValue>
