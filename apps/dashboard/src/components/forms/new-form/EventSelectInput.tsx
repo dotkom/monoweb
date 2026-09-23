@@ -103,7 +103,11 @@ export function EventSelectInput({
       required={required}
       items={options}
       value={selectedOption}
-      onValueChange={(next: EventSelectOption | null) => {
+      onValueChange={(next: EventSelectOption | null, eventDetails) => {
+        if (eventDetails.reason === "input-clear") {
+          return
+        }
+
         onChange(next?.value ?? "")
       }}
       inputValue={open ? searchQuery : (selectedOption?.label ?? "")}

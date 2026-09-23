@@ -45,11 +45,14 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
       },
       ...page,
     }),
+    select: (data) => data.pages.flatMap((page) => page.items),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
   })
 
-  return { events: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]), ...query }
+  const events = useMemo(() => data ?? [], [data])
+
+  return { events, ...query }
 }
 
 export const useEventWithAttendancesGetQuery = (id: EventId, enabled?: boolean) => {

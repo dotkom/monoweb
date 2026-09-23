@@ -367,11 +367,14 @@ export const useUpdateAttendanceMutation = () => {
     trpc.event.attendance.updateAttendance.mutationOptions({
       onError: fail,
       onMutate: loading,
-      onSuccess: async () => {
+      onSuccess: async (data) => {
         complete()
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
         await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendance.queryKey() })
+        await queryClient.invalidateQueries({
+          queryKey: trpc.event.attendance.getSelectionsResults.queryKey({ attendanceId: data.id }),
+        })
       },
     })
   )

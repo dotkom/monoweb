@@ -19,8 +19,8 @@ export function PermissionTooltip({
 
   return (
     <Tooltip>
-      <TooltipTrigger className={className}>
-        <span>{children}</span>
+      <TooltipTrigger asChild>
+        <span className={className}>{children}</span>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

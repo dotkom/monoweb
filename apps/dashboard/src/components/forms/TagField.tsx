@@ -39,8 +39,8 @@ export function TagField<TFieldValues extends FieldValues>({
         id={id}
         value={field.value ?? []}
         onChange={field.onChange}
-        aria-invalid={error ? true : undefined}
         {...inputProps}
+        invalid={Boolean(error)}
         disabled={combineFieldDisabled(field.disabled, inputProps.disabled)}
       />
     </FieldShell>

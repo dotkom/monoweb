@@ -1,6 +1,5 @@
 "use client"
 
-import { EventSelect } from "@/app/(internal)/arrangementer/components/event-select"
 import { useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
 import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
@@ -41,6 +40,7 @@ import { IconUsers, IconX } from "@tabler/icons-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRecipientSelectionPreview, useRecipientSelectionPreviewInfinite } from "../queries"
 import { EventAttendeeRecipientFilters } from "./event-attendee-recipient-filters"
+import { EventSelectInput } from "@/components/forms/new-form/EventSelectInput"
 
 const TARGETABLE_GROUP_TYPES = new Set(["COMMITTEE", "NODE_COMMITTEE", "ASSOCIATED", "INTEREST_GROUP"])
 
@@ -728,9 +728,9 @@ function EventAttendeesFields({
 
   return (
     <Stack gap="xs">
-      <EventSelect
+      <EventSelectInput
         placeholder="Velg arrangement"
-        value={draft.eventId}
+        value={draft.eventId ?? ""}
         onChange={(value) => {
           onChange({
             ...draft,
