@@ -75,6 +75,7 @@ describe("mergeUsers", () => {
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
     handle.userFlagLink.findMany.mockResolvedValue([])
+    handle.application.findMany.mockResolvedValue([])
     deps = { groupRepository, attendanceService }
   })
 
@@ -383,6 +384,41 @@ describe("mergeUsers", () => {
         where: { userId: consumed.id, markId: { in: [sharedMarkId] } },
       })
       expect(handle.personalMark.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+  })
+
+  describe("application deduplication", () => {
+    it("reassigns consumed applications when survivor has none in the same period", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+
+      handle.application.findMany.mockResolvedValue([])
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.application.deleteMany).not.toHaveBeenCalled()
+      expect(handle.application.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+
+    it("deletes the consumed user's application when the survivor applied to the same period", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const sharedPeriodId = "application-period-shared"
+
+      handle.application.findMany.mockResolvedValue([{ applicationPeriodId: sharedPeriodId }] as never)
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.application.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, applicationPeriodId: { in: [sharedPeriodId] } },
+      })
+      expect(handle.application.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })
