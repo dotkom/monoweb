@@ -2,24 +2,49 @@ import type { useAuthorization } from "@admin/auth/authorization-context"
 import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
 import { describe, expect, it } from "vitest"
 
-function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
-  return {
-    canCreateEvents: () => true,
-    canCreateGroup: () => true,
-    canEditOffline: () => true,
-    canEditFadderuke: () => true,
-    canAccessAuditLog: () => true,
-    ...overrides,
-  } as ReturnType<typeof useAuthorization>
+type Authorization = ReturnType<typeof useAuthorization>
+
+const allowAll: Authorization = {
+  isAdministrator: true,
+  isCommitteeMember: true,
+  affiliations: new Map(),
+  isGroupMember: () => true,
+  hasGroupRole: () => true,
+  hasAnyGroupAffiliation: () => true,
+  canAccessAuditLog: () => true,
+  canManageUserMemberships: () => true,
+  canEditUserProfile: () => true,
+  canEditEvent: () => true,
+  canEditContest: () => true,
+  canManageNotification: () => true,
+  canEditOffline: () => true,
+  canEditFadderuke: () => true,
+  canViewApplication: () => true,
+  canManageApplicationInterviews: () => true,
+  canViewApplicationMatching: () => true,
+  canEditApplicationGroupAvailability: () => true,
+  canViewApplicationGroup: () => true,
+  isApplicationGroupMember: () => true,
+  canEditApplication: () => true,
+  canCreateGroup: () => true,
+  canUpdateGroup: () => true,
+  canDeleteGroup: () => true,
+  canManageGroupMembership: () => true,
+  canManageGroupRoles: () => true,
+  canCreateEvents: () => true,
 }
 
-function actionHrefs(authorization: ReturnType<typeof useAuthorization>) {
+function auth(overrides: Partial<Authorization> = {}): Authorization {
+  return { ...allowAll, ...overrides }
+}
+
+function actionHrefs(authorization: Authorization) {
   return filterNavigationsUserHasAccessTo(navigations, authorization).flatMap(
     (page) => page.createActions?.map((action) => action.href) ?? []
   )
 }
 
-function pageHrefs(authorization: ReturnType<typeof useAuthorization>) {
+function pageHrefs(authorization: Authorization) {
   return filterNavigationsUserHasAccessTo(navigations, authorization).map((page) => page.href)
 }
 
@@ -47,5 +72,14 @@ describe("filterNavigationsUserHasAccessTo", () => {
 
   it("hides audit log when canAccessAuditLog is false", () => {
     expect(pageHrefs(auth({ canAccessAuditLog: () => false }))).not.toContain("/admin/logg")
+  })
+
+  it("hides komitéopptak when canViewApplication is false", () => {
+    expect(pageHrefs(auth({ canViewApplication: () => false }))).not.toContain("/admin/opptak")
+  })
+
+  it("hides create komitéopptak when canEditApplication is false", () => {
+    expect(actionHrefs(auth({ canEditApplication: () => false }))).not.toContain("/admin/opptak/ny")
+    expect(pageHrefs(auth({ canEditApplication: () => false }))).toContain("/admin/opptak")
   })
 })

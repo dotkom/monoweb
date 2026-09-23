@@ -1,0 +1,60 @@
+:root {
+  --opptak-slot-green-background: oklch(96.2% 0.044 156.743);
+  --opptak-slot-green-surface: oklch(96.2% 0.044 156.743 / 80%);
+  --opptak-slot-green-border: oklch(62.7% 0.194 149.214);
+  --opptak-slot-green-text: oklch(39.3% 0.095 152.535);
+
+  --opptak-slot-blue-background: oklch(93.2% 0.032 255.585);
+  --opptak-slot-blue-surface: oklch(93.2% 0.032 255.585 / 80%);
+  --opptak-slot-blue-border: oklch(54.6% 0.245 262.881);
+  --opptak-slot-blue-text: oklch(37.9% 0.146 265.522);
+
+  --opptak-slot-yellow-background: oklch(97.3% 0.071 103.193);
+  --opptak-slot-yellow-surface: oklch(97.3% 0.071 103.193 / 80%);
+  --opptak-slot-yellow-border: oklch(68.1% 0.162 75.834);
+  --opptak-slot-yellow-text: oklch(42.1% 0.095 57.708);
+
+  --opptak-slot-red-background: oklch(93.6% 0.032 17.717);
+  --opptak-slot-red-surface: oklch(93.6% 0.032 17.717 / 80%);
+  --opptak-slot-red-border: oklch(57.7% 0.245 27.325);
+  --opptak-slot-red-text: oklch(39.6% 0.141 25.723);
+}
+
+.dark,
+[data-theme="dark"] {
+  --opptak-slot-green-background: color-mix(
+    in oklab,
+    oklch(62.7% 0.194 149.214) 22%,
+    var(--background)
+  );
+  --opptak-slot-green-surface: oklch(62.7% 0.194 149.214 / 32%);
+  --opptak-slot-green-border: oklch(79.2% 0.209 151.711);
+  --opptak-slot-green-text: oklch(96.2% 0.044 156.743);
+
+  --opptak-slot-blue-background: color-mix(
+    in oklab,
+    oklch(54.6% 0.245 262.881) 28%,
+    var(--background)
+  );
+  --opptak-slot-blue-surface: oklch(54.6% 0.245 262.881 / 40%);
+  --opptak-slot-blue-border: oklch(70.7% 0.165 254.624);
+  --opptak-slot-blue-text: oklch(93.2% 0.032 255.585);
+
+  --opptak-slot-yellow-background: color-mix(
+    in oklab,
+    oklch(68.1% 0.162 75.834) 24%,
+    var(--background)
+  );
+  --opptak-slot-yellow-surface: oklch(68.1% 0.162 75.834 / 34%);
+  --opptak-slot-yellow-border: oklch(85.2% 0.199 91.936);
+  --opptak-slot-yellow-text: oklch(97.3% 0.071 103.193);
+
+  --opptak-slot-red-background: color-mix(
+    in oklab,
+    oklch(57.7% 0.245 27.325) 26%,
+    var(--background)
+  );
+  --opptak-slot-red-surface: oklch(57.7% 0.245 27.325 / 36%);
+  --opptak-slot-red-border: oklch(70.4% 0.191 22.216);
+  --opptak-slot-red-text: oklch(93.6% 0.032 17.717);
+}

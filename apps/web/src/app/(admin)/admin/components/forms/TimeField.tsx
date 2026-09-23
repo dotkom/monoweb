@@ -12,6 +12,7 @@ type TimeFieldProps<TFieldValues extends FieldValues> = Omit<TimeInputProps, "va
   description?: string
   required?: boolean
   fixedWidth?: boolean
+  valueAs?: "time" | "minutes"
 }
 
 export function TimeField<TFieldValues extends FieldValues>({
@@ -21,11 +22,19 @@ export function TimeField<TFieldValues extends FieldValues>({
   description,
   required,
   fixedWidth = false,
+  valueAs = "time",
   ...timeInputProps
 }: TimeFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
   const error = getFieldErrorMessage(fieldState.error?.message)
   const id = String(name)
+  const isMinutes = valueAs === "minutes"
+
+  const value = isMinutes
+    ? typeof field.value === "number"
+      ? { hours: Math.floor(field.value / 60), minutes: field.value % 60 }
+      : null
+    : (field.value ?? null)
 
   return (
     <FieldShell
@@ -37,8 +46,8 @@ export function TimeField<TFieldValues extends FieldValues>({
       fixedWidth={fixedWidth}
     >
       <TimeInput
-        value={field.value ?? null}
-        onChange={field.onChange}
+        value={value}
+        onChange={(next) => field.onChange(isMinutes ? next.hours * 60 + next.minutes : next)}
         {...timeInputProps}
         disabled={combineFieldDisabled(field.disabled, timeInputProps.disabled)}
       />
