@@ -1,16 +1,18 @@
-import { Button, Stack, Text, Title } from "@mantine/core"
+import { Button, Text, Title } from "@dotkomonline/ui"
 import Link from "next/link"
 
 export default function UnauthorizedPage() {
   return (
-    <Stack align="center" justify="center" mih="50vh" gap="md">
-      <Title order={1}>Ingen tilgang</Title>
-      <Text c="dimmed" ta="center" maw={480}>
+    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+      <Title element="h1" size="xl">
+        Ingen tilgang
+      </Title>
+      <Text className="max-w-lg text-center text-muted-foreground">
         Du har ikke tilgang til denne siden. Kontakt HS eller Dotkom hvis du mener dette er feil.
       </Text>
-      <Button component={Link} href="/arrangementer">
+      <Button variant="default" element={Link} href="/arrangementer">
         Tilbake til dashboard
       </Button>
-    </Stack>
+    </div>
   )
 }

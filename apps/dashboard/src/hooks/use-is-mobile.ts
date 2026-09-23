@@ -1,5 +1,19 @@
-import { useMediaQuery } from "@mantine/hooks"
+import { useSyncExternalStore } from "react"
 
-export const useIsMobile = () => {
-  return useMediaQuery("(max-width: 768px)")
+const QUERY = "(max-width: 768px)"
+
+function subscribe(onStoreChange: () => void) {
+  const media = window.matchMedia(QUERY)
+  media.addEventListener("change", onStoreChange)
+  return () => {
+    media.removeEventListener("change", onStoreChange)
+  }
+}
+
+export function useIsMobile() {
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(QUERY).matches,
+    () => false
+  )
 }
