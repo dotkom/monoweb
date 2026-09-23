@@ -1,4 +1,4 @@
-import { AllGroupsTable } from "@/app/(internal)/grupper/all-groups-table"
+import { GroupTable } from "@/app/(internal)/grupper/components/GroupTable"
 import { Skeleton, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
 import { useGroupAllByMemberQuery } from "../queries"
@@ -13,7 +13,7 @@ export const UserGroupPage: FC = () => {
     <Stack>
       <Title order={2}>Grupper</Title>
       <Skeleton visible={isLoading}>
-        <AllGroupsTable groups={groups} />
+        <GroupTable groups={groups} isLoading={isLoading} />
       </Skeleton>
     </Stack>
   )

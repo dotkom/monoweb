@@ -1,17 +1,18 @@
 "use client"
 
-import { FilterableTable } from "@/components/molecules/FilterableTable/FilterableTable"
+import { arrayOrEqualsFilter, FilterableDataTable } from "@/components/FilterableDataTable"
 import { type Group, GroupTypeSchema, getGroupTypeName } from "@dotkomonline/rpc/group"
-import { Anchor } from "@mantine/core"
+import { TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
   groups: Group[]
+  isLoading?: boolean
+  actions?: React.ReactNode
 }
 
-export const AllGroupsTable = ({ groups }: Props) => {
+export const GroupTable = ({ groups, isLoading, actions }: Props) => {
   const columnHelper = createColumnHelper<Group>()
 
   const columns = useMemo(
@@ -20,11 +21,7 @@ export const AllGroupsTable = ({ groups }: Props) => {
         id: "abbreviation",
         header: () => "Kort navn",
         sortingFn: "alphanumeric",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/grupper/${info.getValue().slug}`}>
-            {info.getValue().abbreviation}
-          </Anchor>
-        ),
+        cell: (info) => <TextLink href={`/grupper/${info.getValue().slug}`}>{info.getValue().abbreviation}</TextLink>,
       }),
       columnHelper.accessor("name", {
         header: () => "Navn",
@@ -45,9 +42,9 @@ export const AllGroupsTable = ({ groups }: Props) => {
             return "Ingen lenke"
           }
           return (
-            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
+            <TextLink target="_blank" href={val} rel="noopener">
               Link
-            </Anchor>
+            </TextLink>
           )
         },
       }),
@@ -60,9 +57,9 @@ export const AllGroupsTable = ({ groups }: Props) => {
             return "Ingen bilde"
           }
           return (
-            <Anchor component={Link} size="sm" target="_blank" href={val} rel="noopener">
+            <TextLink target="_blank" href={val} rel="noopener">
               Link
-            </Anchor>
+            </TextLink>
           )
         },
       }),
@@ -71,14 +68,14 @@ export const AllGroupsTable = ({ groups }: Props) => {
         header: "Type",
         cell: (info) => info.getValue(),
         sortingFn: "alphanumeric",
-        filterFn: "arrIncludes",
+        filterFn: arrayOrEqualsFilter(),
       }),
       columnHelper.accessor((group) => (!group.deactivatedAt ? "Aktiv" : "Inaktiv"), {
         id: "status",
         header: "Status",
         cell: (info) => info.getValue(),
         sortingFn: "alphanumeric",
-        filterFn: "arrIncludes",
+        filterFn: arrayOrEqualsFilter(),
       }),
     ],
     [columnHelper]
@@ -94,8 +91,11 @@ export const AllGroupsTable = ({ groups }: Props) => {
   )
 
   return (
-    <FilterableTable
+    <FilterableDataTable
       tableOptions={tableOptions}
+      isLoading={isLoading}
+      searchPlaceholder="Søk etter grupper..."
+      actions={actions}
       filters={[
         { columnId: "status", label: "Aktiv", value: "Aktiv" },
         { columnId: "status", label: "Inaktiv", value: "Inaktiv" },

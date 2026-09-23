@@ -9,17 +9,12 @@ import { AlreadyAttendedModal } from "@/app/(internal)/arrangementer/components/
 import { ManualCreateUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-create-user-attend-modal"
 import { ManualDeleteUserAttendModal } from "@/app/(internal)/arrangementer/components/manual-delete-user-attend-modal"
 import { NotifyAttendeesModal } from "@/app/(internal)/arrangementer/components/notify-attendees-modal"
-import { CreateGroupModal } from "@/app/(internal)/grupper/modals/create-group-modal"
-import { CreateGroupRoleModal } from "@/app/(internal)/grupper/modals/create-group-role-modal"
-import { EditGroupMembershipModal } from "@/app/(internal)/grupper/modals/edit-group-membership-modal"
-import { EditGroupRoleModal } from "@/app/(internal)/grupper/modals/edit-group-role-modal"
 import { CreateMembershipModal } from "@/app/(internal)/brukere/components/create-membership-modal"
 import { EditMembershipModal } from "@/app/(internal)/brukere/components/edit-membership-modal"
 import { UploadImageModal } from "@/components/ImageUploadModal"
 import { ModalsProvider } from "@mantine/modals"
 import type { FC, PropsWithChildren } from "react"
 import { QRCodeScannedModal } from "@/app/(internal)/arrangementer/components/qr-code-scanned-modal"
-import { CreateGroupMemberModal } from "@/app/(internal)/grupper/modals/create-group-member-modal"
 import { AddRecipientsModal } from "@/app/(internal)/varslinger/components/add-recipients-modal"
 import { EditNotificationModal } from "@/app/(internal)/varslinger/components/edit-notification-modal"
 import { SendNotificationModal } from "@/app/(internal)/varslinger/components/send-notification-modal"
@@ -36,11 +31,6 @@ const modals = {
   "event/attendance/pool/update": EditPoolModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,
   "attendance/selections/update": UpdateAttendanceSelectionsModal,
-  "group/create": CreateGroupModal,
-  "group/role/create": CreateGroupRoleModal,
-  "group/role/update": EditGroupRoleModal,
-  "group/member/create": CreateGroupMemberModal,
-  "group/membership/update": EditGroupMembershipModal,
   "event/attendance/registered": AttendanceRegisteredModal,
   "event/attendance/registered-error": AlreadyAttendedModal,
   "user/membership/create": CreateMembershipModal,
