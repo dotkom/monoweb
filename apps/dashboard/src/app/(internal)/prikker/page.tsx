@@ -1,26 +1,60 @@
 "use client"
 
-import { Button, Group, Skeleton, Stack } from "@mantine/core"
-import { useCreateMarkModal } from "./modals/create-mark-modal"
-import { useCreateSuspensionModal } from "./modals/create-suspension-modal"
-import { PunishmentTable } from "./punishment-table"
-import { usePunishmentAllInfiniteQuery } from "./queries/use-punishment-all-query"
+import { Button, Title } from "@dotkomonline/ui"
+import { useState } from "react"
+import { CreateMarkModal } from "./CreateMarkModal"
+import { CreateSuspensionModal } from "./CreateSuspensionModal"
+import { MarkTable } from "./MarkTable"
+import { useMarkFindManyInfiniteQuery } from "./queries"
+
+type PageModalState = "mark" | "suspension"
 
 export default function MarkPage() {
-  const { marks, isLoading: isMarksLoading, fetchNextPage } = usePunishmentAllInfiniteQuery()
-
-  const openCreateMarkModal = useCreateMarkModal()
-  const openCreateSuspensionModal = useCreateSuspensionModal()
+  const { marks, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useMarkFindManyInfiniteQuery()
+  const [modal, setModal] = useState<PageModalState | null>(null)
 
   return (
-    <Skeleton visible={isMarksLoading}>
-      <Stack>
-        <Group>
-          <Button onClick={openCreateMarkModal}>Gi ny prikk</Button>
-          <Button onClick={openCreateSuspensionModal}>Gi ny suspensjon</Button>
-        </Group>
-        <PunishmentTable marks={marks} onLoadMore={fetchNextPage} />
-      </Stack>
-    </Skeleton>
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="text-4xl">
+        Prikker
+      </Title>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="default" size="lg" onClick={() => setModal("mark")}>
+            Gi ny prikk
+          </Button>
+          <Button variant="default" size="lg" onClick={() => setModal("suspension")}>
+            Gi ny suspensjon
+          </Button>
+        </div>
+
+        <MarkTable
+          marks={marks}
+          isLoading={isLoading}
+          isPlaceholderData={isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+        />
+      </div>
+
+      <CreateMarkModal
+        open={modal === "mark"}
+        onOpenChange={(open) => {
+          if (!open) {
+            setModal(null)
+          }
+        }}
+      />
+      <CreateSuspensionModal
+        open={modal === "suspension"}
+        onOpenChange={(open) => {
+          if (!open) {
+            setModal(null)
+          }
+        }}
+      />
+    </div>
   )
 }

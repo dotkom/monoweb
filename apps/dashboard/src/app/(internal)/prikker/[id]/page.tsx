@@ -1,110 +1,66 @@
 "use client"
+
 import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
-import { GenericTable } from "@/components/GenericTable"
-import { useTRPC } from "@/lib/trpc-client"
-import type { PersonalMarkDetails } from "@dotkomonline/rpc/mark"
-import type { User } from "@dotkomonline/rpc/user"
-import { Box, Button, CloseButton, Group, Stack, Title } from "@mantine/core"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEditMarkMutation } from "../mutations/use-edit-mark-mutation"
-import { useMarkWriteForm } from "../write-form"
+import { Button, Popover, PopoverContent, PopoverTrigger, Separator, Title } from "@dotkomonline/ui"
+import { IconUserPlus } from "@tabler/icons-react"
+import { useState } from "react"
+import { MarkWriteForm } from "../MarkWriteForm"
+import { PersonalMarkTable } from "../PersonalMarkTable"
+import { useAddPersonalMarkToUserMutation, useEditMarkMutation } from "../mutations"
+import { usePersonalMarkDetailsByMarkQuery } from "../queries"
 import { useMarkDetailsContext } from "./provider"
 
-const columnHelper = createColumnHelper<PersonalMarkDetails>()
-
 export default function MarkEditCard() {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
   const { mark } = useMarkDetailsContext()
-
   const edit = useEditMarkMutation()
-  const router = useRouter()
-
-  const markQueryOptions = trpc.personalMark.getPersonalMarkDetailsByMark.queryOptions({
-    markId: mark.id,
-  })
-  const { data: personalMarks } = useQuery({ ...markQueryOptions, initialData: [] })
-
-  const FormComponent = useMarkWriteForm({
-    label: "Oppdater prikk",
-    onSubmit: (data) => {
-      edit.mutate({ changes: { ...data, id: mark.id, type: "MANUAL" }, groupIds: data.groupIds })
-    },
-    defaultValues: { ...mark, groupIds: mark.groups.map((group) => group.slug) },
-  })
-
-  const removeMark = useMutation(
-    trpc.personalMark.removeFromUser.mutationOptions({
-      onSuccess: () => queryClient.invalidateQueries(markQueryOptions),
-    })
-  )
-
-  const giveMark = useMutation(
-    trpc.personalMark.addToUser.mutationOptions({
-      onSuccess: () => queryClient.invalidateQueries(markQueryOptions),
-    })
-  )
-
-  const columns = [
-    columnHelper.accessor((personalMark) => personalMark.user, {
-      id: "userName",
-      header: () => "Bruker",
-      cell: (info) => <Link href={`/brukere/${info.getValue().id}`}>{info.getValue().name}</Link>,
-    }),
-    columnHelper.accessor((personalMark) => formatDate(personalMark.personalMark.createdAt, "dd.MM.yyyy"), {
-      id: "createdAt",
-      header: () => "Gitt",
-    }),
-    columnHelper.accessor((personalMark) => personalMark, {
-      id: "remove",
-      header: () => "Fjern prikk",
-      cell: (info) => (
-        <Button
-          onClick={() => {
-            const {
-              user: { id: userId },
-              personalMark: { markId },
-            } = info.getValue()
-            removeMark.mutate({ userId, markId })
-          }}
-        >
-          Fjern
-        </Button>
-      ),
-    }),
-  ]
-
-  const table = useReactTable({
-    data: personalMarks,
-    getCoreRowModel: getCoreRowModel(),
-    columns,
-  })
+  const { personalMarks, isLoading } = usePersonalMarkDetailsByMarkQuery(mark.id)
+  const giveMark = useAddPersonalMarkToUserMutation(mark.id)
 
   return (
-    <Box>
-      <Group>
-        <CloseButton onClick={() => router.back()} />
-        <Title>{mark.title}</Title>
-      </Group>
-      <Stack>
-        <FormComponent />
+    <div className="flex flex-col gap-4">
+      <MarkWriteForm
+        submitLabel="Oppdater prikk"
+        onSubmit={(data) => {
+          edit.mutate({ changes: { ...data, id: mark.id, type: "MANUAL" }, groupIds: data.groupIds })
+        }}
+        defaultValues={{ ...mark, groupIds: mark.groups.map((group) => group.slug) }}
+      />
 
-        <Title order={2}>Gi {mark.weight === 6 ? "suspensjon" : "prikk"} til flere</Title>
-        <UserSearch
-          excludeUserIds={personalMarks.map((mark) => mark.user.id)}
-          onSubmit={(data: User) => {
-            giveMark.mutate({
-              userId: data.id,
-              markId: mark.id,
-            })
-          }}
-        />
-        <GenericTable table={table} />
-      </Stack>
-    </Box>
+      <Separator />
+
+      <Title element="h2" className="text-2xl">
+        Gi {mark.weight === 6 ? "suspensjon" : "prikk"} til brukere
+      </Title>
+
+      <PersonalMarkTable
+        markId={mark.id}
+        personalMarks={personalMarks}
+        isLoading={isLoading}
+        actions={
+          <Popover open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="default" icon={<IconUserPlus className="size-4" />}>
+                Gi prikk
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-3">
+              {isAddModalOpen && (
+                <UserSearch
+                  listOpen
+                  autoHightlight
+                  excludeUserIds={personalMarks.map((personalMark) => personalMark.user.id)}
+                  placeholder="Søk etter navn eller e-post"
+                  onSubmit={(user) => {
+                    giveMark.mutate({ userId: user.id, markId: mark.id })
+                  }}
+                />
+              )}
+            </PopoverContent>
+          </Popover>
+        }
+      />
+    </div>
   )
 }
