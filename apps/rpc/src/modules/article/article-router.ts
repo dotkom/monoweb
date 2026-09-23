@@ -1,11 +1,11 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "./article"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "./article"
 
 export type CreateArticleInput = inferProcedureInput<typeof createArticleProcedure>
 export type CreateArticleOutput = inferProcedureOutput<typeof createArticleProcedure>
@@ -90,6 +90,13 @@ const getArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.handle, input))
+
+export type GetArticleBySlugInput = inferProcedureInput<typeof getArticleBySlugProcedure>
+export type GetArticleBySlugOutput = inferProcedureOutput<typeof getArticleBySlugProcedure>
+const getArticleBySlugProcedure = procedure
+  .input(ArticleSchema.shape.slug)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.articleService.getBySlug(ctx.handle, input))
 
 export type FindRelatedArticlesInput = inferProcedureInput<typeof findRelatedArticlesProcedure>
 export type FindRelatedArticlesOutput = inferProcedureOutput<typeof findRelatedArticlesProcedure>
@@ -178,6 +185,7 @@ export const articleRouter = t.router({
   find: findArticleProcedure,
   findBySlug: findArticleBySlugProcedure,
   get: getArticleProcedure,
+  getBySlug: getArticleBySlugProcedure,
   related: findRelatedArticlesProcedure,
   featured: findFeaturedArticlesProcedure,
   getTags: getArticleTagsProcedure,

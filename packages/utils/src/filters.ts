@@ -47,6 +47,13 @@ export function buildSearchFilter() {
   return z.string().nullable().default(null)
 }
 
+export type BooleanFilter = z.infer<ReturnType<typeof buildBooleanFilter>>
+
+/** Expect a field to be a boolean value */
+export function buildBooleanFilter() {
+  return z.boolean().nullable().default(null)
+}
+
 export type SortOrder = z.infer<ReturnType<typeof createSortOrder>>
 
 /** Expect a field to be a sort order value */

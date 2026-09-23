@@ -1,4 +1,4 @@
-import { buildAnyOfFilter, buildSearchFilter } from "@dotkomonline/utils"
+import { buildAnyOfFilter, buildBooleanFilter, buildSearchFilter } from "@dotkomonline/utils"
 import { z } from "zod"
 
 export const ArticleTagSchema = z.object({
@@ -45,6 +45,7 @@ export const ArticleFilterQuerySchema = z
   .object({
     bySearchTerm: buildSearchFilter(),
     byTags: buildAnyOfFilter(ArticleTagSchema.shape.name),
+    byIsFeatured: buildBooleanFilter(),
   })
   .partial()
 

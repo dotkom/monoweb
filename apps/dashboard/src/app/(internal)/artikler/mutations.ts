@@ -28,7 +28,7 @@ export const useCreateArticleMutation = () => {
           message: `Artikkelen "${data.title}" har blitt opprettet.`,
         })
 
-        router.push(`/artikler/${data.id}`)
+        router.push(`/artikler/${data.slug}`)
       },
       onError: (err) => {
         notification.fail({
@@ -44,6 +44,7 @@ export const useEditArticleMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+  const router = useRouter()
 
   return useMutation(
     trpc.article.edit.mutationOptions({
@@ -54,7 +55,7 @@ export const useEditArticleMutation = () => {
         })
       },
       onSuccess: async (data) => {
-        await queryClient.invalidateQueries(trpc.article.get.queryOptions(data.id))
+        await queryClient.invalidateQueries(trpc.article.getBySlug.queryOptions(data.slug))
         await queryClient.invalidateQueries(trpc.article.all.queryOptions())
         await queryClient.invalidateQueries(trpc.article.getTags.queryOptions())
 
@@ -62,6 +63,14 @@ export const useEditArticleMutation = () => {
           title: "Artikkelen oppdatert",
           message: `Artikkelen "${data.title}" har blitt oppdatert.`,
         })
+
+        const { tags, ...newArticle } = data
+
+        queryClient.setQueryData(trpc.article.getBySlug.queryOptions(data.slug).queryKey, {
+          ...newArticle,
+          tags: tags.map((tag) => ({ name: tag })),
+        })
+        router.replace(`/artikler/${data.slug}`)
       },
       onError: (err) => {
         notification.fail({
