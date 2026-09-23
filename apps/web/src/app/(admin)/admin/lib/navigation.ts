@@ -1,6 +1,7 @@
 "use client"
 
 import type { Authorization } from "@admin/auth/authorization-context"
+import { canEditApplication, canViewApplication } from "@admin/auth/permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
@@ -21,6 +22,7 @@ import {
   IconConfetti,
   IconDeviceMobileShare,
   IconHeartHandshake,
+  IconMoodHappy,
   IconPhotoShare,
   IconSitemap,
   IconSkull,
@@ -256,6 +258,21 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny fadderuke",
             href: "/admin/fadderukene/ny",
             resourceName: "fadderuke",
+          },
+        ],
+      },
+      {
+        label: "Komitéopptak",
+        icon: IconMoodHappy,
+        href: "/admin/opptak",
+        keywords: ["komitéopptak"],
+        canAccess: (authorization) => canViewApplication(authorization),
+        createActions: [
+          {
+            label: "Nytt komitéopptak",
+            href: "/admin/opptak/ny",
+            resourceName: "komitéopptak",
+            canAccess: (authorization) => canEditApplication(authorization),
           },
         ],
       },
