@@ -1070,7 +1070,8 @@ model Application {
   aboutMe                      String?           @map("about_me")
   isInterestedInBeingTreasurer Boolean           @default(false) @map("is_interested_in_being_treasurer")
 
-  extraInterest      ApplicationExtraInterest[]
+  extraInterest      ApplicationExtraInterest[] @map("extra_interest")
+
   preferences        ApplicationPreference[]
   availabilityBlocks ApplicationAvailability[]
 
