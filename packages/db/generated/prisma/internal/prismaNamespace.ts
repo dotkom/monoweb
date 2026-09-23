@@ -431,6 +431,7 @@ export const ModelName = {
   CommitteeApplicationGroup: 'CommitteeApplicationGroup',
   CommitteeApplication: 'CommitteeApplication',
   CommitteeApplicationGroupSelection: 'CommitteeApplicationGroupSelection',
+  CommitteeApplicationInterviewAttendee: 'CommitteeApplicationInterviewAttendee',
   CommitteeApplicationAvailability: 'CommitteeApplicationAvailability',
   CommitteeApplicationInterviewBlock: 'CommitteeApplicationInterviewBlock',
   CommitteeApplicationInterview: 'CommitteeApplicationInterview'
@@ -449,7 +450,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "committeeApplicationPeriod" | "committeeApplicationGroup" | "committeeApplication" | "committeeApplicationGroupSelection" | "committeeApplicationAvailability" | "committeeApplicationInterviewBlock" | "committeeApplicationInterview"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "committeeApplicationPeriod" | "committeeApplicationGroup" | "committeeApplication" | "committeeApplicationGroupSelection" | "committeeApplicationInterviewAttendee" | "committeeApplicationAvailability" | "committeeApplicationInterviewBlock" | "committeeApplicationInterview"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3931,6 +3932,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CommitteeApplicationInterviewAttendee: {
+      payload: Prisma.$CommitteeApplicationInterviewAttendeePayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationInterviewAttendeeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewAttendeePayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationInterviewAttendee>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewAttendeeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationInterviewAttendeeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewAttendeeCountAggregateOutputType> | number
+        }
+      }
+    }
     CommitteeApplicationAvailability: {
       payload: Prisma.$CommitteeApplicationAvailabilityPayload<ExtArgs>
       fields: Prisma.CommitteeApplicationAvailabilityFieldRefs
@@ -4839,6 +4914,15 @@ export const CommitteeApplicationGroupSelectionScalarFieldEnum = {
 export type CommitteeApplicationGroupSelectionScalarFieldEnum = (typeof CommitteeApplicationGroupSelectionScalarFieldEnum)[keyof typeof CommitteeApplicationGroupSelectionScalarFieldEnum]
 
 
+export const CommitteeApplicationInterviewAttendeeScalarFieldEnum = {
+  createdAt: 'createdAt',
+  groupSelectionId: 'groupSelectionId',
+  userId: 'userId'
+} as const
+
+export type CommitteeApplicationInterviewAttendeeScalarFieldEnum = (typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum]
+
+
 export const CommitteeApplicationAvailabilityScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
@@ -5502,6 +5586,7 @@ export type GlobalOmitConfig = {
   committeeApplicationGroup?: Prisma.CommitteeApplicationGroupOmit
   committeeApplication?: Prisma.CommitteeApplicationOmit
   committeeApplicationGroupSelection?: Prisma.CommitteeApplicationGroupSelectionOmit
+  committeeApplicationInterviewAttendee?: Prisma.CommitteeApplicationInterviewAttendeeOmit
   committeeApplicationAvailability?: Prisma.CommitteeApplicationAvailabilityOmit
   committeeApplicationInterviewBlock?: Prisma.CommitteeApplicationInterviewBlockOmit
   committeeApplicationInterview?: Prisma.CommitteeApplicationInterviewOmit

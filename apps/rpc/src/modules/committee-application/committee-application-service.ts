@@ -21,7 +21,7 @@ import {
   type CommitteeApplicationGroup,
   type CommitteeApplicationGroupId,
   type CommitteeApplicationGroupConfiguration,
-  type CommitteeApplicationGroupOverview,
+  type CommitteeApplicationGroupStatus,
   type CommitteeApplicationGroupSelectionId,
   type CommitteeApplicationInterviewBlock,
   type CommitteeApplicationInterviewBlocksSet,
@@ -32,6 +32,7 @@ import {
   CommitteeApplicationInterviewPlacementSchema,
   type CommitteeApplicationOpenPeriod,
   type CommitteeApplicationApplicantView,
+  type CommitteeApplicationApplicantDetails,
   type CommitteeApplicationInterviewSchedule,
   type CommitteeApplicationInterviewAssignment,
   type CommitteeApplicationInterviewMatchingInput,
@@ -40,9 +41,9 @@ import {
   COMMITTEE_APPLICATION_INTERVIEW_DURATION_MINUTES,
   COMMITTEE_APPLICATION_APPLICANT_BUFFER_MINUTES,
   COMMITTEE_APPLICATION_INTERVIEW_HOURS,
-  hasValidMazemapRoom,
   isInterviewAvailabilityValid,
 } from "./committee-application"
+import { hasValidMazemapRoom } from "../mazemap/mazemap"
 import type { CommitteeApplicationRepository } from "./committee-application-repository"
 
 export interface CommitteeApplicationService {
@@ -52,6 +53,7 @@ export interface CommitteeApplicationService {
     applicationPeriodId: CommitteeApplicationPeriodId,
     data: CommitteeApplicationPeriodUpdate
   ): Promise<CommitteeApplicationPeriod>
+  deletePeriod(handle: DBHandle, applicationPeriodId: CommitteeApplicationPeriodId): Promise<void>
   getPeriodById(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
@@ -66,7 +68,7 @@ export interface CommitteeApplicationService {
   findManyGroupsByPeriodId(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
-  ): Promise<CommitteeApplicationGroupOverview[]>
+  ): Promise<CommitteeApplicationGroupStatus[]>
 
   submitApplication(handle: DBHandle, userId: UserId, data: CommitteeApplicationSubmit): Promise<CommitteeApplication>
   updateApplication(
@@ -91,6 +93,17 @@ export interface CommitteeApplicationService {
     userId: UserId,
     applicationPeriodId?: CommitteeApplicationPeriodId
   ): Promise<CommitteeApplicationApplicantView | null>
+  getApplicantDetailsById(
+    handle: DBHandle,
+    applicationId: CommitteeApplicationId
+  ): Promise<CommitteeApplicationApplicantDetails>
+  setInterviewAttendance(
+    handle: DBHandle,
+    applicationId: CommitteeApplicationId,
+    applicationGroupId: CommitteeApplicationGroupId,
+    userId: UserId,
+    isAttending: boolean
+  ): Promise<void>
 
   setInterviewBlocks(
     handle: DBHandle,
@@ -370,6 +383,10 @@ export function getCommitteeApplicationService(
       }
       return repository.updatePeriod(handle, applicationPeriodId, configuration.applicationPeriod)
     },
+    async deletePeriod(handle, applicationPeriodId) {
+      await lockPeriod(handle, applicationPeriodId)
+      await repository.deletePeriod(handle, applicationPeriodId)
+    },
     async getPeriodById(handle, applicationPeriodId) {
       const applicationPeriod = await repository.findPeriodById(handle, applicationPeriodId)
       if (applicationPeriod === null) {
@@ -442,6 +459,27 @@ export function getCommitteeApplicationService(
     },
     async findApplicantView(handle, userId, applicationPeriodId) {
       return repository.findApplicantView(handle, userId, applicationPeriodId)
+    },
+    async getApplicantDetailsById(handle, applicationId) {
+      const applicantDetails = await repository.findApplicantDetailsById(handle, applicationId)
+      if (applicantDetails === null) {
+        throw new NotFoundError(`CommitteeApplication(ID=${applicationId}) not found`)
+      }
+      return applicantDetails
+    },
+    async setInterviewAttendance(handle, applicationId, applicationGroupId, userId, isAttending) {
+      const isUpdated = await repository.setInterviewAttendance(
+        handle,
+        applicationId,
+        applicationGroupId,
+        userId,
+        isAttending
+      )
+      if (!isUpdated) {
+        throw new NotFoundError(
+          `CommitteeApplicationGroupSelection(CommitteeApplicationID=${applicationId}, ApplicationGroupID=${applicationGroupId}) not found`
+        )
+      }
     },
 
     async setInterviewBlocks(handle, applicationGroupId, data) {
@@ -525,11 +563,11 @@ export function getCommitteeApplicationService(
           interviews.filter((candidate) => candidate.id !== interview.id)
         )
       }
-      return repository.publishInterviews(handle, applicationPeriodId, new Date())
+      return repository.setInterviewsPublishedAt(handle, applicationPeriodId, new Date())
     },
     async getInterviewSchedule(handle, applicationPeriodId) {
       const applicationPeriod = await this.getPeriodById(handle, applicationPeriodId)
-      const groups = await repository.findManyGroupSchedulesByPeriodId(handle, applicationPeriodId)
+      const groups = await repository.findManyGroupMatchingsByPeriodId(handle, applicationPeriodId)
       return {
         applicationPeriodId,
         interviewsPublishedAt: applicationPeriod.interviewsPublishedAt,

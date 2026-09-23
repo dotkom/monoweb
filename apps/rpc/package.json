@@ -52,6 +52,10 @@
       "import": "./src/modules/mark/mark.ts",
       "types": "./src/modules/mark/mark.ts"
     },
+    "./mazemap": {
+      "import": "./src/modules/mazemap/mazemap.ts",
+      "types": "./src/modules/mazemap/mazemap.ts"
+    },
     "./notification": {
       "import": "./src/modules/notification/notification.ts",
       "types": "./src/modules/notification/notification.ts"

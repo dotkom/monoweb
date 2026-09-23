@@ -7,8 +7,8 @@ import { useMutation } from "@tanstack/react-query"
 import type { TRPCClientErrorLike } from "@trpc/client"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import { useTRPC } from "src/app/(admin)/admin/lib/trpc-client"
-import { useAuthenticatedUser } from "src/app/(admin)/admin/lib/use-authenticated-user"
+import { useTRPC } from "@admin/lib/trpc-client"
+import { useAuthenticatedUser } from "@admin/lib/use-authenticated-user"
 
 export interface BugReportButtonProps {
   message: string

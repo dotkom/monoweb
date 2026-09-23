@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import { TZDate } from "@date-fns/tz"
 import { type DBHandle, Prisma } from "@dotkomonline/db"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { differenceInMinutes } from "date-fns"
 import { parseOrReport } from "../../invariant"
 import { getGroupDisplayName } from "../group/group"
 import type { UserId } from "../user/user"
@@ -16,8 +17,8 @@ import {
   type CommitteeApplicationGroup,
   type CommitteeApplicationGroupId,
   CommitteeApplicationGroupSchema,
-  type CommitteeApplicationGroupOverview,
-  CommitteeApplicationGroupOverviewSchema,
+  type CommitteeApplicationGroupStatus,
+  CommitteeApplicationGroupStatusSchema,
   type CommitteeApplicationGroupSelection,
   type CommitteeApplicationGroupSelectionId,
   CommitteeApplicationGroupSelectionSchema,
@@ -32,18 +33,21 @@ import {
   type CommitteeApplicationInterviewId,
   type CommitteeApplicationInterviewAssignment,
   CommitteeApplicationInterviewSchema,
-  type CommitteeApplicationGroupSchedule,
-  CommitteeApplicationGroupScheduleSchema,
+  type CommitteeApplicationGroupMatching,
+  CommitteeApplicationGroupMatchingSchema,
   type CommitteeApplicationOpenPeriod,
   CommitteeApplicationOpenPeriodSchema,
   type CommitteeApplicationApplicantView,
   CommitteeApplicationApplicantViewSchema,
-  hasValidMazemapRoom,
+  type CommitteeApplicationApplicantDetails,
+  CommitteeApplicationApplicantDetailsSchema,
+  type CommitteeApplicationInterviewAttendee,
 } from "./committee-application"
 import {
   type CommitteeApplicationInterviewMatchingInput,
   CommitteeApplicationInterviewMatchingInputSchema,
 } from "./committee-application"
+import { hasValidMazemapRoom } from "../mazemap/mazemap"
 
 const applicationInclude = {
   groupSelections: { orderBy: [{ rank: "asc" }, { id: "asc" }] },
@@ -53,6 +57,15 @@ const applicationInclude = {
 function toDateOnly(date: Date) {
   const norwegianDate = new TZDate(date, "Europe/Oslo")
   return new Date(Date.UTC(norwegianDate.getFullYear(), norwegianDate.getMonth(), norwegianDate.getDate()))
+}
+function toInterviewAttendees(
+  attendees: { userId: string; user: { name: string | null; imageUrl: string | null } }[]
+): CommitteeApplicationInterviewAttendee[] {
+  return attendees.map((attendee) => ({
+    userId: attendee.userId,
+    name: attendee.user.name ?? "Ukjent bruker",
+    imageUrl: attendee.user.imageUrl,
+  }))
 }
 function toPeriodRow<Configuration extends Partial<CommitteeApplicationPeriodConfiguration>>(data: Configuration) {
   return {
@@ -70,16 +83,17 @@ export interface CommitteeApplicationRepository {
     applicationPeriodId: CommitteeApplicationPeriodId,
     data: Partial<CommitteeApplicationPeriodConfiguration>
   ): Promise<CommitteeApplicationPeriod>
+  deletePeriod(handle: DBHandle, applicationPeriodId: CommitteeApplicationPeriodId): Promise<void>
   findPeriodById(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
   ): Promise<CommitteeApplicationPeriod | null>
   findManyPeriods(handle: DBHandle, page: Pageable): Promise<CommitteeApplicationPeriod[]>
   findOpenPeriod(handle: DBHandle, currentTime: Date): Promise<CommitteeApplicationOpenPeriod | null>
-  publishInterviews(
+  setInterviewsPublishedAt(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId,
-    publishedAt: Date
+    publishedAt: Date | null
   ): Promise<CommitteeApplicationPeriod>
 
   findApplicationGroupById(
@@ -89,7 +103,7 @@ export interface CommitteeApplicationRepository {
   findManyGroupsByPeriodId(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
-  ): Promise<CommitteeApplicationGroupOverview[]>
+  ): Promise<CommitteeApplicationGroupStatus[]>
   createGroups(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId,
@@ -129,6 +143,17 @@ export interface CommitteeApplicationRepository {
     userId: UserId,
     applicationPeriodId?: CommitteeApplicationPeriodId
   ): Promise<CommitteeApplicationApplicantView | null>
+  findApplicantDetailsById(
+    handle: DBHandle,
+    applicationId: CommitteeApplicationId
+  ): Promise<CommitteeApplicationApplicantDetails | null>
+  setInterviewAttendance(
+    handle: DBHandle,
+    applicationId: CommitteeApplicationId,
+    applicationGroupId: CommitteeApplicationGroupId,
+    userId: UserId,
+    isAttending: boolean
+  ): Promise<boolean>
 
   findInterviewBlockById(
     handle: DBHandle,
@@ -144,10 +169,10 @@ export interface CommitteeApplicationRepository {
     blocks: CommitteeApplicationInterviewBlockInput[]
   ): Promise<void>
 
-  findManyGroupSchedulesByPeriodId(
+  findManyGroupMatchingsByPeriodId(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
-  ): Promise<CommitteeApplicationGroupSchedule[]>
+  ): Promise<CommitteeApplicationGroupMatching[]>
   findInterviewMatchingInput(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId,
@@ -199,6 +224,15 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
         CommitteeApplicationPeriodSchema,
         await handle.committeeApplicationPeriod.update({ where: { id: applicationPeriodId }, data: toPeriodRow(data) })
       )
+    },
+
+    async deletePeriod(handle, applicationPeriodId) {
+      // Neither applications nor groups cascade from the period, so they are removed first. Deleting the applications
+      // cascades their group selections, which in turn cascades the interviews. The interviews have to be gone before
+      // the groups are deleted, as the interview blocks restrict deletion while they still hold interviews.
+      await handle.committeeApplication.deleteMany({ where: { applicationPeriodId } })
+      await handle.committeeApplicationGroup.deleteMany({ where: { applicationPeriodId } })
+      await handle.committeeApplicationPeriod.delete({ where: { id: applicationPeriodId } })
     },
 
     async findPeriodById(handle, applicationPeriodId) {
@@ -275,7 +309,7 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
       })
     },
 
-    async publishInterviews(handle, applicationPeriodId, publishedAt) {
+    async setInterviewsPublishedAt(handle, applicationPeriodId, publishedAt) {
       const data = await handle.committeeApplicationPeriod.update({
         where: {
           id: applicationPeriodId,
@@ -317,11 +351,15 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
       })
 
       return parseOrReport(
-        CommitteeApplicationGroupOverviewSchema.array(),
+        CommitteeApplicationGroupStatusSchema.array(),
         applicationGroups.map((applicationGroup) => ({
           ...applicationGroup,
           interviewBlockCount: applicationGroup.interviewBlocks.length,
           interviewBlocksUpdatedAt: applicationGroup.interviewBlocks.at(0)?.updatedAt ?? null,
+          interviewMinutes: applicationGroup.interviewBlocks.reduce(
+            (total, block) => total + differenceInMinutes(block.endsAt, block.startsAt),
+            0
+          ),
           hasAllValidRooms:
             applicationGroup.interviewBlocks.length > 0 &&
             applicationGroup.interviewBlocks.every((block) =>
@@ -477,6 +515,71 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
       })
     },
 
+    async findApplicantDetailsById(handle, applicationId) {
+      const application = await handle.committeeApplication.findUnique({
+        where: { id: applicationId },
+        include: {
+          user: true,
+          availabilityBlocks: { orderBy: { startsAt: "asc" } },
+          groupSelections: {
+            orderBy: [{ rank: "asc" }, { id: "asc" }],
+            include: {
+              applicationGroup: true,
+              interview: { include: { interviewBlock: true } },
+              interviewAttendees: { orderBy: { createdAt: "asc" }, include: { user: true } },
+            },
+          },
+        },
+      })
+      if (application === null) {
+        return null
+      }
+      return parseOrReport(CommitteeApplicationApplicantDetailsSchema, {
+        applicationId: application.id,
+        name: application.user.name ?? "Ukjent søker",
+        email: application.user.email,
+        phone: application.user.phone,
+        studyYear: application.studyYear,
+        aboutMe: application.aboutMe,
+        createdAt: application.createdAt,
+        availability: application.availabilityBlocks,
+        groupSelections: application.groupSelections.map((selection) => ({
+          applicationGroupId: selection.applicationGroup.id,
+          groupId: selection.applicationGroup.groupId,
+          rank: selection.rank,
+          interview:
+            selection.interview === null
+              ? null
+              : {
+                  ...selection.interview,
+                  locationName: selection.interview.interviewBlock.locationName,
+                  locationUrl: selection.interview.interviewBlock.locationUrl,
+                  attendees: toInterviewAttendees(selection.interviewAttendees),
+                },
+        })),
+      })
+    },
+    async setInterviewAttendance(handle, applicationId, applicationGroupId, userId, isAttending) {
+      const selection = await handle.committeeApplicationGroupSelection.findUnique({
+        where: { applicationId_applicationGroupId: { applicationId, applicationGroupId } },
+      })
+      if (selection === null) {
+        return false
+      }
+      if (isAttending) {
+        await handle.committeeApplicationInterviewAttendee.upsert({
+          where: { groupSelectionId_userId: { groupSelectionId: selection.id, userId } },
+          create: { groupSelectionId: selection.id, userId },
+          update: {},
+        })
+      } else {
+        await handle.committeeApplicationInterviewAttendee.deleteMany({
+          where: { groupSelectionId: selection.id, userId },
+        })
+      }
+      return true
+    },
+
     async findInterviewBlockById(handle, interviewBlockId) {
       return parseOrReport(
         CommitteeApplicationInterviewBlockSchema.nullable(),
@@ -505,7 +608,7 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
         })
       }
     },
-    async findManyGroupSchedulesByPeriodId(handle, applicationPeriodId) {
+    async findManyGroupMatchingsByPeriodId(handle, applicationPeriodId) {
       const applicationGroups = await handle.committeeApplicationGroup.findMany({
         where: { applicationPeriodId },
         orderBy: { groupId: "asc" },
@@ -513,13 +616,14 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
           groupSelections: {
             include: {
               interview: { include: { interviewBlock: true } },
+              interviewAttendees: { orderBy: { createdAt: "asc" }, include: { user: true } },
               application: { include: { user: true, availabilityBlocks: { orderBy: { startsAt: "asc" } } } },
             },
           },
         },
       })
       return parseOrReport(
-        CommitteeApplicationGroupScheduleSchema.array(),
+        CommitteeApplicationGroupMatchingSchema.array(),
         applicationGroups.map((applicationGroup) => {
           const matchedInterviews = []
           const unmatchedApplicants = []
@@ -530,15 +634,18 @@ export function getCommitteeApplicationRepository(): CommitteeApplicationReposit
               name: selection.application.user.name ?? "Ukjent søker",
               email: selection.application.user.email,
               phone: selection.application.user.phone,
+              rank: selection.rank,
+              availability: selection.application.availabilityBlocks,
             }
             if (selection.interview === null) {
-              unmatchedApplicants.push({ ...applicant, availability: selection.application.availabilityBlocks })
+              unmatchedApplicants.push(applicant)
             } else {
               matchedInterviews.push({
                 ...selection.interview,
                 ...applicant,
                 locationName: selection.interview.interviewBlock.locationName,
                 locationUrl: selection.interview.interviewBlock.locationUrl,
+                attendees: toInterviewAttendees(selection.interviewAttendees),
               })
             }
           }

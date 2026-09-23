@@ -1,16 +1,17 @@
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator } from "../../authorization"
+import { isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import {
+  CommitteeApplicationApplicantDetailsSchema,
   CommitteeApplicationPeriodSchema,
   CommitteeApplicationPeriodCreateSchema,
   CommitteeApplicationPeriodUpdateSchema,
   CommitteeApplicationGroupSchema,
-  CommitteeApplicationGroupOverviewSchema,
-  CommitteeApplicationGroupScheduleSchema,
+  CommitteeApplicationGroupStatusSchema,
+  CommitteeApplicationGroupMatchingSchema,
   CommitteeApplicationOpenPeriodSchema,
   CommitteeApplicationApplicantViewSchema,
   CommitteeApplicationSchema,
@@ -26,12 +27,15 @@ import {
 
 const applicationPeriodInputSchema = z.object({ applicationPeriodId: CommitteeApplicationPeriodSchema.shape.id })
 const applicationGroupInputSchema = z.object({ applicationGroupId: CommitteeApplicationGroupSchema.shape.id })
+const applicantInputSchema = z.object({ applicationId: CommitteeApplicationSchema.shape.id })
+const groupSelectionInputSchema = applicantInputSchema.extend(applicationGroupInputSchema.shape)
 const interviewInputSchema = z.object({ interviewId: CommitteeApplicationInterviewSchema.shape.id })
 const administratorAuthenticationProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isAdministrator()))
 const administratorProcedure = administratorAuthenticationProcedure.use(withDatabaseTransaction())
 const administratorMutationProcedure = administratorProcedure.use(withAuditLogEntry())
+const committeeMemberProcedure = procedure.use(withAuthentication()).use(withAuthorization(isCommitteeMember()))
 
 export type FindOpenCommitteeApplicationPeriodOutput = inferProcedureOutput<typeof findOpenPeriodProcedure>
 const findOpenPeriodProcedure = procedure
@@ -103,6 +107,13 @@ const updatePeriodProcedure = administratorMutationProcedure
     )
     return applicationPeriod
   })
+export type DeleteCommitteeApplicationPeriodInput = inferProcedureInput<typeof deletePeriodProcedure>
+const deletePeriodProcedure = administratorMutationProcedure
+  .input(applicationPeriodInputSchema)
+  .mutation(async ({ ctx: context, input }) => {
+    await context.committeeApplicationService.deletePeriod(context.handle, input.applicationPeriodId)
+    context.setAuditTransactionName(`Delete CommitteeApplicationPeriod(ID=${input.applicationPeriodId})`)
+  })
 export type GetCommitteeApplicationPeriodByIdInput = inferProcedureInput<typeof getPeriodByIdProcedure>
 export type GetCommitteeApplicationPeriodByIdOutput = inferProcedureOutput<typeof getPeriodByIdProcedure>
 const getPeriodByIdProcedure = administratorProcedure
@@ -122,7 +133,7 @@ export type FindManyCommitteeApplicationGroupsInput = inferProcedureInput<typeof
 export type FindManyCommitteeApplicationGroupsOutput = inferProcedureOutput<typeof findManyGroupsProcedure>
 const findManyGroupsProcedure = administratorProcedure
   .input(applicationPeriodInputSchema)
-  .output(CommitteeApplicationGroupOverviewSchema.array())
+  .output(CommitteeApplicationGroupStatusSchema.array())
   .query(({ ctx: context, input }) =>
     context.committeeApplicationService.findManyGroupsByPeriodId(context.handle, input.applicationPeriodId)
   )
@@ -133,7 +144,7 @@ const getApplicationGroupByIdProcedure = administratorProcedure
     context.committeeApplicationService.getApplicationGroupById(context.handle, input.applicationGroupId)
   )
 const getApplicationByIdProcedure = administratorProcedure
-  .input(z.object({ applicationId: CommitteeApplicationSchema.shape.id }))
+  .input(applicantInputSchema)
   .output(CommitteeApplicationSchema)
   .query(({ ctx: context, input }) =>
     context.committeeApplicationService.getApplicationById(context.handle, input.applicationId)
@@ -148,6 +159,51 @@ const findManyApplicationsByPeriodIdProcedure = administratorProcedure
       input.page
     )
   )
+
+export type GetCommitteeApplicationApplicantDetailsInput = inferProcedureInput<typeof getApplicantDetailsProcedure>
+export type GetCommitteeApplicationApplicantDetailsOutput = inferProcedureOutput<typeof getApplicantDetailsProcedure>
+const getApplicantDetailsProcedure = committeeMemberProcedure
+  .input(applicantInputSchema)
+  .output(CommitteeApplicationApplicantDetailsSchema)
+  .use(withDatabaseTransaction())
+  .query(async ({ ctx: context, input }) => {
+    const applicantDetails = await context.committeeApplicationService.getApplicantDetailsById(
+      context.handle,
+      input.applicationId
+    )
+    await context.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        ...applicantDetails.groupSelections.map((selection) => isGroupMember(() => selection.groupId))
+      ),
+      input
+    )
+    return applicantDetails
+  })
+const setInterviewAttendanceProcedure = committeeMemberProcedure
+  .input(groupSelectionInputSchema.extend({ isAttending: z.boolean() }))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ ctx: context, input }) => {
+    const applicationGroup = await context.committeeApplicationService.getApplicationGroupById(
+      context.handle,
+      input.applicationGroupId
+    )
+    await context.addAuthorizationGuard(
+      isGroupMember(() => applicationGroup.groupId),
+      input
+    )
+    await context.committeeApplicationService.setInterviewAttendance(
+      context.handle,
+      input.applicationId,
+      input.applicationGroupId,
+      context.principal.subject,
+      input.isAttending
+    )
+    context.setAuditTransactionName(
+      `Set CommitteeApplicationInterviewAttendance(CommitteeApplicationID=${input.applicationId},ApplicationGroupID=${input.applicationGroupId},IsAttending=${input.isAttending})`
+    )
+  })
 
 export type FindManyCommitteeApplicationInterviewBlocksInput = inferProcedureInput<
   typeof findManyInterviewBlocksProcedure
@@ -183,14 +239,14 @@ const getInterviewScheduleProcedure = administratorProcedure
     context.committeeApplicationService.getInterviewSchedule(context.handle, input.applicationPeriodId)
   )
 export type FindManyCommitteeApplicationGroupSchedulesInput = inferProcedureInput<
-  typeof findManyGroupSchedulesProcedure
+  typeof findManyGroupMatchingsProcedure
 >
 export type FindManyCommitteeApplicationGroupSchedulesOutput = inferProcedureOutput<
-  typeof findManyGroupSchedulesProcedure
+  typeof findManyGroupMatchingsProcedure
 >
-const findManyGroupSchedulesProcedure = administratorProcedure
+const findManyGroupMatchingsProcedure = administratorProcedure
   .input(applicationPeriodInputSchema)
-  .output(CommitteeApplicationGroupScheduleSchema.array())
+  .output(CommitteeApplicationGroupMatchingSchema.array())
   .query(
     async ({ ctx: context, input }) =>
       (await context.committeeApplicationService.getInterviewSchedule(context.handle, input.applicationPeriodId)).groups
@@ -287,13 +343,15 @@ export const committeeApplicationRouter = t.router({
   findMyApplication: findMyApplicationProcedure,
   getApplicationById: getApplicationByIdProcedure,
   findManyApplicationsByPeriodId: findManyApplicationsByPeriodIdProcedure,
+  getApplicantDetails: getApplicantDetailsProcedure,
+  setInterviewAttendance: setInterviewAttendanceProcedure,
   setInterviewBlocks: setInterviewBlocksProcedure,
   findManyInterviewBlocks: findManyInterviewBlocksProcedure,
   generateInterviews: generateInterviewsProcedure,
   clearInterviews: clearInterviewsProcedure,
   confirmInterviews: confirmInterviewsProcedure,
   getInterviewSchedule: getInterviewScheduleProcedure,
-  findManyGroupSchedules: findManyGroupSchedulesProcedure,
+  findManyGroupMatchings: findManyGroupMatchingsProcedure,
   scheduleInterview: scheduleInterviewProcedure,
   rescheduleInterview: rescheduleInterviewProcedure,
   cancelInterview: cancelInterviewProcedure,

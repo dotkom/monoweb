@@ -98,6 +98,7 @@ export const ModelName = {
   CommitteeApplicationGroup: 'CommitteeApplicationGroup',
   CommitteeApplication: 'CommitteeApplication',
   CommitteeApplicationGroupSelection: 'CommitteeApplicationGroupSelection',
+  CommitteeApplicationInterviewAttendee: 'CommitteeApplicationInterviewAttendee',
   CommitteeApplicationAvailability: 'CommitteeApplicationAvailability',
   CommitteeApplicationInterviewBlock: 'CommitteeApplicationInterviewBlock',
   CommitteeApplicationInterview: 'CommitteeApplicationInterview'
@@ -760,6 +761,15 @@ export const CommitteeApplicationGroupSelectionScalarFieldEnum = {
 } as const
 
 export type CommitteeApplicationGroupSelectionScalarFieldEnum = (typeof CommitteeApplicationGroupSelectionScalarFieldEnum)[keyof typeof CommitteeApplicationGroupSelectionScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewAttendeeScalarFieldEnum = {
+  createdAt: 'createdAt',
+  groupSelectionId: 'groupSelectionId',
+  userId: 'userId'
+} as const
+
+export type CommitteeApplicationInterviewAttendeeScalarFieldEnum = (typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum]
 
 
 export const CommitteeApplicationAvailabilityScalarFieldEnum = {

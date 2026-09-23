@@ -130,12 +130,6 @@ export const CommitteeApplicationInterviewSchema = CommitteeApplicationInterview
 export type CommitteeApplicationInterview = z.infer<typeof CommitteeApplicationInterviewSchema>
 export type CommitteeApplicationInterviewId = CommitteeApplicationInterview["id"]
 
-const MAZEMAP_ROOM_LINK_PATTERN = /^https:\/\/use\.mazemap\.com\/#v=1&campusid=\d+&sharepoitype=poi&sharepoi=\d+$/
-
-export function hasValidMazemapRoom(locationName: string, locationUrl: string | null): boolean {
-  return locationName.trim() !== "" && locationUrl !== null && MAZEMAP_ROOM_LINK_PATTERN.test(locationUrl.trim())
-}
-
 export function isInterviewAvailabilityValid(
   availability: CommitteeApplicationInterviewAvailability,
   applicationPeriod: Pick<CommitteeApplicationPeriod, "interviewsStartDate" | "interviewsEndDate">
@@ -268,26 +262,36 @@ export const CommitteeApplicationOpenPeriodSchema = CommitteeApplicationPeriodSc
 
 export type CommitteeApplicationOpenPeriod = z.infer<typeof CommitteeApplicationOpenPeriodSchema>
 
-export const CommitteeApplicationGroupOverviewSchema = CommitteeApplicationGroupSchema.extend({
+export const CommitteeApplicationGroupStatusSchema = CommitteeApplicationGroupSchema.extend({
   interviewBlockCount: z.int().nonnegative(),
   interviewBlocksUpdatedAt: z.date().nullable(),
   hasAllValidRooms: z.boolean(),
+  interviewMinutes: z.int().nonnegative(),
 })
 
-export type CommitteeApplicationGroupOverview = z.infer<typeof CommitteeApplicationGroupOverviewSchema>
+export type CommitteeApplicationGroupStatus = z.infer<typeof CommitteeApplicationGroupStatusSchema>
 
-export const CommitteeApplicationUnscheduledApplicantSchema = z.object({
+export const CommitteeApplicationInterviewAttendeeSchema = z.object({
+  userId: z.string(),
+  name: z.string(),
+  imageUrl: z.string().nullable(),
+})
+
+export type CommitteeApplicationInterviewAttendee = z.infer<typeof CommitteeApplicationInterviewAttendeeSchema>
+
+export const CommitteeApplicationUnmatchedApplicantSchema = z.object({
   groupSelectionId: z.string(),
   applicationId: z.string(),
   name: z.string(),
   email: z.string().nullable(),
   phone: z.string().nullable(),
+  rank: CommitteeApplicationGroupSelectionSchema.shape.rank,
   availability: CommitteeApplicationInterviewIntervalSchema.array(),
 })
 
-export type CommitteeApplicationUnscheduledApplicant = z.infer<typeof CommitteeApplicationUnscheduledApplicantSchema>
+export type CommitteeApplicationUnmatchedApplicant = z.infer<typeof CommitteeApplicationUnmatchedApplicantSchema>
 
-export const CommitteeApplicationScheduledInterviewSchema = CommitteeApplicationInterviewIntervalSchema.safeExtend({
+export const CommitteeApplicationMatchedInterviewSchema = CommitteeApplicationInterviewIntervalSchema.safeExtend({
   id: z.string(),
   groupSelectionId: z.string(),
   interviewBlockId: z.string(),
@@ -295,29 +299,32 @@ export const CommitteeApplicationScheduledInterviewSchema = CommitteeApplication
   name: z.string(),
   email: z.string().nullable(),
   phone: z.string().nullable(),
+  rank: CommitteeApplicationGroupSelectionSchema.shape.rank,
   locationName: z.string(),
   locationUrl: z.string().nullable(),
+  availability: CommitteeApplicationInterviewIntervalSchema.array(),
+  attendees: CommitteeApplicationInterviewAttendeeSchema.array(),
 })
 
-export type CommitteeApplicationScheduledInterview = z.infer<typeof CommitteeApplicationScheduledInterviewSchema>
+export type CommitteeApplicationMatchedInterview = z.infer<typeof CommitteeApplicationMatchedInterviewSchema>
 
-export const CommitteeApplicationGroupScheduleSchema = z.object({
+export const CommitteeApplicationGroupMatchingSchema = z.object({
   groupId: z.string(),
   applicationGroupId: z.string(),
   totalApplicants: z.int().nonnegative(),
   matchedApplicants: z.int().nonnegative(),
-  matchedInterviews: CommitteeApplicationScheduledInterviewSchema.array(),
-  unmatchedApplicants: CommitteeApplicationUnscheduledApplicantSchema.array(),
+  matchedInterviews: CommitteeApplicationMatchedInterviewSchema.array(),
+  unmatchedApplicants: CommitteeApplicationUnmatchedApplicantSchema.array(),
 })
 
-export type CommitteeApplicationGroupSchedule = z.infer<typeof CommitteeApplicationGroupScheduleSchema>
+export type CommitteeApplicationGroupMatching = z.infer<typeof CommitteeApplicationGroupMatchingSchema>
 
 export const CommitteeApplicationInterviewScheduleSchema = z.object({
   applicationPeriodId: z.string(),
   interviewsPublishedAt: z.date().nullable(),
   totalWantedInterviews: z.int().nonnegative(),
   matchedInterviews: z.int().nonnegative(),
-  groups: CommitteeApplicationGroupScheduleSchema.array(),
+  groups: CommitteeApplicationGroupMatchingSchema.array(),
 })
 
 export type CommitteeApplicationInterviewSchedule = z.infer<typeof CommitteeApplicationInterviewScheduleSchema>
@@ -341,6 +348,31 @@ export const CommitteeApplicationApplicantViewSchema = CommitteeApplicationSchem
 })
 
 export type CommitteeApplicationApplicantView = z.infer<typeof CommitteeApplicationApplicantViewSchema>
+
+export const CommitteeApplicationApplicantDetailsSchema = z.object({
+  applicationId: z.string(),
+  name: z.string(),
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  studyYear: z.int().nullable(),
+  aboutMe: z.string(),
+  createdAt: z.date(),
+  availability: CommitteeApplicationInterviewIntervalSchema.array(),
+  groupSelections: z.array(
+    z.object({
+      applicationGroupId: CommitteeApplicationGroupSchema.shape.id,
+      groupId: CommitteeApplicationGroupSchema.shape.groupId,
+      rank: CommitteeApplicationGroupSelectionSchema.shape.rank,
+      interview: CommitteeApplicationInterviewIntervalSchema.safeExtend({
+        locationName: z.string(),
+        locationUrl: z.string().nullable(),
+        attendees: CommitteeApplicationInterviewAttendeeSchema.array(),
+      }).nullable(),
+    })
+  ),
+})
+
+export type CommitteeApplicationApplicantDetails = z.infer<typeof CommitteeApplicationApplicantDetailsSchema>
 
 export const CommitteeApplicationInterviewMatchingInputSchema = z.object({
   publicationReferenceTime: z.date(),

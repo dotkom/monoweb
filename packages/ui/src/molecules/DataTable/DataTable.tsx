@@ -14,6 +14,7 @@ const INTERACTIVE_ROW_CLICK_SELECTOR = "a, button, input, label, textarea, selec
 export interface DataTableProps<TableData> {
   readonly table: ReactTable<TableData>
   filterable?: boolean
+  equalColumnWidths?: boolean
   getRowClassName?: (row: Row<TableData>) => string | undefined
   getRowStyle?: (row: Row<TableData>) => CSSProperties | undefined
   getCellStyle?: (row: Row<TableData>, columnIndex: number) => CSSProperties | undefined
@@ -28,6 +29,7 @@ export interface DataTableProps<TableData> {
 export function DataTable<TableData>({
   table,
   filterable,
+  equalColumnWidths = false,
   getRowClassName,
   getRowStyle,
   getCellStyle,
@@ -93,7 +95,7 @@ export function DataTable<TableData>({
     <ScrollArea.Root className="relative overflow-hidden rounded-lg bg-card border border-field-border">
       <ScrollArea.Viewport ref={scrollParentRef} className="max-h-100 overscroll-contain rounded-[inherit]">
         <ScrollArea.Content>
-          <Table containerClassName="overflow-visible">
+          <Table containerClassName="overflow-visible" className={cn(equalColumnWidths && "table-fixed")}>
             <TableHeader ref={tableHeaderRef} className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

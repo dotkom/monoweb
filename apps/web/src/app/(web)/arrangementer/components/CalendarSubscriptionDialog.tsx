@@ -39,7 +39,7 @@ import {
   createWebcalUrl,
   fetchPersonalCalendarToken,
 } from "./calendar-subscription"
-import { AppleCalendarLogo } from "./AppleCalendarLogo"
+import { AppleCalendarLogo } from "@/components/icons/AppleCalendarLogo"
 import Image from "next/image"
 
 type CalendarFeed = "personal" | "all"

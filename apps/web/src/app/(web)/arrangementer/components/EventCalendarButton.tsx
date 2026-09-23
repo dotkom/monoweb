@@ -5,7 +5,7 @@ import { slugify } from "@dotkomonline/utils"
 import { AddToCalendarButton } from "./AddToCalendarButton"
 import { createCalendarEvent } from "./calendar-event"
 import { createGoogleCalendarLink } from "./TimeLocationBox/utils"
-import { createIcsBody } from "./ics"
+import { createIcsBody } from "@/utils/ics"
 
 interface EventCalendarButtonProps {
   event: Event

@@ -6,17 +6,21 @@ import { Button, cn, Title, Tooltip, TooltipContent, TooltipTrigger } from "@dot
 import { IconArrowLeft, IconArrowUpRight, IconCheck, IconCopy, type TablerIcon } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { type PropsWithChildren, type ReactNode, useEffect, useState } from "react"
+import { Fragment, type PropsWithChildren, type ReactNode, useEffect, useState } from "react"
 import { PermissionTooltip } from "../PermissionTooltip"
 import { ReadOnlyNotice } from "../ReadOnlyNotice"
 
-export type ResourceDetailNavItem = {
+type ResourceDetailNavLink = {
   href: string
   label: string
-  icon: TablerIcon
+  icon?: TablerIcon
+  status?: ReactNode
   disabled?: boolean
+  disabledReason?: string
   match?: "exact" | "prefix"
 }
+
+export type ResourceDetailNavItem = ResourceDetailNavLink | { key: string; content: ReactNode }
 
 export type ViewInWebLinkProps = {
   label: string
@@ -32,6 +36,7 @@ export type ResourceDetailLayoutProps = PropsWithChildren<{
   navItems: ResourceDetailNavItem[]
   viewInWebProps?: ViewInWebLinkProps
   onDelete?: () => void
+  actions?: ReactNode
   deleteConfirmTitle?: string
   missingDeletePermission?: true | string
   deleteDisabledReason?: true | string
@@ -46,7 +51,7 @@ export type ResourceDetailLayoutProps = PropsWithChildren<{
   }[]
 }>
 
-function isNavItemActive(pathname: string, item: ResourceDetailNavItem): boolean {
+function isNavItemActive(pathname: string, item: ResourceDetailNavLink): boolean {
   if (item.disabled) {
     return false
   }
@@ -65,6 +70,7 @@ export function ResourceDetailLayout({
   navItems,
   viewInWebProps,
   onDelete,
+  actions,
   deleteConfirmTitle,
   missingDeletePermission,
   deleteDisabledReason,
@@ -109,7 +115,9 @@ export function ResourceDetailLayout({
           )}
           {copyIds.length > 0 &&
             isAdministrator &&
-            copyIds.map((copyId) => <CopyIdButton key={copyId.value} id={copyId.value} label={copyId.label} />)}
+            copyIds.map((copyId) => (
+              <CopyButton key={copyId.value} value={copyId.value} label={copyId.label ?? "Kopier ID"} />
+            ))}
           {onDelete && (
             <>
               <ConfirmDeleteModal
@@ -126,6 +134,7 @@ export function ResourceDetailLayout({
               />
             </>
           )}
+          {actions}
         </div>
 
         <Title element="h1" className="mt-4 font-title text-3xl font-semibold tracking-tight">
@@ -138,9 +147,23 @@ export function ResourceDetailLayout({
         )}
 
         {navItems.length > 0 && (
-          <nav className="mt-4 flex overflow-x-auto shadow-[inset_0_-2px_0_0_var(--border)]" aria-label="Seksjoner">
+          <nav
+            className={cn(
+              "mt-4 flex overflow-x-auto shadow-[inset_0_-2px_0_0_var(--border)]",
+              navItems.some((item) => "content" in item) && "items-end"
+            )}
+            aria-label="Seksjoner"
+          >
             {navItems.map((item) => {
-              const { href, label, icon: Icon, disabled } = item
+              if ("content" in item) {
+                return (
+                  <div key={item.key} className="flex items-center">
+                    {item.content}
+                  </div>
+                )
+              }
+
+              const { href, label, icon: Icon, status, disabled, disabledReason } = item
               const active = isNavItemActive(pathname, item)
 
               const itemClassName = cn(
@@ -150,24 +173,36 @@ export function ResourceDetailLayout({
               )
 
               if (disabled) {
-                return (
+                const disabledItem = (
                   <span
-                    key={href}
                     className={cn(
                       itemClassName,
                       "cursor-not-allowed text-muted-foreground opacity-50 hover:bg-transparent"
                     )}
                   >
-                    <Icon className="size-3.5 shrink-0" />
+                    {Icon && <Icon className="size-3.5 shrink-0" />}
                     {label}
+                    {status}
                   </span>
+                )
+
+                if (disabledReason === undefined) {
+                  return <Fragment key={href}>{disabledItem}</Fragment>
+                }
+
+                return (
+                  <Tooltip key={href}>
+                    <TooltipTrigger asChild>{disabledItem}</TooltipTrigger>
+                    <TooltipContent>{disabledReason}</TooltipContent>
+                  </Tooltip>
                 )
               }
 
               return (
                 <Link key={href} href={href} scroll={false} className={itemClassName}>
-                  <Icon className="size-3.5 shrink-0" />
+                  {Icon && <Icon className="size-3.5 shrink-0" />}
                   {label}
+                  {status}
                 </Link>
               )
             })}
@@ -222,12 +257,13 @@ const DeleteButton = ({ onClick, missingDeletePermission, deleteDisabledReason }
   return button
 }
 
-interface CopyIdButtonProps {
-  id: string
+interface CopyButtonProps {
+  value: string
   label?: string
+  iconOnly?: boolean
 }
 
-const CopyIdButton = ({ id, label }: CopyIdButtonProps) => {
+export const CopyButton = ({ value, label = "Kopier", iconOnly = false }: CopyButtonProps) => {
   const [hasCopied, setHasCopied] = useState(false)
 
   useEffect(() => {
@@ -237,18 +273,17 @@ const CopyIdButton = ({ id, label }: CopyIdButtonProps) => {
     }
   }, [hasCopied])
 
+  const Icon = hasCopied ? IconCheck : IconCopy
+
   return (
     <Button
-      variant="outline"
-      icon={
-        hasCopied ? (
-          <IconCheck aria-hidden className="size-3.5 text-green-600" />
-        ) : (
-          <IconCopy aria-hidden className="size-3.5" />
-        )
-      }
+      variant={iconOnly ? "ghost" : "outline"}
+      size={iconOnly ? "icon-sm" : undefined}
+      aria-label={iconOnly ? label : undefined}
+      title={iconOnly ? label : undefined}
+      icon={<Icon aria-hidden className={cn(iconOnly ? "size-4.5" : "size-3.5", hasCopied && "text-green-600")} />}
       onClick={() => {
-        void navigator.clipboard.writeText(id).then(
+        void navigator.clipboard.writeText(value).then(
           () => {
             setHasCopied(true)
           },
@@ -258,7 +293,7 @@ const CopyIdButton = ({ id, label }: CopyIdButtonProps) => {
         )
       }}
     >
-      {label ?? "Kopier ID"}
+      {iconOnly ? undefined : label}
     </Button>
   )
 }

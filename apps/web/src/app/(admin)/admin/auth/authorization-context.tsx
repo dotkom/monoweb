@@ -23,6 +23,13 @@ import {
   hasAnyGroupAffiliation,
   hasGroupRole,
   isGroupMember,
+  canEditApplication,
+  canViewApplication,
+  canViewApplicationGroup,
+  canViewApplicationMatching,
+  canManageApplicationInterviews,
+  isApplicationGroupMember,
+  canEditApplicationGroupAvailability,
 } from "./permissions"
 
 export interface AuthorizationProviderProps {
@@ -31,9 +38,7 @@ export interface AuthorizationProviderProps {
   affiliations: Record<GroupId, GroupRoleType[]>
 }
 
-interface AuthorizationContextValue extends AuthorizationState {}
-
-const AuthorizationContext = createContext<AuthorizationContextValue | null>(null)
+const AuthorizationContext = createContext<AuthorizationState | null>(null)
 
 function toAffiliationsMap(affiliations: Record<GroupId, GroupRoleType[]>) {
   const affiliationsMap = new Map<GroupId, Set<GroupRoleType>>()
@@ -51,7 +56,7 @@ export function AuthorizationProvider({
   isCommitteeMember,
   affiliations,
 }: PropsWithChildren<AuthorizationProviderProps>) {
-  const value = useMemo(
+  const value = useMemo<AuthorizationState>(
     () => ({
       isAdministrator,
       isCommitteeMember,
@@ -89,6 +94,13 @@ export function useAuthorization() {
       canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
       canEditOffline: () => canEditOffline(state),
       canEditFadderuke: () => canEditFadderuke(state),
+      canViewApplication: () => canViewApplication(state),
+      canManageApplicationInterviews: () => canManageApplicationInterviews(state),
+      canViewApplicationMatching: () => canViewApplicationMatching(state),
+      canEditApplicationGroupAvailability: (groupId: GroupId) => canEditApplicationGroupAvailability(state, groupId),
+      canViewApplicationGroup: (groupId: GroupId) => canViewApplicationGroup(state, groupId),
+      isApplicationGroupMember: (groupId: GroupId) => isApplicationGroupMember(state, groupId),
+      canEditApplication: () => canEditApplication(state),
       canCreateGroup: (groupType: GroupType) => canCreateGroup(state, groupType),
       canUpdateGroup: (groupId: GroupId, isInterestGroup: boolean) => canUpdateGroup(state, groupId, isInterestGroup),
       canDeleteGroup: (groupId: GroupId, isInterestGroup: boolean) => canDeleteGroup(state, groupId, isInterestGroup),

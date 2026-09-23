@@ -253,6 +253,14 @@ export type CommitteeApplication = Prisma.CommitteeApplicationModel
  */
 export type CommitteeApplicationGroupSelection = Prisma.CommitteeApplicationGroupSelectionModel
 /**
+ * Model CommitteeApplicationInterviewAttendee
+ * A group member who has signed up to conduct the interview for this group selection.
+ * 
+ * Attached to the group selection rather than the interview, because interviews are deleted and
+ * recreated whenever the matching algorithm is re-run.
+ */
+export type CommitteeApplicationInterviewAttendee = Prisma.CommitteeApplicationInterviewAttendeeModel
+/**
  * Model CommitteeApplicationAvailability
  * A time interval when the applicant is available for interviews in this application period.
  */

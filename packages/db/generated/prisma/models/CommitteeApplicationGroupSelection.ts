@@ -235,6 +235,7 @@ export type CommitteeApplicationGroupSelectionWhereInput = {
   application?: Prisma.XOR<Prisma.CommitteeApplicationScalarRelationFilter, Prisma.CommitteeApplicationWhereInput>
   applicationGroup?: Prisma.XOR<Prisma.CommitteeApplicationGroupScalarRelationFilter, Prisma.CommitteeApplicationGroupWhereInput>
   interview?: Prisma.XOR<Prisma.CommitteeApplicationInterviewNullableScalarRelationFilter, Prisma.CommitteeApplicationInterviewWhereInput> | null
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeListRelationFilter
 }
 
 export type CommitteeApplicationGroupSelectionOrderByWithRelationInput = {
@@ -248,6 +249,7 @@ export type CommitteeApplicationGroupSelectionOrderByWithRelationInput = {
   application?: Prisma.CommitteeApplicationOrderByWithRelationInput
   applicationGroup?: Prisma.CommitteeApplicationGroupOrderByWithRelationInput
   interview?: Prisma.CommitteeApplicationInterviewOrderByWithRelationInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeOrderByRelationAggregateInput
 }
 
 export type CommitteeApplicationGroupSelectionWhereUniqueInput = Prisma.AtLeast<{
@@ -267,6 +269,7 @@ export type CommitteeApplicationGroupSelectionWhereUniqueInput = Prisma.AtLeast<
   application?: Prisma.XOR<Prisma.CommitteeApplicationScalarRelationFilter, Prisma.CommitteeApplicationWhereInput>
   applicationGroup?: Prisma.XOR<Prisma.CommitteeApplicationGroupScalarRelationFilter, Prisma.CommitteeApplicationGroupWhereInput>
   interview?: Prisma.XOR<Prisma.CommitteeApplicationInterviewNullableScalarRelationFilter, Prisma.CommitteeApplicationInterviewWhereInput> | null
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeListRelationFilter
 }, "id" | "applicationId_rank" | "applicationId_applicationGroupId" | "id_applicationGroupId">
 
 export type CommitteeApplicationGroupSelectionOrderByWithAggregationInput = {
@@ -305,6 +308,7 @@ export type CommitteeApplicationGroupSelectionCreateInput = {
   application: Prisma.CommitteeApplicationCreateNestedOneWithoutGroupSelectionsInput
   applicationGroup: Prisma.CommitteeApplicationGroupCreateNestedOneWithoutGroupSelectionsInput
   interview?: Prisma.CommitteeApplicationInterviewCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedCreateInput = {
@@ -316,6 +320,7 @@ export type CommitteeApplicationGroupSelectionUncheckedCreateInput = {
   applicationGroupId: string
   applicationPeriodId: string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionUpdateInput = {
@@ -326,6 +331,7 @@ export type CommitteeApplicationGroupSelectionUpdateInput = {
   application?: Prisma.CommitteeApplicationUpdateOneRequiredWithoutGroupSelectionsNestedInput
   applicationGroup?: Prisma.CommitteeApplicationGroupUpdateOneRequiredWithoutGroupSelectionsNestedInput
   interview?: Prisma.CommitteeApplicationInterviewUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateInput = {
@@ -337,6 +343,7 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateInput = {
   applicationGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   applicationPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionCreateManyInput = {
@@ -518,6 +525,20 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateManyWithoutApplicat
   deleteMany?: Prisma.CommitteeApplicationGroupSelectionScalarWhereInput | Prisma.CommitteeApplicationGroupSelectionScalarWhereInput[]
 }
 
+export type CommitteeApplicationGroupSelectionCreateNestedOneWithoutInterviewAttendeesInput = {
+  create?: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionCreateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewAttendeesInput>
+  connectOrCreate?: Prisma.CommitteeApplicationGroupSelectionCreateOrConnectWithoutInterviewAttendeesInput
+  connect?: Prisma.CommitteeApplicationGroupSelectionWhereUniqueInput
+}
+
+export type CommitteeApplicationGroupSelectionUpdateOneRequiredWithoutInterviewAttendeesNestedInput = {
+  create?: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionCreateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewAttendeesInput>
+  connectOrCreate?: Prisma.CommitteeApplicationGroupSelectionCreateOrConnectWithoutInterviewAttendeesInput
+  upsert?: Prisma.CommitteeApplicationGroupSelectionUpsertWithoutInterviewAttendeesInput
+  connect?: Prisma.CommitteeApplicationGroupSelectionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionUpdateToOneWithWhereWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUpdateWithoutInterviewAttendeesInput>, Prisma.CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewAttendeesInput>
+}
+
 export type CommitteeApplicationGroupSelectionCreateNestedOneWithoutInterviewInput = {
   create?: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionCreateWithoutInterviewInput, Prisma.CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewInput>
   connectOrCreate?: Prisma.CommitteeApplicationGroupSelectionCreateOrConnectWithoutInterviewInput
@@ -539,6 +560,7 @@ export type CommitteeApplicationGroupSelectionCreateWithoutApplicationGroupInput
   rank?: number | null
   application: Prisma.CommitteeApplicationCreateNestedOneWithoutGroupSelectionsInput
   interview?: Prisma.CommitteeApplicationInterviewCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutApplicationGroupInput = {
@@ -548,6 +570,7 @@ export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutApplicationG
   rank?: number | null
   applicationId: string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionCreateOrConnectWithoutApplicationGroupInput = {
@@ -596,6 +619,7 @@ export type CommitteeApplicationGroupSelectionCreateWithoutApplicationInput = {
   rank?: number | null
   applicationGroup: Prisma.CommitteeApplicationGroupCreateNestedOneWithoutGroupSelectionsInput
   interview?: Prisma.CommitteeApplicationInterviewCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutApplicationInput = {
@@ -605,6 +629,7 @@ export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutApplicationI
   rank?: number | null
   applicationGroupId: string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedCreateNestedOneWithoutGroupSelectionInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionCreateOrConnectWithoutApplicationInput = {
@@ -633,6 +658,64 @@ export type CommitteeApplicationGroupSelectionUpdateManyWithWhereWithoutApplicat
   data: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionUpdateManyMutationInput, Prisma.CommitteeApplicationGroupSelectionUncheckedUpdateManyWithoutApplicationInput>
 }
 
+export type CommitteeApplicationGroupSelectionCreateWithoutInterviewAttendeesInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  rank?: number | null
+  application: Prisma.CommitteeApplicationCreateNestedOneWithoutGroupSelectionsInput
+  applicationGroup: Prisma.CommitteeApplicationGroupCreateNestedOneWithoutGroupSelectionsInput
+  interview?: Prisma.CommitteeApplicationInterviewCreateNestedOneWithoutGroupSelectionInput
+}
+
+export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewAttendeesInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  rank?: number | null
+  applicationId: string
+  applicationGroupId: string
+  applicationPeriodId: string
+  interview?: Prisma.CommitteeApplicationInterviewUncheckedCreateNestedOneWithoutGroupSelectionInput
+}
+
+export type CommitteeApplicationGroupSelectionCreateOrConnectWithoutInterviewAttendeesInput = {
+  where: Prisma.CommitteeApplicationGroupSelectionWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionCreateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewAttendeesInput>
+}
+
+export type CommitteeApplicationGroupSelectionUpsertWithoutInterviewAttendeesInput = {
+  update: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionUpdateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewAttendeesInput>
+  create: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionCreateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewAttendeesInput>
+  where?: Prisma.CommitteeApplicationGroupSelectionWhereInput
+}
+
+export type CommitteeApplicationGroupSelectionUpdateToOneWithWhereWithoutInterviewAttendeesInput = {
+  where?: Prisma.CommitteeApplicationGroupSelectionWhereInput
+  data: Prisma.XOR<Prisma.CommitteeApplicationGroupSelectionUpdateWithoutInterviewAttendeesInput, Prisma.CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewAttendeesInput>
+}
+
+export type CommitteeApplicationGroupSelectionUpdateWithoutInterviewAttendeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  application?: Prisma.CommitteeApplicationUpdateOneRequiredWithoutGroupSelectionsNestedInput
+  applicationGroup?: Prisma.CommitteeApplicationGroupUpdateOneRequiredWithoutGroupSelectionsNestedInput
+  interview?: Prisma.CommitteeApplicationInterviewUpdateOneWithoutGroupSelectionNestedInput
+}
+
+export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewAttendeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  interview?: Prisma.CommitteeApplicationInterviewUncheckedUpdateOneWithoutGroupSelectionNestedInput
+}
+
 export type CommitteeApplicationGroupSelectionCreateWithoutInterviewInput = {
   id?: string
   createdAt?: Date | string
@@ -640,6 +723,7 @@ export type CommitteeApplicationGroupSelectionCreateWithoutInterviewInput = {
   rank?: number | null
   application: Prisma.CommitteeApplicationCreateNestedOneWithoutGroupSelectionsInput
   applicationGroup: Prisma.CommitteeApplicationGroupCreateNestedOneWithoutGroupSelectionsInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewInput = {
@@ -650,6 +734,7 @@ export type CommitteeApplicationGroupSelectionUncheckedCreateWithoutInterviewInp
   applicationId: string
   applicationGroupId: string
   applicationPeriodId: string
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutGroupSelectionInput
 }
 
 export type CommitteeApplicationGroupSelectionCreateOrConnectWithoutInterviewInput = {
@@ -675,6 +760,7 @@ export type CommitteeApplicationGroupSelectionUpdateWithoutInterviewInput = {
   rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   application?: Prisma.CommitteeApplicationUpdateOneRequiredWithoutGroupSelectionsNestedInput
   applicationGroup?: Prisma.CommitteeApplicationGroupUpdateOneRequiredWithoutGroupSelectionsNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewInput = {
@@ -685,6 +771,7 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutInterviewInp
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string
   applicationGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   applicationPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionCreateManyApplicationGroupInput = {
@@ -702,6 +789,7 @@ export type CommitteeApplicationGroupSelectionUpdateWithoutApplicationGroupInput
   rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   application?: Prisma.CommitteeApplicationUpdateOneRequiredWithoutGroupSelectionsNestedInput
   interview?: Prisma.CommitteeApplicationInterviewUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutApplicationGroupInput = {
@@ -711,6 +799,7 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutApplicationG
   rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateManyWithoutApplicationGroupInput = {
@@ -736,6 +825,7 @@ export type CommitteeApplicationGroupSelectionUpdateWithoutApplicationInput = {
   rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   applicationGroup?: Prisma.CommitteeApplicationGroupUpdateOneRequiredWithoutGroupSelectionsNestedInput
   interview?: Prisma.CommitteeApplicationInterviewUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutApplicationInput = {
@@ -745,6 +835,7 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateWithoutApplicationI
   rank?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   applicationGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   interview?: Prisma.CommitteeApplicationInterviewUncheckedUpdateOneWithoutGroupSelectionNestedInput
+  interviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutGroupSelectionNestedInput
 }
 
 export type CommitteeApplicationGroupSelectionUncheckedUpdateManyWithoutApplicationInput = {
@@ -755,6 +846,35 @@ export type CommitteeApplicationGroupSelectionUncheckedUpdateManyWithoutApplicat
   applicationGroupId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
+
+/**
+ * Count Type CommitteeApplicationGroupSelectionCountOutputType
+ */
+
+export type CommitteeApplicationGroupSelectionCountOutputType = {
+  interviewAttendees: number
+}
+
+export type CommitteeApplicationGroupSelectionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  interviewAttendees?: boolean | CommitteeApplicationGroupSelectionCountOutputTypeCountInterviewAttendeesArgs
+}
+
+/**
+ * CommitteeApplicationGroupSelectionCountOutputType without action
+ */
+export type CommitteeApplicationGroupSelectionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommitteeApplicationGroupSelectionCountOutputType
+   */
+  select?: Prisma.CommitteeApplicationGroupSelectionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CommitteeApplicationGroupSelectionCountOutputType without action
+ */
+export type CommitteeApplicationGroupSelectionCountOutputTypeCountInterviewAttendeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommitteeApplicationInterviewAttendeeWhereInput
+}
 
 
 export type CommitteeApplicationGroupSelectionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -768,6 +888,8 @@ export type CommitteeApplicationGroupSelectionSelect<ExtArgs extends runtime.Typ
   application?: boolean | Prisma.CommitteeApplicationDefaultArgs<ExtArgs>
   applicationGroup?: boolean | Prisma.CommitteeApplicationGroupDefaultArgs<ExtArgs>
   interview?: boolean | Prisma.CommitteeApplicationGroupSelection$interviewArgs<ExtArgs>
+  interviewAttendees?: boolean | Prisma.CommitteeApplicationGroupSelection$interviewAttendeesArgs<ExtArgs>
+  _count?: boolean | Prisma.CommitteeApplicationGroupSelectionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["committeeApplicationGroupSelection"]>
 
 export type CommitteeApplicationGroupSelectionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -809,6 +931,8 @@ export type CommitteeApplicationGroupSelectionInclude<ExtArgs extends runtime.Ty
   application?: boolean | Prisma.CommitteeApplicationDefaultArgs<ExtArgs>
   applicationGroup?: boolean | Prisma.CommitteeApplicationGroupDefaultArgs<ExtArgs>
   interview?: boolean | Prisma.CommitteeApplicationGroupSelection$interviewArgs<ExtArgs>
+  interviewAttendees?: boolean | Prisma.CommitteeApplicationGroupSelection$interviewAttendeesArgs<ExtArgs>
+  _count?: boolean | Prisma.CommitteeApplicationGroupSelectionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CommitteeApplicationGroupSelectionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.CommitteeApplicationDefaultArgs<ExtArgs>
@@ -825,6 +949,7 @@ export type $CommitteeApplicationGroupSelectionPayload<ExtArgs extends runtime.T
     application: Prisma.$CommitteeApplicationPayload<ExtArgs>
     applicationGroup: Prisma.$CommitteeApplicationGroupPayload<ExtArgs>
     interview: Prisma.$CommitteeApplicationInterviewPayload<ExtArgs> | null
+    interviewAttendees: Prisma.$CommitteeApplicationInterviewAttendeePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1237,6 +1362,7 @@ export interface Prisma__CommitteeApplicationGroupSelectionClient<T, Null = neve
   application<T extends Prisma.CommitteeApplicationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommitteeApplicationDefaultArgs<ExtArgs>>): Prisma.Prisma__CommitteeApplicationClient<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   applicationGroup<T extends Prisma.CommitteeApplicationGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommitteeApplicationGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__CommitteeApplicationGroupClient<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   interview<T extends Prisma.CommitteeApplicationGroupSelection$interviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommitteeApplicationGroupSelection$interviewArgs<ExtArgs>>): Prisma.Prisma__CommitteeApplicationInterviewClient<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationInterviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  interviewAttendees<T extends Prisma.CommitteeApplicationGroupSelection$interviewAttendeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommitteeApplicationGroupSelection$interviewAttendeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationInterviewAttendeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1699,6 +1825,30 @@ export type CommitteeApplicationGroupSelection$interviewArgs<ExtArgs extends run
    */
   include?: Prisma.CommitteeApplicationInterviewInclude<ExtArgs> | null
   where?: Prisma.CommitteeApplicationInterviewWhereInput
+}
+
+/**
+ * CommitteeApplicationGroupSelection.interviewAttendees
+ */
+export type CommitteeApplicationGroupSelection$interviewAttendeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommitteeApplicationInterviewAttendee
+   */
+  select?: Prisma.CommitteeApplicationInterviewAttendeeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommitteeApplicationInterviewAttendee
+   */
+  omit?: Prisma.CommitteeApplicationInterviewAttendeeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommitteeApplicationInterviewAttendeeInclude<ExtArgs> | null
+  where?: Prisma.CommitteeApplicationInterviewAttendeeWhereInput
+  orderBy?: Prisma.CommitteeApplicationInterviewAttendeeOrderByWithRelationInput | Prisma.CommitteeApplicationInterviewAttendeeOrderByWithRelationInput[]
+  cursor?: Prisma.CommitteeApplicationInterviewAttendeeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommitteeApplicationInterviewAttendeeScalarFieldEnum | Prisma.CommitteeApplicationInterviewAttendeeScalarFieldEnum[]
 }
 
 /**

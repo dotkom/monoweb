@@ -4,7 +4,7 @@ import { mockDeep } from "vitest-mock-extended"
 import { FailedPreconditionError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type {
   CommitteeApplication,
-  CommitteeApplicationGroupOverview,
+  CommitteeApplicationGroupStatus,
   CommitteeApplicationInterview,
   CommitteeApplicationInterviewMatchingInput,
   CommitteeApplicationPeriod,
@@ -28,7 +28,7 @@ const period: CommitteeApplicationPeriod = {
   interviewsEndDate: new Date("2026-10-15"),
   interviewsPublishedAt: null,
 }
-const groups: CommitteeApplicationGroupOverview[] = [
+const groups: CommitteeApplicationGroupStatus[] = [
   {
     id: "exclusive",
     groupId: "dotkom",
@@ -40,6 +40,7 @@ const groups: CommitteeApplicationGroupOverview[] = [
     interviewBlockCount: 1,
     interviewBlocksUpdatedAt: openTime,
     hasAllValidRooms: true,
+    interviewMinutes: 480,
   },
   {
     id: "additive",
@@ -52,6 +53,7 @@ const groups: CommitteeApplicationGroupOverview[] = [
     interviewBlockCount: 1,
     interviewBlocksUpdatedAt: openTime,
     hasAllValidRooms: true,
+    interviewMinutes: 480,
   },
 ]
 const submission: CommitteeApplicationSubmit = {
@@ -131,7 +133,7 @@ function setup() {
   repository.updateApplication.mockResolvedValue(application)
   repository.findInterviewMatchingInput.mockResolvedValue(input)
   repository.findManyInterviewsByPeriodId.mockResolvedValue([])
-  repository.findManyGroupSchedulesByPeriodId.mockResolvedValue([])
+  repository.findManyGroupMatchingsByPeriodId.mockResolvedValue([])
   repository.findGroupSelectionById.mockResolvedValue(application.groupSelections[0])
   repository.findInterviewById.mockResolvedValue(interview)
   repository.findApplicationGroupById.mockResolvedValue(groups[0])
@@ -307,7 +309,7 @@ describe("interview publication", () => {
     expect(repository.findInterviewMatchingInput).toHaveBeenCalledWith(handle, period.id, closedTime)
     expect(matcher).toHaveBeenCalledWith(input)
     expect(repository.replaceInterviews).toHaveBeenCalledWith(handle, period.id, [interview])
-    expect(repository.publishInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
   it("prevents matching while applicants can still edit", async () => {
     vi.setSystemTime(openTime)
@@ -318,16 +320,16 @@ describe("interview publication", () => {
   it("confirms the existing schedule and publishes immediately", async () => {
     const { service, repository } = setup()
     repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
-    repository.publishInterviews.mockResolvedValue({ ...period, interviewsPublishedAt: closedTime })
+    repository.setInterviewsPublishedAt.mockResolvedValue({ ...period, interviewsPublishedAt: closedTime })
     await expect(service.confirmInterviews(handle, period.id)).resolves.toMatchObject({
       interviewsPublishedAt: closedTime,
     })
-    expect(repository.publishInterviews).toHaveBeenCalledWith(handle, period.id, closedTime)
+    expect(repository.setInterviewsPublishedAt).toHaveBeenCalledWith(handle, period.id, closedTime)
   })
   it("does not publish an empty schedule", async () => {
     const { service, repository } = setup()
     await expect(service.confirmInterviews(handle, period.id)).rejects.toThrow(IllegalStateError)
-    expect(repository.publishInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
   it("keeps the original publication time on repeated confirmation", async () => {
     const { service, repository } = setup()
@@ -335,7 +337,7 @@ describe("interview publication", () => {
     await expect(service.confirmInterviews(handle, period.id)).resolves.toMatchObject({
       interviewsPublishedAt: openTime,
     })
-    expect(repository.publishInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
   it.each(["generate", "clear", "configuration", "blocks"])("prevents bulk %s after publication", async (action) => {
     const { service, repository } = setup()
@@ -377,14 +379,14 @@ describe("individual interview corrections", () => {
       expect.objectContaining({ startsAt: new Date("2026-10-12T11:00:00Z") })
     )
     expect(repository.replaceInterviews).not.toHaveBeenCalled()
-    expect(repository.publishInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
   it("cancels one published interview without unpublishing", async () => {
     const { service, repository } = setup()
     repository.findPeriodById.mockResolvedValue({ ...period, interviewsPublishedAt: closedTime })
     await service.cancelInterview(handle, interview.id)
     expect(repository.deleteInterview).toHaveBeenCalledWith(handle, interview.id)
-    expect(repository.publishInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
   it("rejects an interview block owned by another committee", async () => {
     const { service, repository } = setup()

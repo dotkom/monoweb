@@ -3,7 +3,7 @@
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@dotkomonline/ui"
 import { IconChevronDown, IconDownload } from "@tabler/icons-react"
 import Image from "next/image"
-import { downloadIcsFile, openIcsFile } from "./ics"
+import { downloadIcsFile, openIcsFile } from "@/utils/ics"
 
 interface AddToCalendarButtonProps {
   googleCalendarUrl: string

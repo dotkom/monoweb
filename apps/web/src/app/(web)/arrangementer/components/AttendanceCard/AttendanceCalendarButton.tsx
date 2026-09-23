@@ -7,7 +7,7 @@ import { createAbsoluteEventPageUrl, slugify } from "@dotkomonline/utils"
 import { addMinutes, isPast } from "date-fns"
 import { AddToCalendarButton } from "../AddToCalendarButton"
 import { createGoogleCalendarLink } from "../TimeLocationBox/utils"
-import { createIcsBody } from "../ics"
+import { createIcsBody } from "@/utils/ics"
 
 interface AttendanceCalendarButtonProps {
   event: Event

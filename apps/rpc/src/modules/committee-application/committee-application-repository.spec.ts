@@ -108,6 +108,11 @@ describe("committee application read views", () => {
     expect(result?.groups[0].interview).toBeNull()
     expect(result?.aboutMe).toBe(application.aboutMe)
     expect(result?.availabilityBlocks).toHaveLength(1)
+    handle.committeeApplicationPeriod.findUnique.mockResolvedValue(null)
+
+    await expect(
+      getCommitteeApplicationRepository().findInterviewMatchingInput(handle, "missing-period", new Date())
+    ).resolves.toBeNull()
   })
   it("reveals interviews immediately when the schedule is published", async () => {
     const handle = mockDeep<DBHandle>()
@@ -122,6 +127,51 @@ describe("committee application read views", () => {
       endsAt: interview.endsAt,
       locationName: interviewBlock.locationName,
       locationUrl: interviewBlock.locationUrl,
+    const startsAt = new Date("2026-10-12T11:50:00Z")
+    const endsAt = new Date("2026-10-12T12:10:00Z")
+    const interviewsPublishedAt = new Date("2026-10-11T21:00:00Z")
+
+    const selection = {
+      id: "selection-id",
+      applicationId: "application-id",
+      applicationGroupId: "application-group-id",
+    }
+    const availability = { applicationId: "application-id", startsAt, endsAt }
+    const block = {
+      id: "block-id",
+      applicationGroupId: "application-group-id",
+      startsAt,
+      endsAt,
+      locationName: "Room A",
+    }
+
+    const period = {
+      id: "period-id",
+      name: "Komitéopptak",
+      createdAt: startsAt,
+      updatedAt: startsAt,
+      isDraft: true,
+      isEnabled: true,
+      applicationsOpenAt: startsAt,
+      applicationsCloseAt: endsAt,
+      interviewsStartDate: startsAt,
+      interviewsEndDate: endsAt,
+      interviewsPublishedAt: interviewsPublishedAt,
+      applications: [{ id: "application-id", groupSelections: [selection], availabilityBlocks: [availability] }],
+      groups: [{ id: "application-group-id", interviewDuration: "MINUTES_20", interviewBlocks: [block] }],
+    }
+
+    handle.committeeApplicationPeriod.findUnique.mockResolvedValue(period)
+
+    await expect(
+      getCommitteeApplicationRepository().findInterviewMatchingInput(handle, "period-id", new Date())
+    ).resolves.toEqual({
+      interviewsPublishedAt: period.interviewsPublishedAt,
+      applications: [{ id: "application-id" }],
+      groups: [{ id: "application-group-id", interviewDuration: "MINUTES_20" }],
+      groupSelections: [selection],
+      availabilityBlocks: [availability],
+      interviewBlocks: [block],
     })
     expect(handle.committeeApplication.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({

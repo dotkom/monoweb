@@ -1,5 +1,6 @@
 "use client"
 
+import { closeOnlyOnChoice } from "@admin/lib/confirm-dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,28 +13,34 @@ import {
 import { IconCancel, IconTrash } from "@tabler/icons-react"
 import type { ReactNode } from "react"
 
-export type ConfirmDeleteModalProps = {
+export type ConfirmModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
   description?: ReactNode
   onConfirm: () => void
-  confirmLabel?: string
+  confirmLabel: string
+  confirmIcon?: ReactNode
   cancelLabel?: string
+  destructive?: boolean
+  size?: "sm" | "md"
 }
 
-export function ConfirmDeleteModal({
+export function ConfirmModal({
   open,
   onOpenChange,
   title,
   description,
   onConfirm,
-  confirmLabel = "Ja, slett",
+  confirmLabel,
+  confirmIcon,
   cancelLabel = "Nei",
-}: ConfirmDeleteModalProps) {
+  destructive = false,
+  size = "md",
+}: ConfirmModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
+    <AlertDialog open={open} onOpenChange={closeOnlyOnChoice(onOpenChange)}>
+      <AlertDialogContent size={size}>
         <AlertDialogTitle>{title}</AlertDialogTitle>
         {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         <AlertDialogFooter>
@@ -43,17 +50,27 @@ export function ConfirmDeleteModal({
           </AlertDialogCancel>
           <AlertDialogAction
             type="button"
-            destructive
+            destructive={destructive}
             onClick={() => {
               onConfirm()
               onOpenChange(false)
             }}
           >
-            <IconTrash className="size-4" />
+            {confirmIcon}
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  )
+}
+
+export type ConfirmDeleteModalProps = Omit<ConfirmModalProps, "confirmLabel" | "confirmIcon" | "destructive"> & {
+  confirmLabel?: string
+}
+
+export function ConfirmDeleteModal({ confirmLabel = "Ja, slett", ...props }: ConfirmDeleteModalProps) {
+  return (
+    <ConfirmModal {...props} confirmLabel={confirmLabel} confirmIcon={<IconTrash className="size-4" />} destructive />
   )
 }

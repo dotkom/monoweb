@@ -1,0 +1,5 @@
+-- RenameForeignKey
+ALTER TABLE "committee_application_interview_attendee" RENAME CONSTRAINT "committee_application_interview_attendee_selection_fkey" TO "committee_application_interview_attendee_group_selection_i_fkey";
+
+-- RenameForeignKey
+ALTER TABLE "committee_application_interview_attendee" RENAME CONSTRAINT "committee_application_interview_attendee_user_fkey" TO "committee_application_interview_attendee_user_id_fkey";

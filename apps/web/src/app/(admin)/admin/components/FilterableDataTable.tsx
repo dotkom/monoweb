@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { type CSSProperties, useState } from "react"
+import { type CSSProperties, type MouseEvent, useState } from "react"
 
 type FilterOption = {
   label: string
@@ -23,10 +23,14 @@ type FilterOption = {
 type FilterableDataTableProps<T> = {
   tableOptions: TableOptions<T>
   filters?: FilterOption[]
+  showSearch?: boolean
   searchPlaceholder?: string
   filterPlaceholder?: string
   actions?: React.ReactNode
   isLoading?: boolean
+  equalColumnWidths?: boolean
+  initialSorting?: SortingState
+  onRowClick?: (row: Row<T>, event: MouseEvent<HTMLTableRowElement>) => void
   getRowClassName?: (row: Row<T>) => string | undefined
   getRowStyle?: (row: Row<T>) => CSSProperties | undefined
 }
@@ -34,15 +38,19 @@ type FilterableDataTableProps<T> = {
 export function FilterableDataTable<T>({
   tableOptions,
   filters,
+  showSearch = true,
   searchPlaceholder = "Søk...",
   filterPlaceholder = "Velg filter...",
   actions,
   isLoading = false,
+  equalColumnWidths = false,
+  initialSorting,
+  onRowClick,
   getRowClassName,
   getRowStyle,
 }: FilterableDataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("")
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>(initialSorting ?? [])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [selectedLabels, setSelectedLabels] = useState<string[]>([])
 
@@ -87,33 +95,41 @@ export function FilterableDataTable<T>({
     setColumnFilters(Object.entries(filtersByColumn).map(([id, value]) => ({ id, value })))
   }
 
+  const hasToolbar = showSearch || filters !== undefined || actions !== undefined
+
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div className="flex shrink-0 flex-wrap gap-2 items-end">
-          <TextInput
-            placeholder={searchPlaceholder}
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-64"
-          />
-          {filters && (
-            <TagInput
-              className="w-64 shrink-0"
-              placeholder={filterPlaceholder}
-              data={filters.map((opt) => opt.label)}
-              value={selectedLabels}
-              onChange={applyColumnFilters}
-              creatable={false}
-            />
-          )}
+      {hasToolbar && (
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div className="flex shrink-0 flex-wrap gap-2 items-end">
+            {showSearch && (
+              <TextInput
+                placeholder={searchPlaceholder}
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="w-64"
+              />
+            )}
+            {filters && (
+              <TagInput
+                className="w-64 shrink-0"
+                placeholder={filterPlaceholder}
+                data={filters.map((opt) => opt.label)}
+                value={selectedLabels}
+                onChange={applyColumnFilters}
+                creatable={false}
+              />
+            )}
+          </div>
+          {actions}
         </div>
-        {actions}
-      </div>
+      )}
       <DataTable
         table={table}
         filterable={true}
+        equalColumnWidths={equalColumnWidths}
         isLoading={isLoading}
+        onRowClick={onRowClick}
         getRowClassName={getRowClassName}
         getRowStyle={getRowStyle}
       />

@@ -20,7 +20,7 @@ import { IconArrowUpRight, IconCalendarEvent, IconCheck, IconCopy, IconLoader2, 
 import { useQuery } from "@tanstack/react-query"
 import Image from "next/image"
 import { useState } from "react"
-import { AppleCalendarLogo } from "./AppleCalendarLogo"
+import { AppleCalendarLogo } from "@/components/icons/AppleCalendarLogo"
 import {
   createAllEventsCalendarUrl,
   createGoogleCalendarSubscribeUrl,
