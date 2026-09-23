@@ -156,7 +156,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
             <Text
               className={cn(
                 "text-3xl px-2 py-1",
-                hasWaitlist && attendee?.reserved && "bg-green-200 dark:bg-green-800 rounded-lg"
+                hasWaitlist &&
+                  attendee?.reserved &&
+                  (actionIsRequired
+                    ? "bg-yellow-200 dark:bg-amber-900 rounded-lg"
+                    : "bg-green-200 dark:bg-green-800 rounded-lg")
               )}
               suppressHydrationWarning
             >

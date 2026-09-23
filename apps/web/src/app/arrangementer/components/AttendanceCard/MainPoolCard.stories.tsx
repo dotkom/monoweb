@@ -8,6 +8,9 @@ import {
   createAttendanceWithPaymentRecord,
   createAttendanceWithQueue,
   createAttendanceWithQueuedPayment,
+  createAttendanceWithQueuedPaymentRecord,
+  createAttendanceWithReservedPayment,
+  createAttendanceWithReservedPaymentRecord,
   createAttendanceWithReservedUser,
   createAttendanceWithServingPunishment,
   createIneligiblePoolAttendance,
@@ -166,6 +169,10 @@ export const AllStates = () => {
         <MainPoolCard attendance={createAttendanceWithPaymentCountdown()} user={user} authorizeUrl={AUTHORIZE_URL} />
       </StatePreview>
 
+      <StatePreview label="Payment countdown while reserved">
+        <MainPoolCard attendance={createAttendanceWithReservedPayment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      </StatePreview>
+
       <StatePreview label="Payment countdown while queued">
         <MainPoolCard attendance={createAttendanceWithQueuedPayment()} user={user} authorizeUrl={AUTHORIZE_URL} />
       </StatePreview>
@@ -190,6 +197,56 @@ export const AllStates = () => {
       <StatePreview label="Refunded">
         <MainPoolCard
           attendance={createAttendanceWithPaymentRecord("refunded")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Paid, others are queued">
+        <MainPoolCard
+          attendance={createAttendanceWithReservedPaymentRecord("charged")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Payment reserved, others are queued">
+        <MainPoolCard
+          attendance={createAttendanceWithReservedPaymentRecord("reserved")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+          chargeScheduleDate={chargeScheduleDate}
+        />
+      </StatePreview>
+
+      <StatePreview label="Refunded, others are queued">
+        <MainPoolCard
+          attendance={createAttendanceWithReservedPaymentRecord("refunded")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Paid while queued">
+        <MainPoolCard
+          attendance={createAttendanceWithQueuedPaymentRecord("charged")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Payment reserved while queued">
+        <MainPoolCard
+          attendance={createAttendanceWithQueuedPaymentRecord("reserved")}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+          chargeScheduleDate={chargeScheduleDate}
+        />
+      </StatePreview>
+
+      <StatePreview label="Refunded while queued">
+        <MainPoolCard
+          attendance={createAttendanceWithQueuedPaymentRecord("refunded")}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
         />

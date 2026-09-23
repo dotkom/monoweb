@@ -340,12 +340,14 @@ export const createAttendanceWithWaitlistedUser = (queueSize = 2): Attendance =>
 
 export const createAttendanceWithPaymentCountdown = (reserved = true): Attendance => {
   const user = createMockUser()
+  const createdAt = subMinutes(now, 15)
   const attendee = createMockAttendee({
     user,
     reserved,
     paymentDeadline: addMinutes(now, 45),
     paymentLink: "https://example.com/betaling",
-    createdAt: subMinutes(now, 15),
+    createdAt,
+    earliestReservationAt: createdAt,
   })
 
   return createMockAttendance({
@@ -353,6 +355,21 @@ export const createAttendanceWithPaymentCountdown = (reserved = true): Attendanc
     attendees: [attendee],
   })
 }
+
+export const createAttendanceWithReservedPayment = (): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    reservedOtherCount: 1,
+    queuedOtherCount: 2,
+    viewer: "reserved",
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 15),
+      earliestReservationAt: subMinutes(now, 15),
+      paymentDeadline: addMinutes(now, 45),
+      paymentLink: "https://example.com/betaling",
+    },
+  })
 
 export const createAttendanceWithQueuedPayment = (): Attendance =>
   createAttendanceWithQueue({
@@ -387,6 +404,39 @@ export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attend
     attendees: [attendee],
   })
 }
+
+export const createAttendanceWithReservedPaymentRecord = (record: PaymentRecord): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    reservedOtherCount: 1,
+    queuedOtherCount: 2,
+    viewer: "reserved",
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 30),
+      earliestReservationAt: subMinutes(now, 30),
+      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
+      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
+      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+    },
+  })
+
+export const createAttendanceWithQueuedPaymentRecord = (record: PaymentRecord): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    reservedOtherCount: 2,
+    queuedOtherCount: 1,
+    viewer: "queued",
+    viewerQueuePosition: 2,
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 30),
+      earliestReservationAt: subMinutes(now, 30),
+      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
+      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
+      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+    },
+  })
 
 export const createAttendanceWithServingPunishment = ({
   withPayment = false,
