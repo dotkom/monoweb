@@ -401,6 +401,30 @@ const CUSTOM_RELATION_MERGERS = {
       data: { userId: survivor.id },
     })
   },
+
+  // Handling FK constraint errors on applications. A user can only have one application per application period.
+  applications: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
+    const survivorApplications = await handle.application.findMany({
+      where: { userId: survivor.id },
+      select: { applicationPeriodId: true },
+    })
+
+    const survivorApplicationPeriodIds = survivorApplications.map((application) => application.applicationPeriodId)
+
+    if (survivorApplicationPeriodIds.length > 0) {
+      await handle.application.deleteMany({
+        where: {
+          userId: consumed.id,
+          applicationPeriodId: { in: survivorApplicationPeriodIds },
+        },
+      })
+    }
+
+    await handle.application.updateMany({
+      where: { userId: consumed.id },
+      data: { userId: survivor.id },
+    })
+  },
 } satisfies Partial<
   Record<
     AllUserKeys,
