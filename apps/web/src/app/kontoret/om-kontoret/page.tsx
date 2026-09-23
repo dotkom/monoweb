@@ -1,9 +1,5 @@
 const OfficePage = async () => {
-	return (
-		<div>
-			Yo, kommer snart
-		</div>
-	)
+  return <div>Yo, kommer snart</div>
 }
 
 export default OfficePage
