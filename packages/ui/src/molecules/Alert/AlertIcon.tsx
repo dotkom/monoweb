@@ -6,10 +6,10 @@ import { cn } from "../../utils"
 const iconVariant = cva("", {
   variants: {
     status: {
-      info: "text-blue-950",
-      success: "text-green-950",
-      danger: "text-red-950",
-      warning: "text-amber-950",
+      info: "text-blue-950 dark:text-blue-500",
+      success: "text-green-950 dark:text-green-500",
+      danger: "text-red-950 dark:text-red-500",
+      warning: "text-amber-950 dark:text-amber-500",
     },
   },
 })

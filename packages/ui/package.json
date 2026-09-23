@@ -39,6 +39,7 @@
     "react": "^19.2.1",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.1",
+    "react-dropzone": "^20.1.2",
     "react-parallax-tilt": "^1.7.299",
     "shadcn": "^4.8.0",
     "tailwind-merge": "^3.6.0",
