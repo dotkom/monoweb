@@ -45,6 +45,7 @@ export const useUserAllInfiniteQuery = ({ filter, page }: UseUserAllQueryProps) 
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     select: (res) => res.pages.flatMap((p) => p.items),
+    placeholderData: keepPreviousData,
   })
 
   return { users: useMemo(() => users ?? [], [users]), ...query }
