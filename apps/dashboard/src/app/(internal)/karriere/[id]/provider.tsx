@@ -3,7 +3,6 @@
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { createContext, useContext } from "react"
 
-/** Context consisting of everything required to use and render the form */
 export const JobListingDetailsContext = createContext<{
   jobListing: JobListing
 } | null>(null)

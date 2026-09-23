@@ -1,36 +1,42 @@
 "use client"
 
+import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { type JobListing, getJobListingEmploymentName } from "@dotkomonline/rpc/job-listing"
-import { Anchor } from "@mantine/core"
+import { TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
   data: JobListing[]
+  isLoading: boolean
+  isPlaceholderData: boolean
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  fetchNextPage: () => void
 }
 
-export const useJobListingTable = ({ data }: Props) => {
+export const JobListingTable = ({
+  data,
+  isLoading,
+  isPlaceholderData,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+}: Props) => {
   const columnHelper = createColumnHelper<JobListing>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((company) => company, {
         id: "title",
         header: () => "Tittel",
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/karriere/${info.getValue().id}`}>
-            {info.getValue().title}
-          </Anchor>
-        ),
+        cell: (info) => <TextLink href={`/karriere/${info.getValue().id}`}>{info.getValue().title}</TextLink>,
       }),
       columnHelper.accessor((company) => company, {
         id: "company",
         header: () => "Bedrift",
         cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/bedrifter/${info.getValue().company.slug}`}>
-            {info.getValue().company.name}
-          </Anchor>
+          <TextLink href={`/bedrifter/${info.getValue().company.slug}`}>{info.getValue().company.name}</TextLink>
         ),
       }),
       columnHelper.accessor("start", {
@@ -71,9 +77,20 @@ export const useJobListingTable = ({ data }: Props) => {
     [columnHelper]
   )
 
-  return useReactTable({
+  const table = useReactTable({
     data,
     getCoreRowModel: getCoreRowModel(),
     columns,
   })
+
+  return (
+    <DataTable
+      table={table}
+      isLoading={isLoading}
+      isPlaceholderData={isPlaceholderData}
+      isFetchingNextPage={isFetchingNextPage}
+      hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
+    />
+  )
 }
