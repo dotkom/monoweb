@@ -1,4 +1,6 @@
 import type { DBHandle, GroupType, Prisma } from "@dotkomonline/db"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { differenceInMilliseconds } from "date-fns"
 import {
   type Group,
   type GroupByMemberFilter,
@@ -20,6 +22,14 @@ import {
 import { type UserId, normalizeDbUser } from "../user/user"
 import z from "zod"
 import { parseOrReport } from "../../invariant"
+
+const GROUP_TYPE_SORT_ORDER = {
+  COMMITTEE: 0,
+  NODE_COMMITTEE: 1,
+  ASSOCIATED: 2,
+  INTEREST_GROUP: 3,
+  EMAIL_ONLY: 4,
+} as const satisfies Record<GroupType, number>
 
 export interface GroupRepository {
   create(handle: DBHandle, groupSlug: GroupId, data: GroupWrite): Promise<Group>
@@ -173,21 +183,30 @@ export function getGroupRepository(): GroupRepository {
     async findManyByUserId(handle, userId, filter) {
       const includeEmailGroups = filter?.includeEmailGroups ?? false
       const includeEmailOnlyMemberships = filter?.includeEmailOnlyMemberships ?? false
+      const membershipFilter = getMembershipFilterForUser(userId, includeEmailOnlyMemberships)
 
       const groups = await handle.group.findMany({
         where: {
           ...getGroupTypeFilter(includeEmailGroups),
           memberships: {
-            some: getMembershipFilterForUser(userId, includeEmailOnlyMemberships),
+            some: membershipFilter,
           },
         },
         include: {
-          memberships: true,
+          memberships: {
+            where: membershipFilter,
+          },
           roles: true,
         },
       })
 
-      return parseOrReport(GroupSchema.array(), groups)
+      const now = getCurrentUTC()
+
+      const sortedGroups = groups.toSorted((leftGroup, rightGroup) =>
+        compareGroupsByMembership(leftGroup, rightGroup, now)
+      )
+
+      return parseOrReport(GroupSchema.array(), sortedGroups)
     },
 
     async createGroupMembership(handle, groupMembershipData, groupRoleIds) {
@@ -396,6 +415,32 @@ function getGroupTypeFilter(includeEmailGroups: boolean) {
       type: "EMAIL_ONLY",
     },
   } as const satisfies Prisma.GroupWhereInput
+}
+
+function compareGroupsByMembership(
+  leftGroup: { type: GroupType; memberships: Pick<GroupMembership, "start" | "end">[] },
+  rightGroup: { type: GroupType; memberships: Pick<GroupMembership, "start" | "end">[] },
+  now: Date
+) {
+  const typeDifference = GROUP_TYPE_SORT_ORDER[leftGroup.type] - GROUP_TYPE_SORT_ORDER[rightGroup.type]
+
+  if (typeDifference !== 0) {
+    return typeDifference
+  }
+
+  const leftDuration = getMembershipDurationMilliseconds(leftGroup.memberships, now)
+  const rightDuration = getMembershipDurationMilliseconds(rightGroup.memberships, now)
+
+  return rightDuration - leftDuration
+}
+
+function getMembershipDurationMilliseconds(memberships: Pick<GroupMembership, "start" | "end">[], now: Date) {
+  return memberships.reduce((totalDuration, membership) => {
+    const membershipEnd = membership.end ?? now
+    const membershipDuration = differenceInMilliseconds(membershipEnd, membership.start)
+
+    return totalDuration + Math.max(0, membershipDuration)
+  }, 0)
 }
 
 function getMembershipFilterForUser(userId: UserId, includeEmailOnlyMemberships: boolean) {
