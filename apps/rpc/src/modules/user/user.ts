@@ -397,12 +397,3 @@ const NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA = Auth0ProviderSchema.extract(["auth0
 export function canUpdateEmailForAuth0Provider(provider: Auth0Provider): boolean {
   return NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA.safeParse(provider).success
 }
-
-export const BirthdayPartyGuessSchema = z.object({
-  id: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  guess: z.number(),
-  userId: z.string(),
-})
-export type BirthdayPartyGuess = z.infer<typeof BirthdayPartyGuessSchema>

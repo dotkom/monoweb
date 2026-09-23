@@ -92,8 +92,7 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink',
-  BirthdayPartyGuess: 'BirthdayPartyGuess'
+  UserFlagLink: 'UserFlagLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -684,17 +683,6 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
-
-
-export const BirthdayPartyGuessScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  guess: 'guess',
-  userId: 'userId'
-} as const
-
-export type BirthdayPartyGuessScalarFieldEnum = (typeof BirthdayPartyGuessScalarFieldEnum)[keyof typeof BirthdayPartyGuessScalarFieldEnum]
 
 
 export const SortOrder = {
