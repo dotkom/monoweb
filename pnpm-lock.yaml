@@ -720,6 +720,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@date-fns/tz':
+        specifier: ^1.5.0
+        version: 1.5.0
       '@dotkomonline/logger':
         specifier: workspace:*
         version: link:../logger
@@ -751,6 +754,9 @@ importers:
       '@dotkomonline/config':
         specifier: workspace:*
         version: link:../config
+      '@faker-js/faker':
+        specifier: 9.9.0
+        version: 9.9.0
       '@types/common-tags':
         specifier: 1.8.4
         version: 1.8.4
