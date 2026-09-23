@@ -1,6 +1,10 @@
 import type { TZDate } from "@date-fns/tz"
 import { buildSearchFilter, getCurrentUTC, slugify } from "@dotkomonline/utils"
-import type { GetUsers200ResponseOneOfInnerIdentitiesInner, ManagementClient } from "auth0"
+import {
+  type GetUsers200ResponseOneOfInnerIdentitiesInner,
+  type ManagementClient,
+  PostIdentitiesRequestProviderEnum,
+} from "auth0"
 import { isAfter } from "date-fns"
 import { z } from "zod"
 
@@ -162,6 +166,12 @@ export const PublicUserSchema = UserSchema.pick({
   biography: true,
 })
 export type PublicUser = z.infer<typeof PublicUserSchema>
+
+export const UserIdAndNameSchema = UserSchema.pick({
+  id: true,
+  name: true,
+})
+export type UserIdAndName = z.infer<typeof UserIdAndNameSchema>
 
 export const UserFilterQuerySchema = z
   .object({
@@ -363,6 +373,13 @@ export const Auth0UserProfileAppMetadataSchema = z
   .partial()
 
 export type Auth0UserProfileAppMetadata = z.infer<typeof Auth0UserProfileAppMetadataSchema>
+
+export const Auth0ProviderSchema = z.enum(PostIdentitiesRequestProviderEnum).extract([
+  "auth0", //
+  "oauth2",
+])
+
+export type Auth0Provider = z.infer<typeof Auth0ProviderSchema>
 
 export const BirthdayPartyGuessSchema = z.object({
   id: z.string(),

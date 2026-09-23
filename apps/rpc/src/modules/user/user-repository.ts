@@ -7,7 +7,9 @@ import {
   type User,
   type UserFilterQuery,
   type UserId,
+  type UserIdAndName,
   type Username,
+  UserIdAndNameSchema,
   UserSchema,
   type UserWrite,
   type UserFlagWithUsers,
@@ -16,6 +18,7 @@ import {
   normalizeDbUser,
   type BirthdayPartyGuess,
   BirthdayPartyGuessSchema,
+  type Auth0Provider,
 } from "./user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
@@ -36,6 +39,7 @@ export interface UserRepository {
   findByUsername(handle: DBHandle, username: Username): Promise<User | null>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
   findMany(handle: DBHandle, query: UserFilterQuery, page: Pageable): Promise<User[]>
+  findIdsAndNamesByAuth0Provider(handle: DBHandle, provider: Auth0Provider): Promise<UserIdAndName[]>
 
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
@@ -152,6 +156,25 @@ export function getUserRepository(): UserRepository {
       })
 
       return parseOrReport(UserSchema.array(), users.map(normalizeDbUser))
+    },
+
+    async findIdsAndNamesByAuth0Provider(handle, provider) {
+      const users = await handle.user.findMany({
+        where: {
+          id: {
+            startsWith: `${provider}|`,
+          },
+          name: {
+            not: null,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      })
+
+      return parseOrReport(UserIdAndNameSchema.array(), users)
     },
 
     async findMany(handle, query, page) {

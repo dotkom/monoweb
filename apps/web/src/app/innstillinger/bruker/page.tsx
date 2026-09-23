@@ -10,13 +10,16 @@ import {
   fetchPersonalCalendarToken,
 } from "@/app/arrangementer/components/calendar-subscription"
 import { AppleCalendarLogo } from "@/app/arrangementer/components/AppleCalendarLogo"
+import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { getSessionRecoveryMessages } from "@dotkomonline/utils"
+import { findActiveMembership, type User } from "@dotkomonline/rpc/user"
+import { getSessionRecoveryMessages, getStudyGrade } from "@dotkomonline/utils"
 import { useTRPC } from "@/utils/trpc/client"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
+import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import {
   Avatar,
@@ -33,9 +36,11 @@ import {
 import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl, resolveAuthErrorMessage } from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
+  IconAlertTriangleFilled,
   IconCalendarEvent,
   IconCheck,
   IconCopy,
+  IconEyeOff,
   IconLink,
   IconLoader2,
   IconMail,
@@ -79,10 +84,22 @@ export default function MinBrukerPage() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
+  const { showNudge: showFeideLinkNudge, duplicateUserId, dismissNudge: dismissFeideLinkNudge } = useFeideLinkNudge()
+
+  const duplicateUserQuery = useQuery({
+    ...trpc.user.get.queryOptions(duplicateUserId ?? ""),
+    enabled: duplicateUserId !== undefined,
+  })
+
   const { data: auth0Connections, isLoading: auth0ConnectionsIsLoading } = useQuery({
     ...trpc.user.getAuth0Connections.queryOptions({ userId: sessionUser?.sub ?? "" }),
     enabled: sessionUser != null && !isInvalid && !identityLinkRequiresLogin,
   })
+
+  const isFeideLinked = auth0Connections?.hasFeide === true
+  const isUsernamePasswordLinked = auth0Connections?.hasUsernamePassword === true
+  const hasLoadedAuth0Connections = auth0Connections !== undefined && !auth0ConnectionsIsLoading
+  const bothLoginMethodsLinked = hasLoadedAuth0Connections && isUsernamePasswordLinked && isFeideLinked
 
   const isPersonalCalendarFeed = selectedCalendarFeed === "personal"
   const personalCalendarTokenQuery = useQuery({
@@ -144,8 +161,9 @@ export default function MinBrukerPage() {
     return null
   }
 
-  const isFeideLinked = auth0Connections?.hasFeide === true
-  const isUsernamePasswordLinked = auth0Connections?.hasUsernamePassword === true
+  const showPasswordLinkNudge = showFeideLinkNudge && hasLoadedAuth0Connections && !isUsernamePasswordLinked
+  const showFeideLinkHighlight = showFeideLinkNudge && hasLoadedAuth0Connections && !isFeideLinked
+  const showDuplicateAccountNotice = showFeideLinkNudge && !bothLoginMethodsLinked
 
   const linkFeideUrl = createLinkIdentityAuthorizeUrl({
     connection: "FEIDE",
@@ -324,22 +342,74 @@ export default function MinBrukerPage() {
         <div className="flex flex-col gap-6">
           <Title size="md">Innloggingsmetoder</Title>
 
+          {showDuplicateAccountNotice && (
+            <div className="flex max-w-xl flex-col gap-2">
+              <div
+                className={cn(
+                  "grid grid-cols-[auto_1fr] gap-2 items-center rounded-lg p-4",
+                  "bg-yellow-100/66 dark:bg-yellow-900/25"
+                )}
+              >
+                <IconAlertTriangleFilled className="size-5 shrink-0 text-yellow-800 dark:text-yellow-400" />
+                <Title element="p" className="text-base text-yellow-800 dark:text-yellow-400">
+                  Vi tror du har to kontoer
+                </Title>
+
+                <div className="col-span-2 grid grid-cols-subgrid gap-2">
+                  <Text className="col-start-2 text-sm font-medium">Er dette deg?</Text>
+
+                  {duplicateUserQuery.isLoading && <DuplicateUserPlateSkeleton />}
+                  {duplicateUserQuery.data !== undefined && (
+                    <div className="col-start-2 min-w-0 bg-background rounded-full p-1 -ml-3">
+                      <DuplicateUserPlate user={duplicateUserQuery.data} />
+                    </div>
+                  )}
+                </div>
+
+                <Text className="col-start-2 text-sm font-medium inline-flex gap-1.5">
+                  <IconLink className="size-4 self-center" />
+                  Tilknytt kontoen for å slå dem sammen til én.
+                </Text>
+
+                <Text className="col-start-2 text-sm text-pretty text-muted-foreground">
+                  En Onliner skal bare ha én konto. Med to kontoer kan du ende opp med å betale to ganger for det samme
+                  arrangementet, eller få prikker for å ikke møte opp selv om du var der.
+                </Text>
+              </div>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={dismissFeideLinkNudge}
+                className="w-fit px-2 -mx-2 text-muted-foreground hover:text-foreground"
+              >
+                <IconEyeOff className="size-3.5" />
+                Dette er feil, skjul
+              </Button>
+            </div>
+          )}
+
           <div className="grid grid-cols-[auto_auto] w-fit gap-y-3 gap-x-6 items-center">
             <div className="flex gap-2 items-center">
               <IconPassword size={22} />
               <Text>Passord</Text>
             </div>
 
-            <div className="flex flex-row gap-2">
-              <Button className="w-fit" {...usernamePasswordLinkButtonProps}>
-                <IconLink className="size-4" />
-                <Text className="text-sm">Tilknytt</Text>
-              </Button>
-              {isUsernamePasswordLinked && (
-                <div className="flex flex-row gap-1 items-center text-xs text-green-600">
-                  <IconCheck size="1.15em" />
-                  <Text>Tilkoblet</Text>
-                </div>
+            <div className="flex flex-col gap-2">
+              {isUsernamePasswordLinked ? (
+                <ConnectedLoginMethod />
+              ) : (
+                <Button
+                  className={cn(
+                    "w-fit",
+                    showPasswordLinkNudge && "ring-2 ring-red-600 dark:ring-red-400 ring-offset-2"
+                  )}
+                  {...usernamePasswordLinkButtonProps}
+                >
+                  <IconLink className="size-4.5" />
+                  <Text className="text-sm">Tilknytt</Text>
+                </Button>
               )}
             </div>
 
@@ -348,16 +418,17 @@ export default function MinBrukerPage() {
               <Text>FEIDE</Text>
             </div>
 
-            <div className="flex flex-row gap-2">
-              <Button className="w-fit" {...feideLinkButtonProps}>
-                <IconLink className="size-4" />
-                <Text className="text-sm">Tilknytt</Text>
-              </Button>
-              {isFeideLinked && (
-                <div className="flex flex-row gap-1 items-center text-xs text-green-600">
-                  <IconCheck size="1.15em" />
-                  <Text>Tilkoblet</Text>
-                </div>
+            <div className="flex flex-col gap-2">
+              {isFeideLinked ? (
+                <ConnectedLoginMethod />
+              ) : (
+                <Button
+                  className={cn("w-fit", showFeideLinkHighlight && "ring-2 ring-red-500 ring-offset-2")}
+                  {...feideLinkButtonProps}
+                >
+                  <IconLink className="size-4.5" />
+                  <Text className="text-sm">Tilknytt</Text>
+                </Button>
               )}
             </div>
           </div>
@@ -458,5 +529,40 @@ export default function MinBrukerPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function ConnectedLoginMethod() {
+  return (
+    <div className="flex flex-row items-center gap-1.5 ml-3">
+      <IconCheck className="size-4.5 text-green-600" />
+      <Text className="text-sm">Tilkoblet</Text>
+    </div>
+  )
+}
+
+function DuplicateUserPlateSkeleton() {
+  return (
+    <div className="col-start-2 -ml-3 flex items-center gap-4 rounded-full bg-background p-1.75">
+      <div className="size-10 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-stone-700" />
+      <div className="h-4 w-36 animate-pulse rounded-full bg-gray-200 dark:bg-stone-700" />
+    </div>
+  )
+}
+
+function DuplicateUserPlate({ user }: { user: User }) {
+  const membership = findActiveMembership(user)
+  const userGrade = membership?.semester != null ? getStudyGrade(membership.semester) : null
+  const UserPlate = getUserPlate(user)
+  const { largeIcon, smallIcons } = getUserIcons(user)
+
+  return (
+    <UserPlate
+      attendee={{ userId: user.id, userGrade }}
+      user={user}
+      smallIcons={smallIcons}
+      largeIcon={largeIcon}
+      isCurrentUser={false}
+    />
   )
 }

@@ -6,6 +6,7 @@ import {
   IDENTITY_LINK_STATUS_COOKIE,
   IDENTITY_LINK_STATUS_VALUE,
 } from "@/lib/link-identity-cookies"
+import { clearHasDuplicateUserFromSession } from "@/lib/auth0"
 import { server } from "@/utils/trpc/server"
 import { cookies } from "next/headers"
 
@@ -39,6 +40,12 @@ export async function confirmIdentityLinkAction() {
 
   if (result.requiresReauthentication) {
     cookieHandle.set(IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE, getIdentityLinkStatusCookieOptions())
+  }
+
+  try {
+    await clearHasDuplicateUserFromSession()
+  } catch (error) {
+    console.error("[web:link-identity] failed to clear duplicate user notice", error)
   }
 
   return result
