@@ -61,7 +61,7 @@ export function TagInput({
       onInputValueChange={setQuery}
       autoHighlight
     >
-      <ComboboxChips ref={anchor} className={cn("w-full", className)}>
+      <ComboboxChips ref={anchor} className={cn("w-full cursor-text", className)}>
         <ComboboxValue>
           {(tags: string[]) => (
             <>
