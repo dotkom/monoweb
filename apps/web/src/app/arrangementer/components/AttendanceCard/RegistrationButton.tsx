@@ -63,7 +63,7 @@ const getButtonColor = (
   }
 
   if (isPoolFull || hasPunishment || hasMergeDelay) {
-    return "bg-yellow-200 hover:bg-yellow-100 dark:bg-yellow-800 dark:hover:bg-yellow-700"
+    return "bg-indigo-200 hover:bg-indigo-100 dark:bg-indigo-800 dark:hover:bg-indigo-700"
   }
 
   return "bg-green-300 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800"

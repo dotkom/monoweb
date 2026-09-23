@@ -221,6 +221,105 @@ export const createMockPunishment = (overrides: Partial<Punishment> = {}): Punis
   ...overrides,
 })
 
+const mockEntityId = (value: number) => `00000000-0000-4000-8000-${value.toString().padStart(12, "0")}`
+
+const createOtherAttendee = (index: number, overrides: Partial<Attendee> = {}): Attendee => {
+  const userId = mockEntityId(1000 + index)
+  const user = createMockUser({
+    id: userId,
+    username: `bruker${index}`,
+  })
+
+  return createMockAttendee({
+    id: mockEntityId(2000 + index),
+    userId,
+    user,
+    ...overrides,
+  })
+}
+
+type ViewerPlace = "absent" | "reserved" | "queued"
+
+type CreateQueueAttendanceOptions = {
+  capacity?: number
+  reservedOtherCount?: number
+  queuedOtherCount?: number
+  viewer?: ViewerPlace
+  viewerQueuePosition?: number
+  attendancePrice?: number | null
+  viewerAttendee?: Partial<Attendee>
+}
+
+export const createAttendanceWithQueue = ({
+  capacity = 2,
+  reservedOtherCount = 2,
+  queuedOtherCount = 0,
+  viewer = "queued",
+  viewerQueuePosition = 1,
+  attendancePrice = null,
+  viewerAttendee,
+}: CreateQueueAttendanceOptions = {}): Attendance => {
+  const viewerCreatedAt = viewerAttendee?.createdAt ?? subMinutes(now, 30)
+  const viewerEarliestReservationAt = viewerAttendee?.earliestReservationAt ?? viewerCreatedAt
+  const peopleAheadOfViewer = viewer === "queued" ? viewerQueuePosition - 1 : 0
+
+  const reservedOthers = Array.from({ length: reservedOtherCount }, (_, index) =>
+    createOtherAttendee(index + 1, {
+      reserved: true,
+      createdAt: subHours(now, 3),
+      earliestReservationAt: subHours(now, 3),
+    })
+  )
+
+  const queuedOthers = Array.from({ length: queuedOtherCount }, (_, index) => {
+    const isAheadOfViewer = index < peopleAheadOfViewer
+    const minutesFromViewer = isAheadOfViewer ? peopleAheadOfViewer - index : index - peopleAheadOfViewer + 1
+    const earliestReservationAt = isAheadOfViewer
+      ? subMinutes(viewerEarliestReservationAt, minutesFromViewer)
+      : addMinutes(viewerEarliestReservationAt, minutesFromViewer)
+
+    return createOtherAttendee(reservedOtherCount + index + 1, {
+      reserved: false,
+      createdAt: earliestReservationAt,
+      earliestReservationAt,
+    })
+  })
+
+  const attendees = [...reservedOthers, ...queuedOthers]
+
+  if (viewer === "reserved") {
+    const user = createMockUser()
+    attendees.push(
+      createMockAttendee({
+        user,
+        reserved: true,
+        createdAt: viewerCreatedAt,
+        earliestReservationAt: viewerEarliestReservationAt,
+        ...viewerAttendee,
+      })
+    )
+  }
+
+  if (viewer === "queued") {
+    const user = createMockUser()
+    attendees.push(
+      createMockAttendee({
+        user,
+        reserved: false,
+        createdAt: viewerCreatedAt,
+        earliestReservationAt: viewerEarliestReservationAt,
+        ...viewerAttendee,
+      })
+    )
+  }
+
+  return createMockAttendance({
+    capacity,
+    attendancePrice,
+    attendees,
+  })
+}
+
 export const createAttendanceWithReservedUser = (): Attendance => {
   const user = createMockUser()
   const attendee = createMockAttendee({ user, reserved: true })
@@ -230,37 +329,20 @@ export const createAttendanceWithReservedUser = (): Attendance => {
   })
 }
 
-export const createAttendanceWithWaitlistedUser = (queueSize = 2): Attendance => {
-  const user = createMockUser()
-  const currentAttendee = createMockAttendee({
-    user,
-    reserved: false,
-    earliestReservationAt: addMinutes(now, 5),
+export const createAttendanceWithWaitlistedUser = (queueSize = 2): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    reservedOtherCount: 2,
+    queuedOtherCount: Math.max(queueSize - 1, 0),
+    viewer: "queued",
+    viewerQueuePosition: queueSize,
   })
 
-  const otherAttendees = Array.from({ length: queueSize - 1 }, (_, index) =>
-    createMockAttendee({
-      id: `00000000-0000-4000-8000-00000000003${index + 1}`,
-      userId: `00000000-0000-4000-8000-00000000000${index + 2}`,
-      user: createMockUser({
-        id: `00000000-0000-4000-8000-00000000000${index + 2}`,
-        username: `bruker${index + 2}`,
-      }),
-      reserved: false,
-      earliestReservationAt: subMinutes(now, index + 1),
-    })
-  )
-
-  return createMockAttendance({
-    attendees: [currentAttendee, ...otherAttendees],
-  })
-}
-
-export const createAttendanceWithPaymentCountdown = (): Attendance => {
+export const createAttendanceWithPaymentCountdown = (reserved = true): Attendance => {
   const user = createMockUser()
   const attendee = createMockAttendee({
     user,
-    reserved: true,
+    reserved,
     paymentDeadline: addMinutes(now, 45),
     paymentLink: "https://example.com/betaling",
     createdAt: subMinutes(now, 15),
@@ -272,19 +354,59 @@ export const createAttendanceWithPaymentCountdown = (): Attendance => {
   })
 }
 
-export const createAttendanceWithServingPunishment = (): Attendance => {
+export const createAttendanceWithQueuedPayment = (): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    reservedOtherCount: 2,
+    queuedOtherCount: 1,
+    viewer: "queued",
+    viewerQueuePosition: 2,
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 15),
+      earliestReservationAt: subMinutes(now, 10),
+      paymentDeadline: addMinutes(now, 45),
+      paymentLink: "https://example.com/betaling",
+    },
+  })
+
+type PaymentRecord = "charged" | "reserved" | "refunded"
+
+export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attendance => {
   const user = createMockUser()
   const attendee = createMockAttendee({
     user,
-    reserved: false,
-    createdAt: now,
-    earliestReservationAt: addHours(now, 4),
+    reserved: true,
+    paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
+    paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
+    paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
   })
 
   return createMockAttendance({
+    attendancePrice: 100,
     attendees: [attendee],
   })
 }
+
+export const createAttendanceWithServingPunishment = ({
+  withPayment = false,
+}: {
+  withPayment?: boolean
+} = {}): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 4,
+    reservedOtherCount: 2,
+    queuedOtherCount: 0,
+    viewer: "queued",
+    viewerQueuePosition: 1,
+    attendancePrice: withPayment ? 100 : null,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 20),
+      earliestReservationAt: addHours(now, 4),
+      paymentDeadline: withPayment ? addMinutes(now, 45) : null,
+      paymentLink: withPayment ? "https://example.com/betaling" : null,
+    },
+  })
 
 export const createAttendanceOpeningSoon = (): Attendance =>
   createMockAttendance({

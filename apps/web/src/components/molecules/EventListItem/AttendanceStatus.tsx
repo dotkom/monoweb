@@ -58,11 +58,12 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
     attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
+  const paymentIsUnpaid = hasAttendeePaid(attendee, attendance.attendancePrice) === false
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasAttendeePaid(attendee, attendance.attendancePrice) === false
-      ? isWithinInterval(now, paymentCountdownInterval)
-      : false
-  const showPaymentCountdown = isWithinPaymentCountdown && attendee?.paymentLink != null
+    paymentCountdownInterval && paymentIsUnpaid ? isWithinInterval(now, paymentCountdownInterval) : false
+  const paymentDeadlineHasPassed = attendee?.paymentDeadline != null && isAfter(now, attendee.paymentDeadline)
+  const showPaymentCountdown =
+    paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 
   const hasCapacity = capacity > 0
 
@@ -90,7 +91,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             attendanceStatus === "NOT_OPENED" && "text-muted-foreground",
             (isReserved || isUnreserved) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
             isReserved && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
-            isUnreserved && "text-amber-800 bg-amber-100 dark:text-amber-100 dark:bg-amber-600/25",
+            isUnreserved && "text-amber-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
             classNames?.count
           )}
         >
