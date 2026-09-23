@@ -232,3 +232,46 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model CommitteeApplicationPeriod
+ * 
+ */
+export type CommitteeApplicationPeriod = Prisma.CommitteeApplicationPeriodModel
+/**
+ * Model CommitteeApplicationGroup
+ * A group participating in one application period, with its interview configuration.
+ */
+export type CommitteeApplicationGroup = Prisma.CommitteeApplicationGroupModel
+/**
+ * Model CommitteeApplication
+ * One user's application to an application period, shared across their selected groups.
+ */
+export type CommitteeApplication = Prisma.CommitteeApplicationModel
+/**
+ * Model CommitteeApplicationGroupSelection
+ * A group choice within an application.
+ */
+export type CommitteeApplicationGroupSelection = Prisma.CommitteeApplicationGroupSelectionModel
+/**
+ * Model CommitteeApplicationInterviewAttendee
+ * A group member who has signed up to conduct the interview for this group selection.
+ * 
+ * Attached to the group selection rather than the interview, because interviews are deleted and
+ * recreated whenever the matching algorithm is re-run.
+ */
+export type CommitteeApplicationInterviewAttendee = Prisma.CommitteeApplicationInterviewAttendeeModel
+/**
+ * Model CommitteeApplicationAvailability
+ * A time interval when the applicant is available for interviews in this application period.
+ */
+export type CommitteeApplicationAvailability = Prisma.CommitteeApplicationAvailabilityModel
+/**
+ * Model CommitteeApplicationInterviewBlock
+ * A time interval reserved by a participating group for conducting interviews at a location.
+ */
+export type CommitteeApplicationInterviewBlock = Prisma.CommitteeApplicationInterviewBlockModel
+/**
+ * Model CommitteeApplicationInterview
+ * 
+ */
+export type CommitteeApplicationInterview = Prisma.CommitteeApplicationInterviewModel
