@@ -1,27 +1,35 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
 import type { UserFilterQuery } from "@dotkomonline/rpc/user"
-import { Group, Skeleton, Stack } from "@mantine/core"
+import { Title } from "@dotkomonline/ui"
 import { useState } from "react"
-import { UserFilters } from "./components/user-filters"
+import { UserFilters } from "./components/UserFilters"
+import { UserTable } from "./components/UserTable"
 import { useUserAllInfiniteQuery } from "./queries"
-import { useUserTable } from "./use-user-table"
 
 export default function UserPage() {
   const [filter, setFilter] = useState<UserFilterQuery>({})
-  const { users, isLoading: isUsersLoading, fetchNextPage } = useUserAllInfiniteQuery({ filter })
-
-  const table = useUserTable({ data: users })
+  const { users, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useUserAllInfiniteQuery({ filter })
 
   return (
-    <Stack>
-      <Group>
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="text-4xl">
+        Brukere
+      </Title>
+
+      <div className="flex flex-col gap-2">
         <UserFilters onChange={setFilter} />
-      </Group>
-      <Skeleton visible={isUsersLoading}>
-        <GenericTable table={table} onLoadMore={fetchNextPage} />
-      </Skeleton>
-    </Stack>
+
+        <UserTable
+          users={users}
+          isLoading={isLoading}
+          isPlaceholderData={isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage ?? false}
+          fetchNextPage={fetchNextPage}
+        />
+      </div>
+    </div>
   )
 }
