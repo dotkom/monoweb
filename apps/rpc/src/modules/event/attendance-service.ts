@@ -18,29 +18,18 @@ import {
   AttendeeWriteSchema,
   DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
   DEREGISTER_GRACE_PERIOD_MS,
+  MAX_MERGE_DELAY_HOURS,
+  type RegisterChangeEvent,
   type RegistrationAvailabilityView,
   type RegistrationRejectionCause,
   type RegistrationUserCause,
   type RegistrationWindowCause,
-  type RegisterChangeEvent,
   buildPoolOccupancies,
   getReservedAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
-  MAX_MERGE_DELAY_HOURS,
 } from "./attendance"
-import { type Event, findFirstHostingGroupEmail } from "./event"
-import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
-import { type Membership, type User, type UserId, findActiveMembership } from "../user/user"
-import type { TaskId } from "../task/task"
-import {
-  createAbsoluteEventPageUrl,
-  createPoolName,
-  getCurrentUTC,
-  ogJoin,
-  slugify,
-  getStudyGrade,
-} from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, getStudyGrade, ogJoin } from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
@@ -63,15 +52,20 @@ import {
   InvalidArgumentError,
   NotFoundError,
   ResourceExhaustedError,
+  TaskSkippedError,
 } from "../../error"
+import { validateTurnstileToken } from "../../turnstile"
 import type { EmailService } from "../email/email-service"
 import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
+import { getGroupDisplayName } from "../group/group"
+import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
 import type { MarkService } from "../mark/mark-service"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import type { PaymentProductsService } from "../payment/payment-products-service"
 import type { Payment, PaymentService } from "../payment/payment-service"
+import type { TaskId } from "../task/task"
 import {
   type ChargeAttendeeTaskDefinition,
   type InferTaskData,
@@ -82,11 +76,12 @@ import {
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
+import { type Membership, type User, type UserId, findActiveMembership } from "../user/user"
 import type { UserService } from "../user/user-service"
+
 import type { AttendanceRepository } from "./attendance-repository"
+import { type Event, findFirstHostingGroupEmail } from "./event"
 import type { EventService } from "./event-service"
-import { validateTurnstileToken } from "../../turnstile"
-import { getGroupDisplayName } from "../group/group"
 
 type EventRegistrationOptions = {
   /** Should the user be registered regardless of if registration is closed? */
@@ -273,8 +268,8 @@ export interface AttendanceService {
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
   ): Promise<void>
-  executeSendFeedbackFormLinkEmails(handle: DBHandle): Promise<void>
-  executeVerifyAttendeeAttendedTask(handle: DBHandle): Promise<void>
+  executeSendFeedbackFormLinkEmailsRecurringTask(handle: DBHandle): Promise<void>
+  executeVerifyAttendeeAttendedTaskRecurringTask(handle: DBHandle): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -830,15 +825,16 @@ export function getAttendanceService(
     },
 
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-      const event = await eventService.getByAttendanceId(handle, attendance.id)
-      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+      const attendance = await this.findAttendanceById(handle, attendanceId)
+      if (attendance === null) {
+        throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
+      }
 
-      // NOTE: If the attendee does not exist, we have a non-critical bug in the app. The circumstances where this is
-      // possible is when the attendee was removed from the attendance after the task was scheduled AND the task was not
-      // cancelled.
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
+
+      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
       if (attendee === undefined) {
-        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendanceId})`)
+        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendanceId})`)
       }
 
       if (attendee.reserved) {
@@ -1142,11 +1138,14 @@ export function getAttendanceService(
     },
 
     async executeChargeAttendeeTask(handle, { attendeeId }) {
-      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
-      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
+      const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
+      if (attendance === null) {
+        throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
+      }
 
+      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
       if (!attendee) {
-        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
       logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
@@ -1387,12 +1386,16 @@ export function getAttendanceService(
     },
 
     async executeVerifyPaymentTask(handle, { attendeeId }) {
-      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+      const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
+      if (attendance === null) {
+        throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
+      }
+
       const event = await eventService.getByAttendanceId(handle, attendance.id)
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
 
       if (attendee === undefined) {
-        throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
+        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
       if (attendee.paymentId === null || attendee.paymentReservedAt) {
@@ -1447,7 +1450,10 @@ export function getAttendanceService(
         throw new Error("executeVerifyFeedbackAnsweredTask tried to run after already having completed")
       }
 
-      const feedbackForm = await feedbackFormService.getById(handle, feedbackFormId)
+      const feedbackForm = await feedbackFormService.findById(handle, feedbackFormId)
+      if (feedbackForm === null) {
+        throw new TaskSkippedError(`FeedbackForm(ID=${feedbackFormId}) no longer exists`)
+      }
 
       if (!isPast(feedbackForm.answerDeadline)) {
         throw new Error("executeVerifyFeedbackAnsweredTask tried to run before answerDeadline on feedback form passed")
@@ -1495,7 +1501,7 @@ export function getAttendanceService(
       await Promise.all([...personalMarkPromises])
     },
 
-    async executeSendFeedbackFormLinkEmails(handle) {
+    async executeSendFeedbackFormLinkEmailsRecurringTask(handle) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byHasFeedbackForm: true,
         byEndDate: {
@@ -1510,7 +1516,6 @@ export function getAttendanceService(
         }
 
         const feedbackForm = await feedbackFormService.findByEventId(handle, event.id)
-
         if (!feedbackForm) {
           return
         }
@@ -1549,7 +1554,7 @@ export function getAttendanceService(
           emails.FEEDBACK_FORM_LINK,
           {
             eventName: event.title,
-            eventLink: `${configuration.WEB_PUBLIC_ORIGIN}/arrangementer/${slugify(event.title)}/${event.id}`,
+            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
             feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
@@ -1561,7 +1566,7 @@ export function getAttendanceService(
       await Promise.all(promises)
     },
 
-    async executeVerifyAttendeeAttendedTask(handle) {
+    async executeVerifyAttendeeAttendedTaskRecurringTask(handle) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byEndDate: {
           min: new TZDate(startOfYesterday()),
@@ -1652,7 +1657,10 @@ export function getAttendanceService(
     },
 
     async executeMergeEventPoolsTask(handle, { attendanceId }) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
+      const attendance = await this.findAttendanceById(handle, attendanceId)
+      if (attendance === null) {
+        throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
+      }
 
       const isMergeable = (pool: AttendancePool) => {
         if (pool.mergeDelayHours === null || pool.mergeDelayHours <= 0) {

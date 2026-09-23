@@ -633,6 +633,9 @@ enum TaskStatus {
   COMPLETED @map("COMPLETED")
   FAILED    @map("FAILED")
   CANCELED  @map("CANCELED")
+  /// The task execution was skipped because its preconditions were not met, typically because one or more payload entities had been deleted.
+  /// For example, if an attendee deregisters before the VERIFY_PAYMENT task is executed, the task is skipped because the attendee no longer exists.
+  SKIPPED   @map("SKIPPED")
 
   @@map("task_status")
 }
