@@ -688,6 +688,40 @@ export type EnumContestResultOrderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
 }
 
+export type EnumCommitteeApplicationInterviewDurationFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationInterviewDuration | Prisma.EnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel> | $Enums.CommitteeApplicationInterviewDuration
+}
+
+export type EnumCommitteeApplicationGroupTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationGroupType | Prisma.EnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel> | $Enums.CommitteeApplicationGroupType
+}
+
+export type EnumCommitteeApplicationInterviewDurationWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationInterviewDuration | Prisma.EnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationInterviewDurationWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeApplicationInterviewDuration
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel>
+}
+
+export type EnumCommitteeApplicationGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationGroupType | Prisma.EnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationGroupTypeWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeApplicationGroupType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1319,6 +1353,40 @@ export type NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+}
+
+export type NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationInterviewDuration | Prisma.EnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel> | $Enums.CommitteeApplicationInterviewDuration
+}
+
+export type NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationGroupType | Prisma.EnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel> | $Enums.CommitteeApplicationGroupType
+}
+
+export type NestedEnumCommitteeApplicationInterviewDurationWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationInterviewDuration | Prisma.EnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationInterviewDuration[] | Prisma.ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationInterviewDurationWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeApplicationInterviewDuration
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCommitteeApplicationInterviewDurationFilter<$PrismaModel>
+}
+
+export type NestedEnumCommitteeApplicationGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CommitteeApplicationGroupType | Prisma.EnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CommitteeApplicationGroupType[] | Prisma.ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCommitteeApplicationGroupTypeWithAggregatesFilter<$PrismaModel> | $Enums.CommitteeApplicationGroupType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCommitteeApplicationGroupTypeFilter<$PrismaModel>
 }
 
 

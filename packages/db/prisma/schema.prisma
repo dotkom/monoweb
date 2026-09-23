@@ -124,6 +124,7 @@ model User {
   contestants           Contestant[]
   contestTeams          ContestTeam[]           @relation("ContestTeamMember")
   userFlagLinks         UserFlagLink[]
+  committeeApplications CommitteeApplication[]
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -202,12 +203,13 @@ model Group {
   recruitmentMethod    GroupRecruitmentMethod    @default(NONE) @map("recruitment_method")
   type                 GroupType
 
-  events        EventHostingGroup[]
-  contests      Contest[]           @relation("ContestOrganizerGroups")
-  memberships   GroupMembership[]
-  marks         MarkGroup[]
-  roles         GroupRole[]
-  notifications Notification[]
+  events                  EventHostingGroup[]
+  contests                Contest[]                   @relation("ContestOrganizerGroups")
+  memberships             GroupMembership[]
+  marks                   MarkGroup[]
+  roles                   GroupRole[]
+  notifications           Notification[]
+  applicationPeriodGroups CommitteeApplicationGroup[]
 
   @@map("group")
 }
@@ -1090,4 +1092,168 @@ model UserFlagLink {
   @@index([userId])
   @@index([userFlagId])
   @@map("user_flag_link")
+}
+
+model CommitteeApplicationPeriod {
+  id                    String   @id @default(uuid())
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  name                  String
+  isDraft               Boolean  @default(true) @map("is_draft")
+  /// Whether applications can be accepted. Disabling a published period does not hide it from users. This has no effect
+  /// if the application period is a draft.
+  isEnabled             Boolean  @default(true) @map("is_enabled")
+  applicationsOpenAt    DateTime @map("applications_open_at") @db.Timestamptz(3)
+  applicationsCloseAt   DateTime @map("applications_close_at") @db.Timestamptz(3)
+  /// First day of interviews. Interviews are scheduled within a hard-coded time window of 09:00-17:00 Norwegian time
+  /// for the period between `interviewsStartDate` and `interviewsEndDate`.
+  interviewsStartDate   DateTime @map("interviews_start_date") @db.Date
+  /// Last day of interviews. Interviews are scheduled within a hard-coded time window of 09:00-17:00 Norwegian time
+  /// for the period between `interviewsStartDate` and `interviewsEndDate`.
+  interviewsEndDate     DateTime @map("interviews_end_date") @db.Date
+  interviewsPublishedAt DateTime @map("interviews_published_at") @db.Timestamptz(3)
+
+  applications CommitteeApplication[]
+  groups       CommitteeApplicationGroup[]
+
+  @@map("committee_application_period")
+}
+
+enum CommitteeApplicationInterviewDuration {
+  MINUTES_20 @map("MINUTES_20")
+  MINUTES_30 @map("MINUTES_30")
+
+  @@map("committee_application_interview_duration")
+}
+
+enum CommitteeApplicationGroupType {
+  /// A user can only become a member of one exclusive group.
+  EXCLUSIVE @map("EXCLUSIVE")
+  /// A user can become a member of multiple additive groups.
+  ADDITIVE  @map("ADDITIVE")
+
+  @@map("committee_application_group_type")
+}
+
+/// A group participating in one application period, with its interview configuration.
+model CommitteeApplicationGroup {
+  id                String                                @id @default(uuid())
+  createdAt         DateTime                              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime                              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  interviewDuration CommitteeApplicationInterviewDuration @map("interview_duration")
+  type              CommitteeApplicationGroupType         @map("type")
+
+  groupId             String                     @map("group_id")
+  applicationPeriodId String                     @map("application_period_id")
+  group               Group                      @relation(fields: [groupId], references: [slug])
+  applicationPeriod   CommitteeApplicationPeriod @relation(fields: [applicationPeriodId], references: [id])
+
+  interviewBlocks CommitteeApplicationInterviewBlock[]
+  groupSelections CommitteeApplicationGroupSelection[]
+
+  @@unique([applicationPeriodId, groupId])
+  @@unique([id, applicationPeriodId])
+  @@index([groupId])
+  @@map("committee_application_group")
+}
+
+/// One user's application to an application period, shared across their selected groups.
+model CommitteeApplication {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  aboutMe   String   @map("about_me")
+
+  userId              String                     @map("user_id")
+  applicationPeriodId String                     @map("application_period_id")
+  user                User                       @relation(fields: [userId], references: [id])
+  applicationPeriod   CommitteeApplicationPeriod @relation(fields: [applicationPeriodId], references: [id])
+
+  groupSelections    CommitteeApplicationGroupSelection[]
+  availabilityBlocks CommitteeApplicationAvailability[]
+
+  @@unique([userId, applicationPeriodId])
+  @@unique([id, applicationPeriodId])
+  @@index([applicationPeriodId])
+  @@map("committee_application")
+}
+
+/// A group choice within an application.
+model CommitteeApplicationGroupSelection {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  rank      Int
+
+  applicationId       String                    @map("application_id")
+  applicationGroupId  String                    @map("application_group_id")
+  /// Shared by both relations to enforce that the application and group belong to the same period.
+  applicationPeriodId String                    @map("application_period_id")
+  application         CommitteeApplication      @relation(fields: [applicationId, applicationPeriodId], references: [id, applicationPeriodId], onDelete: Cascade)
+  applicationGroup    CommitteeApplicationGroup @relation(fields: [applicationGroupId, applicationPeriodId], references: [id, applicationPeriodId])
+
+  interview CommitteeApplicationInterview?
+
+  @@unique([applicationId, rank])
+  @@unique([applicationId, applicationGroupId])
+  @@unique([id, applicationGroupId])
+  @@index([applicationGroupId])
+  @@index([applicationPeriodId])
+  @@map("committee_application_group_selection")
+}
+
+/// A time interval when the applicant is available for interviews in this application period.
+model CommitteeApplicationAvailability {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  startsAt  DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt    DateTime @map("ends_at") @db.Timestamptz(3)
+
+  applicationId String               @map("application_id")
+  application   CommitteeApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("committee_application_availability")
+}
+
+/// A time interval reserved by a participating group for conducting interviews at a location.
+model CommitteeApplicationInterviewBlock {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  startsAt     DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt       DateTime @map("ends_at") @db.Timestamptz(3)
+  locationName String   @map("location_name")
+  locationUrl  String?  @map("location_url")
+
+  applicationGroupId String                    @map("application_group_id")
+  applicationGroup   CommitteeApplicationGroup @relation(fields: [applicationGroupId], references: [id], onDelete: Cascade)
+
+  interviews CommitteeApplicationInterview[]
+
+  @@unique([id, applicationGroupId])
+  @@index([applicationGroupId])
+  @@map("committee_application_interview_block")
+}
+
+model CommitteeApplicationInterview {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  startsAt  DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt    DateTime @map("ends_at") @db.Timestamptz(3)
+
+  groupSelectionId   String                             @unique @map("group_selection_id")
+  /// Shared by both relations to enforce that the selected group owns the interview block.
+  applicationGroupId String                             @map("application_group_id")
+  groupSelection     CommitteeApplicationGroupSelection @relation(fields: [groupSelectionId, applicationGroupId], references: [id, applicationGroupId], onDelete: Cascade)
+
+  interviewBlockId String                             @map("interview_block_id")
+  interviewBlock   CommitteeApplicationInterviewBlock @relation(fields: [interviewBlockId, applicationGroupId], references: [id, applicationGroupId], onDelete: Restrict)
+
+  @@unique([interviewBlockId, startsAt])
+  @@unique([groupSelectionId, applicationGroupId])
+  @@index([applicationGroupId])
+  @@map("committee_application_interview")
 }

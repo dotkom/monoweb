@@ -426,7 +426,14 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  CommitteeApplicationPeriod: 'CommitteeApplicationPeriod',
+  CommitteeApplicationGroup: 'CommitteeApplicationGroup',
+  CommitteeApplication: 'CommitteeApplication',
+  CommitteeApplicationGroupSelection: 'CommitteeApplicationGroupSelection',
+  CommitteeApplicationAvailability: 'CommitteeApplicationAvailability',
+  CommitteeApplicationInterviewBlock: 'CommitteeApplicationInterviewBlock',
+  CommitteeApplicationInterview: 'CommitteeApplicationInterview'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -442,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "committeeApplicationPeriod" | "committeeApplicationGroup" | "committeeApplication" | "committeeApplicationGroupSelection" | "committeeApplicationAvailability" | "committeeApplicationInterviewBlock" | "committeeApplicationInterview"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3628,6 +3635,524 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CommitteeApplicationPeriod: {
+      payload: Prisma.$CommitteeApplicationPeriodPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationPeriodFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationPeriodFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationPeriodFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationPeriodFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationPeriodFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationPeriodFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationPeriodCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationPeriodCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationPeriodCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationPeriodDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationPeriodUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationPeriodDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationPeriodUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationPeriodUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationPeriodUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPeriodPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationPeriodAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationPeriod>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationPeriodGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationPeriodGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationPeriodCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationPeriodCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplicationGroup: {
+      payload: Prisma.$CommitteeApplicationGroupPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationGroup>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationGroupCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplication: {
+      payload: Prisma.$CommitteeApplicationPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplication>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplicationGroupSelection: {
+      payload: Prisma.$CommitteeApplicationGroupSelectionPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationGroupSelectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationGroupSelectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationGroupSelectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationGroupSelectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationGroupSelectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationGroupSelectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationGroupSelectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationGroupSelectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationGroupSelectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationGroupSelectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationGroupSelectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationGroupSelectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationGroupSelectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationGroupSelectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationGroupSelectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationGroupSelectionPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationGroupSelectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationGroupSelection>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationGroupSelectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationGroupSelectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationGroupSelectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationGroupSelectionCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplicationAvailability: {
+      payload: Prisma.$CommitteeApplicationAvailabilityPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationAvailabilityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationAvailabilityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationAvailabilityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationAvailabilityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationAvailabilityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationAvailabilityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationAvailabilityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationAvailabilityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationAvailabilityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationAvailabilityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationAvailabilityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationAvailabilityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationAvailabilityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationAvailabilityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationAvailabilityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationAvailabilityPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationAvailabilityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationAvailability>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationAvailabilityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationAvailabilityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationAvailabilityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationAvailabilityCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplicationInterviewBlock: {
+      payload: Prisma.$CommitteeApplicationInterviewBlockPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationInterviewBlockFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationInterviewBlockFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewBlockFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationInterviewBlockFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewBlockFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationInterviewBlockFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationInterviewBlockCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationInterviewBlockCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewBlockCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationInterviewBlockDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationInterviewBlockUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationInterviewBlockDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationInterviewBlockUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewBlockUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationInterviewBlockUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewBlockPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationInterviewBlockAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationInterviewBlock>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationInterviewBlockGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewBlockGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationInterviewBlockCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewBlockCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommitteeApplicationInterview: {
+      payload: Prisma.$CommitteeApplicationInterviewPayload<ExtArgs>
+      fields: Prisma.CommitteeApplicationInterviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommitteeApplicationInterviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        findFirst: {
+          args: Prisma.CommitteeApplicationInterviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommitteeApplicationInterviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        findMany: {
+          args: Prisma.CommitteeApplicationInterviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>[]
+        }
+        create: {
+          args: Prisma.CommitteeApplicationInterviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        createMany: {
+          args: Prisma.CommitteeApplicationInterviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>[]
+        }
+        delete: {
+          args: Prisma.CommitteeApplicationInterviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        update: {
+          args: Prisma.CommitteeApplicationInterviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommitteeApplicationInterviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommitteeApplicationInterviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommitteeApplicationInterviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommitteeApplicationInterviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommitteeApplicationInterviewPayload>
+        }
+        aggregate: {
+          args: Prisma.CommitteeApplicationInterviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommitteeApplicationInterview>
+        }
+        groupBy: {
+          args: Prisma.CommitteeApplicationInterviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommitteeApplicationInterviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommitteeApplicationInterviewCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4258,6 +4783,101 @@ export const UserFlagLinkScalarFieldEnum = {
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
+export const CommitteeApplicationPeriodScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  isDraft: 'isDraft',
+  isEnabled: 'isEnabled',
+  applicationsOpenAt: 'applicationsOpenAt',
+  applicationsCloseAt: 'applicationsCloseAt',
+  interviewsStartDate: 'interviewsStartDate',
+  interviewsEndDate: 'interviewsEndDate',
+  interviewsPublishedAt: 'interviewsPublishedAt'
+} as const
+
+export type CommitteeApplicationPeriodScalarFieldEnum = (typeof CommitteeApplicationPeriodScalarFieldEnum)[keyof typeof CommitteeApplicationPeriodScalarFieldEnum]
+
+
+export const CommitteeApplicationGroupScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  interviewDuration: 'interviewDuration',
+  type: 'type',
+  groupId: 'groupId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationGroupScalarFieldEnum = (typeof CommitteeApplicationGroupScalarFieldEnum)[keyof typeof CommitteeApplicationGroupScalarFieldEnum]
+
+
+export const CommitteeApplicationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  aboutMe: 'aboutMe',
+  userId: 'userId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationScalarFieldEnum = (typeof CommitteeApplicationScalarFieldEnum)[keyof typeof CommitteeApplicationScalarFieldEnum]
+
+
+export const CommitteeApplicationGroupSelectionScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  rank: 'rank',
+  applicationId: 'applicationId',
+  applicationGroupId: 'applicationGroupId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationGroupSelectionScalarFieldEnum = (typeof CommitteeApplicationGroupSelectionScalarFieldEnum)[keyof typeof CommitteeApplicationGroupSelectionScalarFieldEnum]
+
+
+export const CommitteeApplicationAvailabilityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  applicationId: 'applicationId'
+} as const
+
+export type CommitteeApplicationAvailabilityScalarFieldEnum = (typeof CommitteeApplicationAvailabilityScalarFieldEnum)[keyof typeof CommitteeApplicationAvailabilityScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewBlockScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  locationName: 'locationName',
+  locationUrl: 'locationUrl',
+  applicationGroupId: 'applicationGroupId'
+} as const
+
+export type CommitteeApplicationInterviewBlockScalarFieldEnum = (typeof CommitteeApplicationInterviewBlockScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewBlockScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  groupSelectionId: 'groupSelectionId',
+  applicationGroupId: 'applicationGroupId',
+  interviewBlockId: 'interviewBlockId'
+} as const
+
+export type CommitteeApplicationInterviewScalarFieldEnum = (typeof CommitteeApplicationInterviewScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4684,6 +5304,34 @@ export type ListEnumContestResultOrderFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'CommitteeApplicationInterviewDuration'
+ */
+export type EnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeApplicationInterviewDuration'>
+    
+
+
+/**
+ * Reference to a field of type 'CommitteeApplicationInterviewDuration[]'
+ */
+export type ListEnumCommitteeApplicationInterviewDurationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeApplicationInterviewDuration[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CommitteeApplicationGroupType'
+ */
+export type EnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeApplicationGroupType'>
+    
+
+
+/**
+ * Reference to a field of type 'CommitteeApplicationGroupType[]'
+ */
+export type ListEnumCommitteeApplicationGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommitteeApplicationGroupType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4849,6 +5497,13 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
+  committeeApplicationPeriod?: Prisma.CommitteeApplicationPeriodOmit
+  committeeApplicationGroup?: Prisma.CommitteeApplicationGroupOmit
+  committeeApplication?: Prisma.CommitteeApplicationOmit
+  committeeApplicationGroupSelection?: Prisma.CommitteeApplicationGroupSelectionOmit
+  committeeApplicationAvailability?: Prisma.CommitteeApplicationAvailabilityOmit
+  committeeApplicationInterviewBlock?: Prisma.CommitteeApplicationInterviewBlockOmit
+  committeeApplicationInterview?: Prisma.CommitteeApplicationInterviewOmit
 }
 
 /* Types for Logging */
