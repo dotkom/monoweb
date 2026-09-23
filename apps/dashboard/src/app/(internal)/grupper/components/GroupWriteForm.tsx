@@ -1,12 +1,12 @@
 "use client"
 
 import { CheckboxField } from "@/components/forms/CheckboxField"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { SegmentedControlField } from "@/components/forms/SegmentedControlField"
 import { SelectField } from "@/components/forms/SelectField"
 import { TextField } from "@/components/forms/TextField"
-import { Form } from "@/components/forms/new-form/Form"
 import {
   getGroupDisplayName,
   getGroupMemberVisibilityName,

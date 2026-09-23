@@ -1,8 +1,8 @@
 import { useOfflineFileUploadMutation, useOfflineImageUploadMutation } from "@/app/(internal)/offline/mutations"
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
 import { FileField } from "@/components/forms/FileField"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
-import { Form } from "@/components/forms/new-form/Form"
 import { TextField } from "@/components/forms/TextField"
 import {
   OFFLINE_FILE_MAX_SIZE_KIB,
@@ -29,7 +29,7 @@ interface Props {
 
 export const OfflineWriteForm = ({
   onSubmit,
-  submitLabel,
+  submitLabel = "Lagre",
   defaultValues = OFFLINE_WRITE_FORM_DEFAULT_VALUES,
   disabled,
 }: Props) => {

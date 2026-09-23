@@ -1,6 +1,6 @@
 import { CheckboxField } from "@/components/forms/CheckboxField"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
-import { Form } from "@/components/forms/new-form/Form"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { TagField } from "@/components/forms/TagField"
 import { TextField } from "@/components/forms/TextField"

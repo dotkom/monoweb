@@ -1,19 +1,38 @@
 "use client"
 
 import type { NotificationManagement, NotificationRecipientSelection } from "@dotkomonline/rpc/notification"
-import { Button, Group, Stack } from "@mantine/core"
-import { type ContextModalProps, modals } from "@mantine/modals"
-import { type FC, useState } from "react"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Button } from "@dotkomonline/ui"
+import { IconX } from "@tabler/icons-react"
+import { useState } from "react"
 import { useAddNotificationRecipientsMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 import { RecipientSelectionBuilder } from "./recipient-selection"
 
-export const AddRecipientsModal: FC<ContextModalProps<{ notification: NotificationManagement }>> = ({
-  context,
-  id,
-  innerProps: { notification },
-}) => {
-  const close = () => context.closeModal(id)
+export function AddRecipientsModal({
+  open,
+  onOpenChange,
+  notification,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  notification: NotificationManagement
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent size="xl" onOutsideClick={() => onOpenChange(false)}>
+        <div className="flex items-start justify-between gap-3">
+          <AlertDialogTitle>Send til flere</AlertDialogTitle>
+          <AlertDialogCancel type="button">
+            <IconX className="size-5" />
+          </AlertDialogCancel>
+        </div>
+        {open && <AddRecipientsForm notification={notification} onClose={() => onOpenChange(false)} />}
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+function AddRecipientsForm({ notification, onClose }: { notification: NotificationManagement; onClose: () => void }) {
   const addRecipients = useAddNotificationRecipientsMutation()
   const [recipientSelection, setRecipientSelection] = useState<NotificationRecipientSelection | null>(
     notification.initialRecipientSelection
@@ -43,11 +62,11 @@ export const AddRecipientsModal: FC<ContextModalProps<{ notification: Notificati
       return
     }
 
-    close()
+    onClose()
   }
 
   return (
-    <Stack>
+    <div className="flex flex-col gap-4">
       <RecipientSelectionBuilder
         value={recipientSelection}
         onChange={setRecipientSelection}
@@ -55,20 +74,11 @@ export const AddRecipientsModal: FC<ContextModalProps<{ notification: Notificati
         countMode="new"
       />
 
-      <Group justify="flex-end">
-        <Button onClick={onSubmit} loading={addRecipients.isPending} disabled={!canSubmit}>
+      <div className="flex justify-end">
+        <Button onClick={onSubmit} disabled={!canSubmit}>
           Legg til mottakere
         </Button>
-      </Group>
-    </Stack>
+      </div>
+    </div>
   )
-}
-
-export function openAddRecipientsModal(notification: NotificationManagement) {
-  return modals.openContextModal({
-    modal: "notification/add-recipients",
-    title: "Send til flere",
-    size: "xl",
-    innerProps: { notification },
-  })
 }

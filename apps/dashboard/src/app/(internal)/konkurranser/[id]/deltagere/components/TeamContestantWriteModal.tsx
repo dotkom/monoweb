@@ -31,7 +31,7 @@ export function TeamContestantWriteModal({
   open,
   onOpenChange,
   title,
-  submitLabel,
+  submitLabel = "Lagre",
   excludeUserIds,
   initialTeamName = "",
   initialMembers = [],

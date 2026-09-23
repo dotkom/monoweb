@@ -1,6 +1,6 @@
 "use client"
 
-import { Form } from "@/components/forms/new-form/Form"
+import { Form } from "@/components/forms/Form"
 import { SearchField } from "@/components/forms/SearchField"
 import type { UserFilterQuery } from "@dotkomonline/rpc/user"
 import { useEffect } from "react"

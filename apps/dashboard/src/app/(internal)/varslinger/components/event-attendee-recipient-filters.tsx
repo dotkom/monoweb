@@ -6,7 +6,7 @@ import type {
   NotificationRecipientPaymentStatus,
   NotificationRecipientReservationStatus,
 } from "@dotkomonline/rpc/notification"
-import { Input, MultiSelect, SegmentedControl, Stack } from "@mantine/core"
+import { TagInput, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 
 const RESERVATION_STATUS_DATA: { label: string; value: NotificationRecipientReservationStatus }[] = [
   { label: "Alle", value: "ALL" },
@@ -19,6 +19,46 @@ const PAYMENT_STATUS_DATA: { label: string; value: NotificationRecipientPaymentS
   { label: "Betalt", value: "PAID" },
   { label: "Ikke betalt", value: "UNPAID" },
 ]
+
+function ChoiceGroup<TValue extends string>({
+  label,
+  value,
+  options,
+  disabled,
+  onChange,
+}: {
+  label: string
+  value: TValue
+  options: { label: string; value: TValue }[]
+  disabled?: boolean
+  onChange: (value: TValue) => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium">{label}</span>
+      <ToggleGroup
+        multiple={false}
+        disabled={disabled}
+        value={[value]}
+        onValueChange={(next) => {
+          const selected = next.at(0)
+
+          if (!selected) {
+            return
+          }
+
+          onChange(selected as TValue)
+        }}
+      >
+        {options.map((option) => (
+          <ToggleGroupItem key={option.value} value={option.value}>
+            {option.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  )
+}
 
 export function EventAttendeeRecipientFilters({
   reservationStatus,
@@ -41,84 +81,93 @@ export function EventAttendeeRecipientFilters({
     attendanceSelectionOptions: NotificationRecipientAttendanceSelectionOption[] | null
   }) => void
 }) {
-  const selectionOptionSelectData = selections
+  const selectionOptions = selections
     .filter((selection) => selection.options.length > 0)
-    .map((selection) => ({
-      group: selection.name,
-      items: selection.options.map((option) => ({
+    .flatMap((selection) =>
+      selection.options.map((option) => ({
         value: JSON.stringify({ selectionId: selection.id, optionId: option.id }),
-        label: option.name,
-      })),
-    }))
+        label: `${selection.name}: ${option.name}`,
+      }))
+    )
+  const labelByValue = new Map(selectionOptions.map((option) => [option.value, option.label]))
+  const valueByLabel = new Map(selectionOptions.map((option) => [option.label, option.value]))
 
   return (
-    <Stack gap="xs">
-      <Input.Wrapper label="Påmeldingsstatus">
-        <Stack>
-          <SegmentedControl
-            size="xs"
-            w="13rem"
-            disabled={disabled}
-            value={reservationStatus}
-            data={RESERVATION_STATUS_DATA}
-            onChange={(value) =>
-              onChange({
-                reservationStatus: value as NotificationRecipientReservationStatus,
-                paymentStatus,
-                attendanceSelectionOptions,
-              })
-            }
-          />
-        </Stack>
-      </Input.Wrapper>
+    <div className="flex flex-col gap-3">
+      <ChoiceGroup
+        label="Påmeldingsstatus"
+        value={reservationStatus}
+        options={RESERVATION_STATUS_DATA}
+        disabled={disabled}
+        onChange={(value) =>
+          onChange({
+            reservationStatus: value,
+            paymentStatus,
+            attendanceSelectionOptions,
+          })
+        }
+      />
 
       {hasPayment && (
-        <Input.Wrapper label="Betalingsstatus">
-          <Stack>
-            <SegmentedControl
-              size="xs"
-              w="16rem"
-              disabled={disabled}
-              value={paymentStatus}
-              data={PAYMENT_STATUS_DATA}
-              onChange={(value) =>
-                onChange({
-                  reservationStatus,
-                  paymentStatus: value as NotificationRecipientPaymentStatus,
-                  attendanceSelectionOptions,
-                })
-              }
-            />
-          </Stack>
-        </Input.Wrapper>
-      )}
-
-      {selectionOptionSelectData.length > 0 && (
-        <MultiSelect
-          searchable
-          clearable
-          label="Valg"
-          placeholder="Filtrer på valg"
+        <ChoiceGroup
+          label="Betalingsstatus"
+          value={paymentStatus}
+          options={PAYMENT_STATUS_DATA}
           disabled={disabled}
-          data={selectionOptionSelectData}
-          value={(attendanceSelectionOptions ?? []).map((selectionOption) => JSON.stringify(selectionOption))}
-          onChange={(values) => {
-            let nextAttendanceSelectionOptions: NotificationRecipientAttendanceSelectionOption[] | null = null
-
-            if (values.length > 0) {
-              nextAttendanceSelectionOptions = values.map(
-                (value) => JSON.parse(value) as NotificationRecipientAttendanceSelectionOption
-              )
-            }
-
+          onChange={(value) =>
             onChange({
               reservationStatus,
-              paymentStatus,
-              attendanceSelectionOptions: nextAttendanceSelectionOptions,
+              paymentStatus: value,
+              attendanceSelectionOptions,
             })
-          }}
+          }
         />
       )}
-    </Stack>
+
+      {selectionOptions.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium">Valg</span>
+          <TagInput
+            creatable={false}
+            disabled={disabled}
+            placeholder="Filtrer på valg"
+            data={selectionOptions.map((option) => option.label)}
+            value={(attendanceSelectionOptions ?? []).flatMap((selectionOption) => {
+              const label = labelByValue.get(JSON.stringify(selectionOption))
+
+              if (label === undefined) {
+                return []
+              }
+
+              return [label]
+            })}
+            onChange={(labels) => {
+              const values = labels.flatMap((label) => {
+                const value = valueByLabel.get(label)
+
+                if (value === undefined) {
+                  return []
+                }
+
+                return [value]
+              })
+              let nextAttendanceSelectionOptions: NotificationRecipientAttendanceSelectionOption[] | null = null
+
+              if (values.length > 0) {
+                nextAttendanceSelectionOptions = values.map(
+                  (value) => JSON.parse(value) as NotificationRecipientAttendanceSelectionOption
+                )
+              }
+
+              onChange({
+                reservationStatus,
+                paymentStatus,
+                attendanceSelectionOptions: nextAttendanceSelectionOptions,
+              })
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }

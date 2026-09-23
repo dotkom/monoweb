@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader, Text } from "@mantine/core"
+import { Text } from "@dotkomonline/ui"
 import { type PropsWithChildren, use } from "react"
 import { useNotificationGetQuery } from "../queries"
 import { NotificationDetailsContext } from "./provider"
@@ -13,7 +13,7 @@ export default function NotificationDetailsLayout({
   const { data: notification, isLoading, isError } = useNotificationGetQuery(id)
 
   if (isLoading) {
-    return <Loader />
+    return <div className="size-8 animate-spin rounded-full border-2 border-muted border-t-foreground" />
   }
 
   if (isError || notification === undefined) {

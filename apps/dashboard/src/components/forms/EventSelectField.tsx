@@ -3,7 +3,7 @@
 import type { EventId } from "@dotkomonline/rpc/event"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import { useController } from "react-hook-form"
-import { EventSelectInput } from "./new-form/EventSelectInput"
+import { EventSelectInput } from "./EventSelectInput"
 import { combineFieldDisabled, FieldShell, getFieldErrorMessage } from "./FieldShell"
 
 type EventSelectFieldProps<TFieldValues extends FieldValues> = {

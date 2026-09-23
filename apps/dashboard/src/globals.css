@@ -1,2 +1,8 @@
 @import url("@dotkomonline/config/tailwind.css");
 @import url("@dotkomonline/ui/globals.css");
+
+body {
+  --font-body: "Inter Variable";
+  --font-title: "Inter Tight Variable";
+  --font-mono: "Google Sans Code Variable";
+}

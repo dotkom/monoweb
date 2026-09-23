@@ -4,6 +4,7 @@ import { useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/
 import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useAuthorization } from "@/auth/authorization-context"
+import { EventSelectInput } from "@/components/forms/EventSelectInput"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type {
   NotificationRecipientAttendanceSelectionOption,
@@ -17,30 +18,33 @@ import type {
 } from "@dotkomonline/rpc/notification"
 import { getMembershipTypeName } from "@dotkomonline/rpc/user"
 import {
-  ActionIcon,
   Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Card,
-  Collapse,
-  Group,
-  Input,
-  MultiSelect,
-  SegmentedControl,
+  Collapsible,
+  CollapsibleContent,
   Select,
-  Skeleton,
-  Stack,
-  Switch,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  TagInput,
   Text,
   TextInput,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
   Tooltip,
-  UnstyledButton,
-} from "@mantine/core"
-import { useInViewport } from "@mantine/hooks"
+  TooltipContent,
+  TooltipTrigger,
+} from "@dotkomonline/ui"
 import { IconUsers, IconX } from "@tabler/icons-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRecipientSelectionPreview, useRecipientSelectionPreviewInfinite } from "../queries"
 import { EventAttendeeRecipientFilters } from "./event-attendee-recipient-filters"
-import { EventSelectInput } from "@/components/forms/new-form/EventSelectInput"
 
 const TARGETABLE_GROUP_TYPES = new Set(["COMMITTEE", "NODE_COMMITTEE", "ASSOCIATED", "INTEREST_GROUP"])
 
@@ -229,7 +233,7 @@ function draftsFromRecipientSelection(recipientSelection: NotificationRecipientS
     if (rule.type === "ALL_USERS") {
       return {
         id,
-        type: "ALL_USERS",
+        type: "ALL_USERS" as const,
         membershipStatus: rule.membershipStatus,
         membershipTypes: rule.membershipTypes ?? null,
         studyGrades: rule.studyGrades ?? null,
@@ -240,7 +244,7 @@ function draftsFromRecipientSelection(recipientSelection: NotificationRecipientS
     if (rule.type === "GROUP_MEMBERS") {
       return {
         id,
-        type: "GROUP_MEMBERS",
+        type: "GROUP_MEMBERS" as const,
         groupSlug: rule.groupSlug,
         includeFormerMembers: rule.includeFormerMembers,
       }
@@ -249,7 +253,7 @@ function draftsFromRecipientSelection(recipientSelection: NotificationRecipientS
     if (rule.type === "EVENT_ATTENDEES") {
       return {
         id,
-        type: "EVENT_ATTENDEES",
+        type: "EVENT_ATTENDEES" as const,
         eventId: null,
         attendanceId: rule.attendanceId,
         reservationStatus: rule.reservationStatus,
@@ -260,7 +264,7 @@ function draftsFromRecipientSelection(recipientSelection: NotificationRecipientS
 
     return {
       id,
-      type: "USERS",
+      type: "USERS" as const,
       users: rule.userIds.map((userId) => ({
         id: userId,
         name: null,
@@ -268,6 +272,70 @@ function draftsFromRecipientSelection(recipientSelection: NotificationRecipientS
       })),
     }
   })
+}
+
+function PersonAvatar({ name, imageUrl }: { name: string | null; imageUrl: string | null }) {
+  return (
+    <Avatar size="sm">
+      {imageUrl && <AvatarImage src={imageUrl} alt="" />}
+      <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
+    </Avatar>
+  )
+}
+
+function LabeledToggle({
+  label,
+  checked,
+  onCheckedChange,
+}: {
+  label: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+}) {
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: yes but no
+    <label className="flex items-center gap-2 text-sm">
+      <Toggle checked={checked} onCheckedChange={onCheckedChange} />
+      {label}
+    </label>
+  )
+}
+
+function ChoiceGroup<TValue extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string
+  value: TValue
+  options: { label: string; value: TValue }[]
+  onChange: (value: TValue) => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium">{label}</span>
+      <ToggleGroup
+        multiple={false}
+        value={[value]}
+        onValueChange={(next) => {
+          const selected = next.at(0)
+
+          if (!selected) {
+            return
+          }
+
+          onChange(selected as TValue)
+        }}
+      >
+        {options.map((option) => (
+          <ToggleGroupItem key={option.value} value={option.value}>
+            {option.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  )
 }
 
 export function RecipientSelectionBuilder({
@@ -292,28 +360,38 @@ export function RecipientSelectionBuilder({
   )
   const [isExcludedOpen, setIsExcludedOpen] = useState(false)
   const [recipientSearch, setRecipientSearch] = useState("")
+  const [loadMoreNode, setLoadMoreNode] = useState<HTMLDivElement | null>(null)
 
   const recipientSelection = toRecipientSelection(drafts, excludedRecipients)
   const { preview, recipients, isPending, isForbidden, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useRecipientSelectionPreviewInfinite(recipientSelection, type, recipientSearch)
-  const { ref: loadMoreRef, inViewport: isLoadMoreVisible } = useInViewport()
   const hasAllUsersRule = drafts.some((draft) => draft.type === "ALL_USERS")
 
   useEffect(() => {
-    if (!isLoadMoreVisible) {
+    if (loadMoreNode === null) {
       return
     }
 
-    if (!hasNextPage) {
-      return
-    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) {
+        return
+      }
 
-    if (isFetchingNextPage) {
-      return
-    }
+      if (!hasNextPage) {
+        return
+      }
 
-    fetchNextPage()
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isLoadMoreVisible])
+      if (isFetchingNextPage) {
+        return
+      }
+
+      fetchNextPage()
+    })
+
+    observer.observe(loadMoreNode)
+
+    return () => observer.disconnect()
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, loadMoreNode])
 
   const commit = (nextDrafts: RuleDraft[], nextExcludedRecipients: ExcludedRecipient[]) => {
     setDrafts(nextDrafts)
@@ -347,36 +425,28 @@ export function RecipientSelectionBuilder({
   }
 
   return (
-    <Stack>
-      <Stack gap="xs">
-        <Text fw={500}>Mottakere</Text>
-
-        <Group gap="xs" wrap="wrap">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <Text className="font-medium">Mottakere</Text>
+        <div className="flex flex-wrap gap-2">
           {isAdministrator && (
-            <Button size="xs" variant="light" disabled={hasAllUsersRule} onClick={() => addRule("ALL_USERS")}>
+            <Button size="xs" variant="secondary" disabled={hasAllUsersRule} onClick={() => addRule("ALL_USERS")}>
               {getRuleLabel("ALL_USERS")}
             </Button>
           )}
-
-          <Button size="xs" variant="light" onClick={() => addRule("GROUP_MEMBERS")}>
+          <Button size="xs" variant="secondary" onClick={() => addRule("GROUP_MEMBERS")}>
             {getRuleLabel("GROUP_MEMBERS")}
           </Button>
-
-          <Button size="xs" variant="light" onClick={() => addRule("EVENT_ATTENDEES")}>
+          <Button size="xs" variant="secondary" onClick={() => addRule("EVENT_ATTENDEES")}>
             {getRuleLabel("EVENT_ATTENDEES")}
           </Button>
-
-          <Button size="xs" variant="light" onClick={() => addRule("USERS")}>
+          <Button size="xs" variant="secondary" onClick={() => addRule("USERS")}>
             {getRuleLabel("USERS")}
           </Button>
-        </Group>
-      </Stack>
+        </div>
+      </div>
 
-      {drafts.length === 0 && (
-        <Text size="sm" c="dimmed">
-          Legg til minst én mottakergruppe
-        </Text>
-      )}
+      {drafts.length === 0 && <Text className="text-sm text-muted-foreground">Legg til minst én mottakergruppe</Text>}
 
       {drafts.map((draft) => (
         <RuleEditor
@@ -399,70 +469,51 @@ export function RecipientSelectionBuilder({
       ))}
 
       {recipientSelection !== null && (
-        <Stack gap="sm">
-          {isPending && preview === undefined && <Skeleton height={36} width={80} />}
+        <div className="flex flex-col gap-3">
+          {isPending && preview === undefined && <div className="h-9 w-20 animate-pulse rounded-sm bg-muted" />}
 
-          {preview !== undefined && (
-            <Text size="sm" fw={500}>
-              {recipientCountTitle}
-            </Text>
-          )}
+          {preview !== undefined && <Text className="text-sm font-medium">{recipientCountTitle}</Text>}
 
-          {isForbidden && (
-            <Text size="sm" c="red">
-              Du kan ikke sende til disse mottakerne
-            </Text>
-          )}
+          {isForbidden && <Text className="text-sm text-red-600">Du kan ikke sende til disse mottakerne</Text>}
 
           {!isForbidden && (
-            <Stack gap="xs">
+            <div className="flex flex-col gap-2">
               <TextInput
                 placeholder="Søk etter navn"
                 value={recipientSearch}
                 onChange={(event) => setRecipientSearch(event.currentTarget.value)}
               />
 
-              {isPending && preview === undefined && <Skeleton height={80} />}
+              {isPending && preview === undefined && <div className="h-20 animate-pulse rounded-sm bg-muted" />}
 
               {!isPending && preview !== undefined && recipients.length === 0 && (
-                <Text size="sm" c="dimmed">
-                  Ingen treff
-                </Text>
+                <Text className="text-sm text-muted-foreground">Ingen treff</Text>
               )}
 
               {recipients.length > 0 && (
-                <Stack
-                  gap="xs"
-                  mah={200}
-                  p="xs"
-                  bg="var(--mantine-color-default-hover)"
-                  style={{ overflow: "auto", borderRadius: "var(--mantine-radius-md)" }}
-                >
+                <div className="flex max-h-50 flex-col gap-2 overflow-auto rounded-md bg-muted/60 p-2">
                   {recipients.map((recipient) => (
-                    <Group key={recipient.userId} justify="space-between" wrap="nowrap">
-                      <Group gap="sm" wrap="nowrap">
-                        <Avatar src={recipient.imageUrl ?? undefined} size="sm" radius="xl">
-                          {recipient.name?.charAt(0)}
-                        </Avatar>
-                        <Text size="sm">{recipient.name ?? "Ukjent"}</Text>
-                      </Group>
-
-                      <Group gap="sm" wrap="nowrap">
+                    <div key={recipient.userId} className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <PersonAvatar name={recipient.name} imageUrl={recipient.imageUrl} />
+                        <Text className="text-sm">{recipient.name ?? "Ukjent"}</Text>
+                      </div>
+                      <div className="flex items-center gap-2">
                         {recipient.sourceLabels.length > 1 ? (
-                          <Tooltip label={recipient.sourceLabels.join(", ")}>
-                            <Text size="xs" c="dimmed">
-                              {recipient.sourceLabels[0] ?? "Ukjent"} + {recipient.sourceLabels.length - 1} flere
-                            </Text>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-xs text-muted-foreground">
+                                {recipient.sourceLabels[0] ?? "Ukjent"} + {recipient.sourceLabels.length - 1} flere
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>{recipient.sourceLabels.join(", ")}</TooltipContent>
                           </Tooltip>
                         ) : (
-                          <Text size="xs" c="dimmed">
-                            {recipient.sourceLabels[0] ?? "Ukjent"}
-                          </Text>
+                          <span className="text-xs text-muted-foreground">{recipient.sourceLabels[0] ?? "Ukjent"}</span>
                         )}
-
-                        <ActionIcon
-                          variant="subtle"
-                          color="gray"
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
                           aria-label="Ekskluder"
                           onClick={() =>
                             excludeUser({
@@ -472,43 +523,36 @@ export function RecipientSelectionBuilder({
                             })
                           }
                         >
-                          <IconX size={16} />
-                        </ActionIcon>
-                      </Group>
-                    </Group>
+                          <IconX className="size-4" />
+                        </Button>
+                      </div>
+                    </div>
                   ))}
-
-                  {hasNextPage && <div ref={loadMoreRef} style={{ height: 1 }} />}
-                  {isFetchingNextPage && <Skeleton height={16} />}
-                </Stack>
+                  {hasNextPage && <div ref={setLoadMoreNode} className="h-px" />}
+                  {isFetchingNextPage && <div className="h-4 animate-pulse rounded-sm bg-muted" />}
+                </div>
               )}
-            </Stack>
+            </div>
           )}
-        </Stack>
+        </div>
       )}
 
       {excludedRecipients.length > 0 && (
-        <Stack gap="xs">
-          <UnstyledButton onClick={() => setIsExcludedOpen((wasOpen) => !wasOpen)}>
-            <Text size="sm" c="dimmed">
-              Ekskludert ({excludedRecipients.length})
-            </Text>
-          </UnstyledButton>
-
-          <Collapse in={isExcludedOpen}>
-            <Stack gap="xs">
+        <Collapsible open={isExcludedOpen} onOpenChange={setIsExcludedOpen}>
+          <Button className="text-sm text-muted-foreground" onClick={() => setIsExcludedOpen((wasOpen) => !wasOpen)}>
+            Ekskludert ({excludedRecipients.length})
+          </Button>
+          <CollapsibleContent>
+            <div className="mt-2 flex flex-col gap-2">
               {excludedRecipients.map((excludedRecipient) => (
-                <Group key={excludedRecipient.userId} justify="space-between" wrap="nowrap">
-                  <Group gap="sm" wrap="nowrap">
-                    <Avatar src={excludedRecipient.imageUrl ?? undefined} size="sm" radius="xl">
-                      {excludedRecipient.name?.charAt(0)}
-                    </Avatar>
-                    <Text size="sm">{excludedRecipient.name ?? "Ukjent"}</Text>
-                  </Group>
-
+                <div key={excludedRecipient.userId} className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <PersonAvatar name={excludedRecipient.name} imageUrl={excludedRecipient.imageUrl} />
+                    <Text className="text-sm">{excludedRecipient.name ?? "Ukjent"}</Text>
+                  </div>
                   <Button
-                    variant="subtle"
-                    size="compact-sm"
+                    variant="ghost"
+                    size="sm"
                     onClick={() =>
                       commit(
                         drafts,
@@ -520,13 +564,13 @@ export function RecipientSelectionBuilder({
                   >
                     Gjenopprett
                   </Button>
-                </Group>
+                </div>
               ))}
-            </Stack>
-          </Collapse>
-        </Stack>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
-    </Stack>
+    </div>
   )
 }
 
@@ -546,42 +590,34 @@ function RuleEditor({
   const { preview, isPending, isForbidden } = useRecipientSelectionPreview(recipientSelection, notificationType)
 
   return (
-    <Card withBorder padding="sm" radius="md">
-      <Stack gap="sm">
-        <Group justify="space-between" wrap="nowrap">
-          <Text fw={500} size="sm">
-            {getRuleLabel(draft.type)}
-          </Text>
-
-          <Group gap="xs" wrap="nowrap">
+    <Card size="sm" className="px-3">
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <Text className="text-sm font-medium">{getRuleLabel(draft.type)}</Text>
+          <div className="flex items-center gap-2">
             {isPending ? (
-              <Skeleton height={15} width={48} />
+              <div className="h-4 w-12 animate-pulse rounded-sm bg-muted" />
             ) : (
-              <Group gap={5} wrap="nowrap">
-                <IconUsers size={15} color={isForbidden ? "var(--mantine-color-red)" : "var(--mantine-color-dimmed)"} />
-                <Text size="sm" c={isForbidden ? "red" : "dimmed"}>
+              <div className="flex items-center gap-1">
+                <IconUsers size={15} className={isForbidden ? "text-red-600" : "text-muted-foreground"} />
+                <Text className={isForbidden ? "text-sm text-red-600" : "text-sm text-muted-foreground"}>
                   {isForbidden ? 0 : (preview?.recipientCount ?? "—")}
                 </Text>
-              </Group>
+              </div>
             )}
-
-            <ActionIcon variant="subtle" color="gray" onClick={onRemove} aria-label="Fjern">
-              <IconX size={16} />
-            </ActionIcon>
-          </Group>
-        </Group>
+            <Button type="button" variant="ghost" size="icon-sm" onClick={onRemove} aria-label="Fjern">
+              <IconX className="size-4" />
+            </Button>
+          </div>
+        </div>
 
         {draft.type === "ALL_USERS" && <AllUsersFields draft={draft} onChange={onChange} />}
         {draft.type === "GROUP_MEMBERS" && <GroupMembersFields draft={draft} onChange={onChange} />}
         {draft.type === "EVENT_ATTENDEES" && <EventAttendeesFields draft={draft} onChange={onChange} />}
         {draft.type === "USERS" && <UsersFields draft={draft} onChange={onChange} />}
 
-        {isForbidden && (
-          <Text size="sm" c="red">
-            Du kan ikke sende til disse mottakerne
-          </Text>
-        )}
-      </Stack>
+        {isForbidden && <Text className="text-sm text-red-600">Du kan ikke sende til disse mottakerne</Text>}
+      </div>
     </Card>
   )
 }
@@ -593,62 +629,78 @@ function AllUsersFields({
   draft: Extract<RuleDraft, { type: "ALL_USERS" }>
   onChange: (draft: RuleDraft) => void
 }) {
+  const labelByValue = new Map(MEMBERSHIP_TYPE_FILTER_DATA.map((item) => [item.value, item.label]))
+  const valueByLabel = new Map(MEMBERSHIP_TYPE_FILTER_DATA.map((item) => [item.label, item.value]))
+
   return (
-    <Stack gap="xs">
-      <Input.Wrapper label="Medlemskap">
-        <Stack>
-          <SegmentedControl
-            size="xs"
-            w="18rem"
-            value={draft.membershipStatus}
-            data={MEMBERSHIP_STATUS_DATA}
-            onChange={(value) =>
-              onChange({ ...draft, membershipStatus: value as NotificationRecipientMembershipStatus })
+    <div className="flex flex-col gap-3">
+      <ChoiceGroup
+        label="Medlemskap"
+        value={draft.membershipStatus}
+        options={MEMBERSHIP_STATUS_DATA}
+        onChange={(value) => onChange({ ...draft, membershipStatus: value })}
+      />
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Medlemstype</span>
+        <TagInput
+          creatable={false}
+          placeholder="Alle typer"
+          data={MEMBERSHIP_TYPE_FILTER_DATA.map((item) => item.label)}
+          value={(draft.membershipTypes ?? []).flatMap((membershipType) => {
+            const label = labelByValue.get(membershipType)
+
+            if (label === undefined) {
+              return []
             }
-          />
-        </Stack>
-      </Input.Wrapper>
 
-      <MultiSelect
-        searchable
-        clearable
-        label="Medlemstype"
-        placeholder="Alle typer"
-        data={MEMBERSHIP_TYPE_FILTER_DATA}
-        value={draft.membershipTypes ?? []}
-        onChange={(values) => {
-          if (values.length === 0) {
-            onChange({ ...draft, membershipTypes: null })
-            return
-          }
+            return [label]
+          })}
+          onChange={(labels) => {
+            const values = labels.flatMap((label) => {
+              const membershipType = valueByLabel.get(label)
 
-          onChange({ ...draft, membershipTypes: values as NotificationRecipientMembershipType[] })
-        }}
-      />
+              if (membershipType === undefined) {
+                return []
+              }
 
-      <MultiSelect
-        searchable
-        clearable
-        label="Klassetrinn"
-        placeholder="Alle trinn"
-        data={STUDY_GRADE_FILTER_DATA}
-        value={(draft.studyGrades ?? []).map((studyGrade) => String(studyGrade))}
-        onChange={(values) => {
-          if (values.length === 0) {
-            onChange({ ...draft, studyGrades: null })
-            return
-          }
+              return [membershipType]
+            })
 
-          onChange({ ...draft, studyGrades: values.map((value) => Number(value)) })
-        }}
-      />
+            if (values.length === 0) {
+              onChange({ ...draft, membershipTypes: null })
+              return
+            }
 
-      <Switch
+            onChange({ ...draft, membershipTypes: values })
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Klassetrinn</span>
+        <TagInput
+          creatable={false}
+          placeholder="Alle trinn"
+          data={STUDY_GRADE_FILTER_DATA.map((item) => item.label)}
+          value={(draft.studyGrades ?? []).map((studyGrade) => String(studyGrade))}
+          onChange={(labels) => {
+            if (labels.length === 0) {
+              onChange({ ...draft, studyGrades: null })
+              return
+            }
+
+            onChange({ ...draft, studyGrades: labels.map((label) => Number(label)) })
+          }}
+        />
+      </div>
+
+      <LabeledToggle
         label="Er aktiv komitémedlem"
         checked={draft.requiresActiveCommitteeMembership}
-        onChange={(event) => onChange({ ...draft, requiresActiveCommitteeMembership: event.currentTarget.checked })}
+        onCheckedChange={(checked) => onChange({ ...draft, requiresActiveCommitteeMembership: checked })}
       />
-    </Stack>
+    </div>
   )
 }
 
@@ -672,25 +724,40 @@ function GroupMembersFields({
     return memberGroups.filter((group) => affiliations.has(group.slug))
   }, [affiliations, groups, isAdministrator])
 
-  return (
-    <Stack gap="xs">
-      <Select
-        searchable
-        placeholder="Velg gruppe"
-        value={draft.groupSlug}
-        data={targetableGroups.map((group) => ({
-          value: group.slug,
-          label: getGroupDisplayName(group),
-        }))}
-        onChange={(value) => onChange({ ...draft, groupSlug: value })}
-      />
+  const options = targetableGroups.map((group) => ({
+    value: group.slug,
+    label: getGroupDisplayName(group),
+  }))
 
-      <Switch
+  return (
+    <div className="flex flex-col gap-3">
+      <Select
+        value={draft.groupSlug}
+        onValueChange={(value) => {
+          onChange({ ...draft, groupSlug: value })
+        }}
+        items={options}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Velg gruppe" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <LabeledToggle
         label="Inkluder tidligere medlemmer"
         checked={draft.includeFormerMembers}
-        onChange={(event) => onChange({ ...draft, includeFormerMembers: event.currentTarget.checked })}
+        onCheckedChange={(checked) => onChange({ ...draft, includeFormerMembers: checked })}
       />
-    </Stack>
+    </div>
   )
 }
 
@@ -727,14 +794,14 @@ function EventAttendeesFields({
   }, [attendance, draft.eventId, draft.attendanceId, onChange])
 
   return (
-    <Stack gap="xs">
+    <div className="flex flex-col gap-3">
       <EventSelectInput
         placeholder="Velg arrangement"
         value={draft.eventId ?? ""}
-        onChange={(value) => {
+        onChange={(eventId) => {
           onChange({
             ...draft,
-            eventId: value,
+            eventId: eventId.length === 0 ? null : eventId,
             attendanceId: null,
             attendanceSelectionOptions: null,
             reservationStatus: "RESERVED",
@@ -744,9 +811,7 @@ function EventAttendeesFields({
       />
 
       {shouldShowMissingAttendanceMessage && (
-        <Text size="sm" c="dimmed">
-          Arrangementet har ingen påmelding
-        </Text>
+        <Text className="text-sm text-muted-foreground">Arrangementet har ingen påmelding</Text>
       )}
 
       <EventAttendeeRecipientFilters
@@ -758,7 +823,7 @@ function EventAttendeesFields({
         disabled={attendance === null}
         onChange={(next) => onChange({ ...draft, ...next })}
       />
-    </Stack>
+    </div>
   )
 }
 
@@ -770,21 +835,17 @@ function UsersFields({
   onChange: (draft: RuleDraft) => void
 }) {
   return (
-    <Stack gap="xs">
+    <div className="flex flex-col gap-3">
       {draft.users.length > 0 && (
-        <Group gap="xs">
+        <div className="flex flex-wrap gap-2">
           {draft.users.map((user) => (
-            <Group key={user.id} gap={6} wrap="nowrap">
-              <Avatar src={user.imageUrl ?? undefined} size="sm" radius="xl">
-                {user.name?.charAt(0)}
-              </Avatar>
-
-              <Text size="sm">{user.name ?? "Ukjent"}</Text>
-
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                size="sm"
+            <div key={user.id} className="flex items-center gap-1.5">
+              <PersonAvatar name={user.name} imageUrl={user.imageUrl} />
+              <Text className="text-sm">{user.name ?? "Ukjent"}</Text>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Fjern person"
                 onClick={() =>
                   onChange({
                     ...draft,
@@ -792,11 +853,11 @@ function UsersFields({
                   })
                 }
               >
-                <IconX size={14} />
-              </ActionIcon>
-            </Group>
+                <IconX className="size-3.5" />
+              </Button>
+            </div>
           ))}
-        </Group>
+        </div>
       )}
 
       <UserSearch
@@ -808,6 +869,6 @@ function UsersFields({
           })
         }
       />
-    </Stack>
+    </div>
   )
 }

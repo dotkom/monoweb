@@ -1,7 +1,7 @@
 "use client"
 
 import { EventSelectField } from "@/components/forms/EventSelectField"
-import { Form } from "@/components/forms/new-form/Form"
+import { Form } from "@/components/forms/Form"
 import { TextField } from "@/components/forms/TextField"
 import { FadderukeWriteSchema, type FadderukeWrite } from "@dotkomonline/rpc/fadderuke"
 import { Button } from "@dotkomonline/ui"

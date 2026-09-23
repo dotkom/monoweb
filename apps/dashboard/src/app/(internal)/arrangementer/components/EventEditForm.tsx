@@ -3,12 +3,12 @@
 import { useContestFindManyQuery } from "@/app/(internal)/konkurranser/queries"
 import { CompanySelectField } from "@/components/forms/CompanySelectField"
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
 import { MultiSelectField } from "@/components/forms/MultiSelectField"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { SelectField } from "@/components/forms/SelectField"
 import { TextField } from "@/components/forms/TextField"
-import { Form } from "@/components/forms/new-form/Form"
 import {
   EVENT_IMAGE_MAX_SIZE_KIB,
   EventSchema,

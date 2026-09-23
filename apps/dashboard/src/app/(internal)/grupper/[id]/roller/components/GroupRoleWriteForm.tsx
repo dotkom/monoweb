@@ -1,9 +1,9 @@
 "use client"
 
+import { Form } from "@/components/forms/Form"
 import { SelectField } from "@/components/forms/SelectField"
 import { TextField } from "@/components/forms/TextField"
-import { Form } from "@/components/forms/new-form/Form"
-import { GroupRoleWriteSchema, getGroupRoleTypeName, GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import { getGroupRoleTypeName, GroupRoleTypeEnum, GroupRoleWriteSchema } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type UseFormReturn } from "react-hook-form"

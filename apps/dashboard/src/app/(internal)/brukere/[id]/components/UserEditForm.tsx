@@ -1,11 +1,11 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
 import { SelectField } from "@/components/forms/SelectField"
 import { TextField } from "@/components/forms/TextField"
 import { TextareaField } from "@/components/forms/TextareaField"
-import { Form } from "@/components/forms/new-form/Form"
 import {
   GenderSchema,
   USER_IMAGE_MAX_SIZE_KIB,

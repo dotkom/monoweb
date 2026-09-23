@@ -6,8 +6,8 @@ import {
   useEventParentQuery,
   useEventWithAttendancesGetQuery,
 } from "@/app/(internal)/arrangementer/queries"
+import { EventSelectInput } from "@/components/forms/EventSelectInput"
 import { FieldShell } from "@/components/forms/FieldShell"
-import { EventSelectInput } from "@/components/forms/new-form/EventSelectInput"
 import type { Event, EventId } from "@dotkomonline/rpc/event"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Badge, Button, Text, Title } from "@dotkomonline/ui"
