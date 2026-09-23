@@ -1,26 +1,28 @@
-import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from "@mantine/core"
-import "@mantine/core/styles.css"
-import "@mantine/dates/styles.css"
-import "@mantine/notifications/styles.css"
-import "@fontsource-variable/inter/wght.css"
-import "@fontsource-variable/inter-tight/wght.css"
-import "@fontsource-variable/google-sans-code/wght.css"
+import { AuthorizationProvider } from "@/auth/authorization-context"
 import { auth0 } from "@/lib/auth"
 import { getServerAccessToken } from "@/lib/server-access-token"
 import { getServerAuthorization } from "@/lib/server-authorization"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
+import { Toaster } from "@dotkomonline/ui"
+import "@fontsource-variable/google-sans-code/wght.css"
+import "@fontsource-variable/inter-tight/wght.css"
+import "@fontsource-variable/inter/wght.css"
+import { mantineHtmlProps } from "@mantine/core"
+import "@mantine/core/styles.css"
+import "@mantine/dates/styles.css"
 import { Notifications } from "@mantine/notifications"
+import "@mantine/notifications/styles.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
+import { ThemeProvider } from "next-themes"
 import type { PropsWithChildren } from "react"
-import { AuthorizationProvider } from "@/auth/authorization-context"
+import "../globals.css"
 import { ApplicationShell } from "./ApplicationShell"
 import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
-import "../globals.css"
-import { Toaster } from "@dotkomonline/ui"
+import { ThemedMantineProvider } from "./ThemedMantineProvider"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -41,14 +43,6 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-const theme = createTheme({
-  fontFamily: "Inter Variable",
-  fontFamilyMonospace: "Google Sans Code Variable",
-  headings: {
-    fontFamily: "Inter Tight Variable",
-  },
-})
-
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await auth0.getSession()
   const accessToken = await getServerAccessToken()
@@ -58,26 +52,26 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const { isAdministrator, isCommitteeMember, affiliations } = await getServerAuthorization()
 
   return (
+    // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" {...mantineHtmlProps}>
-      <head>
-        <ColorSchemeScript defaultColorScheme="auto" />
-      </head>
       <body>
         <PlausibleProvider domain="dashboard.online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
-              <MantineProvider defaultColorScheme="auto" theme={theme}>
-                <Notifications />
-                <AuthorizationProvider
-                  isAdministrator={isAdministrator}
-                  isCommitteeMember={isCommitteeMember}
-                  affiliations={affiliations}
-                >
+              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+                <ThemedMantineProvider>
+                  <Notifications />
                   <ModalProvider>
-                    <ApplicationShell>{children}</ApplicationShell>
+                    <AuthorizationProvider
+                      isAdministrator={isAdministrator}
+                      isCommitteeMember={isCommitteeMember}
+                      affiliations={affiliations}
+                    >
+                      <ApplicationShell>{children}</ApplicationShell>
+                    </AuthorizationProvider>
                   </ModalProvider>
-                </AuthorizationProvider>
-              </MantineProvider>
+                </ThemedMantineProvider>
+              </ThemeProvider>
             </QueryProvider>
           </Auth0Provider>
         </PlausibleProvider>
