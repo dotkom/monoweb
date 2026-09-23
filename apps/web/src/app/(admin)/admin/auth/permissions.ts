@@ -5,12 +5,12 @@ import type { UserId } from "@dotkomonline/rpc/user"
 /**
  * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#ADMIN_AFFILIATIONS}
  */
-const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies readonly GroupId[]
+export const ADMIN_AFFILIATIONS = ["dotkom", "hs"] as const satisfies readonly GroupId[]
 
 /**
  * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#CommitteeGroupSlug}
  */
-const CommitteeGroupSlug = {
+export const CommitteeGroupSlug = {
   HOVEDSTYRET: "hs",
   DOTKOM: "dotkom",
   APPKOM: "appkom",
@@ -175,6 +175,73 @@ export function canEditOffline(state: AuthorizationState): boolean {
  */
 export function canEditFadderuke(state: AuthorizationState): boolean {
   return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.VELKOM)
+}
+
+/**
+ * `opptak` read procedures
+ */
+export function canViewApplication(state: AuthorizationState): boolean {
+  return state.isAdministrator || state.isCommitteeMember
+}
+
+function hasRoleTypeInAnyGroup(state: AuthorizationState, roleType: GroupRoleType): boolean {
+  for (const roleTypes of state.affiliations.values()) {
+    if (roleTypes.has(roleType)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Row level access to a single committee in the `opptak` tables
+ */
+export function canViewApplicationGroup(state: AuthorizationState, groupId: GroupId): boolean {
+  return state.isAdministrator || state.affiliations.has(groupId)
+}
+
+/**
+ * `opptak` interview attendance, reserved for the committee itself
+ */
+export function isApplicationGroupMember(state: AuthorizationState, groupId: GroupId): boolean {
+  return state.affiliations.has(groupId)
+}
+
+/**
+ * `opptak` committee and applicant matching pages
+ */
+export function canViewApplicationMatching(state: AuthorizationState): boolean {
+  return state.isAdministrator
+}
+
+/**
+ * `opptak` committee availability pages
+ */
+export function canManageApplicationInterviews(state: AuthorizationState): boolean {
+  return (
+    state.isAdministrator ||
+    hasRoleTypeInAnyGroup(state, GroupRoleTypeEnum.LEADER) ||
+    hasRoleTypeInAnyGroup(state, GroupRoleTypeEnum.DEPUTY_LEADER)
+  )
+}
+
+/**
+ * `opptak` interview availability for a single committee
+ */
+export function canEditApplicationGroupAvailability(state: AuthorizationState, groupId: GroupId): boolean {
+  return (
+    state.isAdministrator ||
+    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
+    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
+  )
+}
+
+/**
+ * `opptake` create/update/delete procedures
+ */
+export function canEditApplication(state: AuthorizationState): boolean {
+  return state.isAdministrator
 }
 
 /**
