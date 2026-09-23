@@ -26,4 +26,6 @@ export interface $DbEnums {
   NotificationStatus: "DRAFT" | "SENT"
   contest_result_type: "SCORE" | "DURATION" | "WINNER"
   contest_result_order: "asc" | "desc"
+  committee_application_interview_duration: "MINUTES_20" | "MINUTES_30"
+  committee_application_group_type: "EXCLUSIVE" | "ADDITIVE"
 }

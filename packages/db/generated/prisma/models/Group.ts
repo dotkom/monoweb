@@ -284,6 +284,7 @@ export type GroupWhereInput = {
   marks?: Prisma.MarkGroupListRelationFilter
   roles?: Prisma.GroupRoleListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupListRelationFilter
 }
 
 export type GroupOrderByWithRelationInput = {
@@ -310,6 +311,7 @@ export type GroupOrderByWithRelationInput = {
   marks?: Prisma.MarkGroupOrderByRelationAggregateInput
   roles?: Prisma.GroupRoleOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupOrderByRelationAggregateInput
 }
 
 export type GroupWhereUniqueInput = Prisma.AtLeast<{
@@ -339,6 +341,7 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   marks?: Prisma.MarkGroupListRelationFilter
   roles?: Prisma.GroupRoleListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupListRelationFilter
 }, "slug" | "slug" | "workspaceGroupId">
 
 export type GroupOrderByWithAggregationInput = {
@@ -411,6 +414,7 @@ export type GroupCreateInput = {
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateInput = {
@@ -437,6 +441,7 @@ export type GroupUncheckedCreateInput = {
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUpdateInput = {
@@ -463,6 +468,7 @@ export type GroupUpdateInput = {
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateInput = {
@@ -489,6 +495,7 @@ export type GroupUncheckedUpdateInput = {
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateManyInput = {
@@ -761,6 +768,20 @@ export type GroupUncheckedUpdateManyWithoutContestsNestedInput = {
   deleteMany?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
 }
 
+export type GroupCreateNestedOneWithoutApplicationPeriodGroupsInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedCreateWithoutApplicationPeriodGroupsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutApplicationPeriodGroupsInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupUpdateOneRequiredWithoutApplicationPeriodGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedCreateWithoutApplicationPeriodGroupsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutApplicationPeriodGroupsInput
+  upsert?: Prisma.GroupUpsertWithoutApplicationPeriodGroupsInput
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutApplicationPeriodGroupsInput, Prisma.GroupUpdateWithoutApplicationPeriodGroupsInput>, Prisma.GroupUncheckedUpdateWithoutApplicationPeriodGroupsInput>
+}
+
 export type GroupCreateWithoutMembershipsInput = {
   slug: string
   abbreviation: string
@@ -784,6 +805,7 @@ export type GroupCreateWithoutMembershipsInput = {
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMembershipsInput = {
@@ -809,6 +831,7 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMembershipsInput = {
@@ -850,6 +873,7 @@ export type GroupUpdateWithoutMembershipsInput = {
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMembershipsInput = {
@@ -875,6 +899,7 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutRolesInput = {
@@ -900,6 +925,7 @@ export type GroupCreateWithoutRolesInput = {
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutRolesInput = {
@@ -925,6 +951,7 @@ export type GroupUncheckedCreateWithoutRolesInput = {
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutRolesInput = {
@@ -966,6 +993,7 @@ export type GroupUpdateWithoutRolesInput = {
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutRolesInput = {
@@ -991,6 +1019,7 @@ export type GroupUncheckedUpdateWithoutRolesInput = {
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutMarksInput = {
@@ -1016,6 +1045,7 @@ export type GroupCreateWithoutMarksInput = {
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMarksInput = {
@@ -1041,6 +1071,7 @@ export type GroupUncheckedCreateWithoutMarksInput = {
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMarksInput = {
@@ -1082,6 +1113,7 @@ export type GroupUpdateWithoutMarksInput = {
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMarksInput = {
@@ -1107,6 +1139,7 @@ export type GroupUncheckedUpdateWithoutMarksInput = {
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutEventsInput = {
@@ -1132,6 +1165,7 @@ export type GroupCreateWithoutEventsInput = {
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutEventsInput = {
@@ -1157,6 +1191,7 @@ export type GroupUncheckedCreateWithoutEventsInput = {
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutEventsInput = {
@@ -1198,6 +1233,7 @@ export type GroupUpdateWithoutEventsInput = {
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutEventsInput = {
@@ -1223,6 +1259,7 @@ export type GroupUncheckedUpdateWithoutEventsInput = {
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutNotificationsInput = {
@@ -1248,6 +1285,7 @@ export type GroupCreateWithoutNotificationsInput = {
   memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutNotificationsInput = {
@@ -1273,6 +1311,7 @@ export type GroupUncheckedCreateWithoutNotificationsInput = {
   memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutNotificationsInput = {
@@ -1314,6 +1353,7 @@ export type GroupUpdateWithoutNotificationsInput = {
   memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutNotificationsInput = {
@@ -1339,6 +1379,7 @@ export type GroupUncheckedUpdateWithoutNotificationsInput = {
   memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateWithoutContestsInput = {
@@ -1364,6 +1405,7 @@ export type GroupCreateWithoutContestsInput = {
   marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutContestsInput = {
@@ -1389,6 +1431,7 @@ export type GroupUncheckedCreateWithoutContestsInput = {
   marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
   roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutContestsInput = {
@@ -1435,6 +1478,126 @@ export type GroupScalarWhereInput = {
   type?: Prisma.EnumGroupTypeFilter<"Group"> | $Enums.GroupType
 }
 
+export type GroupCreateWithoutApplicationPeriodGroupsInput = {
+  slug: string
+  abbreviation: string
+  name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
+  shortDescription?: string | null
+  description: string
+  imageUrl?: string | null
+  email?: string | null
+  contactUrl?: string | null
+  slackUrl?: string | null
+  showLeaderAsContact?: boolean
+  createdAt?: Date | string
+  deactivatedAt?: Date | string | null
+  workspaceGroupId?: string | null
+  memberVisibility?: $Enums.GroupMemberVisibility
+  recruitmentMethod?: $Enums.GroupRecruitmentMethod
+  type: $Enums.GroupType
+  events?: Prisma.EventHostingGroupCreateNestedManyWithoutGroupInput
+  contests?: Prisma.ContestCreateNestedManyWithoutGroupsInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  marks?: Prisma.MarkGroupCreateNestedManyWithoutGroupInput
+  roles?: Prisma.GroupRoleCreateNestedManyWithoutGroupInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutActorGroupInput
+}
+
+export type GroupUncheckedCreateWithoutApplicationPeriodGroupsInput = {
+  slug: string
+  abbreviation: string
+  name?: string | null
+  preferredDisplayName?: $Enums.GroupPreferredDisplayName
+  shortDescription?: string | null
+  description: string
+  imageUrl?: string | null
+  email?: string | null
+  contactUrl?: string | null
+  slackUrl?: string | null
+  showLeaderAsContact?: boolean
+  createdAt?: Date | string
+  deactivatedAt?: Date | string | null
+  workspaceGroupId?: string | null
+  memberVisibility?: $Enums.GroupMemberVisibility
+  recruitmentMethod?: $Enums.GroupRecruitmentMethod
+  type: $Enums.GroupType
+  events?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutGroupInput
+  contests?: Prisma.ContestUncheckedCreateNestedManyWithoutGroupsInput
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  marks?: Prisma.MarkGroupUncheckedCreateNestedManyWithoutGroupInput
+  roles?: Prisma.GroupRoleUncheckedCreateNestedManyWithoutGroupInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorGroupInput
+}
+
+export type GroupCreateOrConnectWithoutApplicationPeriodGroupsInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedCreateWithoutApplicationPeriodGroupsInput>
+}
+
+export type GroupUpsertWithoutApplicationPeriodGroupsInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedUpdateWithoutApplicationPeriodGroupsInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedCreateWithoutApplicationPeriodGroupsInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutApplicationPeriodGroupsInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutApplicationPeriodGroupsInput, Prisma.GroupUncheckedUpdateWithoutApplicationPeriodGroupsInput>
+}
+
+export type GroupUpdateWithoutApplicationPeriodGroupsInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slackUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showLeaderAsContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  workspaceGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  memberVisibility?: Prisma.EnumGroupMemberVisibilityFieldUpdateOperationsInput | $Enums.GroupMemberVisibility
+  recruitmentMethod?: Prisma.EnumGroupRecruitmentMethodFieldUpdateOperationsInput | $Enums.GroupRecruitmentMethod
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  events?: Prisma.EventHostingGroupUpdateManyWithoutGroupNestedInput
+  contests?: Prisma.ContestUpdateManyWithoutGroupsNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
+  roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutApplicationPeriodGroupsInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDisplayName?: Prisma.EnumGroupPreferredDisplayNameFieldUpdateOperationsInput | $Enums.GroupPreferredDisplayName
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slackUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showLeaderAsContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  workspaceGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  memberVisibility?: Prisma.EnumGroupMemberVisibilityFieldUpdateOperationsInput | $Enums.GroupMemberVisibility
+  recruitmentMethod?: Prisma.EnumGroupRecruitmentMethodFieldUpdateOperationsInput | $Enums.GroupRecruitmentMethod
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  events?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutGroupNestedInput
+  contests?: Prisma.ContestUncheckedUpdateManyWithoutGroupsNestedInput
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
+  roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+}
+
 export type GroupUpdateWithoutContestsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   abbreviation?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1458,6 +1621,7 @@ export type GroupUpdateWithoutContestsInput = {
   marks?: Prisma.MarkGroupUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutContestsInput = {
@@ -1483,6 +1647,7 @@ export type GroupUncheckedUpdateWithoutContestsInput = {
   marks?: Prisma.MarkGroupUncheckedUpdateManyWithoutGroupNestedInput
   roles?: Prisma.GroupRoleUncheckedUpdateManyWithoutGroupNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutActorGroupNestedInput
+  applicationPeriodGroups?: Prisma.CommitteeApplicationGroupUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutContestsInput = {
@@ -1517,6 +1682,7 @@ export type GroupCountOutputType = {
   marks: number
   roles: number
   notifications: number
+  applicationPeriodGroups: number
 }
 
 export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1526,6 +1692,7 @@ export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   marks?: boolean | GroupCountOutputTypeCountMarksArgs
   roles?: boolean | GroupCountOutputTypeCountRolesArgs
   notifications?: boolean | GroupCountOutputTypeCountNotificationsArgs
+  applicationPeriodGroups?: boolean | GroupCountOutputTypeCountApplicationPeriodGroupsArgs
 }
 
 /**
@@ -1580,6 +1747,13 @@ export type GroupCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.T
   where?: Prisma.NotificationWhereInput
 }
 
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountApplicationPeriodGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommitteeApplicationGroupWhereInput
+}
+
 
 export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   slug?: boolean
@@ -1605,6 +1779,7 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   marks?: boolean | Prisma.Group$marksArgs<ExtArgs>
   roles?: boolean | Prisma.Group$rolesArgs<ExtArgs>
   notifications?: boolean | Prisma.Group$notificationsArgs<ExtArgs>
+  applicationPeriodGroups?: boolean | Prisma.Group$applicationPeriodGroupsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
@@ -1676,6 +1851,7 @@ export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   marks?: boolean | Prisma.Group$marksArgs<ExtArgs>
   roles?: boolean | Prisma.Group$rolesArgs<ExtArgs>
   notifications?: boolean | Prisma.Group$notificationsArgs<ExtArgs>
+  applicationPeriodGroups?: boolean | Prisma.Group$applicationPeriodGroupsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1690,6 +1866,7 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     marks: Prisma.$MarkGroupPayload<ExtArgs>[]
     roles: Prisma.$GroupRolePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    applicationPeriodGroups: Prisma.$CommitteeApplicationGroupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     slug: string
@@ -2109,6 +2286,7 @@ export interface Prisma__GroupClient<T, Null = never, ExtArgs extends runtime.Ty
   marks<T extends Prisma.Group$marksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$marksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MarkGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   roles<T extends Prisma.Group$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Group$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  applicationPeriodGroups<T extends Prisma.Group$applicationPeriodGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$applicationPeriodGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2698,6 +2876,30 @@ export type Group$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * Group.applicationPeriodGroups
+ */
+export type Group$applicationPeriodGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommitteeApplicationGroup
+   */
+  select?: Prisma.CommitteeApplicationGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommitteeApplicationGroup
+   */
+  omit?: Prisma.CommitteeApplicationGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommitteeApplicationGroupInclude<ExtArgs> | null
+  where?: Prisma.CommitteeApplicationGroupWhereInput
+  orderBy?: Prisma.CommitteeApplicationGroupOrderByWithRelationInput | Prisma.CommitteeApplicationGroupOrderByWithRelationInput[]
+  cursor?: Prisma.CommitteeApplicationGroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommitteeApplicationGroupScalarFieldEnum | Prisma.CommitteeApplicationGroupScalarFieldEnum[]
 }
 
 /**
