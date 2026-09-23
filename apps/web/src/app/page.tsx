@@ -11,6 +11,7 @@ import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
 import { BirthdayPartyNotice } from "@/components/notices/birthday-party-notice"
+import { ActiveApplicationSection } from "@/components/activeapplicationsection"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -56,6 +57,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
+        <ActiveApplicationSection/>
         <BirthdayPartyNotice
           start={TZDate.tz("Europe/Oslo", 2026, 8, 14, 0, 0, 0)}
           end={TZDate.tz("Europe/Oslo", 2026, 8, 20, 23, 59, 59)}
