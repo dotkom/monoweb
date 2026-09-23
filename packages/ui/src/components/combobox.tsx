@@ -189,7 +189,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex h-9 w-full min-w-0 flex-wrap items-center gap-1 px-3 py-1.5 text-base md:text-sm",
+        "flex h-9 w-full min-w-0 flex-wrap items-center gap-1 px-3 py-1.5 text-base",
         "has-data-[slot=combobox-chip]:px-1",
         fieldControlClass,
         fieldPrimarySurfaceClass,
@@ -238,7 +238,7 @@ function ComboboxChipsInput({ className, ...props }: ComboboxPrimitive.Input.Pro
     <ComboboxPrimitive.Input
       data-slot="combobox-chip-input"
       className={cn(
-        "min-w-16 flex-1 bg-transparent outline-none placeholder:text-muted-foreground text-base md:text-sm",
+        "min-w-16 flex-1 bg-transparent outline-none placeholder:text-muted-foreground text-base",
         className
       )}
       {...props}

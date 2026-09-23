@@ -1,85 +1,38 @@
 "use client"
 
+import { useGroupPermissions } from "@/app/(internal)/grupper/use-group-permissions"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import { useGroupPermissions } from "@/hooks/use-group-permissions"
-import { CloseButton, Group, Stack, Tabs, Title } from "@mantine/core"
-import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { GroupEditCard } from "./edit-card"
-import { GroupEventPage } from "./group-event-page"
-import { GroupMembersPage } from "./members-page"
+import { GroupWorkspaceLinkCard } from "../components/GroupWorkspaceLinkCard"
+import { GroupWriteForm } from "../components/GroupWriteForm"
+import { useUpdateGroupMutation } from "../mutations"
 import { useGroupDetailsContext } from "./provider"
-import { GroupRolesPage } from "./roles-page"
 
-const SIDEBAR_LINKS = [
-  {
-    icon: IconListDetails,
-    label: "Info",
-    slug: "info",
-    component: GroupEditCard,
-  },
-  {
-    icon: IconUsers,
-    label: "Medlemmer",
-    slug: "medlemmer",
-    component: GroupMembersPage,
-  },
-  {
-    icon: IconCircles,
-    label: "Roller",
-    slug: "roller",
-    component: GroupRolesPage,
-  },
-  {
-    icon: IconWheelchair,
-    label: "Arrangementer",
-    slug: "arrangementer",
-    component: GroupEventPage,
-  },
-] as const
-
-export default function GroupDetailsPage() {
-  const router = useRouter()
+export default function GroupInfoPage() {
   const { group } = useGroupDetailsContext()
-  const { canEdit } = useGroupPermissions()
-
-  const searchParams = useSearchParams()
-  const currentTab = searchParams.get("tab") || SIDEBAR_LINKS[0].slug
-
-  const handleTabChange = (value: string | null) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set("tab", value ?? SIDEBAR_LINKS[0].slug)
-    router.replace(`/grupper/${group.slug}?${params.toString()}`)
-  }
+  const edit = useUpdateGroupMutation()
+  const { canUpdate, canEdit } = useGroupPermissions()
 
   return (
-    <Stack>
-      <Group>
-        <CloseButton onClick={() => router.back()} />
-        <Title>{group.name}</Title>
-      </Group>
-
-      {!canEdit && (
+    <div className="flex flex-col gap-4">
+      {!canUpdate && canEdit && (
         <ReadOnlyNotice
-          title="Du kan ikke redigere gruppen."
-          message="Dette er fordi du ikke er medlem av gruppen. Kontakt dotkom dersom du mener dette er en feil."
+          title="Du kan ikke redigere gruppen"
+          message="Dette er fordi du ikke er et medlem av gruppen. Kontakt dotkom dersom du mener dette er en feil."
         />
       )}
 
-      <Tabs defaultValue={currentTab} onChange={handleTabChange}>
-        <Tabs.List>
-          {SIDEBAR_LINKS.map(({ label, icon: Icon, slug }) => (
-            <Tabs.Tab key={slug} value={slug} leftSection={<Icon width={14} height={14} />}>
-              {label}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-        {SIDEBAR_LINKS.map(({ slug, component: Component }) => (
-          <Tabs.Panel mt="md" key={slug} value={slug}>
-            <Component />
-          </Tabs.Panel>
-        ))}
-      </Tabs>
-    </Stack>
+      <GroupWorkspaceLinkCard group={group} />
+      <GroupWriteForm
+        submitLabel="Oppdater gruppe"
+        disabled={!canUpdate}
+        onSubmit={(data) => {
+          edit.mutate({
+            id: group.slug,
+            values: data,
+          })
+        }}
+        defaultValues={group}
+      />
+    </div>
   )
 }

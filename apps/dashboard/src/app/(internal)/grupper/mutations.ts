@@ -5,10 +5,12 @@ import { env } from "@/lib/env"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 export const useCreateGroupMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const router = useRouter()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -26,6 +28,8 @@ export const useCreateGroupMutation = () => {
         })
 
         await queryClient.invalidateQueries(trpc.group.all.queryOptions())
+
+        router.replace(`/grupper/${data.slug}`)
       },
       onError: (err) => {
         notification.fail({
@@ -40,6 +44,7 @@ export const useCreateGroupMutation = () => {
 export const useDeleteGroupMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const router = useRouter()
   const notification = useQueryNotification()
 
   return useMutation(
@@ -57,6 +62,8 @@ export const useDeleteGroupMutation = () => {
         })
 
         await queryClient.invalidateQueries(trpc.group.all.queryOptions())
+
+        router.replace("/grupper")
       },
       onError: (err) => {
         notification.fail({
