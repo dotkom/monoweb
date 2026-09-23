@@ -1,4 +1,5 @@
 export * from "./atoms/Badge/Badge"
+export * from "./atoms/Breadcrumb/Breadcrumb"
 export * from "./atoms/Button/Button"
 export * from "./atoms/Checkbox/Checkbox"
 export * from "./atoms/Combobox/Combobox"

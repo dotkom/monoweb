@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@mantine/core"
+import { Button } from "@dotkomonline/ui"
 import * as Sentry from "@sentry/nextjs"
 
 export default function ErrorBoundary({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {

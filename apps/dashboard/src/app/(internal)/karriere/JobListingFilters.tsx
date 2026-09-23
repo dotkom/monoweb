@@ -1,9 +1,9 @@
 import { Form } from "@/components/forms/new-form/Form"
 import { SearchField } from "@/components/forms/SearchField"
 import type { JobListingFilterQuery } from "@dotkomonline/rpc/job-listing"
-import { useDebouncedValue } from "@mantine/hooks"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
+import { useDebounce } from "use-debounce"
 
 interface Props {
   onChange(filters: JobListingFilterQuery): void
@@ -15,7 +15,7 @@ export const JobListingFilters = ({ onChange, defaultValues }: Props) => {
     defaultValues,
   })
   const data = useWatch(form) as JobListingFilterQuery
-  const [debouncedData] = useDebouncedValue(data, 300)
+  const [debouncedData] = useDebounce(data, 300)
 
   useEffect(() => {
     onChange(debouncedData)

@@ -2,7 +2,7 @@
 
 import type { AuditLog } from "@dotkomonline/rpc/audit-log"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
-import { useComputedColorScheme } from "@mantine/core"
+import { useTheme } from "next-themes"
 import { DiffMethod, StringDiff } from "react-string-diff"
 import "./audit-log-diff.css"
 
@@ -12,8 +12,8 @@ interface Props {
 }
 
 export const AuditLogDetails = ({ auditLog, view = "json" }: Props) => {
-  // TODO: Remove useComputedColorScheme when Mantine is fully removed from dashboard
-  const isDark = useComputedColorScheme() === "dark"
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === "dark"
 
   const diffStyles = {
     added: {
