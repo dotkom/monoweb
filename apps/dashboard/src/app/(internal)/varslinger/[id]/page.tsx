@@ -202,20 +202,16 @@ export default function NotificationDetailsPage() {
               <div className="flex items-center gap-1.5">
                 <IconMailOpened size={16} className="text-muted-foreground" />
                 <Text className="text-sm">
-                  {statsQuery.data.readCount} lest{" "}
-                  <span className="text-muted-foreground">
-                    ({formatPercent(statsQuery.data.readCount, statsQuery.data.totalCount)})
-                  </span>
+                  {formatPercent(statsQuery.data.readCount, statsQuery.data.totalCount)} lest{" "}
+                  <span className="text-muted-foreground">({statsQuery.data.readCount})</span>
                 </Text>
               </div>
 
               <div className="flex items-center gap-1.5">
                 <IconMail size={16} className="text-muted-foreground" />
                 <Text className="text-sm">
-                  {statsQuery.data.unreadCount} ulest{" "}
-                  <span className="text-muted-foreground">
-                    ({formatPercent(statsQuery.data.unreadCount, statsQuery.data.totalCount)})
-                  </span>
+                  {formatPercent(statsQuery.data.unreadCount, statsQuery.data.totalCount)} ulest{" "}
+                  <span className="text-muted-foreground">({statsQuery.data.unreadCount})</span>
                 </Text>
               </div>
             </div>
