@@ -1,3 +1,4 @@
+import { useCompanyAllInfiniteQuery } from "@/app/(internal)/bedrifter/queries"
 import { createCheckboxInput } from "@/components/forms/CheckboxInput"
 import { createDateTimeInput } from "@/components/forms/DateTimeInput"
 import { useFormBuilder } from "@/components/forms/Form"
@@ -15,7 +16,6 @@ import {
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addWeeks, roundToNearestHours } from "date-fns"
 import type { z } from "zod"
-import { useCompanyAllQuery } from "@/app/(internal)/bedrifter/queries"
 import { useJobListingAllLocationsQuery } from "./queries/use-job-listing-locations-all-query"
 
 const nextHour = roundToNearestHours(getCurrentUTC(), { roundingMethod: "ceil" })
@@ -43,7 +43,7 @@ export const useJobListingWriteForm = ({
   label = "Registrer ny stillingsannonse",
   defaultValues = JOBLISTING_FORM_DEFAULT_VALUES,
 }: UseJobListingWriteFormProps) => {
-  const { companies } = useCompanyAllQuery()
+  const { companies } = useCompanyAllInfiniteQuery({ page: { take: 1000 }, filter: {} })
   const { locations } = useJobListingAllLocationsQuery()
 
   return useFormBuilder({

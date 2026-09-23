@@ -1,12 +1,20 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { type Company, type CompanyId, CompanySchema, type CompanySlug, type CompanyWrite } from "./company"
-import { parseOrReport } from "../../invariant"
 import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { parseOrReport } from "../../invariant"
+import {
+  type Company,
+  COMPANY_FILTER_SORT_DEFAULT,
+  type CompanyFilterQuery,
+  type CompanyId,
+  CompanySchema,
+  type CompanySlug,
+  type CompanyWrite,
+} from "./company"
 
 export interface CompanyRepository {
   findById(handle: DBHandle, companyId: CompanyId): Promise<Company | null>
   findBySlug(handle: DBHandle, companySlug: CompanySlug): Promise<Company | null>
-  findMany(handle: DBHandle, page: Pageable): Promise<Company[]>
+  findMany(handle: DBHandle, filter: CompanyFilterQuery, page: Pageable): Promise<Company[]>
   create(handle: DBHandle, data: CompanyWrite): Promise<Company>
   update(handle: DBHandle, companyId: CompanyId, data: Partial<CompanyWrite>): Promise<Company>
 }
@@ -23,8 +31,23 @@ export function getCompanyRepository(): CompanyRepository {
       return parseOrReport(CompanySchema.nullable(), company)
     },
 
-    async findMany(handle, page) {
-      const companies = await handle.company.findMany({ ...pageQuery(page) })
+    async findMany(handle, filter, page) {
+      const sortBy = filter.sortBy ?? COMPANY_FILTER_SORT_DEFAULT
+      const sortOrder = filter.orderBy ?? "asc"
+
+      const companies = await handle.company.findMany({
+        ...pageQuery(page),
+        orderBy: { [sortBy]: sortOrder },
+        where: {
+          name:
+            filter.bySearchTerm !== null
+              ? {
+                  contains: filter.bySearchTerm,
+                  mode: "insensitive",
+                }
+              : undefined,
+        },
+      })
       return parseOrReport(CompanySchema.array(), companies)
     },
 
