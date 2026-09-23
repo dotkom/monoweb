@@ -2,31 +2,42 @@
 
 import { useAuthorization } from "@/auth/authorization-context"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
-import { GenericTable } from "@/components/GenericTable"
-import { Box, Button, Skeleton, Stack } from "@mantine/core"
-import { useCreateOfflineModal } from "./modals/create-offline-modal"
-import { useOfflineAllQuery } from "./queries/use-offlines-all-query"
-import { useOfflineTable } from "./use-offline-table"
+import { Button, Title } from "@dotkomonline/ui"
+import { IconPencil } from "@tabler/icons-react"
+import Link from "next/link"
+import { OfflineTable } from "./OfflineTable"
+import { useOfflineAllQuery } from "./queries"
 
 export default function OfflinePage() {
-  const { offlines, isLoading: isOfflinesLoading } = useOfflineAllQuery()
+  const { offlines, isLoading } = useOfflineAllQuery()
   const { canEditOffline } = useAuthorization()
   const canEdit = canEditOffline()
-  const open = useCreateOfflineModal()
-  const table = useOfflineTable({ data: offlines })
 
   return (
-    <Skeleton visible={isOfflinesLoading}>
-      <Stack>
-        <Box>
+    <div className="flex flex-col gap-4">
+      <Title element="h1" className="text-4xl">
+        Offline
+      </Title>
+
+      <OfflineTable
+        offlines={offlines}
+        canEdit={canEdit}
+        actions={
           <PermissionTooltip allowed={canEdit}>
-            <Button onClick={open} disabled={!canEdit}>
-              Legg inn ny Offline
+            <Button
+              variant="default"
+              size="lg"
+              element={Link}
+              href="/offline/ny"
+              icon={<IconPencil />}
+              disabled={!canEdit}
+            >
+              Ny Offline
             </Button>
           </PermissionTooltip>
-        </Box>
-        <GenericTable table={table} />
-      </Stack>
-    </Skeleton>
+        }
+        isLoading={isLoading}
+      />
+    </div>
   )
 }

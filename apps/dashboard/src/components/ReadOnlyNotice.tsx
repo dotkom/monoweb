@@ -1,4 +1,4 @@
-import { Alert } from "@mantine/core"
+import { Alert } from "@dotkomonline/ui"
 import { IconEye } from "@tabler/icons-react"
 import type { ReactNode } from "react"
 
@@ -10,7 +10,7 @@ interface ReadOnlyNoticeProps {
 
 export const ReadOnlyNotice = ({ title, message = "Du har ikke skrivetilgang.", className }: ReadOnlyNoticeProps) => {
   return (
-    <Alert title={title} icon={<IconEye size={24} />} color="blue" variant="light" className={className}>
+    <Alert title={title} icon={<IconEye size={24} />} status="info" className={className}>
       {message}
     </Alert>
   )

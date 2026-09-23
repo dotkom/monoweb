@@ -14,7 +14,6 @@ import { CreateGroupRoleModal } from "@/app/(internal)/grupper/modals/create-gro
 import { EditGroupMembershipModal } from "@/app/(internal)/grupper/modals/edit-group-membership-modal"
 import { EditGroupRoleModal } from "@/app/(internal)/grupper/modals/edit-group-role-modal"
 import { CreateJobListingModal } from "@/app/(internal)/karriere//modals/create-job-listing-modal"
-import { CreateOfflineModal } from "@/app/(internal)/offline/modals/create-offline-modal"
 import { CreateMarkModal } from "@/app/(internal)/prikker/modals/create-mark-modal"
 import { CreateSuspensionModal } from "@/app/(internal)/prikker/modals/create-suspension-modal"
 import { CreateMembershipModal } from "@/app/(internal)/brukere/components/create-membership-modal"
@@ -39,7 +38,6 @@ const modals = {
   "event/attendance/pool/create": CreatePoolModal,
   "event/attendance/pool/update": EditPoolModal,
   "jobListing/create": CreateJobListingModal,
-  "offline/create": CreateOfflineModal,
   "attendance/selections/create": CreateAttendanceSelectionsModal,
   "attendance/selections/update": UpdateAttendanceSelectionsModal,
   "group/create": CreateGroupModal,
