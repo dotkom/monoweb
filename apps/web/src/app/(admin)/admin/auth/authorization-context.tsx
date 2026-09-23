@@ -1,5 +1,15 @@
 "use client"
 
+import { useSimulatedAuthorization } from "@admin/opptak/ForTestingRoleSimulation"
+import {
+  canEditApplication,
+  canEditApplicationGroupAvailability,
+  canManageApplicationInterviews,
+  canViewApplication,
+  canViewApplicationGroup,
+  canViewApplicationMatching,
+  isApplicationGroupMember,
+} from "./permissions"
 import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
 import {
   isAdministrator as isAdministratorAffiliation,
@@ -22,7 +32,20 @@ export type Authorization = AffiliatedPrincipalWithSubject & {
   groups: Map<GroupId, GroupType>
 }
 
-const AuthorizationContext = createContext<Authorization | null>(null)
+const AuthorizationContext = createContext<ReturnType<typeof createAuthorization> | null>(null)
+
+function createAuthorization(state: Authorization) {
+  return {
+    ...state,
+    canViewApplication: () => canViewApplication(state),
+    canManageApplicationInterviews: () => canManageApplicationInterviews(state),
+    canViewApplicationMatching: () => canViewApplicationMatching(state),
+    canEditApplicationGroupAvailability: (groupId: GroupId) => canEditApplicationGroupAvailability(state, groupId),
+    canViewApplicationGroup: (groupId: GroupId) => canViewApplicationGroup(state, groupId),
+    isApplicationGroupMember: (groupId: GroupId) => isApplicationGroupMember(state, groupId),
+    canEditApplication: () => canEditApplication(state),
+  }
+}
 
 function toAffiliationsMap(affiliations: Record<GroupId, GroupRoleType[]>): Map<GroupId, Set<GroupRoleType>> {
   const affiliationsMap = new Map<GroupId, Set<GroupRoleType>>()
@@ -44,22 +67,24 @@ export function AuthorizationProvider({
   affiliations,
   groups,
 }: PropsWithChildren<AuthorizationProviderProps>) {
+  const simulatedAuthorization = useSimulatedAuthorization()
+  const effectiveAffiliations = simulatedAuthorization?.affiliations ?? affiliations
   const value = useMemo(() => {
-    const affiliationsMap = toAffiliationsMap(affiliations)
+    const affiliationsMap = toAffiliationsMap(effectiveAffiliations)
 
-    return {
+    return createAuthorization({
       subject,
       affiliations: affiliationsMap,
       groups: toGroupTypeMap(groups),
-      isAdministrator: isAdministratorAffiliation(affiliationsMap),
-      isCommitteeMember: isCommitteeMemberAffiliation(affiliationsMap),
-    } satisfies Authorization
-  }, [affiliations, groups, subject])
+      isAdministrator: simulatedAuthorization?.isAdministrator ?? isAdministratorAffiliation(affiliationsMap),
+      isCommitteeMember: simulatedAuthorization?.isCommitteeMember ?? isCommitteeMemberAffiliation(affiliationsMap),
+    })
+  }, [effectiveAffiliations, groups, subject, simulatedAuthorization])
 
   return <AuthorizationContext.Provider value={value}>{children}</AuthorizationContext.Provider>
 }
 
-export function useAuthorization(): Authorization {
+export function useAuthorization() {
   const context = useContext(AuthorizationContext)
 
   if (context === null) {
