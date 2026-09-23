@@ -1,6 +1,7 @@
 import { getServerSession } from "@/lib/auth"
 import { env } from "@/lib/env"
 import { getServerAuthorization } from "@/lib/server-authorization"
+import { ThemeProvider } from "next-themes"
 import { redirect } from "next/navigation"
 import type { PropsWithChildren } from "react"
 
@@ -17,5 +18,9 @@ export default async function Layout({ children }: PropsWithChildren) {
     return redirect(env.NEXT_PUBLIC_WEB_URL)
   }
 
-  return children
+  return (
+    <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+      {children}
+    </ThemeProvider>
+  )
 }

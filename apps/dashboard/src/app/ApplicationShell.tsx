@@ -26,7 +26,6 @@ import {
   Stack,
   Text,
   Title,
-  useMantineColorScheme,
 } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import {
@@ -47,6 +46,7 @@ import {
 } from "@tabler/icons-react"
 import { useAuthorization } from "@/auth/authorization-context"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import { type FC, useEffect } from "react"
 import { z } from "zod"
@@ -143,7 +143,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const pathname = usePathname()
-  const { toggleColorScheme } = useMantineColorScheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const {
     isLoading: authLoading,
     isInvalid,
@@ -193,7 +193,17 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
               </Group>
             ) : (
               <>
-                <Button onClick={toggleColorScheme} variant="outline" visibleFrom="xs">
+                <Button
+                  onClick={() => {
+                    if (resolvedTheme === "dark") {
+                      setTheme("light")
+                    } else {
+                      setTheme("dark")
+                    }
+                  }}
+                  variant="outline"
+                  visibleFrom="xs"
+                >
                   Bytt fargetema
                 </Button>
                 <Button component="a" variant="outline" href="/api/auth/logout" visibleFrom="xs">
