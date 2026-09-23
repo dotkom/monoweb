@@ -104,7 +104,7 @@ const links: MenuLink[] = [
         title: "Kontoret",
         href: "/kontoret",
         icon: IconSofa,
-        description: "Informasjon om kontoret og varetelling i kiosken"
+        description: "Informasjon om kontoret og varetelling i kiosken",
       },
     ],
   },

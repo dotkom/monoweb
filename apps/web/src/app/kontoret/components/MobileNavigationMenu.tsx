@@ -18,8 +18,7 @@ import { navigationItems } from "./NavigationMenu"
 export const MobileNavigationMenu = () => {
   const pathname = usePathname()
 
-  const currentLink =
-    navigationItems.find((item) => pathname.startsWith(item.slug)) ?? navigationItems[0]
+  const currentLink = navigationItems.find((item) => pathname.startsWith(item.slug)) ?? navigationItems[0]
   const [open, setOpen] = useState(false)
 
   const CurrentIcon = currentLink.icon
