@@ -125,6 +125,7 @@ model User {
   contestTeams          ContestTeam[]           @relation("ContestTeamMember")
   userFlagLinks         UserFlagLink[]
   birthdayPartyGuess    BirthdayPartyGuess?
+  applications          Application[]
 
   @@map("ow_user")
 }
@@ -202,12 +203,13 @@ model Group {
   recruitmentMethod    GroupRecruitmentMethod    @default(NONE) @map("recruitment_method")
   type                 GroupType
 
-  events        EventHostingGroup[]
-  contests      Contest[]           @relation("ContestOrganizerGroups")
-  memberships   GroupMembership[]
-  marks         MarkGroup[]
-  roles         GroupRole[]
-  notifications Notification[]
+  events                  EventHostingGroup[]
+  contests                Contest[]                @relation("ContestOrganizerGroups")
+  memberships             GroupMembership[]
+  marks                   MarkGroup[]
+  roles                   GroupRole[]
+  notifications           Notification[]
+  applicationPeriodGroups ApplicationPeriodGroup[]
 
   @@map("group")
 }
@@ -1008,4 +1010,133 @@ model BirthdayPartyGuess {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("birthday_party_guess")
+}
+
+model ApplicationPeriod {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  name      String
+
+  applicationsOpenStartDate DateTime @map("start_date") @db.Timestamptz(3)
+  applicationsOpenEndDate   DateTime @map("end_date") @db.Timestamptz(3)
+  interviewStartDate        DateTime @map("interview_start_date") @db.Timestamptz(3)
+  interviewEndDate          DateTime @map("interview_end_date") @db.Timestamptz(3)
+
+  isDraft Boolean @default(true) @map("is_draft")
+
+  applications Application[]
+  groups       ApplicationPeriodGroup[]
+
+  @@map("application_period")
+}
+
+enum InterviewLength {
+  THIRTY_MINUTES  @map("THIRTY_MINUTES")
+  TWENTY_MINUTES  @map("TWENTY_MINUTES")
+  FIFTEEN_MINUTES @map("FIFTEEN_MINUTES")
+}
+
+model ApplicationPeriodGroup {
+  id                  String                  @id @default(uuid())
+  createdAt           DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  groupId             String                  @map("group_id")
+  group               Group                   @relation(fields: [groupId], references: [slug])
+  applicationPeriodId String                  @map("application_period_id")
+  applicationPeriod   ApplicationPeriod       @relation(fields: [applicationPeriodId], references: [id])
+  interviewLength     InterviewLength         @map("interview_length")
+  preferences         ApplicationPreference[]
+  bookedRooms         BookedRoom[]
+
+  @@unique([applicationPeriodId, groupId])
+  @@map("application_period_group")
+}
+
+enum ApplicationExtraInterest {
+  REALFAGSKJELLERER @map("REALFAGSKJELLERER")
+  FEMINIT
+  DOTDAGENE
+}
+
+model Application {
+  id                           String            @id @default(uuid())
+  createdAt                    DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                    DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  userId                       String            @map("user_id")
+  user                         User              @relation(fields: [userId], references: [id])
+  applicationPeriodId          String            @map("application_period_id")
+  applicationPeriod            ApplicationPeriod @relation(fields: [applicationPeriodId], references: [id])
+  aboutMe                      String?           @map("about_me")
+  isInterestedInBeingTreasurer Boolean           @default(false) @map("is_interested_in_being_treasurer")
+
+  extraInterest      ApplicationExtraInterest[]
+  preferences        ApplicationPreference[]
+  availabilityBlocks ApplicationAvailability[]
+
+  @@unique([userId, applicationPeriodId])
+  @@map("application")
+}
+
+model ApplicationPreference {
+  id                       String                 @id @default(uuid())
+  createdAt                DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  rank                     Int
+  applicationId            String                 @map("application_id")
+  application              Application            @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationPeriodGroupId String                 @map("application_period_group_id")
+  applicationPeriodGroup   ApplicationPeriodGroup @relation(fields: [applicationPeriodGroupId], references: [id])
+  interview                ScheduledInterview?
+
+  @@unique([applicationId, rank])
+  @@unique([applicationId, applicationPeriodGroupId])
+  @@map("application_preference")
+}
+
+model ApplicationAvailability {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  start DateTime @map("start") @db.Timestamptz(3)
+  end   DateTime @map("end") @db.Timestamptz(3)
+
+  applicationId String      @map("application_id")
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("application_availability")
+}
+
+model ScheduledInterview {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  start DateTime @map("start") @db.Timestamptz(3)
+  end   DateTime @map("end") @db.Timestamptz(3)
+
+  applicationPreferenceId String                @unique @map("application_preference_id")
+  applicationPreference   ApplicationPreference @relation(fields: [applicationPreferenceId], references: [id], onDelete: Cascade)
+
+  bookedRoomId String     @map("booked_room_id")
+  bookedRoom   BookedRoom @relation(fields: [bookedRoomId], references: [id])
+
+  @@map("scheduled_interview")
+}
+
+model BookedRoom {
+  id                       String                 @id @default(uuid())
+  createdAt                DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  startTime                DateTime               @map("start_time") @db.Timestamptz(3)
+  endTime                  DateTime               @map("end_time") @db.Timestamptz(3)
+  name                     String                 @map("name")
+  mazemapLink              String?                @map("mazemap_link")
+  applicationPeriodGroupId String                 @map("application_period_group_id")
+  applicationPeriodGroup   ApplicationPeriodGroup @relation(fields: [applicationPeriodGroupId], references: [id])
+
+  scheduledInterviews ScheduledInterview[]
+
+  @@map("booked_room")
 }

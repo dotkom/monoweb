@@ -93,7 +93,14 @@ export const ModelName = {
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
   UserFlagLink: 'UserFlagLink',
-  BirthdayPartyGuess: 'BirthdayPartyGuess'
+  BirthdayPartyGuess: 'BirthdayPartyGuess',
+  ApplicationPeriod: 'ApplicationPeriod',
+  ApplicationPeriodGroup: 'ApplicationPeriodGroup',
+  Application: 'Application',
+  ApplicationPreference: 'ApplicationPreference',
+  ApplicationAvailability: 'ApplicationAvailability',
+  ScheduledInterview: 'ScheduledInterview',
+  BookedRoom: 'BookedRoom'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -695,6 +702,98 @@ export const BirthdayPartyGuessScalarFieldEnum = {
 } as const
 
 export type BirthdayPartyGuessScalarFieldEnum = (typeof BirthdayPartyGuessScalarFieldEnum)[keyof typeof BirthdayPartyGuessScalarFieldEnum]
+
+
+export const ApplicationPeriodScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  applicationsOpenStartDate: 'applicationsOpenStartDate',
+  applicationsOpenEndDate: 'applicationsOpenEndDate',
+  interviewStartDate: 'interviewStartDate',
+  interviewEndDate: 'interviewEndDate',
+  isDraft: 'isDraft'
+} as const
+
+export type ApplicationPeriodScalarFieldEnum = (typeof ApplicationPeriodScalarFieldEnum)[keyof typeof ApplicationPeriodScalarFieldEnum]
+
+
+export const ApplicationPeriodGroupScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  groupId: 'groupId',
+  applicationPeriodId: 'applicationPeriodId',
+  interviewLength: 'interviewLength'
+} as const
+
+export type ApplicationPeriodGroupScalarFieldEnum = (typeof ApplicationPeriodGroupScalarFieldEnum)[keyof typeof ApplicationPeriodGroupScalarFieldEnum]
+
+
+export const ApplicationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  applicationPeriodId: 'applicationPeriodId',
+  aboutMe: 'aboutMe',
+  isInterestedInBeingTreasurer: 'isInterestedInBeingTreasurer',
+  extraInterest: 'extraInterest'
+} as const
+
+export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
+
+
+export const ApplicationPreferenceScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  rank: 'rank',
+  applicationId: 'applicationId',
+  applicationPeriodGroupId: 'applicationPeriodGroupId'
+} as const
+
+export type ApplicationPreferenceScalarFieldEnum = (typeof ApplicationPreferenceScalarFieldEnum)[keyof typeof ApplicationPreferenceScalarFieldEnum]
+
+
+export const ApplicationAvailabilityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  start: 'start',
+  end: 'end',
+  applicationId: 'applicationId'
+} as const
+
+export type ApplicationAvailabilityScalarFieldEnum = (typeof ApplicationAvailabilityScalarFieldEnum)[keyof typeof ApplicationAvailabilityScalarFieldEnum]
+
+
+export const ScheduledInterviewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  start: 'start',
+  end: 'end',
+  applicationPreferenceId: 'applicationPreferenceId',
+  bookedRoomId: 'bookedRoomId'
+} as const
+
+export type ScheduledInterviewScalarFieldEnum = (typeof ScheduledInterviewScalarFieldEnum)[keyof typeof ScheduledInterviewScalarFieldEnum]
+
+
+export const BookedRoomScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  name: 'name',
+  mazemapLink: 'mazemapLink',
+  applicationPeriodGroupId: 'applicationPeriodGroupId'
+} as const
+
+export type BookedRoomScalarFieldEnum = (typeof BookedRoomScalarFieldEnum)[keyof typeof BookedRoomScalarFieldEnum]
 
 
 export const SortOrder = {

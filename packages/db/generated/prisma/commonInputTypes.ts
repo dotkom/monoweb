@@ -671,6 +671,23 @@ export type EnumContestResultOrderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
 }
 
+export type EnumInterviewLengthFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterviewLength | Prisma.EnumInterviewLengthFieldRefInput<$PrismaModel>
+  in?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel> | $Enums.InterviewLength
+}
+
+export type EnumInterviewLengthWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterviewLength | Prisma.EnumInterviewLengthFieldRefInput<$PrismaModel>
+  in?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterviewLengthWithAggregatesFilter<$PrismaModel> | $Enums.InterviewLength
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1285,6 +1302,23 @@ export type NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+}
+
+export type NestedEnumInterviewLengthFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterviewLength | Prisma.EnumInterviewLengthFieldRefInput<$PrismaModel>
+  in?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel> | $Enums.InterviewLength
+}
+
+export type NestedEnumInterviewLengthWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterviewLength | Prisma.EnumInterviewLengthFieldRefInput<$PrismaModel>
+  in?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterviewLength[] | Prisma.ListEnumInterviewLengthFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterviewLengthWithAggregatesFilter<$PrismaModel> | $Enums.InterviewLength
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInterviewLengthFilter<$PrismaModel>
 }
 
 
