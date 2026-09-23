@@ -1,17 +1,27 @@
-import { GenericTable } from "@/components/GenericTable"
+import { DataTable } from "@/components/DataTable"
+import { DateTooltip } from "@/components/DateTooltip"
 import type { AuditLog } from "@dotkomonline/rpc/audit-log"
-import { Anchor, Text } from "@mantine/core"
+import { Text, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
-import Link from "next/link"
 import { useMemo } from "react"
 
 interface Props {
-  audit_logs: AuditLog[]
-  onLoadMore?(): void
+  auditLogs: AuditLog[]
+  isLoading: boolean
+  isPlaceholderData: boolean
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  fetchNextPage: () => void
 }
 
-export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
+export const AuditLogTable = ({
+  auditLogs,
+  isLoading,
+  isPlaceholderData,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+}: Props) => {
   const columnHelper = createColumnHelper<AuditLog>()
   const columns = useMemo(
     () => [
@@ -20,53 +30,49 @@ export const AuditLogsTable = ({ audit_logs, onLoadMore }: Props) => {
         sortingFn: "alphanumeric",
         cell: (info) => {
           return info.getValue() ? (
-            <Anchor component={Link} size="sm" href={`/brukere/${info.row.original.userId}`}>
-              {info.getValue()?.name}
-            </Anchor>
+            <TextLink href={`/brukere/${info.row.original.userId}`}>{info.getValue()?.name}</TextLink>
           ) : (
             <Text size="sm">System</Text>
           )
         },
       }),
-
       columnHelper.accessor("createdAt", {
         header: () => "Tidspunkt",
         sortingFn: "alphanumeric",
-        cell: (info) => formatDate(info.getValue(), "dd.MM.yyyy HH:mm"),
+        cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
-
       columnHelper.accessor("operation", {
         header: () => "Handling",
         sortingFn: "alphanumeric",
         cell: (info) => info.getValue(),
       }),
-
       columnHelper.accessor("tableName", {
         sortingFn: "alphanumeric",
         header: () => "Type",
         cell: (info) => info.getValue(),
       }),
-
       columnHelper.accessor("id", {
         header: () => "Detaljer",
-
-        cell: (info) => (
-          <Anchor component={Link} size="sm" href={`/logg/${info.getValue()}`}>
-            Se detaljer
-          </Anchor>
-        ),
+        cell: (info) => <TextLink href={`/logg/${info.getValue()}`}>Se detaljer</TextLink>,
       }),
     ],
     [columnHelper]
   )
-  const tableOptions = useMemo(
-    () => ({
-      data: audit_logs,
-      getCoreRowModel: getCoreRowModel(),
-      columns,
-    }),
-    [audit_logs, columns]
-  )
 
-  return <GenericTable table={useReactTable(tableOptions)} onLoadMore={onLoadMore} />
+  const table = useReactTable({
+    data: auditLogs,
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+  })
+
+  return (
+    <DataTable
+      table={table}
+      isLoading={isLoading}
+      isPlaceholderData={isPlaceholderData}
+      isFetchingNextPage={isFetchingNextPage}
+      hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
+    />
+  )
 }

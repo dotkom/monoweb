@@ -1,6 +1,6 @@
-import { AuditLogFilters } from "@/app/(internal)/logg/components/audit-log-filters"
+import { AuditLogFilters } from "@/app/(internal)/logg/AuditLogFilters"
+import { AuditLogTable } from "@/app/(internal)/logg/AuditLogTable"
 import { useAuditLogSearchQuery } from "@/app/(internal)/logg/queries"
-import { AuditLogsTable } from "@/app/(internal)/logg/use-audit-log-table"
 import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { Skeleton, Stack, Title } from "@mantine/core"
 import type { FC } from "react"
@@ -15,6 +15,9 @@ export const UserAuditLogPage: FC = () => {
     auditLogs,
     isLoading: isAuditLogsLoading,
     fetchNextPage,
+    isPlaceholderData,
+    isFetchingNextPage,
+    hasNextPage,
   } = useAuditLogSearchQuery({
     filter: {
       ...filter,
@@ -27,7 +30,14 @@ export const UserAuditLogPage: FC = () => {
       <Title order={2}>Hendelseslogg</Title>
       <AuditLogFilters onChange={setFilter} />
       <Skeleton visible={isAuditLogsLoading}>
-        <AuditLogsTable audit_logs={auditLogs} onLoadMore={fetchNextPage} />
+        <AuditLogTable
+          auditLogs={auditLogs}
+          isLoading={isAuditLogsLoading}
+          isPlaceholderData={isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+        />
       </Skeleton>
     </Stack>
   )
