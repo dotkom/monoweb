@@ -1,6 +1,6 @@
-import { Box, Center, Tooltip } from "@mantine/core"
-import { IconEye } from "@tabler/icons-react"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { IconEye } from "@tabler/icons-react"
 
 interface EditableRowIndicatorProps {
   canEdit: boolean
@@ -15,26 +15,22 @@ export function EditableRowIndicator({
 }: EditableRowIndicatorProps) {
   if (canEdit) {
     return (
-      <Tooltip label={editableLabel}>
-        <Center w="14px">
-          <Box
-            w="4px"
-            h="20px"
-            style={{
-              borderRadius: "var(--mantine-radius-xl)",
-              backgroundColor: "var(--mantine-color-blue-4)",
-            }}
-          />
-        </Center>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex w-3.5 justify-center">
+            <div className="h-5 w-1 rounded-full bg-blue-400" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>{editableLabel}</TooltipContent>
       </Tooltip>
     )
   }
 
   return (
     <PermissionTooltip allowed={false} label={readOnlyLabel}>
-      <Center>
-        <IconEye size={14} color="var(--mantine-color-dimmed)" />
-      </Center>
+      <div className="flex justify-center">
+        <IconEye size={14} className="text-muted-foreground" />
+      </div>
     </PermissionTooltip>
   )
 }

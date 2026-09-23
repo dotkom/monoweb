@@ -3,7 +3,7 @@
 import { useAuthorization } from "@/auth/authorization-context"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import { useConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/confirm-delete-modal"
+import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { useTRPC } from "@/lib/trpc-client"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
@@ -12,27 +12,16 @@ import {
   type NotificationLink,
   type NotificationManagement,
 } from "@dotkomonline/rpc/notification"
-import {
-  Anchor,
-  Button,
-  CloseButton,
-  Divider,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-  TypographyStylesProvider,
-} from "@mantine/core"
-import { IconBell, IconMail, IconMailOpened, IconUsers } from "@tabler/icons-react"
+import { Button, Separator, Text, TextLink, Title } from "@dotkomonline/ui"
+import { IconBell, IconMail, IconMailOpened, IconUsers, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import DOMPurify from "isomorphic-dompurify"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { openAddRecipientsModal } from "../components/add-recipients-modal"
-import { openEditNotificationModal } from "../components/edit-notification-modal"
+import { useState } from "react"
+import { AddRecipientsModal } from "../components/add-recipients-modal"
+import { EditNotificationModal } from "../components/edit-notification-modal"
 import { NotificationRecipientsTable } from "../components/notification-recipients-table"
 import { useDeleteNotificationMutation } from "../mutations"
 import { useNotificationRecipientStatsQuery, useNotificationRecipientsInfiniteQuery } from "../queries"
@@ -102,6 +91,14 @@ function formatSentAt(date: Date): string {
   return formatDate(date, "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })
 }
 
+function formatPercent(count: number, total: number): string {
+  if (total === 0) {
+    return "0 %"
+  }
+
+  return `${((count / total) * 100).toFixed(0)} %`
+}
+
 function formatDeleteConfirmText(recipientCount: number | undefined): string {
   if (recipientCount === undefined) {
     return "Er du sikker på at du vil slette denne varslingen? Mottakerne vil ikke lenger se den."
@@ -122,29 +119,21 @@ export default function NotificationDetailsPage() {
   const canManage = canManageNotification(notification.actorGroupId)
   const deleteNotification = useDeleteNotificationMutation()
   const statsQuery = useNotificationRecipientStatsQuery(notification.id, canManage)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isAddRecipientsOpen, setIsAddRecipientsOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   const {
     recipients,
     isLoading: isRecipientsLoading,
     fetchNextPage,
+    hasNextPage,
     isError: isRecipientsError,
   } = useNotificationRecipientsInfiniteQuery(notification.id, canManage)
 
   const createdByQuery = useQuery({
     ...trpc.user.get.queryOptions(notification.createdById ?? ""),
     enabled: notification.createdById !== null,
-  })
-
-  const openDeleteModal = useConfirmDeleteModal({
-    title: "Slett varsling",
-    text: formatDeleteConfirmText(statsQuery.data?.totalCount),
-    onConfirm: () => {
-      deleteNotification.mutate(notification.id, {
-        onSuccess: () => {
-          router.push("/varslinger")
-        },
-      })
-    },
   })
 
   const actorGroupLabel = getActorGroupLabel(notification.actorGroup)
@@ -155,14 +144,21 @@ export default function NotificationDetailsPage() {
   const linkHref = notification.link.type === "NONE" ? null : getNotificationLinkHref(notification.link)
 
   return (
-    <Stack>
-      <Group>
-        <CloseButton onClick={() => router.push("/varslinger")} />
-
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Tilbake"
+          onClick={() => router.push("/varslinger")}
+        >
+          <IconX className="size-5" />
+        </Button>
         <Title>{notification.title}</Title>
-      </Group>
+      </div>
 
-      <Text size="sm" c="dimmed">
+      <Text className="text-sm text-muted-foreground">
         Sendt {formatSentAt(notification.createdAt)} som {actorGroupLabel} av {createdByName}
       </Text>
 
@@ -173,117 +169,129 @@ export default function NotificationDetailsPage() {
         />
       )}
 
-      {linkHref === null && (
-        <Text size="sm" c="dimmed">
-          {linkLabel}
-        </Text>
-      )}
+      {linkHref === null && linkLabel !== null && <Text className="text-sm text-muted-foreground">{linkLabel}</Text>}
 
       {linkHref !== null && notification.link.type === "URL" && (
-        <Anchor href={linkHref} size="sm" target="_blank" rel="noreferrer">
+        <a className="text-sm text-primary underline" href={linkHref} target="_blank" rel="noreferrer">
           {linkLabel}
-        </Anchor>
+        </a>
       )}
 
       {linkHref !== null && notification.link.type !== "URL" && (
-        <Anchor component={Link} href={linkHref} size="sm">
+        <TextLink href={linkHref} className="text-sm">
           {linkLabel}
-        </Anchor>
+        </TextLink>
       )}
 
-      <Stack gap="xs">
-        <Group gap={6} wrap="nowrap">
-          <IconBell size={16} color="var(--mantine-color-dimmed)" />
-          <Text size="sm">{getNotificationTypeLabel(notification.type)}</Text>
-        </Group>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
+          <IconBell size={16} className="text-muted-foreground" />
+          <Text className="text-sm">{getNotificationTypeLabel(notification.type)}</Text>
+        </div>
 
-        {canManage && statsQuery.isPending && <Skeleton height={16} width={240} />}
+        {canManage && statsQuery.isPending && <div className="h-4 w-60 animate-pulse rounded-sm bg-muted" />}
 
         {canManage && !statsQuery.isPending && statsQuery.data !== undefined && (
           <>
-            <Group gap={6} wrap="nowrap">
-              <IconUsers size={16} color="var(--mantine-color-dimmed)" />
-              <Text size="sm">{statsQuery.data.totalCount} mottakere</Text>
-            </Group>
+            <div className="flex items-center gap-1.5">
+              <IconUsers size={16} className="text-muted-foreground" />
+              <Text className="text-sm">{statsQuery.data.totalCount} mottakere</Text>
+            </div>
 
-            <Group gap="md" wrap="wrap">
-              <Group gap={6} wrap="nowrap">
-                <IconMailOpened size={16} color="var(--mantine-color-dimmed)" />
-                <Text size="sm">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <IconMailOpened size={16} className="text-muted-foreground" />
+                <Text className="text-sm">
                   {statsQuery.data.readCount} lest{" "}
-                  <span style={{ color: "var(--mantine-color-dimmed)" }}>
-                    ({((statsQuery.data.readCount / statsQuery.data.totalCount) * 100).toFixed(0)} %)
+                  <span className="text-muted-foreground">
+                    ({formatPercent(statsQuery.data.readCount, statsQuery.data.totalCount)})
                   </span>
                 </Text>
-              </Group>
+              </div>
 
-              <Group gap={6} wrap="nowrap">
-                <IconMail size={16} color="var(--mantine-color-dimmed)" />
-                <Text size="sm">
+              <div className="flex items-center gap-1.5">
+                <IconMail size={16} className="text-muted-foreground" />
+                <Text className="text-sm">
                   {statsQuery.data.unreadCount} ulest{" "}
-                  <span style={{ color: "var(--mantine-color-dimmed)" }}>
-                    ({((statsQuery.data.unreadCount / statsQuery.data.totalCount) * 100).toFixed(0)} %)
+                  <span className="text-muted-foreground">
+                    ({formatPercent(statsQuery.data.unreadCount, statsQuery.data.totalCount)})
                   </span>
                 </Text>
-              </Group>
-            </Group>
+              </div>
+            </div>
           </>
         )}
-      </Stack>
+      </div>
 
-      <Group>
+      <div className="flex flex-wrap gap-2">
         <PermissionTooltip allowed={canManage}>
-          <Button variant="light" onClick={() => openEditNotificationModal(notification)} disabled={!canManage}>
+          <Button variant="secondary" onClick={() => setIsEditOpen(true)} disabled={!canManage}>
             Rediger
           </Button>
         </PermissionTooltip>
         <PermissionTooltip allowed={canManage}>
-          <Button variant="light" onClick={() => openAddRecipientsModal(notification)} disabled={!canManage}>
+          <Button variant="secondary" onClick={() => setIsAddRecipientsOpen(true)} disabled={!canManage}>
             Send til flere
           </Button>
         </PermissionTooltip>
         <PermissionTooltip allowed={canManage}>
-          <Button color="red" variant="light" onClick={openDeleteModal} disabled={!canManage}>
+          <Button color="red" variant="secondary" onClick={() => setIsDeleteOpen(true)} disabled={!canManage}>
             Slett
           </Button>
         </PermissionTooltip>
-      </Group>
+      </div>
 
       {hasContent && (
         <>
-          <Divider />
-
-          <TypographyStylesProvider>
-            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized */}
-            <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
-          </TypographyStylesProvider>
+          <Separator />
+          <div
+            className="text-sm [&_a]:underline [&_p]:mb-3"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
         </>
       )}
 
-      <Title order={2}>Mottakere</Title>
+      <Title element="h2">Mottakere</Title>
 
-      {!canManage && (
-        <Text size="sm" c="dimmed">
-          Du har ikke tilgang til mottakerlisten.
-        </Text>
-      )}
+      {!canManage && <Text className="text-sm text-muted-foreground">Du har ikke tilgang til mottakerlisten.</Text>}
 
       {canManage && isRecipientsError && (
-        <Text size="sm" c="dimmed">
-          Kunne ikke laste mottakere.
-        </Text>
+        <Text className="text-sm text-muted-foreground">Kunne ikke laste mottakere.</Text>
       )}
 
-      {canManage && !isRecipientsError && (
-        <Skeleton visible={isRecipientsLoading}>
+      {canManage &&
+        !isRecipientsError &&
+        (isRecipientsLoading ? (
+          <div className="h-40 w-full animate-pulse rounded-sm bg-muted" />
+        ) : (
           <NotificationRecipientsTable
             notificationId={notification.id}
             recipients={recipients}
             canManage={canManage}
-            onLoadMore={fetchNextPage}
+            onLoadMore={hasNextPage ? fetchNextPage : undefined}
           />
-        </Skeleton>
-      )}
-    </Stack>
+        ))}
+
+      <EditNotificationModal open={isEditOpen} onOpenChange={setIsEditOpen} notification={notification} />
+      <AddRecipientsModal
+        open={isAddRecipientsOpen}
+        onOpenChange={setIsAddRecipientsOpen}
+        notification={notification}
+      />
+      <ConfirmDeleteModal
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title="Slett varsling"
+        description={formatDeleteConfirmText(statsQuery.data?.totalCount)}
+        onConfirm={() => {
+          deleteNotification.mutate(notification.id, {
+            onSuccess: () => {
+              router.push("/varslinger")
+            },
+          })
+        }}
+      />
+    </div>
   )
 }

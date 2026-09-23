@@ -1,13 +1,13 @@
 "use client"
 
+import { useGroupGetQuery } from "@/app/(internal)/grupper/queries"
+import { Form } from "@/components/forms/Form"
 import { MultiSelectField } from "@/components/forms/MultiSelectField"
-import { Form } from "@/components/forms/new-form/Form"
 import { type GroupId, GroupRoleSchema } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import z from "zod"
-import { useGroupGetQuery } from "@/app/(internal)/grupper/queries"
 
 const FormSchema = z.object({
   roleIds: GroupRoleSchema.shape.id.array().min(1, "Minst én rolle må være valgt"),

@@ -1,5 +1,5 @@
+import { Form } from "@/components/forms/Form"
 import { MultiSelectField } from "@/components/forms/MultiSelectField"
-import { Form } from "@/components/forms/new-form/Form"
 import { SearchField } from "@/components/forms/SearchField"
 import { AuditLogOperation, AuditLogTable, type AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { useEffect } from "react"

@@ -1,16 +1,18 @@
 "use client"
 
-import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { RichTextField } from "@/components/forms/RichTextField"
+import { SelectField } from "@/components/forms/SelectField"
+import { TextField } from "@/components/forms/TextField"
+import { TextareaField } from "@/components/forms/TextareaField"
 import {
   getNotificationLinkTypeLabel,
   NotificationPayloadTypeSchema,
   type NotificationLink,
   type NotificationManagement,
 } from "@dotkomonline/rpc/notification"
-import { Button, Group, Select, Stack, Text, Textarea, TextInput } from "@mantine/core"
-import { type ContextModalProps, modals } from "@mantine/modals"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Button, Text } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { FC } from "react"
+import { IconX } from "@tabler/icons-react"
 import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { useEditNotificationMutation } from "../mutations"
@@ -42,10 +44,10 @@ const FormSchema = z
 type FormInput = z.input<typeof FormSchema>
 type FormValues = z.output<typeof FormSchema>
 
-function getEditLinkTypeOptions(link: NotificationLink) {
+function getEditLinkTypeOptions(link: NotificationLink): { value: FormValues["linkType"]; label: string }[] {
   const options = [
-    { value: "NONE", label: "Ingen" },
-    { value: "URL", label: "URL" },
+    { value: "NONE" as const, label: "Ingen" },
+    { value: "URL" as const, label: "URL" },
   ]
 
   if (link.type === "NONE" || link.type === "URL") {
@@ -77,23 +79,39 @@ function buildEditedLink(
   return originalLink
 }
 
-export const EditNotificationModal: FC<ContextModalProps<{ notification: NotificationManagement }>> = ({
-  context,
-  id,
-  innerProps: { notification },
-}) => {
-  const close = () => context.closeModal(id)
-  const editNotification = useEditNotificationMutation()
-  const ContentInput = useRichTextInput<FormInput, FormValues>({
-    label: "Melding",
-    required: false,
-  })
+export function EditNotificationModal({
+  open,
+  onOpenChange,
+  notification,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  notification: NotificationManagement
+}) {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent size="lg" onOutsideClick={() => onOpenChange(false)}>
+        <div className="flex items-start justify-between gap-3">
+          <AlertDialogTitle>Rediger varsling</AlertDialogTitle>
+          <AlertDialogCancel type="button">
+            <IconX className="size-5" />
+          </AlertDialogCancel>
+        </div>
+        {open && <EditNotificationForm notification={notification} onClose={() => onOpenChange(false)} />}
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
 
-  const { register, handleSubmit, control, setValue, getValues, setError, clearErrors, formState } = useForm<
-    FormInput,
-    unknown,
-    FormValues
-  >({
+function EditNotificationForm({
+  notification,
+  onClose,
+}: {
+  notification: NotificationManagement
+  onClose: () => void
+}) {
+  const editNotification = useEditNotificationMutation()
+  const { handleSubmit, control, formState } = useForm<FormInput, unknown, FormValues>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
     defaultValues: {
@@ -104,7 +122,6 @@ export const EditNotificationModal: FC<ContextModalProps<{ notification: Notific
       linkUrl: notification.link.type === "URL" ? notification.link.url : "",
     },
   })
-
   const linkType = useWatch({ control, name: "linkType" })
 
   const onSubmit = handleSubmit(async (values) => {
@@ -122,73 +139,38 @@ export const EditNotificationModal: FC<ContextModalProps<{ notification: Notific
       return
     }
 
-    close()
+    onClose()
   })
 
   return (
-    <form onSubmit={onSubmit}>
-      <Stack>
-        <Text size="sm" c="dimmed">
-          Endringer varsler ikke mottakerne på nytt.
-        </Text>
+    <form className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto" onSubmit={onSubmit}>
+      <Text className="text-sm text-muted-foreground">Endringer varsler ikke mottakerne på nytt.</Text>
 
-        <TextInput label="Tittel" withAsterisk {...register("title")} error={formState.errors.title?.message} />
+      <TextField control={control} name="title" label="Tittel" required />
+      <RichTextField control={control} name="content" label="Melding" />
+      <TextareaField
+        control={control}
+        name="shortDescription"
+        label="Kort beskrivelse"
+        description="Vises i varslingslisten."
+        required
+        rows={2}
+      />
+      <SelectField
+        control={control}
+        name="linkType"
+        label="Lenke"
+        required
+        options={getEditLinkTypeOptions(notification.link)}
+      />
 
-        <ContentInput
-          name="content"
-          register={register}
-          control={control}
-          state={formState}
-          setValue={setValue}
-          getValues={getValues}
-          setError={setError}
-          clearErrors={clearErrors}
-          defaultValue={notification.content}
-        />
+      {linkType === "URL" && <TextField control={control} name="linkUrl" label="URL" required />}
 
-        <Textarea
-          label="Kort beskrivelse"
-          description="Vises i varslingslisten."
-          minRows={2}
-          autosize
-          {...register("shortDescription")}
-          error={formState.errors.shortDescription?.message}
-        />
-
-        <Select
-          label="Lenke"
-          data={getEditLinkTypeOptions(notification.link)}
-          value={linkType}
-          onChange={(value) => {
-            const parsedLinkType = NotificationPayloadTypeSchema.safeParse(value)
-
-            if (!parsedLinkType.success) {
-              return
-            }
-
-            setValue("linkType", parsedLinkType.data, { shouldValidate: true })
-          }}
-        />
-
-        {linkType === "URL" && (
-          <TextInput label="URL" withAsterisk {...register("linkUrl")} error={formState.errors.linkUrl?.message} />
-        )}
-
-        <Group justify="flex-end">
-          <Button type="submit" loading={editNotification.isPending} disabled={!formState.isValid}>
-            Lagre
-          </Button>
-        </Group>
-      </Stack>
+      <div className="flex justify-end">
+        <Button type="submit" disabled={!formState.isValid || editNotification.isPending}>
+          Lagre
+        </Button>
+      </div>
     </form>
   )
-}
-
-export function openEditNotificationModal(notification: NotificationManagement) {
-  return modals.openContextModal({
-    modal: "notification/edit",
-    title: "Rediger varsling",
-    size: "lg",
-    innerProps: { notification },
-  })
 }

@@ -1,17 +1,18 @@
 "use client"
 
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
-import { SelectField } from "@/components/forms/SelectField"
-import { Form } from "@/components/forms/new-form/Form"
 import { combineFieldDisabled, FieldShell, getFieldErrorMessage } from "@/components/forms/FieldShell"
+import { Form } from "@/components/forms/Form"
+import { SelectField } from "@/components/forms/SelectField"
 import {
-  MembershipSpecializationSchema,
-  MembershipTypeSchema,
-  type MembershipWrite,
-  MembershipWriteSchema,
   getMembershipTypeName,
   getSpecializationName,
+  MembershipSpecializationSchema,
+  MembershipTypeSchema,
+  MembershipWriteSchema,
+  type MembershipWrite,
 } from "@dotkomonline/rpc/user"
+import { Button, Text } from "@dotkomonline/ui"
 import {
   getCurrentSemesterStart,
   getCurrentUTC,
@@ -20,7 +21,6 @@ import {
   getStudyGrade,
   isSpringSemester,
 } from "@dotkomonline/utils"
-import { Button, Text } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconArrowLeft, IconArrowRight, IconX } from "@tabler/icons-react"
 import { isBefore } from "date-fns"

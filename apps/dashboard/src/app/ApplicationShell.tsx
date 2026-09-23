@@ -53,7 +53,7 @@ import {
 import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Fragment, type FC, useEffect, useState } from "react"
+import { Fragment, useEffect, useState, type FC } from "react"
 import { z } from "zod"
 
 const navigations = [
@@ -150,12 +150,19 @@ const THEME_OPTIONS = [
 
 function ThemeToggle() {
   const { setTheme, theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const selected = mounted ? (theme ?? "system") : "system"
 
   return (
     <ToggleGroup
       multiple={false}
       spacing={0.5}
-      value={[theme ?? "system"]}
+      value={[selected]}
       onValueChange={(value) => {
         setTheme(value.at(0) ?? "system")
       }}
@@ -205,8 +212,8 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
   }, [pathname])
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-50 flex h-[60px] items-center justify-between gap-3 border-b bg-background px-4">
+    <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+      <header className="flex h-[60px] shrink-0 items-center justify-between gap-3 border-b bg-background px-4">
         <div className="flex min-w-0 items-center gap-2">
           <Button
             type="button"
@@ -322,47 +329,49 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 p-4">
-          {showSessionRecovery && sessionRecoveryMessages !== null ? (
-            <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-6">
-              <Text size="sm">{sessionRecoveryMessages.description}</Text>
-              <div className="mt-3 flex gap-2">
-                <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
-                  Logg inn på nytt
-                </Button>
-                <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
-                  Logg ut
-                </Button>
-              </div>
-            </Alert>
-          ) : null}
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4">
+          <div className="pt-4">
+            {showSessionRecovery && sessionRecoveryMessages !== null ? (
+              <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-6">
+                <Text size="sm">{sessionRecoveryMessages.description}</Text>
+                <div className="mt-3 flex gap-2">
+                  <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
+                    Logg inn på nytt
+                  </Button>
+                  <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
+                    Logg ut
+                  </Button>
+                </div>
+              </Alert>
+            ) : null}
 
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink render={<Link href="/" />}>Hjem</BreadcrumbLink>
-              </BreadcrumbItem>
-              {pathname
-                .split("/")
-                .filter((part) => part.length > 0)
-                .map((part, index, parts) => {
-                  const href = `/${parts.slice(0, index + 1).join("/")}`
-                  const decodedPart = decodeURIComponent(part)
-                  const isId = decodedPart.includes("|")
-                  const isUuid = z.uuid().safeParse(decodedPart).success
-                  const label = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)
+            <Breadcrumb className="mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink render={<Link href="/" />}>Hjem</BreadcrumbLink>
+                </BreadcrumbItem>
+                {pathname
+                  .split("/")
+                  .filter((part) => part.length > 0)
+                  .map((part, index, parts) => {
+                    const href = `/${parts.slice(0, index + 1).join("/")}`
+                    const decodedPart = decodeURIComponent(part)
+                    const isId = decodedPart.includes("|")
+                    const isUuid = z.uuid().safeParse(decodedPart).success
+                    const label = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)
 
-                  return (
-                    <Fragment key={href}>
-                      <BreadcrumbSeparator />
-                      <BreadcrumbItem>
-                        <BreadcrumbLink render={<Link href={href} />}>{label}</BreadcrumbLink>
-                      </BreadcrumbItem>
-                    </Fragment>
-                  )
-                })}
-            </BreadcrumbList>
-          </Breadcrumb>
+                    return (
+                      <Fragment key={href}>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                          <BreadcrumbLink render={<Link href={href} />}>{label}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                      </Fragment>
+                    )
+                  })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
 
           {children}
         </main>

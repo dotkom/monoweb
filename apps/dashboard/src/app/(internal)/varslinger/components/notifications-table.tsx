@@ -1,10 +1,9 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
+import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { EditableRowIndicator } from "@/components/EditableRowIndicator"
-import { GenericTable } from "@/components/GenericTable"
-import { TableCellLink } from "@/components/TableCellLink"
 import { useTRPC } from "@/lib/trpc-client"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
@@ -13,7 +12,7 @@ import {
   type NotificationManagement,
   type NotificationRecipientStats,
 } from "@dotkomonline/rpc/notification"
-import { Skeleton, Text } from "@mantine/core"
+import { Text, TextLink } from "@dotkomonline/ui"
 import { useQueries } from "@tanstack/react-query"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
@@ -48,23 +47,15 @@ function RecipientStatsCell({
   children: (stats: NotificationRecipientStats) => string | number
 }) {
   if (!canManage) {
-    return (
-      <Text size="sm" c="dimmed">
-        —
-      </Text>
-    )
+    return <Text className="text-sm text-muted-foreground">—</Text>
   }
 
   if (statsQuery === undefined || statsQuery.isPending) {
-    return <Skeleton height={16} width={40} />
+    return <div className="h-4 w-10 animate-pulse rounded-sm bg-muted" />
   }
 
   if (statsQuery.data === undefined) {
-    return (
-      <Text size="sm" c="dimmed">
-        —
-      </Text>
-    )
+    return <Text className="text-sm text-muted-foreground">—</Text>
   }
 
   return children(statsQuery.data)
@@ -133,7 +124,11 @@ export function NotificationsTable({
       meta: {
         smallPadding: true,
       },
-      cell: (info) => <TableCellLink href={`/varslinger/${info.row.original.id}`}>{info.getValue()}</TableCellLink>,
+      cell: (info) => (
+        <TextLink href={`/varslinger/${info.row.original.id}`} className="text-sm">
+          {info.getValue()}
+        </TextLink>
+      ),
     })
 
     const typeColumn = columnHelper.accessor("type", {
@@ -206,22 +201,11 @@ export function NotificationsTable({
   })
 
   return (
-    <GenericTable
+    <DataTable
       table={table}
-      onLoadMore={onLoadMore}
-      getRowStyle={(row) => ({
-        opacity: dimReadOnlyRows && !row.original.canManage ? 0.65 : 1,
-      })}
-      getCellStyle={(_row, columnIndex) => {
-        if (isAdministrator === false && columnIndex === 0) {
-          return {
-            paddingRight: 0,
-            paddingLeft: "10px",
-          }
-        }
-
-        return undefined
-      }}
+      fetchNextPage={onLoadMore}
+      hasNextPage={onLoadMore !== undefined}
+      getRowClassName={(row) => (dimReadOnlyRows && !row.original.canManage ? "opacity-65" : undefined)}
     />
   )
 }

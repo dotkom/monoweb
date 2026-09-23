@@ -5,7 +5,7 @@ import type {
   NotificationRecipientSelection,
   NotificationType,
 } from "@dotkomonline/rpc/notification"
-import { useDebouncedValue } from "@mantine/hooks"
+import { useDebounce } from "use-debounce"
 import { skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
@@ -15,7 +15,7 @@ export function useRecipientSelectionPreview(
 ) {
   const trpc = useTRPC()
   const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
-  const [debouncedSerializedRecipientSelection] = useDebouncedValue(serializedRecipientSelection, 400)
+  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
 
   const queryInput =
     debouncedSerializedRecipientSelection === null
@@ -46,9 +46,9 @@ export function useRecipientSelectionPreviewInfinite(
 ) {
   const trpc = useTRPC()
   const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
-  const [debouncedSerializedRecipientSelection] = useDebouncedValue(serializedRecipientSelection, 400)
+  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
   const trimmedSearch = search.trim()
-  const [debouncedSearch] = useDebouncedValue(trimmedSearch, 300)
+  const [debouncedSearch] = useDebounce(trimmedSearch, 300)
 
   const queryInput =
     debouncedSerializedRecipientSelection === null

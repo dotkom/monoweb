@@ -1,8 +1,8 @@
 "use client"
 
 import { useCompanyFileUploadMutation } from "@/app/(internal)/bedrifter/mutations"
+import { Form } from "@/components/forms/Form"
 import { ImageUploadModalField } from "@/components/forms/ImageUploadModalField"
-import { Form } from "@/components/forms/new-form/Form"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { TextField } from "@/components/forms/TextField"
 import { COMPANY_IMAGE_MAX_SIZE_KIB, CompanyWriteSchema, type CompanyWrite } from "@dotkomonline/rpc/company"

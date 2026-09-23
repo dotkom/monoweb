@@ -1,15 +1,15 @@
 "use client"
 
+import { useGroupGetQuery } from "@/app/(internal)/grupper/queries"
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
+import { Form } from "@/components/forms/Form"
 import { MultiSelectField } from "@/components/forms/MultiSelectField"
-import { Form } from "@/components/forms/new-form/Form"
 import { type GroupId, GroupMembershipWriteSchema, GroupRoleSchema } from "@dotkomonline/rpc/group"
 import { Button, Text } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isBefore, isFuture } from "date-fns"
 import { useForm } from "react-hook-form"
 import type z from "zod"
-import { useGroupGetQuery } from "@/app/(internal)/grupper/queries"
 
 const FormSchema = GroupMembershipWriteSchema.pick({
   start: true,

@@ -4,9 +4,12 @@ import { useNotifyAttendeesMutation } from "@/app/(internal)/arrangementer/mutat
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useAuthorization } from "@/auth/authorization-context"
 import { COMMITTEE_AFFILIATIONS, intersectGroupAffiliations, isCommitteeAffiliation } from "@/auth/permissions"
-import { useRichTextInput } from "@/components/forms/RichTextInput/RichTextInput"
+import { CheckboxField } from "@/components/forms/CheckboxField"
+import { FieldShell } from "@/components/forms/FieldShell"
+import { RichTextField } from "@/components/forms/RichTextField"
+import { SelectField } from "@/components/forms/SelectField"
+import { TextField } from "@/components/forms/TextField"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
-import type { Event } from "@dotkomonline/rpc/event"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type {
   NotificationLink,
@@ -18,22 +21,22 @@ import type {
 } from "@dotkomonline/rpc/notification"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
   Button,
   Checkbox,
-  Divider,
-  Group,
-  Select,
-  Skeleton,
-  Stack,
-  Switch,
+  Label,
+  Separator,
   Text,
-  TextInput,
   Textarea,
-} from "@mantine/core"
-import { type ContextModalProps, modals } from "@mantine/modals"
+  TextInput,
+} from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type FC, useEffect, useMemo, useState } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { IconX } from "@tabler/icons-react"
+import { useEffect, useMemo, useState } from "react"
+import { useController, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { useCreateNotificationMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
@@ -123,20 +126,38 @@ function getEventRecipientSelection(
   }
 }
 
-export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>> = ({
-  context,
-  id,
-  innerProps: source,
-}) => {
-  const close = () => context.closeModal(id)
+export function SendNotificationModal({
+  open,
+  onOpenChange,
+  source,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  source: SendNotificationSource
+}) {
+  const title = source.kind === "EVENT" ? "Send melding til påmeldte" : "Ny varsling"
+  const size = source.kind === "GLOBAL" ? "xl" : "lg"
+
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent size={size} onOutsideClick={() => onOpenChange(false)}>
+        <div className="flex items-start justify-between gap-3">
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogCancel type="button">
+            <IconX className="size-5" />
+          </AlertDialogCancel>
+        </div>
+        {open && <SendNotificationForm source={source} onClose={() => onOpenChange(false)} />}
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+function SendNotificationForm({ source, onClose }: { source: SendNotificationSource; onClose: () => void }) {
   const { isAdministrator, isCommitteeMember, affiliations } = useAuthorization()
   const { groups } = useGroupAllQuery()
   const createNotification = useCreateNotificationMutation()
   const notifyAttendees = useNotifyAttendeesMutation()
-  const ContentInput = useRichTextInput<FormInput, FormValues>({
-    label: "Melding",
-    required: false,
-  })
 
   const eligibleGroups = useMemo(() => {
     const authorizationState = { isAdministrator, isCommitteeMember, affiliations }
@@ -160,14 +181,9 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
 
     return getEventRecipientSelection(source.attendanceId, "RESERVED", "ALL", null)
   })
-
   const [hasEditedShortDescription, setHasEditedShortDescription] = useState(false)
 
-  const { register, handleSubmit, control, setValue, getValues, setError, clearErrors, formState } = useForm<
-    FormInput,
-    unknown,
-    FormValues
-  >({
+  const { handleSubmit, control, setValue, setError, formState } = useForm<FormInput, unknown, FormValues>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
     defaultValues: {
@@ -181,10 +197,10 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
       linkUrl: "",
     },
   })
+  const shortDescriptionField = useController({ control, name: "shortDescription" })
 
   const content = useWatch({ control, name: "content" })
   const isImportant = useWatch({ control, name: "isImportant" })
-  const sendEmail = useWatch({ control, name: "sendEmail" })
   const linkType = useWatch({ control, name: "linkType" })
   const actorGroupId = useWatch({ control, name: "actorGroupId" })
 
@@ -267,12 +283,12 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
           message: emailMessage,
         })
       } catch {
-        close()
+        onClose()
         return
       }
     }
 
-    close()
+    onClose()
   })
 
   const selectedActorGroup = eligibleGroups.find((group) => group.slug === actorGroupId)
@@ -280,216 +296,144 @@ export const SendNotificationModal: FC<ContextModalProps<SendNotificationSource>
     recipientSelection?.rules[0]?.type === "EVENT_ATTENDEES" ? recipientSelection.rules[0] : null
 
   return (
-    <form onSubmit={onSubmit}>
-      <Stack gap="lg">
-        <TextInput label="Tittel" withAsterisk {...register("title")} error={formState.errors.title?.message} />
-
-        <ContentInput
-          name="content"
-          register={register}
-          control={control}
-          state={formState}
-          setValue={setValue}
-          getValues={getValues}
-          setError={setError}
-          clearErrors={clearErrors}
-          defaultValue=""
-        />
-
+    <form className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto" onSubmit={onSubmit}>
+      <TextField control={control} name="title" label="Tittel" required />
+      <RichTextField control={control} name="content" label="Melding" />
+      <FieldShell
+        id="shortDescription"
+        label="Kort beskrivelse"
+        description="Denne teksten vises i varslingslisten i navbar-en, mens meldingen vises i detaljvisningen."
+        required
+        error={formState.errors.shortDescription?.message}
+      >
         <Textarea
-          label="Kort beskrivelse"
-          description="Denne teksten vises i varslingslisten i navbar-en, mens meldingen vises i detaljvisningen."
-          minRows={2}
-          autosize
-          {...register("shortDescription", {
-            onChange: () => setHasEditedShortDescription(true),
-          })}
-          error={formState.errors.shortDescription?.message}
+          id="shortDescription"
+          name={shortDescriptionField.field.name}
+          ref={shortDescriptionField.field.ref}
+          rows={2}
+          value={shortDescriptionField.field.value ?? ""}
+          onBlur={shortDescriptionField.field.onBlur}
+          onChange={(event) => {
+            setHasEditedShortDescription(true)
+            shortDescriptionField.field.onChange(event)
+          }}
         />
+      </FieldShell>
 
-        {eligibleGroups.length > 1 ? (
-          <Select
-            label="Avsender"
-            withAsterisk
-            data={eligibleGroups.map((group) => ({
-              value: group.slug,
-              label: getGroupDisplayName(group),
-            }))}
-            value={actorGroupId}
-            onChange={(value) => {
-              if (value === null) {
-                return
-              }
+      {eligibleGroups.length > 1 ? (
+        <SelectField
+          control={control}
+          name="actorGroupId"
+          label="Avsender"
+          required
+          options={eligibleGroups.map((group) => ({
+            value: group.slug,
+            label: getGroupDisplayName(group),
+          }))}
+        />
+      ) : (
+        <TextInput
+          label="Avsender"
+          value={selectedActorGroup === undefined ? "" : getGroupDisplayName(selectedActorGroup)}
+          readOnly
+        />
+      )}
 
-              setValue("actorGroupId", value, { shouldValidate: true })
-            }}
-            error={formState.errors.actorGroupId?.message}
+      <Separator />
+
+      {source.kind === "EVENT" && <Text className="text-sm text-muted-foreground">Lenke: Arrangementet</Text>}
+
+      {source.kind === "GLOBAL" && (
+        <div className="flex flex-col gap-3">
+          <SelectField
+            control={control}
+            name="linkType"
+            label="Lenke"
+            required
+            options={[
+              { value: "NONE", label: "Ingen" },
+              { value: "URL", label: "URL" },
+            ]}
           />
-        ) : (
-          <TextInput
-            label="Avsender"
-            value={selectedActorGroup === undefined ? "" : getGroupDisplayName(selectedActorGroup)}
-            readOnly
-          />
-        )}
+          {linkType === "URL" && <TextField control={control} name="linkUrl" label="URL" />}
+        </div>
+      )}
 
-        <Divider />
+      <Separator />
 
-        {source.kind === "EVENT" && (
-          <Text size="sm" c="dimmed">
-            Lenke: Arrangementet
-          </Text>
-        )}
-
-        {source.kind === "GLOBAL" && (
-          <Stack gap="xs">
-            <Select
-              label="Lenke"
-              data={[
-                { value: "NONE", label: "Ingen" },
-                { value: "URL", label: "URL" },
-              ]}
-              value={linkType}
-              onChange={(value) => {
-                const parsedLinkType = FormSchema.shape.linkType.safeParse(value)
-
-                if (!parsedLinkType.success) {
-                  return
-                }
-
-                setValue("linkType", parsedLinkType.data, { shouldValidate: true })
-              }}
-            />
-
-            {linkType === "URL" && (
-              <TextInput label="URL" {...register("linkUrl")} error={formState.errors.linkUrl?.message} />
-            )}
-          </Stack>
-        )}
-
-        <Divider />
-
-        {source.kind === "EVENT" && eventAttendeesRule !== null && (
-          <Stack gap="xs">
-            <Text size="sm">Påmeldte på {source.eventTitle}</Text>
-
-            <EventAttendeeRecipientFilters
-              reservationStatus={eventAttendeesRule.reservationStatus}
-              paymentStatus={eventAttendeesRule.paymentStatus}
-              attendanceSelectionOptions={eventAttendeesRule.attendanceSelectionOptions ?? null}
-              hasPayment={source.hasPayment}
-              selections={source.selections}
-              onChange={(next) =>
-                setRecipientSelection(
-                  getEventRecipientSelection(
-                    source.attendanceId,
-                    next.reservationStatus,
-                    next.paymentStatus,
-                    next.attendanceSelectionOptions
-                  )
+      {source.kind === "EVENT" && eventAttendeesRule !== null && (
+        <div className="flex flex-col gap-3">
+          <Text className="text-sm">Påmeldte på {source.eventTitle}</Text>
+          <EventAttendeeRecipientFilters
+            reservationStatus={eventAttendeesRule.reservationStatus}
+            paymentStatus={eventAttendeesRule.paymentStatus}
+            attendanceSelectionOptions={eventAttendeesRule.attendanceSelectionOptions ?? null}
+            hasPayment={source.hasPayment}
+            selections={source.selections}
+            onChange={(next) =>
+              setRecipientSelection(
+                getEventRecipientSelection(
+                  source.attendanceId,
+                  next.reservationStatus,
+                  next.paymentStatus,
+                  next.attendanceSelectionOptions
                 )
-              }
-            />
-
-            {isForbidden && (
-              <Text size="sm" c="red">
-                Du kan ikke sende til disse mottakerne
-              </Text>
-            )}
-          </Stack>
-        )}
-
-        {source.kind === "GLOBAL" && (
-          <RecipientSelectionBuilder
-            value={recipientSelection}
-            onChange={setRecipientSelection}
-            type={notificationType}
+              )
+            }
           />
+          {isForbidden && <Text className="text-sm text-red-600">Du kan ikke sende til disse mottakerne</Text>}
+        </div>
+      )}
+
+      {source.kind === "GLOBAL" && (
+        <RecipientSelectionBuilder
+          value={recipientSelection}
+          onChange={setRecipientSelection}
+          type={notificationType}
+        />
+      )}
+
+      {source.kind === "EVENT" && (
+        <>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Checkbox id="in-app-notification" checked disabled />
+              <Label htmlFor="in-app-notification">Varsel i appen</Label>
+            </div>
+            <CheckboxField control={control} name="sendEmail" label="E-post" />
+          </div>
+        </>
+      )}
+
+      {isAdministrator && (
+        <>
+          <Separator />
+          <CheckboxField
+            control={control}
+            name="isImportant"
+            label="Viktig varsling"
+            description="Ignorerer mottakernes varslingsinnstillinger"
+          />
+        </>
+      )}
+
+      <Separator />
+
+      <div className={source.kind === "GLOBAL" ? "flex justify-end" : "flex items-center justify-between gap-3"}>
+        {source.kind !== "GLOBAL" && recipientSelection === null && (
+          <Text className="text-sm text-muted-foreground">Legg til minst én mottakergruppe</Text>
         )}
-
-        {source.kind === "EVENT" && (
-          <>
-            <Divider />
-
-            <Stack gap="xs">
-              <Checkbox label="Varsel i appen" checked disabled />
-              <Checkbox
-                label="E-post"
-                checked={sendEmail}
-                onChange={(event) => setValue("sendEmail", event.currentTarget.checked)}
-              />
-            </Stack>
-          </>
+        {source.kind !== "GLOBAL" && recipientSelection !== null && isPreviewPending && (
+          <div className="h-4 w-40 animate-pulse rounded-sm bg-muted" />
         )}
-
-        {isAdministrator && (
-          <>
-            <Divider />
-
-            <Switch
-              label="Viktig varsling"
-              description="Ignorerer mottakernes varslingsinnstillinger"
-              checked={isImportant}
-              onChange={(event) => setValue("isImportant", event.currentTarget.checked)}
-            />
-          </>
+        {source.kind !== "GLOBAL" && recipientSelection !== null && !isPreviewPending && (
+          <Text className="text-sm text-muted-foreground">{formatRecipientCountLabel(recipientCount)}</Text>
         )}
-
-        <Divider />
-
-        <Group justify={source.kind === "GLOBAL" ? "flex-end" : "space-between"} align="center">
-          {source.kind !== "GLOBAL" && recipientSelection === null && (
-            <Text size="sm" c="dimmed">
-              Legg til minst én mottakergruppe
-            </Text>
-          )}
-
-          {source.kind !== "GLOBAL" && recipientSelection !== null && isPreviewPending && (
-            <Skeleton height={16} width={160} />
-          )}
-
-          {source.kind !== "GLOBAL" && recipientSelection !== null && !isPreviewPending && (
-            <Text size="sm" c="dimmed">
-              {formatRecipientCountLabel(recipientCount)}
-            </Text>
-          )}
-
-          <Button
-            type="submit"
-            loading={createNotification.isPending || notifyAttendees.isPending}
-            disabled={!canSubmit}
-          >
-            Send
-          </Button>
-        </Group>
-      </Stack>
+        <Button type="submit" disabled={!canSubmit}>
+          Send
+        </Button>
+      </div>
     </form>
   )
-}
-
-export function openSendNotificationModal(source: SendNotificationSource) {
-  const title = source.kind === "EVENT" ? "Send melding til påmeldte" : "Ny varsling"
-  const size = source.kind === "GLOBAL" ? "xl" : "lg"
-
-  return modals.openContextModal({
-    modal: "notification/send",
-    title,
-    size,
-    innerProps: source,
-  })
-}
-
-export function openEventNotificationModal(
-  event: Pick<Event, "id" | "title" | "hostingGroups">,
-  attendance: Pick<Attendance, "id" | "attendancePrice" | "selections">
-) {
-  return openSendNotificationModal({
-    kind: "EVENT",
-    eventId: event.id,
-    attendanceId: attendance.id,
-    eventTitle: event.title,
-    hostingGroupSlugs: event.hostingGroups.map((group) => group.slug),
-    hasPayment: attendance.attendancePrice !== null,
-    selections: attendance.selections,
-  })
 }

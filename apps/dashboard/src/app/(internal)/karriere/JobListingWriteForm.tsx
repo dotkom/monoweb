@@ -1,11 +1,11 @@
 import { CheckboxField } from "@/components/forms/CheckboxField"
 import { CompanySelectField } from "@/components/forms/CompanySelectField"
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
+import { Form } from "@/components/forms/Form"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { SelectField } from "@/components/forms/SelectField"
 import { TagField } from "@/components/forms/TagField"
 import { TextField } from "@/components/forms/TextField"
-import { Form } from "@/components/forms/new-form/Form"
 import { CompanySchema } from "@dotkomonline/rpc/company"
 import {
   JobListingLocationSchema,

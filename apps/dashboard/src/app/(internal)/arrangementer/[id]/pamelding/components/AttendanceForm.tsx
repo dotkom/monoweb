@@ -1,10 +1,10 @@
 "use client"
 
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
-import { Form } from "@/components/forms/new-form/Form"
+import { Form } from "@/components/forms/Form"
 import { AttendanceWriteSchema } from "@dotkomonline/rpc/attendance"
-import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { Button, Text } from "@dotkomonline/ui"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch, type Control } from "react-hook-form"
 import type { z } from "zod"
@@ -37,7 +37,7 @@ interface AttendanceWriteFormProps {
 export function AttendanceWriteForm({
   onSubmit,
   defaultValues,
-  submitLabel,
+  submitLabel = "Lagre",
   disabled,
   eventStart,
 }: AttendanceWriteFormProps) {

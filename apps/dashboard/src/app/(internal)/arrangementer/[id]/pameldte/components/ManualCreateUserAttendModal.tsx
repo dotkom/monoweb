@@ -1,8 +1,8 @@
 "use client"
 
 import { CheckboxField } from "@/components/forms/CheckboxField"
+import { Form } from "@/components/forms/Form"
 import { SegmentedControlField } from "@/components/forms/SegmentedControlField"
-import { Form } from "@/components/forms/new-form/Form"
 import { useIsMobile } from "@/hooks/use-is-mobile"
 import { notifyFail } from "@/lib/notifications"
 import {

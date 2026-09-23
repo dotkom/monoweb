@@ -7,11 +7,6 @@ import { Toaster } from "@dotkomonline/ui"
 import "@fontsource-variable/google-sans-code/wght.css"
 import "@fontsource-variable/inter-tight/wght.css"
 import "@fontsource-variable/inter/wght.css"
-import { mantineHtmlProps } from "@mantine/core"
-import "@mantine/core/styles.css"
-import "@mantine/dates/styles.css"
-import { Notifications } from "@mantine/notifications"
-import "@mantine/notifications/styles.css"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -20,9 +15,7 @@ import { ThemeProvider } from "next-themes"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { ApplicationShell } from "./ApplicationShell"
-import { ModalProvider } from "./ModalProvider"
 import { QueryProvider } from "./QueryProvider"
-import { ThemedMantineProvider } from "./ThemedMantineProvider"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -53,24 +46,19 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="no" {...mantineHtmlProps}>
+    <html lang="no" suppressHydrationWarning>
       <body>
         <PlausibleProvider domain="dashboard.online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <ThemedMantineProvider>
-                  <Notifications />
-                  <ModalProvider>
-                    <AuthorizationProvider
-                      isAdministrator={isAdministrator}
-                      isCommitteeMember={isCommitteeMember}
-                      affiliations={affiliations}
-                    >
-                      <ApplicationShell>{children}</ApplicationShell>
-                    </AuthorizationProvider>
-                  </ModalProvider>
-                </ThemedMantineProvider>
+                <AuthorizationProvider
+                  isAdministrator={isAdministrator}
+                  isCommitteeMember={isCommitteeMember}
+                  affiliations={affiliations}
+                >
+                  <ApplicationShell>{children}</ApplicationShell>
+                </AuthorizationProvider>
               </ThemeProvider>
             </QueryProvider>
           </Auth0Provider>

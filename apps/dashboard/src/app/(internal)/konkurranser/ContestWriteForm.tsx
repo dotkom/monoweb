@@ -1,7 +1,7 @@
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { DateTimePickerField } from "@/components/forms/DateTimePickerField"
+import { Form } from "@/components/forms/Form"
 import { MultiSelectField } from "@/components/forms/MultiSelectField"
-import { Form } from "@/components/forms/new-form/Form"
 import { RichTextField } from "@/components/forms/RichTextField"
 import { SelectField } from "@/components/forms/SelectField"
 import { TextField } from "@/components/forms/TextField"

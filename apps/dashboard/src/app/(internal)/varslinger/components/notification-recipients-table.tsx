@@ -1,10 +1,9 @@
 "use client"
 
-import { GenericTable } from "@/components/GenericTable"
-import { TableCellLink } from "@/components/TableCellLink"
+import { DataTable } from "@/components/DataTable"
+import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import type { NotificationRecipientListItem } from "@dotkomonline/rpc/notification"
-import { Avatar, Button, Checkbox, Group, Stack, Text, TextInput } from "@mantine/core"
-import { modals } from "@mantine/modals"
+import { Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextInput, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable, type RowSelectionState } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useRemoveNotificationRecipientsMutation } from "../mutations"
@@ -13,7 +12,7 @@ interface NotificationRecipientsTableProps {
   notificationId: string
   recipients: NotificationRecipientListItem[]
   canManage: boolean
-  onLoadMore: () => void
+  onLoadMore?: () => void
 }
 
 function matchesNameFilter(recipient: NotificationRecipientListItem, search: string): boolean {
@@ -45,6 +44,7 @@ export function NotificationRecipientsTable({
   const removeRecipients = useRemoveNotificationRecipientsMutation()
   const [nameFilter, setNameFilter] = useState("")
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false)
 
   const filteredRecipients = useMemo(() => {
     return recipients.filter((recipient) => matchesNameFilter(recipient, nameFilter))
@@ -58,11 +58,19 @@ export function NotificationRecipientsTable({
         aria-label="Velg alle"
         checked={table.getIsAllRowsSelected()}
         indeterminate={table.getIsSomeRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
+        onCheckedChange={(checked) => {
+          table.toggleAllRowsSelected(checked === true)
+        }}
       />
     ),
     cell: ({ row }) => (
-      <Checkbox aria-label="Velg mottaker" checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} />
+      <Checkbox
+        aria-label="Velg mottaker"
+        checked={row.getIsSelected()}
+        onCheckedChange={(checked) => {
+          row.toggleSelected(checked === true)
+        }}
+      />
     ),
   })
   const userColumn = columnHelper.accessor((recipient) => recipient.user, {
@@ -72,14 +80,15 @@ export function NotificationRecipientsTable({
       const user = info.getValue()
 
       return (
-        <TableCellLink href={`/brukere/${user.id}`}>
-          <Group gap="sm" wrap="nowrap">
-            <Avatar src={user.imageUrl ?? undefined} size="sm" radius="xl">
-              {user.name?.charAt(0)}
+        <TextLink href={`/brukere/${user.id}`} className="text-sm">
+          <span className="flex items-center gap-2">
+            <Avatar size="sm">
+              {user.imageUrl && <AvatarImage src={user.imageUrl} alt="" />}
+              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
             </Avatar>
-            <Text size="sm">{user.name ?? "Ukjent"}</Text>
-          </Group>
-        </TableCellLink>
+            <Text className="text-sm">{user.name ?? "Ukjent"}</Text>
+          </span>
+        </TextLink>
       )
     },
   })
@@ -101,31 +110,9 @@ export function NotificationRecipientsTable({
   const selectedUserIds = Object.keys(rowSelection).filter((userId) => rowSelection[userId])
   const selectedCount = selectedUserIds.length
 
-  const openRemoveSelectedModal = () => {
-    modals.openConfirmModal({
-      title: "Fjern mottakere",
-      children: <Text size="sm">{formatRemoveConfirmText(selectedCount)}</Text>,
-      labels: { confirm: "Fjern", cancel: "Avbryt" },
-      confirmProps: { color: "red" },
-      onConfirm: () => {
-        removeRecipients.mutate(
-          {
-            notificationId,
-            userIds: selectedUserIds,
-          },
-          {
-            onSuccess: () => {
-              setRowSelection({})
-            },
-          }
-        )
-      },
-    })
-  }
-
   return (
-    <Stack>
-      <Group justify="space-between" wrap="wrap">
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <TextInput
           placeholder="Søk etter navn"
           value={nameFilter}
@@ -135,17 +122,38 @@ export function NotificationRecipientsTable({
         {canManage && (
           <Button
             color="red"
-            variant="light"
-            disabled={selectedCount === 0}
-            loading={removeRecipients.isPending}
-            onClick={openRemoveSelectedModal}
+            variant="secondary"
+            disabled={selectedCount === 0 || removeRecipients.isPending}
+            onClick={() => setIsRemoveOpen(true)}
           >
             Fjern valgte
           </Button>
         )}
-      </Group>
+      </div>
 
-      <GenericTable table={table} onLoadMore={onLoadMore} />
-    </Stack>
+      <DataTable table={table} fetchNextPage={onLoadMore} hasNextPage={onLoadMore !== undefined} />
+
+      <ConfirmDeleteModal
+        open={isRemoveOpen}
+        onOpenChange={setIsRemoveOpen}
+        title="Fjern mottakere"
+        description={formatRemoveConfirmText(selectedCount)}
+        confirmLabel="Fjern"
+        cancelLabel="Avbryt"
+        onConfirm={() => {
+          removeRecipients.mutate(
+            {
+              notificationId,
+              userIds: selectedUserIds,
+            },
+            {
+              onSuccess: () => {
+                setRowSelection({})
+              },
+            }
+          )
+        }}
+      />
+    </div>
   )
 }

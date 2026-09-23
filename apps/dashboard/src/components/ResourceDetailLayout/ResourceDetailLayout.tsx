@@ -73,7 +73,7 @@ export function ResourceDetailLayout({
 
   return (
     <div className={cn("flex flex-col", className)}>
-      <div className="sticky top-0 z-30 -mx-4 bg-background px-4 dark:bg-background sm:-mx-6 sm:px-6">
+      <div className="sticky top-0 z-30 -mx-4 bg-background px-4 dark:bg-background">
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <Button
             variant="outline"

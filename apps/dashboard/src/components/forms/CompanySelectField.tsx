@@ -3,8 +3,8 @@
 import type { CompanyId } from "@dotkomonline/rpc/company"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import { useController } from "react-hook-form"
+import { CompanySelectInput } from "./CompanySelectInput"
 import { combineFieldDisabled, FieldShell, getFieldErrorMessage } from "./FieldShell"
-import { CompanySelectInput } from "./new-form/CompanySelectInput"
 
 type CompanySelectFieldProps<TFieldValues extends FieldValues> = {
   control: Control<TFieldValues>
