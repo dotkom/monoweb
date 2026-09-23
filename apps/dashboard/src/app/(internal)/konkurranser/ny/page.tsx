@@ -2,8 +2,7 @@
 
 import { useAuthorization } from "@/auth/authorization-context"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import { Stack } from "@mantine/core"
-import { useContestWriteForm } from "../components/contest-write-form"
+import { ContestWriteForm } from "../ContestWriteForm"
 import { useCreateContestMutation } from "../mutations"
 
 export default function CreateContestPage() {
@@ -11,31 +10,30 @@ export default function CreateContestPage() {
   const { canCreateEvents } = useAuthorization()
   const canCreate = canCreateEvents()
 
-  const FormComponent = useContestWriteForm({
-    disabled: !canCreate,
-    onSubmit: (data) => {
-      create.mutate({
-        contest: {
-          name: data.name,
-          description: data.description || null,
-          startDate: data.startDate ?? null,
-          resultType: data.resultType,
-          resultOrder: data.resultOrder,
-          groups: data.groups,
-        },
-      })
-    },
-  })
-
   return (
-    <Stack>
+    <div className="flex flex-col gap-4">
       {!canCreate && (
         <ReadOnlyNotice
           title="Du kan ikke opprette konkurranser."
           message="Dette er fordi du ikke tilhører noen grupper som kan opprette konkurranser. Kontakt dotkom dersom du mener dette er en feil."
         />
       )}
-      <FormComponent />
-    </Stack>
+
+      <ContestWriteForm
+        onSubmit={(data) => {
+          create.mutate({
+            contest: {
+              name: data.name,
+              description: data.description || null,
+              startDate: data.startDate ?? null,
+              resultType: data.resultType,
+              resultOrder: data.resultOrder,
+              groups: data.groups,
+            },
+          })
+        }}
+        disabled={!canCreate}
+      />
+    </div>
   )
 }

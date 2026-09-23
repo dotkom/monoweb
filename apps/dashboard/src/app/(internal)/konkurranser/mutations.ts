@@ -70,6 +70,7 @@ export const useDeleteContestMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+  const router = useRouter()
 
   return useMutation(
     trpc.contest.delete.mutationOptions({
@@ -85,6 +86,7 @@ export const useDeleteContestMutation = () => {
           message: "Konkurransen har blitt slettet.",
         })
         await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
+        router.replace("/konkurranser")
       },
       onError: (err) => {
         notification.fail({
@@ -211,37 +213,6 @@ export const useUpdateContestantResultMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av resultatet: ${err.toString()}.`,
-        })
-      },
-    })
-  )
-}
-
-export const useSetWinnerMutation = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const notification = useQueryNotification()
-
-  return useMutation(
-    trpc.contest.setWinner.mutationOptions({
-      onMutate: () => {
-        notification.loading({
-          title: "Setter vinner...",
-          message: "Vinneren blir satt.",
-        })
-      },
-      onSuccess: async (data) => {
-        notification.complete({
-          title: "Vinner satt",
-          message: "Vinneren har blitt satt for konkurransen.",
-        })
-        await queryClient.invalidateQueries(trpc.contest.getWithContestants.queryOptions({ contestId: data.id }))
-        await queryClient.invalidateQueries({ queryKey: trpc.contest.findMany.queryKey() })
-      },
-      onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under setting av vinner: ${err.toString()}.`,
         })
       },
     })

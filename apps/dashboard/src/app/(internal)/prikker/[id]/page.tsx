@@ -1,5 +1,5 @@
 "use client"
-import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
+import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { GenericTable } from "@/components/GenericTable"
 import { useTRPC } from "@/lib/trpc-client"
 import type { PersonalMarkDetails } from "@dotkomonline/rpc/mark"

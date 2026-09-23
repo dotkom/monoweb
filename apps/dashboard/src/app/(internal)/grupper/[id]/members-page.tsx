@@ -1,4 +1,4 @@
-import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
+import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { type GroupId, type GroupMember, getActiveGroupMembership } from "@dotkomonline/rpc/group"
 import type { WorkspaceMemberLink, WorkspaceMemberSyncState } from "@dotkomonline/rpc/workspace"
 import {

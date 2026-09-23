@@ -2,7 +2,7 @@
 
 import { EventSelect } from "@/app/(internal)/arrangementer/components/event-select"
 import { useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
-import { UserSearch } from "@/app/(internal)/brukere/components/user-search"
+import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { useGroupAllQuery } from "@/app/(internal)/grupper/queries"
 import { useAuthorization } from "@/auth/authorization-context"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
