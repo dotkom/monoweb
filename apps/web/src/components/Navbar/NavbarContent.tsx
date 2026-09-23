@@ -27,6 +27,7 @@ import {
   IconReceipt,
   IconSchool,
   IconUsers,
+  IconSofa,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import type { ComponentType, FC } from "react"
@@ -98,6 +99,12 @@ const links: MenuLink[] = [
         href: "https://wiki.online.ntnu.no/",
         icon: IconBook2,
         description: "Onlines wiki, brukt av hele Trondheim.",
+      },
+      {
+        title: "Kontoret",
+        href: "/kontoret",
+        icon: IconSofa,
+        description: "Informasjon om kontoret og varetelling i kiosken"
       },
     ],
   },
