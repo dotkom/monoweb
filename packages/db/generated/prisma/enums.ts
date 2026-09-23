@@ -242,3 +242,21 @@ export const ContestResultOrder = {
 } as const
 
 export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]
+
+
+export const InterviewLength = {
+  THIRTY_MINUTES: 'THIRTY_MINUTES',
+  TWENTY_MINUTES: 'TWENTY_MINUTES',
+  FIFTEEN_MINUTES: 'FIFTEEN_MINUTES'
+} as const
+
+export type InterviewLength = (typeof InterviewLength)[keyof typeof InterviewLength]
+
+
+export const ApplicationExtraInterest = {
+  REALFAGSKJELLERER: 'REALFAGSKJELLERER',
+  FEMINIT: 'FEMINIT',
+  DOTDAGENE: 'DOTDAGENE'
+} as const
+
+export type ApplicationExtraInterest = (typeof ApplicationExtraInterest)[keyof typeof ApplicationExtraInterest]

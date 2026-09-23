@@ -232,3 +232,38 @@ export type UserFlagLink = Prisma.UserFlagLinkModel
  * 
  */
 export type BirthdayPartyGuess = Prisma.BirthdayPartyGuessModel
+/**
+ * Model ApplicationPeriod
+ * 
+ */
+export type ApplicationPeriod = Prisma.ApplicationPeriodModel
+/**
+ * Model ApplicationPeriodGroup
+ * 
+ */
+export type ApplicationPeriodGroup = Prisma.ApplicationPeriodGroupModel
+/**
+ * Model Application
+ * 
+ */
+export type Application = Prisma.ApplicationModel
+/**
+ * Model ApplicationPreference
+ * 
+ */
+export type ApplicationPreference = Prisma.ApplicationPreferenceModel
+/**
+ * Model ApplicationAvailability
+ * 
+ */
+export type ApplicationAvailability = Prisma.ApplicationAvailabilityModel
+/**
+ * Model ScheduledInterview
+ * 
+ */
+export type ScheduledInterview = Prisma.ScheduledInterviewModel
+/**
+ * Model BookedRoom
+ * 
+ */
+export type BookedRoom = Prisma.BookedRoomModel

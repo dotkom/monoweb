@@ -24,4 +24,6 @@ export interface $DbEnums {
   NotificationType: "BROADCAST" | "BROADCAST_IMPORTANT" | "EVENT_REGISTRATION" | "EVENT_REMINDER" | "EVENT_UPDATE" | "JOB_LISTING_REMINDER" | "NEW_ARTICLE" | "NEW_EVENT" | "NEW_INTEREST_GROUP" | "NEW_JOB_LISTING" | "NEW_OFFLINE" | "NEW_MARK" | "NEW_FEEDBACK_FORM"
   contest_result_type: "SCORE" | "DURATION" | "WINNER"
   contest_result_order: "asc" | "desc"
+  InterviewLength: "THIRTY_MINUTES" | "TWENTY_MINUTES" | "FIFTEEN_MINUTES"
+  ApplicationExtraInterest: "REALFAGSKJELLERER" | "FEMINIT" | "DOTDAGENE"
 }
