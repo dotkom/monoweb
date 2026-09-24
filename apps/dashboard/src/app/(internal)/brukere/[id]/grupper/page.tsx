@@ -5,7 +5,7 @@ import { Title } from "@dotkomonline/ui"
 import { useGroupAllByMemberQuery } from "../../queries"
 import { useUserDetailsContext } from "../provider"
 
-export default function UserGrupperPage() {
+export default function UserGroupsPage() {
   const { user } = useUserDetailsContext()
   const { groups, isLoading } = useGroupAllByMemberQuery(user.id)
 

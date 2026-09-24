@@ -5,7 +5,7 @@ import { useEventAllByAttendingUserInfiniteQuery } from "@/app/(internal)/arrang
 import { Title } from "@dotkomonline/ui"
 import { useUserDetailsContext } from "../provider"
 
-export default function UserArrangementerPage() {
+export default function UserEventsPage() {
   const { user } = useUserDetailsContext()
 
   const { events, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =

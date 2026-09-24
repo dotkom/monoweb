@@ -157,6 +157,7 @@ export const getGroupDisplayName = (group: Pick<Group, "abbreviation" | "name" |
   if (group.preferredDisplayName === "NAME") {
     return group.name ?? group.abbreviation
   }
+
   return group.abbreviation
 }
 
