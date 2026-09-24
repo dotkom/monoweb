@@ -113,12 +113,19 @@ export const EventType = {
   COMPANY: 'COMPANY',
   ACADEMIC: 'ACADEMIC',
   SOCIAL: 'SOCIAL',
-  INTERNAL: 'INTERNAL',
   OTHER: 'OTHER',
   WELCOME: 'WELCOME'
 } as const
 
 export type EventType = (typeof EventType)[keyof typeof EventType]
+
+
+export const EventVisibility = {
+  PUBLIC: 'PUBLIC',
+  COMMITTEE_ONLY: 'COMMITTEE_ONLY'
+} as const
+
+export type EventVisibility = (typeof EventVisibility)[keyof typeof EventVisibility]
 
 
 export const MarkType = {

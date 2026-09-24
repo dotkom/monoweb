@@ -6,9 +6,9 @@ import { server } from "@/utils/trpc/server"
 const EventsPage = async () => {
   const cookieStore = await cookies()
   const initialListViewMode = parseEventsListViewMode(cookieStore.get(EVENT_VIEW_COOKIE_NAME)?.value)
-  const [groups, isStaff] = await Promise.all([server.group.all.query(), server.user.isStaff.query()])
+  const groups = await server.group.all.query()
 
-  return <EventListPage initialListViewMode={initialListViewMode} groups={groups} isStaff={isStaff} />
+  return <EventListPage initialListViewMode={initialListViewMode} groups={groups} />
 }
 
 export default EventsPage

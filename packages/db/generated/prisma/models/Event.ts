@@ -36,6 +36,8 @@ export type EventSumAggregateOutputType = {
 
 export type EventMinAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
   title: string | null
   start: Date | null
   end: Date | null
@@ -46,10 +48,9 @@ export type EventMinAggregateOutputType = {
   locationTitle: string | null
   locationAddress: string | null
   locationLink: string | null
-  type: $Enums.EventType | null
   markForMissedAttendance: boolean | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  type: $Enums.EventType | null
+  visibility: $Enums.EventVisibility | null
   attendanceId: string | null
   parentId: string | null
   contestId: string | null
@@ -58,6 +59,8 @@ export type EventMinAggregateOutputType = {
 
 export type EventMaxAggregateOutputType = {
   id: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
   title: string | null
   start: Date | null
   end: Date | null
@@ -68,10 +71,9 @@ export type EventMaxAggregateOutputType = {
   locationTitle: string | null
   locationAddress: string | null
   locationLink: string | null
-  type: $Enums.EventType | null
   markForMissedAttendance: boolean | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  type: $Enums.EventType | null
+  visibility: $Enums.EventVisibility | null
   attendanceId: string | null
   parentId: string | null
   contestId: string | null
@@ -80,6 +82,8 @@ export type EventMaxAggregateOutputType = {
 
 export type EventCountAggregateOutputType = {
   id: number
+  createdAt: number
+  updatedAt: number
   title: number
   start: number
   end: number
@@ -90,10 +94,9 @@ export type EventCountAggregateOutputType = {
   locationTitle: number
   locationAddress: number
   locationLink: number
-  type: number
   markForMissedAttendance: number
-  createdAt: number
-  updatedAt: number
+  type: number
+  visibility: number
   attendanceId: number
   parentId: number
   contestId: number
@@ -112,6 +115,8 @@ export type EventSumAggregateInputType = {
 
 export type EventMinAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   title?: true
   start?: true
   end?: true
@@ -122,10 +127,9 @@ export type EventMinAggregateInputType = {
   locationTitle?: true
   locationAddress?: true
   locationLink?: true
-  type?: true
   markForMissedAttendance?: true
-  createdAt?: true
-  updatedAt?: true
+  type?: true
+  visibility?: true
   attendanceId?: true
   parentId?: true
   contestId?: true
@@ -134,6 +138,8 @@ export type EventMinAggregateInputType = {
 
 export type EventMaxAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   title?: true
   start?: true
   end?: true
@@ -144,10 +150,9 @@ export type EventMaxAggregateInputType = {
   locationTitle?: true
   locationAddress?: true
   locationLink?: true
-  type?: true
   markForMissedAttendance?: true
-  createdAt?: true
-  updatedAt?: true
+  type?: true
+  visibility?: true
   attendanceId?: true
   parentId?: true
   contestId?: true
@@ -156,6 +161,8 @@ export type EventMaxAggregateInputType = {
 
 export type EventCountAggregateInputType = {
   id?: true
+  createdAt?: true
+  updatedAt?: true
   title?: true
   start?: true
   end?: true
@@ -166,10 +173,9 @@ export type EventCountAggregateInputType = {
   locationTitle?: true
   locationAddress?: true
   locationLink?: true
-  type?: true
   markForMissedAttendance?: true
-  createdAt?: true
-  updatedAt?: true
+  type?: true
+  visibility?: true
   attendanceId?: true
   parentId?: true
   contestId?: true
@@ -265,6 +271,8 @@ export type EventGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type EventGroupByOutputType = {
   id: string
+  createdAt: Date
+  updatedAt: Date
   title: string
   start: Date
   end: Date
@@ -275,10 +283,9 @@ export type EventGroupByOutputType = {
   locationTitle: string | null
   locationAddress: string | null
   locationLink: string | null
-  type: $Enums.EventType
   markForMissedAttendance: boolean
-  createdAt: Date
-  updatedAt: Date
+  type: $Enums.EventType
+  visibility: $Enums.EventVisibility
   attendanceId: string | null
   parentId: string | null
   contestId: string | null
@@ -310,6 +317,8 @@ export type EventWhereInput = {
   OR?: Prisma.EventWhereInput[]
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   id?: Prisma.StringFilter<"Event"> | string
+  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   title?: Prisma.StringFilter<"Event"> | string
   start?: Prisma.DateTimeFilter<"Event"> | Date | string
   end?: Prisma.DateTimeFilter<"Event"> | Date | string
@@ -320,27 +329,28 @@ export type EventWhereInput = {
   locationTitle?: Prisma.StringNullableFilter<"Event"> | string | null
   locationAddress?: Prisma.StringNullableFilter<"Event"> | string | null
   locationLink?: Prisma.StringNullableFilter<"Event"> | string | null
-  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFilter<"Event"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFilter<"Event"> | $Enums.EventVisibility
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
   contestId?: Prisma.StringNullableFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableFilter<"Event"> | number | null
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormNullableScalarRelationFilter, Prisma.FeedbackFormWhereInput> | null
   fadderuke?: Prisma.XOR<Prisma.FadderukeNullableScalarRelationFilter, Prisma.FadderukeWhereInput> | null
+  companies?: Prisma.EventCompanyListRelationFilter
+  hostingGroups?: Prisma.EventHostingGroupListRelationFilter
+  deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
   contest?: Prisma.XOR<Prisma.ContestNullableScalarRelationFilter, Prisma.ContestWhereInput> | null
-  companies?: Prisma.EventCompanyListRelationFilter
-  hostingGroups?: Prisma.EventHostingGroupListRelationFilter
-  deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
 }
 
 export type EventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
@@ -351,23 +361,22 @@ export type EventOrderByWithRelationInput = {
   locationTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   locationAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   locationLink?: Prisma.SortOrderInput | Prisma.SortOrder
-  type?: Prisma.SortOrder
   markForMissedAttendance?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   contestId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadataImportId?: Prisma.SortOrderInput | Prisma.SortOrder
   feedbackForm?: Prisma.FeedbackFormOrderByWithRelationInput
   fadderuke?: Prisma.FadderukeOrderByWithRelationInput
+  companies?: Prisma.EventCompanyOrderByRelationAggregateInput
+  hostingGroups?: Prisma.EventHostingGroupOrderByRelationAggregateInput
+  deregisterReasons?: Prisma.DeregisterReasonOrderByRelationAggregateInput
   attendance?: Prisma.AttendanceOrderByWithRelationInput
   parent?: Prisma.EventOrderByWithRelationInput
   children?: Prisma.EventOrderByRelationAggregateInput
   contest?: Prisma.ContestOrderByWithRelationInput
-  companies?: Prisma.EventCompanyOrderByRelationAggregateInput
-  hostingGroups?: Prisma.EventHostingGroupOrderByRelationAggregateInput
-  deregisterReasons?: Prisma.DeregisterReasonOrderByRelationAggregateInput
 }
 
 export type EventWhereUniqueInput = Prisma.AtLeast<{
@@ -375,6 +384,8 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   OR?: Prisma.EventWhereInput[]
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
+  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   title?: Prisma.StringFilter<"Event"> | string
   start?: Prisma.DateTimeFilter<"Event"> | Date | string
   end?: Prisma.DateTimeFilter<"Event"> | Date | string
@@ -385,27 +396,28 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   locationTitle?: Prisma.StringNullableFilter<"Event"> | string | null
   locationAddress?: Prisma.StringNullableFilter<"Event"> | string | null
   locationLink?: Prisma.StringNullableFilter<"Event"> | string | null
-  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFilter<"Event"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFilter<"Event"> | $Enums.EventVisibility
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
   contestId?: Prisma.StringNullableFilter<"Event"> | string | null
   metadataImportId?: Prisma.IntNullableFilter<"Event"> | number | null
   feedbackForm?: Prisma.XOR<Prisma.FeedbackFormNullableScalarRelationFilter, Prisma.FeedbackFormWhereInput> | null
   fadderuke?: Prisma.XOR<Prisma.FadderukeNullableScalarRelationFilter, Prisma.FadderukeWhereInput> | null
+  companies?: Prisma.EventCompanyListRelationFilter
+  hostingGroups?: Prisma.EventHostingGroupListRelationFilter
+  deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
   contest?: Prisma.XOR<Prisma.ContestNullableScalarRelationFilter, Prisma.ContestWhereInput> | null
-  companies?: Prisma.EventCompanyListRelationFilter
-  hostingGroups?: Prisma.EventHostingGroupListRelationFilter
-  deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
 }, "id">
 
 export type EventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
@@ -416,10 +428,9 @@ export type EventOrderByWithAggregationInput = {
   locationTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   locationAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   locationLink?: Prisma.SortOrderInput | Prisma.SortOrder
-  type?: Prisma.SortOrder
   markForMissedAttendance?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrderInput | Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   contestId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -436,6 +447,8 @@ export type EventScalarWhereWithAggregatesInput = {
   OR?: Prisma.EventScalarWhereWithAggregatesInput[]
   NOT?: Prisma.EventScalarWhereWithAggregatesInput | Prisma.EventScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Event"> | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   title?: Prisma.StringWithAggregatesFilter<"Event"> | string
   start?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   end?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
@@ -446,10 +459,9 @@ export type EventScalarWhereWithAggregatesInput = {
   locationTitle?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   locationAddress?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   locationLink?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
-  type?: Prisma.EnumEventTypeWithAggregatesFilter<"Event"> | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolWithAggregatesFilter<"Event"> | boolean
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
+  type?: Prisma.EnumEventTypeWithAggregatesFilter<"Event"> | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityWithAggregatesFilter<"Event"> | $Enums.EventVisibility
   attendanceId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   contestId?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
@@ -458,6 +470,8 @@ export type EventScalarWhereWithAggregatesInput = {
 
 export type EventCreateInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -468,24 +482,25 @@ export type EventCreateInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
-  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -496,24 +511,25 @@ export type EventUncheckedCreateInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -524,24 +540,25 @@ export type EventUpdateInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
-  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -552,24 +569,25 @@ export type EventUncheckedUpdateInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateManyInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -580,10 +598,9 @@ export type EventCreateManyInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
@@ -592,6 +609,8 @@ export type EventCreateManyInput = {
 
 export type EventUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -602,15 +621,16 @@ export type EventUpdateManyMutationInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type EventUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -621,10 +641,9 @@ export type EventUncheckedUpdateManyInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -648,6 +667,8 @@ export type EventNullableScalarRelationFilter = {
 
 export type EventCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
@@ -658,10 +679,9 @@ export type EventCountOrderByAggregateInput = {
   locationTitle?: Prisma.SortOrder
   locationAddress?: Prisma.SortOrder
   locationLink?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   markForMissedAttendance?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
@@ -674,6 +694,8 @@ export type EventAvgOrderByAggregateInput = {
 
 export type EventMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
@@ -684,10 +706,9 @@ export type EventMaxOrderByAggregateInput = {
   locationTitle?: Prisma.SortOrder
   locationAddress?: Prisma.SortOrder
   locationLink?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   markForMissedAttendance?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
@@ -696,6 +717,8 @@ export type EventMaxOrderByAggregateInput = {
 
 export type EventMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   start?: Prisma.SortOrder
   end?: Prisma.SortOrder
@@ -706,10 +729,9 @@ export type EventMinOrderByAggregateInput = {
   locationTitle?: Prisma.SortOrder
   locationAddress?: Prisma.SortOrder
   locationLink?: Prisma.SortOrder
-  type?: Prisma.SortOrder
   markForMissedAttendance?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  type?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   attendanceId?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
   contestId?: Prisma.SortOrder
@@ -793,6 +815,10 @@ export type EnumEventStatusFieldUpdateOperationsInput = {
 
 export type EnumEventTypeFieldUpdateOperationsInput = {
   set?: $Enums.EventType
+}
+
+export type EnumEventVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.EventVisibility
 }
 
 export type EventUpdateOneWithoutChildrenNestedInput = {
@@ -947,6 +973,8 @@ export type EventUpdateOneRequiredWithoutFadderukeNestedInput = {
 
 export type EventCreateWithoutAttendanceInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -957,23 +985,24 @@ export type EventCreateWithoutAttendanceInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
-  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
-  children?: Prisma.EventCreateNestedManyWithoutParentInput
-  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
 }
 
 export type EventUncheckedCreateWithoutAttendanceInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -984,19 +1013,18 @@ export type EventUncheckedCreateWithoutAttendanceInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutAttendanceInput = {
@@ -1030,6 +1058,8 @@ export type EventScalarWhereInput = {
   OR?: Prisma.EventScalarWhereInput[]
   NOT?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
   id?: Prisma.StringFilter<"Event"> | string
+  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   title?: Prisma.StringFilter<"Event"> | string
   start?: Prisma.DateTimeFilter<"Event"> | Date | string
   end?: Prisma.DateTimeFilter<"Event"> | Date | string
@@ -1040,10 +1070,9 @@ export type EventScalarWhereInput = {
   locationTitle?: Prisma.StringNullableFilter<"Event"> | string | null
   locationAddress?: Prisma.StringNullableFilter<"Event"> | string | null
   locationLink?: Prisma.StringNullableFilter<"Event"> | string | null
-  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFilter<"Event"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
+  type?: Prisma.EnumEventTypeFilter<"Event"> | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFilter<"Event"> | $Enums.EventVisibility
   attendanceId?: Prisma.StringNullableFilter<"Event"> | string | null
   parentId?: Prisma.StringNullableFilter<"Event"> | string | null
   contestId?: Prisma.StringNullableFilter<"Event"> | string | null
@@ -1052,6 +1081,8 @@ export type EventScalarWhereInput = {
 
 export type EventCreateWithoutChildrenInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1062,23 +1093,24 @@ export type EventCreateWithoutChildrenInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
-  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
-  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
-  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
 }
 
 export type EventUncheckedCreateWithoutChildrenInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1089,10 +1121,9 @@ export type EventUncheckedCreateWithoutChildrenInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
@@ -1111,6 +1142,8 @@ export type EventCreateOrConnectWithoutChildrenInput = {
 
 export type EventCreateWithoutParentInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1121,23 +1154,24 @@ export type EventCreateWithoutParentInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
-  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
-  children?: Prisma.EventCreateNestedManyWithoutParentInput
-  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
 }
 
 export type EventUncheckedCreateWithoutParentInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1148,19 +1182,18 @@ export type EventUncheckedCreateWithoutParentInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutParentInput = {
@@ -1186,6 +1219,8 @@ export type EventUpdateToOneWithWhereWithoutChildrenInput = {
 
 export type EventUpdateWithoutChildrenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1196,23 +1231,24 @@ export type EventUpdateWithoutChildrenInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
-  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
-  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
-  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
 }
 
 export type EventUncheckedUpdateWithoutChildrenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1223,10 +1259,9 @@ export type EventUncheckedUpdateWithoutChildrenInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1256,6 +1291,8 @@ export type EventUpdateManyWithWhereWithoutParentInput = {
 
 export type EventCreateWithoutCompaniesInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1266,23 +1303,24 @@ export type EventCreateWithoutCompaniesInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutCompaniesInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1293,19 +1331,18 @@ export type EventUncheckedCreateWithoutCompaniesInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutCompaniesInput = {
@@ -1326,6 +1363,8 @@ export type EventUpdateToOneWithWhereWithoutCompaniesInput = {
 
 export type EventUpdateWithoutCompaniesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1336,23 +1375,24 @@ export type EventUpdateWithoutCompaniesInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutCompaniesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1363,23 +1403,24 @@ export type EventUncheckedUpdateWithoutCompaniesInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateWithoutHostingGroupsInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1390,23 +1431,24 @@ export type EventCreateWithoutHostingGroupsInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutHostingGroupsInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1417,19 +1459,18 @@ export type EventUncheckedCreateWithoutHostingGroupsInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutHostingGroupsInput = {
@@ -1450,6 +1491,8 @@ export type EventUpdateToOneWithWhereWithoutHostingGroupsInput = {
 
 export type EventUpdateWithoutHostingGroupsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1460,23 +1503,24 @@ export type EventUpdateWithoutHostingGroupsInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutHostingGroupsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1487,23 +1531,24 @@ export type EventUncheckedUpdateWithoutHostingGroupsInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateWithoutFeedbackFormInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1514,23 +1559,24 @@ export type EventCreateWithoutFeedbackFormInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
-  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutFeedbackFormInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1541,19 +1587,18 @@ export type EventUncheckedCreateWithoutFeedbackFormInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutFeedbackFormInput = {
@@ -1574,6 +1619,8 @@ export type EventUpdateToOneWithWhereWithoutFeedbackFormInput = {
 
 export type EventUpdateWithoutFeedbackFormInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1584,23 +1631,24 @@ export type EventUpdateWithoutFeedbackFormInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
-  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutFeedbackFormInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1611,23 +1659,24 @@ export type EventUncheckedUpdateWithoutFeedbackFormInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateWithoutDeregisterReasonsInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1638,23 +1687,24 @@ export type EventCreateWithoutDeregisterReasonsInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
-  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutDeregisterReasonsInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1665,19 +1715,18 @@ export type EventUncheckedCreateWithoutDeregisterReasonsInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutDeregisterReasonsInput = {
@@ -1698,6 +1747,8 @@ export type EventUpdateToOneWithWhereWithoutDeregisterReasonsInput = {
 
 export type EventUpdateWithoutDeregisterReasonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1708,23 +1759,24 @@ export type EventUpdateWithoutDeregisterReasonsInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
-  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutDeregisterReasonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1735,23 +1787,24 @@ export type EventUncheckedUpdateWithoutDeregisterReasonsInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateWithoutContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1762,23 +1815,24 @@ export type EventCreateWithoutContestInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
-  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
-  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
-  children?: Prisma.EventCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
 }
 
 export type EventUncheckedCreateWithoutContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1789,19 +1843,18 @@ export type EventUncheckedCreateWithoutContestInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
   fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutContestInput = {
@@ -1832,6 +1885,8 @@ export type EventUpdateManyWithWhereWithoutContestInput = {
 
 export type EventCreateWithoutFadderukeInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1842,23 +1897,24 @@ export type EventCreateWithoutFadderukeInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
-  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
-  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
-  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutFadderukeInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1869,19 +1925,18 @@ export type EventUncheckedCreateWithoutFadderukeInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
-  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
 export type EventCreateOrConnectWithoutFadderukeInput = {
@@ -1902,6 +1957,8 @@ export type EventUpdateToOneWithWhereWithoutFadderukeInput = {
 
 export type EventUpdateWithoutFadderukeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1912,23 +1969,24 @@ export type EventUpdateWithoutFadderukeInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
-  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
-  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
-  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutFadderukeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1939,23 +1997,24 @@ export type EventUncheckedUpdateWithoutFadderukeInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventCreateManyAttendanceInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -1966,10 +2025,9 @@ export type EventCreateManyAttendanceInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   parentId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
@@ -1977,6 +2035,8 @@ export type EventCreateManyAttendanceInput = {
 
 export type EventUpdateWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1987,23 +2047,24 @@ export type EventUpdateWithoutAttendanceInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
-  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
-  children?: Prisma.EventUpdateManyWithoutParentNestedInput
-  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
 }
 
 export type EventUncheckedUpdateWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2014,23 +2075,24 @@ export type EventUncheckedUpdateWithoutAttendanceInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventUncheckedUpdateManyWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2041,10 +2103,9 @@ export type EventUncheckedUpdateManyWithoutAttendanceInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2052,6 +2113,8 @@ export type EventUncheckedUpdateManyWithoutAttendanceInput = {
 
 export type EventCreateManyParentInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -2062,10 +2125,9 @@ export type EventCreateManyParentInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   contestId?: string | null
   metadataImportId?: number | null
@@ -2073,6 +2135,8 @@ export type EventCreateManyParentInput = {
 
 export type EventUpdateWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2083,23 +2147,24 @@ export type EventUpdateWithoutParentInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
-  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
-  children?: Prisma.EventUpdateManyWithoutParentNestedInput
-  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
 }
 
 export type EventUncheckedUpdateWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2110,23 +2175,24 @@ export type EventUncheckedUpdateWithoutParentInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventUncheckedUpdateManyWithoutParentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2137,10 +2203,9 @@ export type EventUncheckedUpdateManyWithoutParentInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2148,6 +2213,8 @@ export type EventUncheckedUpdateManyWithoutParentInput = {
 
 export type EventCreateManyContestInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   title: string
   start: Date | string
   end: Date | string
@@ -2158,10 +2225,9 @@ export type EventCreateManyContestInput = {
   locationTitle?: string | null
   locationAddress?: string | null
   locationLink?: string | null
-  type: $Enums.EventType
   markForMissedAttendance?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
   attendanceId?: string | null
   parentId?: string | null
   metadataImportId?: number | null
@@ -2169,6 +2235,8 @@ export type EventCreateManyContestInput = {
 
 export type EventUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2179,23 +2247,24 @@ export type EventUpdateWithoutContestInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
-  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
-  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
-  children?: Prisma.EventUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
 }
 
 export type EventUncheckedUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2206,23 +2275,24 @@ export type EventUncheckedUpdateWithoutContestInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
   fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
-  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
 export type EventUncheckedUpdateManyWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2233,10 +2303,9 @@ export type EventUncheckedUpdateManyWithoutContestInput = {
   locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
   markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
   attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2248,17 +2317,17 @@ export type EventUncheckedUpdateManyWithoutContestInput = {
  */
 
 export type EventCountOutputType = {
-  children: number
   companies: number
   hostingGroups: number
   deregisterReasons: number
+  children: number
 }
 
 export type EventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  children?: boolean | EventCountOutputTypeCountChildrenArgs
   companies?: boolean | EventCountOutputTypeCountCompaniesArgs
   hostingGroups?: boolean | EventCountOutputTypeCountHostingGroupsArgs
   deregisterReasons?: boolean | EventCountOutputTypeCountDeregisterReasonsArgs
+  children?: boolean | EventCountOutputTypeCountChildrenArgs
 }
 
 /**
@@ -2269,13 +2338,6 @@ export type EventCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
    * Select specific fields to fetch from the EventCountOutputType
    */
   select?: Prisma.EventCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * EventCountOutputType without action
- */
-export type EventCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.EventWhereInput
 }
 
 /**
@@ -2299,9 +2361,18 @@ export type EventCountOutputTypeCountDeregisterReasonsArgs<ExtArgs extends runti
   where?: Prisma.DeregisterReasonWhereInput
 }
 
+/**
+ * EventCountOutputType without action
+ */
+export type EventCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EventWhereInput
+}
+
 
 export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   title?: boolean
   start?: boolean
   end?: boolean
@@ -2312,28 +2383,29 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   locationTitle?: boolean
   locationAddress?: boolean
   locationLink?: boolean
-  type?: boolean
   markForMissedAttendance?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  type?: boolean
+  visibility?: boolean
   attendanceId?: boolean
   parentId?: boolean
   contestId?: boolean
   metadataImportId?: boolean
   feedbackForm?: boolean | Prisma.Event$feedbackFormArgs<ExtArgs>
   fadderuke?: boolean | Prisma.Event$fadderukeArgs<ExtArgs>
+  companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
+  hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
+  deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
   contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
-  companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
-  hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
-  deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   _count?: boolean | Prisma.EventCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["event"]>
 
 export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   title?: boolean
   start?: boolean
   end?: boolean
@@ -2344,10 +2416,9 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   locationTitle?: boolean
   locationAddress?: boolean
   locationLink?: boolean
-  type?: boolean
   markForMissedAttendance?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  type?: boolean
+  visibility?: boolean
   attendanceId?: boolean
   parentId?: boolean
   contestId?: boolean
@@ -2359,6 +2430,8 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   title?: boolean
   start?: boolean
   end?: boolean
@@ -2369,10 +2442,9 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   locationTitle?: boolean
   locationAddress?: boolean
   locationLink?: boolean
-  type?: boolean
   markForMissedAttendance?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  type?: boolean
+  visibility?: boolean
   attendanceId?: boolean
   parentId?: boolean
   contestId?: boolean
@@ -2384,6 +2456,8 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type EventSelectScalar = {
   id?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   title?: boolean
   start?: boolean
   end?: boolean
@@ -2394,27 +2468,26 @@ export type EventSelectScalar = {
   locationTitle?: boolean
   locationAddress?: boolean
   locationLink?: boolean
-  type?: boolean
   markForMissedAttendance?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  type?: boolean
+  visibility?: boolean
   attendanceId?: boolean
   parentId?: boolean
   contestId?: boolean
   metadataImportId?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "start" | "end" | "status" | "description" | "shortDescription" | "imageUrl" | "locationTitle" | "locationAddress" | "locationLink" | "type" | "markForMissedAttendance" | "createdAt" | "updatedAt" | "attendanceId" | "parentId" | "contestId" | "metadataImportId", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "title" | "start" | "end" | "status" | "description" | "shortDescription" | "imageUrl" | "locationTitle" | "locationAddress" | "locationLink" | "markForMissedAttendance" | "type" | "visibility" | "attendanceId" | "parentId" | "contestId" | "metadataImportId", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feedbackForm?: boolean | Prisma.Event$feedbackFormArgs<ExtArgs>
   fadderuke?: boolean | Prisma.Event$fadderukeArgs<ExtArgs>
+  companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
+  hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
+  deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
   contest?: boolean | Prisma.Event$contestArgs<ExtArgs>
-  companies?: boolean | Prisma.Event$companiesArgs<ExtArgs>
-  hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
-  deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   _count?: boolean | Prisma.EventCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2433,16 +2506,18 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     feedbackForm: Prisma.$FeedbackFormPayload<ExtArgs> | null
     fadderuke: Prisma.$FadderukePayload<ExtArgs> | null
+    companies: Prisma.$EventCompanyPayload<ExtArgs>[]
+    hostingGroups: Prisma.$EventHostingGroupPayload<ExtArgs>[]
+    deregisterReasons: Prisma.$DeregisterReasonPayload<ExtArgs>[]
     attendance: Prisma.$AttendancePayload<ExtArgs> | null
     parent: Prisma.$EventPayload<ExtArgs> | null
     children: Prisma.$EventPayload<ExtArgs>[]
     contest: Prisma.$ContestPayload<ExtArgs> | null
-    companies: Prisma.$EventCompanyPayload<ExtArgs>[]
-    hostingGroups: Prisma.$EventHostingGroupPayload<ExtArgs>[]
-    deregisterReasons: Prisma.$DeregisterReasonPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    createdAt: Date
+    updatedAt: Date
     title: string
     start: Date
     end: Date
@@ -2453,10 +2528,9 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     locationTitle: string | null
     locationAddress: string | null
     locationLink: string | null
-    type: $Enums.EventType
     markForMissedAttendance: boolean
-    createdAt: Date
-    updatedAt: Date
+    type: $Enums.EventType
+    visibility: $Enums.EventVisibility
     attendanceId: string | null
     parentId: string | null
     contestId: string | null
@@ -2861,13 +2935,13 @@ export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   feedbackForm<T extends Prisma.Event$feedbackFormArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$feedbackFormArgs<ExtArgs>>): Prisma.Prisma__FeedbackFormClient<runtime.Types.Result.GetResult<Prisma.$FeedbackFormPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   fadderuke<T extends Prisma.Event$fadderukeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$fadderukeArgs<ExtArgs>>): Prisma.Prisma__FadderukeClient<runtime.Types.Result.GetResult<Prisma.$FadderukePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  companies<T extends Prisma.Event$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventCompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  hostingGroups<T extends Prisma.Event$hostingGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$hostingGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventHostingGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deregisterReasons<T extends Prisma.Event$deregisterReasonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$deregisterReasonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeregisterReasonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendance<T extends Prisma.Event$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$attendanceArgs<ExtArgs>>): Prisma.Prisma__AttendanceClient<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Event$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$parentArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Event$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contest<T extends Prisma.Event$contestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$contestArgs<ExtArgs>>): Prisma.Prisma__ContestClient<runtime.Types.Result.GetResult<Prisma.$ContestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  companies<T extends Prisma.Event$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventCompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  hostingGroups<T extends Prisma.Event$hostingGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$hostingGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventHostingGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  deregisterReasons<T extends Prisma.Event$deregisterReasonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$deregisterReasonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeregisterReasonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2898,6 +2972,8 @@ export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface EventFieldRefs {
   readonly id: Prisma.FieldRef<"Event", 'String'>
+  readonly createdAt: Prisma.FieldRef<"Event", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly title: Prisma.FieldRef<"Event", 'String'>
   readonly start: Prisma.FieldRef<"Event", 'DateTime'>
   readonly end: Prisma.FieldRef<"Event", 'DateTime'>
@@ -2908,10 +2984,9 @@ export interface EventFieldRefs {
   readonly locationTitle: Prisma.FieldRef<"Event", 'String'>
   readonly locationAddress: Prisma.FieldRef<"Event", 'String'>
   readonly locationLink: Prisma.FieldRef<"Event", 'String'>
-  readonly type: Prisma.FieldRef<"Event", 'EventType'>
   readonly markForMissedAttendance: Prisma.FieldRef<"Event", 'Boolean'>
-  readonly createdAt: Prisma.FieldRef<"Event", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
+  readonly type: Prisma.FieldRef<"Event", 'EventType'>
+  readonly visibility: Prisma.FieldRef<"Event", 'EventVisibility'>
   readonly attendanceId: Prisma.FieldRef<"Event", 'String'>
   readonly parentId: Prisma.FieldRef<"Event", 'String'>
   readonly contestId: Prisma.FieldRef<"Event", 'String'>
@@ -3364,6 +3439,78 @@ export type Event$fadderukeArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
+ * Event.companies
+ */
+export type Event$companiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EventCompany
+   */
+  select?: Prisma.EventCompanySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EventCompany
+   */
+  omit?: Prisma.EventCompanyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventCompanyInclude<ExtArgs> | null
+  where?: Prisma.EventCompanyWhereInput
+  orderBy?: Prisma.EventCompanyOrderByWithRelationInput | Prisma.EventCompanyOrderByWithRelationInput[]
+  cursor?: Prisma.EventCompanyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EventCompanyScalarFieldEnum | Prisma.EventCompanyScalarFieldEnum[]
+}
+
+/**
+ * Event.hostingGroups
+ */
+export type Event$hostingGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EventHostingGroup
+   */
+  select?: Prisma.EventHostingGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EventHostingGroup
+   */
+  omit?: Prisma.EventHostingGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventHostingGroupInclude<ExtArgs> | null
+  where?: Prisma.EventHostingGroupWhereInput
+  orderBy?: Prisma.EventHostingGroupOrderByWithRelationInput | Prisma.EventHostingGroupOrderByWithRelationInput[]
+  cursor?: Prisma.EventHostingGroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EventHostingGroupScalarFieldEnum | Prisma.EventHostingGroupScalarFieldEnum[]
+}
+
+/**
+ * Event.deregisterReasons
+ */
+export type Event$deregisterReasonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeregisterReason
+   */
+  select?: Prisma.DeregisterReasonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeregisterReason
+   */
+  omit?: Prisma.DeregisterReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeregisterReasonInclude<ExtArgs> | null
+  where?: Prisma.DeregisterReasonWhereInput
+  orderBy?: Prisma.DeregisterReasonOrderByWithRelationInput | Prisma.DeregisterReasonOrderByWithRelationInput[]
+  cursor?: Prisma.DeregisterReasonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeregisterReasonScalarFieldEnum | Prisma.DeregisterReasonScalarFieldEnum[]
+}
+
+/**
  * Event.attendance
  */
 export type Event$attendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3442,78 +3589,6 @@ export type Event$contestArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.ContestInclude<ExtArgs> | null
   where?: Prisma.ContestWhereInput
-}
-
-/**
- * Event.companies
- */
-export type Event$companiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the EventCompany
-   */
-  select?: Prisma.EventCompanySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the EventCompany
-   */
-  omit?: Prisma.EventCompanyOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EventCompanyInclude<ExtArgs> | null
-  where?: Prisma.EventCompanyWhereInput
-  orderBy?: Prisma.EventCompanyOrderByWithRelationInput | Prisma.EventCompanyOrderByWithRelationInput[]
-  cursor?: Prisma.EventCompanyWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.EventCompanyScalarFieldEnum | Prisma.EventCompanyScalarFieldEnum[]
-}
-
-/**
- * Event.hostingGroups
- */
-export type Event$hostingGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the EventHostingGroup
-   */
-  select?: Prisma.EventHostingGroupSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the EventHostingGroup
-   */
-  omit?: Prisma.EventHostingGroupOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EventHostingGroupInclude<ExtArgs> | null
-  where?: Prisma.EventHostingGroupWhereInput
-  orderBy?: Prisma.EventHostingGroupOrderByWithRelationInput | Prisma.EventHostingGroupOrderByWithRelationInput[]
-  cursor?: Prisma.EventHostingGroupWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.EventHostingGroupScalarFieldEnum | Prisma.EventHostingGroupScalarFieldEnum[]
-}
-
-/**
- * Event.deregisterReasons
- */
-export type Event$deregisterReasonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DeregisterReason
-   */
-  select?: Prisma.DeregisterReasonSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DeregisterReason
-   */
-  omit?: Prisma.DeregisterReasonOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DeregisterReasonInclude<ExtArgs> | null
-  where?: Prisma.DeregisterReasonWhereInput
-  orderBy?: Prisma.DeregisterReasonOrderByWithRelationInput | Prisma.DeregisterReasonOrderByWithRelationInput[]
-  cursor?: Prisma.DeregisterReasonWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.DeregisterReasonScalarFieldEnum | Prisma.DeregisterReasonScalarFieldEnum[]
 }
 
 /**

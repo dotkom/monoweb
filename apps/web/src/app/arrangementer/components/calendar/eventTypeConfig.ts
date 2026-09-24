@@ -45,17 +45,6 @@ export const eventCategories: Record<EventType, EventCategoryConfig> = {
       badge: "bg-blue-200 text-blue-700 dark:bg-blue-800 dark:text-blue-200",
     },
   },
-  INTERNAL: {
-    displayName: "Internt",
-    classes: {
-      guide: "bg-yellow-500 dark:bg-yellow-600",
-      item: "bg-yellow-100 text-yellow-900 border-yellow-500 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-600",
-      itemBorder: "border-yellow-500 dark:border-yellow-600",
-      itemFade: "to-yellow-100 dark:to-yellow-950",
-      card: "bg-yellow-100 text-yellow-950 border-yellow-200 hover:border-yellow-500 dark:bg-yellow-950 dark:text-yellow-50 dark:border-yellow-900 dark:hover:border-yellow-600",
-      badge: "bg-yellow-200 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200",
-    },
-  },
   // Change these colors to match Fadderuka Theme
   WELCOME: {
     displayName: "Fadderuke",

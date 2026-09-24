@@ -33,7 +33,7 @@ export const useCompanyEventsAllInfiniteQuery = (id: CompanyId) => {
     ...trpc.event.all.infiniteQueryOptions({
       filter: {
         byOrganizingCompany: [id],
-        excludingType: [],
+        excludingVisibility: [],
       },
     }),
     select: (data) => data.pages.flatMap((page) => page.items),

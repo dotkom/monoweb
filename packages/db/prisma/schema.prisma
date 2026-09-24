@@ -284,9 +284,6 @@ enum EventType {
   ACADEMIC         @map("ACADEMIC")
   /// Sosialt
   SOCIAL           @map("SOCIAL")
-  // This type is for the rare occation we have an event that is only open to committee members.
-  /// Komitéarrangement
-  INTERNAL         @map("INTERNAL")
   OTHER            @map("OTHER")
   // This type is for a committe called "velkom" and are special social events for new students.
   // These have a separate type because we have historically hid these from event lists to not
@@ -296,6 +293,13 @@ enum EventType {
   WELCOME          @map("WELCOME")
 
   @@map("event_type")
+}
+
+enum EventVisibility {
+  PUBLIC         @map("PUBLIC")
+  COMMITTEE_ONLY @map("COMMITTEE_ONLY")
+
+  @@map("event_visibility")
 }
 
 model Attendance {
@@ -371,23 +375,28 @@ model Attendee {
 }
 
 model Event {
-  id                      String        @id @default(uuid())
+  id                      String          @id @default(uuid())
+  createdAt               DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   title                   String
-  start                   DateTime      @db.Timestamptz(3)
-  end                     DateTime      @db.Timestamptz(3)
+  start                   DateTime        @db.Timestamptz(3)
+  end                     DateTime        @db.Timestamptz(3)
   status                  EventStatus
   description             String
-  shortDescription        String?       @map("short_description")
-  imageUrl                String?       @map("image_url")
-  locationTitle           String?       @map("location_title")
-  locationAddress         String?       @map("location_address")
-  locationLink            String?       @map("location_link")
+  shortDescription        String?         @map("short_description")
+  imageUrl                String?         @map("image_url")
+  locationTitle           String?         @map("location_title")
+  locationAddress         String?         @map("location_address")
+  locationLink            String?         @map("location_link")
+  markForMissedAttendance Boolean         @default(true) @map("mark_for_missed_attendance")
   type                    EventType
-  feedbackForm            FeedbackForm?
-  markForMissedAttendance Boolean       @default(true) @map("mark_for_missed_attendance")
-  fadderuke               Fadderuke?
-  createdAt               DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt               DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  visibility              EventVisibility @default(PUBLIC)
+
+  feedbackForm      FeedbackForm?
+  fadderuke         Fadderuke?
+  companies         EventCompany[]
+  hostingGroups     EventHostingGroup[]
+  deregisterReasons DeregisterReason[]
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
@@ -396,10 +405,6 @@ model Event {
   parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
   children     Event[]     @relation("children")
   contest      Contest?    @relation(fields: [contestId], references: [id], onDelete: SetNull)
-
-  companies         EventCompany[]
-  hostingGroups     EventHostingGroup[]
-  deregisterReasons DeregisterReason[]
 
   /// Historical metadata -- This is the id of the event in the previous version of OnlineWeb, if it was imported from
   /// the previous version

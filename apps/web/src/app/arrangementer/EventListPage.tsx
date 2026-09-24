@@ -57,10 +57,9 @@ import { usePlausible } from "next-plausible"
 interface Props {
   initialListViewMode: EventsListViewMode
   groups: Group[]
-  isStaff: boolean
 }
 
-export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) => {
+export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const plausible = usePlausible()
   const { view, isCards, isCalendar, setListViewMode } = useEventsView(initialListViewMode)
   const { navigateToView } = useEventsViewNavigation(setListViewMode)
@@ -152,7 +151,7 @@ export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) =
         min: now,
       },
       orderBy: "asc",
-      excludingType: [],
+      excludingVisibility: [],
     },
     page: {
       take: 20,
@@ -333,11 +332,7 @@ export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) =
                           />
                         </div>
                         <div className="mt-6">
-                          <EventTypeFilter
-                            value={filters.types}
-                            onChange={(types) => updateFilters({ types })}
-                            isStaff={isStaff}
-                          />
+                          <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} />
                         </div>
                       </div>
 
@@ -437,7 +432,7 @@ export const EventListPage = ({ initialListViewMode, groups, isStaff }: Props) =
       {isEventListView && (
         <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0">
           <div className="max-md:hidden mt-4">
-            <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} isStaff={isStaff} />
+            <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} />
             <div className="mt-6">
               <EventGroupFilter
                 value={filters.groups}

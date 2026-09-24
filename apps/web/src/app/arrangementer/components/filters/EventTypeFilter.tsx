@@ -7,16 +7,13 @@ import { IconChevronDown } from "@tabler/icons-react"
 interface EventTypeFilterProps {
   value: EventType[]
   onChange: (types: EventType[]) => void
-  isStaff: boolean
 }
 
-export const EventTypeFilter = ({ value, onChange, isStaff }: EventTypeFilterProps) => {
-  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.enum)
-    .filter((type) => isStaff || type !== "INTERNAL")
-    .map((type) => ({
-      value: type,
-      label: mapEventTypeToLabel(type),
-    }))
+export const EventTypeFilter = ({ value, onChange }: EventTypeFilterProps) => {
+  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.enum).map((type) => ({
+    value: type,
+    label: mapEventTypeToLabel(type),
+  }))
 
   const handleToggle = (type: EventType) => {
     const newTypes = value.includes(type) ? value.filter((t) => t !== type) : [...value, type]

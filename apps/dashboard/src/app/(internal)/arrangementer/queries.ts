@@ -23,7 +23,7 @@ export const useEventAllQuery = ({
     ...trpc.event.all.queryOptions({
       filter: {
         ...filter,
-        excludingType: [],
+        excludingVisibility: [],
         byStatus: ["PUBLIC", "DRAFT"],
       },
       ...page,
@@ -40,7 +40,7 @@ export const useEventAllInfiniteQuery = ({ filter, page }: UseEventAllQueryProps
     ...trpc.event.all.infiniteQueryOptions({
       filter: {
         ...filter,
-        excludingType: [],
+        excludingVisibility: [],
         byStatus: ["PUBLIC", "DRAFT"],
       },
       ...page,

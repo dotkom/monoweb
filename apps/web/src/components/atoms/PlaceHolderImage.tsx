@@ -12,7 +12,6 @@ export const PlaceHolderImage: FC<PlaceHolderImageProps> = ({ className, variant
     SOCIAL: "fill-[#A7D9B6] dark:fill-[#1f3d2a]", // muted green
     COMPANY: "fill-[#E6B5B5] dark:fill-[#4f2626]", // muted red
     ACADEMIC: "fill-[#AFC5E3] dark:fill-[#2a3553]", // muted blue
-    INTERNAL: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
     WELCOME: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
     GENERAL_ASSEMBLY: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
     OTHER: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
