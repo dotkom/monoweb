@@ -16,6 +16,7 @@ import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { ApplicationShell } from "./ApplicationShell"
 import { QueryProvider } from "./QueryProvider"
+import { headers } from "next/headers"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -44,6 +45,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   const { isAdministrator, isCommitteeMember, affiliations } = await getServerAuthorization()
 
+  const requestHeaders = await headers()
+  const userAgent = requestHeaders.get("user-agent") ?? ""
+  const isMac = /macintosh/i.test(userAgent)
+
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning className="h-dvh overflow-hidden">
@@ -57,7 +62,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   isCommitteeMember={isCommitteeMember}
                   affiliations={affiliations}
                 >
-                  <ApplicationShell>{children}</ApplicationShell>
+                  <ApplicationShell isMac={isMac}>{children}</ApplicationShell>
                 </AuthorizationProvider>
               </ThemeProvider>
             </QueryProvider>

@@ -11,7 +11,7 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogTitle,
-} from "../Dialog/Dialog"
+} from "../AlertDialog/AlertDialog"
 import { type AspectRatio, ImageInput } from "../ImageInput/ImageInput"
 
 export type ImageUploadModalProps = {

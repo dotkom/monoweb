@@ -1,7 +1,8 @@
 "use client"
 
 import { Button, Title } from "@dotkomonline/ui"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { CreateMarkModal } from "./CreateMarkModal"
 import { CreateSuspensionModal } from "./CreateSuspensionModal"
 import { MarkTable } from "./MarkTable"
@@ -13,6 +14,26 @@ export default function MarkPage() {
   const { marks, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useMarkFindManyInfiniteQuery()
   const [modal, setModal] = useState<PageModalState | null>(null)
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const createSearchParam = searchParams.get("create")
+
+  useEffect(() => {
+    if (createSearchParam === "prikk") {
+      setModal("mark")
+    } else if (createSearchParam === "suspensjon") {
+      setModal("suspension")
+    } else {
+      return
+    }
+
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("create")
+    const qs = params.toString()
+
+    router.replace(qs ? `/prikker?${qs}` : "/prikker")
+  }, [createSearchParam, router, searchParams])
 
   return (
     <div className="flex flex-col gap-4">

@@ -99,6 +99,10 @@ function buildWhereFromQuery(query: NotificationFilterQuery): Prisma.Notificatio
     where.payload = linkColumns.payload
   }
 
+  if (query.bySearchTerm !== undefined && query.bySearchTerm.length > 0) {
+    where.title = { contains: query.bySearchTerm, mode: "insensitive" }
+  }
+
   return where
 }
 

@@ -5,7 +5,7 @@ import { isCommitteeAffiliation } from "@/auth/permissions"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { NotificationsTable } from "./components/NotificationsTable"
 import { SendNotificationModal } from "./components/SendNotificationModal"
 import { useNotificationsInfiniteQuery } from "./queries"
@@ -35,6 +35,20 @@ export default function NotificationsPage() {
     params.set("scope", value)
     router.replace(`/varslinger?${params.toString()}`)
   }
+
+  const hasOpenCreateSearchParam = searchParams.get("create") !== null
+
+  useEffect(() => {
+    if (hasOpenCreateSearchParam && isAdministrator) {
+      setIsCreateOpen(true)
+
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete("create")
+      const qs = params.toString()
+
+      router.replace(qs ? `/varslinger?${qs}` : "/varslinger")
+    }
+  }, [hasOpenCreateSearchParam, isAdministrator, router, searchParams])
 
   const filters = useMemo(() => {
     if (scopeFilter === "mine" && !isAdministrator && committeeSlugs.length > 0) {
