@@ -168,6 +168,24 @@ describe("event integration tests", () => {
     expect(committeeEvents).toHaveLength(1)
   })
 
+  it("should include authenticated events when only committee events are excluded", async () => {
+    const authenticatedEvent = await core.eventService.createEvent(
+      dbClient,
+      getMockEvent({ visibility: "AUTHENTICATED" })
+    )
+
+    const defaultEvents = await core.eventService.findEvents(dbClient, {
+      byId: [authenticatedEvent.id],
+    })
+    expect(defaultEvents).toHaveLength(0)
+
+    const authenticatedEvents = await core.eventService.findEvents(dbClient, {
+      byId: [authenticatedEvent.id],
+      excludingVisibility: ["COMMITTEE_ONLY"],
+    })
+    expect(authenticatedEvents).toHaveLength(1)
+  })
+
   it("should prevent assigning itself as a parent event", async () => {
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
     await expect(core.eventService.updateEventParent(dbClient, event.id, event.id)).rejects.toThrow(

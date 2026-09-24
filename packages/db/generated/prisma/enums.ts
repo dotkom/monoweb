@@ -122,6 +122,7 @@ export type EventType = (typeof EventType)[keyof typeof EventType]
 
 export const EventVisibility = {
   PUBLIC: 'PUBLIC',
+  AUTHENTICATED: 'AUTHENTICATED',
   COMMITTEE_ONLY: 'COMMITTEE_ONLY'
 } as const
 

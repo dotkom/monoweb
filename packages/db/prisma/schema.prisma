@@ -297,6 +297,7 @@ enum EventType {
 
 enum EventVisibility {
   PUBLIC         @map("PUBLIC")
+  AUTHENTICATED  @map("AUTHENTICATED")
   COMMITTEE_ONLY @map("COMMITTEE_ONLY")
 
   @@map("event_visibility")

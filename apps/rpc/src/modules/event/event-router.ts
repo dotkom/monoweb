@@ -26,6 +26,40 @@ import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../e
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
 
+function excludeVisibility(excludedVisibilities: EventVisibility[], visibility: EventVisibility): EventVisibility[] {
+  if (excludedVisibilities.includes(visibility)) {
+    return excludedVisibilities
+  }
+
+  return [...excludedVisibilities, visibility]
+}
+
+function getExcludedVisibilities(
+  requestedExclusions: EventVisibility[],
+  canViewAuthenticatedEvents: boolean,
+  canViewCommitteeOnlyEvents: boolean
+): EventVisibility[] {
+  let excludedVisibilities = requestedExclusions
+
+  if (!canViewAuthenticatedEvents) {
+    excludedVisibilities = excludeVisibility(excludedVisibilities, "AUTHENTICATED")
+  }
+
+  if (!canViewCommitteeOnlyEvents) {
+    excludedVisibilities = excludeVisibility(excludedVisibilities, "COMMITTEE_ONLY")
+  }
+
+  return excludedVisibilities
+}
+
+function canViewEvent(visibility: EventVisibility, hasPrincipal: boolean): boolean {
+  if (visibility === "AUTHENTICATED") {
+    return hasPrincipal
+  }
+
+  return true
+}
+
 function assertHasCommitteeOrganizer(groupIds: Iterable<string>): void {
   const hasCommitteeOrganizer = [...groupIds].some((groupId) => COMMITTEE_AFFILIATION_SET.has(groupId))
   if (!hasCommitteeOrganizer) {
@@ -41,6 +75,11 @@ const getEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input)
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null)) {
+      throw new UnauthorizedError("Authentication is required to view this event")
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -55,7 +94,14 @@ const findEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.findEventById(ctx.handle, input)
-    if (!event) return null
+    if (!event) {
+      return null
+    }
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null)) {
+      return null
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -214,11 +260,7 @@ const allEventsProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude committee-only events
-    let excludingVisibility = filter?.excludingVisibility ?? []
-    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
-      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
-    }
+    const excludingVisibility = getExcludedVisibilities(filter?.excludingVisibility ?? [], principal !== null, isStaff)
 
     const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
@@ -254,11 +296,7 @@ const allEventSummariesProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude committee-only events
-    let excludingVisibility = filter?.excludingVisibility ?? []
-    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
-      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
-    }
+    const excludingVisibility = getExcludedVisibilities(filter?.excludingVisibility ?? [], principal !== null, isStaff)
 
     const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
@@ -301,11 +339,7 @@ const allByAttendingUserIdProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude committee-only events
-    let excludingVisibility = filter?.excludingVisibility ?? []
-    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
-      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
-    }
+    const excludingVisibility = getExcludedVisibilities(filter?.excludingVisibility ?? [], principal !== null, isStaff)
 
     const events = await ctx.eventService.findEventsByAttendingUserId(
       ctx.handle,
@@ -355,11 +389,7 @@ const allByAttendingUserIdForCalendarProcedure = procedure
     const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.handle, id)
     const isStaff = ctx.authorizationService.isCommitteeMember(userAffiliations)
 
-    let excludingVisibility: EventVisibility[] = []
-
-    if (!isStaff) {
-      excludingVisibility = ["COMMITTEE_ONLY"]
-    }
+    const excludingVisibility = getExcludedVisibilities([], true, isStaff)
 
     const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
@@ -402,13 +432,8 @@ const allSummariesByAttendingUserIdProcedure = procedure
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
     const isViewingOwnEvents = principal.subject === id
 
-    let excludingVisibility = filter?.excludingVisibility ?? []
-    const shouldForceExcludeCommitteeOnly =
-      !isStaff && !isViewingOwnEvents && !excludingVisibility.includes("COMMITTEE_ONLY")
-
-    if (shouldForceExcludeCommitteeOnly) {
-      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
-    }
+    const canViewCommitteeOnly = isStaff || isViewingOwnEvents
+    const excludingVisibility = getExcludedVisibilities(filter?.excludingVisibility ?? [], true, canViewCommitteeOnly)
 
     const events = await ctx.eventService.findEventSummariesByAttendingUserId(
       ctx.handle,
@@ -504,9 +529,23 @@ const findParentEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const childEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
-    if (!childEvent?.parentId) return null
+    if (!childEvent?.parentId) {
+      return null
+    }
+
+    if (!canViewEvent(childEvent.visibility, ctx.principal !== null)) {
+      return null
+    }
+
     const event = await ctx.eventService.findEventById(ctx.handle, childEvent.parentId)
-    if (!event) return null
+    if (!event) {
+      return null
+    }
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null)) {
+      return null
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -520,7 +559,13 @@ const findChildEventsProcedure = procedure
   .output(EventWithAttendanceSchema.array())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
+    const parentEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    if (parentEvent === null || !canViewEvent(parentEvent.visibility, ctx.principal !== null)) {
+      return []
+    }
+
+    const childEvents = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
+    const events = childEvents.filter((event) => canViewEvent(event.visibility, ctx.principal !== null))
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -633,11 +678,11 @@ const findFeaturedEventsProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    let excludingVisibility = input.filter?.excludingVisibility ?? []
-
-    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
-      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
-    }
+    const excludingVisibility = getExcludedVisibilities(
+      input.filter?.excludingVisibility ?? [],
+      principal !== null,
+      isStaff
+    )
 
     const events = await ctx.eventService.findFeaturedEvents(
       ctx.handle,

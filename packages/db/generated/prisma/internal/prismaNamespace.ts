@@ -4432,14 +4432,14 @@ export type ListEnumEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'EventVisibility'
  */
 export type EnumEventVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventVisibility'>
-
+    
 
 
 /**
  * Reference to a field of type 'EventVisibility[]'
  */
 export type ListEnumEventVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventVisibility[]'>
-
+    
 
 
 /**
@@ -4823,3 +4823,4 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
+
