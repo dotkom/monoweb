@@ -231,21 +231,31 @@ describe("canManageNotification", () => {
 })
 
 describe("canCreateNotifications", () => {
-  it("is temporarily limited to administrators", () => {
+  it("allows committee members and administrators", () => {
     expect(canCreateNotifications(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
-    expect(canCreateNotifications(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
+    expect(canCreateNotifications(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canCreateNotifications(createState({}))).toBe(false)
   })
 })
 
 describe("canCreateNotification", () => {
   it("requires create access and affiliation with the actor group", () => {
-    const admin = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+    const administrator = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
     const arrkom = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
     const actorGroup = { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }
 
-    expect(canCreateNotification(admin, actorGroup)).toBe(true)
-    expect(canCreateNotification(admin, actorGroup, NotificationTypeSchema.enum.BROADCAST_IMPORTANT)).toBe(true)
-    expect(canCreateNotification(arrkom, actorGroup)).toBe(false)
+    expect(canCreateNotification(administrator, actorGroup)).toBe(true)
+    expect(canCreateNotification(administrator, actorGroup, NotificationTypeSchema.enum.BROADCAST_IMPORTANT)).toBe(true)
+    expect(canCreateNotification(arrkom, actorGroup)).toBe(true)
+    expect(canCreateNotification(arrkom, { slug: "bedkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(false)
+    expect(canCreateNotification(createState({}), actorGroup)).toBe(false)
+  })
+
+  it("limits important notifications to administrators", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+    const actorGroup = { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }
+
+    expect(canCreateNotification(state, actorGroup, NotificationTypeSchema.enum.BROADCAST_IMPORTANT)).toBe(false)
   })
 })
 
