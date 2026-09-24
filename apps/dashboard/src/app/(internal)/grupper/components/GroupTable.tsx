@@ -99,7 +99,7 @@ export const GroupTable = ({ groups, isLoading, actions }: Props) => {
       filters={[
         { columnId: "status", label: "Aktiv", value: "Aktiv" },
         { columnId: "status", label: "Inaktiv", value: "Inaktiv" },
-        ...Object.values(GroupTypeSchema.enum).map((groupType) => {
+        ...GroupTypeSchema.options.map((groupType) => {
           const typeName = getGroupTypeName(groupType)
 
           return {

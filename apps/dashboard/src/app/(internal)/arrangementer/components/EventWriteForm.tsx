@@ -28,12 +28,12 @@ import { z } from "zod"
 import { useEventFileUploadMutation } from "../mutations"
 import { validateEventOrganizers, validateEventWrite } from "../validation"
 
-const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
+const EVENT_FORM_DATA_TYPE = EventTypeSchema.options.map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
 }))
 
-const EVENT_FORM_DATA_VISIBILITY = Object.values(EventVisibilitySchema.enum).map((visibility) => ({
+const EVENT_FORM_DATA_VISIBILITY = EventVisibilitySchema.options.map((visibility) => ({
   value: visibility,
   label: mapEventVisibilityToLabel(visibility),
 }))

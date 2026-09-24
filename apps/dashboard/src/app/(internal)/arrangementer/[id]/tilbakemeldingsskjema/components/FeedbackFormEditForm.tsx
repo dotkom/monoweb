@@ -53,7 +53,7 @@ import z from "zod"
 import { useDeleteFeedbackFormMutation } from "../../../mutations"
 import { useEventFeedbackPublicResultsTokenGetQuery, useFeedbackAnswersGetQuery } from "../../../queries"
 
-const typeOptions = Object.values(FeedbackQuestionSchema.shape.type.enum).map((type) => ({
+const typeOptions = FeedbackQuestionSchema.shape.type.options.map((type) => ({
   value: type,
   label: getFeedbackQuestionTypeName(type),
 }))
