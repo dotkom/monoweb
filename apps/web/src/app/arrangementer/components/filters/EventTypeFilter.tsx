@@ -10,7 +10,7 @@ interface EventTypeFilterProps {
 }
 
 export const EventTypeFilter = ({ value, onChange }: EventTypeFilterProps) => {
-  const EVENT_TYPE_OPTIONS = Object.values(EventTypeSchema.enum).map((type) => ({
+  const EVENT_TYPE_OPTIONS = EventTypeSchema.options.map((type) => ({
     value: type,
     label: mapEventTypeToLabel(type),
   }))

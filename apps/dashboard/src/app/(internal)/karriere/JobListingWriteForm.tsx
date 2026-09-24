@@ -85,7 +85,7 @@ export const JobListingWriteForm = ({
         label="Type"
         placeholder="Velg type"
         required
-        options={Object.values(JobListingSchema.shape.employment.enum).map((employment) => ({
+        options={JobListingSchema.shape.employment.options.map((employment) => ({
           value: employment,
           label: getJobListingEmploymentName(employment),
         }))}

@@ -192,7 +192,7 @@ export const GroupWriteForm = ({
         name="memberVisibility"
         label="Hvilke medlemmer skal vises"
         placeholder="Velg en"
-        options={Object.values(GroupMemberVisibilitySchema.enum).map((groupMemberVisibilityType) => ({
+        options={GroupMemberVisibilitySchema.options.map((groupMemberVisibilityType) => ({
           value: groupMemberVisibilityType,
           label: getGroupMemberVisibilityName(groupMemberVisibilityType),
         }))}
@@ -212,7 +212,7 @@ export const GroupWriteForm = ({
         label="Type"
         placeholder="Velg en"
         required
-        options={Object.values(GroupTypeSchema.enum).map((groupType) => ({
+        options={GroupTypeSchema.options.map((groupType) => ({
           value: groupType,
           label: getGroupTypeName(groupType),
         }))}
@@ -224,7 +224,7 @@ export const GroupWriteForm = ({
         description="Hvordan har denne gruppen ordinært opptak?"
         placeholder="Velg en"
         required
-        options={Object.values(GroupRecruitmentMethodSchema.enum).map((recruitmentMethod) => ({
+        options={GroupRecruitmentMethodSchema.options.map((recruitmentMethod) => ({
           value: recruitmentMethod,
           label: getGroupRecruitmentMethodName(recruitmentMethod),
         }))}

@@ -26,7 +26,7 @@ import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
-const DEREGISTER_REASON_TYPE_OPTIONS = Object.values(DeregisterReasonTypeSchema.enum).map((type) => ({
+const DEREGISTER_REASON_TYPE_OPTIONS = DeregisterReasonTypeSchema.options.map((type) => ({
   value: type,
   label: mapDeregisterReasonTypeToLabel(type),
 }))

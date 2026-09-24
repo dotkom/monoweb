@@ -118,12 +118,12 @@ const DEFAULT_VALUES: Partial<FormInput> = {
   semester: 0,
 }
 
-const typeOptions = Object.values(MembershipTypeSchema.enum).map((type) => ({
+const typeOptions = MembershipTypeSchema.options.map((type) => ({
   value: type,
   label: getMembershipTypeName(type) ?? type,
 }))
 
-const specializationOptions = Object.values(MembershipSpecializationSchema.enum)
+const specializationOptions = MembershipSpecializationSchema.options
   .filter((specialization) => specialization !== "UNKNOWN")
   .map((specialization) => ({
     value: specialization,
