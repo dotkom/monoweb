@@ -171,31 +171,32 @@ export const getGroupSecondaryName = (group: Pick<Group, "abbreviation" | "name"
   return otherName
 }
 
-export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPreferredDisplayName) => {
+export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPreferredDisplayName): string => {
   switch (preferredDisplayName) {
     case "ABBREVIATION":
       return "Kort navn"
     case "NAME":
       return "Offisielt navn"
-    default:
-      return "Ukjent"
   }
 }
 
-export const createGroupPageUrl = (group: Group) => {
+export const createGroupPageUrl = (group: Group): string => {
   switch (group.type) {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
     case "ASSOCIATED":
+    case "EMAIL_ONLY":
       return `/grupper/${group.slug}`
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
-    default:
-      throw new Error(`Unknown group type: ${group.type}`)
   }
 }
 
-export const getGroupTypeName = (type: GroupType | null | undefined) => {
+export const getGroupTypeName = (type: GroupType | null | undefined): string => {
+  if (type == null) {
+    return "Ukjent"
+  }
+
   switch (type) {
     case "COMMITTEE":
       return "Komité"
@@ -207,12 +208,14 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Interessegruppe"
     case "EMAIL_ONLY":
       return "E-postgruppe"
-    default:
-      return "Ukjent type"
   }
 }
 
-export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | null | undefined) => {
+export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | null | undefined): string => {
+  if (name == null) {
+    return "Ukjent"
+  }
+
   switch (name) {
     case "ALL_MEMBERS":
       return "Alle medlemmer"
@@ -222,12 +225,10 @@ export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | n
       return "Kun leder"
     case "NONE":
       return "Ingen"
-    default:
-      return "Ukjent"
   }
 }
 
-export const getGroupRoleTypeName = (type: GroupRoleType) => {
+export const getGroupRoleTypeName = (type: GroupRoleType): string => {
   switch (type) {
     case GroupRoleTypeEnum.LEADER:
       return "Leder"
@@ -247,8 +248,6 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "Permitert"
     case GroupRoleTypeEnum.EDITOR_IN_CHIEF:
       return "Redaktør"
-    default:
-      return "Ukjent type"
   }
 }
 
