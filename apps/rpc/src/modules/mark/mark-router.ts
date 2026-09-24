@@ -59,6 +59,8 @@ export type GetMarkInput = inferProcedureInput<typeof getMarkProcedure>
 export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
 const getMarkProcedure = procedure
   .input(MarkSchema.shape.id)
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.markService.getById(ctx.handle, input))
 
@@ -66,6 +68,8 @@ export type FindMarksInput = inferProcedureInput<typeof findManyProcedure>
 export type FindMarksOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
@@ -85,6 +89,7 @@ const deleteMarkProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => ctx.markService.delete(ctx.handle, input))
 
 export const markRouter = t.router({
