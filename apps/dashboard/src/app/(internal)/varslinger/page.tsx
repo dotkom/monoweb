@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@/auth/authorization-context"
 import { isCommitteeAffiliation } from "@/auth/permissions"
+import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
@@ -68,9 +69,11 @@ export default function NotificationsPage() {
             </ToggleGroup>
           )}
         </div>
-        <Button type="button" onClick={() => setIsCreateOpen(true)}>
-          Ny varsling
-        </Button>
+        <PermissionTooltip allowed={isAdministrator} label="Kun administratorer kan opprette varslinger">
+          <Button type="button" onClick={() => setIsCreateOpen(true)} disabled={!isAdministrator}>
+            Ny varsling
+          </Button>
+        </PermissionTooltip>
       </div>
 
       {isLoading ? (
@@ -90,7 +93,9 @@ export default function NotificationsPage() {
         </Button>
       )}
 
-      <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />
+      {isAdministrator && (
+        <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />
+      )}
     </div>
   )
 }
