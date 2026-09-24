@@ -1,4 +1,4 @@
-import { buildLimitedDepthJsonSchema, buildSearchFilter } from "@dotkomonline/utils"
+import { buildSearchFilter } from "@dotkomonline/utils"
 import { z } from "zod"
 import { UserSchema } from "../user/user"
 
@@ -49,7 +49,7 @@ export const AuditLogSchema = z.object({
   rowId: z.string().nullable(),
   createdAt: z.date(),
   operation: z.string(),
-  rowData: buildLimitedDepthJsonSchema(),
+  rowData: z.unknown(),
   transactionId: z.bigint(),
   userId: z.string().nullable(),
   user: UserSchema.omit({ memberships: true }).nullable(),

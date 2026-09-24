@@ -1,4 +1,4 @@
-import { buildLimitedDepthJsonSchema, getStudyGrade } from "@dotkomonline/utils"
+import { getStudyGrade } from "@dotkomonline/utils"
 import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
@@ -45,7 +45,7 @@ export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 const AttendeeBaseSchema = z.object({
   id: z.string(),
   userGrade: z.number().int().nullable(),
-  selections: buildLimitedDepthJsonSchema().default("[]"),
+  selections: z.array(AttendanceSelectionResponseSchema),
   reserved: z.boolean(),
   earliestReservationAt: z.date(),
   attendedAt: z.date().nullable(),
@@ -74,7 +74,6 @@ export type Attendee = z.infer<typeof AttendeeSchema>
  */
 export const AttendeeSchema = AttendeeBaseSchema.extend({
   user: UserSchema,
-  selections: z.array(AttendanceSelectionResponseSchema),
 })
 
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
@@ -103,22 +102,18 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
 // The 96-hour limit is arbitrary
 export const MAX_MERGE_DELAY_HOURS = 96
 
-const AttendancePoolBaseSchema = z.object({
+export type AttendancePoolId = AttendancePool["id"]
+export type AttendancePool = z.infer<typeof AttendancePoolSchema>
+export const AttendancePoolSchema = z.object({
   id: z.string(),
   title: z.string(),
   mergeDelayHours: z.number().int().nullable(),
-  yearCriteria: buildLimitedDepthJsonSchema(),
+  yearCriteria: z.array(z.number()),
   capacity: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
   taskId: z.string().nullable(),
-})
-
-export type AttendancePoolId = AttendancePool["id"]
-export type AttendancePool = z.infer<typeof AttendancePoolSchema>
-export const AttendancePoolSchema = AttendancePoolBaseSchema.extend({
-  yearCriteria: z.array(z.number()),
 })
 
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
@@ -140,7 +135,7 @@ const AttendanceBaseSchema = z.object({
   registerStart: z.date(),
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
-  selections: buildLimitedDepthJsonSchema().default("[]"),
+  selections: z.array(AttendanceSelectionSchema),
   createdAt: z.date(),
   updatedAt: z.date(),
   attendancePrice: z.number().int().nullable(),
@@ -151,7 +146,6 @@ export type AttendanceId = Attendance["id"]
 export const AttendanceSchema = AttendanceBaseSchema.extend({
   pools: z.array(AttendancePoolSchema),
   attendees: z.array(AttendeeSchema),
-  selections: z.array(AttendanceSelectionSchema),
 })
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
