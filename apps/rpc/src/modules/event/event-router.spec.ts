@@ -64,7 +64,7 @@ describe("authenticated event visibility", () => {
 
     expect(findEventSummaries).toHaveBeenCalledWith(
       transactionHandle,
-      expect.objectContaining({ excludingVisibility: ["AUTHENTICATED", "COMMITTEE_ONLY"] }),
+      expect.objectContaining({ excludingVisibility: ["COMMITTEE_ONLY", "AUTHENTICATED"] }),
       { take: 20 }
     )
   })
