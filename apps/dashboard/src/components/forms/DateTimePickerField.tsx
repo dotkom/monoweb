@@ -29,7 +29,7 @@ export function DateTimePickerField<TFieldValues extends FieldValues>({
   description,
   required,
   placeholder,
-  withTime,
+  withTime = true,
   className,
   minuteStep,
   timeInputClassName,

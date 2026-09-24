@@ -176,6 +176,12 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
         }
         placeholder="Ingen utsettelse"
         type="number"
+        onChange={(event) => {
+          const next = event.target.valueAsNumber
+          form.setValue("mergeDelayHours", Number.isNaN(next) ? null : next, {
+            shouldValidate: true,
+          })
+        }}
       />
 
       <Button type="submit" variant="default" className="w-fit">
