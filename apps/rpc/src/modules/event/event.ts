@@ -16,7 +16,7 @@ import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
 
 export const EventTypeSchema = z.enum(["GENERAL_ASSEMBLY", "COMPANY", "ACADEMIC", "SOCIAL", "OTHER", "WELCOME"])
 export const EventStatusSchema = z.enum(["DRAFT", "PUBLIC", "DELETED"])
-export const EventVisibilitySchema = z.enum(["PUBLIC", "COMMITTEE_ONLY"])
+export const EventVisibilitySchema = z.enum(["PUBLIC", "AUTHENTICATED", "COMMITTEE_ONLY"])
 
 export type BaseEvent = z.infer<typeof BaseEventSchema>
 export const BaseEventSchema = z.object({
@@ -145,6 +145,8 @@ export const mapEventVisibilityToLabel = (visibility: EventVisibility) => {
   switch (visibility) {
     case "PUBLIC":
       return "Offentlig"
+    case "AUTHENTICATED":
+      return "Kun innloggede brukere"
     case "COMMITTEE_ONLY":
       return "Kun komitémedlemmer"
     default:

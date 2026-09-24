@@ -55,6 +55,8 @@
 --
 -- COMMITTEE_ONLY events are only featured for users with an active committee or node-committee membership.
 -- Anonymous viewers never see them, even if COMMITTEE_ONLY is omitted from excludingVisibility.
+-- AUTHENTICATED events are only featured when the viewer is logged in (authenticated).
+-- Anonymous viewers never see them, even if AUTHENTICATED is omitted from excludingVisibility.
 --
 -- When excludeAttendedByUser is true, events the viewing user is already registered for are omitted.
 -- Anonymous viewers are unaffected.
@@ -108,6 +110,10 @@ WITH
         )
       )
       AND (
+        event.visibility <> 'AUTHENTICATED'
+        OR $17::text IS NOT NULL
+      )
+      AND (
         event.visibility <> 'COMMITTEE_ONLY'
         OR (
           $17::text IS NOT NULL
@@ -130,6 +136,7 @@ WITH
       AND (
         cardinality($19::event_visibility[]) = 0
         OR event.visibility <> ALL($19)
+        OR event.visibility = 'AUTHENTICATED'
         OR event.visibility = 'COMMITTEE_ONLY'
       )
       AND (

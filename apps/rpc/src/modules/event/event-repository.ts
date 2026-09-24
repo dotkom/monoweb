@@ -219,7 +219,7 @@ export function getEventRepository(): EventRepository {
                 notIn: query.excludingType ?? [],
               },
               visibility: {
-                notIn: query.excludingVisibility ?? ["COMMITTEE_ONLY"],
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -336,7 +336,7 @@ export function getEventRepository(): EventRepository {
                 notIn: query.excludingType ?? [],
               },
               visibility: {
-                notIn: query.excludingVisibility ?? ["COMMITTEE_ONLY"],
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -471,7 +471,7 @@ export function getEventRepository(): EventRepository {
           query.byHasFeedbackForm ?? null,
           userId,
           excludeAttendedByUser,
-          query.excludingVisibility ?? ["COMMITTEE_ONLY"],
+          query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
           query.byVisibility ?? []
         )
       )
