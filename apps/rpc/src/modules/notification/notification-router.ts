@@ -1,6 +1,6 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember } from "../../authorization"
+import { isCommitteeMember } from "../../authorization"
 import { ForbiddenError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { type TRPCContext, procedure, t } from "../../trpc"
@@ -254,7 +254,7 @@ const createNotificationProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -293,7 +293,7 @@ const editNotificationProcedure = procedure
   )
   .output(NotificationManagementSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -312,7 +312,7 @@ export type DeleteNotificationOutput = inferProcedureOutput<typeof deleteNotific
 const deleteNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -381,7 +381,7 @@ const addRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -414,7 +414,7 @@ const removeRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
