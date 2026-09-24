@@ -281,6 +281,8 @@ export type AttendeeScalarFieldEnum = (typeof AttendeeScalarFieldEnum)[keyof typ
 
 export const EventScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   title: 'title',
   start: 'start',
   end: 'end',
@@ -291,10 +293,9 @@ export const EventScalarFieldEnum = {
   locationTitle: 'locationTitle',
   locationAddress: 'locationAddress',
   locationLink: 'locationLink',
-  type: 'type',
   markForMissedAttendance: 'markForMissedAttendance',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
+  type: 'type',
+  visibility: 'visibility',
   attendanceId: 'attendanceId',
   parentId: 'parentId',
   contestId: 'contestId',

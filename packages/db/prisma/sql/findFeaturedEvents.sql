@@ -53,8 +53,8 @@
 -- Child events of a parent that has attendance are only featured if the viewing user is reserved on that parent.
 -- Parents without attendance, and events without a parent, are unaffected. Anonymous viewers never see gated children.
 --
--- INTERNAL events are only featured for users with an active committee or node-committee membership.
--- Anonymous viewers never see them, even if INTERNAL is omitted from excludingType.
+-- COMMITTEE_ONLY events are only featured for users with an active committee or node-committee membership.
+-- Anonymous viewers never see them, even if COMMITTEE_ONLY is omitted from excludingVisibility.
 --
 -- When excludeAttendedByUser is true, events the viewing user is already registered for are omitted.
 -- Anonymous viewers are unaffected.
@@ -75,6 +75,7 @@ WITH
       AND ($8::text IS NULL OR event.title ILIKE '%' || $8 || '%')
       AND (cardinality($9::text[]) = 0 OR event.id = ANY($9))
       AND (cardinality($10::event_type[]) = 0 OR event.type = ANY($10))
+      AND (cardinality($20::event_visibility[]) = 0 OR event.visibility = ANY($20))
       AND (NOT $11::boolean OR event.parent_id IS NULL)
       AND (
         (
@@ -107,7 +108,7 @@ WITH
         )
       )
       AND (
-        event.type <> 'INTERNAL'
+        event.visibility <> 'COMMITTEE_ONLY'
         OR (
           $17::text IS NOT NULL
           AND EXISTS (
@@ -125,7 +126,11 @@ WITH
       AND (
         cardinality($15::event_type[]) = 0
         OR event.type <> ALL($15)
-        OR event.type = 'INTERNAL'
+      )
+      AND (
+        cardinality($19::event_visibility[]) = 0
+        OR event.visibility <> ALL($19)
+        OR event.visibility = 'COMMITTEE_ONLY'
       )
       AND (
         $16::boolean IS NULL

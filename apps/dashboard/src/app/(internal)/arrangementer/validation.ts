@@ -1,5 +1,5 @@
 import { isCommitteeAffiliation } from "@/auth/permissions"
-import { EventStatusSchema, EventTypeSchema, type EventWrite } from "@dotkomonline/rpc/event"
+import { EventStatusSchema, EventTypeSchema, EventVisibilitySchema, type EventWrite } from "@dotkomonline/rpc/event"
 import { isAfter } from "date-fns"
 import type { z } from "zod"
 
@@ -46,6 +46,11 @@ export const validateEventWrite = (event: EventWrite): z.core.$ZodIssue[] => {
   const parsedEventType = EventTypeSchema.safeParse(event.type)
   if (!parsedEventType.success) {
     issues.push(...parsedEventType.error.issues)
+  }
+
+  const parsedEventVisibility = EventVisibilitySchema.safeParse(event.visibility)
+  if (!parsedEventVisibility.success) {
+    issues.push(...parsedEventVisibility.error.issues)
   }
 
   const parsedEventStatus = EventStatusSchema.safeParse(event.status)

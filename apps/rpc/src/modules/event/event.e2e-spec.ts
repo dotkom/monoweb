@@ -33,6 +33,7 @@ export function getMockEvent(input: Partial<EventWrite> = {}): EventWrite {
   return {
     status: "PUBLIC",
     type: "SOCIAL",
+    visibility: "PUBLIC",
     title: faker.lorem.sentence(1),
     start: faker.date.future(),
     end: faker.date.future(),
@@ -147,6 +148,24 @@ describe("event integration tests", () => {
       })
       expect(events).toHaveLength(1)
     }
+  })
+
+  it("should exclude committee-only events by default", async () => {
+    const committeeOnlyEvent = await core.eventService.createEvent(
+      dbClient,
+      getMockEvent({ visibility: "COMMITTEE_ONLY" })
+    )
+
+    const defaultEvents = await core.eventService.findEvents(dbClient, {
+      byId: [committeeOnlyEvent.id],
+    })
+    expect(defaultEvents).toHaveLength(0)
+
+    const committeeEvents = await core.eventService.findEvents(dbClient, {
+      byId: [committeeOnlyEvent.id],
+      excludingVisibility: [],
+    })
+    expect(committeeEvents).toHaveLength(1)
   })
 
   it("should prevent assigning itself as a parent event", async () => {

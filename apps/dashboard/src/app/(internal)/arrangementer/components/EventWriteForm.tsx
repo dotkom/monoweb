@@ -14,8 +14,10 @@ import {
   EVENT_IMAGE_MAX_SIZE_KIB,
   type EventStatus,
   EventTypeSchema,
+  EventVisibilitySchema,
   EventWriteSchema,
   mapEventTypeToLabel,
+  mapEventVisibilityToLabel,
 } from "@dotkomonline/rpc/event"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
@@ -29,6 +31,11 @@ import { validateEventOrganizers, validateEventWrite } from "../validation"
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
+}))
+
+const EVENT_FORM_DATA_VISIBILITY = Object.values(EventVisibilitySchema.enum).map((visibility) => ({
+  value: visibility,
+  label: mapEventVisibilityToLabel(visibility),
 }))
 
 const EVENT_FORM_DATA_STATUS = [
@@ -56,6 +63,7 @@ const DEFAULT_VALUES = {
   end: addHours(tomorrowAt16, 4),
   status: "PUBLIC",
   type: "SOCIAL",
+  visibility: "PUBLIC",
   title: "",
   description: "",
   locationTitle: null,
@@ -153,6 +161,14 @@ export function EventWriteForm({ onSubmit, disabled, submitLabel = "Opprett arra
         label="Type"
         placeholder="Velg type"
         options={EVENT_FORM_DATA_TYPE}
+        required
+      />
+      <SelectField<EventWriteFormValues, EventWriteFormValues["visibility"]>
+        control={control}
+        name="visibility"
+        label="Synlighet"
+        placeholder="Velg synlighet"
+        options={EVENT_FORM_DATA_VISIBILITY}
         required
       />
       <SelectField<EventWriteFormValues, string>

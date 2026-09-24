@@ -169,6 +169,7 @@ function MarkForMissedAttendanceCheckbox() {
             event: {
               status: event.status,
               type: event.type,
+              visibility: event.visibility,
               title: event.title,
               start: event.start,
               end: event.end,

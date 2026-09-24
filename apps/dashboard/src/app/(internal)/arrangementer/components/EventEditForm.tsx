@@ -14,7 +14,9 @@ import {
   EventSchema,
   type EventStatus,
   EventTypeSchema,
+  EventVisibilitySchema,
   mapEventTypeToLabel,
+  mapEventVisibilityToLabel,
 } from "@dotkomonline/rpc/event"
 import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
@@ -27,6 +29,11 @@ import { validateEventOrganizers, validateEventWrite } from "../validation"
 const EVENT_FORM_DATA_TYPE = Object.values(EventTypeSchema.enum).map((type) => ({
   value: type,
   label: mapEventTypeToLabel(type),
+}))
+
+const EVENT_FORM_DATA_VISIBILITY = Object.values(EventVisibilitySchema.enum).map((visibility) => ({
+  value: visibility,
+  label: mapEventVisibilityToLabel(visibility),
 }))
 
 const EVENT_FORM_DATA_STATUS = [
@@ -139,6 +146,14 @@ export function EventEditForm({
         label="Type"
         placeholder="Velg type"
         options={EVENT_FORM_DATA_TYPE}
+        required
+      />
+      <SelectField<EventEditFormValues, EventEditFormValues["visibility"]>
+        control={control}
+        name="visibility"
+        label="Synlighet"
+        placeholder="Velg synlighet"
+        options={EVENT_FORM_DATA_VISIBILITY}
         required
       />
       <SelectField<EventEditFormValues, string>

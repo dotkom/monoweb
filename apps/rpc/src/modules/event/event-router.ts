@@ -4,7 +4,7 @@ import {
   BaseEventSchema,
   EventFilterQuerySchema,
   EventSchema,
-  type EventType,
+  type EventVisibility,
   EventWithAttendanceSchema,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
@@ -214,13 +214,13 @@ const allEventsProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
+    // If the user is not staff, we exclude committee-only events
+    let excludingVisibility = filter?.excludingVisibility ?? []
+    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
+      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
     }
 
-    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingType }, page)
+    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -254,13 +254,13 @@ const allEventSummariesProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
+    // If the user is not staff, we exclude committee-only events
+    let excludingVisibility = filter?.excludingVisibility ?? []
+    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
+      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
     }
 
-    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingType }, page)
+    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null),
@@ -301,16 +301,16 @@ const allByAttendingUserIdProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
+    // If the user is not staff, we exclude committee-only events
+    let excludingVisibility = filter?.excludingVisibility ?? []
+    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
+      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
     }
 
     const events = await ctx.eventService.findEventsByAttendingUserId(
       ctx.handle,
       id,
-      { ...filter, excludingType },
+      { ...filter, excludingVisibility },
       page
     )
     const attendances = await ctx.attendanceService.getAttendancesByIds(
@@ -355,13 +355,13 @@ const allByAttendingUserIdForCalendarProcedure = procedure
     const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.handle, id)
     const isStaff = ctx.authorizationService.isCommitteeMember(userAffiliations)
 
-    let excludingType: EventType[] = []
+    let excludingVisibility: EventVisibility[] = []
 
     if (!isStaff) {
-      excludingType = ["INTERNAL"]
+      excludingVisibility = ["COMMITTEE_ONLY"]
     }
 
-    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingType }, page)
+    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null)
@@ -402,17 +402,18 @@ const allSummariesByAttendingUserIdProcedure = procedure
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
     const isViewingOwnEvents = principal.subject === id
 
-    let excludingType = filter?.excludingType ?? []
-    const shouldForceExcludeInternal = !isStaff && !isViewingOwnEvents && !excludingType.includes("INTERNAL")
+    let excludingVisibility = filter?.excludingVisibility ?? []
+    const shouldForceExcludeCommitteeOnly =
+      !isStaff && !isViewingOwnEvents && !excludingVisibility.includes("COMMITTEE_ONLY")
 
-    if (shouldForceExcludeInternal) {
-      excludingType = [...excludingType, "INTERNAL"]
+    if (shouldForceExcludeCommitteeOnly) {
+      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
     }
 
     const events = await ctx.eventService.findEventSummariesByAttendingUserId(
       ctx.handle,
       id,
-      { ...filter, excludingType },
+      { ...filter, excludingVisibility },
       page
     )
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
@@ -632,17 +633,17 @@ const findFeaturedEventsProcedure = procedure
     const principal = ctx.principal
     const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    let excludingType = input.filter?.excludingType ?? []
+    let excludingVisibility = input.filter?.excludingVisibility ?? []
 
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
+    if (!isStaff && !excludingVisibility.includes("COMMITTEE_ONLY")) {
+      excludingVisibility = [...excludingVisibility, "COMMITTEE_ONLY"]
     }
 
     const events = await ctx.eventService.findFeaturedEvents(
       ctx.handle,
       {
         ...input.filter,
-        excludingType,
+        excludingVisibility,
       },
       input.cursor ?? input.offset,
       input.limit,

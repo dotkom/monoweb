@@ -174,6 +174,7 @@ export const createMockEvent = (overrides: Partial<Event> = {}): Event => ({
   end: addDays(now, 7),
   type: "SOCIAL",
   status: "PUBLIC",
+  visibility: "PUBLIC",
   imageUrl: null,
   locationTitle: "Kontoret",
   locationAddress: "A4-137, Realfagbygget",
