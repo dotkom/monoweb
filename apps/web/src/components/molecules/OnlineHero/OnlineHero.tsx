@@ -10,6 +10,7 @@ import type { FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
 import { secondsToMilliseconds } from "date-fns"
+import { incrementThemeChangeCounter } from "@/utils/explosion-easter-egg"
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/cuRaxFhP7TxceRfB/scene.splinecode"
 // How far the pointer needs to move (in px) before we consider it a "drag"
@@ -164,6 +165,7 @@ export const OnlineHero: FC = () => {
 
     const currentTheme = themeState.current
     setTheme(currentTheme === "dark" ? "light" : "dark")
+    incrementThemeChangeCounter()
   }
 
   return (
