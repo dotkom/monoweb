@@ -270,6 +270,7 @@ function MembershipDateField({
     <div className="flex flex-col gap-2">
       <DateTimePickerField
         control={control}
+        withTime={false}
         name={name}
         label={label}
         description={semesterDescription}
@@ -278,7 +279,6 @@ function MembershipDateField({
       />
       <div className="flex flex-wrap gap-2">
         <Button
-          type="button"
           variant="ghost"
           size="sm"
           disabled={disabled}
@@ -291,7 +291,6 @@ function MembershipDateField({
           Forrige semester
         </Button>
         <Button
-          type="button"
           variant="ghost"
           size="sm"
           disabled={disabled}

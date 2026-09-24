@@ -270,7 +270,6 @@ export const FeedbackFormEditForm: FC<Props> = ({ onSave, defaultValues, feedbac
               name="feedbackForm.answerDeadline"
               label="Svarfrist"
               description="Brukere som ikke har svart på skjemaet innen svarfristen vil få 2 prikker."
-              withTime
               disabled={readOnly}
               onValueChange={() => {
                 save()
