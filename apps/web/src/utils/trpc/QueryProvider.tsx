@@ -46,6 +46,8 @@ let recoveryRedirectScheduled = false
 // Deduplicate parallel client-side access token fetches into one in-flight request.
 let accessTokenRequest: Promise<string> | null = null
 
+const authenticatedSubscriptionPaths = new Set(["notification.onNewNotification"])
+
 function scheduleRecoveryRedirect(error: unknown): void {
   if (!isAccessTokenFetchFailure(error) || recoveryRedirectScheduled) {
     return
@@ -109,22 +111,34 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
               transformer: superjson,
               url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
               EventSource: EventSourcePolyfill,
-              eventSourceOptions: async () => {
+              eventSourceOptions: async ({ op: operation }) => {
+                const requiresAuthentication = authenticatedSubscriptionPaths.has(operation.path)
+
                 try {
                   const token = await fetchSharedAccessToken()
 
-                  if (token !== undefined) {
-                    return {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
+                  if (token === undefined) {
+                    if (!requiresAuthentication) {
+                      return {}
                     }
+
+                    throw new Error("Cannot start an authenticated subscription without an access token")
+                  }
+
+                  return {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
                   }
                 } catch (error) {
                   scheduleRecoveryRedirect(error)
-                }
 
-                return {}
+                  if (requiresAuthentication) {
+                    throw error
+                  }
+
+                  return {}
+                }
               },
             }),
           ],
