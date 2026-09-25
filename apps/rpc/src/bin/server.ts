@@ -137,6 +137,29 @@ registerObservabilityProbeRoutes(server)
 registerStripeWebhookRoutes(server, serviceLayer)
 
 await identifyCallerIAMIdentity(configuration)
+
+server.addHook("onRequest", async (request, reply) => {
+  if (request.method === "OPTIONS") {
+    return
+  }
+
+  if (!request.url.includes("notification.onNewNotification")) {
+    return
+  }
+
+  const authorization = request.headers.authorization
+  if (
+    typeof authorization === "string" &&
+    authorization.startsWith("Bearer ") &&
+    authorization.length > "Bearer ".length
+  ) {
+    return
+  }
+
+  reply.code(401).type("text/plain").send("Unauthorized")
+  return reply
+})
+
 await server.listen({ port: 4444, host: "0.0.0.0" })
 
 // In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
