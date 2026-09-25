@@ -75,8 +75,8 @@ export const config = {
     // Route the SDK's authorize, callback, logout and access-token endpoints through the proxy
     "/api/auth/:path*",
     {
-      // Run proxy for normal page requests while omitting static files and Next.js prefetch requests
-      source: "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
+      // Run proxy for normal page requests while omitting the Sentry tunnel, static files and Next.js prefetch requests
+      source: "/((?!pulse|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

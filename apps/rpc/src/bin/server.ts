@@ -9,6 +9,7 @@ import rawBody from "fastify-raw-body"
 import { type AppRouter, appRouter } from "../app-router"
 import { identifyCallerIAMIdentity } from "../aws"
 import { createConfiguration, isAuthorizationUnsafelyDisabled, isDevelopmentEnvironment } from "../configuration"
+import { registerAuthenticatedSubscriptionGuard } from "../http-routes/authenticated-subscription"
 import { registerObservabilityProbeRoutes } from "../http-routes/observability-probe"
 import { registerStripeWebhookRoutes } from "../http-routes/stripe"
 import { createServiceLayer, createThirdPartyClients } from "../modules/core"
@@ -100,6 +101,21 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
   return createTrpcContext(null, serviceLayer)
 }
 
+async function validateAuthorizationHeader(authorizationHeader: string): Promise<boolean> {
+  if (!authorizationHeader.startsWith("Bearer ")) {
+    return false
+  }
+
+  const token = authorizationHeader.substring("Bearer ".length)
+
+  try {
+    const principal = await dependencies.rpcJwtService.verify(token)
+    return principal.payload.sub !== undefined
+  } catch {
+    return false
+  }
+}
+
 const server = fastify({
   routerOptions: {
     maxParamLength: 5000,
@@ -124,6 +140,8 @@ server.register(fastifyCors, {
   allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "X-Requested-With", "X-CSRF-Token", "Origin"],
   credentials: true,
 })
+
+registerAuthenticatedSubscriptionGuard(server, validateAuthorizationHeader)
 
 server.register(fastifyTRPCPlugin, {
   prefix: "/api/trpc",
