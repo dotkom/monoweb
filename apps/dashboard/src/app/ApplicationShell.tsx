@@ -212,7 +212,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
   }, [pathname])
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+    <div className="flex h-dvh max-h-dvh flex-col overflow-hidden bg-background text-foreground">
       <header className="flex h-[60px] shrink-0 items-center justify-between gap-3 border-b bg-background px-4">
         <div className="flex min-w-0 items-center gap-2">
           <Button

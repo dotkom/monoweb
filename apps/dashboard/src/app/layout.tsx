@@ -46,8 +46,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="no" suppressHydrationWarning>
-      <body>
+    <html lang="no" suppressHydrationWarning className="h-dvh overflow-hidden">
+      <body className="h-dvh overflow-hidden">
         <PlausibleProvider domain="dashboard.online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
