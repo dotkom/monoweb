@@ -31,10 +31,10 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
   )
 
   const pastClassName = past
-    ? "text-gray-600 dark:text-stone-600 group-hover:text-gray-800 dark:group-hover:text-stone-400"
+    ? "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400"
     : undefined
   const calendarIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-400")
-  const arrowIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-300")
+  const arrowIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-400")
 
   if (compact) {
     let compactLabel = startDate
@@ -52,7 +52,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
     }
 
     return (
-      <div className={cn("flex min-w-0 flex-row items-center gap-2 text-xs dark:text-stone-300", pastClassName)}>
+      <div className={cn("flex min-w-0 flex-row items-center gap-2 text-xs", pastClassName)}>
         <IconCalendarEvent className={cn("size-3.5", calendarIconClassName)} />
         <Text className="min-w-0 truncate">{compactLabel}</Text>
       </div>
@@ -61,7 +61,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
 
   if (singleDay || ongoing) {
     return (
-      <div className={cn("flex flex-row items-center gap-2 text-xs md:text-sm dark:text-stone-300", pastClassName)}>
+      <div className={cn("flex flex-row items-center gap-2 text-xs md:text-sm", pastClassName)}>
         <IconCalendarEvent width={16} height={16} className={calendarIconClassName} />
 
         {ongoing ? (
@@ -82,7 +82,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
   }
 
   return (
-    <div className={cn("flex flex-row items-center gap-2 text-xs md:text-sm dark:text-stone-300", pastClassName)}>
+    <div className={cn("flex flex-row items-center gap-2 text-xs md:text-sm", pastClassName)}>
       <IconCalendarEvent width={16} height={16} className={calendarIconClassName} />
 
       <div className="flex flex-col md:flex-row md:gap-1">
