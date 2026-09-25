@@ -31,10 +31,10 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
   )
 
   const pastClassName = past
-    ? "text-gray-600 dark:text-stone-600 group-hover:text-gray-800 dark:group-hover:text-stone-400"
+    ? "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400"
     : undefined
   const calendarIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-400")
-  const arrowIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-300")
+  const arrowIconClassName = cn("shrink-0", !past && "text-gray-800 dark:text-stone-400")
 
   if (compact) {
     let compactLabel = startDate
