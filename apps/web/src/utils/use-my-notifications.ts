@@ -101,7 +101,7 @@ export function useMyNotifications({ enableLiveUpdates = false }: { enableLiveUp
   )
 
   useSubscription(
-    trpcClient.notification.onNewNotification.subscriptionOptions(undefined, {
+    trpcClient.notification.onNewNotificationAAAAA.subscriptionOptions(undefined, {
       enabled: enableLiveUpdates && isAuthenticated && !stopLiveUpdates,
       onError: (error) => {
         if (isTrpcErrorCode(error, "UNAUTHORIZED") || isTrpcErrorCode(error, "FORBIDDEN")) {

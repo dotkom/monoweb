@@ -433,7 +433,7 @@ export const notificationRouter = t.router({
   getMyUnreadCount: getMyUnreadCountProcedure,
   markAsRead: markAsReadProcedure,
   markAllAsRead: markAllAsReadProcedure,
-  onNewNotification: onNewNotificationProcedure,
+  onNewNotificationAAAAA: onNewNotificationProcedure,
 
   // Management
   find: findNotificationProcedure,
