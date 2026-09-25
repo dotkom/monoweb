@@ -11,7 +11,6 @@ import {
   httpBatchLink,
   httpSubscriptionLink,
   loggerLink,
-  retryLink,
   splitLink,
 } from "@trpc/client"
 import { minutesToMilliseconds } from "date-fns"
@@ -98,15 +97,6 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         splitLink({
           condition: (op) => op.type === "subscription",
           true: [
-            retryLink({
-              retry: ({ error, attempts }) => {
-                const errorCode = error.data?.code
-                const isAuthenticationError = errorCode === "UNAUTHORIZED" || errorCode === "FORBIDDEN"
-                const hasRemainingAttempts = attempts < 3
-
-                return hasRemainingAttempts && isAuthenticationError
-              },
-            }),
             httpSubscriptionLink({
               transformer: superjson,
               url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
