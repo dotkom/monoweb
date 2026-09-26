@@ -57,7 +57,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:*",
-    "@types/node": "22.19.3",
+    "@types/node": "22.20.4",
     "@types/sanitize-html": "2.16.1",
     "dotenv-cli": "8.0.0",
     "tslib": "2.8.1",
