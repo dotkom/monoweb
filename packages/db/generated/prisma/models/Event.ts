@@ -907,10 +907,12 @@ export type EventCreateNestedOneWithoutDeregisterReasonsInput = {
   connect?: Prisma.EventWhereUniqueInput
 }
 
-export type EventUpdateOneRequiredWithoutDeregisterReasonsNestedInput = {
+export type EventUpdateOneWithoutDeregisterReasonsNestedInput = {
   create?: Prisma.XOR<Prisma.EventCreateWithoutDeregisterReasonsInput, Prisma.EventUncheckedCreateWithoutDeregisterReasonsInput>
   connectOrCreate?: Prisma.EventCreateOrConnectWithoutDeregisterReasonsInput
   upsert?: Prisma.EventUpsertWithoutDeregisterReasonsInput
+  disconnect?: Prisma.EventWhereInput | boolean
+  delete?: Prisma.EventWhereInput | boolean
   connect?: Prisma.EventWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutDeregisterReasonsInput, Prisma.EventUpdateWithoutDeregisterReasonsInput>, Prisma.EventUncheckedUpdateWithoutDeregisterReasonsInput>
 }

@@ -628,12 +628,18 @@ export function getEventRepository(): EventRepository {
 
       return rows.map((row) => {
         const { event, ...rest } = row
-        const deregisterReason = {
-          event: {
+        let linkedEvent = null
+
+        if (event !== null) {
+          linkedEvent = {
             ...event,
-            companies: event.companies.map((c) => c.company),
-            hostingGroups: event.hostingGroups.map((g) => g.group),
-          },
+            companies: event.companies.map((eventCompany) => eventCompany.company),
+            hostingGroups: event.hostingGroups.map((eventHostingGroup) => eventHostingGroup.group),
+          }
+        }
+
+        const deregisterReason = {
+          event: linkedEvent,
           ...rest,
         }
 

@@ -90,10 +90,10 @@ model Course {
   aliases CourseAlias[]
 
   facultyId String?  @map("faculty_id")
-  faculty   Faculty? @relation(fields: [facultyId], references: [id])
+  faculty   Faculty? @relation(fields: [facultyId], references: [id], onDelete: SetNull)
 
   departmentId String?     @map("department_id")
-  department   Department? @relation(fields: [departmentId], references: [id])
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
 
   /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
   latestYearCheckedForNtnuData Int? @map("latest_year_checked_for_ntnu_data")
@@ -158,7 +158,7 @@ model Department {
   courses Course[]
 
   facultyId String  @map("faculty_id")
-  faculty   Faculty @relation(fields: [facultyId], references: [id])
+  faculty   Faculty @relation(fields: [facultyId], references: [id], onDelete: Restrict)
 
   @@map("department")
 }
