@@ -2,29 +2,24 @@
 
 import { DataTable } from "@/components/DataTable"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import type { NotificationRecipientListItem } from "@dotkomonline/rpc/notification"
-import { Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextInput, TextLink } from "@dotkomonline/ui"
+import type { NotificationRecipientFilterQuery, NotificationRecipientListItem } from "@dotkomonline/rpc/notification"
+import { Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable, type RowSelectionState } from "@tanstack/react-table"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useRemoveNotificationRecipientsMutation } from "../mutations"
+import { NotificationRecipientFilters } from "./NotificationRecipientFilters"
 
 interface NotificationRecipientsTableProps {
   notificationId: string
   recipients: NotificationRecipientListItem[]
+  recipientFilters: NotificationRecipientFilterQuery
+  setRecipientFilters: (filters: NotificationRecipientFilterQuery) => void
   canManage: boolean
-  onLoadMore?: () => void
-}
-
-function matchesNameFilter(recipient: NotificationRecipientListItem, search: string): boolean {
-  const trimmedSearch = search.trim().toLowerCase()
-
-  if (trimmedSearch.length === 0) {
-    return true
-  }
-
-  const name = recipient.user.name ?? ""
-
-  return name.toLowerCase().includes(trimmedSearch)
+  isLoading: boolean
+  isPlaceholderData: boolean
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  fetchNextPage: () => void
 }
 
 function formatRemoveConfirmText(selectedCount: number): string {
@@ -38,17 +33,18 @@ function formatRemoveConfirmText(selectedCount: number): string {
 export function NotificationRecipientsTable({
   notificationId,
   recipients,
+  recipientFilters,
+  setRecipientFilters,
   canManage,
-  onLoadMore,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+  isLoading,
+  isPlaceholderData,
 }: NotificationRecipientsTableProps) {
   const removeRecipients = useRemoveNotificationRecipientsMutation()
-  const [nameFilter, setNameFilter] = useState("")
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [isRemoveOpen, setIsRemoveOpen] = useState(false)
-
-  const filteredRecipients = useMemo(() => {
-    return recipients.filter((recipient) => matchesNameFilter(recipient, nameFilter))
-  }, [nameFilter, recipients])
 
   const columnHelper = createColumnHelper<NotificationRecipientListItem>()
   const selectColumn = columnHelper.display({
@@ -96,7 +92,7 @@ export function NotificationRecipientsTable({
   const columns = [...selectColumns, userColumn]
 
   const table = useReactTable({
-    data: filteredRecipients,
+    data: recipients,
     columns,
     state: {
       rowSelection,
@@ -112,17 +108,12 @@ export function NotificationRecipientsTable({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <TextInput
-          placeholder="Søk etter navn"
-          value={nameFilter}
-          onChange={(event) => setNameFilter(event.currentTarget.value)}
-        />
-
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <NotificationRecipientFilters onChange={setRecipientFilters} defaultValues={recipientFilters} />
         {canManage && (
           <Button
-            color="red"
-            variant="secondary"
+            size="lg"
+            variant="destructive"
             disabled={selectedCount === 0 || removeRecipients.isPending}
             onClick={() => setIsRemoveOpen(true)}
           >
@@ -131,7 +122,14 @@ export function NotificationRecipientsTable({
         )}
       </div>
 
-      <DataTable table={table} fetchNextPage={onLoadMore} hasNextPage={onLoadMore !== undefined} />
+      <DataTable
+        table={table}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        isLoading={isLoading}
+        isPlaceholderData={isPlaceholderData}
+        isFetchingNextPage={isFetchingNextPage}
+      />
 
       <ConfirmDeleteModal
         open={isRemoveOpen}

@@ -6,7 +6,7 @@ import { IconX } from "@tabler/icons-react"
 import { useState } from "react"
 import { useAddNotificationRecipientsMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
-import { RecipientSelectionBuilder } from "./recipient-selection"
+import { RecipientSelectionBuilder } from "./RecipientSelection"
 
 export function AddRecipientsModal({
   open,
@@ -75,7 +75,7 @@ function AddRecipientsForm({ notification, onClose }: { notification: Notificati
       />
 
       <div className="flex justify-end">
-        <Button onClick={onSubmit} disabled={!canSubmit}>
+        <Button variant="default" onClick={onSubmit} disabled={!canSubmit}>
           Legg til mottakere
         </Button>
       </div>

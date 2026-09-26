@@ -6,8 +6,8 @@ import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
-import { NotificationsTable } from "./components/notifications-table"
-import { SendNotificationModal } from "./components/send-notification-modal"
+import { NotificationsTable } from "./components/NotificationsTable"
+import { SendNotificationModal } from "./components/SendNotificationModal"
 import { useNotificationsInfiniteQuery } from "./queries"
 
 type ScopeFilter = "alle" | "mine"
@@ -44,7 +44,7 @@ export default function NotificationsPage() {
     return {}
   }, [committeeSlugs, isAdministrator, scopeFilter])
 
-  const { notifications, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+  const { notifications, isLoading, isPlaceholderData, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useNotificationsInfiniteQuery(filters)
 
   return (
@@ -70,28 +70,23 @@ export default function NotificationsPage() {
           )}
         </div>
         <PermissionTooltip allowed={isAdministrator} label="Kun administratorer kan opprette varslinger">
-          <Button type="button" onClick={() => setIsCreateOpen(true)} disabled={!isAdministrator}>
+          <Button onClick={() => setIsCreateOpen(true)} disabled={!isAdministrator}>
             Ny varsling
           </Button>
         </PermissionTooltip>
       </div>
 
-      {isLoading ? (
-        <div className="h-40 w-full animate-pulse rounded-sm bg-muted" />
-      ) : (
-        <NotificationsTable
-          notifications={notifications}
-          showLinkType
-          showReadPercentage={false}
-          dimReadOnlyRows={scopeFilter === "alle"}
-        />
-      )}
-
-      {hasNextPage && (
-        <Button variant="secondary" disabled={isFetchingNextPage} onClick={() => fetchNextPage()}>
-          Last inn flere
-        </Button>
-      )}
+      <NotificationsTable
+        notifications={notifications}
+        showLinkType
+        showReadPercentage={false}
+        dimReadOnlyRows={scopeFilter === "alle"}
+        isLoading={isLoading}
+        isPlaceholderData={isPlaceholderData}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+      />
 
       {isAdministrator && (
         <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />

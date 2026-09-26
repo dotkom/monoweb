@@ -12,6 +12,7 @@ import {
   NotificationCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
+  NotificationRecipientFilterQuerySchema,
   NotificationRecipientListItemSchema,
   type NotificationRecipientSelection,
   NotificationRecipientSelectionPreviewSchema,
@@ -326,7 +327,12 @@ const deleteNotificationProcedure = procedure
 export type FindRecipientsInput = inferProcedureInput<typeof findRecipientsProcedure>
 export type FindRecipientsOutput = inferProcedureOutput<typeof findRecipientsProcedure>
 const findRecipientsProcedure = procedure
-  .input(BasePaginateInputSchema.extend({ notificationId: NotificationSchema.shape.id }))
+  .input(
+    BasePaginateInputSchema.extend({
+      notificationId: NotificationSchema.shape.id,
+      filters: NotificationRecipientFilterQuerySchema.default({}),
+    })
+  )
   .output(
     z.object({
       items: z.array(NotificationRecipientListItemSchema),
@@ -337,12 +343,12 @@ const findRecipientsProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const { notificationId, ...page } = input
+    const { notificationId, filters, ...page } = input
     const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
 
     assertCanManageNotification(ctx, notification)
 
-    const items = await ctx.notificationService.findRecipients(ctx.handle, notificationId, page)
+    const items = await ctx.notificationService.findRecipients(ctx.handle, notificationId, filters, page)
 
     return {
       items,

@@ -61,19 +61,29 @@ function RecipientStatsCell({
   return children(statsQuery.data)
 }
 
-export function NotificationsTable({
-  notifications,
-  onLoadMore,
-  showLinkType = false,
-  showReadPercentage = true,
-  dimReadOnlyRows = false,
-}: {
+interface Props {
   notifications: NotificationManagement[]
-  onLoadMore?: () => void
   showLinkType?: boolean
   showReadPercentage?: boolean
   dimReadOnlyRows?: boolean
-}) {
+  isLoading: boolean
+  isPlaceholderData: boolean
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  fetchNextPage: () => void
+}
+
+export function NotificationsTable({
+  notifications,
+  showLinkType = false,
+  showReadPercentage = true,
+  dimReadOnlyRows = false,
+  isLoading,
+  isPlaceholderData,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+}: Props) {
   const trpc = useTRPC()
   const authorization = useAuthorization()
   const { isAdministrator, canManageNotification } = authorization
@@ -109,9 +119,9 @@ export function NotificationsTable({
               fit: true,
               noPadding: true,
             },
-            cell: (info) => (
+            cell: () => (
               <EditableRowIndicator
-                canEdit={info.getValue()}
+                canEdit={isAdministrator}
                 readOnlyLabel="Du kan se denne varslingen, men ikke redigere den"
                 editableLabel="Du kan redigere denne varslingen"
               />
@@ -203,8 +213,11 @@ export function NotificationsTable({
   return (
     <DataTable
       table={table}
-      fetchNextPage={onLoadMore}
-      hasNextPage={onLoadMore !== undefined}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      isLoading={isLoading}
+      isPlaceholderData={isPlaceholderData}
       getRowClassName={(row) => (dimReadOnlyRows && !row.original.canManage ? "opacity-65" : undefined)}
     />
   )

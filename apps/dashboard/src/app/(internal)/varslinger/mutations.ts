@@ -1,11 +1,13 @@
 import { useQueryGenericMutationNotification, useQueryNotification } from "@/lib/notifications"
 import { useTRPC } from "@/lib/trpc-client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
 export function useCreateNotificationMutation() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
+  const router = useRouter()
 
   return useMutation(
     trpc.notification.create.mutationOptions({
@@ -22,11 +24,13 @@ export function useCreateNotificationMutation() {
         })
 
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findMany.queryKey(),
+          queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
         await queryClient.invalidateQueries({
           queryKey: trpc.notification.getRecipientStats.queryKey(),
         })
+
+        router.replace(`/varslinger/${data.notification.id}`)
       },
       onError: (error) => {
         notification.fail({
@@ -56,7 +60,7 @@ export function useEditNotificationMutation() {
           queryKey: trpc.notification.get.queryKey(),
         })
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findMany.queryKey(),
+          queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
       },
     })
@@ -66,6 +70,7 @@ export function useEditNotificationMutation() {
 export function useDeleteNotificationMutation() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const router = useRouter()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
     method: "delete",
   })
@@ -78,8 +83,10 @@ export function useDeleteNotificationMutation() {
         complete()
 
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findMany.queryKey(),
+          queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
+
+        router.replace("/varslinger")
       },
     })
   )
@@ -105,13 +112,13 @@ export function useAddNotificationRecipientsMutation() {
         })
 
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findRecipients.queryKey(),
+          queryKey: trpc.notification.findRecipients.infiniteQueryKey(),
         })
         await queryClient.invalidateQueries({
           queryKey: trpc.notification.getRecipientStats.queryKey(),
         })
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findMany.queryKey(),
+          queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
       },
       onError: (error) => {
@@ -144,13 +151,13 @@ export function useRemoveNotificationRecipientsMutation() {
         })
 
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findRecipients.queryKey(),
+          queryKey: trpc.notification.findRecipients.infiniteQueryKey(),
         })
         await queryClient.invalidateQueries({
           queryKey: trpc.notification.getRecipientStats.queryKey(),
         })
         await queryClient.invalidateQueries({
-          queryKey: trpc.notification.findMany.queryKey(),
+          queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
       },
       onError: (error) => {

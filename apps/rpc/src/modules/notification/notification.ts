@@ -292,6 +292,14 @@ export const NotificationRecipientSchema = z.object({
 export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
 export type NotificationRecipientId = NotificationRecipient["id"]
 
+export const NotificationRecipientFilterQuerySchema = z
+  .object({
+    bySearchTerm: z.string().optional(),
+  })
+  .partial()
+
+export type NotificationRecipientFilterQuery = z.infer<typeof NotificationRecipientFilterQuerySchema>
+
 export const NotificationRecipientListItemSchema = NotificationRecipientSchema.omit({
   readAt: true,
 }).extend({
