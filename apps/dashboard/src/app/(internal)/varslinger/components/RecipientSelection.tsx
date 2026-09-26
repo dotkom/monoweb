@@ -44,7 +44,7 @@ import {
 import { IconUsers, IconX } from "@tabler/icons-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRecipientSelectionPreview, useRecipientSelectionPreviewInfinite } from "../queries"
-import { EventAttendeeRecipientFilters } from "./event-attendee-recipient-filters"
+import { EventAttendeeRecipientFilters } from "./EventAttendeeRecipientFilters"
 
 const TARGETABLE_GROUP_TYPES = new Set(["COMMITTEE", "NODE_COMMITTEE", "ASSOCIATED", "INTEREST_GROUP"])
 

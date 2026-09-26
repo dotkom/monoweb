@@ -117,47 +117,51 @@ export function ResourceDetailLayout({
           )}
         </div>
 
-        <Title className="mt-4 font-title text-3xl font-semibold tracking-tight">{title}</Title>
+        <Title element="h1" className="mt-4 font-title text-3xl font-semibold tracking-tight">
+          {title}
+        </Title>
         {description && <div className="mt-1 text-sm text-muted-foreground">{description}</div>}
 
         {readOnlyNotice && (
           <ReadOnlyNotice title={readOnlyNotice.title} message={readOnlyNotice.message} className="mt-4" />
         )}
 
-        <nav className="mt-4 flex overflow-x-auto shadow-[inset_0_-2px_0_0_var(--border)]" aria-label="Seksjoner">
-          {navItems.map((item) => {
-            const { href, label, icon: Icon, disabled } = item
-            const active = isNavItemActive(pathname, item)
+        {navItems.length > 0 && (
+          <nav className="mt-4 flex overflow-x-auto shadow-[inset_0_-2px_0_0_var(--border)]" aria-label="Seksjoner">
+            {navItems.map((item) => {
+              const { href, label, icon: Icon, disabled } = item
+              const active = isNavItemActive(pathname, item)
 
-            const itemClassName = cn(
-              "inline-flex items-center gap-1.5 border-b-2 border-transparent px-2.5 py-2 text-sm font-medium whitespace-nowrap transition-colors",
-              "rounded-t hover:bg-muted",
-              active ? "border-foreground text-foreground" : "hover:border-foreground/20"
-            )
+              const itemClassName = cn(
+                "inline-flex items-center gap-1.5 border-b-2 border-transparent px-2.5 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                "rounded-t hover:bg-muted",
+                active ? "border-foreground text-foreground" : "hover:border-foreground/20"
+              )
 
-            if (disabled) {
+              if (disabled) {
+                return (
+                  <span
+                    key={href}
+                    className={cn(
+                      itemClassName,
+                      "cursor-not-allowed text-muted-foreground opacity-50 hover:bg-transparent"
+                    )}
+                  >
+                    <Icon className="size-3.5 shrink-0" />
+                    {label}
+                  </span>
+                )
+              }
+
               return (
-                <span
-                  key={href}
-                  className={cn(
-                    itemClassName,
-                    "cursor-not-allowed text-muted-foreground opacity-50 hover:bg-transparent"
-                  )}
-                >
+                <Link key={href} href={href} scroll={false} className={itemClassName}>
                   <Icon className="size-3.5 shrink-0" />
                   {label}
-                </span>
+                </Link>
               )
-            }
-
-            return (
-              <Link key={href} href={href} scroll={false} className={itemClassName}>
-                <Icon className="size-3.5 shrink-0" />
-                {label}
-              </Link>
-            )
-          })}
-        </nav>
+            })}
+          </nav>
+        )}
       </div>
 
       <div className="mt-6">{children}</div>
