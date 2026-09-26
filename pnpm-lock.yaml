@@ -1123,7 +1123,7 @@ importers:
         version: 7.88.0(react@19.2.8)
       react-parallax-tilt:
         specifier: ^1.7.299
-        version: 1.7.343(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 1.7.344(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       shadcn:
         specifier: ^4.8.0
         version: 4.8.0(@types/node@22.19.7)(typescript@5.9.3)
@@ -7840,8 +7840,8 @@ packages:
   react-merge-refs@2.1.1:
     resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
 
-  react-parallax-tilt@1.7.343:
-    resolution: {integrity: sha512-x6WuEKNKmDDxORcvhwgHg7dpI7dSSYnqcuELFZd5nmE8oml52vH55Z8e9W6vndkjqpMpy6i7+JJzWiv2ggbXNA==}
+  react-parallax-tilt@1.7.344:
+    resolution: {integrity: sha512-HsPZdvdO3ORllt8f2xqhkfWduO0uudOCrzZc41p85IKccPo5roFRoo91uA5JEm3rSgSCPirKqgs4t+Wy1eAOgw==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -16369,7 +16369,7 @@ snapshots:
 
   react-merge-refs@2.1.1: {}
 
-  react-parallax-tilt@1.7.343(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-parallax-tilt@1.7.344(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
