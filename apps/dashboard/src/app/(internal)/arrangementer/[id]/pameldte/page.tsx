@@ -10,9 +10,9 @@ import { useState } from "react"
 import { useEventContext } from "../provider"
 import { useEventFeedbackFormGetQuery, useFeedbackAnswersGetQuery } from "../../queries"
 import { useEventEditPermission } from "../../use-event-edit-permission"
+import { SendNotificationModal } from "@/app/(internal)/varslinger/components/send-notification-modal"
 import { AttendeesTable } from "./components/AttendeesTable"
 import { ManualCreateUserAttendModal } from "./components/ManualCreateUserAttendModal"
-import { NotifyAttendeesModal } from "./components/NotifyAttendeesModal"
 import { QrCodeScanner } from "./components/QrCodeScanner"
 
 export default function EventAttendeesPage() {
@@ -50,10 +50,10 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
           <Button
             variant="secondary"
             className="w-fit"
-            disabled={attendees.length === 0 || !canEdit}
+            disabled={attendance.attendees.length === 0 || !canEdit}
             onClick={() => setNotifyOpen(true)}
           >
-            Send e-post til alle
+            Send melding til påmeldte
           </Button>
           {attendeesWithoutEmail.length > 0 && (
             <div className="flex flex-col gap-1">
@@ -98,7 +98,19 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
 
       <div className="h-8" />
 
-      <NotifyAttendeesModal open={notifyOpen} onOpenChange={setNotifyOpen} eventId={event.id} attendees={attendees} />
+      <SendNotificationModal
+        open={notifyOpen}
+        onOpenChange={setNotifyOpen}
+        source={{
+          kind: "EVENT",
+          eventId: event.id,
+          attendanceId: attendance.id,
+          eventTitle: event.title,
+          hostingGroupSlugs: event.hostingGroups.map((group) => group.slug),
+          hasPayment: attendance.attendancePrice !== null,
+          selections: attendance.selections,
+        }}
+      />
 
       {manualCreate && (
         <ManualCreateUserAttendModal
