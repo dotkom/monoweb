@@ -1,0 +1,46 @@
+{
+  "rules": {
+    "model-name-grammatical-number": [
+      "error",
+      {
+        "style": "singular"
+      }
+    ],
+    "model-name-pascal-case": ["error"],
+    "model-name-mapping-snake-case": ["error"],
+    "field-name-camel-case": ["error"],
+    "field-name-mapping-snake-case": ["error"],
+    "enum-name-pascal-case": ["error"],
+    "enum-value-case": [
+      "error",
+      {
+        "style": "snake",
+        "case": "upper"
+      }
+    ],
+    "forbid-required-ignored-field": ["error"],
+    "require-field": [
+      "error",
+      {
+        "require": ["createdAt", "updatedAt"]
+      }
+    ],
+    "require-field-type": [
+      "error",
+      {
+        "require": [
+          {
+            "ifName": "/At$/",
+            "type": "DateTime"
+          }
+        ]
+      }
+    ],
+    "require-field-index": [
+      "error",
+      {
+        "forAllRelations": true
+      }
+    ]
+  }
+}

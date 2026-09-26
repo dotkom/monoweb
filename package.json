@@ -20,6 +20,7 @@
     "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
+    "prisma-schema-lint-check": "prisma-lint packages/db/prisma/schema.prisma packages/grades-db/prisma/schema.prisma",
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
@@ -61,6 +62,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
+    "prisma-lint": "0.13.1",
     "typescript": "5.9.3"
   }
 }
