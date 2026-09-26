@@ -25,9 +25,11 @@ import {
   type RegisterChangeEvent,
   buildPoolOccupancies,
   getReservedAttendeeCount,
+  hasAttendeeCompletedSelections,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
   MAX_MERGE_DELAY_HOURS,
+  resolveSelectionDeadline,
 } from "./attendance"
 import { type Event, findFirstHostingGroupEmail } from "./event"
 import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
@@ -79,6 +81,7 @@ import {
   type ReserveAttendeeTaskDefinition,
   type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyPaymentTaskDefinition,
+  type VerifySelectionsTaskDefinition,
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
@@ -269,6 +272,7 @@ export interface AttendanceService {
   syncAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+  executeVerifySelectionsTask(handle: DBHandle, task: InferTaskData<VerifySelectionsTaskDefinition>): Promise<void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
@@ -310,6 +314,40 @@ export function getAttendanceService(
   emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
+
+  async function cancelPendingSelectionDeadline(handle: DBHandle, attendeeId: AttendeeId): Promise<void> {
+    const task = await taskSchedulingService.findVerifySelectionsTask(handle, attendeeId)
+
+    if (task === null || task.status !== "PENDING") {
+      return
+    }
+
+    await taskSchedulingService.cancel(handle, task.id)
+  }
+
+  async function startSelectionDeadline(handle: DBHandle, attendee: Attendee, attendance: Attendance): Promise<void> {
+    if (attendance.selections.length === 0) {
+      return
+    }
+
+    if (attendee.selectionDeadline !== null) {
+      return
+    }
+
+    const deadline = new TZDate(resolveSelectionDeadline(attendee.paymentDeadline))
+
+    await attendanceRepository.updateAttendeeSelectionDeadline(handle, attendee.id, deadline)
+    await taskSchedulingService.scheduleAt(handle, tasks.VERIFY_SELECTIONS, { attendeeId: attendee.id }, deadline)
+
+    attendee.selectionDeadline = deadline
+    logger.info(
+      "Attendee(ID=%s,UserID=%s) has been given until %s UTC to answer selections for Event attendance %s",
+      attendee.id,
+      attendee.user.id,
+      deadline.toUTCString(),
+      attendance.id
+    )
+  }
 
   function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
     if (attendee.user.email === null) {
@@ -777,6 +815,7 @@ export function getAttendanceService(
           )
         }
 
+        await startSelectionDeadline(handle, attendee, attendance)
         sendEventRegistrationEmail(event, attendance, attendee)
       } else {
         await taskSchedulingService.scheduleAt(
@@ -826,7 +865,22 @@ export function getAttendanceService(
       } satisfies AttendeeWrite)
       validateAttendeeWrite(input)
 
-      return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+      const updated = await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+
+      if (data.selections === undefined || updated.selectionDeadline === null) {
+        return updated
+      }
+
+      const selectionsCompleted = hasAttendeeCompletedSelections(attendance.selections, updated.selections)
+      if (!selectionsCompleted) {
+        return updated
+      }
+
+      await attendanceRepository.updateAttendeeSelectionDeadline(handle, updated.id, null)
+      updated.selectionDeadline = null
+      await cancelPendingSelectionDeadline(handle, updated.id)
+
+      return updated
     },
 
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
@@ -895,6 +949,7 @@ export function getAttendanceService(
         )
       }
 
+      await startSelectionDeadline(handle, attendee, attendance)
       sendEventRegistrationEmail(event, attendance, attendee)
       emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
     },
@@ -924,6 +979,7 @@ export function getAttendanceService(
         await paymentService.cancel(attendee.paymentId)
       }
 
+      await cancelPendingSelectionDeadline(handle, attendeeId)
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
@@ -994,6 +1050,8 @@ export function getAttendanceService(
           payment.url
         )
       }
+
+      await startSelectionDeadline(handle, firstUnreservedAdjacentAttendee, attendance)
 
       await attendanceRepository.updateAttendeeById(
         handle,
@@ -1384,6 +1442,37 @@ export function getAttendanceService(
           await taskSchedulingService.cancel(handle, task.id)
         }
       }
+    },
+
+    async executeVerifySelectionsTask(handle, { attendeeId }) {
+      const attendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+
+      if (attendance === null) {
+        return
+      }
+
+      const attendee = attendance.attendees.find((candidate) => candidate.id === attendeeId)
+
+      if (attendee === undefined || attendee.selectionDeadline === null) {
+        return
+      }
+
+      const selectionsCompleted = hasAttendeeCompletedSelections(attendance.selections, attendee.selections)
+      if (selectionsCompleted) {
+        await attendanceRepository.updateAttendeeSelectionDeadline(handle, attendee.id, null)
+        return
+      }
+
+      logger.info(
+        "Deregistering Attendee(ID=%s,UserID=%s) for missing selections before %s",
+        attendee.id,
+        attendee.userId,
+        attendee.selectionDeadline.toUTCString()
+      )
+
+      await this.deregisterAttendee(handle, attendeeId, {
+        ignoreDeregistrationWindow: true,
+      })
     },
 
     async executeVerifyPaymentTask(handle, { attendeeId }) {

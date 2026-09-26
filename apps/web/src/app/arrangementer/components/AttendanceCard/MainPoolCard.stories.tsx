@@ -1,5 +1,5 @@
 import { Text } from "@dotkomonline/ui"
-import { addDays } from "date-fns"
+import { addDays, addMinutes } from "date-fns"
 import { useEffect, useState, type ReactNode } from "react"
 import {
   createAttendanceOpeningSoon,
@@ -72,6 +72,29 @@ export const ActiveRegistration = () => {
 export default {
   title: "Attendance Card/Main Pool Card",
   component: MainPoolCard,
+}
+
+const foodSelection = {
+  id: "selection-food",
+  name: "Mat",
+  options: [
+    { id: "option-meat", name: "Kjøtt" },
+    { id: "option-vegetarian", name: "Vegetar" },
+  ],
+}
+
+const withFoodSelection = (
+  attendance: ReturnType<typeof createAttendanceWithReservedUser>,
+  attendeeOverrides: Partial<ReturnType<typeof createAttendanceWithReservedUser>["attendees"][number]>
+) => {
+  return {
+    ...attendance,
+    selections: [foodSelection],
+    attendees: attendance.attendees.map((attendee) => ({
+      ...attendee,
+      ...attendeeOverrides,
+    })),
+  }
 }
 
 const StatePreview = ({ label, children }: { label: string; children: ReactNode }) => {
@@ -259,6 +282,34 @@ export const AllStates = () => {
       <StatePreview label="Punishment delay with payment">
         <MainPoolCard
           attendance={createAttendanceWithServingPunishment({ withPayment: true })}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Selection deadline">
+        <MainPoolCard
+          attendance={withFoodSelection(createAttendanceWithReservedUser(), {
+            selectionDeadline: addMinutes(new Date(), 45),
+          })}
+          user={user}
+          authorizeUrl={AUTHORIZE_URL}
+        />
+      </StatePreview>
+
+      <StatePreview label="Selection chosen">
+        <MainPoolCard
+          attendance={withFoodSelection(createAttendanceWithReservedUser(), {
+            selectionDeadline: null,
+            selections: [
+              {
+                selectionId: "selection-food",
+                selectionName: "Mat",
+                optionId: "option-vegetarian",
+                optionName: "Vegetar",
+              },
+            ],
+          })}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
         />

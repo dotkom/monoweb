@@ -354,6 +354,9 @@ model Attendee {
   createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   paymentDeadline       DateTime?           @map("payment_deadline")
+  /// Set when the attendee is reserved and the event already has selections.
+  /// Attendees reserved before selections existed keep this null.
+  selectionDeadline     DateTime?           @map("selection_deadline") @db.Timestamptz(3)
   paymentLink           String?             @map("payment_link")
   paymentId             String?             @map("payment_id")
   paymentReservedAt     DateTime?           @map("payment_reserved_at")
@@ -622,6 +625,7 @@ enum TaskType {
   CHARGE_ATTENDEE                        @map("CHARGE_ATTENDEE")
   MERGE_ATTENDANCE_POOLS                 @map("MERGE_ATTENDANCE_POOLS")
   VERIFY_PAYMENT                         @map("VERIFY_PAYMENT")
+  VERIFY_SELECTIONS                      @map("VERIFY_SELECTIONS")
   VERIFY_FEEDBACK_ANSWERED               @map("VERIFY_FEEDBACK_ANSWERED")
   SEND_FEEDBACK_FORM_EMAILS              @map("SEND_FEEDBACK_FORM_EMAILS")
   VERIFY_ATTENDEE_ATTENDED               @map("VERIFY_ATTENDEE_ATTENDED")

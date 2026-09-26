@@ -73,6 +73,7 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     paymentChargedAt: null,
     paymentRefundedAt: null,
     paymentDeadline: null,
+    selectionDeadline: null,
     paymentId: null,
     paymentLink: null,
     paymentChargeDeadline: null,
