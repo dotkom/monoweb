@@ -42,6 +42,7 @@ import {
   IconMoon,
   IconPhoto,
   IconPhotoShare,
+  IconShieldLock,
   IconSkull,
   IconSun,
   IconUserMinus,
@@ -57,6 +58,12 @@ import { Fragment, useEffect, useState, type FC } from "react"
 import { z } from "zod"
 
 const navigations = [
+  {
+    label: "Administrator",
+    icon: IconShieldLock,
+    href: "/administrator",
+    isAdmin: true,
+  },
   {
     label: "Arrangementer",
     icon: IconWheelchair,
