@@ -167,7 +167,7 @@ function EditNotificationForm({
       {linkType === "URL" && <TextField control={control} name="linkUrl" label="URL" required />}
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={!formState.isValid || editNotification.isPending}>
+        <Button variant="default" type="submit" disabled={!formState.isValid || editNotification.isPending}>
           Lagre
         </Button>
       </div>

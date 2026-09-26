@@ -14,6 +14,7 @@ import type {
   NotificationManagement,
   NotificationRecipient,
   NotificationRecipientListItem,
+  NotificationRecipientFilterQuery,
   NotificationRecipientSelection,
   NotificationRecipientSelectionPreview,
   NotificationRecipientStats,
@@ -90,6 +91,7 @@ export interface NotificationService {
   findRecipients(
     handle: DBHandle,
     notificationId: NotificationId,
+    filters: NotificationRecipientFilterQuery,
     page: Pageable
   ): Promise<NotificationRecipientListItem[]>
   getRecipientStats(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipientStats>
@@ -247,10 +249,10 @@ export function getNotificationService(
       return await notificationRepository.removeRecipients(handle, notificationId, userIds)
     },
 
-    async findRecipients(handle, notificationId, page) {
+    async findRecipients(handle, notificationId, filters, page) {
       await this.getById(handle, notificationId)
 
-      return await notificationRepository.findRecipients(handle, notificationId, page)
+      return await notificationRepository.findRecipients(handle, notificationId, filters, page)
     },
 
     async getRecipientStats(handle, notificationId) {

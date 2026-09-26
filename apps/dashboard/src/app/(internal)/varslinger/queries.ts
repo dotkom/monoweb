@@ -1,13 +1,14 @@
-import { isTrpcErrorCode } from "@/lib/trpc-errors"
 import { useTRPC } from "@/lib/trpc-client"
+import { isTrpcErrorCode } from "@/lib/trpc-errors"
 import type {
   NotificationFilterQuery,
+  NotificationRecipientFilterQuery,
   NotificationRecipientSelection,
   NotificationType,
 } from "@dotkomonline/rpc/notification"
-import { useDebounce } from "use-debounce"
-import { skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
+import { useDebounce } from "use-debounce"
 
 export function useRecipientSelectionPreview(
   recipientSelection: NotificationRecipientSelection | null,
@@ -85,10 +86,13 @@ export function useNotificationsInfiniteQuery(filters: NotificationFilterQuery =
       filters,
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (data) => data.pages.flatMap((page) => page.items),
   })
 
+  const notifications = useMemo(() => data ?? [], [data])
+
   return {
-    notifications: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]),
+    notifications,
     ...query,
   }
 }
@@ -112,17 +116,33 @@ export function useNotificationRecipientStatsQuery(notificationId: string, enabl
   })
 }
 
-export function useNotificationRecipientsInfiniteQuery(notificationId: string, enabled = true) {
+export function useNotificationRecipientsInfiniteQuery(
+  notificationId: string,
+  filters: NotificationRecipientFilterQuery,
+  enabled = true
+) {
   const trpc = useTRPC()
-  const queryInput = enabled ? { notificationId } : skipToken
+  const queryInput = enabled ? { notificationId, filters } : skipToken
   const { data, ...query } = useInfiniteQuery({
     ...trpc.notification.findRecipients.infiniteQueryOptions(queryInput),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (data) => data.pages.flatMap((page) => page.items),
+    placeholderData: keepPreviousData,
     retry: false,
   })
 
+  const recipients = useMemo(() => data ?? [], [data])
+
   return {
-    recipients: useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]),
+    recipients,
     ...query,
   }
+}
+
+export function useNotificationCreatedByQuery(createdById: string | null | undefined) {
+  const trpc = useTRPC()
+  return useQuery({
+    ...trpc.user.get.queryOptions(createdById ?? ""),
+    enabled: createdById !== null && createdById !== undefined,
+  })
 }
