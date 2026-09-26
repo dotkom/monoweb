@@ -125,6 +125,7 @@ model User {
   contestTeams          ContestTeam[]           @relation("ContestTeamMember")
   userFlagLinks         UserFlagLink[]
 
+  /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
 }
 
@@ -141,8 +142,8 @@ model Company {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  events     EventCompany[]
-  JobListing JobListing[]
+  events      EventCompany[]
+  jobListings JobListing[]
 
   @@map("company")
 }
@@ -225,6 +226,8 @@ model GroupMembership {
 
   roles GroupMembershipRole[]
 
+  @@index([groupId])
+  @@index([userId])
   @@map("group_membership")
 }
 
@@ -234,7 +237,9 @@ model GroupMembershipRole {
   membership   GroupMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
   role         GroupRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index membershipId
   @@id([membershipId, roleId])
+  @@index([roleId])
   @@map("group_membership_role")
 }
 
@@ -346,6 +351,7 @@ model AttendancePool {
   attendees Attendee[]
 
   @@index([attendanceId], name: "idx_attendance_pool_attendance_id")
+  @@index([taskId])
   @@map("attendance_pool")
 }
 
@@ -380,6 +386,9 @@ model Attendee {
   paymentRefundedBy   User?          @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy", onDelete: SetNull)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
+  @@index([userId])
+  @@index([attendancePoolId])
+  @@index([paymentRefundedById])
   @@map("attendee")
 }
 
@@ -420,6 +429,8 @@ model Event {
   metadataImportId Int? @map("metadata_import_id")
 
   @@index([contestId])
+  @@index([attendanceId])
+  @@index([parentId])
   @@map("event")
 }
 
@@ -429,7 +440,9 @@ model EventCompany {
   event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
+  /// prisma-lint-ignore-model require-field-index eventId
   @@id([eventId, companyId])
+  @@index([companyId])
   @@map("event_company")
 }
 
@@ -464,7 +477,9 @@ model MarkGroup {
   mark    Mark   @relation(fields: [markId], references: [id], onDelete: Cascade)
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index markId
   @@id([markId, groupId])
+  @@index([groupId])
   @@map("mark_group")
 }
 
@@ -478,7 +493,10 @@ model PersonalMark {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id], onDelete: SetNull)
 
+  /// prisma-lint-ignore-model require-field-index markId
   @@id([markId, userId])
+  @@index([userId])
+  @@index([givenById])
   @@map("personal_mark")
 }
 
@@ -525,6 +543,7 @@ model EventHostingGroup {
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Restrict)
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index groupId
   @@id([groupId, eventId])
   @@index([eventId], name: "idx_event_hosting_group_event_id")
   @@map("event_hosting_group")
@@ -562,6 +581,7 @@ model JobListing {
 
   locations JobListingLocation[]
 
+  @@index([companyId])
   @@map("job_listing")
 }
 
@@ -573,6 +593,7 @@ model JobListingLocation {
   jobListing   JobListing @relation(fields: [jobListingId], references: [id], onDelete: Cascade)
 
   @@id([name, jobListingId])
+  @@index([jobListingId])
   @@map("job_listing_location")
 }
 
@@ -621,7 +642,9 @@ model ArticleTagLink {
   article   Article    @relation(fields: [articleId], references: [id], onDelete: Cascade)
   tag       ArticleTag @relation(fields: [tagName], references: [name], onDelete: Restrict)
 
+  /// prisma-lint-ignore-model require-field-index articleId
   @@id([articleId, tagName])
+  @@index([tagName])
   @@map("article_tag_link")
 }
 
@@ -669,6 +692,7 @@ model Task {
   notifications   Notification[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
+  @@index([recurringTaskId])
   @@map("task")
 }
 
@@ -742,6 +766,7 @@ model FeedbackQuestion {
   options FeedbackQuestionOption[]
   answers FeedbackQuestionAnswer[] @relation("QuestionAnswers")
 
+  @@index([feedbackFormId])
   @@map("feedback_question")
 }
 
@@ -769,6 +794,8 @@ model FeedbackQuestionAnswer {
 
   selectedOptions FeedbackQuestionAnswerOptionLink[]
 
+  @@index([questionId])
+  @@index([formAnswerId])
   @@map("feedback_question_answer")
 }
 
@@ -778,7 +805,10 @@ model FeedbackQuestionAnswerOptionLink {
   feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id], onDelete: Cascade)
   feedbackQuestionAnswer   FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index feedbackQuestionOptionId
   @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
+  @@index([feedbackQuestionAnswerId])
+  /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("feedback_answer_option_link")
 }
 
@@ -794,6 +824,7 @@ model FeedbackFormAnswer {
 
   answers FeedbackQuestionAnswer[] @relation("FormAnswers")
 
+  @@index([feedbackFormId])
   @@map("feedback_form_answer")
 }
 
@@ -827,6 +858,8 @@ model AuditLog {
   auditTransactionId String?           @map("audit_transaction_id")
   auditTransaction   AuditTransaction? @relation(fields: [auditTransactionId], references: [id])
 
+  @@index([userId])
+  @@index([auditTransactionId])
   @@map("audit_log")
 }
 
@@ -843,6 +876,8 @@ model DeregisterReason {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   event   Event?  @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
+  @@index([eventId])
   @@map("deregister_reason")
 }
 
@@ -921,6 +956,10 @@ model Notification {
 
   @@index([createdAt])
   @@index([payloadType, payload])
+  @@index([actorGroupId])
+  @@index([createdById])
+  @@index([lastUpdatedById])
+  @@index([taskId])
   @@map("notification")
 }
 
@@ -986,6 +1025,7 @@ model Contestant {
   wonContest Contest?     @relation("ContestWinner")
 
   @@unique([contestId, userId])
+  @@index([userId])
   @@map("contestant")
 }
 
@@ -1026,5 +1066,7 @@ model UserFlagLink {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userFlag   UserFlag @relation(fields: [userFlagId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userFlagId])
   @@map("user_flag_link")
 }
