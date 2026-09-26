@@ -72,7 +72,7 @@ model Membership {
   semester       Int?
 
   userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([userId], name: "idx_membership_user_id")
   @@map("membership")
@@ -332,7 +332,7 @@ model AttendancePool {
 
   attendanceId String     @map("attendance_id")
   taskId       String?    @map("task_id")
-  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
   task         Task?      @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   attendees Attendee[]
@@ -366,10 +366,10 @@ model Attendee {
   userId              String         @map("user_id")
   attendancePoolId    String         @map("attendance_pool_id")
   paymentRefundedById String?        @map("payment_refunded_by_id")
-  attendance          Attendance     @relation(fields: [attendanceId], references: [id])
-  user                User           @relation(fields: [userId], references: [id])
-  attendancePool      AttendancePool @relation(fields: [attendancePoolId], references: [id])
-  paymentRefundedBy   User?          @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  attendance          Attendance     @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
+  user                User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  attendancePool      AttendancePool @relation(fields: [attendancePoolId], references: [id], onDelete: Restrict)
+  paymentRefundedBy   User?          @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy", onDelete: SetNull)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@map("attendee")
@@ -402,8 +402,8 @@ model Event {
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
   contestId    String?     @map("contest_id")
-  attendance   Attendance? @relation(fields: [attendanceId], references: [id])
-  parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
+  attendance   Attendance? @relation(fields: [attendanceId], references: [id], onDelete: SetNull)
+  parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey", onDelete: SetNull)
   children     Event[]     @relation("children")
   contest      Contest?    @relation(fields: [contestId], references: [id], onDelete: SetNull)
 
@@ -418,8 +418,8 @@ model Event {
 model EventCompany {
   eventId   String  @map("event_id")
   companyId String  @map("company_id")
-  event     Event   @relation(fields: [eventId], references: [id])
-  company   Company @relation(fields: [companyId], references: [id])
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   @@id([eventId, companyId])
   @@map("event_company")
@@ -453,8 +453,8 @@ model Mark {
 model MarkGroup {
   markId  String @map("mark_id")
   groupId String @map("group_id")
-  mark    Mark   @relation(fields: [markId], references: [id])
-  group   Group  @relation(fields: [groupId], references: [slug])
+  mark    Mark   @relation(fields: [markId], references: [id], onDelete: Cascade)
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
 
   @@id([markId, groupId])
   @@map("mark_group")
@@ -466,9 +466,9 @@ model PersonalMark {
   markId    String  @map("mark_id")
   userId    String  @map("user_id")
   givenById String? @map("given_by_id")
-  mark      Mark    @relation(fields: [markId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
-  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id])
+  mark      Mark    @relation(fields: [markId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id], onDelete: SetNull)
 
   @@id([markId, userId])
   @@map("personal_mark")
@@ -476,7 +476,7 @@ model PersonalMark {
 
 model PrivacyPermissions {
   id                String   @id @default(uuid())
-  user              User     @relation(fields: [userId], references: [id])
+  user              User     @relation(fields: [userId], references: [id], onDelete: Restrict)
   userId            String   @unique @map("user_id")
   // TODO: rename to ~"privateProfile" and require authentication to view profile if true
   profileVisible    Boolean  @default(true) @map("profile_visible")
@@ -495,7 +495,7 @@ model PrivacyPermissions {
 
 model NotificationPermissions {
   id                          String   @id @default(uuid())
-  user                        User     @relation(fields: [userId], references: [id])
+  user                        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
   userId                      String   @unique @map("user_id")
   applications                Boolean  @default(true)
   newArticles                 Boolean  @default(true) @map("new_articles")
@@ -514,8 +514,8 @@ model NotificationPermissions {
 model EventHostingGroup {
   groupId String @map("group_id")
   eventId String @map("event_id")
-  group   Group  @relation(fields: [groupId], references: [slug])
-  event   Event  @relation(fields: [eventId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Restrict)
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Restrict)
 
   @@id([groupId, eventId])
   @@index([eventId], name: "idx_event_hosting_group_event_id")
@@ -550,7 +550,7 @@ model JobListing {
   updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   companyId String  @map("company_id")
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   locations JobListingLocation[]
 
@@ -562,7 +562,7 @@ model JobListingLocation {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
 
   jobListingId String     @map("job_listing_id")
-  jobListing   JobListing @relation(fields: [jobListingId], references: [id])
+  jobListing   JobListing @relation(fields: [jobListingId], references: [id], onDelete: Cascade)
 
   @@id([name, jobListingId])
   @@map("job_listing_location")
@@ -610,8 +610,8 @@ model ArticleTag {
 model ArticleTagLink {
   articleId String     @map("article_id")
   tagName   String     @map("tag_name")
-  article   Article    @relation(fields: [articleId], references: [id])
-  tag       ArticleTag @relation(fields: [tagName], references: [name])
+  article   Article    @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       ArticleTag @relation(fields: [tagName], references: [name], onDelete: Restrict)
 
   @@id([articleId, tagName])
   @@map("article_tag_link")
@@ -707,7 +707,7 @@ model FeedbackForm {
   answerDeadline     DateTime @map("answer_deadline") @db.Timestamptz(3)
 
   eventId String @unique @map("event_id")
-  event   Event  @relation(fields: [eventId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Restrict)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
@@ -753,7 +753,7 @@ model FeedbackQuestionAnswer {
 
   questionId   String             @map("question_id")
   formAnswerId String             @map("form_answer_id")
-  question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id])
+  question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id], onDelete: Cascade)
   formAnswer   FeedbackFormAnswer @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
 
   selectedOptions FeedbackQuestionAnswerOptionLink[]
@@ -764,7 +764,7 @@ model FeedbackQuestionAnswer {
 model FeedbackQuestionAnswerOptionLink {
   feedbackQuestionOptionId String                 @map("feedback_question_option_id")
   feedbackQuestionAnswerId String                 @map("feedback_question_answer_id")
-  feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id])
+  feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id], onDelete: Cascade)
   feedbackQuestionAnswer   FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id], onDelete: Cascade)
 
   @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
@@ -778,7 +778,7 @@ model FeedbackFormAnswer {
 
   feedbackFormId String       @map("feedback_form_id")
   attendeeId     String       @unique @map("attendee_id")
-  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id], onDelete: Restrict)
   attendee       Attendee     @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
 
   answers FeedbackQuestionAnswer[] @relation("FormAnswers")
@@ -798,7 +798,7 @@ model AuditLog {
 
   /// User relation is optional because the system can execute operations without a user to link it to. For example with
   /// recurring tasks.
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String? @map("user_id")
 
   @@map("audit_log")
@@ -814,8 +814,8 @@ model DeregisterReason {
 
   userId  String @map("user_id")
   eventId String @map("event_id")
-  user    User   @relation(fields: [userId], references: [id])
-  event   Event  @relation(fields: [eventId], references: [id])
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@map("deregister_reason")
 }
@@ -888,7 +888,7 @@ model Notification {
   taskId          String? @map("task_id")
   actorGroup      Group?  @relation(fields: [actorGroupId], references: [slug], onDelete: SetNull)
   createdBy       User?   @relation("created_by", fields: [createdById], references: [id], onDelete: SetNull)
-  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
+  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
   task            Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   recipients NotificationRecipient[]
@@ -954,7 +954,7 @@ model Contestant {
   contestId String  @map("contest_id")
   userId    String? @map("user_id")
   contest   Contest @relation("ContestContestants", fields: [contestId], references: [id], onDelete: Cascade)
-  user      User?   @relation(fields: [userId], references: [id])
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   team       ContestTeam?
   wonContest Contest?     @relation("ContestWinner")
