@@ -97,6 +97,9 @@ export function getMarkRepository(): MarkRepository {
                     }
                   : undefined,
             },
+            {
+              title: query.bySearchTerm ? { contains: query.bySearchTerm, mode: "insensitive" } : undefined,
+            },
           ],
         },
         include: QUERY_WITH_GROUPS,

@@ -1,7 +1,9 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
+import { CommandPalette } from "@/components/molecules/CommandPalette/CommandPalette"
 import { env } from "@/lib/env"
+import { navigations } from "@/lib/navigation"
 import { useAuthenticatedUser } from "@/lib/use-authenticated-user"
 import {
   Alert,
@@ -28,25 +30,11 @@ import {
   toAbsoluteUrl,
 } from "@dotkomonline/utils"
 import {
-  IconAward,
-  IconBan,
-  IconBell,
-  IconBriefcase,
-  IconCampfire,
-  IconClipboardList,
-  IconConfetti,
   IconDeviceDesktop,
   IconDeviceMobile,
   IconMenu2,
-  IconMoneybag,
   IconMoon,
-  IconPhoto,
-  IconPhotoShare,
-  IconSkull,
   IconSun,
-  IconUserMinus,
-  IconUsersGroup,
-  IconWheelchair,
   IconX,
   type Icon as TablerIcon,
 } from "@tabler/icons-react"
@@ -55,77 +43,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useState, type FC } from "react"
 import { z } from "zod"
-
-const navigations = [
-  {
-    label: "Arrangementer",
-    icon: IconWheelchair,
-    href: "/arrangementer",
-  },
-  {
-    label: "Varslinger",
-    icon: IconBell,
-    href: "/varslinger",
-  },
-  {
-    label: "Grupper",
-    icon: IconCampfire,
-    href: "/grupper",
-  },
-  {
-    label: "Prikker og suspensjoner",
-    icon: IconBan,
-    href: "/prikker",
-  },
-  {
-    label: "Jobbutlysninger",
-    icon: IconBriefcase,
-    href: "/karriere",
-  },
-  {
-    label: "Konkurranser",
-    icon: IconAward,
-    href: "/konkurranser",
-  },
-  {
-    label: "Artikler",
-    icon: IconPhoto,
-    href: "/artikler",
-  },
-  {
-    label: "Offline",
-    icon: IconSkull,
-    href: "/offline",
-    canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditOffline(),
-  },
-  { label: "Bedrifter", icon: IconMoneybag, href: "/bedrifter" },
-  {
-    label: "Fadderukene",
-    icon: IconConfetti,
-    href: "/fadderukene",
-    canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditFadderuke(),
-  },
-  { label: "Avmeldingsgrunner", icon: IconUserMinus, href: "/avmeldingsgrunner" },
-  { label: "Brukere", icon: IconUsersGroup, href: "/brukere" },
-  {
-    label: "Plakatbestilling",
-    icon: IconPhotoShare,
-    href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
-    openInNewTab: true,
-  },
-  {
-    label: "Hendelseslogg",
-    icon: IconClipboardList,
-    href: "/logg",
-    canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
-  },
-] satisfies {
-  label: string
-  icon: TablerIcon
-  href: string
-  openInNewTab?: boolean
-  canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
-}[]
 
 type Theme = "light" | "dark" | "system"
 
@@ -186,9 +103,10 @@ function ThemeToggle() {
 
 interface ApplicationShellProps {
   children: React.ReactNode
+  isMac: boolean
 }
 
-export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
+export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac }) => {
   const authorization = useAuthorization()
   const [mobileOpened, setMobileOpened] = useState(false)
   const [desktopOpened, setDesktopOpened] = useState(true)
@@ -235,12 +153,14 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
           >
             {desktopOpened ? <IconX /> : <IconMenu2 />}
           </Button>
-          <Title element="h1" size="md" className="truncate">
+          <Title element="h1" size="md" className="truncate hidden sm:block">
             OnlineWeb dashboard
           </Title>
         </div>
 
-        <div className="hidden items-center gap-2 sm:flex">
+        <CommandPalette isMac={isMac} />
+
+        <div className="hidden items-center gap-2 md:flex">
           {showSessionRecovery ? (
             <>
               <Button element="a" variant="default" href={createAuthorizeUrl({ returnTo })}>
@@ -310,7 +230,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children }) => {
             )
           })}
 
-          <div className="mt-6 flex flex-col gap-2 sm:hidden">
+          <div className="mt-6 flex flex-col gap-2 md:hidden">
             <ThemeToggle />
             {showSessionRecovery ? (
               <>
