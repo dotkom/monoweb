@@ -1,8 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs"
+import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   // zod v4 has internal ESM circular imports that webpack cannot linearize safely.
   serverExternalPackages: ["zod"],
   async redirects() {
@@ -60,7 +60,9 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   tunnelRoute: "/pulse",
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,
-  hideSourceMaps: true,
+  sourcemaps: {
+    disable: true,
+  },
   // Turbopack is the default bundler in Next.js 16, so the `webpack` options have no effect.
   // These are the Turbopack equivalents; `treeshake.removeDebugLogging` has no counterpart.
   _experimental: {
