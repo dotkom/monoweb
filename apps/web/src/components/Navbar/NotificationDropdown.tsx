@@ -218,7 +218,7 @@ function NotificationScrollList({
               onMarkAsRead(userNotification.notification.id)
             }}
             onNavigate={onNavigate}
-            className="last-of-type:-mb-2 last-of-type:rounded-b-xl"
+            className="last-of-type:-mb-2"
           >
             {payload}
           </NotificationItem>
