@@ -52,14 +52,14 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         control={form.control}
         name="email"
         render={() => (
-            <TextInput
-              label="E-post"
-              type="email"
-              placeholder="ola.nordmann@gmail.com"
-              description="Legg til e-post om du ønsker oppdateringer om problemet"
-              id="email"
-              {...form.register("email")}
-            />
+          <TextInput
+            label="E-post"
+            type="email"
+            placeholder="ola.nordmann@gmail.com"
+            description="Legg til e-post om du ønsker oppdateringer om problemet"
+            id="email"
+            {...form.register("email")}
+          />
         )}
       />
       <Controller
@@ -67,13 +67,13 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         name="title"
         rules={{ required: "Rapporten trenger tittel" }}
         render={() => (
-            <TextInput
-              label="Tittel"
-              placeholder="Får ikke meldt meg på et arrangement"
-              required
-              id="title"
-              {...form.register("title")}
-            />
+          <TextInput
+            label="Tittel"
+            placeholder="Får ikke meldt meg på et arrangement"
+            required
+            id="title"
+            {...form.register("title")}
+          />
         )}
       />
       <Controller
@@ -81,24 +81,19 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         name="body"
         rules={{ required: "Rapporten trenger innhold" }}
         render={() => (
-            <Textarea
-              label="Innhold"
-              placeholder="Jeg får ikke melde meg på ITEX. Når jeg trykker meld på..."
-              description="Vennligst forklar feilen så grundig som mulig"
-              required
-              id="body"
-              {...form.register("body")}
-            />
+          <Textarea
+            label="Innhold"
+            placeholder="Jeg får ikke melde meg på ITEX. Når jeg trykker meld på..."
+            description="Vennligst forklar feilen så grundig som mulig"
+            required
+            id="body"
+            {...form.register("body")}
+          />
         )}
       />
 
       <div className="flex flex-row-reverse gap-4 pt-2 rounded-t-lg">
-        <Button
-          type="submit"
-          variant="default"
-          size="lg"
-          disabled={form.formState.isSubmitting}
-        >
+        <Button type="submit" variant="default" size="lg" disabled={form.formState.isSubmitting}>
           <IconMail className="size-[1.25em]" />
           Send
         </Button>
