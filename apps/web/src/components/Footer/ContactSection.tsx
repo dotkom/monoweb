@@ -2,6 +2,7 @@
 
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { Text } from "@dotkomonline/ui"
+
 import { IconBug, IconCheck, IconClipboard } from "@tabler/icons-react"
 import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 import { useState } from "react"

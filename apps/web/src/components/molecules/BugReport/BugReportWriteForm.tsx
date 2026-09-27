@@ -52,17 +52,14 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         control={form.control}
         name="email"
         render={() => (
-          <div className="flex flex-col gap-2">
             <TextInput
               label="E-post"
               type="email"
               placeholder="ola.nordmann@gmail.com"
               description="Legg til e-post om du ønsker oppdateringer om problemet"
-              required={false}
               id="email"
               {...form.register("email")}
             />
-          </div>
         )}
       />
       <Controller
@@ -70,15 +67,13 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         name="title"
         rules={{ required: "Rapporten trenger tittel" }}
         render={() => (
-          <div className="flex flex-col gap-2">
             <TextInput
               label="Tittel"
               placeholder="Får ikke meldt meg på et arrangement"
-              required={true}
+              required
               id="title"
               {...form.register("title")}
             />
-          </div>
         )}
       />
       <Controller
@@ -86,26 +81,23 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
         name="body"
         rules={{ required: "Rapporten trenger innhold" }}
         render={() => (
-          <div className="flex flex-col gap-2">
             <Textarea
               label="Innhold"
               placeholder="Jeg får ikke melde meg på ITEX. Når jeg trykker meld på..."
               description="Vennligst forklar feilen så grundig som mulig"
-              required={true}
+              required
               id="body"
               {...form.register("body")}
             />
-          </div>
         )}
       />
 
       <div className="flex flex-row-reverse gap-4 pt-2 rounded-t-lg">
         <Button
           type="submit"
-          variant={form.formState.isValid ? "default" : "outline"}
-          color={form.formState.isValid ? "brand" : "gray"}
+          variant="default"
           size="lg"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting}
         >
           <IconMail className="size-[1.25em]" />
           Send
