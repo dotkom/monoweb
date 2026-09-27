@@ -23,6 +23,8 @@ export class AlreadyExistsError extends ApplicationError {}
 export class FailedPreconditionError extends ApplicationError {}
 export class ResourceExhaustedError extends ApplicationError {}
 export class ForbiddenError extends ApplicationError {}
+export class TaskSkippedError extends ApplicationError {}
+
 /**
  * This should probably have been called UnauthenticatedError, but this follows tRPC Error code naming scheme.
  *

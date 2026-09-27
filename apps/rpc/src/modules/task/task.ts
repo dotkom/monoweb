@@ -10,7 +10,7 @@ export const TaskTypeSchema = z.enum([
   "VERIFY_ATTENDEE_ATTENDED",
 ])
 
-export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED"])
+export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED", "SKIPPED"])
 
 export const TaskSchema = z.object({
   id: z.string(),

@@ -46,6 +46,7 @@ export interface FeedbackFormService {
   ): Promise<FeedbackForm>
   delete(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<void>
   getById(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<FeedbackForm>
+  findById(handle: DBHandle, feedBackFormId: FeedbackFormId): Promise<FeedbackForm | null>
   findByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm | null>
   getByEventId(handle: DBHandle, eventId: EventId): Promise<FeedbackForm>
   getPublicForm(handle: DBHandle, publicResultsToken: FeedbackPublicResultsToken): Promise<FeedbackForm>
@@ -155,6 +156,10 @@ export function getFeedbackFormService(
       }
 
       return feedbackForm
+    },
+
+    async findById(handle, feedbackFormId) {
+      return await formRepository.findById(handle, feedbackFormId)
     },
 
     async findByEventId(handle, eventId) {
