@@ -5,7 +5,7 @@ import { useMarkFindManyInfiniteQuery } from "@/app/(internal)/prikker/queries"
 import { Title } from "@dotkomonline/ui"
 import { useUserDetailsContext } from "../provider"
 
-export default function UserPrikkerPage() {
+export default function UserMarksPage() {
   const { user } = useUserDetailsContext()
 
   const { marks, fetchNextPage, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage } =

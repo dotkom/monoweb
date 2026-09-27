@@ -88,5 +88,6 @@ export const MarkFilterQuerySchema = z
   .object({
     byId: buildAnyOfFilter(MarkSchema.shape.id),
     byGivenToUserId: buildAnyOfFilter(UserSchema.shape.id),
+    bySearchTerm: z.string().optional(),
   })
   .partial()

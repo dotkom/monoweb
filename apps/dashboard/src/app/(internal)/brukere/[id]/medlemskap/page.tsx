@@ -9,7 +9,7 @@ import { useUserDetailsContext } from "../provider"
 import { CreateMembershipModal } from "./components/CreateMembershipModal"
 import { MembershipTable } from "./components/MembershipTable"
 
-export default function UserMedlemskapPage() {
+export default function UserMembershipPage() {
   const { user } = useUserDetailsContext()
   const { canManageUserMemberships } = useAuthorization()
   const canManage = canManageUserMemberships()

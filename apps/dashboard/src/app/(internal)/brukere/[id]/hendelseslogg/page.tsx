@@ -8,7 +8,7 @@ import { Title } from "@dotkomonline/ui"
 import { useState } from "react"
 import { useUserDetailsContext } from "../provider"
 
-export default function UserHendelsesloggPage() {
+export default function UserAuditLogPage() {
   const { user } = useUserDetailsContext()
 
   const [filter, setFilter] = useState<AuditLogFilterQuery>()

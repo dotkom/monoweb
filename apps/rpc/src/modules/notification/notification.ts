@@ -277,6 +277,7 @@ export const NotificationFilterQuerySchema = z
     byActorGroupId: z.string().array(),
     /** All notifications pointing to a specific entity, e.g. every notification about one event. */
     byLink: NotificationLinkSchema,
+    bySearchTerm: z.string().optional(),
   })
   .partial()
 
