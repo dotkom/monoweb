@@ -31,6 +31,7 @@ import {
   IconBug,
   IconLock,
   IconLogout2,
+  IconMail,
   IconMailForward,
   IconMessageReport,
   IconMoon,
@@ -306,17 +307,9 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
 
           {filteredLinkGroups.map((group, i, { length }) => {
             const notLast = i !== length - 1
-            const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
 
             return (
               <Fragment key={group.id}>
-                {allLinksAdminOnly && (
-                  <div className="flex items-center gap-1 px-1.5 py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
-                    <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                    <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                  </div>
-                )}
-
                 <DropdownMenuGroup className="space-y-1">
                   {group.links.map((link) => {
                     const isProfile = link.href === "/profil"
@@ -357,11 +350,8 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                             )}
                           </div>
 
-                          {link.adminOnly && !allLinksAdminOnly && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                              <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                            </div>
+                          {link.openInNewTab && (
+                            <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                           )}
                         </Link>
                       </DropdownMenuItem>
@@ -373,6 +363,24 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               </Fragment>
             )
           })}
+          <DropdownMenuItem
+            asChild
+            variant="uncolored"
+            onClick={() => {
+              setBugReportModalOpen(true)
+            }}
+            key="Rapporter en feil"
+            className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-3 min-h-9 px-3">
+              <IconBug className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <div className="flex items-center justify-between w-full">
+                <div className="flex flex-row gap-2 items-center">
+                  <Text className="text-sm font-medium text-gray-900 dark:text-white">Rapporter en feil</Text>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
