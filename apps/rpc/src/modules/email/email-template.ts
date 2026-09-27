@@ -199,7 +199,7 @@ export const emails = {
         title: z.string(),
         body: z.string(),
       }),
-    getTemplate: async () => fsp.readFile(path.join(templates, "bug_report_form_email.mustache"), "utf-8"),
+    getTemplate: async () => fsp.readFile(path.join(templates, "bug_report_form.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
