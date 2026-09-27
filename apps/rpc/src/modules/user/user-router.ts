@@ -1,5 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { MembershipSchema, MembershipWriteSchema, UserFilterQuerySchema, UserSchema, UserWriteSchema } from "./user"
+import { BugReportFormSchema, MembershipSchema, MembershipWriteSchema, UserFilterQuerySchema, UserSchema, UserWriteSchema } from "./user"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
@@ -380,6 +380,15 @@ const getAuth0ConnectionsProcedure = procedure
     return response
   })
 
+export type SendBugReportEmailInput = inferProcedureInput<typeof sendBugReportEmailProcedure>
+export type SendBugReportEmailOutput = inferProcedureOutput<typeof sendBugReportEmailProcedure>
+const sendBugReportEmailProcedure = procedure
+  .input(BugReportFormSchema)
+  .use(withDatabaseTransaction())
+  .mutation(async ({ input, ctx }) => {
+    ctx.userService.sendBugReportEmail(input)
+  })
+
 export const userRouter = t.router({
   all: allUsersProcedure,
   get: getUserProcedure,
@@ -402,4 +411,5 @@ export const userRouter = t.router({
   mergeUsers: mergeUsersProcedure,
   hasDuplicateUser: hasDuplicateUserProcedure,
   getAuth0Connections: getAuth0ConnectionsProcedure,
+  sendBugReportEmail: sendBugReportEmailProcedure,
 })
