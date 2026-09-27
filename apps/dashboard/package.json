@@ -64,7 +64,7 @@
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:^",
     "@tailwindcss/postcss": "4.1.18",
-    "@types/node": "22.19.7",
+    "@types/node": "22.20.4",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
     "jsdom": "28.1.0",
