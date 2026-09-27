@@ -146,7 +146,7 @@ export function EventWriteForm({ onSubmit, disabled, submitLabel = "Opprett arra
         options={groups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) }))}
         required
       />
-      <CompanySelectField control={control} name="companyIds" label="Bedrifter" placeholder="Velg bedrifter" />
+      <CompanySelectField control={control} name="companyIds" label="Bedrifter" placeholder="Velg bedrifter" multiple />
       <SelectField<EventWriteFormValues, EventWriteFormValues["status"]>
         control={control}
         name="status"
