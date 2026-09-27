@@ -23,13 +23,13 @@ export const AuditLogFilters = ({ onChange, defaultValues }: Props) => {
   }, [onChange, debouncedData])
 
   return (
-    <Form form={form} onSubmit={onChange} className="flex flex-row flex-wrap gap-2">
+    <Form form={form} onSubmit={onChange} className="flex flex-row flex-wrap gap-2 items-end">
       <SearchField fixedWidth control={form.control} name="bySearchTerm" placeholder="Søk etter hendelse..." />
       <MultiSelectField
         fixedWidth
         control={form.control}
         name="byTableName"
-        placeholder="Filtrer etter type"
+        placeholder="Filtrer etter type..."
         options={AuditLogTable.options.map((option) => ({
           label: option,
           value: option,
@@ -39,7 +39,7 @@ export const AuditLogFilters = ({ onChange, defaultValues }: Props) => {
         fixedWidth
         control={form.control}
         name="byOperation"
-        placeholder="Filtrer etter handling"
+        placeholder="Filtrer etter handling..."
         options={AuditLogOperation.options.map((option) => ({
           label: option,
           value: option,

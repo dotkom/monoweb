@@ -90,8 +90,8 @@ export function FilterableDataTable<T>({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2 items-end">
           <TextInput
             placeholder={searchPlaceholder}
             value={globalFilter}
