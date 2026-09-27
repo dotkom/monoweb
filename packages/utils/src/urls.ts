@@ -152,6 +152,29 @@ export const createAbsoluteEventPageUrl = (
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
 
+export const createJobListingSlug = (jobListingTitle: string): string => {
+  return slugify(jobListingTitle)
+}
+
+export const createJobListingPageUrl = (
+  jobListingId: string,
+  jobListingTitle?: string
+): `/karriere/${string}/${string}` => {
+  const slug = jobListingTitle ? createJobListingSlug(jobListingTitle) : "jobbutlysning"
+
+  return `/karriere/${slug}/${jobListingId}`
+}
+
+export const createAbsoluteJobListingPageUrl = (
+  origin: string,
+  jobListingId: string,
+  jobListingTitle?: string
+): `${string}/karriere/${string}/${string}` => {
+  const slug = jobListingTitle ? createJobListingSlug(jobListingTitle) : "jobbutlysning"
+
+  return `${origin}/karriere/${slug}/${jobListingId}`
+}
+
 export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string => {
   return new URL(key, cloudFrontUrl).toString()
 }

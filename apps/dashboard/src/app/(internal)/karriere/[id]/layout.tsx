@@ -8,6 +8,7 @@ import {
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
 import { env } from "@/lib/env"
+import { createAbsoluteJobListingPageUrl } from "@dotkomonline/utils"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import { JobListingDetailsContext } from "./provider"
@@ -49,8 +50,8 @@ export default function JobListingDetailsLayout({ children }: PropsWithChildren)
       backHref="/karriere"
       navItems={navItems}
       viewInWebProps={{
-        label: "Se stillingsannonse",
-        href: `${env.NEXT_PUBLIC_WEB_URL}/karriere/${encodeURIComponent(data.id)}`,
+        label: "Se jobbutlysning",
+        href: createAbsoluteJobListingPageUrl(env.NEXT_PUBLIC_WEB_URL, data.id, data.title),
       }}
     >
       <JobListingDetailsContext.Provider value={{ jobListing: data }}>{children}</JobListingDetailsContext.Provider>

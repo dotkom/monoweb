@@ -1,9 +1,15 @@
+import { Link } from "@/components/link"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Company } from "@dotkomonline/rpc/company"
 import type { JobListing, JobListingEmployment } from "@dotkomonline/rpc/job-listing"
 import { Button, RichText, Text, Title } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import {
+  createAbsoluteJobListingPageUrl,
+  createJobListingPageUrl,
+  createJobListingSlug,
+  richTextToPlainText,
+} from "@dotkomonline/utils"
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -15,23 +21,25 @@ import {
 import { formatDate } from "date-fns"
 import type { Metadata } from "next"
 import Image from "next/image"
-import { Link } from "@/components/link"
-import { notFound } from "next/navigation"
+import { notFound, permanentRedirect, RedirectType } from "next/navigation"
 
-interface JobListingProps {
-  params: Promise<{
-    id: string
-  }>
+interface JobListingPageParams {
+  slug: string
+  id: string
 }
 
-const JobListingPage = async ({ params }: JobListingProps) => {
-  const { id: rawParamId } = await params
-  const paramId = decodeURIComponent(rawParamId)
+const JobListingPage = async ({ params }: { params: Promise<JobListingPageParams> }) => {
+  const { id, slug } = await params
+  const decodedSlug = decodeURIComponent(slug)
 
-  const jobListing = await server.jobListing.get.query(paramId)
+  const jobListing = await server.jobListing.find.query(id)
 
   if (!jobListing) {
     return notFound()
+  }
+
+  if (decodedSlug !== createJobListingSlug(jobListing.title)) {
+    permanentRedirect(createJobListingPageUrl(jobListing.id, jobListing.title), RedirectType.replace)
   }
 
   return (
@@ -190,7 +198,7 @@ const ApplyButton = ({ jobListing }: ApplyButtonProps) => {
   )
 }
 
-export async function generateMetadata({ params }: Pick<JobListingProps, "params">): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<JobListingPageParams> }): Promise<Metadata> {
   const { id } = await params
 
   const jobListing = await server.jobListing.find.query(id)
@@ -203,7 +211,7 @@ export async function generateMetadata({ params }: Pick<JobListingProps, "params
   }
 
   const description = richTextToPlainText(jobListing.shortDescription || jobListing.description)
-  const jobListingPageUrl = `${env.NEXT_PUBLIC_ORIGIN}/karriere/${jobListing.id}`
+  const jobListingPageUrl = createAbsoluteJobListingPageUrl(env.NEXT_PUBLIC_ORIGIN, jobListing.id, jobListing.title)
 
   return {
     title: jobListing.title,
