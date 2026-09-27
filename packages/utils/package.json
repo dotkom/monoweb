@@ -18,7 +18,7 @@
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:*",
     "@types/html-to-text": "9.0.4",
-    "@types/node": "22.19.7",
+    "@types/node": "22.20.4",
     "typescript": "5.9.3",
     "vitest": "3.2.7"
   },
