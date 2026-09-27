@@ -1,5 +1,6 @@
 import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
+import { HTTP_REQUEST_SOURCE_HEADER, readHttpRequestSourceFromHeaders } from "@dotkomonline/utils"
 import fastifyCors from "@fastify/cors"
 import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
@@ -59,13 +60,14 @@ controller.signal.addEventListener("abort", () => {
 })
 
 export async function createFastifyContext({ req }: CreateFastifyContextOptions) {
+  const requestSource = readHttpRequestSourceFromHeaders(req.headers)
   const bearer = req.headers.authorization
   if (bearer !== undefined) {
     const token = bearer.substring("Bearer ".length)
     const principal = await dependencies.rpcJwtService.verify(token)
     const subject = principal.payload.sub
     if (subject === undefined) {
-      return createTrpcContext(null, serviceLayer)
+      return createTrpcContext(null, serviceLayer, requestSource)
     }
 
     const scopes = new Set<string>()
@@ -93,11 +95,12 @@ export async function createFastifyContext({ req }: CreateFastifyContextOptions)
         affiliations,
         scopes,
       },
-      serviceLayer
+      serviceLayer,
+      requestSource
     )
   }
 
-  return createTrpcContext(null, serviceLayer)
+  return createTrpcContext(null, serviceLayer, requestSource)
 }
 
 const server = fastify({
@@ -121,7 +124,15 @@ server.setErrorHandler((error) => {
 server.register(fastifyCors, {
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "X-Requested-With", "X-CSRF-Token", "Origin"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Cache-Control",
+    "X-Requested-With",
+    "X-CSRF-Token",
+    HTTP_REQUEST_SOURCE_HEADER,
+    "Origin",
+  ],
   credentials: true,
 })
 

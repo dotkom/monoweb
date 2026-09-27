@@ -3,7 +3,13 @@
 import { env } from "@/env"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { createClearSessionUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
+import {
+  HTTP_REQUEST_SOURCE_HEADER,
+  RpcRequestSource,
+  createClearSessionUrl,
+  isAccessTokenFetchFailure,
+  toAbsoluteUrl,
+} from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
@@ -117,6 +123,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
 
                   return {
                     headers: {
+                      [HTTP_REQUEST_SOURCE_HEADER]: RpcRequestSource.Web,
                       Authorization: `Bearer ${token}`,
                     },
                   }
@@ -137,6 +144,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
             url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
             async fetch(url, options) {
               const headers = new Headers(options?.headers)
+              headers.set(HTTP_REQUEST_SOURCE_HEADER, RpcRequestSource.Web)
 
               try {
                 const token = await fetchSharedAccessToken()

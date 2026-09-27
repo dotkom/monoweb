@@ -1,6 +1,7 @@
 import { getServerAccessToken } from "@/lib/server-access-token"
 import { env } from "@/lib/env"
 import type { AppRouter } from "@dotkomonline/rpc"
+import { RpcRequestSource, getRpcRequestSourceHeaders } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
 import superjson from "superjson"
 
@@ -11,12 +12,16 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
       url: `${env.RPC_HOST}/api/trpc`,
       headers: async () => {
         const accessToken = await getServerAccessToken()
+        const headers = getRpcRequestSourceHeaders(RpcRequestSource.Dashboard)
 
         if (accessToken === null) {
-          return {}
+          return headers
         }
 
-        return { Authorization: `Bearer ${accessToken}` }
+        return {
+          ...headers,
+          Authorization: `Bearer ${accessToken}`,
+        }
       },
     }),
   ],
