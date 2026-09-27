@@ -44,7 +44,10 @@ import {
   type UserFlagWrite,
   type Auth0Provider,
   Auth0ProviderSchema,
+  type BugReportFormResult,
 } from "./user"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -159,6 +162,8 @@ export interface UserService {
     userId: UserId,
     createdByUserId: UserId
   ): Promise<PresignedPost>
+
+  sendBugReportEmail(data: BugReportFormResult): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -170,7 +175,8 @@ export function getUserService(
   managementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
-  bucket: string
+  bucket: string,
+  emailService: EmailService
 ): UserService {
   const logger = getLogger("user-service")
 
@@ -1038,6 +1044,23 @@ export function getUserService(
         contentType,
         createdByUserId,
       })
+    },
+
+    async sendBugReportEmail(data) {
+      emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        data.email === undefined || data.email === "" ? [] : [data.email],
+        ["dotkom@online.ntnu.no"],
+        [],
+        [],
+        `(Online) Problem rapportert: ${data.title}`,
+        emails.BUG_REPORT,
+        {
+          title: data.title,
+          email: data.email,
+          body: data.body,
+        }
+      )
     },
   }
 }

@@ -17,6 +17,7 @@ export type EmailType =
   | "WAITLIST_NOTIFICATION"
   | "COMMITTEE_EMAIL_CREATED"
   | "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED"
+  | "BUG_REPORT"
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodType<TData>
@@ -189,6 +190,16 @@ export const emails = {
       }),
     getTemplate: async () =>
       fsp.readFile(path.join(templates, "committee_email_created_2fa_enforced.mustache"), "utf-8"),
+  }),
+  BUG_REPORT: createEmailTemplate({
+    type: "BUG_REPORT",
+    getSchema: () =>
+      z.object({
+        email: z.string().optional(),
+        title: z.string(),
+        body: z.string(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "bug_report_form_email.mustache"), "utf-8"),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>

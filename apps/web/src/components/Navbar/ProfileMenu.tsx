@@ -44,7 +44,7 @@ import { type ComponentType, type FC, Fragment, useState } from "react"
 import { NotificationDropdown } from "./NotificationDropdown"
 import { ThemeToggle } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
-import { BugReportForm } from "../BugReportForm"
+import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -187,7 +187,7 @@ type AvatarDropdownProps = {
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const [open, setOpen] = useState(false)
-  const [bugReportFormOpen, setBugReportFormOpen] = useState(false)
+  const [isBugReportModalOpen, setBugReportModalOpen] = useState(false)
   const trpc = useTRPC()
 
   const isStaffResponse = useQuery({
@@ -252,10 +252,10 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           openInNewTab: true,
         },
         {
-            icon: IconBug,
-            label: "Rapporter en feil",
-            onClick: () => setBugReportFormOpen(true),
-          },
+          icon: IconBug,
+          label: "Rapporter en feil",
+          onClick: () => setBugReportModalOpen(true),
+        },
       ],
     },
   ]
@@ -304,23 +304,23 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             </div>
           </DropdownMenuLabel>
 
-        {filteredLinkGroups.map((group, i, { length }) => {
-          const notLast = i !== length - 1
-          const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
+          {filteredLinkGroups.map((group, i, { length }) => {
+            const notLast = i !== length - 1
+            const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
 
-          return (
-            <Fragment key={group.id}>
-              {allLinksAdminOnly && (
-                <div className="flex items-center gap-1 px-1.5 py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
-                  <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                  <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                </div>
-              )}
+            return (
+              <Fragment key={group.id}>
+                {allLinksAdminOnly && (
+                  <div className="flex items-center gap-1 px-1.5 py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
+                    <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
+                    <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                  </div>
+                )}
 
-              <DropdownMenuGroup className="space-y-1">
-                {group.links.map((link) => {
-                  const isProfile = link.href === "/profil"
-                  const IconComponent = link.icon
+                <DropdownMenuGroup className="space-y-1">
+                  {group.links.map((link) => {
+                    const isProfile = link.href === "/profil"
+                    const IconComponent = link.icon
 
                     return (
                       <DropdownMenuItem
@@ -401,7 +401,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <BugReportForm bugReportFormOpen={bugReportFormOpen} setBugReportFormOpen={setBugReportFormOpen} />
+      <BugReportModal open={isBugReportModalOpen} setOpen={setBugReportModalOpen} />
     </>
   )
 }

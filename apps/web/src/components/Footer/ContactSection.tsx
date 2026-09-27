@@ -4,7 +4,7 @@ import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { Text } from "@dotkomonline/ui"
 import { IconCheck, IconClipboard, IconMail } from "@tabler/icons-react"
 import { useState } from "react"
-import { BugReportModal } from "../BugReportModal"
+import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
 export const ContactSection = () => {
   const { icon: copyKontaktEmailIcon, copy: copyKontaktEmail } = useCopyToClipboard()
