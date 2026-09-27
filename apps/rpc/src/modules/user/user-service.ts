@@ -44,10 +44,10 @@ import {
   type UserFlagWrite,
   type Auth0Provider,
   Auth0ProviderSchema,
-  BugReportFormResult,
+  type BugReportFormResult,
 } from "./user"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template";
-import { EmailService } from "../email/email-service";
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import type { EmailService } from "../email/email-service"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -1046,11 +1046,11 @@ export function getUserService(
       })
     },
 
-     async sendBugReportEmail(data) {
+    async sendBugReportEmail(data) {
       emailService.send(
         DEFAULT_EMAIL_SOURCE,
         data.email === undefined || data.email === "" ? [] : [data.email],
-        ["johan.hordvik.rong@online.ntnu.no"],
+        ["dotkom@online.ntnu.no"],
         [],
         [],
         `(Online) Problem rapportert: ${data.title}`,

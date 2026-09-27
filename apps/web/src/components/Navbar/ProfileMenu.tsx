@@ -44,7 +44,7 @@ import { type ComponentType, type FC, Fragment, useState } from "react"
 import { NotificationDropdown } from "./NotificationDropdown"
 import { ThemeToggle } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
-import { BugReportModal } from "../molecules/BugReport/BugReportModal";
+import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -139,13 +139,65 @@ interface LinkDetail {
   href?: string
   openInNewTab?: boolean
   adminOnly?: boolean
-  onClick?: () => void
 }
 
 interface LinkGroup {
   id: string
   links: LinkDetail[]
 }
+
+const linkGroups: LinkGroup[] = [
+  {
+    id: "profile",
+    links: [
+      {
+        icon: IconUser,
+        label: "Min profil",
+        href: "/profil",
+      },
+      {
+        icon: IconBell,
+        label: "Varslinger",
+        href: "/varslinger",
+      },
+      {
+        icon: IconSettings,
+        label: "Innstillinger",
+        href: "/innstillinger/bruker",
+      },
+    ],
+  },
+  {
+    id: "admin",
+    links: [
+      {
+        icon: IconAdjustments,
+        label: "Dashboard",
+        href: env.NEXT_PUBLIC_DASHBOARD_URL,
+        openInNewTab: true,
+        adminOnly: true,
+      },
+      {
+        icon: OnlineIcon,
+        label: "Komitéwiki",
+        href: "https://spurious-lynx-a5d.notion.site/hjem-b22d657f3c8143ee842f8810cafef1cb",
+        openInNewTab: true,
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    id: "support",
+    links: [
+      {
+        icon: IconMailForward,
+        label: "Kontakt oss",
+        href: "mailto:hovedstyret@online.ntnu.no",
+        openInNewTab: true,
+      },
+    ],
+  },
+]
 
 export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
   const fullPathname = useFullPathname()
@@ -202,64 +254,6 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
     trpc.event.findUnansweredByUser.queryOptions(user?.id ?? skipToken, { enabled: Boolean(user) })
   )
 
-  const linkGroups: LinkGroup[] = [
-    {
-      id: "profile",
-      links: [
-        {
-          icon: IconUser,
-          label: "Min profil",
-          href: "/profil",
-        },
-        {
-          icon: IconBell,
-          label: "Varslinger",
-          href: "/varslinger",
-        },
-        {
-          icon: IconSettings,
-          label: "Innstillinger",
-          href: "/innstillinger/bruker",
-        },
-      ],
-    },
-    {
-      id: "admin",
-      links: [
-        {
-          icon: IconAdjustments,
-          label: "Dashboard",
-          href: env.NEXT_PUBLIC_DASHBOARD_URL,
-          openInNewTab: true,
-          adminOnly: true,
-        },
-        {
-          icon: OnlineIcon,
-          label: "Komitéwiki",
-          href: "https://spurious-lynx-a5d.notion.site/hjem-b22d657f3c8143ee842f8810cafef1cb",
-          openInNewTab: true,
-          adminOnly: true,
-        },
-      ],
-    },
-    {
-      id: "support",
-      links: [
-        {
-          icon: IconMailForward,
-          label: "Kontakt oss",
-          href: "mailto:hovedstyret@online.ntnu.no",
-          openInNewTab: true,
-        },
-        {
-          icon: IconBug,
-          label: "Rapporter en feil",
-          onClick: () => setBugReportModalOpen(true),
-        },
-      ],
-    },
-  ]
-
   const filteredLinkGroups = linkGroups
     .map((group) => ({
       ...group,
@@ -284,7 +278,9 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                 <IconUser className="size-5" />
               </AvatarFallback>
             </Avatar>
-            {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
+            {showFeedbackFormPing && !open && (
+              <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />
+            )}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -365,6 +361,18 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               </Fragment>
             )
           })}
+
+          <DropdownMenuItem
+            asChild
+            onClick={() => setBugReportModalOpen(true)}
+            variant="uncolored"
+            className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center w-full gap-3 text-sm py-2">
+              <IconBug className="size-5" />
+              <Text className="text-sm font-medium">Rapporter en feil</Text>
+            </div>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 

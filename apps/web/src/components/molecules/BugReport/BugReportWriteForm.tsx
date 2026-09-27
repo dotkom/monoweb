@@ -1,5 +1,5 @@
 import { type BugReportFormResult, BugReportFormSchema } from "@dotkomonline/rpc/user"
-import { Button, Textarea, TextInput } from "@dotkomonline/ui"
+import { Button, Textarea, TextInput, toast } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconMail } from "@tabler/icons-react"
 import { useMutation } from "@tanstack/react-query"
@@ -15,7 +15,22 @@ export interface BugReportProps {
 export const BugReportForm = ({ setOpen }: BugReportProps) => {
   const trpc = useTRPC()
   const { dbUser } = useAuthenticatedUser()
-  const mutate = useMutation(trpc.user.sendBugReportEmail.mutationOptions())
+  const mutate = useMutation(
+    trpc.user.sendBugReportEmail.mutationOptions({
+      onSuccess: () => {
+        toast.add({
+          title: "Suksess",
+          description: "E-post har blitt sendt til Dotkom",
+        })
+      },
+      onError: () => {
+        toast.add({
+          title: "Feil",
+          description: "Kunne ikke sende e-post",
+        })
+      },
+    })
+  )
 
   const form = useForm<BugReportFormResult>({
     defaultValues: {

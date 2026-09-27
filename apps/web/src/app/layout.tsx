@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar/Navbar"
 import { getAuthenticatedUser } from "@/utils/get-authenticated-user"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
-import { cn } from "@dotkomonline/ui"
+import { cn, Toaster } from "@dotkomonline/ui"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -56,11 +56,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <div className="page-shell">
-                  <Navbar />
-                  <main className="grow">{children}</main>
-                  <Footer />
-                </div>
+                <Toaster>
+                  <div className="page-shell">
+                    <Navbar />
+                    <main className="grow">{children}</main>
+                    <Footer />
+                  </div>
+                </Toaster>
               </ThemeProvider>
             </QueryProvider>
           </Auth0Provider>

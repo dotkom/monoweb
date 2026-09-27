@@ -208,7 +208,7 @@ export async function createServiceLayer(
     membershipService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET,
-    emailService,
+    emailService
   )
   const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
   const jobListingService = getJobListingService(jobListingRepository)
