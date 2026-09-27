@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
 } from "../AlertDialog/AlertDialog"
-import { type AspectRatio, ImageInput } from "../ImageInput/ImageInput"
+import { type AspectRatio, ImageInput, type ImageInputImageSource } from "../ImageInput/ImageInput"
 
 export type ImageUploadModalProps = {
   open: boolean
@@ -23,6 +23,8 @@ export type ImageUploadModalProps = {
   aspectRatio?: AspectRatio
   acceptGif?: boolean
   withMetadata?: boolean
+  imageSources?: ImageInputImageSource[]
+  imageSourcesLabel?: string
 }
 
 export function ImageUploadModal({
@@ -34,6 +36,8 @@ export function ImageUploadModal({
   aspectRatio,
   acceptGif,
   withMetadata = true,
+  imageSources,
+  imageSourcesLabel,
 }: ImageUploadModalProps) {
   const [imageUrl, setImageUrl] = useState("")
   const [alt, setAlt] = useState("")
@@ -148,6 +152,8 @@ export function ImageUploadModal({
             maxSizeKiB={maxSizeKiB}
             aspectRatio={aspectRatio}
             acceptGif={acceptGif}
+            imageSources={imageSources}
+            imageSourcesLabel={imageSourcesLabel}
           />
 
           {formError && <Text className="text-sm text-destructive">{formError}</Text>}

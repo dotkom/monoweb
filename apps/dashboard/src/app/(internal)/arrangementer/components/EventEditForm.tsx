@@ -21,8 +21,9 @@ import {
 import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, type UseFormReturn } from "react-hook-form"
+import { useForm, useWatch, type UseFormReturn } from "react-hook-form"
 import { z } from "zod"
+import { useCompaniesByIdsQuery } from "../../bedrifter/queries"
 import { useEventFileUploadMutation } from "../mutations"
 import { validateEventOrganizers, validateEventWrite } from "../validation"
 
@@ -81,6 +82,12 @@ export function EventEditForm({
   const resolvedForm = form as UseFormReturn<EventEditFormValues>
   const { control } = resolvedForm
 
+  const companyIds = useWatch({ control, name: "companyIds" })
+  const { companies } = useCompaniesByIdsQuery(companyIds, companyIds.length > 0)
+  const imageSources = companies.flatMap((company) =>
+    company.imageUrl ? [{ label: company.name, url: company.imageUrl }] : []
+  )
+
   return (
     <Form form={resolvedForm} onSubmit={onSubmit}>
       <TextField control={control} name="title" label="Arrangementnavn" placeholder="Silent Disco" required />
@@ -114,6 +121,8 @@ export function EventEditForm({
         description="Bildet bør passe sideforholdene 24:9 (arrangementsiden) og 16:9 (alle andre sider)."
         onFileUpload={uploadFile}
         aspectRatio={{ width: 24, height: 9 }}
+        imageSources={imageSources}
+        imageSourcesLabel="Eller bruk bilde fra valgt bedrift"
       />
       <DateTimePickerField control={control} name="start" label="Starttidspunkt" required syncOffsetTo="end" />
       <DateTimePickerField

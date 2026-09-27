@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, ImageUploadModal, type AspectRatio } from "@dotkomonline/ui"
+import { Button, type ImageInputImageSource, ImageUploadModal, type AspectRatio } from "@dotkomonline/ui"
 import { IconPhoto, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 import type { Control, FieldValues, Path } from "react-hook-form"
@@ -19,6 +19,8 @@ type ImageUploadModalFieldProps<TFieldValues extends FieldValues> = {
   acceptGif?: boolean
   withMetadata?: boolean
   disabled?: boolean
+  imageSources?: ImageInputImageSource[]
+  imageSourcesLabel?: string
 }
 
 export function ImageUploadModalField<TFieldValues extends FieldValues>({
@@ -33,6 +35,8 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
   acceptGif,
   withMetadata = false,
   disabled,
+  imageSources,
+  imageSourcesLabel,
 }: ImageUploadModalFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
   const error = getFieldErrorMessage(fieldState.error?.message)
@@ -78,6 +82,8 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
         onSubmit={async (url) => {
           field.onChange(url)
         }}
+        imageSources={imageSources}
+        imageSourcesLabel={imageSourcesLabel}
       />
     </FieldShell>
   )

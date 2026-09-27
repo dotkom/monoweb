@@ -3,6 +3,7 @@
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react"
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 import { useDropzone, type FileRejection } from "react-dropzone"
+import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../.."
 import { Button } from "../../atoms/Button/Button"
 import { TextInput } from "../../atoms/Input/TextInput"
 import { Text } from "../../atoms/Typography/Text"
@@ -14,6 +15,11 @@ const ASPECT_RATIO_TOLERANCE = 0.05 as const
 export type AspectRatio = {
   width: number
   height: number
+}
+
+export type ImageInputImageSource = {
+  label: string
+  url: string
 }
 
 export type ImageInputProps = {
@@ -29,6 +35,8 @@ export type ImageInputProps = {
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
   className?: string
+  imageSources?: ImageInputImageSource[]
+  imageSourcesLabel?: string
 }
 
 function getImageDimensions(source: string): Promise<{ width: number; height: number } | null> {
@@ -105,6 +113,8 @@ export function ImageInput({
   maxSizeKiB,
   aspectRatio,
   className,
+  imageSources,
+  imageSourcesLabel,
 }: ImageInputProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -215,47 +225,84 @@ export function ImageInput({
         {wrapperDescription && <Text className="text-xs text-muted-foreground">{wrapperDescription}</Text>}
         {displayError && <Text className="text-xs text-destructive">{displayError}</Text>}
 
-        <div
-          {...getRootProps()}
-          className={cn(
-            "flex min-h-30 cursor-pointer items-center justify-center rounded-md border border-border bg-muted/40 p-3 transition-colors",
-            isDragActive && "border-primary bg-muted",
-            (disabled || isUploading) && "pointer-events-none opacity-60"
-          )}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-wrap items-center justify-center gap-4 pointer-events-none">
-            {dropzoneIcon}
-            <div className="text-center sm:text-left">
-              <Text className="text-sm">
-                {isUploading ? "Laster opp…" : "Dra bildet hit, eller klikk for å velge fil"}
-              </Text>
-              <Text className="mt-1 text-xs text-muted-foreground">
-                PNG, JPG{acceptGif ? ", WEBP eller GIF" : " eller WEBP"}
-              </Text>
+        <div className="flex flex-col gap-5">
+          <div
+            {...getRootProps()}
+            className={cn(
+              "flex min-h-30 cursor-pointer items-center justify-center rounded-md border border-border bg-muted/40 p-3 transition-colors",
+              isDragActive && "border-primary bg-muted",
+              (disabled || isUploading) && "pointer-events-none opacity-60"
+            )}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-wrap items-center justify-center gap-4 pointer-events-none">
+              {dropzoneIcon}
+              <div className="text-center sm:text-left">
+                <Text className="text-sm">
+                  {isUploading ? "Laster opp…" : "Dra bildet hit, eller klikk for å velge fil"}
+                </Text>
+                <Text className="mt-1 text-xs text-muted-foreground">
+                  PNG, JPG{acceptGif ? ", WEBP eller GIF" : " eller WEBP"}
+                </Text>
+              </div>
             </div>
           </div>
+
+          <TextInput
+            label="Eller lim inn en URL"
+            placeholder="https://..."
+            disabled={disabled}
+            value={value ?? ""}
+            onChange={async (event) => {
+              const nextValue = event.target.value
+              setUploadError(null)
+
+              if (!nextValue) {
+                onChange("")
+                setAspectRatioWarning(null)
+                return
+              }
+
+              onChange(nextValue)
+              setAspectRatioWarning(await getAspectRatioWarning(nextValue, aspectRatio))
+            }}
+          />
+
+          {imageSources !== undefined && imageSources.length > 0 && (
+            <div className="flex flex-col gap-3 transition-colors">
+              <Label
+                htmlFor="image-source-select"
+                className={cn("text-foreground", disabled && "text-gray-500 dark:text-stone-400")}
+              >
+                {imageSourcesLabel ?? "Velg et eksisterende bilde"}
+              </Label>
+
+              <Select
+                id="image-source-select"
+                value={imageSources.find((source) => source.url === value)?.url ?? null}
+                onValueChange={(url) => {
+                  if (typeof url !== "string") {
+                    return
+                  }
+
+                  onChange(url)
+                }}
+                items={imageSources.map((source) => ({ value: source.url, label: source.label }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Velg et eksisterende bilde" />
+                </SelectTrigger>
+                <SelectContent>
+                  {imageSources.map((source) => (
+                    <SelectItem key={source.url} value={source.url}>
+                      {source.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
-
-        <TextInput
-          label="Eller lim inn en URL"
-          placeholder="https://..."
-          disabled={disabled}
-          value={value ?? ""}
-          onChange={async (event) => {
-            const nextValue = event.target.value
-            setUploadError(null)
-
-            if (!nextValue) {
-              onChange("")
-              setAspectRatioWarning(null)
-              return
-            }
-
-            onChange(nextValue)
-            setAspectRatioWarning(await getAspectRatioWarning(nextValue, aspectRatio))
-          }}
-        />
       </div>
 
       {aspectRatioWarning && (
