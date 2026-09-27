@@ -1,4 +1,5 @@
 import { getLogger } from "@dotkomonline/logger"
+import { HTTP_REQUEST_SOURCE_ATTRIBUTE } from "@dotkomonline/utils"
 import type { GroupId, GroupRoleType } from "./modules/group/group"
 import type { UserId } from "./modules/user/user"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
@@ -31,10 +32,11 @@ export type Principal = {
   scopes: Set<string>
 }
 
-export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer) => {
+export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer, requestSource: string) => {
   const trpcContext = {
     ...context,
     principal,
+    requestSource,
     addAuthorizationGuard,
   }
 
@@ -109,6 +111,7 @@ export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
       span.setAttribute("http.request.method", "_OTHER")
       span.setAttribute("http.request.method_original", type)
       span.setAttribute("http.route", path)
+      span.setAttribute(HTTP_REQUEST_SOURCE_ATTRIBUTE, ctx.requestSource)
 
       try {
         const logger = getLogger("@dotkomonline/rpc/trpc")

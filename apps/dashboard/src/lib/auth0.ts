@@ -3,7 +3,9 @@ import type { AppRouter } from "@dotkomonline/rpc"
 import {
   AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
   AuthErrorCode,
+  RpcRequestSource,
   createClearSessionUrl,
+  getRpcRequestSourceHeaders,
   toAbsoluteUrl,
 } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
@@ -47,6 +49,7 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
         transformer: superjson,
         url: `${env.RPC_HOST}/api/trpc`,
         headers: async () => ({
+          ...getRpcRequestSourceHeaders(RpcRequestSource.Dashboard),
           Authorization: `Bearer ${accessToken}`,
         }),
       }),
