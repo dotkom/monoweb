@@ -19,7 +19,6 @@ import type {
   NotificationRecipientSelection,
   NotificationRecipientSelectionRule,
 } from "@dotkomonline/rpc/notification"
-import { richTextToPlainText } from "@dotkomonline/utils"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -33,6 +32,7 @@ import {
   Textarea,
   TextInput,
 } from "@dotkomonline/ui"
+import { richTextToPlainText } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconX } from "@tabler/icons-react"
 import { useEffect, useMemo, useState } from "react"
@@ -40,8 +40,8 @@ import { useController, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { useCreateNotificationMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
-import { EventAttendeeRecipientFilters } from "./event-attendee-recipient-filters"
-import { RecipientSelectionBuilder } from "./recipient-selection"
+import { EventAttendeeRecipientFilters } from "./EventAttendeeRecipientFilters"
+import { RecipientSelectionBuilder } from "./RecipientSelection"
 
 const FormSchema = z.object({
   title: z.string().min(1, "Tittel er påkrevd").max(120),

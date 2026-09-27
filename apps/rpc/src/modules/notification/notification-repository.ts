@@ -1,5 +1,5 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { type Pageable, getCurrentUTC, pageQuery } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
 import {
@@ -9,12 +9,13 @@ import {
   type NotificationManagement,
   NotificationManagementSchema,
   type NotificationRecipient,
+  type NotificationRecipientFilterQuery,
   type NotificationRecipientListItem,
   NotificationRecipientListItemSchema,
   NotificationRecipientSchema,
   type NotificationRecipientSelection,
-  type NotificationRecipientStats,
   NotificationRecipientSelectionSchema,
+  type NotificationRecipientStats,
   NotificationSchema,
   type NotificationUpdate,
   type NotificationWrite,
@@ -23,7 +24,6 @@ import {
   parseNotificationLink,
   serializeNotificationLink,
 } from "./notification"
-import { getCurrentUTC } from "@dotkomonline/utils"
 
 export interface NotificationRepository {
   create(handle: DBHandle, data: NotificationWrite): Promise<NotificationManagement>
@@ -37,6 +37,7 @@ export interface NotificationRepository {
   findRecipients(
     handle: DBHandle,
     notificationId: NotificationId,
+    filters: NotificationRecipientFilterQuery,
     page: Pageable
   ): Promise<NotificationRecipientListItem[]>
   getRecipientStats(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipientStats>
@@ -202,11 +203,21 @@ export function getNotificationRepository(): NotificationRepository {
       return result.count
     },
 
-    async findRecipients(handle, notificationId, page) {
+    async findRecipients(handle, notificationId, filters, page) {
       const rows = await handle.notificationRecipient.findMany({
         ...pageQuery(page),
         where: {
           notificationId,
+          ...(filters.bySearchTerm !== undefined
+            ? {
+                user: {
+                  name: {
+                    contains: filters.bySearchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              }
+            : {}),
         },
         orderBy: [{ user: { name: "asc" } }, { id: "desc" }],
         select: {
