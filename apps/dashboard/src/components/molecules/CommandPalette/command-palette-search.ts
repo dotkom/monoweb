@@ -109,8 +109,12 @@ function scoreItem(searchTerm: string, item: SearchItem): number {
     score += bestScore
   }
 
-  if (lowercase(item.label) === lowercase(searchTerm)) {
+  if (lowercase(item.label.trim()) === lowercase(searchTerm.trim())) {
     score += 40
+  }
+
+  if (lowercase(item.label.trim()).startsWith(lowercase(searchTerm.trim()))) {
+    score += 8
   }
 
   return score
