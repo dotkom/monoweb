@@ -1,11 +1,12 @@
 "use client"
 
+import { useAuthorization } from "@/auth/authorization-context"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { Button, cn, Title, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconArrowLeft, IconArrowUpRight, type TablerIcon } from "@tabler/icons-react"
+import { IconArrowLeft, IconArrowUpRight, IconCheck, IconCopy, type TablerIcon } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { type PropsWithChildren, type ReactNode, useState } from "react"
+import { type PropsWithChildren, type ReactNode, useEffect, useState } from "react"
 import { PermissionTooltip } from "../PermissionTooltip"
 import { ReadOnlyNotice } from "../ReadOnlyNotice"
 
@@ -38,6 +39,10 @@ export type ResourceDetailLayoutProps = PropsWithChildren<{
     title: string
     message: string
   }
+  copyIds: {
+    value: string
+    label?: string
+  }[]
 }>
 
 function isNavItemActive(pathname: string, item: ResourceDetailNavItem): boolean {
@@ -64,10 +69,12 @@ export function ResourceDetailLayout({
   deleteDisabledReason,
   className,
   readOnlyNotice,
+  copyIds,
   children,
 }: ResourceDetailLayoutProps) {
   const router = useRouter()
   const rawPathname = usePathname()
+  const { isAdministrator } = useAuthorization()
   const pathname = decodeURIComponent(rawPathname)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
@@ -84,7 +91,6 @@ export function ResourceDetailLayout({
           >
             Tilbake
           </Button>
-
           {viewInWebProps && (
             <Button
               variant="outline"
@@ -98,7 +104,9 @@ export function ResourceDetailLayout({
               {viewInWebProps.label}
             </Button>
           )}
-
+          {copyIds.length > 0 &&
+            isAdministrator &&
+            copyIds.map((copyId) => <CopyIdButton key={copyId.value} id={copyId.value} label={copyId.label} />)}
           {onDelete && (
             <>
               <ConfirmDeleteModal
@@ -209,4 +217,45 @@ const DeleteButton = ({ onClick, missingDeletePermission, deleteDisabledReason }
   }
 
   return button
+}
+
+interface CopyIdButtonProps {
+  id: string
+  label?: string
+}
+
+const CopyIdButton = ({ id, label }: CopyIdButtonProps) => {
+  const [hasCopied, setHasCopied] = useState(false)
+
+  useEffect(() => {
+    if (hasCopied) {
+      const timeout = setTimeout(() => setHasCopied(false), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [hasCopied])
+
+  return (
+    <Button
+      variant="outline"
+      icon={
+        hasCopied ? (
+          <IconCheck aria-hidden className="size-3.5 text-green-600" />
+        ) : (
+          <IconCopy aria-hidden className="size-3.5" />
+        )
+      }
+      onClick={() => {
+        void navigator.clipboard.writeText(id).then(
+          () => {
+            setHasCopied(true)
+          },
+          () => {
+            setHasCopied(false)
+          }
+        )
+      }}
+    >
+      {label ?? "Kopier ID"}
+    </Button>
+  )
 }

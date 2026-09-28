@@ -71,6 +71,7 @@ export default function GroupDetailsLayout({ children }: PropsWithChildren) {
   return (
     <ResourceDetailLayout
       title={getGroupDisplayName(data)}
+      copyIds={[{ value: data.slug, label: "Kopier slug" }]}
       backHref="/grupper"
       navItems={navItems}
       onDelete={() => {

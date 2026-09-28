@@ -122,6 +122,7 @@ export default function AuditLogDetailsLayout({ children }: PropsWithChildren) {
   return (
     <ResourceDetailLayout
       title="Hendelse"
+      copyIds={[{ value: data.id }]}
       backHref="/logg"
       navItems={navItems}
       description={

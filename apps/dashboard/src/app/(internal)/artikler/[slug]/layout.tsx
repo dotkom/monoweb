@@ -44,6 +44,7 @@ export default function ArticleDetailsLayout({ children }: PropsWithChildren) {
   return (
     <ResourceDetailLayout
       title={data.title}
+      copyIds={[{ value: data.id }]}
       backHref="/artikler"
       navItems={navItems}
       viewInWebProps={{

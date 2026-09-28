@@ -118,6 +118,7 @@ export default function EventWithAttendancesLayout({
   return (
     <ResourceDetailLayout
       title={event.title}
+      copyIds={[{ value: event.id }, ...(attendance ? [{ value: attendance.id, label: "Påmeldings-ID" }] : [])]}
       backHref="/arrangementer"
       navItems={navItems}
       viewInWebProps={{

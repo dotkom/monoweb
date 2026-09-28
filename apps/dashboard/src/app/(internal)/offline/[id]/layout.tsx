@@ -41,7 +41,7 @@ export default function OfflineDetailsLayout({ children }: PropsWithChildren) {
   ]
 
   return (
-    <ResourceDetailLayout title={data.title} backHref="/offline" navItems={navItems}>
+    <ResourceDetailLayout title={data.title} copyIds={[{ value: data.id }]} backHref="/offline" navItems={navItems}>
       <OfflineDetailsContext.Provider value={{ offline: data }}>{children}</OfflineDetailsContext.Provider>
     </ResourceDetailLayout>
   )

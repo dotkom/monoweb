@@ -49,6 +49,7 @@ export default function CompanyDetailsLayout({ children }: PropsWithChildren) {
   return (
     <ResourceDetailLayout
       title={data.name}
+      copyIds={[{ value: data.id }]}
       backHref="/bedrifter"
       navItems={navItems}
       viewInWebProps={{
