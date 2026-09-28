@@ -40,7 +40,7 @@ export default function MarkDetailsLayout({ children }: PropsWithChildren) {
   ]
 
   return (
-    <ResourceDetailLayout title={mark.title} backHref="/prikker" navItems={navItems}>
+    <ResourceDetailLayout title={mark.title} copyIds={[{ value: mark.id }]} backHref="/prikker" navItems={navItems}>
       <MarkDetailsContext.Provider value={{ mark }}>{children}</MarkDetailsContext.Provider>
     </ResourceDetailLayout>
   )

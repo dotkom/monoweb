@@ -48,6 +48,7 @@ export default function FadderukeDetailsLayout({ children }: PropsWithChildren) 
   return (
     <ResourceDetailLayout
       title={`Fadderukene ${data.year}`}
+      copyIds={[{ value: data.id }]}
       backHref="/fadderukene"
       navItems={navItems}
       onDelete={() => {

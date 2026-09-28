@@ -65,6 +65,7 @@ export default function ContestDetailsLayout({ children }: PropsWithChildren) {
   return (
     <ResourceDetailLayout
       title={data.contest.name}
+      copyIds={[{ value: data.contest.id }]}
       backHref="/konkurranser"
       navItems={navItems}
       onDelete={() => deleteContest.mutate({ contestId: id })}

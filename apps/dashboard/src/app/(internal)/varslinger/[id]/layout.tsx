@@ -54,6 +54,7 @@ export default function NotificationDetailsLayout({
   return (
     <ResourceDetailLayout
       title={notification.title}
+      copyIds={[{ value: notification.id }]}
       backHref="/varslinger"
       navItems={[]}
       onDelete={() => deleteNotification.mutate(notification.id)}

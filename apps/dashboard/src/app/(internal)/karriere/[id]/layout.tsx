@@ -47,6 +47,7 @@ export default function JobListingDetailsLayout({ children }: PropsWithChildren)
   return (
     <ResourceDetailLayout
       title={data.title}
+      copyIds={[{ value: data.id }]}
       backHref="/karriere"
       navItems={navItems}
       viewInWebProps={{

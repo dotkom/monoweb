@@ -133,6 +133,7 @@ export default function UserDetailsLayout({
   return (
     <ResourceDetailLayout
       title={user.name ?? user.email ?? user.id}
+      copyIds={[{ value: user.id }]}
       description={description}
       backHref="/brukere"
       navItems={navItems}

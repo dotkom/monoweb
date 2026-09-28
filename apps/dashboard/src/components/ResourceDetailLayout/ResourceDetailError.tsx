@@ -9,7 +9,7 @@ interface ResourceDetailErrorProps {
 
 export function ResourceDetailError({ backHref, title, message }: ResourceDetailErrorProps) {
   return (
-    <ResourceDetailLayout title={title} backHref={backHref} navItems={[]}>
+    <ResourceDetailLayout title={title} backHref={backHref} navItems={[]} copyIds={[]}>
       <ErrorMessage title={title}>{message}</ErrorMessage>
     </ResourceDetailLayout>
   )
