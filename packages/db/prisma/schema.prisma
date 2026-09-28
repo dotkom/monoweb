@@ -361,7 +361,7 @@ model Attendee {
   attendedAt            DateTime?           @map("attended_at") @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  paymentDeadline       DateTime?           @map("payment_deadline")
+  completionDeadline    DateTime?           @map("completion_deadline")
   paymentLink           String?             @map("payment_link")
   paymentId             String?             @map("payment_id")
   paymentReservedAt     DateTime?           @map("payment_reserved_at")
@@ -629,7 +629,7 @@ enum TaskType {
   RESERVE_ATTENDEE                       @map("RESERVE_ATTENDEE")
   CHARGE_ATTENDEE                        @map("CHARGE_ATTENDEE")
   MERGE_ATTENDANCE_POOLS                 @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT                         @map("VERIFY_PAYMENT")
+  VERIFY_ATTENDANCE_COMPLETION           @map("VERIFY_ATTENDANCE_COMPLETION")
   VERIFY_FEEDBACK_ANSWERED               @map("VERIFY_FEEDBACK_ANSWERED")
   SEND_FEEDBACK_FORM_EMAILS              @map("SEND_FEEDBACK_FORM_EMAILS")
   VERIFY_ATTENDEE_ATTENDED               @map("VERIFY_ATTENDEE_ATTENDED")
@@ -647,7 +647,7 @@ enum TaskStatus {
   FAILED    @map("FAILED")
   CANCELED  @map("CANCELED")
   /// The task execution was skipped because its preconditions were not met, typically because one or more payload entities had been deleted.
-  /// For example, if an attendee deregisters before the VERIFY_PAYMENT task is executed, the task is skipped because the attendee no longer exists.
+  /// For example, if an attendee deregisters before the VERIFY_ATTENDANCE_COMPLETION task is executed, the task is skipped because the attendee no longer exists.
   SKIPPED   @map("SKIPPED")
 
   @@map("task_status")

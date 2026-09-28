@@ -94,7 +94,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
   const sortedElements = dateBlocks.toSorted((a, b) => a.date.getTime() - b.date.getTime())
 
   const element = (
-    <div className="flex flex-col justify-between space-y-4 sm:flex-row sm:space-x-4">
+    <div className="flex flex-col justify-between space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
       {sortedElements.map(({ element, key }, index) => (
         <React.Fragment key={key}>
           {element}

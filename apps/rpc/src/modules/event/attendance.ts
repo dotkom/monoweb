@@ -7,7 +7,7 @@ import { type User, type UserId, UserSchema, findActiveMembership } from "../use
 /**
  * Grace period after registration during which deregistration requires no reason.
  *
- * This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour payment deadline.
+ * This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour completion deadline.
  * Frontends should account for a few seconds to account for clock skew to avoid errors near the grace period end.
  */
 export const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
@@ -51,7 +51,7 @@ const AttendeeBaseSchema = z.object({
   attendedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  paymentDeadline: z.date().nullable(),
+  completionDeadline: z.date().nullable(),
   paymentLink: z.string().nullable(),
   paymentId: z.string().nullable(),
   paymentReservedAt: z.date().nullable(),
@@ -90,7 +90,6 @@ export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
 export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentChargedAt: true,
   paymentId: true,
-  paymentDeadline: true,
   paymentChargeDeadline: true,
   paymentLink: true,
   paymentReservedAt: true,
@@ -215,12 +214,34 @@ export const RegistrationAvailabilityRegistrationViewSchema = z.object({
 })
 export type RegistrationAvailabilityRegistrationView = z.infer<typeof RegistrationAvailabilityRegistrationViewSchema>
 
+export const AttendeeStateSchema = z.enum(["QUEUED", "RESERVED", "REGISTERED"])
+export type AttendeeState = z.infer<typeof AttendeeStateSchema>
+
+export const AttendanceCompletionRequirementSchema = z.enum(["PAYMENT"])
+export type AttendanceCompletionRequirement = z.infer<typeof AttendanceCompletionRequirementSchema>
+
+export const AttendanceCompletionRequirementStateSchema = z.object({
+  requirement: AttendanceCompletionRequirementSchema,
+  completed: z.boolean(),
+})
+export type AttendanceCompletionRequirementState = z.infer<typeof AttendanceCompletionRequirementStateSchema>
+
+export const RegistrationAvailabilityCompletionViewSchema = z.object({
+  attendeeState: AttendeeStateSchema,
+  completionDeadline: z.date().nullable(),
+  requirements: z.array(AttendanceCompletionRequirementStateSchema),
+  missingRequirements: z.array(AttendanceCompletionRequirementSchema),
+  paymentLink: z.string().nullable(),
+})
+export type RegistrationAvailabilityCompletionView = z.infer<typeof RegistrationAvailabilityCompletionViewSchema>
+
 export const RegistrationAvailabilityViewSchema = z.object({
   userId: UserSchema.shape.id,
   punishment: PunishmentSchema.nullable(),
   pool: RegistrationAvailabilityPoolViewSchema.nullable(),
   registration: RegistrationAvailabilityRegistrationViewSchema.nullable(),
   deregistration: RegistrationAvailabilityDeregistrationViewSchema.nullable(),
+  completion: RegistrationAvailabilityCompletionViewSchema.nullable(),
 })
 export type RegistrationAvailabilityView = z.infer<typeof RegistrationAvailabilityViewSchema>
 
@@ -360,8 +381,101 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
 
 type AttendeePaymentProps = Pick<
   Attendee,
-  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "paymentDeadline" | "paymentRefundedById"
+  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedById"
 >
+
+export function getApplicableAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice">
+): AttendanceCompletionRequirement[] {
+  if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
+    return ["PAYMENT"]
+  }
+
+  return []
+}
+
+export function isAttendanceCompletionRequirementCompleted(
+  requirement: AttendanceCompletionRequirement,
+  attendee: Attendee | null,
+  attendancePrice: number | null
+): boolean {
+  if (attendee === null) {
+    return false
+  }
+
+  if (requirement === "PAYMENT") {
+    return hasAttendeePaid(attendee, attendancePrice) === true
+  }
+
+  return false
+}
+
+export function getMissingAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Attendee | null
+): AttendanceCompletionRequirement[] {
+  return getApplicableAttendanceCompletionRequirements(attendance).filter(
+    (requirement) => !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice)
+  )
+}
+
+export function getAttendeeState(
+  attendee: Attendee | null,
+  attendance: Pick<Attendance, "attendancePrice">
+): AttendeeState | null {
+  if (attendee === null) {
+    return null
+  }
+
+  if (!attendee.registered) {
+    return "QUEUED"
+  }
+
+  if (getMissingAttendanceCompletionRequirements(attendance, attendee).length > 0) {
+    return "RESERVED"
+  }
+
+  return "REGISTERED"
+}
+
+export function attendeeHasPendingCompletionDeadline(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Pick<Attendee, "completionDeadline"> | null
+): boolean {
+  if (attendee === null || attendee.completionDeadline === null) {
+    return false
+  }
+
+  return getMissingAttendanceCompletionRequirements(attendance, attendee as Attendee).length > 0
+}
+
+export function buildRegistrationAvailabilityCompletionView(
+  attendance: Attendance,
+  attendee: Attendee | null
+): RegistrationAvailabilityCompletionView | null {
+  if (attendee === null) {
+    return null
+  }
+
+  const attendeeState = getAttendeeState(attendee, attendance)
+
+  if (attendeeState === null) {
+    return null
+  }
+
+  const requirements = getApplicableAttendanceCompletionRequirements(attendance)
+
+  return {
+    attendeeState,
+    completionDeadline: attendee.completionDeadline,
+    requirements: requirements.map((requirement) => ({
+      requirement,
+      completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
+    })),
+    missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
+    paymentLink: attendee.paymentLink,
+  }
+}
 
 export const hasAttendeePaid = (
   attendee: Omit<AttendeePaymentProps, "paymentRefundedById"> | null,
@@ -379,7 +493,7 @@ export const hasAttendeePaid = (
   const hasBeenRefunded = attendee.paymentRefundedAt !== null
   const hasBeenCharged = attendee.paymentChargedAt !== null
   const hasReserved = options?.excludePaymentReservation ? false : attendee.paymentReservedAt !== null
-  const hasDeadline = attendee.paymentDeadline !== null
+  const hasDeadline = attendee.completionDeadline !== null
 
   return hasBeenCharged || hasReserved || (hasBeenRefunded && !hasDeadline)
 }
@@ -407,7 +521,7 @@ export const getAttendeePaymentStatus = (attendee: AttendeePaymentProps): Attend
     return "cancelled"
   }
 
-  if (attendee.paymentDeadline !== null) {
+  if (attendee.completionDeadline !== null) {
     return "pending"
   }
 

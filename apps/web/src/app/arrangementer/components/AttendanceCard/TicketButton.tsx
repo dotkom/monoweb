@@ -28,8 +28,8 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
         <Button
           onClick={() => setOpen(true)}
           className="w-full rounded-lg h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
-          icon={<IconTicket className="size-[1.25em]" />}
         >
+          <IconTicket className="size-[1.25em]" />
           Vis billett
         </Button>
       </AlertDialogTrigger>

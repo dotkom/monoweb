@@ -57,13 +57,15 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     !eventEndInPast &&
     (isRegistered || isQueued ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
 
-  const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
+  const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
-    attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
+    attendee?.createdAt && attendee.completionDeadline
+      ? interval(attendee.createdAt, attendee.completionDeadline)
+      : null
   const paymentIsUnpaid = hasAttendeePaid(attendee, attendance.attendancePrice) === false
   const isWithinPaymentCountdown =
     paymentCountdownInterval && paymentIsUnpaid ? isWithinInterval(now, paymentCountdownInterval) : false
-  const paymentDeadlineHasPassed = attendee?.paymentDeadline != null && isAfter(now, attendee.paymentDeadline)
+  const paymentDeadlineHasPassed = attendee?.completionDeadline != null && isAfter(now, attendee.completionDeadline)
   const showPaymentCountdown =
     paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 

@@ -53,7 +53,7 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     earliestReservationAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
-    paymentDeadline: null,
+    completionDeadline: null,
     paymentId: null,
     paymentLink: null,
     paymentChargeDeadline: null,
@@ -126,6 +126,7 @@ describe("buildRegistrationAvailabilityView", () => {
         hasMergeDelay: false,
       },
       deregistration: null,
+      completion: null,
     })
   })
 
@@ -236,6 +237,32 @@ describe("buildDeregistrationAvailabilityView", () => {
         chargeScheduleDate: null,
       })
     )
+    expect(view.completion).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline: null,
+      requirements: [{ requirement: "PAYMENT", completed: false }],
+      missingRequirements: ["PAYMENT"],
+      paymentLink: null,
+    })
+  })
+
+  it("includes reserved completion state when payment is pending", () => {
+    const attendance = createAttendance()
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      paymentLink: "https://example.com/pay",
+    })
+
+    const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
+
+    expect(view.completion).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [{ requirement: "PAYMENT", completed: false }],
+      missingRequirements: ["PAYMENT"],
+      paymentLink: "https://example.com/pay",
+    })
   })
 
   it("requires deregister reason after grace period", () => {

@@ -40,10 +40,10 @@ export const ViewAttendeesButton = ({
 
   const button = (
     <Button
-      className="rounded-lg w-full h-fit min-h-[4rem] text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
-      icon={<IconUsers className="size-[1.25em]" />}
+      className="rounded-lg w-full h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
       disabled={!user}
     >
+      <IconUsers className="size-[1.25em]" />
       Vis påmeldte
     </Button>
   )
