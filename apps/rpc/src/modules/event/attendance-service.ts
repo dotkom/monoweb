@@ -25,7 +25,7 @@ import {
   type RegistrationUserCause,
   type RegistrationWindowCause,
   buildPoolOccupancies,
-  getReservedAttendeeCount,
+  getRegisteredAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
 } from "./attendance"
@@ -142,7 +142,7 @@ export type RegistrationAvailabilityResult = RegistrationAvailabilitySuccess | R
 export type RegistrationAvailabilitySuccess = {
   /**
    * The point in time where a reservation could be made for the user. Users of this result should use this point
-   * in time for determining when to set `reserved = true` for the user.
+   * in time for determining when to set `registered = true` for the user.
    */
   reservationActiveAt: TZDate
   event: Event
@@ -620,7 +620,7 @@ export function getAttendanceService(
               return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_REGISTRATION")
             }
 
-            if (!attendee.reserved) {
+            if (!attendee.registered) {
               return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_RESERVATION")
             }
           }
@@ -727,9 +727,11 @@ export function getAttendanceService(
         success,
       })
 
-      const poolAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
+      const registeredPoolAttendees = attendance.attendees.filter(
+        (attendee) => attendee.attendancePoolId === pool.id && attendee.registered
+      )
       const isImmediateReservation =
-        (!isFuture(reservationActiveAt) && (pool.capacity === 0 || poolAttendees.length < pool.capacity)) ||
+        (!isFuture(reservationActiveAt) && (pool.capacity === 0 || registeredPoolAttendees.length < pool.capacity)) ||
         options.immediateReservation
 
       const userGrade = membership?.semester != null ? getStudyGrade(membership.semester) : null
@@ -742,7 +744,7 @@ export function getAttendanceService(
         AttendeeWriteSchema.parse({
           attendedAt: null,
           earliestReservationAt: reservationActiveAt,
-          reserved: isImmediateReservation,
+          registered: isImmediateReservation,
           selections: [],
           userGrade,
         } satisfies AttendeeWrite)
@@ -837,15 +839,17 @@ export function getAttendanceService(
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendanceId})`)
       }
 
-      if (attendee.reserved) {
+      if (attendee.registered) {
         return
       }
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
-      const adjacentAttendees = attendance.attendees.filter((a) => a.attendancePoolId === pool.id && a.reserved)
-      const isPoolAtMaxCapacity = adjacentAttendees.length >= pool.capacity
+      const registeredAdjacentAttendees = attendance.attendees.filter(
+        (adjacentAttendee) => adjacentAttendee.attendancePoolId === pool.id && adjacentAttendee.registered
+      )
+      const isPoolAtMaxCapacity = registeredAdjacentAttendees.length >= pool.capacity
       const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
 
       if (isPoolAtMaxCapacity) {
@@ -861,10 +865,10 @@ export function getAttendanceService(
       }
 
       const data = AttendeeWriteSchema.parse(attendee)
-      data.reserved = true
+      data.registered = true
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
-      attendee.reserved = true
+      attendee.registered = true
 
       const hasExistingPayment =
         attendee.paymentLink !== null ||
@@ -909,8 +913,8 @@ export function getAttendanceService(
         )
       }
 
-      // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.reserved`
-      if (attendee.reserved && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
+      // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.registered`
+      if (attendee.registered && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
         )
@@ -937,18 +941,18 @@ export function getAttendanceService(
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
-      // If the deregistered attendee wasn't reserved, no spot was freed up, so no waitlist promotion is needed.
-      if (!attendee.reserved) {
+      // If the deregistered attendee wasn't registered, no spot was freed up, so no waitlist promotion is needed.
+      if (!attendee.registered) {
         return
       }
 
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
-      const reservedAttendeesCount = remainingAttendees.filter(
-        (a) => a.reserved && a.attendancePoolId === pool.id
+      const registeredAttendeeCount = remainingAttendees.filter(
+        (remainingAttendee) => remainingAttendee.registered && remainingAttendee.attendancePoolId === pool.id
       ).length
 
       // If the pool is at capacity, we cannot reserve anyone new
-      if (pool.capacity !== 0 && (pool.capacity < 0 || reservedAttendeesCount >= pool.capacity)) {
+      if (pool.capacity !== 0 && (pool.capacity < 0 || registeredAttendeeCount >= pool.capacity)) {
         return
       }
 
@@ -956,35 +960,35 @@ export function getAttendanceService(
       // match are:
       //
       // 1. The attendee must be in the same pool as the deregistered attendee
-      // 2. The attendee must not already be reserved
+      // 2. The attendee must not already be registered
       // 3. The attendee must have a reservation time not in the future
       const sortedWaitlist = remainingAttendees
         .filter((a) => a.attendancePoolId === pool.id)
-        .filter((a) => !a.reserved)
+        .filter((waitlistAttendee) => !waitlistAttendee.registered)
         .filter((a) => !isFuture(a.earliestReservationAt))
         .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
 
-      const firstUnreservedAdjacentAttendee = sortedWaitlist.at(0)
+      const firstQueuedAdjacentAttendee = sortedWaitlist.at(0)
 
-      if (firstUnreservedAdjacentAttendee === undefined) {
+      if (firstQueuedAdjacentAttendee === undefined) {
         return
       }
 
       // If this event is paid, the new attendee must also receive payment information.
       if (
-        firstUnreservedAdjacentAttendee.paymentId === null &&
+        firstQueuedAdjacentAttendee.paymentId === null &&
         attendance.attendancePrice !== null &&
         attendance.attendancePrice !== 0
       ) {
         const paymentDeadline = addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, firstUnreservedAdjacentAttendee.id, paymentDeadline)
-        firstUnreservedAdjacentAttendee.paymentDeadline = paymentDeadline
-        firstUnreservedAdjacentAttendee.paymentId = payment.id
-        firstUnreservedAdjacentAttendee.paymentLink = payment.url
+        const payment = await this.startAttendeePayment(handle, firstQueuedAdjacentAttendee.id, paymentDeadline)
+        firstQueuedAdjacentAttendee.paymentDeadline = paymentDeadline
+        firstQueuedAdjacentAttendee.paymentId = payment.id
+        firstQueuedAdjacentAttendee.paymentLink = payment.url
         logger.info(
           "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s after reciving spot due to another user deregistering",
-          firstUnreservedAdjacentAttendee.id,
-          firstUnreservedAdjacentAttendee.user.id,
+          firstQueuedAdjacentAttendee.id,
+          firstQueuedAdjacentAttendee.user.id,
           paymentDeadline.toUTCString(),
           event.id,
           payment.url
@@ -993,28 +997,28 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeById(
         handle,
-        firstUnreservedAdjacentAttendee.id,
+        firstQueuedAdjacentAttendee.id,
         AttendeeWriteSchema.parse({
-          ...firstUnreservedAdjacentAttendee,
-          reserved: true,
+          ...firstQueuedAdjacentAttendee,
+          registered: true,
         })
       )
 
       logger.info(
         "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
-        firstUnreservedAdjacentAttendee.id,
-        firstUnreservedAdjacentAttendee.user.id,
-        firstUnreservedAdjacentAttendee.user.name || "<missing name>",
+        firstQueuedAdjacentAttendee.id,
+        firstQueuedAdjacentAttendee.user.id,
+        firstQueuedAdjacentAttendee.user.name || "<missing name>",
         event.id,
         event.title,
         attendee.user.id
       )
 
-      sendEventRegistrationEmail(event, attendance, firstUnreservedAdjacentAttendee)
+      sendEventRegistrationEmail(event, attendance, firstQueuedAdjacentAttendee)
 
       const promotedAttendee = {
-        ...firstUnreservedAdjacentAttendee,
-        reserved: true,
+        ...firstQueuedAdjacentAttendee,
+        registered: true,
       }
 
       emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "reserved")
@@ -1584,7 +1588,7 @@ export function getAttendanceService(
         try {
           const attendance = await this.getAttendanceById(handle, event.attendanceId)
           const attendeesNotAttended = attendance.attendees.filter(
-            (attendee) => attendee.reserved && !attendee.attendedAt
+            (attendee) => attendee.registered && !attendee.attendedAt
           )
 
           if (attendeesNotAttended.length === 0) {
@@ -1938,7 +1942,7 @@ export function buildRegistrationAvailabilityView(
         eventRejectionCause: result.eventCause,
         userRejectionCause: result.userCause,
         reservationActiveAt: null,
-        willBeUnreserved: false,
+        willBeQueued: false,
         hasMergeDelay: false,
       },
       deregistration: null,
@@ -1946,9 +1950,9 @@ export function buildRegistrationAvailabilityView(
   }
 
   const { pool, reservationActiveAt } = result
-  const reservedCount = getReservedAttendeeCount(attendance, pool.id)
-  const isPoolFull = pool.capacity !== 0 && reservedCount >= pool.capacity
-  const willBeUnreserved = isFuture(reservationActiveAt) || isPoolFull
+  const registeredCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const isPoolFull = pool.capacity !== 0 && registeredCount >= pool.capacity
+  const willBeQueued = isFuture(reservationActiveAt) || isPoolFull
   const hasMergeDelay = pool.mergeDelayHours !== null && pool.mergeDelayHours > 0
 
   return {
@@ -1964,7 +1968,7 @@ export function buildRegistrationAvailabilityView(
       eventRejectionCause: result.success ? null : result.eventCause,
       userRejectionCause: null,
       reservationActiveAt,
-      willBeUnreserved,
+      willBeQueued,
       hasMergeDelay,
     },
     deregistration: null,
@@ -1995,7 +1999,7 @@ export function buildDeregistrationAvailabilityView(
 
   if (hasBeenCharged) {
     rejectionCause = "PAYMENT_COMPLETED"
-  } else if (attendee.reserved && isPastDeregisterDeadline) {
+  } else if (attendee.registered && isPastDeregisterDeadline) {
     rejectionCause = "DEREGISTER_DEADLINE_PASSED"
   }
 

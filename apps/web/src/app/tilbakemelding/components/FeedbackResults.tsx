@@ -130,7 +130,10 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
                 name="Oppmøtte"
                 value={attendees.filter((attendee) => attendee.attendedAt !== null).length}
               />
-              <StatisticsTableRow name="Venteliste" value={attendees.filter((attendee) => !attendee.reserved).length} />
+              <StatisticsTableRow
+                name="Venteliste"
+                value={attendees.filter((attendee) => !attendee.registered).length}
+              />
               <StatisticsTableRow name="Svar" value={answers.length} />
             </TableBody>
           </Table>

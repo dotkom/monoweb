@@ -467,13 +467,13 @@ const adminDeregisterForEventProcedure = procedure
     )
   })
 
-export type AdminUpdateAtteendeeReservedInput = inferProcedureInput<typeof adminUpdateAtteendeeReservedProcedure>
-export type AdminUpdateAtteendeeReservedOutput = inferProcedureOutput<typeof adminUpdateAtteendeeReservedProcedure>
-const adminUpdateAtteendeeReservedProcedure = procedure
+export type AdminUpdateAttendeeRegisteredInput = inferProcedureInput<typeof adminUpdateAttendeeRegisteredProcedure>
+export type AdminUpdateAttendeeRegisteredOutput = inferProcedureOutput<typeof adminUpdateAttendeeRegisteredProcedure>
+const adminUpdateAttendeeRegisteredProcedure = procedure
   .input(
     z.object({
       attendeeId: AttendeeSchema.shape.id,
-      reserved: AttendeeSchema.shape.reserved,
+      registered: AttendeeSchema.shape.registered,
     })
   )
   .use(withAuthentication())
@@ -482,13 +482,13 @@ const adminUpdateAtteendeeReservedProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
-      reserved: input.reserved,
+      registered: input.registered,
     })
 
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
 
     ctx.setAuditTransactionName(
-      `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) reserved to ${input.reserved} for Event(ID=${event.id},Title=${event.title})`
+      `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
     )
 
     return attendee
@@ -656,7 +656,7 @@ export const attendanceRouter = t.router({
   startAttendeePayment: startAttendeePaymentProcedure,
   deregisterForEvent: deregisterForEventProcedure,
   adminDeregisterForEvent: adminDeregisterForEventProcedure,
-  adminUpdateAtteendeeReserved: adminUpdateAtteendeeReservedProcedure,
+  adminUpdateAttendeeRegistered: adminUpdateAttendeeRegisteredProcedure,
   registerAttendance: registerAttendanceProcedure,
   updateSelectionResponses: updateSelectionResponsesProcedure,
   getAttendance: getAttendanceProcedure,

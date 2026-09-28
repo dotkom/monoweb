@@ -543,7 +543,7 @@ export const useNotifyAttendeesMutation = () => {
   )
 }
 
-export const useUpdateAttendeeReservedMutation = () => {
+export const useUpdateAttendeeRegisteredMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
@@ -551,7 +551,7 @@ export const useUpdateAttendeeReservedMutation = () => {
   })
 
   return useMutation(
-    trpc.event.attendance.adminUpdateAtteendeeReserved.mutationOptions({
+    trpc.event.attendance.adminUpdateAttendeeRegistered.mutationOptions({
       onError: fail,
       onMutate: loading,
       onSuccess: async () => {

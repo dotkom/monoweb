@@ -66,8 +66,8 @@ const StateShowcase = ({
 
 export const AllStates = () => {
   const user = createMockUser()
-  const reservedAttendee = createMockAttendee({ user, reserved: true })
-  const waitlistAttendee = createMockAttendee({ user, reserved: false })
+  const registeredAttendee = createMockAttendee({ user, registered: true })
+  const queuedAttendee = createMockAttendee({ user, registered: false })
 
   const { attendance: lockedAttendance, attendee: lockedAttendee } = createLockedDeregisterAttendance()
 
@@ -104,20 +104,20 @@ export const AllStates = () => {
       />
 
       <StateShowcase
-        label="Reserved attendee"
-        withCapacityAttendance={createMockAttendance({ attendees: [reservedAttendee] })}
-        withCapacityAttendee={reservedAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [reservedAttendee] })}
-        withoutCapacityAttendee={reservedAttendee}
+        label="Registered attendee"
+        withCapacityAttendance={createMockAttendance({ attendees: [registeredAttendee] })}
+        withCapacityAttendee={registeredAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [registeredAttendee] })}
+        withoutCapacityAttendee={registeredAttendee}
         eventEndInPast={false}
       />
 
       <StateShowcase
         label="Waitlist attendee"
-        withCapacityAttendance={createMockAttendance({ attendees: [waitlistAttendee] })}
-        withCapacityAttendee={waitlistAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [waitlistAttendee] })}
-        withoutCapacityAttendee={waitlistAttendee}
+        withCapacityAttendance={createMockAttendance({ attendees: [queuedAttendee] })}
+        withCapacityAttendee={queuedAttendee}
+        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [queuedAttendee] })}
+        withoutCapacityAttendee={queuedAttendee}
         eventEndInPast={false}
       />
 

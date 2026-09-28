@@ -52,8 +52,8 @@ export default function EventPaymentPage() {
   const { canEdit } = useEventEditPermission()
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
-  const reservedAttendees = useMemo(
-    () => attendance?.attendees.filter((attendee) => attendee.reserved) ?? [],
+  const registeredAttendees = useMemo(
+    () => attendance?.attendees.filter((attendee) => attendee.registered) ?? [],
     [attendance]
   )
   const hasPayment = Boolean(attendance?.attendancePrice)
@@ -172,11 +172,11 @@ export default function EventPaymentPage() {
 
   const tableOptions = useMemo(
     () => ({
-      data: reservedAttendees,
+      data: registeredAttendees,
       getCoreRowModel: getCoreRowModel(),
       columns,
     }),
-    [reservedAttendees, columns]
+    [registeredAttendees, columns]
   )
 
   return (

@@ -27,7 +27,7 @@ import { nb } from "date-fns/locale"
 import { useMemo, useState } from "react"
 import { ManualDeleteUserAttendModal } from "./ManualDeleteUserAttendModal"
 import {
-  useUpdateAttendeeReservedMutation,
+  useUpdateAttendeeRegisteredMutation,
   useUpdateEventAttendanceMutation,
 } from "@/app/(internal)/arrangementer/mutations"
 
@@ -69,7 +69,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
     poolName: string
   } | null>(null)
   const updateAttendanceMut = useUpdateEventAttendanceMutation()
-  const updateAttendeeReservedMut = useUpdateAttendeeReservedMutation()
+  const updateAttendeeRegisteredMutation = useUpdateAttendeeRegisteredMutation()
 
   const pools = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, AttendancePool>>((acc, pool) => {
@@ -81,7 +81,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
   const waitlists = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
       const waitlist = attendees
-        .filter((a) => a.attendancePoolId === pool.id && !a.reserved)
+        .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.registered)
         .sort((a, b) => a.earliestReservationAt.getTime() - b.earliestReservationAt.getTime())
 
       acc[pool.id] = waitlist.reduce<Record<string, number>>((map, attendee, idx) => {
@@ -282,9 +282,12 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
                 className="h-fit w-fit p-0.5"
                 disabled={!canEdit}
                 icon={<ArrowIcon size={12} />}
-                onClick={() =>
-                  updateAttendeeReservedMut.mutate({ attendeeId: attendee.id, reserved: queuePosition !== null })
-                }
+                onClick={() => {
+                  updateAttendeeRegisteredMutation.mutate({
+                    attendeeId: attendee.id,
+                    registered: queuePosition !== null,
+                  })
+                }}
               >
                 <Text className="text-xs">{queuePosition ? "Påmeld" : "Til kø"}</Text>
               </Button>
@@ -349,7 +352,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
       updateAttendanceMut,
       pools,
       waitlists,
-      updateAttendeeReservedMut,
+      updateAttendeeRegisteredMutation,
       attendance,
       feedbackAnswers,
       canEdit,

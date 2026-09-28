@@ -28,7 +28,7 @@ export function patchRegistrationAvailabilityFromPoolOccupancies(
     return registrationAvailability
   }
 
-  const willBeUnreserved =
+  const willBeQueued =
     (registration.reservationActiveAt !== null && isFuture(registration.reservationActiveAt)) ||
     poolOccupancy.isPoolFull
 
@@ -40,7 +40,7 @@ export function patchRegistrationAvailabilityFromPoolOccupancies(
     },
     registration: {
       ...registration,
-      willBeUnreserved,
+      willBeQueued,
     },
   }
 }

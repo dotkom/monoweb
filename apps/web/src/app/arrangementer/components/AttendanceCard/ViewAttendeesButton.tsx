@@ -33,10 +33,10 @@ export const ViewAttendeesButton = ({
   const allAttendees = attendance.attendees.toSorted((a, b) =>
     compareAsc(a.earliestReservationAt, b.earliestReservationAt)
   )
-  const reservedAttendees = allAttendees.filter((attendee) => attendee.reserved)
-  const waitlistAttendees = allAttendees.filter((attendee) => !attendee.reserved)
+  const registeredAttendees = allAttendees.filter((attendee) => attendee.registered)
+  const queuedAttendees = allAttendees.filter((attendee) => !attendee.registered)
 
-  const maxAttendees = Math.max(reservedAttendees.length, waitlistAttendees.length)
+  const maxAttendees = Math.max(registeredAttendees.length, queuedAttendees.length)
 
   const button = (
     <Button
@@ -82,15 +82,15 @@ export const ViewAttendeesButton = ({
               Påmeldte
             </Title>
 
-            <AttendeeList attendees={reservedAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
+            <AttendeeList attendees={registeredAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
           </div>
 
-          {waitlistAttendees.length > 0 && (
+          {queuedAttendees.length > 0 && (
             <div className="flex flex-col gap-2 mt-6">
               <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-30">
                 Venteliste
               </Title>
-              <AttendeeList attendees={waitlistAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
+              <AttendeeList attendees={queuedAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
             </div>
           )}
         </div>

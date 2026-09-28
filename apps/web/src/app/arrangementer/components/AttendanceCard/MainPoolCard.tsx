@@ -7,8 +7,8 @@ import {
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
-  getReservedAttendeeCount,
-  getUnreservedAttendeeCount,
+  getQueuedAttendeeCount,
+  getRegisteredAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/rpc/attendance"
 import { type User, findActiveMembership } from "@dotkomonline/rpc/user"
@@ -133,9 +133,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     )
   }
 
-  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
-  const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
-  const hasWaitlist = unreservedAttendeeCount > 0
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const hasWaitlist = queuedAttendeeCount > 0
 
   const servingPunishment =
     attendee?.earliestReservationAt &&
@@ -143,8 +143,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
   const actionIsRequired = showPaymentCountdown
-  const isReserved = attendee?.reserved === true
-  const isQueued = attendee?.reserved === false
+  const isRegistered = attendee?.registered === true
+  const isQueued = attendee?.registered === false
   const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-600/50")
   const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/10")
 
@@ -157,14 +157,14 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               className={cn(
                 "text-3xl px-2 py-1",
                 hasWaitlist &&
-                  attendee?.reserved &&
+                  isRegistered &&
                   (actionIsRequired
                     ? "bg-yellow-200 dark:bg-amber-900 rounded-lg"
                     : "bg-green-200 dark:bg-green-800 rounded-lg")
               )}
               suppressHydrationWarning
             >
-              <RollingNumber value={reservedAttendeeCount} />
+              <RollingNumber value={registeredAttendeeCount} />
               {/* Don't show capacity for merge pools (capacity = 0) */}
               {pool.capacity > 0 && (
                 <>
@@ -177,14 +177,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               <Text
                 className={cn(
                   "text-lg px-2 py-0.5",
-                  attendee?.reserved === false && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-800 rounded-md",
-                  attendee?.reserved === false &&
-                    actionIsRequired &&
-                    "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
+                  isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-800 rounded-md",
+                  isQueued && actionIsRequired && "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
                 )}
                 suppressHydrationWarning
               >
-                +<RollingNumber value={unreservedAttendeeCount} /> i kø
+                +<RollingNumber value={queuedAttendeeCount} /> i kø
               </Text>
             )}
           </div>
@@ -238,7 +236,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
       className={cn(
         "flex flex-col w-full rounded-lg overflow-hidden",
         !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
-        !actionIsRequired && isReserved && "bg-green-100 dark:bg-green-900",
+        !actionIsRequired && isRegistered && "bg-green-100 dark:bg-green-900",
         !actionIsRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
       )}
     >
@@ -246,10 +244,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         className={cn(
           "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold",
           !attendee && "bg-gray-200 dark:bg-stone-700",
-          isReserved && "bg-green-200 dark:bg-green-800",
+          isRegistered && "bg-green-200 dark:bg-green-800",
           isQueued && "bg-indigo-200 dark:bg-indigo-900",
           actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
-          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-amber-700/50",
+          actionIsRequired && isRegistered && "bg-yellow-200 dark:bg-amber-700/50",
           actionIsRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
         )}
       >
@@ -341,7 +339,7 @@ const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: Attendance
     return <NotRegisteredStatus />
   }
 
-  if (attendee.reserved === true) {
+  if (attendee.registered === true) {
     if (actionIsRequired) {
       return <ReservedStatus />
     }
@@ -458,7 +456,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   }
 
   if (!hasPaid) {
-    return <UnpaidStatus price={price} registered={attendee.reserved === true} />
+    return <UnpaidStatus price={price} registered={attendee.registered === true} />
   }
 
   if (attendee.paymentRefundedAt) {
@@ -466,7 +464,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   }
 
   if (attendee.paymentChargedAt) {
-    return <PaidStatus price={price} registered={attendee.reserved === true} />
+    return <PaidStatus price={price} registered={attendee.registered === true} />
   }
 
   if (attendee.paymentReservedAt) {

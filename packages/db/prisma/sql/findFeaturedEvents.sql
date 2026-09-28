@@ -50,7 +50,7 @@
 --
 -- Attendance records without any attendance pools are treated as if the event does not require registration.
 --
--- Child events of a parent that has attendance are only featured if the viewing user is reserved on that parent.
+-- Child events of a parent that has attendance are only featured if the viewing user is registered on that parent.
 -- Parents without attendance, and events without a parent, are unaffected. Anonymous viewers never see gated children.
 --
 -- COMMITTEE_ONLY events are only featured for users with an active committee or node-committee membership.
@@ -161,7 +161,7 @@ WITH
               WHERE
                 attendee.attendance_id = parent_event.attendance_id
                 AND attendee.user_id = $17
-                AND attendee.reserved = TRUE
+                AND attendee.registered = TRUE
             )
           )
       )
@@ -185,14 +185,14 @@ WITH
     WHERE attendance_id IS NOT NULL
   ),
 
-  reserved_attendees AS (
+  registered_attendees AS (
     SELECT
       attendee.attendance_pool_id,
-      COUNT(*) AS reserved_count
+      COUNT(*) AS registered_count
     FROM attendee
     INNER JOIN candidate_attendances
       ON candidate_attendances.attendance_id = attendee.attendance_id
-    WHERE attendee.reserved = TRUE
+    WHERE attendee.registered = TRUE
     GROUP BY attendee.attendance_pool_id
   ),
 
@@ -201,13 +201,13 @@ WITH
       attendance_pool.attendance_id,
       BOOL_OR(
         attendance_pool.capacity = 0
-        OR COALESCE(reserved_attendees.reserved_count, 0) < attendance_pool.capacity
+        OR COALESCE(registered_attendees.registered_count, 0) < attendance_pool.capacity
       ) AS has_available_pool
     FROM attendance_pool
     INNER JOIN candidate_attendances
       ON candidate_attendances.attendance_id = attendance_pool.attendance_id
-    LEFT JOIN reserved_attendees
-      ON reserved_attendees.attendance_pool_id = attendance_pool.id
+    LEFT JOIN registered_attendees
+      ON registered_attendees.attendance_pool_id = attendance_pool.id
     GROUP BY attendance_pool.attendance_id
   ),
 

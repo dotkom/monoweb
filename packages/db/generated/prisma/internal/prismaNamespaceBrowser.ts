@@ -258,7 +258,7 @@ export const AttendeeScalarFieldEnum = {
   id: 'id',
   userGrade: 'userGrade',
   selections: 'selections',
-  reserved: 'reserved',
+  registered: 'registered',
   earliestReservationAt: 'earliestReservationAt',
   attendedAt: 'attendedAt',
   createdAt: 'createdAt',
