@@ -10,6 +10,7 @@ import {
   IconCampfire,
   IconClipboardList,
   IconConfetti,
+  IconDeviceMobileShare,
   IconMoneybag,
   IconPhoto,
   IconPhotoShare,
@@ -190,6 +191,12 @@ export const navigations: Navigation[] = [
     label: "Plakatbestilling",
     icon: IconPhotoShare,
     href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
+    openInNewTab: true,
+  },
+  {
+    label: "SoMe-bestilling",
+    icon: IconDeviceMobileShare,
+    href: "https://fern-smelt-8a2.notion.site/3e9ae7670a518023ab1bdc4e5214d8c3",
     openInNewTab: true,
   },
   {
