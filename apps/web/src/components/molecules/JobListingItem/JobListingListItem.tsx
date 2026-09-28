@@ -1,5 +1,6 @@
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { Text, Title, cn } from "@dotkomonline/ui"
+import { createJobListingPageUrl } from "@dotkomonline/utils"
 import { IconClockHour3, IconHourglassLow, IconMapPin } from "@tabler/icons-react"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -18,7 +19,7 @@ export const JobListingListItem: FC<JobListingListItemProps> = ({ jobListing, cl
 
   return (
     <Link
-      href={`/karriere/${id}`}
+      href={createJobListingPageUrl(id, title)}
       className={cn(
         // [calc(100%+1rem)] is to offset the -mx-2
         "group flex flex-row gap-3 sm:gap-4 w-[calc(100%+1rem)] rounded-xl p-2 -mx-2 last:-mb-2",
