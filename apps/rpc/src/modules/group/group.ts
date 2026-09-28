@@ -30,7 +30,6 @@ export const GroupRoleTypeSchema = z.enum([
   "TRUSTEE",
   "EMAIL_ONLY",
   "TEMPORARILY_LEAVE",
-  "EDITOR_IN_CHIEF",
 ])
 export const GroupRoleTypeEnum = GroupRoleTypeSchema.enum
 export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
@@ -139,8 +138,6 @@ export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.ex
 })
 export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
 
-// NOTE: We omit `EDITOR_IN_CHIEF` ("Redaktør"), since the role is only relevant for Prokom, the committee managing
-// Online's magazine "Offline".
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
     { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder" },
@@ -247,8 +244,6 @@ export const getGroupRoleTypeName = (type: GroupRoleType): string => {
       return "E-postbruker"
     case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
       return "Permitert"
-    case GroupRoleTypeEnum.EDITOR_IN_CHIEF:
-      return "Redaktør"
   }
 }
 

@@ -92,8 +92,7 @@ export const GroupRoleType = {
   DEPUTY_LEADER: 'DEPUTY_LEADER',
   TRUSTEE: 'TRUSTEE',
   EMAIL_ONLY: 'EMAIL_ONLY',
-  TEMPORARILY_LEAVE: 'TEMPORARILY_LEAVE',
-  EDITOR_IN_CHIEF: 'EDITOR_IN_CHIEF'
+  TEMPORARILY_LEAVE: 'TEMPORARILY_LEAVE'
 } as const
 
 export type GroupRoleType = (typeof GroupRoleType)[keyof typeof GroupRoleType]

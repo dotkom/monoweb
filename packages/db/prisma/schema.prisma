@@ -239,16 +239,24 @@ model GroupMembershipRole {
 }
 
 enum GroupRoleType {
+  /// "Komitéleder" (committee leader) or "interessegruppeansvarlig" (interest group coordinator).
   LEADER            @map("LEADER")
+  /// "Vinstraffansvarlig". A role responsible for managing their committee's members' punishments for not doing their
+  /// duties. These punishments are per 2026 external from monoweb (not marks/personal marks).
   PUNISHER          @map("PUNISHER")
+  /// "Økonomiansvarlig". A role responsible for managing their committee's finances.
   TREASURER         @map("TREASURER")
+  /// The generic member role.
   COSMETIC          @map("COSMETIC")
+  /// "Nestleder". Acting leader if the leader is temporarily unable to fulfill their duties.
   DEPUTY_LEADER     @map("DEPUTY_LEADER")
+  /// "Tillitsvalgt". A person who is trusted by the members to see and hear them confidentially.
   TRUSTEE           @map("TRUSTEE")
+  /// A role for users who should be in the email list and otherwise not be regarded as a member of the group.
   EMAIL_ONLY        @map("EMAIL_ONLY")
+  /// "Permittert". A person who is unable to fulfill their duties, often due to being on exchange abroad or being voted
+  /// a member of Hovedstyret.
   TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
-  /// The editor in chief for Online's magazine "Offline" ("Redaktør" in Norwegian)
-  EDITOR_IN_CHIEF   @map("EDITOR_IN_CHIEF")
 
   @@map("group_role_type")
 }
