@@ -50,7 +50,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   const eventDetail = await server.event.find.query(eventId)
 
-  if (!eventDetail) {
+  if (eventDetail === null) {
     notFound()
   }
 
