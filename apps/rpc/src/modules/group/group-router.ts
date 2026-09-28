@@ -1,20 +1,20 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import {
-  GroupByMemberFilterSchema,
-  GroupMembershipSchema,
-  GroupMembershipWriteSchema,
-  GroupRoleTypeEnum,
-  GroupRoleSchema,
-  GroupRoleWriteSchema,
-  GroupSchema,
-  GroupWriteSchema,
-} from "./group"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { CommitteeGroupSlug } from "../authorization-service"
+import {
+  GroupByMemberFilterSchema,
+  GroupMembershipSchema,
+  GroupMembershipWriteSchema,
+  GroupRoleSchema,
+  GroupRoleTypeEnum,
+  GroupRoleWriteSchema,
+  GroupSchema,
+  GroupWriteSchema,
+} from "./group"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
@@ -175,6 +175,14 @@ const allByMemberProcedure = procedure
       includeEmailOnlyMemberships: input.filter?.includeEmailOnlyMemberships ?? false,
     })
   )
+
+export type AllMembershipsByUserIdInput = inferProcedureInput<typeof allMembershipsByUserIdProcedure>
+export type AllMembershipsByUserIdOutput = inferProcedureOutput<typeof allMembershipsByUserIdProcedure>
+const allMembershipsByUserIdProcedure = procedure
+  .input(GroupMembershipSchema.shape.userId)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => ctx.groupService.allMembershipsByUserId(ctx.handle, input))
 
 export type StartMembershipInput = inferProcedureInput<typeof startMembershipProcedure>
 export type StartMembershipOutput = inferProcedureOutput<typeof startMembershipProcedure>
@@ -428,6 +436,7 @@ export const groupRouter = t.router({
   getMembers: getMembersProcedure,
   getMember: getMemberProcedure,
   allByMember: allByMemberProcedure,
+  allMembershipsByUserId: allMembershipsByUserIdProcedure,
   startMembership: startMembershipProcedure,
   endMembership: endMembershipProcedure,
   updateMembership: updateMembershipProcedure,

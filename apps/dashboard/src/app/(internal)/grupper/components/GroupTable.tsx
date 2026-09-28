@@ -1,7 +1,14 @@
 "use client"
 
 import { arrayOrEqualsFilter, FilterableDataTable } from "@/components/FilterableDataTable"
-import { type Group, GroupTypeSchema, getGroupTypeName } from "@dotkomonline/rpc/group"
+import {
+  findActiveGroupMembershipIn,
+  getGroupTypeName,
+  type Group,
+  type GroupMembership,
+  GroupTypeSchema,
+  sortGroupRolesByPriority,
+} from "@dotkomonline/rpc/group"
 import { TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo } from "react"
@@ -10,18 +17,22 @@ interface Props {
   groups: Group[]
   isLoading?: boolean
   actions?: React.ReactNode
+  userGroupMemberships?: GroupMembership[]
 }
 
-export const GroupTable = ({ groups, isLoading, actions }: Props) => {
+export const GroupTable = ({ groups, isLoading, actions, userGroupMemberships }: Props) => {
   const columnHelper = createColumnHelper<Group>()
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor((group) => group, {
+  const columns = useMemo(() => {
+    const cols = [
+      columnHelper.accessor((group) => group.abbreviation, {
         id: "abbreviation",
         header: () => "Kort navn",
         sortingFn: "alphanumeric",
-        cell: (info) => <TextLink href={`/grupper/${info.getValue().slug}`}>{info.getValue().abbreviation}</TextLink>,
+        cell: (info) => {
+          const group = info.row.original
+          return <TextLink href={`/grupper/${group.slug}`}>{group.abbreviation}</TextLink>
+        },
       }),
       columnHelper.accessor("name", {
         header: () => "Navn",
@@ -77,9 +88,35 @@ export const GroupTable = ({ groups, isLoading, actions }: Props) => {
         sortingFn: "alphanumeric",
         filterFn: arrayOrEqualsFilter(),
       }),
-    ],
-    [columnHelper]
-  )
+      userGroupMemberships !== undefined &&
+        columnHelper.accessor(
+          (group) => {
+            const membership = findActiveGroupMembershipIn(userGroupMemberships, group.slug)
+            const roles = membership?.roles ?? []
+
+            if (!membership) {
+              return "Ikke aktiv"
+            }
+
+            if (roles.length === 0) {
+              return "Ingen roller"
+            }
+
+            return sortGroupRolesByPriority(roles)
+              .map((role) => role.name)
+              .join(", ")
+          },
+          {
+            id: "roles",
+            header: "Roller",
+            sortingFn: "alphanumeric",
+            cell: (info) => info.getValue(),
+          }
+        ),
+    ]
+
+    return cols.filter((col): col is Exclude<typeof col, false> => Boolean(col))
+  }, [columnHelper, userGroupMemberships])
 
   const tableOptions = useMemo(
     () => ({

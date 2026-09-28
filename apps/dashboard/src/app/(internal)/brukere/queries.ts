@@ -67,6 +67,14 @@ export const useGroupAllByMemberQuery = (userId: UserId) => {
   return { groups, isLoading }
 }
 
+export const useAllMembershipsByUserIdQuery = (userId: UserId) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery(trpc.group.allMembershipsByUserId.queryOptions(userId))
+
+  const memberships = useMemo(() => data ?? [], [data])
+  return { memberships, ...query }
+}
+
 export const useFindWorkspaceUserQuery = (userId: UserId, customKey?: string, enabled = true) => {
   const trpc = useTRPC()
   const {

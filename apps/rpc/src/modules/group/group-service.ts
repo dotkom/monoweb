@@ -59,6 +59,7 @@ export interface GroupService {
   findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
   findLeadersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
+  allMembershipsByUserId(handle: DBHandle, userId: UserId): Promise<GroupMembership[]>
   startMembership(
     handle: DBHandle,
     userId: UserId,
@@ -250,6 +251,10 @@ export function getGroupService(
       }
 
       return members
+    },
+
+    async allMembershipsByUserId(handle, userId) {
+      return groupRepository.findManyGroupMemberships(handle, null, userId)
     },
 
     async startMembership(handle, userId, groupSlug, groupRoleIds) {
