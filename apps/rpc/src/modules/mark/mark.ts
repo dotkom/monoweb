@@ -9,6 +9,7 @@ export const MarkTypeSchema = z.enum([
   "MISSED_ATTENDANCE",
   "MISSING_FEEDBACK",
   "MISSING_PAYMENT",
+  "MISSING_SELECTIONS",
 ])
 export type MarkType = z.infer<typeof MarkTypeSchema>
 

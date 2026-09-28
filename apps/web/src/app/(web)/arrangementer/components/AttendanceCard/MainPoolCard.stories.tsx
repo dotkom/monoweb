@@ -13,15 +13,22 @@ import {
   createAttendanceWithQueuedPayment,
   createAttendanceWithQueuedPaymentRecord,
   createAttendanceWithRegisteredPaymentRecord,
+  createAttendanceWithPaymentAndSelectionsPending,
+  createAttendanceWithPaymentAndSelectionsPendingPastDeregisterDeadline,
+  createAttendanceWithPaymentCompleteSelectionsPending,
+  createAttendanceWithSelectionsPendingPastDeregisterDeadline,
   createAttendanceWithRegisteredUser,
   createAttendanceWithReservedPayment,
+  createAttendanceWithSelectionsComplete,
+  createAttendanceWithSelectionsCompletePaymentPending,
+  createAttendanceWithSelectionsPending,
   createAttendanceWithServingPunishment,
   createIneligiblePoolAttendance,
   createMockAttendance,
   createMockAttendee,
   createMockUser,
 } from "../../../../../../.ladle/fixtures/attendance"
-import { MainPoolCard } from "./MainPoolCard"
+import { MainPoolCard, type CompletionHighlightTarget } from "./MainPoolCard"
 import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
 
@@ -38,6 +45,7 @@ const MainPoolCardPreview = ({
   chargeScheduleDate?: Date | null
 }) => {
   const attendee = getAttendee(attendance, user)
+  const [, setCompletionHighlightTarget] = useState<CompletionHighlightTarget>(null)
   useDeadlineTick(attendee?.registrationEligibleAt)
   const isRegistrationDelayed = hasRegistrationDelay(attendee)
 
@@ -49,6 +57,9 @@ const MainPoolCardPreview = ({
         authorizeUrl={AUTHORIZE_URL}
         chargeScheduleDate={chargeScheduleDate}
         hasAttachedActionBelow={isRegistrationDelayed}
+        setCompletionHighlightTarget={setCompletionHighlightTarget}
+        isCompletionHighlightHidden={false}
+        onToggleCompletionHighlightHidden={() => setCompletionHighlightTarget(null)}
       />
       {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
     </div>
@@ -255,6 +266,37 @@ export const AllStates = () => {
 
       <StatePreview label="Punishment delay with payment">
         <MainPoolCardPreview attendance={createAttendanceWithServingPunishment({ withPayment: true })} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Selections pending">
+        <MainPoolCardPreview attendance={createAttendanceWithSelectionsPending()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Selections complete">
+        <MainPoolCardPreview attendance={createAttendanceWithSelectionsComplete()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Payment and selections pending">
+        <MainPoolCardPreview attendance={createAttendanceWithPaymentAndSelectionsPending()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Payment complete, selections pending">
+        <MainPoolCardPreview attendance={createAttendanceWithPaymentCompleteSelectionsPending()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Selections complete, payment pending">
+        <MainPoolCardPreview attendance={createAttendanceWithSelectionsCompletePaymentPending()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Selections pending after deregister deadline">
+        <MainPoolCardPreview attendance={createAttendanceWithSelectionsPendingPastDeregisterDeadline()} user={user} />
+      </StatePreview>
+
+      <StatePreview label="Payment and selections pending after deregister deadline">
+        <MainPoolCardPreview
+          attendance={createAttendanceWithPaymentAndSelectionsPendingPastDeregisterDeadline()}
+          user={user}
+        />
       </StatePreview>
     </div>
   )
