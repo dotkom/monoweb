@@ -20,7 +20,7 @@ export const CollapsibleFilterSection = ({ title, count, children, className }: 
           "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
         )}
       >
-        <div className="flex items-center gap-2 h-5.5">
+        <div className="flex items-center gap-2 h-5.5 mb-2">
           <Label className="cursor-pointer text-foreground">{title}</Label>
           {count > 0 && (
             <Text
