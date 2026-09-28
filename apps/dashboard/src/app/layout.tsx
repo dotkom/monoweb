@@ -2,6 +2,10 @@ import { AuthorizationProvider } from "@/auth/authorization-context"
 import { auth0 } from "@/lib/auth"
 import { getServerAccessToken } from "@/lib/server-access-token"
 import { getServerAuthorization } from "@/lib/server-authorization"
+import {
+  NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME,
+  parseNavigationGroupsCollapsedCookie,
+} from "@/lib/navigation-group-cookie"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { Toaster } from "@dotkomonline/ui"
 import "@fontsource-variable/google-sans-code/wght.css"
@@ -12,6 +16,7 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
+import { cookies } from "next/headers"
 import type { PropsWithChildren } from "react"
 import "../globals.css"
 import { ApplicationShell } from "./ApplicationShell"
@@ -48,6 +53,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const requestHeaders = await headers()
   const userAgent = requestHeaders.get("user-agent") ?? ""
   const isMac = /macintosh/i.test(userAgent)
+  const cookieStore = await cookies()
+  const collapsedNavigationGroups = parseNavigationGroupsCollapsedCookie(
+    cookieStore.get(NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME)?.value
+  )
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
@@ -62,7 +71,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   isCommitteeMember={isCommitteeMember}
                   affiliations={affiliations}
                 >
-                  <ApplicationShell isMac={isMac}>{children}</ApplicationShell>
+                  <ApplicationShell isMac={isMac} collapsedNavigationGroups={collapsedNavigationGroups}>
+                    {children}
+                  </ApplicationShell>
                 </AuthorizationProvider>
               </ThemeProvider>
             </QueryProvider>
