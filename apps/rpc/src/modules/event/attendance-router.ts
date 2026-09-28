@@ -18,9 +18,11 @@ import {
   AttendanceWriteSchema,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
+  areAttendeeSelectionsEqual,
   DEREGISTER_GRACE_PERIOD_MS,
-  RegisterChangeEventSchema,
+  isPastDeregisterDeadlineForAttendee,
   RegistrationAvailabilityViewSchema,
+  RegisterChangeEventSchema,
 } from "./attendance"
 import {
   buildDeregistrationAvailabilityView,
@@ -551,9 +553,21 @@ const updateSelectionResponsesProcedure = procedure
       input
     )
 
+    const attendance = await ctx.attendanceService.getAttendanceByAttendeeId(ctx.handle, input.attendeeId)
+
+    if (
+      !areAttendeeSelectionsEqual(input.options, attendee.selections) &&
+      isPastDeregisterDeadlineForAttendee(attendance, attendee)
+    ) {
+      throw new FailedPreconditionError(
+        `Cannot update selections for Attendee(ID=${input.attendeeId}) after deregister deadline`
+      )
+    }
+
     const updatedAttendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
       selections: input.options,
     })
+
     ctx.setAuditTransactionName(
       `Update Selection Responses for Attendee(ID=${updatedAttendee.id},Name=${updatedAttendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
     )
