@@ -11,7 +11,7 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "flex size-full flex-col overflow-hidden rounded-xl! bg-popover p-1 text-popover-foreground",
+        "flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-xl! bg-popover p-1 text-popover-foreground",
         className
       )}
       {...props}
@@ -40,7 +40,10 @@ function CommandDialog({
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogContent
-        className={cn("top-1/3 translate-y-0 overflow-hidden rounded-xl p-0", className)}
+        className={cn(
+          "top-4 flex max-h-[calc(100dvh-(--spacing(8)))] min-h-0 translate-y-0 flex-col overflow-hidden rounded-xl p-0 sm:top-1/3",
+          className
+        )}
         showCloseButton={showCloseButton}
       >
         {children}
@@ -70,7 +73,10 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn("no-scrollbar max-h-73 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none", className)}
+      className={cn(
+        "no-scrollbar min-h-0 max-h-73 flex-1 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
+        className
+      )}
       {...props}
     />
   )
