@@ -1,9 +1,15 @@
 "use client"
 
-import { FilterableDataTable } from "@/components/FilterableDataTable"
 import { DateTooltip } from "@/components/DateTooltip"
+import { FilterableDataTable } from "@/components/FilterableDataTable"
 import { useUser } from "@auth0/nextjs-auth0/client"
-import { type GroupId, type GroupMembership, getActiveGroupMembership } from "@dotkomonline/rpc/group"
+import {
+  findLatestGroupMembershipIn,
+  isGroupMemberActive,
+  sortGroupRolesByPriority,
+  type GroupId,
+  type GroupMembership,
+} from "@dotkomonline/rpc/group"
 import type { WorkspaceMemberLink, WorkspaceMemberSyncState } from "@dotkomonline/rpc/workspace"
 import { Text, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconAlertTriangleFilled, IconSquareCheckFilled } from "@tabler/icons-react"
@@ -18,9 +24,12 @@ interface Props {
   actions?: React.ReactNode
 }
 
-function formatRoles(memberships: GroupMembership[]) {
-  const latestRoles = memberships.at(0)?.roles.map((role) => role.name)
-  return latestRoles?.join(", ") ?? "-"
+function formatRoles(memberships: GroupMembership[], groupId: GroupId) {
+  const latestRoles = sortGroupRolesByPriority(findLatestGroupMembershipIn(memberships, groupId)?.roles ?? []).map(
+    (role) => role.name
+  )
+
+  return latestRoles.length > 0 ? latestRoles.join(", ") : "-"
 }
 
 export const GroupMemberTable = ({ data, groupId, showWorkspaceColumns, isLoading, actions }: Props) => {
@@ -41,7 +50,7 @@ export const GroupMemberTable = ({ data, groupId, showWorkspaceColumns, isLoadin
             return <Text className="text-sm text-muted-foreground">Ingen bruker</Text>
           }
 
-          const isActive = getActiveGroupMembership(groupMember, groupId)
+          const isActive = isGroupMemberActive(groupMember, groupId)
 
           return (
             <TextLink href={`/brukere/${groupMember.id}`} className={isActive ? undefined : "text-muted-foreground"}>
@@ -77,15 +86,16 @@ export const GroupMemberTable = ({ data, groupId, showWorkspaceColumns, isLoadin
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "roles",
         header: () => "Roller",
-        cell: (info) => formatRoles(info.getValue()?.groupMemberships ?? []),
+        cell: (info) => formatRoles(info.getValue()?.groupMemberships ?? [], groupId),
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
         id: "start",
         header: () => "Startdato",
         sortingFn: "datetime",
         cell: (info) => {
-          const date = info.getValue()?.groupMemberships.at(0)?.start
-          return date ? <DateTooltip date={date} /> : "-"
+          const date = findLatestGroupMembershipIn(info.getValue()?.groupMemberships ?? [], groupId)?.start
+
+          return date !== undefined ? <DateTooltip date={date} /> : "-"
         },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
@@ -93,8 +103,9 @@ export const GroupMemberTable = ({ data, groupId, showWorkspaceColumns, isLoadin
         header: () => "Sluttdato",
         sortingFn: "datetime",
         cell: (info) => {
-          const date = info.getValue()?.groupMemberships.at(0)?.end
-          return date ? <DateTooltip date={date} /> : "-"
+          const date = findLatestGroupMembershipIn(info.getValue()?.groupMemberships ?? [], groupId)?.end
+
+          return date != null ? <DateTooltip date={date} /> : "-"
         },
       }),
       columnHelper.accessor(({ groupMember }) => groupMember, {
@@ -142,7 +153,7 @@ function getMemberRowClassName(row: Row<WorkspaceMemberLink>, groupId: GroupId, 
     return undefined
   }
 
-  const isInactive = Boolean(row.original.groupMember) && !getActiveGroupMembership(row.original.groupMember, groupId)
+  const isInactive = Boolean(row.original.groupMember) && !isGroupMemberActive(row.original.groupMember, groupId)
 
   return getRowBackgroundClass(row.original.syncState, isInactive)
 }

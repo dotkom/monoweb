@@ -4,11 +4,16 @@ import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { server } from "@/utils/trpc/server"
 import {
   type GroupMember,
-  type GroupRole,
   GroupRoleTypeEnum,
+  findActiveGroupMembership,
   getGroupDisplayName,
   getGroupSecondaryName,
   getGroupTypeName,
+  getHighestGroupRolePriority,
+  hasGroupMembershipRoleType,
+  isGroupMemberActive,
+  isGroupMemberVisible,
+  sortGroupRolesByPriority,
 } from "@dotkomonline/rpc/group"
 import { type UserId, isVanityVerified } from "@dotkomonline/rpc/user"
 import {
@@ -85,60 +90,36 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
   const hasContactInfo = group.email || group.contactUrl
 
-  const membersToShow = [...members.values()].filter((member) => {
-    const membership = getLatestActiveMembership(member)
-
-    const isEmailOnly = membership?.roles.every((role) => role.type === GroupRoleTypeEnum.EMAIL_ONLY)
-    const isMe = member.id === session?.sub
-
-    if (group.memberVisibility === "NONE" || (isEmailOnly && !isMe)) {
-      return false
-    }
-
-    if (group.memberVisibility === "ALL_MEMBERS") {
-      return true
-    }
-
-    if (group.memberVisibility === "LEADER") {
-      return membership?.roles.some((role) => role.type === GroupRoleTypeEnum.LEADER)
-    }
-
-    if (group.memberVisibility === "WITH_ROLES") {
-      return membership?.roles.some(
-        (role) => role.type !== GroupRoleTypeEnum.COSMETIC && role.type !== GroupRoleTypeEnum.EMAIL_ONLY
-      )
-    }
-
-    return false
-  })
+  const membersToShow = [...members.values()].filter((member) =>
+    isGroupMemberVisible(member, group.memberVisibility, session?.sub)
+  )
 
   const activeMembers = [...membersToShow]
-    .filter((member) => getLatestActiveMembership(member) !== undefined)
+    .filter((member) => isGroupMemberActive(member))
     .toSorted((leftMember, rightMember) => {
-      const left = getLatestActiveMembership(leftMember)
-      const right = getLatestActiveMembership(rightMember)
-      // Sanity check
-      if (left === undefined || right === undefined) {
+      const left = findActiveGroupMembership(leftMember)
+      const right = findActiveGroupMembership(rightMember)
+
+      if (left === null || right === null) {
+        // Sanity check
         return 0
       }
-      const leftPriority = Math.max(...left.roles.map((role) => getRolePriority(role)))
-      const rightPriority = Math.max(...right.roles.map((role) => getRolePriority(role)))
 
-      if (leftPriority !== rightPriority) {
-        return rightPriority - leftPriority
+      const byRole = getHighestGroupRolePriority(right.roles) - getHighestGroupRolePriority(left.roles)
+      if (byRole !== 0) {
+        return byRole
       }
 
       return compareDesc(left.start, right.start)
     })
 
-  const inactiveMembers = membersToShow.filter((member) => !activeMembers.includes(member))
+  const inactiveMembers = membersToShow.filter((member) => !isGroupMemberActive(member))
 
-  const leader = [...members.values()]
-    .filter((member) => getLatestActiveMembership(member) !== undefined)
-    .find((user) => {
-      const membership = getLatestActiveMembership(user)
-      return membership?.roles.some((role) => role.type === GroupRoleTypeEnum.LEADER)
-    })
+  const leader = [...members.values()].find((member) => {
+    const membership = findActiveGroupMembership(member)
+
+    return membership != null && hasGroupMembershipRoleType(membership, GroupRoleTypeEnum.LEADER)
+  })
 
   const displayName = getGroupDisplayName(group)
   const secondaryName = getGroupSecondaryName(group)
@@ -273,14 +254,11 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isVerified = isVanityVerified(member)
   const isUser = userId === member.id
 
-  // This requires periods to be sorted by startedAt in descending order
-  const firstActiveMembership = getLatestActiveMembership(member)
+  const firstActiveMembership = findActiveGroupMembership(member)
 
-  const roles = firstActiveMembership?.roles.toSorted((a, b) => {
-    return getRolePriority(b) - getRolePriority(a)
-  })
+  const roles = sortGroupRolesByPriority(firstActiveMembership?.roles ?? [])
 
-  const roleNames = roles?.map(({ name }) => name).join(", ") || "Ingen roller"
+  const roleNames = roles.length > 0 ? roles.map(({ name }) => name).join(", ") : "Ingen roller"
 
   return (
     <Link
@@ -318,34 +296,6 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
     </Link>
   )
 }
-
-function getLatestActiveMembership(member: GroupMember) {
-  return member.groupMemberships.find((m) => m.end === null)
-}
-
-function getRolePriority(role: GroupRole) {
-  switch (role.type) {
-    case GroupRoleTypeEnum.LEADER:
-      return 8
-    case GroupRoleTypeEnum.DEPUTY_LEADER:
-      return 7
-    case GroupRoleTypeEnum.TREASURER:
-      return 6
-    case GroupRoleTypeEnum.TRUSTEE:
-      return 5
-    case GroupRoleTypeEnum.PUNISHER:
-      return 4
-    case GroupRoleTypeEnum.COSMETIC:
-      return 3
-    case GroupRoleTypeEnum.EMAIL_ONLY:
-      return 2
-    case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
-      return 1
-    default:
-      return 0
-  }
-}
-
 interface GroupMemberListProps {
   members: GroupMember[]
   type: "active" | "inactive"

@@ -4,7 +4,7 @@ import { UserSearch } from "@/app/(internal)/brukere/components/UserSearch"
 import { useGroupPermissions } from "@/app/(internal)/grupper/use-group-permissions"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
-import { type GroupMember, getActiveGroupMembership } from "@dotkomonline/rpc/group"
+import { type GroupMember, isGroupMemberActive } from "@dotkomonline/rpc/group"
 import type { UserId } from "@dotkomonline/rpc/user"
 import type { WorkspaceMemberLink, WorkspaceMemberSyncState } from "@dotkomonline/rpc/workspace"
 import { Button, Popover, PopoverContent, PopoverTrigger, Text, Title } from "@dotkomonline/ui"
@@ -80,8 +80,8 @@ export default function GroupMembersPage() {
     }
 
     return memberLinks.toSorted((a, b) => {
-      const aIsActive = getActiveGroupMembership(a.groupMember, group.slug) !== null
-      const bIsActive = getActiveGroupMembership(b.groupMember, group.slug) !== null
+      const aIsActive = isGroupMemberActive(a.groupMember, group.slug)
+      const bIsActive = isGroupMemberActive(b.groupMember, group.slug)
 
       if (aIsActive !== bIsActive) {
         return aIsActive ? -1 : 1

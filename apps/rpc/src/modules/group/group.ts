@@ -247,19 +247,6 @@ export const getGroupRoleTypeName = (type: GroupRoleType): string => {
   }
 }
 
-export const getActiveGroupMembership = (member: GroupMember | null, groupSlug?: GroupId): GroupMembership | null => {
-  if (!member) {
-    return null
-  }
-
-  const isGroup = (inputGroupSlug: GroupId) => (groupSlug ? inputGroupSlug === groupSlug : true)
-
-  // This is to make sure the function is deterministic
-  const sortedMemberships = member.groupMemberships.toSorted((a, b) => compareDesc(a.start, b.start))
-
-  return sortedMemberships.find((membership) => membership.end === null && isGroup(membership.groupId)) ?? null
-}
-
 export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmentMethod): string => {
   switch (recruitmentMethod) {
     case "GENERAL_ASSEMBLY":
@@ -277,11 +264,140 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
   }
 }
 
+// TODO: Maybe this should check if membership.end is in the future?
+export const isGroupMembershipActive = (membership: GroupMembership): boolean => {
+  return membership.end === null
+}
+
+export const isGroupMemberActive = (member: GroupMember | null, groupId?: GroupId): boolean => {
+  if (member === null) {
+    return false
+  }
+
+  return findActiveGroupMembership(member, groupId) !== null
+}
+
+export function findActiveGroupMembershipIn(
+  groupMemberships: GroupMembership[],
+  groupId?: GroupId
+): GroupMembership | null {
+  const activeMemberships = groupMemberships
+    .toSorted((a, b) => compareDesc(a.start, b.start))
+    .filter((membership) => isGroupMembershipActive(membership))
+
+  if (groupId === undefined) {
+    return activeMemberships.at(0) ?? null
+  }
+
+  return activeMemberships.find((membership) => membership.groupId === groupId) ?? null
+}
+
+export function findActiveGroupMembership(member: GroupMember | null, groupId?: GroupId): GroupMembership | null {
+  if (member === null) {
+    return null
+  }
+
+  return findActiveGroupMembershipIn(member.groupMemberships, groupId)
+}
+
+export function findLatestGroupMembershipIn(
+  groupMemberships: GroupMembership[],
+  groupId?: GroupId
+): GroupMembership | null {
+  return (
+    groupMemberships
+      .filter((m) => groupId == null || m.groupId === groupId)
+      .toSorted((a, b) => compareDesc(a.start, b.start))
+      .at(0) ?? null
+  )
+}
+
+export function findLatestGroupMembership(member: GroupMember | null, groupId?: GroupId): GroupMembership | null {
+  if (member === null) {
+    return null
+  }
+
+  return findLatestGroupMembershipIn(member.groupMemberships, groupId)
+}
+
 export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: GroupMembership["roles"]): boolean => {
   const typesA = new Set(rolesA.map((role) => role.id))
   const typesB = new Set(rolesB.map((role) => role.id))
 
   return typesA.symmetricDifference(typesB).size === 0
+}
+
+export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {
+  return membership.roles.some((role) => role.type === type)
+}
+
+export function isEmailOnlyGroupMembership(membership: GroupMembership): boolean {
+  return membership.roles.every((role) => role.type === GroupRoleTypeEnum.EMAIL_ONLY)
+}
+
+export function isGroupMemberVisible(
+  member: GroupMember,
+  visibility: GroupMemberVisibilityType,
+  viewerUserId?: string | null
+): boolean {
+  const membership = findActiveGroupMembership(member)
+  const isMe = member.id === viewerUserId
+  const isEmailOnly = membership != null && isEmailOnlyGroupMembership(membership)
+
+  if (visibility === "NONE" || (isEmailOnly && !isMe)) {
+    return false
+  }
+
+  if (visibility === "ALL_MEMBERS") {
+    return true
+  }
+
+  if (visibility === "LEADER") {
+    return membership !== null && hasGroupMembershipRoleType(membership, GroupRoleTypeEnum.LEADER)
+  }
+
+  if (visibility === "WITH_ROLES") {
+    return (
+      membership?.roles.some(
+        (role) => role.type !== GroupRoleTypeEnum.COSMETIC && role.type !== GroupRoleTypeEnum.EMAIL_ONLY
+      ) ?? false
+    )
+  }
+
+  return false
+}
+
+export function getGroupRolePriority(role: GroupRole): number {
+  switch (role.type) {
+    case GroupRoleTypeEnum.LEADER:
+      return 8
+    case GroupRoleTypeEnum.DEPUTY_LEADER:
+      return 7
+    case GroupRoleTypeEnum.TREASURER:
+      return 6
+    case GroupRoleTypeEnum.TRUSTEE:
+      return 5
+    case GroupRoleTypeEnum.PUNISHER:
+      return 4
+    case GroupRoleTypeEnum.COSMETIC:
+      return 3
+    case GroupRoleTypeEnum.EMAIL_ONLY:
+      return 2
+    case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
+      return 1
+  }
+}
+
+export function sortGroupRolesByPriority(roles: GroupRole[]): GroupRole[] {
+  return roles.toSorted((a, b) => getGroupRolePriority(b) - getGroupRolePriority(a))
+}
+
+export function getHighestGroupRolePriority(roles: GroupRole[]): number {
+  if (roles.length === 0) {
+    return 0
+  }
+
+  return Math.max(...roles.map(getGroupRolePriority))
 }
 
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024

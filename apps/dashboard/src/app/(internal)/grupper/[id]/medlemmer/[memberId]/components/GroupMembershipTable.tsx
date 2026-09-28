@@ -3,7 +3,7 @@
 import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import type { GroupMember, GroupMembership } from "@dotkomonline/rpc/group"
+import { sortGroupRolesByPriority, type GroupMember, type GroupMembership } from "@dotkomonline/rpc/group"
 import { Button, Text } from "@dotkomonline/ui"
 import { ogJoin } from "@dotkomonline/utils"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -40,9 +40,8 @@ export const GroupMembershipTable = ({ groupMember, disabled }: Props) => {
         id: "roles",
         header: () => "Roller",
         cell: (info) =>
-          info
-            .getValue()
-            .roles.map((role) => role.name)
+          sortGroupRolesByPriority(info.getValue().roles)
+            .map((role) => role.name)
             .join(", "),
       }),
       columnHelper.accessor((membership) => membership, {
@@ -167,7 +166,7 @@ function getDeleteGroupMembershipConfirmText(
   groupMember: GroupMember,
   deleteRemovesUserFromGroup: boolean
 ) {
-  const roles = ogJoin(groupMembership.roles.map((role) => role.name))
+  const roles = ogJoin(sortGroupRolesByPriority(groupMembership.roles).map((role) => role.name))
   const period = `${formatDate(groupMembership.start, "dd.MM.yyyy")} - ${groupMembership.end ? formatDate(groupMembership.end, "dd.MM.yyyy") : "Nå"}`
 
   const removalWarningText = deleteRemovesUserFromGroup
