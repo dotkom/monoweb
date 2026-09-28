@@ -72,8 +72,8 @@ export function ResourceDetailLayout({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   return (
-    <div className={cn("flex flex-col", className)}>
-      <div className="top-0 z-30 -mx-4 bg-background px-4 dark:bg-background">
+    <div className={className}>
+      <div className="sticky top-0 z-30 -mx-4 bg-background px-4 dark:bg-background">
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <Button
             variant="outline"
