@@ -1,10 +1,10 @@
 "use client"
 
-import type { GroupMembership } from "@dotkomonline/rpc/group"
+import { useUpdateGroupMembershipMutation } from "@/app/(internal)/grupper/mutations"
+import { isGroupMembershipActive, type GroupMembership } from "@dotkomonline/rpc/group"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { GroupMembershipWriteForm } from "./GroupMembershipWriteForm"
-import { useUpdateGroupMembershipMutation } from "@/app/(internal)/grupper/mutations"
 
 type EditGroupMembershipModalProps = {
   open: boolean
@@ -15,7 +15,7 @@ type EditGroupMembershipModalProps = {
 export function EditGroupMembershipModal({ open, onOpenChange, groupMembership }: EditGroupMembershipModalProps) {
   const update = useUpdateGroupMembershipMutation()
 
-  const membershipIsActive = groupMembership?.end === null
+  const isActive = groupMembership !== null && isGroupMembershipActive(groupMembership)
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -28,7 +28,7 @@ export function EditGroupMembershipModal({ open, onOpenChange, groupMembership }
         </div>
 
         <div className="flex flex-col gap-4">
-          {membershipIsActive && (
+          {isActive && (
             <Text className="text-destructive">
               Kun rediger aktivt medlemskap hvis noe er feil. For å legge til nye roller, avslutt nåværende og lag nytt
               medlemskap.
@@ -37,7 +37,7 @@ export function EditGroupMembershipModal({ open, onOpenChange, groupMembership }
 
           {open && groupMembership && (
             <GroupMembershipWriteForm
-              allowEditEndDate={!membershipIsActive}
+              allowEditEndDate={!isActive}
               groupId={groupMembership.groupId}
               defaultValues={{
                 roleIds: groupMembership.roles.map((role) => role.id),

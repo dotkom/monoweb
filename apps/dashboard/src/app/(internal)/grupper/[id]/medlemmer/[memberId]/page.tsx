@@ -4,7 +4,7 @@ import { useGroupPermissions } from "@/app/(internal)/grupper/use-group-permissi
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { getGroupDisplayName, isGroupMembershipActive, sortGroupRolesByPriority } from "@dotkomonline/rpc/group"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -42,7 +42,7 @@ export default function GroupMemberDetailsPage() {
   const startMembership = useStartGroupMembershipMutation()
   const endMembership = useEndGroupMembershipMutation()
 
-  const activeMemberships = groupMember.groupMemberships.filter((membership) => membership.end === null)
+  const activeMemberships = groupMember.groupMemberships.filter(isGroupMembershipActive)
 
   return (
     <div className="flex flex-col gap-4">
@@ -122,7 +122,9 @@ export default function GroupMemberDetailsPage() {
             {activeMemberships.map((membership) => (
               <div key={membership.id} className="flex flex-col gap-1">
                 <Title element="h3" className="text-lg font-semibold">
-                  {membership.roles.map((role) => role.name).join(", ")}
+                  {sortGroupRolesByPriority(membership.roles)
+                    .map((role) => role.name)
+                    .join(", ")}
                 </Title>
                 <Text>
                   {differenceInHours(new Date(), membership.start, { roundingMethod: "floor" }) < 1
