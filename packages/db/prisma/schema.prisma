@@ -1018,23 +1018,21 @@ model ApplicationPeriod {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   name      String
 
-  applicationsOpenStartDate DateTime @map("start_date") @db.Timestamptz(3)
-  applicationsOpenEndDate   DateTime @map("end_date") @db.Timestamptz(3)
-  interviewStartDate        DateTime @map("interview_start_date") @db.Timestamptz(3)
-  interviewEndDate          DateTime @map("interview_end_date") @db.Timestamptz(3)
+  applicationsStart DateTime @map("start_date") @db.Timestamptz(3) // Form opens
+  applicationsEnd   DateTime @map("end_date") @db.Timestamptz(3) // Form closes
+  interviewStartDate        DateTime @map("interview_start_date") @db.Timestamptz(3) // Interviews start
+  interviewEndDate          DateTime @map("interview_end_date") @db.Timestamptz(3) // Interviews end
+  
+  dayStartMinutes Int @default(480) @map("day_start_minutes") // start-time each day (08:00)
+  dayEndMinutes   Int @default(1320) @map("day_end_minutes") // end-time each day (22:00)
 
+  slotLengthMinutes Int      @default(10) @map("slot_length_minutes")
   isDraft Boolean @default(true) @map("is_draft")
 
   applications Application[]
   groups       ApplicationPeriodGroup[]
 
   @@map("application_period")
-}
-
-enum InterviewLength {
-  THIRTY_MINUTES  @map("THIRTY_MINUTES")
-  TWENTY_MINUTES  @map("TWENTY_MINUTES")
-  FIFTEEN_MINUTES @map("FIFTEEN_MINUTES")
 }
 
 model ApplicationPeriodGroup {
@@ -1045,20 +1043,14 @@ model ApplicationPeriodGroup {
   group               Group                   @relation(fields: [groupId], references: [slug])
   applicationPeriodId String                  @map("application_period_id")
   applicationPeriod   ApplicationPeriod       @relation(fields: [applicationPeriodId], references: [id])
-  interviewLength     InterviewLength         @map("interview_length")
+
+  slotsPerInterview      Int                  @map("slots_per_interview") // 1 means 10min interviewlength (default), 2 means 20min etc.
+  InterviewBlocks     InterviewBlock[]
   preferences         ApplicationPreference[]
-  bookedRooms         BookedRoom[]
 
   @@unique([applicationPeriodId, groupId])
   @@map("application_period_group")
 }
-
-enum ApplicationExtraInterest {
-  REALFAGSKJELLERER @map("REALFAGSKJELLERER")
-  FEMINIT
-  DOTDAGENE
-}
-
 model Application {
   id                           String            @id @default(uuid())
   createdAt                    DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -1068,9 +1060,8 @@ model Application {
   applicationPeriodId          String            @map("application_period_id")
   applicationPeriod            ApplicationPeriod @relation(fields: [applicationPeriodId], references: [id])
   aboutMe                      String?           @map("about_me")
-  isInterestedInBeingTreasurer Boolean           @default(false) @map("is_interested_in_being_treasurer")
+  isInterestedInBeingTreasurer Boolean           @default(false) @map("is_interested_in_being_treasurer") // is this something we need? 
 
-  extraInterest      ApplicationExtraInterest[] @map("extra_interest")
 
   preferences        ApplicationPreference[]
   availabilityBlocks ApplicationAvailability[]
@@ -1100,13 +1091,37 @@ model ApplicationAvailability {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  start DateTime @map("start") @db.Timestamptz(3)
-  end   DateTime @map("end") @db.Timestamptz(3)
+  day       Int
+  startSlot Int @map("start_slot")
+  endSlot   Int @map("end_slot")
 
   applicationId String      @map("application_id")
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@map("application_availability")
+}
+model InterviewBlock {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  day       Int
+  startSlot Int @map("start_slot") // inclusive
+  endSlot   Int @map("end_slot") // exclusive
+
+  interviewsBeforeBreak Int? @map("interviews_before_break")
+  breakSlots            Int  @default(1) @map("break_slots")
+
+  roomName    String  @map("room_name")
+  mazemapLink String? @map("mazemap_link")
+
+  applicationPeriodGroupId String                 @map("application_period_group_id")
+  applicationPeriodGroup   ApplicationPeriodGroup @relation(fields: [applicationPeriodGroupId], references: [id], onDelete: Cascade)
+
+  scheduledInterviews ScheduledInterview[]
+
+  @@index([applicationPeriodGroupId])
+  @@map("interview_block")
 }
 
 model ScheduledInterview {
@@ -1114,30 +1129,16 @@ model ScheduledInterview {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  start DateTime @map("start") @db.Timestamptz(3)
-  end   DateTime @map("end") @db.Timestamptz(3)
+  startSlot Int     @map("start_slot")
+  isLocked  Boolean @default(false) @map("is_locked") // manual placement, scheduler must keep it
 
   applicationPreferenceId String                @unique @map("application_preference_id")
   applicationPreference   ApplicationPreference @relation(fields: [applicationPreferenceId], references: [id], onDelete: Cascade)
 
-  bookedRoomId String     @map("booked_room_id")
-  bookedRoom   BookedRoom @relation(fields: [bookedRoomId], references: [id])
+  interviewBlockId String         @map("interview_block_id")
+  interviewBlock   InterviewBlock @relation(fields: [interviewBlockId], references: [id], onDelete: Restrict)
 
+  @@unique([interviewBlockId, startSlot])
   @@map("scheduled_interview")
 }
 
-model BookedRoom {
-  id                       String                 @id @default(uuid())
-  createdAt                DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  startTime                DateTime               @map("start_time") @db.Timestamptz(3)
-  endTime                  DateTime               @map("end_time") @db.Timestamptz(3)
-  name                     String                 @map("name")
-  mazemapLink              String?                @map("mazemap_link")
-  applicationPeriodGroupId String                 @map("application_period_group_id")
-  applicationPeriodGroup   ApplicationPeriodGroup @relation(fields: [applicationPeriodGroupId], references: [id])
-
-  scheduledInterviews ScheduledInterview[]
-
-  @@map("booked_room")
-}
