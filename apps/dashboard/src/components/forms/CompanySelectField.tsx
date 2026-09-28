@@ -16,6 +16,7 @@ type CompanySelectFieldProps<TFieldValues extends FieldValues> = {
   disabled?: boolean
   excludeCompanyIds?: CompanyId[]
   fixedWidth?: boolean
+  multiple?: boolean
 }
 
 export function CompanySelectField<TFieldValues extends FieldValues>({
@@ -28,12 +29,47 @@ export function CompanySelectField<TFieldValues extends FieldValues>({
   disabled,
   excludeCompanyIds,
   fixedWidth = false,
+  multiple = false,
 }: CompanySelectFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
   const error = getFieldErrorMessage(fieldState.error?.message)
   const id = String(name)
 
-  const value = typeof field.value === "string" ? field.value : ""
+  let Input = null
+
+  if (multiple) {
+    const value = Array.isArray(field.value) ? field.value : []
+
+    Input = (
+      <CompanySelectInput
+        multiple
+        id={id}
+        value={value}
+        onChange={field.onChange}
+        placeholder={placeholder}
+        disabled={combineFieldDisabled(field.disabled, disabled)}
+        required={required}
+        invalid={Boolean(error)}
+        excludeCompanyIds={excludeCompanyIds}
+      />
+    )
+  } else {
+    const value = typeof field.value === "string" ? field.value : ""
+
+    Input = (
+      <CompanySelectInput
+        id={id}
+        value={value}
+        onChange={field.onChange}
+        placeholder={placeholder}
+        disabled={combineFieldDisabled(field.disabled, disabled)}
+        required={required}
+        invalid={Boolean(error)}
+        excludeCompanyIds={excludeCompanyIds}
+        multiple={multiple}
+      />
+    )
+  }
 
   return (
     <FieldShell
@@ -44,16 +80,7 @@ export function CompanySelectField<TFieldValues extends FieldValues>({
       error={error}
       fixedWidth={fixedWidth}
     >
-      <CompanySelectInput
-        id={id}
-        value={value}
-        onChange={field.onChange}
-        placeholder={placeholder}
-        disabled={combineFieldDisabled(field.disabled, disabled)}
-        required={required}
-        invalid={Boolean(error)}
-        excludeCompanyIds={excludeCompanyIds}
-      />
+      {Input}
     </FieldShell>
   )
 }

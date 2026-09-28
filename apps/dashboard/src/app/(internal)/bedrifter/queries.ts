@@ -54,3 +54,17 @@ export const useCompanyBySlugQuery = (slug: CompanySlug) => {
   const trpc = useTRPC()
   return useQuery(trpc.company.getBySlug.queryOptions(slug))
 }
+
+export const useCompaniesByIdsQuery = (ids: CompanyId[], enabled?: boolean) => {
+  const trpc = useTRPC()
+  const { data, ...query } = useQuery({
+    ...trpc.company.findMany.queryOptions({ filter: { byIds: ids }, take: ids.length }),
+    select: (data) => data.items,
+    placeholderData: keepPreviousData,
+    enabled,
+  })
+
+  const companies = useMemo(() => data ?? [], [data])
+
+  return { companies, ...query }
+}

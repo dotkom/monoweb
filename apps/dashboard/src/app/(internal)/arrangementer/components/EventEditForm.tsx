@@ -131,7 +131,7 @@ export function EventEditForm({
         options={hostingGroups.map((group) => ({ value: group.slug, label: getGroupDisplayName(group) }))}
         required
       />
-      <CompanySelectField control={control} name="companyIds" label="Bedrifter" placeholder="Velg bedrifter" />
+      <CompanySelectField control={control} name="companyIds" label="Bedrifter" placeholder="Velg bedrifter" multiple />
       <SelectField<EventEditFormValues, EventEditFormValues["status"]>
         control={control}
         name="status"

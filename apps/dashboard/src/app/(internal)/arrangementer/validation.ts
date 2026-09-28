@@ -84,7 +84,7 @@ export const validateEventOrganizers = (hostingGroupIds: string[]): z.core.$ZodI
   if (!hasCommitteeOrganizer) {
     issues.push({
       code: "custom",
-      message: "Du må velge minst én komité som arrangør",
+      message: "Du må velge minst én gruppe som arrangør",
       path: ["hostingGroupIds"],
     })
   }
