@@ -9,11 +9,12 @@ import {
   type Attendance,
   type AttendanceSelectionResponse,
   buildRegistrationAvailabilityCompletionView,
+  getActualDeregisterDeadlineForAttendee,
   getAttendee,
 } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
-import { Text, Title, cn } from "@dotkomonline/ui"
+import { Badge, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconCoins, IconEdit } from "@tabler/icons-react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
@@ -30,11 +31,12 @@ import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMuta
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { EventRules } from "./EventRules"
-import { MainPoolCard } from "./MainPoolCard"
+import { MainPoolCard, type CompletionHighlightTarget } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
+import { useCompletionHighlightHidden } from "../../hooks/useCompletionHighlightHidden"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
@@ -71,6 +73,13 @@ export const AttendanceCard = ({
   const [turnstileHasFailed, setTurnstileHasFailed] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [hideTurnstile, setHideTurnstile] = useState(false)
+  const [completionHighlightTarget, setCompletionHighlightTarget] = useState<CompletionHighlightTarget>(null)
+  const { isHighlightHidden, toggleHighlightHidden } = useCompletionHighlightHidden()
+
+  const handleToggleCompletionHighlightHidden = () => {
+    setCompletionHighlightTarget(null)
+    toggleHighlightHidden()
+  }
 
   const { data: attendance } = useQuery(
     trpc.event.attendance.getAttendance.queryOptions(
@@ -130,7 +139,9 @@ export const AttendanceCard = ({
   const deregistration = registrationAvailability?.deregistration ?? null
   const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
 
-  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
+  const deregisterDeadlineForAttendee =
+    attendee !== null ? getActualDeregisterDeadlineForAttendee(attendance, attendee) : null
+  const deadlineTick = useDeadlineTick(attendee?.completionDeadline, deregisterDeadlineForAttendee)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
   const completion = useMemo(() => {
@@ -277,7 +288,9 @@ export const AttendanceCard = ({
     },
   })
 
-  const selectionsMutation = useSetSelectionsOptionsMutation()
+  const selectionsMutation = useSetSelectionsOptionsMutation({
+    attendanceId: attendance.id,
+  })
 
   const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
     if (!attendee) {
@@ -293,6 +306,17 @@ export const AttendanceCard = ({
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
   const paymentLink = completion?.paymentLink ?? null
   const showPaymentLink = paymentIsMissing && paymentLink !== null
+
+  const selectionsAreIncomplete = completion?.missingRequirements.includes("SELECTIONS") ?? false
+  const selectionsMissedDeadline = completion?.missedRequirements.includes("SELECTIONS") ?? false
+  const showPaymentHighlight =
+    !isHighlightHidden && (completionHighlightTarget === "payment" || completionHighlightTarget === "both")
+  const showSelectionHighlight =
+    !isHighlightHidden &&
+    selectionsAreIncomplete &&
+    (completionHighlightTarget === "selections" || completionHighlightTarget === "both")
+  const isPastDeregisterDeadline =
+    registrationAvailability?.deregistration?.isPastDeregisterDeadline ?? isPast(attendance.deregisterDeadline)
 
   const registerForAttendance = () => {
     if (!turnstileToken) {
@@ -368,6 +392,9 @@ export const AttendanceCard = ({
             chargeScheduleDate={chargeScheduleDate}
             registrationAvailability={registrationAvailability}
             hasAttachedActionBelow={showPaymentLink}
+            setCompletionHighlightTarget={setCompletionHighlightTarget}
+            isCompletionHighlightHidden={isHighlightHidden}
+            onToggleCompletionHighlightHidden={handleToggleCompletionHighlightHidden}
           />
 
           {showPaymentLink && (
@@ -375,7 +402,8 @@ export const AttendanceCard = ({
               href={paymentLink}
               className={cn(
                 "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 font-medium min-h-16",
-                "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+                "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600",
+                showPaymentHighlight && "ring-2 ring-offset-2 ring-red-400 dark:ring-red-600"
               )}
             >
               <IconCoins className="size-[1.25em]" />
@@ -387,15 +415,28 @@ export const AttendanceCard = ({
 
         {attendee?.registered && attendance.selections.length > 0 && (
           <div className="flex flex-col gap-2">
-            <Title element="p" size="sm" className="text-base">
-              Valg
-            </Title>
+            <div className="flex flex-row items-center gap-2">
+              <Title element="p" size="sm" className="text-base">
+                Valg
+              </Title>
+              {selectionsAreIncomplete && (
+                <Badge color="red" className="px-1.5 py-0 text-xs rounded-sm border-0 bg-red-100">
+                  Ikke fullført
+                </Badge>
+              )}
+              {selectionsMissedDeadline && (
+                <Badge color="red" className="px-1.5 py-0 text-xs rounded-sm border-0 bg-red-100">
+                  Frist utløpt
+                </Badge>
+              )}
+            </div>
 
             <SelectionsForm
               attendance={attendance}
               attendee={attendee}
               onSubmit={handleSelectionChange}
-              disabled={attendanceStatus === "CLOSED"}
+              disabled={attendanceStatus === "CLOSED" || isPastDeregisterDeadline}
+              showFieldHighlight={showSelectionHighlight}
             />
           </div>
         )}

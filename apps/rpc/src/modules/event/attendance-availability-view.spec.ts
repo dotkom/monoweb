@@ -242,6 +242,7 @@ describe("buildDeregistrationAvailabilityView", () => {
       completionDeadline: null,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
+      missedRequirements: [],
       paymentLink: null,
     })
   })
@@ -261,8 +262,69 @@ describe("buildDeregistrationAvailabilityView", () => {
       completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
+      missedRequirements: [],
       paymentLink: "https://example.com/pay",
     })
+  })
+
+  it("includes reserved completion state when selections are pending", () => {
+    const attendance = createAttendance({
+      attendancePrice: null,
+      selections: [
+        {
+          id: "selection-food",
+          name: "Mat",
+          options: [{ id: "option-meat", name: "Kjøtt" }],
+        },
+      ],
+    })
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      selections: [],
+    })
+
+    const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
+
+    expect(view.completion).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [{ requirement: "SELECTIONS", completed: false }],
+      missingRequirements: ["SELECTIONS"],
+      missedRequirements: [],
+      paymentLink: null,
+    })
+  })
+
+  it("marks selections as missed after deregister deadline", () => {
+    const deregisterDeadline = subHours(getCurrentUTC(), 1)
+    const attendance = createAttendance({
+      attendancePrice: null,
+      deregisterDeadline,
+      selections: [
+        {
+          id: "selection-food",
+          name: "Mat",
+          options: [{ id: "option-meat", name: "Kjøtt" }],
+        },
+      ],
+    })
+    const attendee = createAttendee({
+      completionDeadline: subHours(getCurrentUTC(), 2),
+      selections: [],
+    })
+
+    const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
+
+    expect(view.completion).toEqual({
+      attendeeState: "REGISTERED",
+      completionDeadline: attendee.completionDeadline,
+      requirements: [{ requirement: "SELECTIONS", completed: false }],
+      missingRequirements: [],
+      missedRequirements: ["SELECTIONS"],
+      paymentLink: null,
+    })
+    expect(view.deregistration?.isPastDeregisterDeadline).toBe(true)
   })
 
   it("requires deregister reason after grace period", () => {
