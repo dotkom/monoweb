@@ -6,6 +6,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { env } from "@/lib/env"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
@@ -73,6 +74,10 @@ export default function GroupDetailsLayout({ children }: PropsWithChildren) {
       title={getGroupDisplayName(data)}
       backHref="/grupper"
       navItems={navItems}
+      viewInWebProps={{
+        href: `${env.NEXT_PUBLIC_WEB_URL}/grupper/${data.slug}`,
+        label: "Se gruppen",
+      }}
       onDelete={() => {
         remove.mutate(data.slug)
       }}
