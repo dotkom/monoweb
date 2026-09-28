@@ -1,5 +1,8 @@
 import { Gender, type Prisma } from "../"
 
+export const HELLE_HUMMER_USER_ID = "9b224590-2f08-4a54-9491-5751cc948a12"
+export const GUNNAR_GAS_USER_ID = "2bdcc7ac-31ac-4a79-b1db-bce64a53c79f"
+
 export const getUserFixtures = () =>
   [
     {
@@ -87,7 +90,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "2bdcc7ac-31ac-4a79-b1db-bce64a53c79f",
+      id: GUNNAR_GAS_USER_ID,
       name: "Gunnar Gås",
       username: "gunnar",
       email: "gunnar@gaas.example.com",
@@ -101,7 +104,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "9b224590-2f08-4a54-9491-5751cc948a12",
+      id: HELLE_HUMMER_USER_ID,
       name: "Helle Hummer",
       username: "helle",
       email: "helle@hummer.example.com",
