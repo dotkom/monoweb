@@ -23,6 +23,12 @@ import { AttendanceStatus } from "@/components/molecules/EventListItem/Attendanc
 import { patchAttendanceFromRegisterChange } from "@/app/arrangementer/components/AttendanceCard/patchAttendanceFromRegisterChange"
 import { buildRegistrationAvailabilityCompletionView, getAttendeePaymentStatus } from "@dotkomonline/rpc/attendance"
 
+const completionHighlightProps = {
+  setCompletionHighlightTarget: vi.fn(),
+  isCompletionHighlightHidden: false,
+  onToggleCompletionHighlightHidden: vi.fn(),
+}
+
 beforeEach(() => {
   vi.stubGlobal("React", React)
 })
@@ -72,7 +78,12 @@ describe("event payment countdown", () => {
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("i køen")
@@ -101,7 +112,12 @@ describe("event payment countdown", () => {
     const updatedAttendance = patchAttendanceFromRegisterChange(attendance, { status: "deregistered", attendee })
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={updatedAttendance ?? attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={updatedAttendance ?? attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("Du er ikke påmeldt")
@@ -119,7 +135,12 @@ describe("event payment countdown", () => {
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("Du har reservert plass")
@@ -148,7 +169,12 @@ describe("event payment countdown", () => {
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("Fullfør påmeldingen innen")
@@ -179,7 +205,12 @@ describe("event payment countdown", () => {
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("Du har reservert 100 kr")
@@ -215,7 +246,12 @@ describe("event payment countdown", () => {
     expect(getAttendeePaymentStatus(updatedAttendee)).toBe("reserved")
 
     const markup = renderToStaticMarkup(
-      <MainPoolCard attendance={updatedAttendance ?? attendance} user={createMockUser()} authorizeUrl="/login" />
+      <MainPoolCard
+        {...completionHighlightProps}
+        attendance={updatedAttendance ?? attendance}
+        user={createMockUser()}
+        authorizeUrl="/login"
+      />
     )
 
     expect(markup).toContain("Du er påmeldt")
