@@ -797,6 +797,18 @@ model FeedbackFormAnswer {
   @@map("feedback_form_answer")
 }
 
+model AuditTransaction {
+  id        String   @id @default(uuid())
+  name      String
+  procedure String?  @map("procedure")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  logs AuditLog[]
+
+  @@map("audit_transaction")
+}
+
 model AuditLog {
   id            String   @id @default(uuid())
   tableName     String   @map("table_name")
@@ -811,6 +823,9 @@ model AuditLog {
   /// recurring tasks.
   user   User?   @relation(fields: [userId], references: [id])
   userId String? @map("user_id")
+
+  auditTransactionId String?           @map("audit_transaction_id")
+  auditTransaction   AuditTransaction? @relation(fields: [auditTransactionId], references: [id])
 
   @@map("audit_log")
 }

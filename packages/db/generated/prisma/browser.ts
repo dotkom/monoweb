@@ -178,6 +178,11 @@ export type FeedbackQuestionAnswerOptionLink = Prisma.FeedbackQuestionAnswerOpti
  */
 export type FeedbackFormAnswer = Prisma.FeedbackFormAnswerModel
 /**
+ * Model AuditTransaction
+ * 
+ */
+export type AuditTransaction = Prisma.AuditTransactionModel
+/**
  * Model AuditLog
  * 
  */

@@ -52,16 +52,23 @@ export function withDatabaseTransaction<TContext extends TRPCContext, TInput>(
   return handler
 }
 
+type SetAuditTransactionName = (name: string) => void
+
 /**
- * tRPC Middleware to attach audit entry logs to the transaction, if the user is authenticated
+ * tRPC Middleware to attach audit entry logs to the transaction, if the user is authenticated.
  *
  * Audit log entries are stored in the database for most mutations. We use the audit log to keep track of changes to
  * the application.
  */
 export function withAuditLogEntry<TContext extends TRPCContext & WithTransaction, TInput>() {
-  const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
+  const handler: MiddlewareFunction<
+    TContext,
+    TContext & WithTransaction & { setAuditTransactionName: SetAuditTransactionName },
+    TInput
+  > = async ({ ctx, next, path }) => {
     if (ctx.principal !== null) {
       // We use a PostgreSQL configuration parameter, isolated to the current transaction to tell which user is
+
       // performing a change. Additionally, we have a PostgreSQL trigger on most tables to insert entries into the
       // `audit_log` table upon change. This trigger reads the configuration parameter.
       //
@@ -70,7 +77,32 @@ export function withAuditLogEntry<TContext extends TRPCContext & WithTransaction
       // The PostgreSQL trigger is found inside the migrations folder in /packages/db.
       await ctx.handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal.subject}, true)`
     }
-    return await next({ ctx })
+
+    // Create an audit event that all subsequent audit log entries will be connected to.
+    // `path` is used as a temporary name as we don't know it until after the procedure has finished.
+    const auditTransaction = await ctx.handle.auditTransaction.create({
+      data: { name: path, procedure: path },
+    })
+    await ctx.handle.$executeRaw`SELECT set_config('app.audit_transaction_id', ${auditTransaction.id}, true)`
+
+    const auditTransactionName: { value?: string } = {}
+    const result = await next({
+      ctx: {
+        setAuditTransactionName(name: string) {
+          auditTransactionName.value = name
+        },
+      },
+    })
+
+    // After the procedure has finished, update the audit event with the actual name.
+    if (result.ok && auditTransactionName.value !== undefined) {
+      await ctx.handle.auditTransaction.update({
+        where: { id: auditTransaction.id },
+        data: { name: auditTransactionName.value },
+      })
+    }
+
+    return result
   }
   return handler
 }
