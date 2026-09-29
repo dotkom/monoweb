@@ -59,6 +59,7 @@ export interface GroupService {
   findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
   findLeadersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
+  getMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership>
   allMembershipsByUserId(handle: DBHandle, userId: UserId): Promise<GroupMembership[]>
   startMembership(
     handle: DBHandle,
@@ -145,7 +146,9 @@ export function getGroupService(
 
     async getBySlug(handle, groupSlug) {
       const group = await this.findBySlug(handle, groupSlug)
-      if (!group) throw new NotFoundError(`Group(ID=${groupSlug}) not found`)
+      if (!group) {
+        throw new NotFoundError(`Group(Slug=${groupSlug}) not found`)
+      }
       return group
     },
 
@@ -168,7 +171,7 @@ export function getGroupService(
     async getBySlugAndType(handle, groupSlug, groupType) {
       const group = await groupRepository.findBySlug(handle, groupSlug)
       if (!group || group.type !== groupType) {
-        throw new NotFoundError(`Group(ID=${groupSlug}, Type=${groupType}) not found`)
+        throw new NotFoundError(`Group(Slug=${groupSlug}, Type=${groupType}) not found`)
       }
       return group
     },
@@ -242,7 +245,7 @@ export function getGroupService(
           .sort((a, b) => compareDesc(a.start, b.start))
 
         if (groupMemberships.length === 0) {
-          throw new IllegalStateError(`No group memberships found for User(ID=${user.id}) in Group(ID=${groupSlug})`)
+          throw new IllegalStateError(`No group memberships found for User(ID=${user.id}) in Group(Slug=${groupSlug})`)
         }
 
         members.set(user.id, {
@@ -252,6 +255,15 @@ export function getGroupService(
       }
 
       return members
+    },
+
+    async getMembershipById(handle, groupMembershipId) {
+      const membership = await groupRepository.findGroupMembershipById(handle, groupMembershipId)
+      if (membership === null) {
+        throw new NotFoundError(`GroupMembership(ID=${groupMembershipId}) not found`)
+      }
+
+      return membership
     },
 
     async allMembershipsByUserId(handle, userId) {

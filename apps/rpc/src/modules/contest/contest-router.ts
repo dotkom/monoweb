@@ -1,11 +1,11 @@
-import { ContestSchema, ContestUpdateSchema, ContestWriteSchema, ContestantSchema } from "./contest"
+import { PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, or } from "../../authorization"
 import { ForbiddenError, InvalidArgumentError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { ContestSchema, ContestUpdateSchema, ContestWriteSchema, ContestantSchema } from "./contest"
 import { sanitizeContestantDetailsForPublic } from "./contest-service"
 
 export type CreateContestInput = inferProcedureInput<typeof createContestProcedure>
@@ -34,7 +34,14 @@ const createContestProcedure = procedure
       throw new InvalidArgumentError("Email-only groups cannot be used as organizers for contests")
     }
 
-    return ctx.contestService.create(ctx.handle, { ...input.contest, groups: [...allowedGroupSlugs] })
+    const createdContest = await ctx.contestService.create(ctx.handle, {
+      ...input.contest,
+      groups: [...allowedGroupSlugs],
+    })
+
+    ctx.setAuditTransactionName(`Create Contest(ID=${createdContest.id},Name=${createdContest.name})`)
+
+    return createdContest
   })
 
 export type UpdateContestInput = inferProcedureInput<typeof updateContestProcedure>
@@ -90,7 +97,11 @@ const updateContestProcedure = procedure
       )
     }
 
-    return ctx.contestService.update(ctx.handle, input.contestId, sanitizedInput)
+    const updatedContest = await ctx.contestService.update(ctx.handle, input.contestId, sanitizedInput)
+
+    ctx.setAuditTransactionName(`Update Contest(ID=${updatedContest.id},Name=${updatedContest.name})`)
+
+    return updatedContest
   })
 
 export type DeleteContestInput = inferProcedureInput<typeof deleteContestProcedure>
@@ -114,7 +125,11 @@ const deleteContestProcedure = procedure
       )
     }
 
-    return ctx.contestService.delete(ctx.handle, input.contestId)
+    await ctx.contestService.delete(ctx.handle, input.contestId)
+
+    ctx.setAuditTransactionName(`Delete Contest(ID=${contest.id},Name=${contest.name})`)
+
+    return contest
   })
 
 export type GetContestByIdInput = inferProcedureInput<typeof getContestByIdProcedure>
@@ -159,7 +174,16 @@ const setWinnerProcedure = procedure
       )
     }
 
-    return ctx.contestService.setWinner(ctx.handle, input.contestId, input.data.contestantId)
+    const updatedContest = await ctx.contestService.setWinner(ctx.handle, input.contestId, input.data.contestantId)
+
+    const auditTransactionName =
+      input.data.contestantId !== null
+        ? `Set Winner for Contest(ID=${contest.id},Name=${contest.name}) to Contestant(ID=${input.data.contestantId})`
+        : `Remove Winner from Contest(ID=${contest.id},Name=${contest.name})`
+
+    ctx.setAuditTransactionName(auditTransactionName)
+
+    return updatedContest
   })
 
 export type AddContestantInput = inferProcedureInput<typeof addContestantProcedure>
@@ -194,15 +218,32 @@ const addContestantProcedure = procedure
     }
 
     if ("teamName" in input.data) {
-      return ctx.contestService.addTeamContestant(
+      const addedTeamContestant = await ctx.contestService.addTeamContestant(
         ctx.handle,
         input.contestId,
         input.data.teamName,
         input.data.memberIds
       )
+
+      ctx.setAuditTransactionName(
+        `Add Contestant(ID=${addedTeamContestant.id},TeamName=${input.data.teamName}) to Contest(ID=${contest.id},Name=${contest.name})`
+      )
+
+      return addedTeamContestant
     }
 
-    return ctx.contestService.addUserContestant(ctx.handle, input.contestId, input.data.userId)
+    const addedUserContestant = await ctx.contestService.addUserContestant(
+      ctx.handle,
+      input.contestId,
+      input.data.userId
+    )
+    const user = await ctx.userService.getById(ctx.handle, input.data.userId)
+
+    ctx.setAuditTransactionName(
+      `Add Contestant(ID=${addedUserContestant.id},Name=${user.name}) to Contest(ID=${contest.id},Name=${contest.name})`
+    )
+
+    return addedUserContestant
   })
 
 export type RemoveContestantInput = inferProcedureInput<typeof removeContestantProcedure>
@@ -227,7 +268,13 @@ const removeContestantProcedure = procedure
       )
     }
 
-    return ctx.contestService.removeContestant(ctx.handle, input.contestantId)
+    await ctx.contestService.removeContestant(ctx.handle, input.contestantId)
+
+    ctx.setAuditTransactionName(
+      `Remove Contestant(ID=${contestant.id}) from Contest(ID=${contest.id},Name=${contest.name})`
+    )
+
+    return contestant
   })
 
 export type UpdateContestantResultInput = inferProcedureInput<typeof updateContestantResultProcedure>
@@ -255,7 +302,17 @@ const updateContestantResultProcedure = procedure
       )
     }
 
-    return ctx.contestService.updateContestantResult(ctx.handle, input.contestantId, input.data.resultValue)
+    const updatedContestantResult = await ctx.contestService.updateContestantResult(
+      ctx.handle,
+      input.contestantId,
+      input.data.resultValue
+    )
+
+    ctx.setAuditTransactionName(
+      `Update Contestant(ID=${updatedContestantResult.id}) result for Contest(ID=${contest.id},Name=${contest.name})`
+    )
+
+    return updatedContestantResult
   })
 
 export type UpdateTeamContestantInput = inferProcedureInput<typeof updateTeamContestantProcedure>
@@ -288,10 +345,18 @@ const updateTeamContestantProcedure = procedure
       )
     }
 
-    return ctx.contestService.updateTeamContestant(ctx.handle, input.contestantId, {
+    const updatedTeamContestant = await ctx.contestService.updateTeamContestant(ctx.handle, input.contestantId, {
       teamName: input.data.teamName,
       memberIds: input.data.memberIds,
     })
+
+    const teamNameAuditLogText = input.data.teamName !== undefined ? `,TeamName=${input.data.teamName}` : ""
+
+    ctx.setAuditTransactionName(
+      `Update Contestant(ID=${updatedTeamContestant.id}${teamNameAuditLogText}) for Contest(ID=${contest.id},Name=${contest.name})`
+    )
+
+    return updatedTeamContestant
   })
 
 export type GetContestWithContestantsInput = inferProcedureInput<typeof getContestWithContestantsProcedure>

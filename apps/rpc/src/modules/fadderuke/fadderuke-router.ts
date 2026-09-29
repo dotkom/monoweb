@@ -44,7 +44,11 @@ const createProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.fadderukeService.create(ctx.handle, input.fadderuke)
+    const createdFadderuke = await ctx.fadderukeService.create(ctx.handle, input.fadderuke)
+
+    ctx.setAuditTransactionName(`Create Fadderuke(ID=${createdFadderuke.id},Year=${createdFadderuke.year})`)
+
+    return createdFadderuke
   })
 
 export type UpdateFadderukeInput = inferProcedureInput<typeof updateProcedure>
@@ -57,7 +61,11 @@ const updateProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.fadderukeService.update(ctx.handle, input.fadderukeId, input.fadderuke)
+    const updatedFadderuke = await ctx.fadderukeService.update(ctx.handle, input.fadderukeId, input.fadderuke)
+
+    ctx.setAuditTransactionName(`Update Fadderuke(ID=${updatedFadderuke.id},Year=${updatedFadderuke.year})`)
+
+    return updatedFadderuke
   })
 
 export type DeleteFadderukeInput = inferProcedureInput<typeof deleteProcedure>
@@ -69,7 +77,11 @@ const deleteProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    await ctx.fadderukeService.delete(ctx.handle, input.fadderukeId)
+    const deletedFadderuke = await ctx.fadderukeService.delete(ctx.handle, input.fadderukeId)
+
+    ctx.setAuditTransactionName(`Delete Fadderuke(ID=${deletedFadderuke.id},Year=${deletedFadderuke.year})`)
+
+    return input.fadderukeId
   })
 
 export const fadderukeRouter = t.router({

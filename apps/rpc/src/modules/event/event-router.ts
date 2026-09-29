@@ -1,5 +1,18 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
+import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
+import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
+import { CompanySchema } from "../company/company"
+import { feedbackRouter } from "../feedback-form/feedback-router"
+import { GroupSchema } from "../group/group"
+import { UserSchema } from "../user/user"
 import { AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
+import { attendanceRouter } from "./attendance-router"
 import {
   BaseEventSchema,
   EventFilterQuerySchema,
@@ -10,19 +23,6 @@ import {
   EventWithFeedbackFormSchema,
   EventWriteSchema,
 } from "./event"
-import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
-import { CompanySchema } from "../company/company"
-import { GroupSchema } from "../group/group"
-import { UserSchema } from "../user/user"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isAdministrator, isCommitteeMember, or, isSameSubject } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
-import { feedbackRouter } from "../feedback-form/feedback-router"
-import { attendanceRouter } from "./attendance-router"
-import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
 
@@ -158,6 +158,9 @@ const createEventProcedure = procedure
       new Set(input.companyIds)
     )
     await ctx.eventService.updateEventParent(ctx.handle, event.id, input.parentId ?? null)
+
+    ctx.setAuditTransactionName(`Create Event(ID=${event.id},Title=${event.title})`)
+
     return { event, attendance: null }
   })
 
@@ -213,6 +216,9 @@ const editEventProcedure = procedure
     const attendance = updatedEventWithoutOrganizers.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, updatedEventWithoutOrganizers.attendanceId)
       : null
+
+    ctx.setAuditTransactionName(`Update Event(ID=${updatedEvent.id},Title=${updatedEvent.title})`)
+
     return { event: updatedEvent, attendance }
   })
 
@@ -240,7 +246,10 @@ const deleteEventProcedure = procedure
       }
     }
 
-    return await ctx.eventService.deleteEvent(ctx.handle, input.id)
+    const deletedEvent = await ctx.eventService.deleteEvent(ctx.handle, input.id)
+    ctx.setAuditTransactionName(`Delete Event(ID=${deletedEvent.id},Title=${deletedEvent.title})`)
+
+    return deletedEvent
   })
 
 export type AllEventsInput = inferProcedureInput<typeof allEventsProcedure>
@@ -485,10 +494,16 @@ const addAttendanceProcedure = procedure
 
     const attendance = await ctx.attendanceService.createAttendance(ctx.handle, input.values)
     const updatedEvent = await ctx.eventService.updateEventAttendance(ctx.handle, input.eventId, attendance.id)
+
+    ctx.setAuditTransactionName(
+      `Add Attendance(ID=${attendance.id}) to Event(ID=${input.eventId},Title=${event.title})`
+    )
+
     return { event: updatedEvent, attendance }
   })
 
 // TODO: rename this to `updateEventParent`
+// TODO: not used. maybe delete
 export type UpdateParentEventInput = inferProcedureInput<typeof updateParentEventProcedure>
 export type UpdateParentEventOutput = inferProcedureOutput<typeof updateParentEventProcedure>
 const updateParentEventProcedure = procedure
@@ -499,9 +514,12 @@ const updateParentEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const event = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const parentEvent = input.parentEventId
+      ? await ctx.eventService.getEventById(ctx.handle, input.parentEventId)
+      : null
 
-    if (event?.hostingGroups.length) {
+    if (event.hostingGroups.length) {
       const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
         ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
@@ -518,6 +536,14 @@ const updateParentEventProcedure = procedure
     const attendance = updatedEvent.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, updatedEvent.attendanceId)
       : null
+
+    const auditTransactionName =
+      parentEvent !== null
+        ? `Set Event(ID=${event.id},Title=${event.title}) parent to Event(ID=${parentEvent.id},Title=${parentEvent.title})`
+        : `Remove parent from Event(ID=${event.id},Title=${event.title})`
+
+    ctx.setAuditTransactionName(auditTransactionName)
+
     return { event: updatedEvent, attendance }
   })
 
@@ -642,7 +668,6 @@ const findManyDeregisterReasonsWithEventProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const rows = await ctx.eventService.findManyDeregisterReasonsWithEvent(ctx.handle, input)
     return {

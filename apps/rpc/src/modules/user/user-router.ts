@@ -1,4 +1,12 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
+import { InvalidArgumentError, UnauthorizedError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
+import { GroupRoleTypeSchema } from "../group/group"
 import {
   BugReportFormSchema,
   MembershipSchema,
@@ -7,14 +15,6 @@ import {
   UserSchema,
   UserWriteSchema,
 } from "./user"
-import { BasePaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
-import { InvalidArgumentError, UnauthorizedError } from "../../error"
-import { GroupRoleTypeSchema } from "../group/group"
 
 export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
 export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
@@ -74,7 +74,6 @@ const createUserFileUploadProcedure = procedure
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const userId = input?.userId ?? ctx.principal.subject
 
@@ -119,7 +118,11 @@ const createUserMembershipProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.userService.createMembership(ctx.handle, input.userId, input.data)
+    const user = await ctx.userService.createMembership(ctx.handle, input.userId, input.data)
+
+    ctx.setAuditTransactionName(`Create Membership for User(ID=${user.id},Name=${user.name})`)
+
+    return user
   })
 
 export type UpdateUserMembershipInput = inferProcedureInput<typeof updateUserMembershipProcedure>
@@ -136,7 +139,11 @@ const updateUserMembershipProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.userService.updateMembership(ctx.handle, input.membershipId, input.data)
+    const user = await ctx.userService.updateMembership(ctx.handle, input.membershipId, input.data)
+
+    ctx.setAuditTransactionName(`Update Membership(ID=${input.membershipId}) for User(ID=${user.id},Name=${user.name})`)
+
+    return user
   })
 
 export type DeleteUserMembershipInput = inferProcedureInput<typeof deleteUserMembershipProcedure>
@@ -152,7 +159,11 @@ const deleteUserMembershipProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.userService.deleteMembership(ctx.handle, input.membershipId)
+    const user = await ctx.userService.deleteMembership(ctx.handle, input.membershipId)
+
+    ctx.setAuditTransactionName(`Delete Membership(ID=${input.membershipId}) for User(ID=${user.id},Name=${user.name})`)
+
+    return user
   })
 
 export type GetMeInput = inferProcedureInput<typeof getMeProcedure>
@@ -203,7 +214,11 @@ const updateUserProcedure = procedure
       email = undefined
     }
 
-    return ctx.userService.update(ctx.handle, input.id, { name, email, ...data })
+    const user = await ctx.userService.update(ctx.handle, input.id, { name, email, ...data })
+
+    ctx.setAuditTransactionName(`Update User(ID=${user.id},Name=${user.name})`)
+
+    return user
   })
 
 export type RequestEmailChangeInput = inferProcedureInput<typeof requestEmailChangeProcedure>
@@ -214,7 +229,12 @@ const requestEmailChangeProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.userService.requestEmailChange(ctx.handle, ctx.principal.subject, input.newEmail)
+    const user = await ctx.userService.getById(ctx.handle, ctx.principal.subject)
+    const result = await ctx.userService.requestEmailChange(ctx.handle, user.id, input.newEmail)
+
+    ctx.setAuditTransactionName(`Request Email change for User(ID=${user.id},Name=${user.name})`)
+
+    return result
   })
 
 export type SyncEmailFromAuth0Input = inferProcedureInput<typeof syncEmailFromAuth0Procedure>
@@ -222,8 +242,14 @@ export type SyncEmailFromAuth0Output = inferProcedureOutput<typeof syncEmailFrom
 const syncEmailFromAuth0Procedure = procedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
   .mutation(async ({ ctx }) => {
-    return ctx.userService.syncEmailFromAuth0(ctx.handle, ctx.principal.subject)
+    const user = await ctx.userService.getById(ctx.handle, ctx.principal.subject)
+    const result = await ctx.userService.syncEmailFromAuth0(ctx.handle, user.id)
+
+    ctx.setAuditTransactionName(`Sync email from Auth0 for User(ID=${user.id},Name=${user.name})`)
+
+    return result
   })
 
 export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
@@ -310,7 +336,15 @@ const confirmIdentityLinkProcedure = procedure
       throw new InvalidArgumentError("Cannot link a user to themselves")
     }
 
-    return await ctx.userMergeService.mergeAndLinkIdentities(ctx.handle, primaryUserId, secondaryUserId)
+    const survivorUser = await ctx.userService.getById(ctx.handle, primaryUserId)
+    const consumedUser = await ctx.userService.getById(ctx.handle, secondaryUserId)
+    const result = await ctx.userMergeService.mergeAndLinkIdentities(ctx.handle, primaryUserId, secondaryUserId)
+
+    ctx.setAuditTransactionName(
+      `Merge and Link User(ID=${consumedUser.id},Name=${consumedUser.name}) into User(ID=${survivorUser.id},Name=${survivorUser.name})`
+    )
+
+    return result
   })
 
 // IMPORTANT: It does not make sense to link Auth0 identities WITHOUT merging the database users, as the user will be
@@ -337,20 +371,36 @@ const mergeUsersProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const { survivorUserId, consumedUserId, mergeInDatabase, linkAuth0Identities } = input
+    const survivorUser = await ctx.userService.getById(ctx.handle, survivorUserId)
+    const consumedUser = await ctx.userService.getById(ctx.handle, consumedUserId)
 
     if (linkAuth0Identities && mergeInDatabase) {
       const result = await ctx.userMergeService.mergeAndLinkIdentities(ctx.handle, survivorUserId, consumedUserId)
+
+      ctx.setAuditTransactionName(
+        `Merge and Link User(ID=${consumedUser.id},Name=${consumedUser.name}) into User(ID=${survivorUser.id},Name=${survivorUser.name})`
+      )
 
       return result.user
     }
 
     if (linkAuth0Identities) {
       await ctx.userMergeService.linkAuth0Identities(survivorUserId, consumedUserId)
+
+      ctx.setAuditTransactionName(
+        `Link User(ID=${consumedUserId},Name=${consumedUser.name}) to User(ID=${survivorUserId},Name=${survivorUser.name})`
+      )
     }
 
     const user = mergeInDatabase
       ? await ctx.userMergeService.merge(ctx.handle, survivorUserId, consumedUserId)
       : await ctx.userService.getById(ctx.handle, survivorUserId)
+
+    if (!linkAuth0Identities && mergeInDatabase) {
+      ctx.setAuditTransactionName(
+        `Merge User(ID=${consumedUserId},Name=${consumedUser.name}) into User(ID=${survivorUserId},Name=${survivorUser.name})`
+      )
+    }
 
     return user
   })

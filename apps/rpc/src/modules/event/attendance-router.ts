@@ -1,5 +1,16 @@
-import { on } from "node:events"
 import { TZDate } from "@date-fns/tz"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { TRPCError } from "@trpc/server"
+import { addHours, addMilliseconds, isPast } from "date-fns"
+import { on } from "node:events"
+import { z } from "zod"
+import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError, UnauthorizedError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, procedureTraceErrorsOnly, t } from "../../trpc"
+import type { GroupId } from "../group/group"
+import { UserSchema } from "../user/user"
 import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
@@ -8,26 +19,15 @@ import {
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DEREGISTER_GRACE_PERIOD_MS,
-  RegistrationAvailabilityViewSchema,
   RegisterChangeEventSchema,
+  RegistrationAvailabilityViewSchema,
 } from "./attendance"
-import { DeregisterReasonTypeSchema, EventSchema } from "./event"
-import type { GroupId } from "../group/group"
-import { UserSchema } from "../user/user"
-import { getCurrentUTC } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { TRPCError } from "@trpc/server"
-import { addHours, addMilliseconds, isPast } from "date-fns"
-import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
-import { FailedPreconditionError, InvalidArgumentError, NotFoundError, UnauthorizedError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
   buildDeregistrationAvailabilityView,
   buildRegistrationAvailabilityView,
   getRegistrationAvailabilityFailureCause,
 } from "./attendance-service"
+import { DeregisterReasonTypeSchema, EventSchema } from "./event"
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -43,7 +43,14 @@ const createPoolProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.attendanceService.createAttendancePool(ctx.handle, input.id, input.input)
+    const createdPool = await ctx.attendanceService.createAttendancePool(ctx.handle, input.id, input.input)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(
+      `Create AttendancePool(ID=${createdPool.id},Title=${createdPool.title}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return createdPool
   })
 
 export type UpdatePoolInput = inferProcedureInput<typeof updatePoolProcedure>
@@ -63,9 +70,20 @@ const updatePoolProcedure = procedure
     const attendance = await ctx.attendanceService.getAttendanceByPoolId(ctx.handle, input.id)
     const pool = attendance.pools.find((pool) => pool.id === input.id)
     if (pool === undefined) {
-      throw new TRPCError({ code: "NOT_FOUND" })
+      throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
     }
-    await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, { ...pool, ...input.input })
+
+    const updatedPool = await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, {
+      ...pool,
+      ...input.input,
+    })
+
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    ctx.setAuditTransactionName(
+      `Update AttendancePool(ID=${updatedPool.id},Title=${updatedPool.title}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return updatedPool
   })
 
 export type DeletePoolInput = inferProcedureInput<typeof deletePoolProcedure>
@@ -81,7 +99,19 @@ const deletePoolProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.attendanceService.deleteAttendancePool(ctx.handle, input.id)
+    const attendance = await ctx.attendanceService.getAttendanceByPoolId(ctx.handle, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+
+    const pool = attendance.pools.find((pool) => pool.id === input.id)
+    if (pool === undefined) {
+      throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
+    }
+
+    await ctx.attendanceService.deleteAttendancePool(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(
+      `Delete AttendancePool(ID=${input.id},Title=${pool.title}) for Event(ID=${event.id},Title=${event.title})`
+    )
   })
 
 export type DeleteAttendanceInput = inferProcedureInput<typeof deleteAttendanceProcedure>
@@ -112,7 +142,9 @@ const deleteAttendanceProcedure = procedure
       }
     }
 
-    return ctx.attendanceService.deleteAttendance(ctx.handle, input.id)
+    await ctx.attendanceService.deleteAttendance(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(`Delete Attendance(ID=${input.id}) for Event(ID=${event.id},Title=${event.title})`)
   })
 
 const ADMIN_REGISTER_DEFAULT_OPTIONS = {
@@ -159,10 +191,18 @@ const adminRegisterForEventProcedure = procedure
         overrideTurnstileCheck: input.options.overrideTurnstileCheck,
       }
     )
+
     if (!result.success) {
       throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
-    return await ctx.attendanceService.registerAttendee(ctx.handle, result)
+
+    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result)
+
+    ctx.setAuditTransactionName(
+      `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
+    )
+
+    return attendee
   })
 
 export type UpdateAttendancePaymentInput = inferProcedureInput<typeof updateAttendancePaymentProcedure>
@@ -180,10 +220,13 @@ const updateAttendancePaymentProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
-    if (attendance === undefined) {
-      throw new TRPCError({ code: "NOT_FOUND" })
-    }
-    return ctx.attendanceService.updateAttendancePaymentPrice(ctx.handle, input.id, input.price)
+
+    await ctx.attendanceService.updateAttendancePaymentPrice(ctx.handle, input.id, input.price)
+
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    ctx.setAuditTransactionName(
+      `Update AttendancePayment(AttendanceID=${attendance.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
   })
 
 export type GetSelectionsResultsInput = inferProcedureInput<typeof getSelectionsResultsProcedure>
@@ -276,10 +319,18 @@ const registerForEventProcedure = procedure
         overrideTurnstileCheck: false,
       }
     )
+
     if (!result.success) {
       throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
-    return await ctx.attendanceService.registerAttendee(ctx.handle, result)
+
+    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result)
+
+    ctx.setAuditTransactionName(
+      `Register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
+    )
+
+    return attendee
   })
 
 export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeProcedure>
@@ -308,7 +359,13 @@ const cancelAttendeePaymentProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: { attendeeId }, ctx }) => {
-    return ctx.attendanceService.cancelAttendeePayment(ctx.handle, attendeeId, ctx.principal.subject)
+    await ctx.attendanceService.cancelAttendeePayment(ctx.handle, attendeeId, ctx.principal.subject)
+
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    ctx.setAuditTransactionName(
+      `Cancel Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
   })
 
 export type StartAttendeePaymentInput = inferProcedureInput<typeof startAttendeePaymentProcedure>
@@ -322,12 +379,19 @@ const startAttendeePaymentProcedure = procedure
   .mutation(async ({ input: { attendeeId }, ctx }) => {
     const deadline = addHours(getCurrentUTC(), 24)
 
-    return ctx.attendanceService.startAttendeePayment(ctx.handle, attendeeId, deadline)
+    const payment = await ctx.attendanceService.startAttendeePayment(ctx.handle, attendeeId, deadline)
+
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    ctx.setAuditTransactionName(
+      `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return payment
   })
 
 export type DeregisterForEventInput = inferProcedureInput<typeof deregisterForEventProcedure>
 export type DeregisterForEventOutput = inferProcedureOutput<typeof deregisterForEventProcedure>
-
 const deregisterForEventProcedure = procedure
   .input(
     z.object({
@@ -361,9 +425,9 @@ const deregisterForEventProcedure = procedure
       ignoreDeregistrationWindow: false,
     })
 
-    if (input.deregisterReason) {
-      const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
 
+    if (input.deregisterReason) {
       await ctx.eventService.createDeregisterReason(ctx.handle, {
         ...input.deregisterReason,
         userId: ctx.principal.subject,
@@ -372,6 +436,10 @@ const deregisterForEventProcedure = procedure
         userGrade: attendee.userGrade,
       })
     }
+
+    ctx.setAuditTransactionName(
+      `Deregister Attendee(ID=${attendee.id},Name=${attendee.user.name}) from Event(ID=${event.id},Title=${event.title})`
+    )
   })
 
 export type AdminDeregisterForEventInput = inferProcedureInput<typeof adminDeregisterForEventProcedure>
@@ -388,9 +456,15 @@ const adminDeregisterForEventProcedure = procedure
     if (attendee === undefined) {
       throw new TRPCError({ code: "NOT_FOUND" })
     }
-    return await ctx.attendanceService.deregisterAttendee(ctx.handle, attendee.id, {
+
+    await ctx.attendanceService.deregisterAttendee(ctx.handle, attendee.id, {
       ignoreDeregistrationWindow: true,
     })
+
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    ctx.setAuditTransactionName(
+      `Admin deregister Attendee(ID=${attendee.id},Name=${attendee.user.name}) from Event(ID=${event.id},Title=${event.title})`
+    )
   })
 
 export type AdminUpdateAtteendeeReservedInput = inferProcedureInput<typeof adminUpdateAtteendeeReservedProcedure>
@@ -407,7 +481,17 @@ const adminUpdateAtteendeeReservedProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, { reserved: input.reserved })
+    const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
+      reserved: input.reserved,
+    })
+
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+
+    ctx.setAuditTransactionName(
+      `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) reserved to ${input.reserved} for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return attendee
   })
 
 export type RegisterAttendanceInput = inferProcedureInput<typeof registerAttendanceProcedure>
@@ -425,6 +509,16 @@ const registerAttendanceProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     await ctx.attendanceService.registerAttendance(ctx.handle, input.id, input.at ? new TZDate(input.at) : null)
+
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+
+    const auditTransactionName =
+      input.at !== null
+        ? `Register Attendance of Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+        : `Clear Attendance of Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+
+    ctx.setAuditTransactionName(auditTransactionName)
   })
 
 export type UpdateSelectionResponsesInput = inferProcedureInput<typeof updateSelectionResponsesProcedure>
@@ -457,7 +551,14 @@ const updateSelectionResponsesProcedure = procedure
       input
     )
 
-    await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, { selections: input.options })
+    const updatedAttendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
+      selections: input.options,
+    })
+    ctx.setAuditTransactionName(
+      `Update Selection Responses for Attendee(ID=${updatedAttendee.id},Name=${updatedAttendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return updatedAttendee
   })
 
 export type GetAttendanceInput = inferProcedureInput<typeof getAttendanceProcedure>
@@ -480,9 +581,15 @@ const updateAttendanceProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) =>
-    ctx.attendanceService.updateAttendanceById(ctx.handle, input.id, input.attendance)
-  )
+  .mutation(async ({ input, ctx }) => {
+    const updatedAttendance = await ctx.attendanceService.updateAttendanceById(ctx.handle, input.id, input.attendance)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, updatedAttendance.id)
+    ctx.setAuditTransactionName(
+      `Update Attendance(ID=${updatedAttendance.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return updatedAttendance
+  })
 
 export type FindChargeAttendeeScheduleDateInput = inferProcedureInput<typeof findChargeAttendeeScheduleDateProcedure>
 export type FindChargeAttendeeScheduleDateOutput = inferProcedureOutput<typeof findChargeAttendeeScheduleDateProcedure>
@@ -517,7 +624,6 @@ const notifyAttendeesProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
     const [firstGroupId, ...restGroupIds] = event.hostingGroups.map((g) => g.slug)
@@ -527,9 +633,11 @@ const notifyAttendeesProcedure = procedure
         : isAdministrator(),
       input
     )
+
     if (event.attendanceId === null) {
       throw new FailedPreconditionError("Event does not have attendance")
     }
+
     await ctx.attendanceService.notifyAttendees(ctx.handle, event.attendanceId, input.message)
   })
 
