@@ -250,6 +250,18 @@ export const navigationGroups: NavigationGroup[] = [
 
 export const navigations = navigationGroups.flatMap((group) => group.items)
 
+const navigationBreadcrumbLabels: Record<string, string> = {}
+
+for (const navigation of navigations) {
+  navigationBreadcrumbLabels[navigation.href] = navigation.label
+
+  for (const action of navigation.createActions ?? []) {
+    navigationBreadcrumbLabels[action.href] = action.label
+  }
+}
+
+export { navigationBreadcrumbLabels }
+
 export function filterNavigationsUserHasAccessTo(
   navigations: Navigation[],
   authorization: ReturnType<typeof useAuthorization>

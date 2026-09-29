@@ -5,6 +5,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import type { AuditLogTable } from "@dotkomonline/rpc/audit-log"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { IconAlignJustified, IconPlusMinus } from "@tabler/icons-react"
@@ -87,6 +88,9 @@ export default function AuditLogDetailsLayout({ children }: PropsWithChildren) {
   const { id: rawId } = useParams<{ id: string }>()
   const id = decodeURIComponent(rawId)
   const { data, isLoading, isError, error } = useAuditLogGetByIdQuery(id)
+
+  useBreadcrumbLabel(breadcrumbPath("logg", id), "Hendelse")
+  useBreadcrumbLabel(breadcrumbPath("logg", id, "endringer"), "Endringer")
 
   if (isLoading) {
     return null

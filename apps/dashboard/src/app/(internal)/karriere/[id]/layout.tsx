@@ -7,6 +7,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { createAbsoluteJobListingPageUrl } from "@dotkomonline/utils"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
@@ -19,6 +20,8 @@ export default function JobListingDetailsLayout({ children }: PropsWithChildren)
   const trpc = useTRPC()
   const { id } = useParams<{ id: string }>()
   const { data, isLoading, isError, error } = useQuery(trpc.jobListing.get.queryOptions(id))
+
+  useBreadcrumbLabel(breadcrumbPath("karriere", id), data?.title ?? null)
 
   if (isLoading) {
     return null

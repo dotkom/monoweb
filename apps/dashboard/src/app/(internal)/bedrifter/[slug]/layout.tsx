@@ -5,6 +5,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { IconBuildingWarehouse, IconCalendarEvent } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
@@ -16,6 +17,9 @@ export default function CompanyDetailsLayout({ children }: PropsWithChildren) {
   const { slug: rawSlug } = useParams<{ slug: string }>()
   const slug = decodeURIComponent(rawSlug)
   const { data, isLoading, isError, error } = useCompanyBySlugQuery(slug)
+
+  useBreadcrumbLabel(breadcrumbPath("bedrifter", slug), data?.name ?? null)
+  useBreadcrumbLabel(breadcrumbPath("bedrifter", slug, "arrangementer"), "Arrangementer")
 
   if (isLoading) {
     return null

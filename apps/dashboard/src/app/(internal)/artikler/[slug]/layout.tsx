@@ -5,6 +5,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
@@ -16,6 +17,8 @@ export default function ArticleDetailsLayout({ children }: PropsWithChildren) {
   const { slug: rawSlug } = useParams<{ slug: string }>()
   const slug = decodeURIComponent(rawSlug)
   const { data, isLoading, isError, error } = useArticleBySlugQuery(slug)
+
+  useBreadcrumbLabel(breadcrumbPath("artikler", slug), data?.title ?? null)
 
   if (isLoading) {
     return null
