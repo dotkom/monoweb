@@ -5,12 +5,12 @@ import { Title } from "@dotkomonline/ui"
 import { useState } from "react"
 import { AuditLogFilters } from "./AuditLogFilters"
 import { AuditLogTable } from "./AuditLogTable"
-import { useAuditLogSearchQuery } from "./queries"
+import { useAuditActivityInfiniteQuery } from "./queries"
 
 export default function AuditLogDetailsPage() {
   const [filter, setFilter] = useState<AuditLogFilterQuery>({})
-  const { auditLogs, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useAuditLogSearchQuery({ filter })
+  const { auditActivities, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useAuditActivityInfiniteQuery({ filter })
 
   return (
     <div className="flex flex-col gap-4">
@@ -21,7 +21,7 @@ export default function AuditLogDetailsPage() {
         <AuditLogFilters onChange={setFilter} defaultValues={filter} />
 
         <AuditLogTable
-          auditLogs={auditLogs}
+          auditActivities={auditActivities}
           isLoading={isLoading}
           isPlaceholderData={isPlaceholderData}
           isFetchingNextPage={isFetchingNextPage}

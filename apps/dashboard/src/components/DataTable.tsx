@@ -2,7 +2,9 @@ import { getTableColumnClassName } from "@/components/table-column-classes"
 import { cn, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text } from "@dotkomonline/ui"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { flexRender, type Table as ReactTable, type Row } from "@tanstack/react-table"
-import { useEffect, useRef, type CSSProperties } from "react"
+import { useEffect, useRef, type CSSProperties, type MouseEvent } from "react"
+
+const INTERACTIVE_ROW_CLICK_SELECTOR = "a, button, input, label, textarea, select"
 
 export interface DataTableProps<T> {
   readonly table: ReactTable<T>
@@ -10,6 +12,7 @@ export interface DataTableProps<T> {
   getRowClassName?: (row: Row<T>) => string | undefined
   getRowStyle?: (row: Row<T>) => CSSProperties | undefined
   getCellStyle?: (row: Row<T>, columnIndex: number) => CSSProperties | undefined
+  onRowClick?: (row: Row<T>, event: MouseEvent<HTMLTableRowElement>) => void
   hasNextPage?: boolean
   isFetchingNextPage?: boolean
   fetchNextPage?: () => void
@@ -23,6 +26,7 @@ export function DataTable<T>({
   getRowClassName,
   getRowStyle,
   getCellStyle,
+  onRowClick,
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
@@ -104,7 +108,12 @@ export function DataTable<T>({
               <TableRow
                 key={row.id}
                 style={{ ...getRowStyle?.(row) }}
-                className={cn("hover:bg-transparent transition-colors duration-200", getRowClassName?.(row))}
+                className={cn(
+                  "transition-colors duration-200",
+                  onRowClick ? "cursor-pointer" : "hover:bg-transparent",
+                  getRowClassName?.(row)
+                )}
+                onClick={onRowClick ? (event) => handleRowClick(row, event, onRowClick) : undefined}
               >
                 {row.getVisibleCells().map((cell, columnIndex) => (
                   <TableCell
@@ -125,4 +134,17 @@ export function DataTable<T>({
       </div>
     </div>
   )
+}
+
+// TODO: burn this
+function handleRowClick<T>(
+  row: Row<T>,
+  event: MouseEvent<HTMLTableRowElement>,
+  onRowClick: (row: Row<T>, event: MouseEvent<HTMLTableRowElement>) => void
+) {
+  if (event.target instanceof Element && event.target.closest(INTERACTIVE_ROW_CLICK_SELECTOR)) {
+    return
+  }
+
+  onRowClick(row, event)
 }

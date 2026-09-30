@@ -2,7 +2,7 @@
 
 import { AuditLogFilters } from "@/app/(internal)/logg/AuditLogFilters"
 import { AuditLogTable } from "@/app/(internal)/logg/AuditLogTable"
-import { useAuditLogSearchQuery } from "@/app/(internal)/logg/queries"
+import { useAuditActivityInfiniteQuery } from "@/app/(internal)/logg/queries"
 import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { Title } from "@dotkomonline/ui"
 import { useState } from "react"
@@ -13,13 +13,13 @@ export default function UserAuditLogPage() {
 
   const [filter, setFilter] = useState<AuditLogFilterQuery>()
   const {
-    auditLogs,
+    auditActivities,
     isLoading: isAuditLogsLoading,
     fetchNextPage,
     isPlaceholderData,
     isFetchingNextPage,
     hasNextPage,
-  } = useAuditLogSearchQuery({
+  } = useAuditActivityInfiniteQuery({
     filter: {
       ...filter,
       byUserId: [user.id],
@@ -31,15 +31,17 @@ export default function UserAuditLogPage() {
       <Title element="h2" className="text-2xl font-semibold">
         Hendelseslogg
       </Title>
-      <AuditLogFilters onChange={setFilter} />
-      <AuditLogTable
-        auditLogs={auditLogs}
-        isLoading={isAuditLogsLoading}
-        isPlaceholderData={isPlaceholderData}
-        isFetchingNextPage={isFetchingNextPage}
-        hasNextPage={hasNextPage ?? false}
-        fetchNextPage={fetchNextPage}
-      />
+      <div className="flex flex-col gap-2">
+        <AuditLogFilters onChange={setFilter} />
+        <AuditLogTable
+          auditActivities={auditActivities}
+          isLoading={isAuditLogsLoading}
+          isPlaceholderData={isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage ?? false}
+          fetchNextPage={fetchNextPage}
+        />
+      </div>
     </div>
   )
 }

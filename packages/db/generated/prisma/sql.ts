@@ -5,4 +5,6 @@
 // @ts-nocheck 
 export { type $DbEnums } from "./sql/$DbEnums"
 
+export * from "./sql/findAuditActivityIds"
+
 export * from "./sql/findFeaturedEvents"

@@ -51,6 +51,7 @@ export const AuditLogSchema = z.object({
   operation: z.string(),
   rowData: z.unknown(),
   transactionId: z.bigint(),
+  auditTransactionId: z.string().nullable(),
   userId: z.string().nullable(),
   user: UserSchema.omit({ memberships: true }).nullable(),
 })
@@ -64,7 +65,47 @@ export const AuditLogFilterQuerySchema = z
     byUserId: z.array(UserSchema.shape.id).optional(),
     byTableName: z.array(AuditLogTable).optional(),
     byOperation: z.array(AuditLogOperation).optional(),
+    byProcedure: z.array(z.string()).optional(),
   })
   .partial()
 
 export type AuditLogTable = z.infer<typeof AuditLogTable>
+
+export const AuditTransactionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  procedure: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+export type AuditTransaction = z.infer<typeof AuditTransactionSchema>
+
+export const AuditTransactionWithLogsSchema = AuditTransactionSchema.extend({
+  logs: z.array(AuditLogSchema),
+})
+
+export type AuditTransactionWithLogs = z.infer<typeof AuditTransactionWithLogsSchema>
+
+export const AuditActivityTypeSchema = z.enum(["audit_log", "audit_transaction"])
+export type AuditActivityType = z.infer<typeof AuditActivityTypeSchema>
+
+export const AuditActivityIdSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  type: AuditActivityTypeSchema,
+})
+
+export type AuditActivityId = z.infer<typeof AuditActivityIdSchema>
+
+export const AuditActivitySchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  name: z.string().nullable(),
+  procedure: z.string().nullable(),
+  userId: z.string().nullable(),
+  user: UserSchema.omit({ memberships: true }).nullable(),
+  logs: z.array(AuditLogSchema),
+})
+
+export type AuditActivity = z.infer<typeof AuditActivitySchema>
