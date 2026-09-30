@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  react-weekly-availability-calendar@1.6.1:
+    hash: 2ae71a8595037cebde4e37ae79e014d2b4a705402256450f952a1fcc0f7fa82c
+    path: patches/react-weekly-availability-calendar@1.6.1.patch
+
 importers:
 
   .:
@@ -61,7 +66,7 @@ importers:
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.71.2(react@19.2.8))(valibot@1.2.0(typescript@5.9.3))(zod@4.4.3)
       '@sentry/nextjs':
         specifier: ^10.52.0
-        version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))
+        version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))
       '@tabler/icons-react':
         specifier: ^3.34.1
         version: 3.48.0(react@19.2.8)
@@ -121,7 +126,7 @@ importers:
         version: 6.2.12
       next:
         specifier: 16.3.6
-        version: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-plausible:
         specifier: ^3.12.4
         version: 3.12.5(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -348,7 +353,7 @@ importers:
         version: 28.1.0(@noble/hashes@1.8.0)
       next:
         specifier: ^16.3.4
-        version: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
         specifier: ^4.8.3
         version: 4.14.6(@swc/helpers@0.5.23)(@types/react@19.2.18)(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -621,6 +626,9 @@ importers:
       '@dotkomonline/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@hello-pangea/dnd':
+        specifier: 18.0.1
+        version: 18.0.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hookform/error-message':
         specifier: ^2.0.1
         version: 2.0.1(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.71.2(react@19.2.8))(react@19.2.8)
@@ -650,10 +658,10 @@ importers:
         version: 1.2.18(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@sentry/nextjs':
         specifier: ^10.52.0
-        version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))
+        version: 10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.12.98)(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@splinetool/runtime@1.12.98)(next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@splinetool/runtime':
         specifier: ^1.9.98
         version: 1.12.98
@@ -710,7 +718,7 @@ importers:
         version: 28.1.0(@noble/hashes@1.8.0)
       next:
         specifier: 16.3.6
-        version: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-plausible:
         specifier: ^3.12.4
         version: 3.12.5(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -735,6 +743,9 @@ importers:
       react-turnstile:
         specifier: ^1.1.5
         version: 1.1.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react-weekly-availability-calendar:
+        specifier: ^1.6.1
+        version: 1.6.1(patch_hash=2ae71a8595037cebde4e37ae79e014d2b4a705402256450f952a1fcc0f7fa82c)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       recharts:
         specifier: ^3.1.0
         version: 3.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@16.13.1)(react@19.2.8)(redux@5.0.1)
@@ -1528,10 +1539,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime@7.28.6':
-    resolution: {integrity: sha512-05WQkdpL9COIMz4LjTxGpPNCdlpyimKppYNoJ5Di5EUObifl8t4tuLuUBBZEpoLYOmfvIWrsp9fCl0HoPRVTdA==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.29.7':
     resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
@@ -8012,6 +8019,13 @@ packages:
       react: '>= 16.13.1'
       react-dom: '>= 16.13.1'
 
+  react-weekly-availability-calendar@1.6.1:
+    resolution: {integrity: sha512-LTBqvtwQWrQsVwb0nV5ac0Dz7LTZSw6eFMzgCMJMOsPdkZsIjH8kwhxQ42Pl1I/ATRfZ787TYf1Gq926HfpbXQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+
   react-zxing@2.1.0:
     resolution: {integrity: sha512-iFZ8KPfZl+biiT5/bluuMGaSLQAwnE0ialQHbJioHFuwqhCo1WmjQmAtI4WN8BmiKYFVkHGgwHSl+pgwpwtQEg==}
     engines: {node: ^18 || ^20 || ^22, yarn: ^1.22}
@@ -9288,7 +9302,7 @@ snapshots:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
       jose: 6.2.12
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       oauth4webapi: 3.8.8
       openid-client: 6.8.8
       react: 19.2.8
@@ -9737,8 +9751,6 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.29.7(@babel/core@7.28.6)
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/runtime@7.28.6': {}
 
   '@babel/runtime@7.29.7': {}
 
@@ -10251,7 +10263,7 @@ snapshots:
 
   '@hello-pangea/dnd@18.0.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.7
       css-box-model: 1.2.1
       raf-schd: 4.0.3
       react: 19.2.8
@@ -11988,7 +12000,7 @@ snapshots:
 
   '@sentry/core@10.52.0': {}
 
-  '@sentry/nextjs@10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))':
+  '@sentry/nextjs@10.52.0(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.1))(next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/semantic-conventions': 1.40.0
@@ -12001,7 +12013,7 @@ snapshots:
       '@sentry/react': 10.52.0(react@19.2.8)
       '@sentry/vercel-edge': 10.52.0
       '@sentry/webpack-plugin': 5.2.1(webpack@5.104.1(lightningcss@1.30.2)(postcss@8.5.28))
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       rollup: 4.56.0
       stacktrace-parser: 0.1.11
     transitivePeerDependencies:
@@ -12026,7 +12038,7 @@ snapshots:
       '@sentry/react': 10.52.0(react@19.2.8)
       '@sentry/vercel-edge': 10.52.0
       '@sentry/webpack-plugin': 5.2.1(webpack@5.104.1(postcss@8.5.28))
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       rollup: 4.56.0
       stacktrace-parser: 0.1.11
     transitivePeerDependencies:
@@ -12172,7 +12184,7 @@ snapshots:
       color: 5.0.3
       text-hex: 1.0.0
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.98)(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.98)(next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@splinetool/runtime': 1.12.98
       blurhash: 2.0.5
@@ -12182,7 +12194,7 @@ snapshots:
       react-merge-refs: 2.1.1
       thumbhash: 0.1.1
     optionalDependencies:
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   '@splinetool/runtime@1.12.98':
     dependencies:
@@ -12629,7 +12641,7 @@ snapshots:
     dependencies:
       '@trpc/client': 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.8.1(typescript@5.9.3)
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       typescript: 5.9.3
@@ -15823,7 +15835,7 @@ snapshots:
       '@swc/core': 1.16.2(@swc/helpers@0.5.23)
       icu-minify: 4.14.7
       negotiator: 1.1.0
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl-swc-plugin-extractor: 4.14.6
       react: 19.2.8
       use-intl: 4.14.7(@types/react@19.2.18)(react@19.2.8)
@@ -15833,7 +15845,7 @@ snapshots:
 
   next-plausible@3.12.5(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
@@ -15868,7 +15880,7 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  next@16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 16.3.6
       '@swc/helpers': 0.5.23
@@ -15934,7 +15946,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       react: 19.2.8
     optionalDependencies:
-      next: 16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next: 16.3.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   oauth4webapi@3.8.8: {}
 
@@ -16571,6 +16583,11 @@ snapshots:
       '@types/react': 19.2.18
 
   react-turnstile@1.1.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+
+  react-weekly-availability-calendar@1.6.1(patch_hash=2ae71a8595037cebde4e37ae79e014d2b4a705402256450f952a1fcc0f7fa82c)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
