@@ -69,7 +69,7 @@ export function getAuditLogService(auditLogRepository: AuditLogRepository): Audi
       for (const activityId of activityIds) {
         if (activityId.type === AuditActivityTypeSchema.enum.audit_log) {
           const auditLog = auditLogs.find((log) => log.id === activityId.id)
-          if (auditLog !== undefined) {
+          if (auditLog !== undefined && !isTimestampOnlyUpdate(auditLog)) {
             auditActivities.push({
               id: activityId.id,
               createdAt: activityId.createdAt,
@@ -85,7 +85,12 @@ export function getAuditLogService(auditLogRepository: AuditLogRepository): Audi
             (transaction) => transaction.id === activityId.id
           )
           if (auditTransactionWithLogs !== undefined) {
-            const user = auditTransactionWithLogs.logs.at(0)?.user
+            const logs = auditTransactionWithLogs.logs.filter((log) => !isTimestampOnlyUpdate(log))
+            if (logs.length === 0) {
+              continue
+            }
+
+            const user = logs.at(0)?.user
 
             auditActivities.push({
               id: activityId.id,
@@ -94,7 +99,7 @@ export function getAuditLogService(auditLogRepository: AuditLogRepository): Audi
               procedure: auditTransactionWithLogs.procedure,
               userId: user?.id ?? null,
               user: user ?? null,
-              logs: auditTransactionWithLogs.logs,
+              logs,
             })
           }
         }
@@ -103,4 +108,17 @@ export function getAuditLogService(auditLogRepository: AuditLogRepository): Audi
       return auditActivities
     },
   }
+}
+
+function isTimestampOnlyUpdate(auditLog: AuditLog) {
+  if (auditLog.operation !== "UPDATE" || !isRecord(auditLog.rowData)) {
+    return false
+  }
+
+  const keys = Object.keys(auditLog.rowData).filter((key) => key !== "updated_at" && key !== "updatedAt")
+  return keys.length === 0
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }
