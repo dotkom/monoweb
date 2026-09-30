@@ -416,6 +416,7 @@ export const ModelName = {
   FeedbackQuestionAnswer: 'FeedbackQuestionAnswer',
   FeedbackQuestionAnswerOptionLink: 'FeedbackQuestionAnswerOptionLink',
   FeedbackFormAnswer: 'FeedbackFormAnswer',
+  AuditTransaction: 'AuditTransaction',
   AuditLog: 'AuditLog',
   DeregisterReason: 'DeregisterReason',
   NotificationRecipient: 'NotificationRecipient',
@@ -441,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2813,6 +2814,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AuditTransaction: {
+      payload: Prisma.$AuditTransactionPayload<ExtArgs>
+      fields: Prisma.AuditTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.AuditTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.AuditTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.AuditTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AuditTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.AuditTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        update: {
+          args: Prisma.AuditTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AuditTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.AuditTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditTransaction>
+        }
+        groupBy: {
+          args: Prisma.AuditTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditTransactionCountAggregateOutputType> | number
+        }
+      }
+    }
     AuditLog: {
       payload: Prisma.$AuditLogPayload<ExtArgs>
       fields: Prisma.AuditLogFieldRefs
@@ -4041,6 +4116,17 @@ export const FeedbackFormAnswerScalarFieldEnum = {
 export type FeedbackFormAnswerScalarFieldEnum = (typeof FeedbackFormAnswerScalarFieldEnum)[keyof typeof FeedbackFormAnswerScalarFieldEnum]
 
 
+export const AuditTransactionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  procedure: 'procedure',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AuditTransactionScalarFieldEnum = (typeof AuditTransactionScalarFieldEnum)[keyof typeof AuditTransactionScalarFieldEnum]
+
+
 export const AuditLogScalarFieldEnum = {
   id: 'id',
   tableName: 'tableName',
@@ -4049,7 +4135,8 @@ export const AuditLogScalarFieldEnum = {
   operation: 'operation',
   rowData: 'rowData',
   transactionId: 'transactionId',
-  userId: 'userId'
+  userId: 'userId',
+  auditTransactionId: 'auditTransactionId'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
@@ -4751,6 +4838,7 @@ export type GlobalOmitConfig = {
   feedbackQuestionAnswer?: Prisma.FeedbackQuestionAnswerOmit
   feedbackQuestionAnswerOptionLink?: Prisma.FeedbackQuestionAnswerOptionLinkOmit
   feedbackFormAnswer?: Prisma.FeedbackFormAnswerOmit
+  auditTransaction?: Prisma.AuditTransactionOmit
   auditLog?: Prisma.AuditLogOmit
   deregisterReason?: Prisma.DeregisterReasonOmit
   notificationRecipient?: Prisma.NotificationRecipientOmit

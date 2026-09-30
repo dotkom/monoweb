@@ -83,6 +83,7 @@ export const ModelName = {
   FeedbackQuestionAnswer: 'FeedbackQuestionAnswer',
   FeedbackQuestionAnswerOptionLink: 'FeedbackQuestionAnswerOptionLink',
   FeedbackFormAnswer: 'FeedbackFormAnswer',
+  AuditTransaction: 'AuditTransaction',
   AuditLog: 'AuditLog',
   DeregisterReason: 'DeregisterReason',
   NotificationRecipient: 'NotificationRecipient',
@@ -556,6 +557,17 @@ export const FeedbackFormAnswerScalarFieldEnum = {
 export type FeedbackFormAnswerScalarFieldEnum = (typeof FeedbackFormAnswerScalarFieldEnum)[keyof typeof FeedbackFormAnswerScalarFieldEnum]
 
 
+export const AuditTransactionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  procedure: 'procedure',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AuditTransactionScalarFieldEnum = (typeof AuditTransactionScalarFieldEnum)[keyof typeof AuditTransactionScalarFieldEnum]
+
+
 export const AuditLogScalarFieldEnum = {
   id: 'id',
   tableName: 'tableName',
@@ -564,7 +576,8 @@ export const AuditLogScalarFieldEnum = {
   operation: 'operation',
   rowData: 'rowData',
   transactionId: 'transactionId',
-  userId: 'userId'
+  userId: 'userId',
+  auditTransactionId: 'auditTransactionId'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
