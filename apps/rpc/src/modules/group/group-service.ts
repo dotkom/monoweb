@@ -92,6 +92,7 @@ export interface GroupService {
 
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
+  deleteRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
 
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
@@ -333,6 +334,10 @@ export function getGroupService(
 
     async updateRole(handle, groupRoleId, groupRoleData) {
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
+    },
+
+    async deleteRole(handle, groupRoleId) {
+      return await groupRepository.deleteGroupRole(handle, groupRoleId)
     },
 
     simplifyMemberships(memberships) {

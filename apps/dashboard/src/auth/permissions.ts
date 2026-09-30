@@ -253,7 +253,7 @@ export function canManageGroupMembership(
 }
 
 /**
- * `group.createRole`, `group.updateRole` procedures
+ * `group.createRole`, `group.updateRole`, `group.deleteRole` procedures
  */
 export function canManageGroupRoles(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
   if (state.isAdministrator) {

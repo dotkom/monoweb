@@ -408,6 +408,27 @@ const updateRoleProcedure = procedure
     return ctx.groupService.updateRole(ctx.handle, input.id, input.role)
   })
 
+export type DeleteRoleInput = inferProcedureInput<typeof deleteRoleProcedure>
+export type DeleteRoleOutput = inferProcedureOutput<typeof deleteRoleProcedure>
+const deleteRoleProcedure = procedure
+  .input(GroupRoleSchema.shape.id)
+  .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        hasGroupRole((input) => input, GroupRoleTypeEnum.LEADER),
+        hasGroupRole((input) => input, GroupRoleTypeEnum.DEPUTY_LEADER),
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
+      )
+    )
+  )
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.groupService.deleteRole(ctx.handle, input)
+  })
+
 export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
 export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
@@ -443,5 +464,6 @@ export const groupRouter = t.router({
   deleteGroupMembership: deleteMembershipProcedure,
   createRole: createRoleProcedure,
   updateRole: updateRoleProcedure,
+  deleteRole: deleteRoleProcedure,
   createFileUpload: createFileUploadProcedure,
 })
