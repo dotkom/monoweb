@@ -6,8 +6,8 @@ import type { AuditActivity, AuditLog } from "@dotkomonline/rpc/audit-log"
 import { Badge, Button, Text, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconChevronDown, IconChevronRight, IconCornerDownRight, IconEye, IconEyeOff } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
-import { useRouter } from "next/navigation"
 import { useCallback, useMemo, useState } from "react"
+import { AuditLogModal } from "./AuditLogModal"
 
 type AuditTableRow =
   | {
@@ -36,9 +36,10 @@ export const AuditLogTable = ({
   hasNextPage,
   fetchNextPage,
 }: Props) => {
-  const router = useRouter()
   const [expandedActivityIds, setExpandedActivityIds] = useState<ReadonlySet<string>>(() => new Set())
   const [hideIds, setHideIds] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLog | null>(null)
 
   const toggleExpanded = useCallback((activityId: string) => {
     setExpandedActivityIds((current) => {
@@ -229,43 +230,58 @@ export const AuditLogTable = ({
   })
 
   return (
-    <DataTable
-      table={table}
-      isLoading={isLoading}
-      isPlaceholderData={isPlaceholderData}
-      isFetchingNextPage={isFetchingNextPage}
-      hasNextPage={hasNextPage}
-      fetchNextPage={fetchNextPage}
-      onRowClick={(row) => {
-        const tableRow = row.original
+    <>
+      <DataTable
+        table={table}
+        isLoading={isLoading}
+        isPlaceholderData={isPlaceholderData}
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+        onRowClick={(row) => {
+          const tableRow = row.original
 
-        if (tableRow.kind === "child") {
-          router.push(`/logg/${tableRow.log.id}`)
-          return
-        }
+          if (tableRow.kind === "child") {
+            setSelectedAuditLog(tableRow.log)
+            setIsModalOpen(true)
+            return
+          }
 
-        if (canExpandActivity(tableRow.activity)) {
-          toggleExpanded(tableRow.activity.id)
-          return
-        }
+          if (canExpandActivity(tableRow.activity)) {
+            toggleExpanded(tableRow.activity.id)
+            return
+          }
 
-        const log = tableRow.activity.logs.at(0)
-        if (log !== undefined) {
-          router.push(`/logg/${log.id}`)
-        }
-      }}
-      getRowClassName={(row) => {
-        const expandedGroupClassname = "bg-muted/80 dark:bg-muted/40"
+          const log = tableRow.activity.logs.at(0)
+          if (log !== undefined) {
+            setSelectedAuditLog(log)
+            setIsModalOpen(true)
+          }
+        }}
+        getRowClassName={(row) => {
+          const expandedGroupClassname = "bg-muted/80 dark:bg-muted/40"
 
-        const childClassName = row.original.kind === "child" ? expandedGroupClassname : undefined
+          const childClassName = row.original.kind === "child" ? expandedGroupClassname : undefined
 
-        const activityIsExpanded =
-          row.original.kind === "parent" && isExpandedActivity(row.original.activity, expandedActivityIds)
-        const expandedParentClassName = activityIsExpanded ? expandedGroupClassname : undefined
+          const activityIsExpanded =
+            row.original.kind === "parent" && isExpandedActivity(row.original.activity, expandedActivityIds)
+          const expandedParentClassName = activityIsExpanded ? expandedGroupClassname : undefined
 
-        return [childClassName, expandedParentClassName].filter(Boolean).join(" ")
-      }}
-    />
+          return [childClassName, expandedParentClassName].filter(Boolean).join(" ")
+        }}
+      />
+      <AuditLogModal
+        auditLog={selectedAuditLog}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onOpenChangeComplete={(nextOpen) => {
+          if (nextOpen) {
+            return
+          }
+          setSelectedAuditLog(null)
+        }}
+      />
+    </>
   )
 }
 

@@ -76,7 +76,7 @@ export const AuditLogDetails = ({ auditLog, view = "json" }: Props) => {
     )
   }
 
-  return <pre>{JSON.stringify(auditLog.rowData, null, 2)}</pre>
+  return <pre className="min-w-0 whitespace-pre-wrap break-all">{JSON.stringify(auditLog.rowData, null, 2)}</pre>
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
