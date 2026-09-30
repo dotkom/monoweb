@@ -22,7 +22,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError, UnauthorizedError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
+import { procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
   buildDeregistrationAvailabilityView,
   buildRegistrationAvailabilityView,
@@ -284,7 +284,7 @@ const registerForEventProcedure = procedure
 
 export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeProcedure>
 export type OnRegisterChangeOutput = inferProcedureOutput<typeof onRegisterChangeProcedure>
-const onRegisterChangeProcedure = procedure
+const onRegisterChangeProcedure = procedureTraceErrorsOnly
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withDatabaseTransaction())
   .subscription(async function* ({ input, ctx, signal }) {

@@ -3,7 +3,7 @@ import { z } from "zod"
 import { isAdministrator, isCommitteeMember } from "../../authorization"
 import { ForbiddenError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { type TRPCContext, procedure, t } from "../../trpc"
+import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { DBHandle } from "@dotkomonline/db"
 import type { GroupId } from "../group/group"
@@ -116,7 +116,7 @@ const PaginatedNotificationsSchema = z.object({
 
 export type GetMyNotificationsInput = inferProcedureInput<typeof getMyNotificationsProcedure>
 export type GetMyNotificationsOutput = inferProcedureOutput<typeof getMyNotificationsProcedure>
-const getMyNotificationsProcedure = procedure
+const getMyNotificationsProcedure = procedureTraceErrorsOnly
   .input(PaginateInputSchema)
   .output(
     z.object({
@@ -137,7 +137,7 @@ const getMyNotificationsProcedure = procedure
 
 export type GetMyUnreadCountInput = inferProcedureInput<typeof getMyUnreadCountProcedure>
 export type GetMyUnreadCountOutput = inferProcedureOutput<typeof getMyUnreadCountProcedure>
-const getMyUnreadCountProcedure = procedure
+const getMyUnreadCountProcedure = procedureTraceErrorsOnly
   .output(z.number().int().nonnegative())
   .use(withAuthentication())
   .use(withDatabaseTransaction())
