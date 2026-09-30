@@ -1,9 +1,30 @@
-import type { DBHandle } from "@dotkomonline/db"
-import { AuditLogSchema, type AuditLog, type AuditLogFilterQuery, type AuditLogId } from "./audit-log"
-import { normalizeDbUser } from "../user/user"
-import type { UserId } from "../user/user"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { sql, type DBHandle } from "@dotkomonline/db"
+import { pageQuery, snakeCaseToCamelCase, type Pageable } from "@dotkomonline/utils"
+import z from "zod"
 import { parseOrReport } from "../../invariant"
+import type { UserId } from "../user/user"
+import { normalizeDbUser } from "../user/user"
+import {
+  AuditActivityIdSchema,
+  AuditLogSchema,
+  AuditTransactionWithLogsSchema,
+  type AuditActivityId,
+  type AuditLog,
+  type AuditLogFilterQuery,
+  type AuditLogId,
+  type AuditTransactionWithLogs,
+} from "./audit-log"
+
+function normalizeAuditTransactionWithLogs<T extends { logs: Array<Parameters<typeof normalizeAuditLog>[0]> }>(
+  auditTransactionWithLogs: T
+) {
+  const { logs, ...rest } = auditTransactionWithLogs
+
+  return {
+    ...rest,
+    logs: logs.map((log) => normalizeAuditLog(log)),
+  }
+}
 
 function normalizeAuditLog<T extends { user: Parameters<typeof normalizeDbUser>[0] | null; [key: string]: unknown }>(
   auditLog: T
@@ -28,6 +49,14 @@ export interface AuditLogRepository {
   findById(handle: DBHandle, auditLogId: AuditLogId): Promise<AuditLog | null>
   findMany(handle: DBHandle, query: AuditLogFilterQuery, page: Pageable): Promise<AuditLog[]>
   findManyByUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<AuditLog[]>
+  findManyByIds(handle: DBHandle, ids: string[]): Promise<AuditLog[]>
+  findManyAuditTransactionsWithLogsByIds(handle: DBHandle, ids: string[]): Promise<AuditTransactionWithLogs[]>
+  findManyActivityIds(
+    handle: DBHandle,
+    query: AuditLogFilterQuery,
+    offset: number,
+    limit: number
+  ): Promise<AuditActivityId[]>
 }
 
 export function getAuditLogRepository(): AuditLogRepository {
@@ -129,6 +158,53 @@ export function getAuditLogRepository(): AuditLogRepository {
       })
 
       return parseOrReport(AuditLogSchema.array(), auditLogs.map(normalizeAuditLog))
+    },
+
+    async findManyByIds(handle, ids) {
+      const auditLogs = await handle.auditLog.findMany({
+        where: { id: { in: ids } },
+        include: {
+          user: { include: userInclude },
+        },
+      })
+
+      return parseOrReport(AuditLogSchema.array(), auditLogs.map(normalizeAuditLog))
+    },
+
+    async findManyAuditTransactionsWithLogsByIds(handle, ids) {
+      const auditTransactionsWithLogs = await handle.auditTransaction.findMany({
+        where: { id: { in: ids } },
+        include: {
+          logs: {
+            include: {
+              user: { include: userInclude },
+            },
+          },
+        },
+      })
+
+      return parseOrReport(
+        AuditTransactionWithLogsSchema.array(),
+        auditTransactionsWithLogs.map(normalizeAuditTransactionWithLogs)
+      )
+    },
+
+    async findManyActivityIds(handle, query, offset, limit) {
+      const auditLogAndTransactionIds = await handle.$queryRawTyped(
+        sql.findAuditActivityIds(
+          offset,
+          limit,
+          query.bySearchTerm ?? null,
+          query.byTableName ?? [],
+          query.byOperation ?? [],
+          query.byUserId ?? []
+        )
+      )
+
+      return parseOrReport(
+        z.preprocess((data) => snakeCaseToCamelCase(data), AuditActivityIdSchema.array()),
+        auditLogAndTransactionIds
+      )
     },
   }
 }
