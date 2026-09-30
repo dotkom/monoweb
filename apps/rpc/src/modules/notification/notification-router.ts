@@ -1,11 +1,11 @@
+import type { DBHandle } from "@dotkomonline/db"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember } from "../../authorization"
 import { ForbiddenError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { DBHandle } from "@dotkomonline/db"
 import type { GroupId } from "../group/group"
 import {
   type Notification,
@@ -269,7 +269,7 @@ const createNotificationProcedure = procedure
       throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not authorized to send important notifications`)
     }
 
-    return await ctx.notificationService.send(ctx.handle, {
+    const sentNotification = await ctx.notificationService.send(ctx.handle, {
       type: input.type,
       title: input.title,
       shortDescription: input.shortDescription,
@@ -279,6 +279,12 @@ const createNotificationProcedure = procedure
       actorGroupId: input.actorGroupId,
       createdById: ctx.principal.subject,
     })
+
+    ctx.setAuditTransactionName(
+      `Send Notification(ID=${sentNotification.notification.id},Title=${sentNotification.notification.title}) to ${sentNotification.recipientCount} ${sentNotification.recipientCount === 1 ? "recipient" : "recipients"}`
+    )
+
+    return sentNotification
   })
 
 export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
@@ -302,10 +308,14 @@ const editNotificationProcedure = procedure
 
     assertCanManageNotification(ctx, notification)
 
-    return await ctx.notificationService.update(ctx.handle, input.id, {
+    const updatedNotification = await ctx.notificationService.update(ctx.handle, input.id, {
       ...input.input,
       lastUpdatedById: ctx.principal.subject,
     })
+
+    ctx.setAuditTransactionName(`Update Notification(ID=${updatedNotification.id},Title=${updatedNotification.title})`)
+
+    return updatedNotification
   })
 
 export type DeleteNotificationInput = inferProcedureInput<typeof deleteNotificationProcedure>
@@ -322,6 +332,10 @@ const deleteNotificationProcedure = procedure
     assertCanManageNotification(ctx, notification)
 
     await ctx.notificationService.delete(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Delete Notification(ID=${notification.id},Title=${notification.title})`)
+
+    return true
   })
 
 export type FindRecipientsInput = inferProcedureInput<typeof findRecipientsProcedure>
@@ -402,6 +416,10 @@ const addRecipientsProcedure = procedure
       input.recipientSelection
     )
 
+    ctx.setAuditTransactionName(
+      `Add ${addedCount} ${addedCount === 1 ? "recipient" : "recipients"} to Notification(ID=${input.notificationId},Title=${notification.title})`
+    )
+
     return { addedCount }
   })
 
@@ -429,6 +447,10 @@ const removeRecipientsProcedure = procedure
     assertCanManageNotification(ctx, notification)
 
     const removedCount = await ctx.notificationService.removeRecipients(ctx.handle, input.notificationId, input.userIds)
+
+    ctx.setAuditTransactionName(
+      `Remove ${removedCount} ${removedCount === 1 ? "recipient" : "recipients"} from Notification(ID=${input.notificationId},Title=${notification.title})`
+    )
 
     return { removedCount }
   })

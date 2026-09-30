@@ -121,6 +121,10 @@ export const FeedbackFormIdSchema = FeedbackFormSchema.shape.id
 
 export type FeedbackFormId = z.infer<typeof FeedbackFormIdSchema>
 
+export const FeedbackFormAnswerIdSchema = FeedbackFormAnswerSchema.shape.id
+
+export type FeedbackFormAnswerId = z.infer<typeof FeedbackFormAnswerIdSchema>
+
 export const FeedbackPublicResultsTokenSchema = FeedbackFormBaseSchema.shape.publicResultsToken
 
 export type FeedbackPublicResultsToken = z.infer<typeof FeedbackPublicResultsTokenSchema>

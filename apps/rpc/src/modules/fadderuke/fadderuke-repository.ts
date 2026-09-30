@@ -5,7 +5,7 @@ import { type Fadderuke, type FadderukeId, FadderukeSchema, type FadderukeWrite 
 export interface FadderukeRepository {
   create(handle: DBHandle, data: FadderukeWrite): Promise<Fadderuke>
   update(handle: DBHandle, fadderukeId: FadderukeId, data: Partial<FadderukeWrite>): Promise<Fadderuke>
-  delete(handle: DBHandle, fadderukeId: FadderukeId): Promise<void>
+  delete(handle: DBHandle, fadderukeId: FadderukeId): Promise<Fadderuke>
   findById(handle: DBHandle, fadderukeId: FadderukeId): Promise<Fadderuke | null>
   findByYear(handle: DBHandle, year: number): Promise<Fadderuke | null>
   findMany(handle: DBHandle): Promise<Fadderuke[]>
@@ -31,11 +31,13 @@ export function getFadderukeRepository(): FadderukeRepository {
     },
 
     async delete(handle, fadderukeId) {
-      await handle.fadderuke.delete({
+      const deletedFadderuke = await handle.fadderuke.delete({
         where: {
           id: fadderukeId,
         },
       })
+
+      return parseOrReport(FadderukeSchema, deletedFadderuke)
     },
 
     async findById(handle, fadderukeId) {

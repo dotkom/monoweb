@@ -23,6 +23,9 @@ const createArticleProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const article = await ctx.articleService.create(ctx.handle, input.article)
     const tags = await ctx.articleService.setTags(ctx.handle, article.id, input.tags)
+
+    ctx.setAuditTransactionName(`Create Article(ID=${article.id},Title=${article.title})`)
+
     return {
       ...article,
       tags,
@@ -46,6 +49,9 @@ const editArticleProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const article = await ctx.articleService.update(ctx.handle, input.id, input.input)
     const tags = await ctx.articleService.setTags(ctx.handle, input.id, input.tags)
+
+    ctx.setAuditTransactionName(`Update Article(ID=${article.id},Title=${article.title})`)
+
     return { ...article, tags }
   })
 
@@ -141,7 +147,10 @@ const addArticleTagProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.addTag(ctx.handle, input.id, input.tag)
+    await ctx.articleService.addTag(ctx.handle, input.id, input.tag)
+    const article = await ctx.articleService.getById(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(`Add ArticleTag(Name=${input.tag}) to Article(ID=${input.id},Title=${article.title})`)
   })
 
 export type RemoveArticleTagInput = inferProcedureInput<typeof removeArticleTagProcedure>
@@ -158,7 +167,12 @@ const removeArticleTagProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
+    await ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
+    const article = await ctx.articleService.getById(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(
+      `Remove ArticleTag(Name=${input.tag}) from Article(ID=${input.id},Title=${article.title})`
+    )
   })
 
 export type CreateArticleFileUploadInput = inferProcedureInput<typeof createArticleFileUploadProcedure>

@@ -16,7 +16,11 @@ const createCompanyProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.companyService.create(ctx.handle, input)
+    const createdCompany = await ctx.companyService.create(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Create Company(ID=${createdCompany.id},Name=${createdCompany.name})`)
+
+    return createdCompany
   })
 
 export type EditCompanyInput = inferProcedureInput<typeof editCompanyProcedure>
@@ -33,7 +37,11 @@ const editCompanyProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.companyService.update(ctx.handle, input.id, input.input)
+    const updatedCompany = await ctx.companyService.update(ctx.handle, input.id, input.input)
+
+    ctx.setAuditTransactionName(`Update Company(ID=${updatedCompany.id},Name=${updatedCompany.name})`)
+
+    return updatedCompany
   })
 
 export type FindManyCompaniesInput = inferProcedureInput<typeof findManyCompaniesProcedure>

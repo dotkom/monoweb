@@ -29,7 +29,12 @@ const createGroupProcedure = procedure
     if (input.type !== "INTEREST_GROUP") {
       await ctx.addAuthorizationGuard(isAdministrator(), input)
     }
-    return ctx.groupService.create(ctx.handle, input)
+
+    const createdGroup = await ctx.groupService.create(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Create Group(Slug=${createdGroup.slug},Name=${createdGroup.name})`)
+
+    return createdGroup
   })
 
 export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
@@ -104,7 +109,11 @@ const updateGroupProcedure = procedure
       )
     }
 
-    return ctx.groupService.update(ctx.handle, input.id, input.values)
+    const updatedGroup = await ctx.groupService.update(ctx.handle, input.id, input.values)
+
+    ctx.setAuditTransactionName(`Update Group(Slug=${updatedGroup.slug},Name=${updatedGroup.name})`)
+
+    return updatedGroup
   })
 
 export type DeleteGroupInput = inferProcedureInput<typeof deleteGroupProcedure>
@@ -131,7 +140,11 @@ const deleteGroupProcedure = procedure
       await ctx.addAuthorizationGuard(or(isAdministrator(), hasGroupRole(input, GroupRoleTypeEnum.LEADER)), input)
     }
 
-    return ctx.groupService.delete(ctx.handle, input)
+    const deletedGroup = await ctx.groupService.delete(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Delete Group(Slug=${deletedGroup.slug},Name=${deletedGroup.name})`)
+
+    return deletedGroup
   })
 
 export type GetMembersInput = inferProcedureInput<typeof getMembersProcedure>
@@ -221,7 +234,18 @@ const startMembershipProcedure = procedure
       )
     }
 
-    return ctx.groupService.startMembership(ctx.handle, input.userId, input.groupId, new Set(input.roleIds))
+    const groupMember = await ctx.groupService.startMembership(
+      ctx.handle,
+      input.userId,
+      input.groupId,
+      new Set(input.roleIds)
+    )
+
+    ctx.setAuditTransactionName(
+      `Start GroupMembership for User(ID=${groupMember.id},Name=${groupMember.name}) in Group(Slug=${input.groupId},Name=${group.name})`
+    )
+
+    return groupMember
   })
 
 export type EndMembershipInput = inferProcedureInput<typeof endMembershipProcedure>
@@ -255,7 +279,14 @@ const endMembershipProcedure = procedure
       )
     }
 
-    return ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
+    const endedMemberships = await ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
+    const user = await ctx.userService.getById(ctx.handle, input.userId)
+
+    ctx.setAuditTransactionName(
+      `End GroupMemberships for User(ID=${user.id},Name=${user.name}) in Group(Slug=${input.groupId},Name=${group.name})`
+    )
+
+    return endedMemberships
   })
 
 export type UpdateMembershipInput = inferProcedureInput<typeof updateMembershipProcedure>
@@ -295,7 +326,20 @@ const updateMembershipProcedure = procedure
       )
     }
 
-    return ctx.groupService.updateMembership(ctx.handle, input.id, input.data, new Set(input.roleIds))
+    const updatedGroupMembership = await ctx.groupService.updateMembership(
+      ctx.handle,
+      input.id,
+      input.data,
+      new Set(input.roleIds)
+    )
+
+    const user = await ctx.userService.getById(ctx.handle, updatedGroupMembership.userId)
+
+    ctx.setAuditTransactionName(
+      `Update GroupMembership(ID=${input.id}) for User(ID=${user.id},Name=${user.name}) in Group(Slug=${group.slug},Name=${group.name})`
+    )
+
+    return updatedGroupMembership
   })
 
 export type DeleteMembershipInput = inferProcedureInput<typeof deleteMembershipProcedure>
@@ -330,7 +374,14 @@ const deleteMembershipProcedure = procedure
       )
     }
 
-    return ctx.groupService.deleteManyGroupMemberships(ctx.handle, [input.id])
+    const groupMembership = await ctx.groupService.getMembershipById(ctx.handle, input.id)
+    const user = await ctx.userService.getById(ctx.handle, groupMembership.userId)
+
+    await ctx.groupService.deleteManyGroupMemberships(ctx.handle, [input.id])
+
+    ctx.setAuditTransactionName(
+      `Delete GroupMembership(ID=${input.id}) for User(ID=${user.id},Name=${user.name}) in Group(Slug=${group.slug},Name=${group.name})`
+    )
   })
 
 export type CreateRoleInput = inferProcedureInput<typeof createRoleProcedure>
@@ -365,7 +416,13 @@ const createRoleProcedure = procedure
       )
     }
 
-    return ctx.groupService.createRole(ctx.handle, input)
+    const createdRole = await ctx.groupService.createRole(ctx.handle, input)
+
+    ctx.setAuditTransactionName(
+      `Create GroupRole(ID=${createdRole.id},Name=${createdRole.name}) for Group(Slug=${group.slug},Name=${group.name})`
+    )
+
+    return createdRole
   })
 
 export type UpdateRoleInput = inferProcedureInput<typeof updateRoleProcedure>
@@ -405,7 +462,13 @@ const updateRoleProcedure = procedure
       )
     }
 
-    return ctx.groupService.updateRole(ctx.handle, input.id, input.role)
+    const updatedRole = await ctx.groupService.updateRole(ctx.handle, input.id, input.role)
+
+    ctx.setAuditTransactionName(
+      `Update GroupRole(ID=${updatedRole.id},Name=${updatedRole.name}) for Group(Slug=${group.slug},Name=${group.name})`
+    )
+
+    return updatedRole
   })
 
 export type DeleteRoleInput = inferProcedureInput<typeof deleteRoleProcedure>

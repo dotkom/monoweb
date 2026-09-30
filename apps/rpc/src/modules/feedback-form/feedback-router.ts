@@ -1,3 +1,11 @@
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { isCommitteeMember, isSameSubject } from "../../authorization"
+import { FailedPreconditionError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
+import { AttendeeSchema } from "../event/attendance"
+import { EventSchema } from "../event/event"
 import {
   FeedbackFormAnswerWriteSchema,
   FeedbackFormIdSchema,
@@ -7,14 +15,6 @@ import {
   FeedbackQuestionAnswerWriteSchema,
   FeedbackQuestionsWriteSchema,
 } from "./feedback-form"
-import { AttendeeSchema } from "../event/attendance"
-import { EventSchema } from "../event/event"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isCommitteeMember, isSameSubject } from "../../authorization"
-import { FailedPreconditionError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
 
 export type GetFeedbackEligibilityInput = inferProcedureInput<typeof getFeedbackEligibilityProcedure>
 export type GetFeedbackEligibilityOutput = inferProcedureOutput<typeof getFeedbackEligibilityProcedure>
@@ -55,7 +55,16 @@ const createFormProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => ctx.feedbackFormService.create(ctx.handle, input.feedbackForm, input.questions))
+  .mutation(async ({ input, ctx }) => {
+    const createdFeedbackForm = await ctx.feedbackFormService.create(ctx.handle, input.feedbackForm, input.questions)
+    const event = await ctx.eventService.getEventById(ctx.handle, createdFeedbackForm.eventId)
+
+    ctx.setAuditTransactionName(
+      `Create FeedbackForm(ID=${createdFeedbackForm.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return createdFeedbackForm
+  })
 
 export type CreateFormCopyInput = inferProcedureInput<typeof createFormCopyProcedure>
 export type CreateFormCopyOutput = inferProcedureOutput<typeof createFormCopyProcedure>
@@ -70,9 +79,21 @@ const createFormCopyProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) =>
-    ctx.feedbackFormService.createCopyFromEvent(ctx.handle, input.eventId, input.eventIdToCopyFrom)
-  )
+  .mutation(async ({ input, ctx }) => {
+    const createdFeedbackForm = await ctx.feedbackFormService.createCopyFromEvent(
+      ctx.handle,
+      input.eventId,
+      input.eventIdToCopyFrom
+    )
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const eventToCopyFrom = await ctx.eventService.getEventById(ctx.handle, input.eventIdToCopyFrom)
+
+    ctx.setAuditTransactionName(
+      `Create FeedbackForm(ID=${createdFeedbackForm.id}) for Event(ID=${event.id},Title=${event.title}) from copy of Event(ID=${eventToCopyFrom.id},Title=${eventToCopyFrom.title})`
+    )
+
+    return createdFeedbackForm
+  })
 
 export type UpdateFormInput = inferProcedureInput<typeof updateFormProcedure>
 export type UpdateFormOutput = inferProcedureOutput<typeof updateFormProcedure>
@@ -88,9 +109,21 @@ const updateFormProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) =>
-    ctx.feedbackFormService.update(ctx.handle, input.id, input.feedbackForm, input.questions)
-  )
+  .mutation(async ({ input, ctx }) => {
+    const updatedFeedbackForm = await ctx.feedbackFormService.update(
+      ctx.handle,
+      input.id,
+      input.feedbackForm,
+      input.questions
+    )
+    const event = await ctx.eventService.getEventById(ctx.handle, updatedFeedbackForm.eventId)
+
+    ctx.setAuditTransactionName(
+      `Update FeedbackForm(ID=${updatedFeedbackForm.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return updatedFeedbackForm
+  })
 
 export type DeleteFormInput = inferProcedureInput<typeof deleteFormProcedure>
 export type DeleteFormOutput = inferProcedureOutput<typeof deleteFormProcedure>
@@ -100,7 +133,15 @@ const deleteFormProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => ctx.feedbackFormService.delete(ctx.handle, input))
+  .mutation(async ({ input, ctx }) => {
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    await ctx.feedbackFormService.delete(ctx.handle, input)
+
+    ctx.setAuditTransactionName(
+      `Delete FeedbackForm(ID=${feedbackForm.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
 
 export type GetFormByIdInput = inferProcedureInput<typeof getFormByIdProcedure>
 export type GetFormByIdOutput = inferProcedureOutput<typeof getFormByIdProcedure>
@@ -168,7 +209,19 @@ const createAnswerProcedure = procedure
       throw new FailedPreconditionError(`Failed to submit feedback: ${answerEligibility.cause}`)
     }
 
-    return ctx.feedbackFormAnswerService.create(ctx.handle, input.formAnswer, input.questionAnswers)
+    const createdAnswer = await ctx.feedbackFormAnswerService.create(
+      ctx.handle,
+      input.formAnswer,
+      input.questionAnswers
+    )
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, createdAnswer.feedbackFormId)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+
+    ctx.setAuditTransactionName(
+      `Create FeedbackFormAnswer(ID=${createdAnswer.id}) for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+
+    return createdAnswer
   })
 
 export type FindAnswerByAttendeeInput = inferProcedureInput<typeof findAnswerByAttendeeProcedure>
@@ -233,7 +286,18 @@ const deleteQuestionAnswerProcedure = procedure
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => ctx.feedbackFormAnswerService.deleteQuestionAnswer(ctx.handle, input))
+  .mutation(async ({ input, ctx }) => {
+    const questionAnswer = await ctx.feedbackFormAnswerService.getQuestionAnswerById(ctx.handle, input)
+    const formAnswer = await ctx.feedbackFormAnswerService.getById(ctx.handle, questionAnswer.formAnswerId)
+
+    await ctx.feedbackFormAnswerService.deleteQuestionAnswer(ctx.handle, input)
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, formAnswer.feedbackFormId)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+
+    ctx.setAuditTransactionName(
+      `Delete FeedbackQuestionAnswer(ID=${questionAnswer.id}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
 
 export const feedbackRouter = t.router({
   getFeedbackEligibility: getFeedbackEligibilityProcedure,

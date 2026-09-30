@@ -27,7 +27,16 @@ const createJobListingProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.jobListingService.create(ctx.handle, input.companyId, input.input, input.locationIds)
+    const createdJobListing = await ctx.jobListingService.create(
+      ctx.handle,
+      input.companyId,
+      input.input,
+      input.locationIds
+    )
+
+    ctx.setAuditTransactionName(`Create JobListing(ID=${createdJobListing.id},Title=${createdJobListing.title})`)
+
+    return createdJobListing
   })
 
 export type EditJobListingInput = inferProcedureInput<typeof editJobListingProcedure>
@@ -46,7 +55,11 @@ const editJobListingProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.jobListingService.update(ctx.handle, input.id, input.input, input.locationIds)
+    const updatedJobListing = await ctx.jobListingService.update(ctx.handle, input.id, input.input, input.locationIds)
+
+    ctx.setAuditTransactionName(`Update JobListing(ID=${updatedJobListing.id},Title=${updatedJobListing.title})`)
+
+    return updatedJobListing
   })
 
 export type FindManyJobListingsInput = inferProcedureInput<typeof findManyJobListingsProcedure>

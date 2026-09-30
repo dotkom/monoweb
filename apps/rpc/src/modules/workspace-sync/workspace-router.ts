@@ -1,3 +1,9 @@
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import invariant from "tiny-invariant"
+import z from "zod"
+import { hasGroupRole, isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
 import { CommitteeGroupSlug } from "../authorization-service"
 import { GroupRoleTypeEnum, GroupSchema } from "../group/group"
 import { UserSchema } from "../user/user"
@@ -7,12 +13,6 @@ import {
   WorkspaceMemberLinkSchema,
   WorkspaceUserSchema,
 } from "./workspace"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import invariant from "tiny-invariant"
-import z from "zod"
-import { hasGroupRole, isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
 
 export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
 export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
@@ -45,7 +45,18 @@ const createWorkspaceUserProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-    return await workspaceService.createWorkspaceUser(ctx.handle, input.userId, input.contactCommittee)
+
+    const createdWorkspaceUser = await workspaceService.createWorkspaceUser(
+      ctx.handle,
+      input.userId,
+      input.contactCommittee
+    )
+
+    ctx.setAuditTransactionName(
+      `Create WorkspaceUser for User(ID=${input.userId},Name=${createdWorkspaceUser.user.name})`
+    )
+
+    return createdWorkspaceUser
   })
 
 export type FindWorkspaceUserInput = inferProcedureInput<typeof findWorkspaceUserProcedure>
@@ -68,7 +79,6 @@ const findWorkspaceUserProcedure = procedure
     )
   )
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -103,7 +113,11 @@ const linkWorkspaceUserProcedure = procedure
     const user = await ctx.userService.getById(ctx.handle, input.userId)
     const workspaceUser = await workspaceService.getWorkspaceUser(ctx.handle, input.userId, input.customKey)
 
-    return await ctx.userService.update(ctx.handle, user.id, { workspaceUserId: workspaceUser.id })
+    const updatedUser = await ctx.userService.update(ctx.handle, user.id, { workspaceUserId: workspaceUser.id })
+
+    ctx.setAuditTransactionName(`Link WorkspaceUser for User(ID=${input.userId},Name=${updatedUser.name})`)
+
+    return updatedUser
   })
 
 export type LinkWorkspaceGroupInput = inferProcedureInput<typeof linkWorkspaceGroupProcedure>
@@ -133,7 +147,11 @@ const linkWorkspaceGroupProcedure = procedure
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupSlug)
     const workspaceGroup = await workspaceService.getWorkspaceGroup(ctx.handle, input.groupSlug, input.customKey)
 
-    return await ctx.groupService.update(ctx.handle, group.slug, { workspaceGroupId: workspaceGroup.id })
+    const updatedGroup = await ctx.groupService.update(ctx.handle, group.slug, { workspaceGroupId: workspaceGroup.id })
+
+    ctx.setAuditTransactionName(`Link WorkspaceGroup for Group(Slug=${input.groupSlug},Name=${updatedGroup.name})`)
+
+    return updatedGroup
   })
 
 export type ResetWorkspaceUserPasswordInput = inferProcedureInput<typeof resetWorkspaceUserPasswordProcedure>
@@ -166,7 +184,14 @@ const resetWorkspaceUserPasswordProcedure = procedure
   .mutation(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
-    return await workspaceService.resetWorkspaceUserPassword(ctx.handle, input.userId)
+
+    const resetWorkspaceUser = await workspaceService.resetWorkspaceUserPassword(ctx.handle, input.userId)
+
+    ctx.setAuditTransactionName(
+      `Reset WorkspaceUser password for User(ID=${resetWorkspaceUser.user.id},Name=${resetWorkspaceUser.user.name})`
+    )
+
+    return resetWorkspaceUser
   })
 
 export type CreateWorkspaceGroupInput = inferProcedureInput<typeof createWorkspaceGroupProcedure>
@@ -186,7 +211,13 @@ const createWorkspaceGroupProcedure = procedure
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.createWorkspaceGroup(ctx.handle, input.groupSlug)
+    const createdWorkspaceGroup = await workspaceService.createWorkspaceGroup(ctx.handle, input.groupSlug)
+
+    ctx.setAuditTransactionName(
+      `Create WorkspaceGroup for Group(Slug=${input.groupSlug},Name=${createdWorkspaceGroup.group.name})`
+    )
+
+    return createdWorkspaceGroup
   })
 
 export type FindWorkspaceGroupInput = inferProcedureInput<typeof findWorkspaceGroupProcedure>
@@ -209,7 +240,6 @@ const findWorkspaceGroupProcedure = procedure
     )
   )
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
@@ -246,7 +276,12 @@ const synchronizeWorkspaceGroupProcedure = procedure
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.synchronizeWorkspaceGroup(ctx.handle, input.groupSlug)
+    const result = await workspaceService.synchronizeWorkspaceGroup(ctx.handle, input.groupSlug)
+
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupSlug)
+    ctx.setAuditTransactionName(`Synchronize WorkspaceGroup for Group(Slug=${group.slug},Name=${group.name})`)
+
+    return result
   })
 
 export type GetMembersForWorkspaceGroupInput = inferProcedureInput<typeof getMembersForWorkspaceGroupProcedure>

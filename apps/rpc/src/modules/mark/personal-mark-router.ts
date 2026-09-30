@@ -1,11 +1,11 @@
-import { UserSchema } from "../user/user"
-import { CreatePersonalMarkSchema, PersonalMarkSchema } from "./mark"
+import { PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { UserSchema } from "../user/user"
+import { CreatePersonalMarkSchema, PersonalMarkSchema } from "./mark"
 
 export type GetPersonalMarksByUserInput = inferProcedureInput<typeof getPersonalMarksByUserProcedure>
 export type GetPersonalMarksByUserOutput = inferProcedureOutput<typeof getPersonalMarksByUserProcedure>
@@ -74,7 +74,21 @@ const addPersonalMarkToUserProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.personalMarkService.addToUser(ctx.handle, input.userId, input.markId, ctx.principal.subject)
+    const addedPersonalMark = await ctx.personalMarkService.addToUser(
+      ctx.handle,
+      input.userId,
+      input.markId,
+      ctx.principal.subject
+    )
+    const user = await ctx.userService.getById(ctx.handle, input.userId)
+
+    const mark = await ctx.markService.getById(ctx.handle, addedPersonalMark.markId)
+
+    ctx.setAuditTransactionName(
+      `Add PersonalMark for Mark(ID=${addedPersonalMark.markId},Title=${mark.title}) to User(ID=${user.id},Name=${user.name})`
+    )
+
+    return addedPersonalMark
   })
 
 export type CountUsersWithMarkInput = inferProcedureInput<typeof countUsersWithMarkProcedure>
@@ -97,7 +111,15 @@ const removePersonalMarkFromUserProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.personalMarkService.removeFromUser(ctx.handle, input.userId, input.markId)
+    const removedPersonalMark = await ctx.personalMarkService.removeFromUser(ctx.handle, input.userId, input.markId)
+    const mark = await ctx.markService.getById(ctx.handle, removedPersonalMark.markId)
+    const user = await ctx.userService.getById(ctx.handle, input.userId)
+
+    ctx.setAuditTransactionName(
+      `Remove PersonalMark for Mark(ID=${removedPersonalMark.markId},Title=${mark.title}) from User(ID=${user.id},Name=${user.name})`
+    )
+
+    return removedPersonalMark
   })
 
 export type GetExpiryDateForUserInput = inferProcedureInput<typeof getExpiryDateForUserProcedure>
