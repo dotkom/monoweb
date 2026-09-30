@@ -1,6 +1,6 @@
 "use client"
 
-import type { EventId } from "@dotkomonline/rpc/event"
+import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import { useController } from "react-hook-form"
 import { EventSelectInput } from "./EventSelectInput"
@@ -17,6 +17,7 @@ type EventSelectFieldProps<TFieldValues extends FieldValues> = {
   excludeChildEvents?: boolean
   excludeEventIds?: EventId[]
   fixedWidth?: boolean
+  filters?: EventFilterQuery
 }
 
 export function EventSelectField<TFieldValues extends FieldValues>({
@@ -30,6 +31,7 @@ export function EventSelectField<TFieldValues extends FieldValues>({
   excludeChildEvents = false,
   excludeEventIds,
   fixedWidth = false,
+  filters,
 }: EventSelectFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
   const error = getFieldErrorMessage(fieldState.error?.message)
@@ -56,6 +58,7 @@ export function EventSelectField<TFieldValues extends FieldValues>({
         invalid={Boolean(error)}
         excludeChildEvents={excludeChildEvents}
         excludeEventIds={excludeEventIds}
+        filters={filters}
       />
     </FieldShell>
   )
