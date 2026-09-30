@@ -70,6 +70,7 @@ export interface GroupRepository {
     groupRoleId: GroupRoleId,
     groupRoleData: Partial<GroupRoleWrite>
   ): Promise<GroupRole>
+  deleteGroupRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
 }
 
 export function getGroupRepository(): GroupRepository {
@@ -396,6 +397,12 @@ export function getGroupRepository(): GroupRepository {
             in: groupMembershipIds,
           },
         },
+      })
+    },
+
+    async deleteGroupRole(handle, groupRoleId) {
+      await handle.groupRole.delete({
+        where: { id: groupRoleId },
       })
     },
   }

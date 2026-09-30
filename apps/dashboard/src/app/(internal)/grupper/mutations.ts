@@ -151,6 +151,27 @@ export const useUpdateGroupRoleMutation = () => {
   )
 }
 
+export const useDeleteGroupRoleMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "delete",
+  })
+
+  return useMutation(
+    trpc.group.deleteRole.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+
+        await queryClient.invalidateQueries(trpc.group.all.queryOptions())
+        await queryClient.invalidateQueries({ queryKey: trpc.group.get.queryKey() })
+        await queryClient.invalidateQueries({ queryKey: trpc.group.getMembers.queryKey() })
+      },
+    })
+  )
+}
 export const useStartGroupMembershipMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

@@ -6,6 +6,7 @@ import { ReadOnlyNotice } from "@/components/ReadOnlyNotice"
 import type { GroupRole } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { useState } from "react"
+import { useDeleteGroupRoleMutation } from "../../mutations"
 import { useGroupDetailsContext } from "../provider"
 import { CreateGroupRoleModal } from "./components/CreateGroupRoleModal"
 import { EditGroupRoleModal } from "./components/EditGroupRoleModal"
@@ -16,6 +17,7 @@ export default function GroupRolesPage() {
   const { canManageRoles, canEdit } = useGroupPermissions()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editRole, setEditRole] = useState<GroupRole | null>(null)
+  const deleteRole = useDeleteGroupRoleMutation()
 
   return (
     <div className="flex flex-col gap-4">
@@ -30,6 +32,7 @@ export default function GroupRolesPage() {
         roles={group.roles}
         canManageRoles={canManageRoles}
         onEdit={(role) => setEditRole(role)}
+        onDelete={(role) => deleteRole.mutate(role.id)}
         actions={
           <PermissionTooltip allowed={canManageRoles}>
             <Button type="button" variant="default" disabled={!canManageRoles} onClick={() => setIsCreateOpen(true)}>
