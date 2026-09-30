@@ -5,6 +5,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -14,6 +15,8 @@ import { MarkDetailsContext } from "./provider"
 export default function MarkDetailsLayout({ children }: PropsWithChildren) {
   const { id } = useParams<{ id: string }>()
   const { mark, isLoading, isError, error } = useMarkGetQuery(id)
+
+  useBreadcrumbLabel(breadcrumbPath("prikker", id), mark?.title ?? null)
 
   if (isLoading) {
     return null

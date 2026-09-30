@@ -3,6 +3,7 @@
 import { useAuthorization } from "@/auth/authorization-context"
 import { ResourceDetailError } from "@/components/ResourceDetailLayout/ResourceDetailError"
 import { ResourceDetailLayout } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { getNotificationLinkTypeLabel } from "@dotkomonline/rpc/notification"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { type PropsWithChildren, use } from "react"
@@ -25,6 +26,8 @@ export default function NotificationDetailsLayout({
   const { canManageNotification, isAdministrator } = useAuthorization()
   const { data: notification, isLoading, isError, error } = useNotificationGetQuery(id)
   const canManage = notification ? canManageNotification(notification.actorGroupId) : false
+
+  useBreadcrumbLabel(breadcrumbPath("varslinger", id), notification?.title ?? null)
 
   const statsQuery = useNotificationRecipientStatsQuery(id, canManage)
   const deleteNotification = useDeleteNotificationMutation()

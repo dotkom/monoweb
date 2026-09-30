@@ -6,6 +6,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
@@ -19,6 +20,11 @@ export default function GroupDetailsLayout({ children }: PropsWithChildren) {
   const { id: rawId } = useParams<{ id: string }>()
   const id = decodeURIComponent(rawId)
   const { data, isLoading, isError, error } = useGroupGetQuery(id)
+
+  useBreadcrumbLabel(breadcrumbPath("grupper", id), data ? getGroupDisplayName(data) : null)
+  useBreadcrumbLabel(breadcrumbPath("grupper", id, "medlemmer"), "Medlemmer")
+  useBreadcrumbLabel(breadcrumbPath("grupper", id, "roller"), "Roller")
+  useBreadcrumbLabel(breadcrumbPath("grupper", id, "arrangementer"), "Arrangementer")
   const remove = useDeleteGroupMutation()
   const authorization = useAuthorization()
   const isInterestGroup = data?.type === "INTEREST_GROUP"

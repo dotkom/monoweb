@@ -6,6 +6,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
@@ -44,6 +45,13 @@ export default function EventWithAttendancesLayout({
   const authorization = useAuthorization()
   const { data, isLoading, isError, error } = useEventWithAttendancesGetQuery(id)
   const { data: feedbackForm, isLoading: feedbackFormIsLoading } = useEventFeedbackFormGetQuery(id)
+
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id), data?.event.title ?? null)
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "pamelding"), "Påmelding")
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "pameldte"), "Påmeldte")
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "valg"), "Valg")
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "betaling"), "Betaling")
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "tilbakemeldingsskjema"), "Tilbakemeldingsskjema")
 
   const remove = useDeleteEventMutation()
 

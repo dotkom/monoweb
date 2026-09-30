@@ -5,6 +5,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -15,6 +16,8 @@ export default function OfflineDetailsLayout({ children }: PropsWithChildren) {
   const { id: rawId } = useParams<{ id: string }>()
   const id = decodeURIComponent(rawId)
   const { data, isLoading, isError, error } = useOfflineByIdQuery(id)
+
+  useBreadcrumbLabel(breadcrumbPath("offline", id), data?.title ?? null)
 
   if (isLoading) {
     return null

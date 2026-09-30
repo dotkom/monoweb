@@ -6,6 +6,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -20,6 +21,8 @@ export default function FadderukeDetailsLayout({ children }: PropsWithChildren) 
   const deleteFadderuke = useDeleteFadderukeMutation()
   const { canEditFadderuke } = useAuthorization()
   const canEdit = canEditFadderuke()
+
+  useBreadcrumbLabel(breadcrumbPath("fadderukene", id), data ? `Fadderukene ${data.year}` : null)
 
   if (isLoading) {
     return null

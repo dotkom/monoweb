@@ -6,6 +6,7 @@ import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { useTRPC } from "@/lib/trpc-client"
 import { findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
@@ -36,6 +37,13 @@ export default function UserDetailsLayout({
   const canManageMemberships = authorization.canManageUserMemberships()
 
   const { data: user, isLoading, isError, error } = useQuery(trpc.user.get.queryOptions(id))
+
+  useBreadcrumbLabel(breadcrumbPath("brukere", id), user ? (user.name ?? user.email ?? "Ukjent bruker") : null)
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "medlemskap"), "Medlemskap")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "grupper"), "Grupper")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "arrangementer"), "Arrangementer")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "prikker-og-suspensjoner"), "Prikker & Suspensjoner")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "hendelseslogg"), "Hendelseslogg")
 
   const basePath = `/brukere/${id}`
 

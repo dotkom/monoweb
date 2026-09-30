@@ -1,18 +1,15 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
+import { BreadcrumbTrail } from "@/components/BreadcrumbTrail"
 import { CommandPalette } from "@/components/molecules/CommandPalette/CommandPalette"
+import { BreadcrumbProvider } from "@/lib/breadcrumb-context"
 import { env } from "@/lib/env"
 import { filterNavigationGroupsUserHasAccessTo, navigationGroups, type Navigation } from "@/lib/navigation"
 import { setNavigationGroupsCollapsedCookie } from "@/lib/navigation-group-cookie"
 import { useAuthenticatedUser } from "@/lib/use-authenticated-user"
 import {
   Alert,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
   Button,
   Collapsible,
   CollapsibleContent,
@@ -26,13 +23,7 @@ import {
   TooltipTrigger,
   cn,
 } from "@dotkomonline/ui"
-import {
-  capitalizeFirstLetter,
-  createAuthorizeUrl,
-  createLogoutUrl,
-  getSessionRecoveryMessages,
-  toAbsoluteUrl,
-} from "@dotkomonline/utils"
+import { createAuthorizeUrl, createLogoutUrl, getSessionRecoveryMessages, toAbsoluteUrl } from "@dotkomonline/utils"
 import {
   IconChevronDown,
   IconDeviceDesktop,
@@ -47,7 +38,6 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useState, type FC } from "react"
-import { z } from "zod"
 
 type Theme = "light" | "dark" | "system"
 
@@ -236,128 +226,105 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        {mobileOpened ? (
-          <button
-            type="button"
-            className="fixed top-15 right-0 bottom-0 left-0 z-30 bg-black/40 md:hidden"
-            aria-label="Lukk meny"
-            onClick={() => setMobileOpened(false)}
-          />
-        ) : null}
+      <BreadcrumbProvider>
+        <div className="flex min-h-0 flex-1">
+          {mobileOpened ? (
+            <button
+              type="button"
+              className="fixed top-15 right-0 bottom-0 left-0 z-30 bg-black/40 md:hidden"
+              aria-label="Lukk meny"
+              onClick={() => setMobileOpened(false)}
+            />
+          ) : null}
 
-        <aside
-          className={cn(
-            "fixed top-15 bottom-0 left-0 z-40 w-72 shrink-0 flex-col gap-1 overflow-y-auto border-r bg-background p-4",
-            "md:static md:inset-auto md:z-auto",
-            mobileOpened ? "flex" : "hidden",
-            desktopOpened ? "md:flex" : "md:hidden"
-          )}
-        >
-          {visibleNavigationGroups.map((group, groupIndex) => {
-            const groupKey = group.label ?? group.items[0]?.href ?? String(groupIndex)
+          <aside
+            className={cn(
+              "fixed top-15 bottom-0 left-0 z-40 w-72 shrink-0 flex-col gap-1 overflow-y-auto border-r bg-background p-4",
+              "md:static md:inset-auto md:z-auto",
+              mobileOpened ? "flex" : "hidden",
+              desktopOpened ? "md:flex" : "md:hidden"
+            )}
+          >
+            {visibleNavigationGroups.map((group, groupIndex) => {
+              const groupKey = group.label ?? group.items[0]?.href ?? String(groupIndex)
 
-            if (group.label) {
-              const groupLabel = group.label
-              const isOpen = !collapsedGroups.has(groupLabel)
+              if (group.label) {
+                const groupLabel = group.label
+                const isOpen = !collapsedGroups.has(groupLabel)
+
+                return (
+                  <Collapsible
+                    key={groupKey}
+                    open={isOpen}
+                    onOpenChange={(open) => setNavigationGroupOpen(groupLabel, open)}
+                    className={cn(groupIndex > 0 && "mt-4")}
+                  >
+                    <CollapsibleTrigger
+                      className={cn(
+                        "mb-1 flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1 text-left hover:bg-muted",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      )}
+                      aria-label={isOpen ? `Skjul ${group.label}` : `Vis ${group.label}`}
+                    >
+                      <Text className="text-xs font-medium text-muted-foreground">{group.label}</Text>
+                      <IconChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <NavigationItems items={group.items} pathname={pathname} />
+                    </CollapsibleContent>
+                  </Collapsible>
+                )
+              }
 
               return (
-                <Collapsible
-                  key={groupKey}
-                  open={isOpen}
-                  onOpenChange={(open) => setNavigationGroupOpen(groupLabel, open)}
-                  className={cn(groupIndex > 0 && "mt-4")}
-                >
-                  <CollapsibleTrigger
-                    className={cn(
-                      "mb-1 flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1 text-left hover:bg-muted",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    )}
-                    aria-label={isOpen ? `Skjul ${group.label}` : `Vis ${group.label}`}
-                  >
-                    <Text className="text-xs font-medium text-muted-foreground">{group.label}</Text>
-                    <IconChevronDown className="size-4 shrink-0 text-muted-foreground" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <NavigationItems items={group.items} pathname={pathname} />
-                  </CollapsibleContent>
-                </Collapsible>
+                <Fragment key={groupKey}>
+                  <NavigationItems items={group.items} pathname={pathname} />
+                </Fragment>
               )
-            }
+            })}
 
-            return (
-              <Fragment key={groupKey}>
-                <NavigationItems items={group.items} pathname={pathname} />
-              </Fragment>
-            )
-          })}
-
-          <div className="mt-6 flex flex-col gap-2 md:hidden">
-            <ThemeToggle />
-            {showSessionRecovery ? (
-              <>
-                <Button element="a" variant="default" href={createAuthorizeUrl({ returnTo })}>
-                  Logg inn på nytt
-                </Button>
-                <Button element="a" variant="outline" href={createLogoutUrl({ returnTo })}>
-                  Logg ut
-                </Button>
-              </>
-            ) : (
-              <Button element="a" variant="outline" href="/api/auth/logout">
-                Logg ut
-              </Button>
-            )}
-          </div>
-        </aside>
-
-        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4">
-          <div className="pt-4">
-            {showSessionRecovery && sessionRecoveryMessages !== null ? (
-              <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-6">
-                <Text size="sm">{sessionRecoveryMessages.description}</Text>
-                <div className="mt-3 flex gap-2">
-                  <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
+            <div className="mt-6 flex flex-col gap-2 md:hidden">
+              <ThemeToggle />
+              {showSessionRecovery ? (
+                <>
+                  <Button element="a" variant="default" href={createAuthorizeUrl({ returnTo })}>
                     Logg inn på nytt
                   </Button>
-                  <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
+                  <Button element="a" variant="outline" href={createLogoutUrl({ returnTo })}>
                     Logg ut
                   </Button>
-                </div>
-              </Alert>
-            ) : null}
+                </>
+              ) : (
+                <Button element="a" variant="outline" href="/api/auth/logout">
+                  Logg ut
+                </Button>
+              )}
+            </div>
+          </aside>
 
-            <Breadcrumb className="mb-6">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink render={<Link href="/" />}>Hjem</BreadcrumbLink>
-                </BreadcrumbItem>
-                {pathname
-                  .split("/")
-                  .filter((part) => part.length > 0)
-                  .map((part, index, parts) => {
-                    const href = `/${parts.slice(0, index + 1).join("/")}`
-                    const decodedPart = decodeURIComponent(part)
-                    const isId = decodedPart.includes("|")
-                    const isUuid = z.uuid().safeParse(decodedPart).success
-                    const label = isId || isUuid ? decodedPart : capitalizeFirstLetter(decodedPart)
+          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4">
+            <div className="pt-4">
+              {showSessionRecovery && sessionRecoveryMessages !== null ? (
+                <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-6">
+                  <Text size="sm">{sessionRecoveryMessages.description}</Text>
+                  <div className="mt-3 flex gap-2">
+                    <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
+                      Logg inn på nytt
+                    </Button>
+                    <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
+                      Logg ut
+                    </Button>
+                  </div>
+                </Alert>
+              ) : null}
 
-                    return (
-                      <Fragment key={href}>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                          <BreadcrumbLink render={<Link href={href} />}>{label}</BreadcrumbLink>
-                        </BreadcrumbItem>
-                      </Fragment>
-                    )
-                  })}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+              <BreadcrumbTrail />
+            </div>
 
-          {children}
-        </main>
-      </div>
+            {children}
+          </main>
+        </div>
+      </BreadcrumbProvider>
     </div>
   )
 }
