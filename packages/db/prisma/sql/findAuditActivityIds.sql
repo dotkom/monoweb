@@ -36,6 +36,10 @@ WITH matching_logs AS (
       cardinality($6::text[]) = 0
       OR audit_log.user_id = ANY($6)
     )
+    AND NOT (
+      audit_log.operation = 'UPDATE'
+      AND (audit_log.row_data - 'updated_at' - 'updatedAt') = '{}'::jsonb
+    )
 ), matching_transactions AS (
   SELECT
     audit_transaction.id AS id,
@@ -63,6 +67,10 @@ WITH matching_logs AS (
           cardinality($6::text[]) = 0
           OR audit_log.user_id = ANY($6)
         )
+        AND NOT (
+          audit_log.operation = 'UPDATE'
+          AND (audit_log.row_data - 'updated_at' - 'updatedAt') = '{}'::jsonb
+        )
     )
 ), no_search_orphans AS (
   SELECT
@@ -83,6 +91,10 @@ WITH matching_logs AS (
     AND (
       cardinality($6::text[]) = 0
       OR audit_log.user_id = ANY($6)
+    )
+    AND NOT (
+      audit_log.operation = 'UPDATE'
+      AND (audit_log.row_data - 'updated_at' - 'updatedAt') = '{}'::jsonb
     )
   ORDER BY audit_log.created_at DESC
   LIMIT ($1::int + $2::int)
@@ -108,6 +120,10 @@ WITH matching_logs AS (
         AND (
           cardinality($6::text[]) = 0
           OR audit_log.user_id = ANY($6)
+        )
+        AND NOT (
+          audit_log.operation = 'UPDATE'
+          AND (audit_log.row_data - 'updated_at' - 'updatedAt') = '{}'::jsonb
         )
     )
   ORDER BY audit_transaction.created_at DESC
