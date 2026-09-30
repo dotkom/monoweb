@@ -1,7 +1,7 @@
 "use client"
 
 import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@/app/(internal)/arrangementer/queries"
-import type { EventId } from "@dotkomonline/rpc/event"
+import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@dotkomonline/ui"
 import { useEffect, useMemo, useState } from "react"
 
@@ -20,6 +20,7 @@ export type EventSelectInputProps = {
   invalid?: boolean
   excludeChildEvents?: boolean
   excludeEventIds?: EventId[]
+  filters?: EventFilterQuery
 }
 
 export function EventSelectInput({
@@ -32,6 +33,7 @@ export function EventSelectInput({
   invalid,
   excludeChildEvents = false,
   excludeEventIds,
+  filters,
 }: EventSelectInputProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
@@ -51,6 +53,7 @@ export function EventSelectInput({
     filter: {
       bySearchTerm: debouncedSearchQuery,
       excludingChildEvents: excludeChildEvents,
+      ...filters,
     },
     shouldKeepPreviousData: true,
   })

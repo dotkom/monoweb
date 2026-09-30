@@ -127,6 +127,9 @@ export default function EventFeedbackPage() {
                 }}
                 placeholder="Velg et arrangement..."
                 disabled={!canCreateFeedbackForm || !canEdit}
+                filters={{
+                  byHasFeedbackForm: true,
+                }}
               />
             </FieldShell>
           </div>
