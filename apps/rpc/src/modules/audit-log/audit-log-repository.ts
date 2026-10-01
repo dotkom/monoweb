@@ -150,11 +150,18 @@ export function getAuditLogRepository(): AuditLogRepository {
 
     async findManyByUserId(handle, userId, page) {
       const auditLogs = await handle.auditLog.findMany({
-        where: { userId },
-        include: {
-          user: { include: userInclude },
-        },
         ...pageQuery(page),
+        where: {
+          userId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            include: userInclude,
+          },
+        },
       })
 
       return parseOrReport(AuditLogSchema.array(), auditLogs.map(normalizeAuditLog))
@@ -162,9 +169,18 @@ export function getAuditLogRepository(): AuditLogRepository {
 
     async findManyByIds(handle, ids) {
       const auditLogs = await handle.auditLog.findMany({
-        where: { id: { in: ids } },
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
-          user: { include: userInclude },
+          user: {
+            include: userInclude,
+          },
         },
       })
 
@@ -173,11 +189,20 @@ export function getAuditLogRepository(): AuditLogRepository {
 
     async findManyAuditTransactionsWithLogsByIds(handle, ids) {
       const auditTransactionsWithLogs = await handle.auditTransaction.findMany({
-        where: { id: { in: ids } },
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           logs: {
             include: {
-              user: { include: userInclude },
+              user: {
+                include: userInclude,
+              },
             },
           },
         },
