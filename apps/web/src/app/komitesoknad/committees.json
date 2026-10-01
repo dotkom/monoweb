@@ -1,0 +1,206 @@
+{
+  "source": "https://online.ntnu.no/grupper",
+  "fetchedAt": "2026-09-30",
+  "groups": [
+    {
+      "slug": "appkom",
+      "name": "Appkom",
+      "description": "Applikasjonskomitten er ansvarlig for å utvikle og drifte sine egne IT-tjenester, som Online appen og infoskjermen på A4.",
+      "logoSrc": "/committee-logos/appkom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "arrkom",
+      "name": "Arrkom",
+      "description": "Arrangementskomiteen har som hovedansvar å arrangere sosiale tilstelninger for informatikkstudenter.",
+      "logoSrc": "/committee-logos/arrkom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "backlog",
+      "name": "Backlog",
+      "description": "Backlog hovedoppgave er å bistå med kunnskap, erfaring og assistanse i linjeforeningens daglige drift.",
+      "logoSrc": "/committee-logos/backlog.png",
+      "section": "other",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "bankom",
+      "name": "Bankom",
+      "description": "Bank- og økonomikomiteen er ansvarlig for alt det økonomiske innad i Online. Dette består av regnskapsføring, fakturering og å ha kontroll på det som skjer i nettbanken.",
+      "logoSrc": "/committee-logos/bankom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "bedkom",
+      "name": "Bedkom",
+      "description": "Bedriftskomiteen er bindeleddet mellom næringslivet og informatikkstudenter.",
+      "logoSrc": "/committee-logos/bedkom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "cag",
+      "name": "Casual Gaming",
+      "description": "Casual Gaming er en ideell studentorganisasjon som arrangerer sosiale spillarrangementer som for eksempel Brettspillkvelder og LAN. Er du glad i brettspill, dataspill og gira på å skape et bedre spillmiljø for studenter? Da er Casual Gaming noe for deg.",
+      "logoSrc": "/committee-logos/cag.png",
+      "section": "other",
+      "type": "ASSOCIATED"
+    },
+    {
+      "slug": "debug",
+      "name": "Debug",
+      "description": "Debug er Online sitt uavhengige varslingsorgan, som du kan kontakte dersom du opplever noe ubehagelig. Men hva vil det si at vi er uavhengige? At vi er uavhengige betyr enkelt og greit at vi ikke tilhører noen komité, vi styrer oss selv. Vi gir ingen innsyn i våre saker, ikke engang til Hovedstyret. Det er en av fordelene med å være uavhengige - vi svarer ikke til noen. I hovedsak har Debug tre ansvarsområder: konflikthåndtering, rådgivning, og håndtering av varslingssaker.",
+      "logoSrc": "/committee-logos/debug.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "dotdagene",
+      "name": "dotDAGENE",
+      "description": "dotDAGENE er et arrangement som ble gjennomført for første gang 3. mars 2026, med mål om å koble studenter og næringsliv gjennom faglige og karriererelaterte aktiviteter, samtidig som det bidrar til å finansiere ekskursjonen.Første gjennomføring har etablert et grunnlag for videre utvikling, og dotDAGENE videreføres med ambisjon om å bli en fast og attraktiv møteplass mellom studenter og bedrifter. Samtidig er det fortsatt betydelig rom for å påvirke både innhold, format og retning i videre arbeid.Arrangementet planlegges og videreutvikles av en egen komité som jobber med hele prosessen, fra strukturering og forbedring av konseptet til gjennomføring av kommende arrangementer. Erfaringene fra første gjennomføring danner utgangspunktet for videre profesjonalisering og skalering.Arbeidet innebærer blant annet:Videreutvikling og planlegging av arrangementetDialog og samarbeid med bedrifterMarkedsføring og kommunikasjonØkonomisk oppfølging og arbeid med finansiering av ekskursjonendotDAGENE er organisert sammen med Ekskom, og skiller seg fra tradisjonelle komiteer ved å være fleksibelt organisert. Deltakelse er ikke knyttet til klassetrinn eller faste perioder, men til kapasitet og engasjement.",
+      "logoSrc": "/committee-logos/dotdagene.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "dotkom",
+      "name": "Dotkom",
+      "description": "Drifts- og Utviklingskomiteen er komiteen som er ansvarlig for utvikling og vedlikehold av Online sine nettsider, samt drift av maskinparken.",
+      "logoSrc": "/committee-logos/dotkom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "ekskom",
+      "name": "Ekskom",
+      "description": "Ekskom organiserer Onlines årlige ekskursjon.",
+      "logoSrc": "/committee-logos/ekskom.png",
+      "section": "other",
+      "type": "NODE_COMMITTEE"
+    },
+    {
+      "slug": "eldsteradet",
+      "name": "Eldsterådet",
+      "description": "",
+      "logoSrc": null,
+      "section": "other",
+      "type": "ASSOCIATED"
+    },
+    {
+      "slug": "fagkom",
+      "name": "Fagkom",
+      "description": "Fag- og kurskomiteen jobber med å arrangere kurs, workshop, faglige presentasjoner og andre faglige arrangementer for studentene ved informatikk.",
+      "logoSrc": "/committee-logos/fagkom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "feminit",
+      "name": "FeminIT",
+      "description": "FeminIT er en gruppe som er skapt for å bedre og ikke minst opprettholde samholdet mellom jenter og ikke-binære på informatikk. FeminIT startet som en gruppering i 2021 og etter hvert som flere medlemmer ble med, ble FeminIT en komité under generalforsamlingen våren 2022. På informatikk er det rundt 20% jenter (2021), noe som er altfor lite. FeminIT arrangerer alt fra eksamenslesing, kafeonsdag, sirkeltrening og egentlig alt som medlemmene har lyst til å finne på. Målet med FeminIT er derfor å skape et bedre samhold mellom jentene på informatikk i håp om å bedre bekjentskap på samme og på tvers av trinn.",
+      "logoSrc": "/committee-logos/feminit.png",
+      "section": "other",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "fond",
+      "name": "Fondet",
+      "description": "Fondet forvalter linjeforeningen sitt fond.",
+      "logoSrc": null,
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "hs",
+      "name": "Hovedstyret",
+      "description": "Hovedstyret velges av linjeforeningens medlemmer på generalforsamlingen i løpet av vårsemesteret og sitter ett år frem i tid. Styret består av leder, nestleder og alle komitelederne.",
+      "logoSrc": "/committee-logos/hs.svg",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "jubkom",
+      "name": "Jubkom",
+      "description": "Jubkom har ansvaret for å organisere Onlines jubileum hvert femte år. Dette er en bursdagsfeiring uten sidestykke og ikke noe man bør gå glipp av. Neste jubileum er i 2026. Har du spørsmål, tips eller innspill kan jubKom kontaktes på epost",
+      "logoSrc": "/committee-logos/jubkom.png",
+      "section": "other",
+      "type": "NODE_COMMITTEE"
+    },
+    {
+      "slug": "online-il",
+      "name": "OIL",
+      "description": "Online idrettslag står for arrangering av sport og idrett for Informatikkstudenter. Komiteen tilbyr et lavterskel tilbud som skal passe for alle. Som medlem i komiteen vil du få muligheten til å planlegge og arrangere idretter du har lyst til å være med på.",
+      "logoSrc": "/committee-logos/online-il.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "output",
+      "name": "Output",
+      "description": "",
+      "logoSrc": null,
+      "section": "other",
+      "type": "ASSOCIATED"
+    },
+    {
+      "slug": "prokom",
+      "name": "Prokom",
+      "description": "Profil- og aviskomiteens hovedoppgave er å sikre kvalitet på profileringsmateriell, samt gi ut linjeforeningens tidsskrift, Offline.",
+      "logoSrc": "/committee-logos/prokom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "kjelleren",
+      "name": "Realfagskjelleren",
+      "description": "Realfagskjelleren på Moholt er en studentdrevet bar som tilbyr rimelig drikke, nye bekjentskap og artige fester!",
+      "logoSrc": "/committee-logos/kjelleren.png",
+      "section": "other",
+      "type": "ASSOCIATED"
+    },
+    {
+      "slug": "redaksjonen",
+      "name": "Redaksjonen",
+      "description": "Redaksjonen har ansvar for å produsere linjeforeningsavisen Offline.&nbsp;Som medlem i redaksjonen vil du ha mulighet til å skrive artikler, organisere midtsiden og designe layouten til avisa. I Offline skriver vi om alt som engasjerer oss, så om du vil rante om et fag, få sponset testing av alle kebabene i byen, lage et horoskop eller egentlig hva som helst annet, er vi komiteen for deg. I redaksjonen har du full kreativ frihet til å skrive om hva du vil og lage layouten du selv mener passer.Redaksjonen slipper omtrent to utgaver i semesteret og organiserer mye sosialt rundt hver utgave. Vi har pitchekvelder, skrivemøter, brekkehelger, slippfest og mye mer. Du trenger ingen erfaring med design eller skriving, vi har opplæring og stort fokus på å jobbe sammen. Så om du har noe å dele med folket, bli med i redaksjonen da vel!",
+      "logoSrc": "/committee-logos/redaksjonen.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "riddere",
+      "name": "Riddere av Det Indre Lager",
+      "description": "Riddere av Det Indre Lager består av Onlinere som gjennom sine verv eller arbeidsinnsats utmerket seg over enhver forventning.",
+      "logoSrc": null,
+      "section": "other",
+      "type": "ASSOCIATED"
+    },
+    {
+      "slug": "trikom",
+      "name": "Trikom",
+      "description": "Trivselskomitéen er de folka som sørger for at kontoret er et hyggelig sted å være, og at det alltid fins noe digg (og billig) å kjøpe i kiosken. Vi arrangerer også lavterskel arrangement gjennom hele semesteret, både i og utenfor skoletid. Målet til trikom er å gjøre skolehverdagen hyggeligere, og samholdet i online enda bedre.",
+      "logoSrc": "/committee-logos/trikom.png",
+      "section": "main",
+      "type": "COMMITTEE"
+    },
+    {
+      "slug": "velkom",
+      "name": "Velkom",
+      "description": "Velkom arrangerer de årlige fadderukene. Dette er som regel studentenes første møte med Online og det er deres oppgave å sørge for at alle nye føler seg velkomne. Fadderukene byr som regel på alt fra fester til grilling og byrebus.",
+      "logoSrc": "/committee-logos/velkom.png",
+      "section": "other",
+      "type": "NODE_COMMITTEE"
+    },
+    {
+      "slug": "aeresmedlemmer",
+      "name": "Æresmedlemmer",
+      "description": "",
+      "logoSrc": null,
+      "section": "other",
+      "type": "ASSOCIATED"
+    }
+  ]
+}

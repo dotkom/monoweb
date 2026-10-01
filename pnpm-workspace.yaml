@@ -2,3 +2,6 @@ packages:
   - apps/*
   - packages/*
   - tools/*
+
+patchedDependencies:
+  react-weekly-availability-calendar@1.6.1: patches/react-weekly-availability-calendar@1.6.1.patch

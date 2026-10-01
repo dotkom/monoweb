@@ -1,0 +1,41 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 7943229345781573819957c18c90e3e04c23ffc5..8f7838068a81c793280e775027cacf27def938e1 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -282,7 +282,8 @@ function resolveHourRange(startHour, endHour) {
+   }
+   return { startMinutes: startHour * 60, endMinutes: endHour * 60 };
+ }
+-var ROW_HEIGHT_PX = 24;
++// Compact quarter-hour rows; shared by rendering and pointer calculations.
++var ROW_HEIGHT_PX = 12;
+ var MOVE_GHOST_WIDTH_RATIO = 0.8;
+ var CALENDAR_HEADER_ROW_PX = 45;
+ function AvailabilityCalendarGrid({
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 60f8993a47e8f18741cd78d6fa5c6f59acbe0ed0..6a6cf730f78d1d668ac2244ce5a72b46600236d2 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -152,7 +152,7 @@ interface AvailabilityCalendarProps {
+      * resize and keyboard step snaps to. Also the shortest slot the grid can
+      * represent.
+      */
+-    snapMinutes: 10 | 30 | 60;
++    snapMinutes: 10 | 15 | 30 | 60;
+     /**
+      * Clock format for the time gutter, slot labels and screen-reader
+      * announcements. Combine with `locale` for locale-aware formatting.
+diff --git a/dist/index.js b/dist/index.js
+index 23564b841505d6973c269be4902bc6d5717c57f3..a698862c8ac4690d354435f1951ba2b2280de2d1 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -280,7 +280,8 @@ function resolveHourRange(startHour, endHour) {
+   }
+   return { startMinutes: startHour * 60, endMinutes: endHour * 60 };
+ }
+-var ROW_HEIGHT_PX = 24;
++// Compact quarter-hour rows; shared by rendering and pointer calculations.
++var ROW_HEIGHT_PX = 12;
+ var MOVE_GHOST_WIDTH_RATIO = 0.8;
+ var CALENDAR_HEADER_ROW_PX = 45;
+ function AvailabilityCalendarGrid({
