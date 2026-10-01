@@ -9,10 +9,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./Dialog"
+} from "./AlertDialog"
 
 export default {
-  title: "ModalDialog",
+  title: "AlertDialog",
 }
 
 export function AlertDialogDemo() {
@@ -38,7 +38,7 @@ export function AlertDialogDemo() {
   )
 }
 
-export function Destructive() {
+export function AlertDialogDestructive() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
