@@ -68,11 +68,13 @@ export const EventTable = ({
                 const canEdit = info.getValue()
 
                 return (
-                  <EditableRowIndicator
-                    canEdit={canEdit}
-                    readOnlyLabel="Du kan se dette arrangementet, men ikke redigere det"
-                    editableLabel="Du kan redigere dette arrangementet"
-                  />
+                  <div className="pl-2.5">
+                    <EditableRowIndicator
+                      canEdit={canEdit}
+                      readOnlyLabel="Du kan se dette arrangementet, men ikke redigere det"
+                      editableLabel="Du kan redigere dette arrangementet"
+                    />
+                  </div>
                 )
               },
             })
@@ -90,12 +92,16 @@ export const EventTable = ({
             return (
               <TextLink
                 href={`/arrangementer/${event.id}`}
-                className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
+                className="flex items-center gap-2 w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
               >
                 {event.title}
                 {isDraft && (
-                  <Badge color="orange" variant="secondary" className="inline-flex items-center gap-1 text-xs">
-                    <IconEyeDotted size={14} />
+                  <Badge
+                    color="orange"
+                    variant="secondary"
+                    className="inline-flex items-center gap-1 text-[0.625rem] h-5 px-1.5"
+                  >
+                    <IconEyeDotted className="size-3" />
                     {mapEventStatusToLabel(event.status)}
                   </Badge>
                 )}
