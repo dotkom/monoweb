@@ -187,12 +187,12 @@ export const DeregisterReasonSchema = z.object({
   details: z.string().nullable(),
   userGrade: z.number().int().nullable(),
   userId: z.string(),
-  eventId: z.string(),
+  eventId: z.string().nullable(),
 })
 
 export type DeregisterReasonWithEvent = z.infer<typeof DeregisterReasonWithEventSchema>
 export const DeregisterReasonWithEventSchema = DeregisterReasonSchema.extend({
-  event: EventSchema,
+  event: EventSchema.nullable(),
 })
 
 export type DeregisterReasonWrite = z.infer<typeof DeregisterReasonWriteSchema>
@@ -203,7 +203,7 @@ export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
   eventId: true,
   registeredAt: true,
   userGrade: true,
-})
+}).extend({ eventId: EventSchema.shape.id })
 
 export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   switch (type) {

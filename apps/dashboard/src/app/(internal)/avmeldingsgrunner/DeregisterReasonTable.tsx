@@ -25,10 +25,18 @@ export const DeregisterReasonTable = ({
   const columnHelper = createColumnHelper<DeregisterReasonWithEvent>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor((deregisterReason) => deregisterReason.event.title, {
+      columnHelper.accessor((deregisterReason) => deregisterReason.event?.title ?? "Slettet arrangement", {
         id: "title",
         header: () => "Arrangement",
-        cell: (info) => <TextLink href={`/arrangementer/${info.row.original.event.id}`}>{info.getValue()}</TextLink>,
+        cell: (info) => {
+          const event = info.row.original.event
+
+          if (event === null) {
+            return info.getValue()
+          }
+
+          return <TextLink href={`/arrangementer/${event.id}`}>{info.getValue()}</TextLink>
+        },
       }),
       columnHelper.accessor("registeredAt", {
         header: () => "Registreringsdato",
