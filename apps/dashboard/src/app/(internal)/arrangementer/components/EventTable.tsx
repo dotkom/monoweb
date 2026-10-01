@@ -79,7 +79,7 @@ export const EventTable = ({
           : null,
         columnHelper.accessor(({ event }) => event, {
           id: "title",
-          header: () => <span className="ml-1">Arrangement</span>,
+          header: () => "Arrangement",
           meta: {
             smallPadding: true,
           },
@@ -88,16 +88,17 @@ export const EventTable = ({
             const isDraft = event.status === EventStatusSchema.enum.DRAFT
 
             return (
-              <TextLink href={`/arrangementer/${event.id}`} className="text-sm">
-                <span className="block w-full rounded-sm px-1 py-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10">
-                  {event.title}
-                  {isDraft && (
-                    <Badge color="orange" variant="secondary" className="inline-flex items-center gap-1 text-xs">
-                      <IconEyeDotted size={14} />
-                      {mapEventStatusToLabel(event.status)}
-                    </Badge>
-                  )}
-                </span>
+              <TextLink
+                href={`/arrangementer/${event.id}`}
+                className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
+              >
+                {event.title}
+                {isDraft && (
+                  <Badge color="orange" variant="secondary" className="inline-flex items-center gap-1 text-xs">
+                    <IconEyeDotted size={14} />
+                    {mapEventStatusToLabel(event.status)}
+                  </Badge>
+                )}
               </TextLink>
             )
           },

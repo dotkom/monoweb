@@ -134,7 +134,10 @@ export function NotificationsTable({
         smallPadding: true,
       },
       cell: (info) => (
-        <TextLink href={`/varslinger/${info.row.original.id}`} className="text-sm">
+        <TextLink
+          href={`/varslinger/${info.row.original.id}`}
+          className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
+        >
           {info.getValue()}
         </TextLink>
       ),
