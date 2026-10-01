@@ -356,7 +356,7 @@ model Attendee {
   feedbackFormAnswer    FeedbackFormAnswer?
   /// Which options the user has selected from the Attendance selections
   selections            Json                @default("[]")
-  reserved              Boolean
+  registered            Boolean
   earliestReservationAt DateTime            @map("earliest_reservation_at") @db.Timestamptz(3)
   attendedAt            DateTime?           @map("attended_at") @db.Timestamptz(3)
   createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)

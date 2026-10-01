@@ -10,8 +10,8 @@ import {
   type AttendancePool,
   type Attendee,
   getAttendablePool,
-  getReservedAttendeeCount,
-  getUnreservedAttendeeCount,
+  getQueuedAttendeeCount,
+  getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import type { Event, EventId } from "@dotkomonline/rpc/event"
 import type { User, UserId } from "@dotkomonline/rpc/user"
@@ -247,11 +247,11 @@ function ParentEventRegistrationStatus({
   userId: UserId
 }) {
   const parentAttendee = parentAttendance?.attendees.find((attendee) => attendee.userId === userId) ?? null
-  const isMissingReservedSpot = parentAttendee === null || !parentAttendee.reserved
+  const isMissingRegisteredSpot = parentAttendee === null || !parentAttendee.registered
 
   return (
     <div className="mb-2 flex items-center gap-1.5">
-      {isMissingReservedSpot && <IconAlertTriangle className="size-5 text-red-600" />}
+      {isMissingRegisteredSpot && <IconAlertTriangle className="size-5 text-red-600" />}
       <Text className="text-sm">{getParentRegistrationStatusText(parentEvent.title, parentAttendee)}</Text>
     </div>
   )
@@ -262,7 +262,7 @@ function getParentRegistrationStatusText(parentEventTitle: string, parentAttende
     return `Ikke påmeldt forelderarrangementet ${parentEventTitle}`
   }
 
-  if (!parentAttendee.reserved) {
+  if (!parentAttendee.registered) {
     return `På venteliste på forelderarrangementet ${parentEventTitle}`
   }
 
@@ -312,17 +312,17 @@ function SelectedPoolOccupancy({
 }
 
 function PoolOccupancyStatus({ pool, attendance }: { pool: AttendancePool; attendance: Attendance }) {
-  const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
-  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
-  const poolIsFull = pool.capacity > 0 && reservedAttendeeCount >= pool.capacity
+  const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  const poolIsFull = pool.capacity > 0 && registeredAttendeeCount >= pool.capacity
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-1.5">
         {poolIsFull && <IconAlertTriangle className="size-5 text-red-600" />}
-        <Text className="text-sm">{getPoolOccupancyText(pool, reservedAttendeeCount)}</Text>
+        <Text className="text-sm">{getPoolOccupancyText(pool, registeredAttendeeCount)}</Text>
       </div>
-      <WaitlistCount count={unreservedAttendeeCount} poolTitle={pool.title} />
+      <WaitlistCount count={queuedAttendeeCount} poolTitle={pool.title} />
     </div>
   )
 }
@@ -339,10 +339,10 @@ function WaitlistCount({ count, poolTitle }: { count: number; poolTitle: string 
   )
 }
 
-function getPoolOccupancyText(pool: AttendancePool, reservedAttendeeCount: number): string {
+function getPoolOccupancyText(pool: AttendancePool, registeredAttendeeCount: number): string {
   if (pool.capacity > 0) {
-    return `${reservedAttendeeCount}/${pool.capacity} påmeldte i ${pool.title}`
+    return `${registeredAttendeeCount}/${pool.capacity} påmeldte i ${pool.title}`
   }
 
-  return `${reservedAttendeeCount} påmeldte i ${pool.title} (ledige plasser)`
+  return `${registeredAttendeeCount} påmeldte i ${pool.title} (ledige plasser)`
 }

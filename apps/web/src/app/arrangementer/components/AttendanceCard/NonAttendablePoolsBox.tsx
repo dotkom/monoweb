@@ -4,8 +4,8 @@ import {
   type AttendancePool,
   getAttendablePool,
   getNonAttendablePools,
-  getReservedAttendeeCount,
-  getUnreservedAttendeeCount,
+  getQueuedAttendeeCount,
+  getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import {
@@ -60,8 +60,8 @@ interface AttendanceBoxPoolSmallProps {
 }
 
 const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProps) => {
-  const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
-  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
+  const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
 
   return (
     <div
@@ -76,7 +76,7 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
 
       <div className="flex flex-row gap-2 items-center">
         <Text>
-          <RollingNumber value={reservedAttendeeCount} />
+          <RollingNumber value={registeredAttendeeCount} />
           {pool.capacity > 0 && (
             <>
               /<span className="font-mono">{pool.capacity}</span>
@@ -84,9 +84,9 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
           )}
         </Text>
 
-        {unreservedAttendeeCount > 0 && (
+        {queuedAttendeeCount > 0 && (
           <Text className="text-gray-600 dark:text-stone-400">
-            +<RollingNumber value={unreservedAttendeeCount} /> i kø
+            +<RollingNumber value={queuedAttendeeCount} /> i kø
           </Text>
         )}
       </div>

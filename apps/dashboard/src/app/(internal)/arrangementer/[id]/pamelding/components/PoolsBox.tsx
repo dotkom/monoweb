@@ -5,8 +5,8 @@ import { notifyFail } from "@/lib/notifications"
 import {
   type Attendance,
   type AttendancePool,
-  getReservedAttendeeCount,
-  getUnreservedAttendeeCount,
+  getQueuedAttendeeCount,
+  getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import type { FC } from "react"
@@ -25,8 +25,8 @@ interface NormalPoolBoxProps {
 
 const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGroup, canEdit }) => {
   const [editOpen, setEditOpen] = useState(false)
-  const reservedAttendeeCount = getReservedAttendeeCount(attendance, pool.id)
-  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance, pool.id)
+  const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const defaultValues: PoolFormValues = {
@@ -43,9 +43,10 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
           <div>
             <Title className="text-base font-semibold">{pool.title}</Title>
             <Text>
-              {reservedAttendeeCount} {pool.capacity > 0 ? `/ ${pool.capacity} påmeldte` : "påmeldte (ledige plasser)"}
+              {registeredAttendeeCount}{" "}
+              {pool.capacity > 0 ? `/ ${pool.capacity} påmeldte` : "påmeldte (ledige plasser)"}
             </Text>
-            {unreservedAttendeeCount > 0 && <Text>{unreservedAttendeeCount} i kø</Text>}
+            {queuedAttendeeCount > 0 && <Text>{queuedAttendeeCount} i kø</Text>}
             <div className="h-2" />
             <Text className="text-sm">Årstrinn: {formatPoolYearCriterias(pool.yearCriteria)}</Text>
             <Text className="text-sm">
@@ -73,7 +74,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
       <ConfirmDeleteModal
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        onConfirm={() => deleteGroup(pool.id, reservedAttendeeCount)}
+        onConfirm={() => deleteGroup(pool.id, registeredAttendeeCount)}
         confirmLabel="Slett"
         cancelLabel="Avbryt"
         title="Slett påmeldingsgruppe"

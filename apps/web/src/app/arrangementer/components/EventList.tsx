@@ -96,7 +96,7 @@ export const EventList: FC<EventListProps> = ({
           return true
         }
 
-        return getAttendee(parentEventWithAttendance.attendance, userId ?? null)?.reserved
+        return getAttendee(parentEventWithAttendance.attendance, userId ?? null)?.registered
       })
 
   const groupedEvents = Object.groupBy(filteredFutureEventWithAttendances, (eventWithAttendance) => {

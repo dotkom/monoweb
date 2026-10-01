@@ -29,7 +29,7 @@ type AttendeeAssignment = {
   poolTitle: string
   userIndex: number
   registeredDaysAgo: number
-  reserved?: boolean
+  registered?: boolean
 }
 
 const attendeeAssignments: AttendeeAssignment[] = [
@@ -127,7 +127,7 @@ export const getAttendeeFixtures = (
 ) => {
   let volleyballAttendeeIndex = 0
 
-  return attendeeAssignments.map(({ attendanceIndex, poolTitle, userIndex, registeredDaysAgo, reserved = true }) => {
+  return attendeeAssignments.map(({ attendanceIndex, poolTitle, userIndex, registeredDaysAgo, registered = true }) => {
     const registeredAt = subDays(now, registeredDaysAgo)
     const isVolleyballAttendee = attendanceIndex === 10
 
@@ -142,7 +142,7 @@ export const getAttendeeFixtures = (
       attendancePoolId: resolvePoolId(poolMap, attendanceIds, attendanceIndex, poolTitle),
       userId: userIds[userIndex],
       userGrade: userGrades[userIndex],
-      reserved,
+      registered,
       earliestReservationAt: registeredAt,
       createdAt: registeredAt,
       updatedAt: registeredAt,

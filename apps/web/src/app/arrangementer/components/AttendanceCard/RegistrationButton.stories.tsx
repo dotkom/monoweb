@@ -1,5 +1,5 @@
 import {
-  createAttendanceWithReservedUser,
+  createAttendanceWithRegisteredUser,
   createMockAttendance,
   createMockDeregistrationAvailability,
   createMockPunishment,
@@ -26,7 +26,7 @@ export default {
 
 export const AllStates = () => {
   const user = createMockUser()
-  const reservedAttendance = createAttendanceWithReservedUser()
+  const registeredAttendance = createAttendanceWithRegisteredUser()
 
   return (
     <div className="flex flex-col gap-8 max-w-md">
@@ -44,7 +44,7 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Can deregister</Text>
         <RegistrationButton
           {...baseProps}
-          attendance={reservedAttendance}
+          attendance={registeredAttendance}
           registrationAvailability={createMockDeregistrationAvailability()}
           user={user}
         />
@@ -66,7 +66,7 @@ export const AllStates = () => {
               eventRejectionCause: null,
               userRejectionCause: null,
               reservationActiveAt: null,
-              willBeUnreserved: true,
+              willBeQueued: true,
               hasMergeDelay: false,
             },
           })}
@@ -102,7 +102,7 @@ export const AllStates = () => {
               eventRejectionCause: null,
               userRejectionCause: null,
               reservationActiveAt: null,
-              willBeUnreserved: false,
+              willBeQueued: false,
               hasMergeDelay: true,
             },
           })}
@@ -175,7 +175,7 @@ export const AllStates = () => {
               eventRejectionCause: "TOO_EARLY",
               userRejectionCause: null,
               reservationActiveAt: null,
-              willBeUnreserved: false,
+              willBeQueued: false,
               hasMergeDelay: false,
             },
           })}
@@ -194,7 +194,7 @@ export const AllStates = () => {
               eventRejectionCause: "TOO_LATE",
               userRejectionCause: null,
               reservationActiveAt: null,
-              willBeUnreserved: false,
+              willBeQueued: false,
               hasMergeDelay: false,
             },
           })}
@@ -214,7 +214,7 @@ export const AllStates = () => {
               eventRejectionCause: null,
               userRejectionCause: "SUSPENDED",
               reservationActiveAt: null,
-              willBeUnreserved: false,
+              willBeQueued: false,
               hasMergeDelay: false,
             },
           })}
@@ -234,7 +234,7 @@ export const AllStates = () => {
               eventRejectionCause: null,
               userRejectionCause: "NO_MATCHING_POOL",
               reservationActiveAt: null,
-              willBeUnreserved: false,
+              willBeQueued: false,
               hasMergeDelay: false,
             },
           })}
@@ -246,7 +246,7 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Deregister deadline passed</Text>
         <RegistrationButton
           {...baseProps}
-          attendance={reservedAttendance}
+          attendance={registeredAttendance}
           registrationAvailability={createMockDeregistrationAvailability({
             canDeregister: false,
             rejectionCause: "DEREGISTER_DEADLINE_PASSED",
@@ -260,7 +260,7 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Payment completed</Text>
         <RegistrationButton
           {...baseProps}
-          attendance={reservedAttendance}
+          attendance={registeredAttendance}
           registrationAvailability={createMockDeregistrationAvailability({
             canDeregister: false,
             rejectionCause: "PAYMENT_COMPLETED",

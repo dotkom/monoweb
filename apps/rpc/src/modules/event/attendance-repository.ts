@@ -175,7 +175,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             select: {
               attendees: {
                 where: {
-                  reserved: true,
+                  registered: true,
                 },
               },
             },
@@ -211,7 +211,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         return {
           ...attendance,
           currentUserAttendee: currentAttendee ? normalizeAttendee(currentAttendee) : null,
-          reservedAttendeeCount: attendance._count.attendees,
+          registeredAttendeeCount: attendance._count.attendees,
         }
       })
 

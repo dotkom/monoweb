@@ -10,7 +10,7 @@ import {
   type Attendee,
   getAttendanceCapacity,
   hasAttendeePaid,
-  getReservedAttendeeCount,
+  getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
@@ -44,16 +44,18 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 }) => {
   const now = getCurrentUTC()
   const attendanceStatus = getAttendanceStatus(attendance, now)
-  const isReserved = attendee?.reserved === true
-  const isUnreserved = attendee?.reserved === false
+  const isRegistered = attendee?.registered === true
+  const isQueued = attendee?.registered === false
   const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, now)
   const numberOfAttendees =
-    "reservedAttendeeCount" in attendance ? attendance.reservedAttendeeCount : getReservedAttendeeCount(attendance)
+    "registeredAttendeeCount" in attendance
+      ? attendance.registeredAttendeeCount
+      : getRegisteredAttendeeCount(attendance)
   const capacity = getAttendanceCapacity(attendance)
 
   const showLock =
     !eventEndInPast &&
-    (isReserved || isUnreserved ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
+    (isRegistered || isQueued ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
 
   const paymentCountdownText = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -89,9 +91,9 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             "flex flex-row gap-1 items-center py-0.5",
             "tracking-wider",
             attendanceStatus === "NOT_OPENED" && "text-muted-foreground",
-            (isReserved || isUnreserved) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
-            isReserved && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
-            isUnreserved && "text-amber-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
+            (isRegistered || isQueued) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
+            isRegistered && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
+            isQueued && "text-amber-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
             classNames?.count
           )}
         >
@@ -105,9 +107,9 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             )}
           </Text>
 
-          {isReserved ? (
+          {isRegistered ? (
             <IconCheck className={iconSizeClassName} />
-          ) : isUnreserved ? (
+          ) : isQueued ? (
             <IconCircleDashedCheck className={iconSizeClassName} />
           ) : null}
         </div>
@@ -119,7 +121,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                 className={cn(
                   "flex flex-row gap-1 items-center px-0.75 py-0.5",
                   "rounded-sm bg-muted text-gray-700 dark:text-stone-200",
-                  !isReserved && !isUnreserved && "ml-0.5",
+                  !isRegistered && !isQueued && "ml-0.5",
                   classNames?.lock
                 )}
               >
@@ -127,7 +129,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <Text>{isReserved || isUnreserved ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
+              <Text>{isRegistered || isQueued ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
             </TooltipContent>
           </Tooltip>
         )}

@@ -1,7 +1,7 @@
 import { addHours, subHours } from "date-fns"
 import {
   createAttendanceWithPaymentCountdown,
-  createAttendanceWithReservedUser,
+  createAttendanceWithRegisteredUser,
   createMockAttendance,
 } from "../../../../../.ladle/fixtures/attendance"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
@@ -15,8 +15,8 @@ export default {
 export const AllStates = () => {
   const paymentAttendance = createAttendanceWithPaymentCountdown()
   const paymentAttendee = paymentAttendance.attendees[0]
-  const reservedAttendance = createAttendanceWithReservedUser()
-  const reservedAttendee = reservedAttendance.attendees[0]
+  const registeredAttendance = createAttendanceWithRegisteredUser()
+  const registeredAttendee = registeredAttendance.attendees[0]
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl">
@@ -70,8 +70,8 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Reserved before charge</Text>
 
         <AttendanceDateInfo
-          attendance={reservedAttendance}
-          attendee={reservedAttendee}
+          attendance={registeredAttendance}
+          attendee={registeredAttendee}
           chargeScheduleDate={addHours(new Date(), 6)}
         />
       </div>

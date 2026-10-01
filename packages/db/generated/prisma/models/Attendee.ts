@@ -37,7 +37,7 @@ export type AttendeeSumAggregateOutputType = {
 export type AttendeeMinAggregateOutputType = {
   id: string | null
   userGrade: number | null
-  reserved: boolean | null
+  registered: boolean | null
   earliestReservationAt: Date | null
   attendedAt: Date | null
   createdAt: Date | null
@@ -59,7 +59,7 @@ export type AttendeeMinAggregateOutputType = {
 export type AttendeeMaxAggregateOutputType = {
   id: string | null
   userGrade: number | null
-  reserved: boolean | null
+  registered: boolean | null
   earliestReservationAt: Date | null
   attendedAt: Date | null
   createdAt: Date | null
@@ -82,7 +82,7 @@ export type AttendeeCountAggregateOutputType = {
   id: number
   userGrade: number
   selections: number
-  reserved: number
+  registered: number
   earliestReservationAt: number
   attendedAt: number
   createdAt: number
@@ -114,7 +114,7 @@ export type AttendeeSumAggregateInputType = {
 export type AttendeeMinAggregateInputType = {
   id?: true
   userGrade?: true
-  reserved?: true
+  registered?: true
   earliestReservationAt?: true
   attendedAt?: true
   createdAt?: true
@@ -136,7 +136,7 @@ export type AttendeeMinAggregateInputType = {
 export type AttendeeMaxAggregateInputType = {
   id?: true
   userGrade?: true
-  reserved?: true
+  registered?: true
   earliestReservationAt?: true
   attendedAt?: true
   createdAt?: true
@@ -159,7 +159,7 @@ export type AttendeeCountAggregateInputType = {
   id?: true
   userGrade?: true
   selections?: true
-  reserved?: true
+  registered?: true
   earliestReservationAt?: true
   attendedAt?: true
   createdAt?: true
@@ -269,7 +269,7 @@ export type AttendeeGroupByOutputType = {
   id: string
   userGrade: number | null
   selections: runtime.JsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date
   attendedAt: Date | null
   createdAt: Date
@@ -315,7 +315,7 @@ export type AttendeeWhereInput = {
   id?: Prisma.StringFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
   selections?: Prisma.JsonFilter<"Attendee">
-  reserved?: Prisma.BoolFilter<"Attendee"> | boolean
+  registered?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   attendedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -343,7 +343,7 @@ export type AttendeeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
   selections?: Prisma.SortOrder
-  reserved?: Prisma.SortOrder
+  registered?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -375,7 +375,7 @@ export type AttendeeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AttendeeWhereInput | Prisma.AttendeeWhereInput[]
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
   selections?: Prisma.JsonFilter<"Attendee">
-  reserved?: Prisma.BoolFilter<"Attendee"> | boolean
+  registered?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   attendedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -403,7 +403,7 @@ export type AttendeeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
   selections?: Prisma.SortOrder
-  reserved?: Prisma.SortOrder
+  registered?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -434,7 +434,7 @@ export type AttendeeScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableWithAggregatesFilter<"Attendee"> | number | null
   selections?: Prisma.JsonWithAggregatesFilter<"Attendee">
-  reserved?: Prisma.BoolWithAggregatesFilter<"Attendee"> | boolean
+  registered?: Prisma.BoolWithAggregatesFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeWithAggregatesFilter<"Attendee"> | Date | string
   attendedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Attendee"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attendee"> | Date | string
@@ -457,7 +457,7 @@ export type AttendeeCreateInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -481,7 +481,7 @@ export type AttendeeUncheckedCreateInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -505,7 +505,7 @@ export type AttendeeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -529,7 +529,7 @@ export type AttendeeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -553,7 +553,7 @@ export type AttendeeCreateManyInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -576,7 +576,7 @@ export type AttendeeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -595,7 +595,7 @@ export type AttendeeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -633,7 +633,7 @@ export type AttendeeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
   selections?: Prisma.SortOrder
-  reserved?: Prisma.SortOrder
+  registered?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -659,7 +659,7 @@ export type AttendeeAvgOrderByAggregateInput = {
 export type AttendeeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
-  reserved?: Prisma.SortOrder
+  registered?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -681,7 +681,7 @@ export type AttendeeMaxOrderByAggregateInput = {
 export type AttendeeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userGrade?: Prisma.SortOrder
-  reserved?: Prisma.SortOrder
+  registered?: Prisma.SortOrder
   earliestReservationAt?: Prisma.SortOrder
   attendedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -895,7 +895,7 @@ export type AttendeeCreateWithoutUserInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -918,7 +918,7 @@ export type AttendeeUncheckedCreateWithoutUserInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -951,7 +951,7 @@ export type AttendeeCreateWithoutPaymentRefundedByInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -974,7 +974,7 @@ export type AttendeeUncheckedCreateWithoutPaymentRefundedByInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1026,7 +1026,7 @@ export type AttendeeScalarWhereInput = {
   id?: Prisma.StringFilter<"Attendee"> | string
   userGrade?: Prisma.IntNullableFilter<"Attendee"> | number | null
   selections?: Prisma.JsonFilter<"Attendee">
-  reserved?: Prisma.BoolFilter<"Attendee"> | boolean
+  registered?: Prisma.BoolFilter<"Attendee"> | boolean
   earliestReservationAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
   attendedAt?: Prisma.DateTimeNullableFilter<"Attendee"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Attendee"> | Date | string
@@ -1065,7 +1065,7 @@ export type AttendeeCreateWithoutAttendanceInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1088,7 +1088,7 @@ export type AttendeeUncheckedCreateWithoutAttendanceInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1137,7 +1137,7 @@ export type AttendeeCreateWithoutAttendancePoolInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1160,7 +1160,7 @@ export type AttendeeUncheckedCreateWithoutAttendancePoolInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1209,7 +1209,7 @@ export type AttendeeCreateWithoutFeedbackFormAnswerInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1232,7 +1232,7 @@ export type AttendeeUncheckedCreateWithoutFeedbackFormAnswerInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1271,7 +1271,7 @@ export type AttendeeUpdateWithoutFeedbackFormAnswerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1294,7 +1294,7 @@ export type AttendeeUncheckedUpdateWithoutFeedbackFormAnswerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1317,7 +1317,7 @@ export type AttendeeCreateManyUserInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1339,7 +1339,7 @@ export type AttendeeCreateManyPaymentRefundedByInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1361,7 +1361,7 @@ export type AttendeeUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1384,7 +1384,7 @@ export type AttendeeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1407,7 +1407,7 @@ export type AttendeeUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1429,7 +1429,7 @@ export type AttendeeUpdateWithoutPaymentRefundedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1452,7 +1452,7 @@ export type AttendeeUncheckedUpdateWithoutPaymentRefundedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1475,7 +1475,7 @@ export type AttendeeUncheckedUpdateManyWithoutPaymentRefundedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1497,7 +1497,7 @@ export type AttendeeCreateManyAttendanceInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1519,7 +1519,7 @@ export type AttendeeUpdateWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1542,7 +1542,7 @@ export type AttendeeUncheckedUpdateWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1565,7 +1565,7 @@ export type AttendeeUncheckedUpdateManyWithoutAttendanceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1587,7 +1587,7 @@ export type AttendeeCreateManyAttendancePoolInput = {
   id?: string
   userGrade?: number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved: boolean
+  registered: boolean
   earliestReservationAt: Date | string
   attendedAt?: Date | string | null
   createdAt?: Date | string
@@ -1609,7 +1609,7 @@ export type AttendeeUpdateWithoutAttendancePoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1632,7 +1632,7 @@ export type AttendeeUncheckedUpdateWithoutAttendancePoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1655,7 +1655,7 @@ export type AttendeeUncheckedUpdateManyWithoutAttendancePoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   selections?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  reserved?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  registered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   earliestReservationAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1679,7 +1679,7 @@ export type AttendeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   userGrade?: boolean
   selections?: boolean
-  reserved?: boolean
+  registered?: boolean
   earliestReservationAt?: boolean
   attendedAt?: boolean
   createdAt?: boolean
@@ -1707,7 +1707,7 @@ export type AttendeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   userGrade?: boolean
   selections?: boolean
-  reserved?: boolean
+  registered?: boolean
   earliestReservationAt?: boolean
   attendedAt?: boolean
   createdAt?: boolean
@@ -1734,7 +1734,7 @@ export type AttendeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   userGrade?: boolean
   selections?: boolean
-  reserved?: boolean
+  registered?: boolean
   earliestReservationAt?: boolean
   attendedAt?: boolean
   createdAt?: boolean
@@ -1761,7 +1761,7 @@ export type AttendeeSelectScalar = {
   id?: boolean
   userGrade?: boolean
   selections?: boolean
-  reserved?: boolean
+  registered?: boolean
   earliestReservationAt?: boolean
   attendedAt?: boolean
   createdAt?: boolean
@@ -1780,7 +1780,7 @@ export type AttendeeSelectScalar = {
   paymentRefundedById?: boolean
 }
 
-export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userGrade" | "selections" | "reserved" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentCheckoutUrl" | "attendanceId" | "userId" | "attendancePoolId" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
+export type AttendeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userGrade" | "selections" | "registered" | "earliestReservationAt" | "attendedAt" | "createdAt" | "updatedAt" | "paymentDeadline" | "paymentLink" | "paymentId" | "paymentReservedAt" | "paymentChargeDeadline" | "paymentChargedAt" | "paymentRefundedAt" | "paymentCheckoutUrl" | "attendanceId" | "userId" | "attendancePoolId" | "paymentRefundedById", ExtArgs["result"]["attendee"]>
 export type AttendeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   feedbackFormAnswer?: boolean | Prisma.Attendee$feedbackFormAnswerArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceDefaultArgs<ExtArgs>
@@ -1820,7 +1820,7 @@ export type $AttendeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
      * Which options the user has selected from the Attendance selections
      */
     selections: runtime.JsonValue
-    reserved: boolean
+    registered: boolean
     earliestReservationAt: Date
     attendedAt: Date | null
     createdAt: Date
@@ -2268,7 +2268,7 @@ export interface AttendeeFieldRefs {
   readonly id: Prisma.FieldRef<"Attendee", 'String'>
   readonly userGrade: Prisma.FieldRef<"Attendee", 'Int'>
   readonly selections: Prisma.FieldRef<"Attendee", 'Json'>
-  readonly reserved: Prisma.FieldRef<"Attendee", 'Boolean'>
+  readonly registered: Prisma.FieldRef<"Attendee", 'Boolean'>
   readonly earliestReservationAt: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly attendedAt: Prisma.FieldRef<"Attendee", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Attendee", 'DateTime'>

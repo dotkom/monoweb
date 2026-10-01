@@ -9,9 +9,9 @@ import {
   createAttendanceWithQueue,
   createAttendanceWithQueuedPayment,
   createAttendanceWithQueuedPaymentRecord,
+  createAttendanceWithRegisteredPaymentRecord,
+  createAttendanceWithRegisteredUser,
   createAttendanceWithReservedPayment,
-  createAttendanceWithReservedPaymentRecord,
-  createAttendanceWithReservedUser,
   createAttendanceWithServingPunishment,
   createIneligiblePoolAttendance,
   createMockAttendance,
@@ -24,16 +24,16 @@ const AUTHORIZE_URL = "/api/auth/login"
 const SIMULATION_CAPACITY = 120
 
 // The goal is to make the registration go very fast at the start, and then slows down as the pool fills up
-const getTickDelayMs = (reservedCount: number): number => {
-  if (reservedCount < 50) {
+const getTickDelayMilliseconds = (registeredCount: number): number => {
+  if (registeredCount < 50) {
     return 100 // 10/s
   }
 
-  if (reservedCount < 102) {
+  if (registeredCount < 102) {
     return 200
   }
 
-  if (reservedCount < 111) {
+  if (registeredCount < 111) {
     return 1000
   }
 
@@ -41,21 +41,21 @@ const getTickDelayMs = (reservedCount: number): number => {
 }
 
 export const ActiveRegistration = () => {
-  const [reservedCount, setReservedCount] = useState(0)
+  const [registeredCount, setRegisteredCount] = useState(0)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setReservedCount((current) => (current >= SIMULATION_CAPACITY ? 0 : current + 1))
-    }, getTickDelayMs(reservedCount))
+      setRegisteredCount((currentCount) => (currentCount >= SIMULATION_CAPACITY ? 0 : currentCount + 1))
+    }, getTickDelayMilliseconds(registeredCount))
 
     return () => clearTimeout(timeout)
-  }, [reservedCount])
+  }, [registeredCount])
 
   // After 20 "registrations", 1 of 3 new registrations have an accompanying waitlist/queue entry
-  const queuedCount = reservedCount < 20 ? 0 : Math.floor((reservedCount - 20) / 3)
+  const queuedCount = registeredCount < 20 ? 0 : Math.floor((registeredCount - 20) / 3)
   const attendees = [
-    ...Array.from({ length: reservedCount }, () => createMockAttendee({ reserved: true })),
-    ...Array.from({ length: queuedCount }, () => createMockAttendee({ reserved: false })),
+    ...Array.from({ length: registeredCount }, () => createMockAttendee({ registered: true })),
+    ...Array.from({ length: queuedCount }, () => createMockAttendee({ registered: false })),
   ]
 
   const attendance = createMockAttendance({ capacity: SIMULATION_CAPACITY, attendees })
@@ -117,7 +117,7 @@ export const AllStates = () => {
         <MainPoolCard
           attendance={createAttendanceWithQueue({
             capacity: 2,
-            reservedOtherCount: 2,
+            registeredOtherCount: 2,
             queuedOtherCount: 3,
             viewer: "absent",
           })}
@@ -126,15 +126,15 @@ export const AllStates = () => {
         />
       </StatePreview>
 
-      <StatePreview label="Reserved">
-        <MainPoolCard attendance={createAttendanceWithReservedUser()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      <StatePreview label="Registered">
+        <MainPoolCard attendance={createAttendanceWithRegisteredUser()} user={user} authorizeUrl={AUTHORIZE_URL} />
       </StatePreview>
 
-      <StatePreview label="Reserved, others are queued">
+      <StatePreview label="Registered, others are queued">
         <MainPoolCard
           attendance={createAttendanceWithQueue({
             capacity: 2,
-            reservedOtherCount: 1,
+            registeredOtherCount: 1,
             queuedOtherCount: 2,
             viewer: "reserved",
           })}
@@ -147,7 +147,7 @@ export const AllStates = () => {
         <MainPoolCard
           attendance={createAttendanceWithQueue({
             capacity: 2,
-            reservedOtherCount: 2,
+            registeredOtherCount: 2,
             queuedOtherCount: 2,
             viewer: "queued",
             viewerQueuePosition: 2,
@@ -204,7 +204,7 @@ export const AllStates = () => {
 
       <StatePreview label="Paid, others are queued">
         <MainPoolCard
-          attendance={createAttendanceWithReservedPaymentRecord("charged")}
+          attendance={createAttendanceWithRegisteredPaymentRecord("charged")}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
         />
@@ -212,7 +212,7 @@ export const AllStates = () => {
 
       <StatePreview label="Payment reserved, others are queued">
         <MainPoolCard
-          attendance={createAttendanceWithReservedPaymentRecord("reserved")}
+          attendance={createAttendanceWithRegisteredPaymentRecord("reserved")}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
           chargeScheduleDate={chargeScheduleDate}
@@ -221,7 +221,7 @@ export const AllStates = () => {
 
       <StatePreview label="Refunded, others are queued">
         <MainPoolCard
-          attendance={createAttendanceWithReservedPaymentRecord("refunded")}
+          attendance={createAttendanceWithRegisteredPaymentRecord("refunded")}
           user={user}
           authorizeUrl={AUTHORIZE_URL}
         />

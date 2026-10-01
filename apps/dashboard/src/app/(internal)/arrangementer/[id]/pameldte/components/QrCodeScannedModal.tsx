@@ -5,7 +5,7 @@ import {
   type Attendance,
   type AttendeeId,
   getAttendeeQueuePosition,
-  getUnreservedAttendeeCount,
+  getQueuedAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import {
   AlertDialog,
@@ -38,7 +38,7 @@ export function QRCodeScannedModal({ open, onOpenChange, attendance, attendeeId,
   const attendee = attendance.attendees.find((item) => item.id === attendeeId)
   const pool = attendee && attendance.pools.find((item) => item.id === attendee.attendancePoolId)
 
-  const unreservedAttendeeCount = getUnreservedAttendeeCount(attendance)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance)
   const spotInQueue = attendee ? getAttendeeQueuePosition(attendance, attendee.user) : null
 
   const close = () => {
@@ -116,7 +116,7 @@ export function QRCodeScannedModal({ open, onOpenChange, attendance, attendeeId,
             <UserBox user={attendee.user} isMobile={isMobile} />
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1.5">
-                {attendee.reserved ? (
+                {attendee.registered ? (
                   <>
                     <IconCheck className="size-5 text-green-600" />
                     <Text>Reservert plass</Text>
@@ -125,7 +125,7 @@ export function QRCodeScannedModal({ open, onOpenChange, attendance, attendeeId,
                   <>
                     <IconAlertTriangle className="size-5 text-red-600" />
                     <Text>
-                      {spotInQueue}. plass i kø ({unreservedAttendeeCount} totalt i kø)
+                      {spotInQueue}. plass i kø ({queuedAttendeeCount} totalt i kø)
                     </Text>
                   </>
                 )}
