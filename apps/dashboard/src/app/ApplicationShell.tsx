@@ -108,7 +108,9 @@ function NavigationItems({ items, pathname }: { items: Navigation[]; pathname: s
     const active = !navigation.openInNewTab && pathname.startsWith(navigation.href)
     const className = cn(
       "flex items-center gap-2 rounded-lg p-2 text-sm no-underline",
-      active ? "bg-muted font-medium" : "hover:bg-muted"
+      active
+        ? "bg-muted md:bg-black/7 dark:md:bg-stone-900 font-medium"
+        : "md:hover:bg-black/7 dark:md:hover:bg-stone-800"
     )
 
     if (navigation.openInNewTab) {
@@ -138,7 +140,6 @@ function NavigationItems({ items, pathname }: { items: Navigation[]; pathname: s
 export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, collapsedNavigationGroups }) => {
   const authorization = useAuthorization()
   const [mobileOpened, setMobileOpened] = useState(false)
-  const [desktopOpened, setDesktopOpened] = useState(true)
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(() => new Set(collapsedNavigationGroups))
   const pathname = usePathname()
   const {
@@ -175,11 +176,10 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
   }, [pathname])
 
   return (
-    <div className="flex h-dvh max-h-dvh flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-15 shrink-0 items-center justify-between gap-3 border-b bg-background px-4">
-        <div className="flex items-center gap-2">
+    <div className="flex h-dvh max-h-dvh flex-col overflow-hidden bg-background md:bg-gray-100 dark:md:bg-stone-950 text-foreground [--sidebar-width:18rem]">
+      <header className="flex h-15 shrink-0 items-center justify-between gap-3 p-4 md:pl-6.5 md:pr-7 md:py-3">
+        <div className="flex min-w-0 items-center gap-2">
           <Button
-            type="button"
             variant="outline"
             size="icon"
             className="size-9 md:hidden"
@@ -188,16 +188,6 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
           >
             {mobileOpened ? <IconX className="size-4.5 shrink-0" /> : <IconMenu2 className="size-4.5 shrink-0" />}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-9 hidden md:inline-flex"
-            aria-label={desktopOpened ? "Skjul meny" : "Vis meny"}
-            onClick={() => setDesktopOpened((open) => !open)}
-          >
-            {desktopOpened ? <IconX className="size-4.5 shrink-0" /> : <IconMenu2 className="size-4.5 shrink-0" />}
-          </Button>
           <Title element="h1" size="md" className="truncate hidden sm:block">
             OnlineWeb dashboard
           </Title>
@@ -205,20 +195,20 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
 
         <CommandPalette isMac={isMac} />
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden shrink-0 items-center gap-2 md:flex">
           {showSessionRecovery ? (
             <>
               <Button element="a" variant="default" href={createAuthorizeUrl({ returnTo })}>
                 Logg inn på nytt
               </Button>
-              <Button element="a" variant="outline" href={createLogoutUrl({ returnTo })}>
+              <Button element="a" variant="secondary" color="red" href={createLogoutUrl({ returnTo })}>
                 Logg ut
               </Button>
             </>
           ) : (
             <>
               <ThemeToggle />
-              <Button element="a" variant="outline" href="/api/auth/logout">
+              <Button element="a" variant="secondary" color="red" href="/api/auth/logout">
                 Logg ut
               </Button>
             </>
@@ -227,7 +217,7 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
       </header>
 
       <BreadcrumbProvider>
-        <div className="flex min-h-0 flex-1">
+        <div className="flex min-h-0 flex-1 md:gap-1.5 md:p-1.5">
           {mobileOpened ? (
             <button
               type="button"
@@ -239,10 +229,10 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
 
           <aside
             className={cn(
-              "fixed top-15 bottom-0 left-0 z-40 w-72 shrink-0 flex-col gap-1 overflow-y-auto border-r bg-background p-4",
-              "md:static md:inset-auto md:z-auto",
-              mobileOpened ? "flex" : "hidden",
-              desktopOpened ? "md:flex" : "md:hidden"
+              "fixed top-15 bottom-0 left-0 z-40 w-(--sidebar-width) shrink-0 flex-col gap-1 overflow-y-auto p-4 md:p-3",
+              "md:static md:inset-auto md:z-auto md:flex md:rounded-2xl",
+              "bg-background md:bg-gray-100 dark:md:bg-stone-950",
+              mobileOpened ? "flex" : "hidden"
             )}
           >
             {visibleNavigationGroups.map((group, groupIndex) => {
@@ -302,24 +292,22 @@ export const ApplicationShell: FC<ApplicationShellProps> = ({ children, isMac, c
             </div>
           </aside>
 
-          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto px-4 pb-4">
-            <div className="pt-4">
-              {showSessionRecovery && sessionRecoveryMessages !== null ? (
-                <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-6">
-                  <Text size="sm">{sessionRecoveryMessages.description}</Text>
-                  <div className="mt-3 flex gap-2">
-                    <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
-                      Logg inn på nytt
-                    </Button>
-                    <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
-                      Logg ut
-                    </Button>
-                  </div>
-                </Alert>
-              ) : null}
+          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-4 md:p-5.5 md:rounded-2xl bg-background">
+            {showSessionRecovery && sessionRecoveryMessages !== null ? (
+              <Alert status="danger" title={sessionRecoveryMessages.title} className="mb-4">
+                <Text size="sm">{sessionRecoveryMessages.description}</Text>
+                <div className="mt-3 flex gap-2">
+                  <Button element="a" size="sm" variant="default" href={createAuthorizeUrl({ returnTo })}>
+                    Logg inn på nytt
+                  </Button>
+                  <Button element="a" size="sm" variant="outline" href={createLogoutUrl({ returnTo })}>
+                    Logg ut
+                  </Button>
+                </div>
+              </Alert>
+            ) : null}
 
-              <BreadcrumbTrail />
-            </div>
+            <BreadcrumbTrail />
 
             {children}
           </main>
