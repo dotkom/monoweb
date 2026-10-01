@@ -42,6 +42,8 @@ jobs:
         name: Install dependencies from pnpm lockfile
       - run: pnpm lint-check
         name: Linting and formatting checks
+      - run: pnpm prisma-schema-lint-check
+        name: Prisma schema lint
       - run: pnpm type-check
         name: TypeScript type checker
       - run: pnpm test
