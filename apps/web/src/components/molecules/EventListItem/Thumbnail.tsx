@@ -1,6 +1,5 @@
 import type { EventType } from "@dotkomonline/rpc/event"
 import { Badge, Tilt, cn } from "@dotkomonline/ui"
-import Image from "next/image"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
 import { EVENT_TYPE_CONFIG } from "./eventTypeConfig"
@@ -33,13 +32,14 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({
           )}
         >
           {imageUrl ? (
-            <Image
+            // biome-ignore lint/performance/noImgElement: unoptimized next/image crashes iOS Safari (#3062)
+            <img
               src={imageUrl}
               alt={alt}
-              fill
-              sizes="(min-width: 640px) 200px, 160px"
+              loading="lazy"
+              decoding="async"
               className={cn(
-                "object-cover",
+                "absolute inset-0 w-full h-full object-cover",
                 !compact && "rounded-md",
                 compact && "rounded-sm",
                 startInPast && "opacity-50 grayscale group-hover:grayscale-0 transition-all"

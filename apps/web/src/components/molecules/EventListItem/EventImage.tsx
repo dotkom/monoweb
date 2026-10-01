@@ -2,7 +2,6 @@ import { CalendarBox } from "@/components/atoms/CalendarBox"
 import type { EventType } from "@dotkomonline/rpc/event"
 import { Badge, Tilt, cn } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
-import Image from "next/image"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
 import { EVENT_TYPE_CONFIG } from "./eventTypeConfig"
@@ -15,7 +14,6 @@ interface EventImageProps {
   eventType: EventType
   className?: string
   imageClassName?: string
-  sizes?: string
   showBadge?: boolean
   showCalendarBox?: boolean
 }
@@ -28,7 +26,6 @@ export const EventImage: FC<EventImageProps> = ({
   eventType,
   className,
   imageClassName,
-  sizes = "(min-width: 640px) 200px, 160px",
   showBadge = true,
   showCalendarBox = false,
 }) => {
@@ -41,13 +38,14 @@ export const EventImage: FC<EventImageProps> = ({
       <div className={cn("relative", className)}>
         <div className={cn("relative bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden", imageClassName)}>
           {imageUrl ? (
-            <Image
+            // biome-ignore lint/performance/noImgElement: unoptimized next/image crashes iOS Safari (#3062)
+            <img
               src={imageUrl}
               alt={alt}
-              fill
-              sizes={sizes}
+              loading="lazy"
+              decoding="async"
               className={cn(
-                "object-cover",
+                "absolute inset-0 w-full h-full object-cover",
                 eventHasEnded && "opacity-50 grayscale group-hover:grayscale-0 transition-all"
               )}
             />
