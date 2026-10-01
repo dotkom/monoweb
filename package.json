@@ -21,6 +21,7 @@
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
     "prisma-schema-lint-check": "prisma-lint packages/db/prisma/schema.prisma packages/grades-db/prisma/schema.prisma",
+    "tflint-check": "tflint --chdir=infra --recursive --format=compact",
     "test": "pnpm run -r test",
     "test:it": "pnpm run -r test:it",
     "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
