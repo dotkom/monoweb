@@ -80,7 +80,8 @@ export function ResourceDetailLayout({
 
   return (
     <div className={className}>
-      <div className="sticky top-0 z-30 -mx-4 bg-background px-4 dark:bg-background">
+      {/* Cover the scroll container's padding so content stays hidden behind the sticky header. */}
+      <div className="sticky -top-4 z-30 -mx-4 -mt-4 bg-background px-4 pt-4 md:-top-5.5 md:-mx-5.5 md:-mt-5.5 md:px-5.5 md:pt-5.5">
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <Button
             variant="outline"
