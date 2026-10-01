@@ -16,7 +16,7 @@ import {
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
   type VerifyFeedbackAnsweredTaskDefinition,
-  type VerifyPaymentTaskDefinition,
+  type VerifyAttendanceCompletionTaskDefinition,
   getTaskDefinition,
   tasks,
 } from "./task-definition"
@@ -75,10 +75,10 @@ export function getLocalTaskExecutor(
                 payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
               )
 
-            case tasks.VERIFY_PAYMENT.type:
-              return await attendanceService.executeVerifyPaymentTask(
+            case tasks.VERIFY_ATTENDANCE_COMPLETION.type:
+              return await attendanceService.executeVerifyAttendanceCompletionTask(
                 handle,
-                payload as InferTaskData<VerifyPaymentTaskDefinition>
+                payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
               )
 
             case tasks.CHARGE_ATTENDEE.type:

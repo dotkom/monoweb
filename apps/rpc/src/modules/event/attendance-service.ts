@@ -25,6 +25,8 @@ import {
   type RegistrationUserCause,
   type RegistrationWindowCause,
   buildPoolOccupancies,
+  buildRegistrationAvailabilityCompletionView,
+  getMissingAttendanceCompletionRequirements,
   getRegisteredAttendeeCount,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
@@ -72,7 +74,7 @@ import {
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
   type VerifyFeedbackAnsweredTaskDefinition,
-  type VerifyPaymentTaskDefinition,
+  type VerifyAttendanceCompletionTaskDefinition,
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
@@ -255,7 +257,7 @@ export interface AttendanceService {
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, priceNok: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
-  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, paymentDeadline: TZDate): Promise<Payment>
+  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, completionDeadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
   /**
    * Sync the payment status of an attendee with the status of the payment in the payment service.
@@ -263,7 +265,10 @@ export interface AttendanceService {
    */
   syncAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
-  executeVerifyPaymentTask(handle: DBHandle, task: InferTaskData<VerifyPaymentTaskDefinition>): Promise<void>
+  executeVerifyAttendanceCompletionTask(
+    handle: DBHandle,
+    task: InferTaskData<VerifyAttendanceCompletionTaskDefinition>
+  ): Promise<void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
@@ -305,6 +310,35 @@ export function getAttendanceService(
   emailService: EmailService
 ): AttendanceService {
   const logger = getLogger("attendance-service")
+
+  async function cancelPendingAttendeeCompletion(handle: DBHandle, attendeeId: AttendeeId): Promise<void> {
+    const task = await taskSchedulingService.findVerifyAttendanceCompletionTask(handle, attendeeId)
+
+    if (task === null || task.status !== "PENDING") {
+      return
+    }
+
+    await taskSchedulingService.cancel(handle, task.id)
+  }
+
+  async function startAttendeeCompletionDeadline(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    completionDeadline: TZDate
+  ): Promise<void> {
+    await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, completionDeadline)
+    await taskSchedulingService.scheduleAt(
+      handle,
+      tasks.VERIFY_ATTENDANCE_COMPLETION,
+      { attendeeId },
+      completionDeadline
+    )
+  }
+
+  async function clearAttendeeCompletionDeadline(handle: DBHandle, attendeeId: AttendeeId): Promise<void> {
+    await cancelPendingAttendeeCompletion(handle, attendeeId)
+    await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
+  }
 
   function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
     if (attendee.user.email === null) {
@@ -754,21 +788,21 @@ export function getAttendanceService(
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
         if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
-          const paymentDeadline = options.immediatePayment
+          const completionDeadline = options.immediatePayment
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
 
-          const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+          const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
 
-          attendee.paymentDeadline = paymentDeadline
+          attendee.completionDeadline = completionDeadline
           attendee.paymentId = payment.id
           attendee.paymentLink = payment.url
 
           logger.info(
-            "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s",
+            "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
             attendee.id,
             attendee.user.id,
-            paymentDeadline.toUTCString(),
+            completionDeadline.toUTCString(),
             event.id,
             payment.url
           )
@@ -877,19 +911,19 @@ export function getAttendanceService(
         attendee.paymentChargedAt !== null
 
       if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
-        const paymentDeadline = addHours(getCurrentUTC(), 24)
+        const completionDeadline = addHours(getCurrentUTC(), 24)
 
-        const payment = await this.startAttendeePayment(handle, attendee.id, paymentDeadline)
+        const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
 
-        attendee.paymentDeadline = paymentDeadline
+        attendee.completionDeadline = completionDeadline
         attendee.paymentId = payment.id
         attendee.paymentLink = payment.url
 
         logger.info(
-          "Attendee(ID=%s,UserID=%s) has reserved by a task and been given until %s UTC to pay for Event(ID=%s) at link %s",
+          "Attendee(ID=%s,UserID=%s) has reserved by a task and been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
           attendee.id,
           attendee.user.id,
-          paymentDeadline.toUTCString(),
+          completionDeadline.toUTCString(),
           event.id,
           payment.url
         )
@@ -980,16 +1014,16 @@ export function getAttendanceService(
         attendance.attendancePrice !== null &&
         attendance.attendancePrice !== 0
       ) {
-        const paymentDeadline = addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, firstQueuedAdjacentAttendee.id, paymentDeadline)
-        firstQueuedAdjacentAttendee.paymentDeadline = paymentDeadline
+        const completionDeadline = addHours(getCurrentUTC(), 24)
+        const payment = await this.startAttendeePayment(handle, firstQueuedAdjacentAttendee.id, completionDeadline)
+        firstQueuedAdjacentAttendee.completionDeadline = completionDeadline
         firstQueuedAdjacentAttendee.paymentId = payment.id
         firstQueuedAdjacentAttendee.paymentLink = payment.url
         logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to pay for Event(ID=%s) at link %s after reciving spot due to another user deregistering",
+          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) at link %s after reciving spot due to another user deregistering",
           firstQueuedAdjacentAttendee.id,
           firstQueuedAdjacentAttendee.user.id,
-          paymentDeadline.toUTCString(),
+          completionDeadline.toUTCString(),
           event.id,
           payment.url
         )
@@ -1157,7 +1191,7 @@ export function getAttendanceService(
       await this.createAttendeePaymentCharge(handle, attendee.id)
     },
 
-    async startAttendeePayment(handle, attendeeId, paymentDeadline): Promise<Payment> {
+    async startAttendeePayment(handle, attendeeId, completionDeadline): Promise<Payment> {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
 
       if (!attendance.attendancePrice) {
@@ -1195,16 +1229,7 @@ export function getAttendanceService(
         isImmediatePayment ? "CHARGE" : "RESERVE"
       )
 
-      // This task has to be scheduled regardless, as the user still has the `deadline` time to make the payment
-      // regardless of whether it's a charge or a reservation.
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.VERIFY_PAYMENT,
-        {
-          attendeeId,
-        },
-        paymentDeadline
-      )
+      await startAttendeeCompletionDeadline(handle, attendeeId, completionDeadline)
 
       // We attempt to put a "hold" on the user's credit card for as long as possible. From experience, Visa and
       // MasterCard allow a hold to be kept on an account for 7 days. To allow for leeway and clock tolerance, we set
@@ -1225,7 +1250,6 @@ export function getAttendanceService(
       }
 
       await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-        paymentDeadline,
         paymentId: payment.id,
         paymentLink: payment.url,
         paymentRefundedAt: null,
@@ -1303,18 +1327,13 @@ export function getAttendanceService(
       await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
         paymentChargedAt: null,
         paymentId: null,
-        paymentDeadline: null,
         paymentLink: null,
         paymentReservedAt: null,
         paymentRefundedAt: payment.status === "PAID" ? getCurrentUTC() : null,
         paymentRefundedById: refundedByUserId,
       })
 
-      const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
-
-      if (task) {
-        await taskSchedulingService.cancel(handle, task.id)
-      }
+      await clearAttendeeCompletionDeadline(handle, attendeeId)
     },
 
     async syncAttendeePayment(handle, attendeeId) {
@@ -1365,7 +1384,6 @@ export function getAttendanceService(
           paymentReservedAt: null,
           paymentChargedAt: null,
           paymentId: null,
-          paymentDeadline: payment.status === "UNPAID" ? attendee.paymentDeadline : null,
           paymentLink: null,
           paymentCheckoutUrl: payment.status === "UNPAID" ? null : payment.checkoutUrl,
         }
@@ -1378,18 +1396,15 @@ export function getAttendanceService(
         return
       }
 
-      // If the payment was manully altered to something other than reserved,
-      // cancel the verify payment task as it is no longer needed
-      if (payment.status !== "RESERVED") {
-        const task = await taskSchedulingService.findVerifyPaymentTask(handle, attendeeId)
-
-        if (task) {
-          await taskSchedulingService.cancel(handle, task.id)
-        }
+      if (payment.status === "CANCELLED") {
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        return
       }
+
+      await clearAttendeeCompletionDeadline(handle, attendeeId)
     },
 
-    async executeVerifyPaymentTask(handle, { attendeeId }) {
+    async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
       const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
@@ -1400,6 +1415,11 @@ export function getAttendanceService(
 
       if (attendee === undefined) {
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
+      }
+
+      if (getMissingAttendanceCompletionRequirements(attendance, attendee).length === 0) {
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        return
       }
 
       if (attendee.paymentId === null || attendee.paymentReservedAt) {
@@ -1441,9 +1461,9 @@ export function getAttendanceService(
         await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
           paymentReservedAt: getCurrentUTC(),
           paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-          paymentDeadline: null,
           paymentLink: null,
         })
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
       }
     },
 
@@ -1946,6 +1966,7 @@ export function buildRegistrationAvailabilityView(
         hasMergeDelay: false,
       },
       deregistration: null,
+      completion: null,
     }
   }
 
@@ -1972,6 +1993,7 @@ export function buildRegistrationAvailabilityView(
       hasMergeDelay,
     },
     deregistration: null,
+    completion: null,
   }
 }
 
@@ -2021,5 +2043,6 @@ export function buildDeregistrationAvailabilityView(
       hasBeenCharged,
       chargeScheduleDate,
     },
+    completion: buildRegistrationAvailabilityCompletionView(attendance, attendee),
   }
 }

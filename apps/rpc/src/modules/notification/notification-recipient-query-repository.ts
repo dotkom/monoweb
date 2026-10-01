@@ -86,7 +86,7 @@ const paidAttendeePaymentConditions: Prisma.AttendeeWhereInput[] = [
   { paymentChargedAt: { not: null } },
   { paymentReservedAt: { not: null } },
   {
-    AND: [{ paymentRefundedAt: { not: null } }, { paymentDeadline: null }],
+    AND: [{ paymentRefundedAt: { not: null } }, { completionDeadline: null }],
   },
 ]
 

@@ -1,5 +1,10 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import type { Attendance, AttendanceSummary, Attendee } from "@dotkomonline/rpc/attendance"
+import {
+  type Attendance,
+  type AttendanceSummary,
+  type Attendee,
+  buildRegistrationAvailabilityCompletionView,
+} from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { Punishment } from "@dotkomonline/rpc/mark"
 import type { User } from "@dotkomonline/rpc/user"
@@ -72,7 +77,7 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     earliestReservationAt: now,
     paymentChargedAt: null,
     paymentRefundedAt: null,
-    paymentDeadline: null,
+    completionDeadline: null,
     paymentId: null,
     paymentLink: null,
     paymentChargeDeadline: null,
@@ -213,8 +218,77 @@ export const createMockRegistrationAvailability = (
     hasMergeDelay: false,
   },
   deregistration: null,
+  completion: null,
   ...overrides,
 })
+
+export const createMockCompletionAvailability = (
+  attendance: Attendance,
+  attendee: Attendee | null,
+  overrides: Partial<NonNullable<RegistrationAvailability["completion"]>> = {}
+): NonNullable<RegistrationAvailability["completion"]> => {
+  const completionView = attendee === null ? null : buildRegistrationAvailabilityCompletionView(attendance, attendee)
+
+  if (completionView === null) {
+    return {
+      attendeeState: "REGISTERED",
+      completionDeadline: null,
+      requirements: [],
+      missingRequirements: [],
+      paymentLink: null,
+      ...overrides,
+    }
+  }
+
+  return {
+    ...completionView,
+    ...overrides,
+  }
+}
+
+export const createMockRegistrationAvailabilityForAttendee = (
+  attendance: Attendance,
+  attendee: Attendee | null,
+  overrides: Partial<RegistrationAvailability> = {}
+): RegistrationAvailability =>
+  createMockRegistrationAvailability({
+    registration: null,
+    deregistration: attendee
+      ? {
+          attendeeId: attendee.id,
+          canDeregister: true,
+          rejectionCause: null,
+          isWithinGracePeriod: true,
+          requiresDeregisterReason: false,
+          actualDeregisterDeadline: attendance.deregisterDeadline,
+          isPastDeregisterDeadline: false,
+          hasBeenCharged: false,
+          chargeScheduleDate: null,
+        }
+      : null,
+    completion: createMockCompletionAvailability(attendance, attendee),
+    ...overrides,
+  })
+
+export const createMockRegistrationAvailabilityPastDeregisterDeadline = (
+  attendance: Attendance,
+  attendee: Attendee,
+  overrides: Partial<RegistrationAvailability> = {}
+): RegistrationAvailability =>
+  createMockRegistrationAvailabilityForAttendee(attendance, attendee, {
+    deregistration: {
+      attendeeId: attendee.id,
+      canDeregister: false,
+      rejectionCause: "DEREGISTER_DEADLINE_PASSED",
+      isWithinGracePeriod: false,
+      requiresDeregisterReason: true,
+      actualDeregisterDeadline: attendance.deregisterDeadline,
+      isPastDeregisterDeadline: true,
+      hasBeenCharged: false,
+      chargeScheduleDate: null,
+    },
+    ...overrides,
+  })
 
 export const createMockPunishment = (overrides: Partial<Punishment> = {}): Punishment => ({
   suspended: false,
@@ -345,7 +419,7 @@ export const createAttendanceWithPaymentCountdown = (registered = true): Attenda
   const attendee = createMockAttendee({
     user,
     registered,
-    paymentDeadline: addMinutes(now, 45),
+    completionDeadline: addMinutes(now, 45),
     paymentLink: "https://example.com/betaling",
     createdAt,
     earliestReservationAt: createdAt,
@@ -367,7 +441,7 @@ export const createAttendanceWithReservedPayment = (): Attendance =>
     viewerAttendee: {
       createdAt: subMinutes(now, 15),
       earliestReservationAt: subMinutes(now, 15),
-      paymentDeadline: addMinutes(now, 45),
+      completionDeadline: addMinutes(now, 45),
       paymentLink: "https://example.com/betaling",
     },
   })
@@ -383,7 +457,7 @@ export const createAttendanceWithQueuedPayment = (): Attendance =>
     viewerAttendee: {
       createdAt: subMinutes(now, 15),
       earliestReservationAt: subMinutes(now, 10),
-      paymentDeadline: addMinutes(now, 45),
+      completionDeadline: addMinutes(now, 45),
       paymentLink: "https://example.com/betaling",
     },
   })
@@ -454,7 +528,7 @@ export const createAttendanceWithServingPunishment = ({
     viewerAttendee: {
       createdAt: subMinutes(now, 20),
       earliestReservationAt: addHours(now, 4),
-      paymentDeadline: withPayment ? addMinutes(now, 45) : null,
+      completionDeadline: withPayment ? addMinutes(now, 45) : null,
       paymentLink: withPayment ? "https://example.com/betaling" : null,
     },
   })

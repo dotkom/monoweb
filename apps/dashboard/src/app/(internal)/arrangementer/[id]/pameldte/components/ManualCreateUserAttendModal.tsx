@@ -38,7 +38,7 @@ const FormSchema = z.object({
   poolId: z.string(),
   ignoreRegisteredToParent: z.boolean().default(true),
   immediateReservation: z.boolean().default(false),
-  paymentDeadlineHours: z.enum(["1", "24"]).default("24"),
+  completionDeadlineHours: z.enum(["1", "24"]).default("24"),
 })
 
 type FormInput = z.input<typeof FormSchema>
@@ -66,7 +66,7 @@ export function ManualCreateUserAttendModal({
       poolId: defaultPoolId,
       ignoreRegisteredToParent: true,
       immediateReservation: false,
-      paymentDeadlineHours: "24",
+      completionDeadlineHours: "24",
     },
   })
 
@@ -108,7 +108,7 @@ export function ManualCreateUserAttendModal({
                     options: {
                       ignoreRegisteredToParent: values.ignoreRegisteredToParent,
                       immediateReservation: values.immediateReservation,
-                      immediatePayment: isImmediatePayment(values.paymentDeadlineHours ?? "24"),
+                      immediatePayment: isImmediatePayment(values.completionDeadlineHours ?? "24"),
                     },
                   })
                   onOpenChange(false)
@@ -148,8 +148,8 @@ export function ManualCreateUserAttendModal({
               {attendance !== undefined && attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && (
                 <SegmentedControlField
                   control={form.control}
-                  name="paymentDeadlineHours"
-                  label="Betalingsfrist"
+                  name="completionDeadlineHours"
+                  label="Fullføringsfrist"
                   options={[
                     { value: "1", label: "1 time" },
                     { value: "24", label: "24 timer" },
@@ -269,8 +269,8 @@ function getParentRegistrationStatusText(parentEventTitle: string, parentAttende
   return `Påmeldt forelderarrangementet ${parentEventTitle}`
 }
 
-function isImmediatePayment(paymentDeadlineHours: FormResult["paymentDeadlineHours"]): boolean {
-  return paymentDeadlineHours === "1"
+function isImmediatePayment(completionDeadlineHours: FormResult["completionDeadlineHours"]): boolean {
+  return completionDeadlineHours === "1"
 }
 
 function getDefaultPoolId(attendance: Attendance | undefined, user: User | undefined): string {

@@ -1,9 +1,12 @@
 import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
 import { RollingNumber } from "@/components/RollingNumber"
 import { useCountdown } from "@/utils/countdown/use-countdown"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
+import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type Attendance,
   type Attendee,
+  buildRegistrationAvailabilityCompletionView,
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
@@ -38,38 +41,70 @@ import {
 } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
-import type { FC, ReactNode } from "react"
+import { useMemo, type FC, type ReactNode } from "react"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
 // See https://support.stripe.com/questions/where-is-my-customers-refund
 const MAX_REFUND_PROCESSING_DAYS = 12
 
+type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
+
 interface MainPoolCardProps {
   attendance: Attendance
   user: User | null
   authorizeUrl: string
   chargeScheduleDate?: Date | null
+  registrationAvailability?: RegistrationAvailability | null
+  hasAttachedActionBelow?: boolean
 }
 
-export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authorizeUrl, chargeScheduleDate }) => {
+export const MainPoolCard: FC<MainPoolCardProps> = ({
+  attendance,
+  user,
+  authorizeUrl,
+  chargeScheduleDate,
+  registrationAvailability = null,
+  hasAttachedActionBelow = false,
+}) => {
   const now = new Date()
   const attendee = getAttendee(attendance, user)
+
+  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
+  const completion = useMemo(() => {
+    if (attendee !== null) {
+      return buildRegistrationAvailabilityCompletionView(attendance, attendee)
+    }
+
+    return registrationAvailability?.completion ?? null
+  }, [attendance, attendee, registrationAvailability?.completion, deadlineTick])
 
   const registerCountdownDisplay = useCountdown(attendance.registerStart, formatRollingCountdown)
   const registerCountdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
   const isWithinRegisterCountdown = isWithinInterval(now, registerCountdownInterval)
   const showRegisterCountdown = isWithinRegisterCountdown && !attendee
 
-  const paymentCountdownDisplay = useCountdown(attendee?.paymentDeadline ?? null, formatRollingCountdown)
-  const paymentCountdownInterval =
-    attendee?.createdAt && attendee.paymentDeadline ? interval(attendee.createdAt, attendee.paymentDeadline) : null
-  const paymentIsUnpaid = hasAttendeePaid(attendee, attendance.attendancePrice) === false
-  const isWithinPaymentCountdown =
-    paymentCountdownInterval && paymentIsUnpaid ? isWithinInterval(now, paymentCountdownInterval) : false
-  const paymentDeadlineHasPassed = attendee?.paymentDeadline != null && isAfter(now, attendee.paymentDeadline)
-  const showPaymentCountdown =
-    paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
+  const completionCountdownDisplay = useCountdown(completion?.completionDeadline ?? null, formatRollingCountdown)
+  const completionCountdownInterval =
+    attendee?.createdAt && completion?.completionDeadline
+      ? interval(attendee.createdAt, completion.completionDeadline)
+      : null
+
+  const hasMissingRequirements = (completion?.missingRequirements.length ?? 0) > 0
+  const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
+
+  const isWithinCompletionCountdown =
+    completionCountdownInterval && hasMissingRequirements ? isWithinInterval(now, completionCountdownInterval) : false
+
+  const completionDeadlineHasPassed =
+    completion?.completionDeadline != null && isAfter(now, completion.completionDeadline)
+
+  const showCompletionPanel =
+    hasMissingRequirements &&
+    completion?.completionDeadline !== null &&
+    (isWithinCompletionCountdown || completionDeadlineHasPassed)
 
   const cardClassname = cn(
     "flex flex-col w-full min-h-40 gap-2 p-3 rounded-lg",
@@ -142,14 +177,16 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
     isFuture(attendee.earliestReservationAt) &&
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
-  const actionIsRequired = showPaymentCountdown
-  const isRegistered = attendee?.registered === true
-  const isQueued = attendee?.registered === false
-  const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-600/50")
-  const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/10")
+  const actionIsRequired = (completion?.missingRequirements.length ?? 0) > 0
+  const attendeeState = completion?.attendeeState ?? null
+  const isRegistered = attendeeState === "REGISTERED"
+  const isReserved = attendeeState === "RESERVED"
+  const isQueued = attendeeState === "QUEUED"
+  const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-800/50")
+  const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/7")
 
   const cardBody = (
-    <div className="flex flex-col min-h-40 gap-6 p-3 items-center text-center justify-center w-full">
+    <div className="flex flex-col min-h-40 gap-6 p-2 items-center text-center justify-center w-full">
       {!showRegisterCountdown && (
         <div className="flex grow flex-col gap-4 items-center text-center justify-center">
           <div className="flex flex-col gap-1 items-center">
@@ -157,9 +194,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               className={cn(
                 "text-3xl px-2 py-1",
                 hasWaitlist &&
-                  isRegistered &&
+                  (isRegistered || isReserved) &&
                   (actionIsRequired
-                    ? "bg-yellow-200 dark:bg-amber-900 rounded-lg"
+                    ? "bg-yellow-200 dark:bg-amber-800 dark:saturate-75 rounded-lg"
                     : "bg-green-200 dark:bg-green-800 rounded-lg")
               )}
               suppressHydrationWarning
@@ -194,7 +231,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
               <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={actionIsRequired} />
             )}
 
-            <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            <PaymentStatus
+              attendance={attendance}
+              attendee={attendee}
+              chargeScheduleDate={chargeScheduleDate}
+              hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
+            />
           </div>
         </div>
       )}
@@ -215,10 +257,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         </div>
       )}
 
-      <PaymentAction
-        visible={showPaymentCountdown}
-        paymentLink={attendee?.paymentLink ?? null}
-        countdownDisplay={paymentCountdownDisplay}
+      <CompletionCard
+        visible={showCompletionPanel}
+        countdownDisplay={completionCountdownDisplay}
+        paymentIsMissing={paymentIsMissing}
+        hasAttachedActionBelow={hasAttachedActionBelow}
+        isQueued={isQueued}
       />
     </div>
   )
@@ -234,9 +278,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
   return (
     <div
       className={cn(
-        "flex flex-col w-full rounded-lg overflow-hidden",
+        "flex flex-col w-full overflow-hidden",
+        hasAttachedActionBelow ? "rounded-t-xl rounded-b-md" : "rounded-xl",
         !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
-        !actionIsRequired && isRegistered && "bg-green-100 dark:bg-green-900",
+        !actionIsRequired && (isRegistered || isReserved) && "bg-green-100 dark:bg-green-900",
         !actionIsRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
       )}
     >
@@ -244,10 +289,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({ attendance, user, authoriz
         className={cn(
           "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold",
           !attendee && "bg-gray-200 dark:bg-stone-700",
-          isRegistered && "bg-green-200 dark:bg-green-800",
-          isQueued && "bg-indigo-200 dark:bg-indigo-900",
+          (isRegistered || isReserved) && !actionIsRequired && "bg-green-200 dark:bg-green-800",
+          isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-900",
           actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
-          actionIsRequired && isRegistered && "bg-yellow-200 dark:bg-amber-700/50",
+          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-amber-900/50",
           actionIsRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
         )}
       >
@@ -356,6 +401,7 @@ interface PaymentStatusProps {
   attendance: Attendance
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
+  hideUnpaidStatus?: boolean
 }
 
 interface PriceStatusProps {
@@ -443,7 +489,7 @@ const ReservedPaymentStatus = ({ price, chargeScheduleDate }: ReservedPaymentSta
   )
 }
 
-const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStatusProps) => {
+const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidStatus = false }: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
   const price = attendance.attendancePrice
 
@@ -455,7 +501,15 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
     return <PriceStatus price={price} registered={false} />
   }
 
+  if (!attendee.registered) {
+    return null
+  }
+
   if (!hasPaid) {
+    if (hideUnpaidStatus) {
+      return null
+    }
+
     return <UnpaidStatus price={price} registered={attendee.registered === true} />
   }
 
@@ -474,39 +528,75 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate }: PaymentStat
   return null
 }
 
-interface PaymentActionProps {
+interface CompletionCardProps {
   visible: boolean
-  paymentLink: string | null
   countdownDisplay: ReactNode
+  paymentIsMissing: boolean
+  hasAttachedActionBelow: boolean
+  isQueued: boolean
 }
 
-const PaymentAction = ({ visible, paymentLink, countdownDisplay }: PaymentActionProps) => {
-  if (!visible || paymentLink === null) {
+const CompletionCard = ({
+  visible,
+  countdownDisplay,
+  paymentIsMissing,
+  hasAttachedActionBelow,
+  isQueued,
+}: CompletionCardProps) => {
+  if (!visible) {
     return null
   }
 
   return (
-    <Link
-      href={paymentLink}
-      className="group relative bg-indigo-200 dark:bg-indigo-600 dark:saturate-40 rounded-xs cursor-pointer w-full p-3 shadow-md"
+    <div
+      className={cn(
+        "w-full shadow-md bg-background",
+        hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
+      )}
     >
-      <span
+      <div
         className={cn(
-          "absolute top-0 left-0 inset-0 rounded-xs bg-linear-to-t pointer-events-none transition-colors duration-400",
-          "from-indigo-300 via-indigo-300/75 group-hover:via-indigo-300/40 group-hover:from-indigo-300/50 to-transparent",
-          "dark:from-black/50 dark:via-black/30 dark:group-hover:via-black/5 dark:group-hover:from-black/15 dark:to-transparent"
+          "relative flex flex-col gap-3 w-full overflow-hidden p-3",
+          !isQueued && "bg-violet-200 dark:bg-violet-900/75",
+          isQueued && "bg-blue-200 dark:bg-sky-900/75",
+          hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
         )}
-      />
+      >
+        <span
+          className={cn(
+            "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
+            "from-white/50 via-white/30 to-transparent",
+            "dark:from-white/10 dark:via-white/3 dark:to-transparent"
+          )}
+        />
+        <span
+          className={cn(
+            "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
+            "from-transparent via-red-300/6 to-red-300/15",
+            "dark:from-transparent dark:via-red-500/5 dark:to-red-500/12"
+          )}
+        />
 
-      <div className="relative flex flex-col gap-1 items-center justify-center w-full">
-        <Text className="text-base font-medium">Du må betale innen</Text>
-        <Text suppressHydrationWarning className="text-3xl font-medium">
-          {countdownDisplay}
-        </Text>
+        <div className="relative flex flex-col gap-1 items-center justify-center w-full">
+          <div className="relative flex flex-col gap-3">
+            <Text className="text-base font-medium">Fullfør påmeldingen innen</Text>
+
+            <Text suppressHydrationWarning className="text-3xl font-medium">
+              {countdownDisplay}
+            </Text>
+
+            {paymentIsMissing && (
+              <div className="flex flex-col gap-2 items-start w-fit">
+                <div className="flex flex-row w-fit items-center gap-2 -mx-1 px-1 rounded-sm">
+                  <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
+                  <Text>Du har ikke betalt</Text>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      <IconArrowUpRight className="absolute right-3 top-1/2 size-[1.25em] -translate-y-1/2" />
-    </Link>
+    </div>
   )
 }
 

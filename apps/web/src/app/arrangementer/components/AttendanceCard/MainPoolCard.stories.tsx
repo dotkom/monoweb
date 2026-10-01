@@ -1,6 +1,9 @@
 import { Text } from "@dotkomonline/ui"
-import { addDays } from "date-fns"
+import { addDays, isPast } from "date-fns"
 import { useEffect, useState, type ReactNode } from "react"
+import { getAttendee } from "@dotkomonline/rpc/attendance"
+import type { Attendance } from "@dotkomonline/rpc/attendance"
+import type { User } from "@dotkomonline/rpc/user"
 import {
   createAttendanceOpeningSoon,
   createAttendanceOpeningSoonWithPrice,
@@ -16,12 +19,43 @@ import {
   createIneligiblePoolAttendance,
   createMockAttendance,
   createMockAttendee,
+  createMockRegistrationAvailabilityForAttendee,
+  createMockRegistrationAvailabilityPastDeregisterDeadline,
   createMockUser,
 } from "../../../../../.ladle/fixtures/attendance"
 import { MainPoolCard } from "./MainPoolCard"
 
 const AUTHORIZE_URL = "/api/auth/login"
 const SIMULATION_CAPACITY = 120
+
+const MainPoolCardPreview = ({
+  attendance,
+  user,
+  chargeScheduleDate,
+}: {
+  attendance: Attendance
+  user: User | null
+  chargeScheduleDate?: Date | null
+}) => {
+  const attendee = getAttendee(attendance, user)
+
+  const registrationAvailability =
+    user === null || attendee === null
+      ? null
+      : isPast(attendance.deregisterDeadline)
+        ? createMockRegistrationAvailabilityPastDeregisterDeadline(attendance, attendee)
+        : createMockRegistrationAvailabilityForAttendee(attendance, attendee)
+
+  return (
+    <MainPoolCard
+      attendance={attendance}
+      user={user}
+      authorizeUrl={AUTHORIZE_URL}
+      chargeScheduleDate={chargeScheduleDate}
+      registrationAvailability={registrationAvailability}
+    />
+  )
+}
 
 // The goal is to make the registration go very fast at the start, and then slows down as the pool fills up
 const getTickDelayMilliseconds = (registeredCount: number): number => {
@@ -64,7 +98,7 @@ export const ActiveRegistration = () => {
   return (
     <div className="flex flex-col gap-2 max-w-md">
       <Text className="text-sm text-muted-foreground">Aktiv påmelding</Text>
-      <MainPoolCard attendance={attendance} user={viewer} authorizeUrl={AUTHORIZE_URL} />
+      <MainPoolCardPreview attendance={attendance} user={viewer} />
     </div>
   )
 }
@@ -90,31 +124,26 @@ export const AllStates = () => {
   return (
     <div className="flex flex-col gap-8 max-w-md">
       <StatePreview label="Not logged in">
-        <MainPoolCard
-          attendance={createMockAttendance({ attendancePrice: 100 })}
-          user={null}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createMockAttendance({ attendancePrice: 100 })} user={null} />
       </StatePreview>
 
       <StatePreview label="No membership">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createMockAttendance({ attendancePrice: 100 })}
           user={createMockUser({ memberships: [] })}
-          authorizeUrl={AUTHORIZE_URL}
         />
       </StatePreview>
 
       <StatePreview label="Ineligible pool">
-        <MainPoolCard attendance={createIneligiblePoolAttendance()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createIneligiblePoolAttendance()} user={user} />
       </StatePreview>
 
       <StatePreview label="Not registered">
-        <MainPoolCard attendance={createMockAttendance()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createMockAttendance()} user={user} />
       </StatePreview>
 
       <StatePreview label="Not registered, others are queued">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithQueue({
             capacity: 2,
             registeredOtherCount: 2,
@@ -122,16 +151,15 @@ export const AllStates = () => {
             viewer: "absent",
           })}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
         />
       </StatePreview>
 
       <StatePreview label="Registered">
-        <MainPoolCard attendance={createAttendanceWithRegisteredUser()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createAttendanceWithRegisteredUser()} user={user} />
       </StatePreview>
 
       <StatePreview label="Registered, others are queued">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithQueue({
             capacity: 2,
             registeredOtherCount: 1,
@@ -139,12 +167,11 @@ export const AllStates = () => {
             viewer: "reserved",
           })}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
         />
       </StatePreview>
 
       <StatePreview label="In queue">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithQueue({
             capacity: 2,
             registeredOtherCount: 2,
@@ -153,115 +180,83 @@ export const AllStates = () => {
             viewerQueuePosition: 2,
           })}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
         />
       </StatePreview>
 
       <StatePreview label="Register countdown">
-        <MainPoolCard attendance={createAttendanceOpeningSoon()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createAttendanceOpeningSoon()} user={user} />
       </StatePreview>
 
       <StatePreview label="Register countdown with price">
-        <MainPoolCard attendance={createAttendanceOpeningSoonWithPrice()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createAttendanceOpeningSoonWithPrice()} user={user} />
       </StatePreview>
 
-      <StatePreview label="Payment countdown">
-        <MainPoolCard attendance={createAttendanceWithPaymentCountdown()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      <StatePreview label="Completion countdown">
+        <MainPoolCardPreview attendance={createAttendanceWithPaymentCountdown()} user={user} />
       </StatePreview>
 
-      <StatePreview label="Payment countdown while reserved">
-        <MainPoolCard attendance={createAttendanceWithReservedPayment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      <StatePreview label="Completion countdown while reserved">
+        <MainPoolCardPreview attendance={createAttendanceWithReservedPayment()} user={user} />
       </StatePreview>
 
-      <StatePreview label="Payment countdown while queued">
-        <MainPoolCard attendance={createAttendanceWithQueuedPayment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+      <StatePreview label="Completion countdown while queued">
+        <MainPoolCardPreview attendance={createAttendanceWithQueuedPayment()} user={user} />
       </StatePreview>
 
       <StatePreview label="Paid">
-        <MainPoolCard
-          attendance={createAttendanceWithPaymentRecord("charged")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithPaymentRecord("charged")} user={user} />
       </StatePreview>
 
       <StatePreview label="Payment reserved">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithPaymentRecord("reserved")}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
           chargeScheduleDate={chargeScheduleDate}
         />
       </StatePreview>
 
       <StatePreview label="Refunded">
-        <MainPoolCard
-          attendance={createAttendanceWithPaymentRecord("refunded")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithPaymentRecord("refunded")} user={user} />
       </StatePreview>
 
       <StatePreview label="Paid, others are queued">
-        <MainPoolCard
-          attendance={createAttendanceWithRegisteredPaymentRecord("charged")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithRegisteredPaymentRecord("charged")} user={user} />
       </StatePreview>
 
       <StatePreview label="Payment reserved, others are queued">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithRegisteredPaymentRecord("reserved")}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
           chargeScheduleDate={chargeScheduleDate}
         />
       </StatePreview>
 
       <StatePreview label="Refunded, others are queued">
-        <MainPoolCard
-          attendance={createAttendanceWithRegisteredPaymentRecord("refunded")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithRegisteredPaymentRecord("refunded")} user={user} />
       </StatePreview>
 
       <StatePreview label="Paid while queued">
-        <MainPoolCard
-          attendance={createAttendanceWithQueuedPaymentRecord("charged")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithQueuedPaymentRecord("charged")} user={user} />
       </StatePreview>
 
       <StatePreview label="Payment reserved while queued">
-        <MainPoolCard
+        <MainPoolCardPreview
           attendance={createAttendanceWithQueuedPaymentRecord("reserved")}
           user={user}
-          authorizeUrl={AUTHORIZE_URL}
           chargeScheduleDate={chargeScheduleDate}
         />
       </StatePreview>
 
       <StatePreview label="Refunded while queued">
-        <MainPoolCard
-          attendance={createAttendanceWithQueuedPaymentRecord("refunded")}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithQueuedPaymentRecord("refunded")} user={user} />
       </StatePreview>
 
       <StatePreview label="Punishment delay">
-        <MainPoolCard attendance={createAttendanceWithServingPunishment()} user={user} authorizeUrl={AUTHORIZE_URL} />
+        <MainPoolCardPreview attendance={createAttendanceWithServingPunishment()} user={user} />
       </StatePreview>
 
       <StatePreview label="Punishment delay with payment">
-        <MainPoolCard
-          attendance={createAttendanceWithServingPunishment({ withPayment: true })}
-          user={user}
-          authorizeUrl={AUTHORIZE_URL}
-        />
+        <MainPoolCardPreview attendance={createAttendanceWithServingPunishment({ withPayment: true })} user={user} />
       </StatePreview>
     </div>
   )
