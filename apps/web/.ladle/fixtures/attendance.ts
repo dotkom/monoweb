@@ -1,6 +1,7 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type Attendance,
+  type AttendanceSelection,
   type AttendanceSummary,
   type Attendee,
   buildRegistrationAvailabilityCompletionView,
@@ -28,6 +29,7 @@ export type CreateMockAttendanceOptions = {
   registeredAttendeeCount?: number
   yearCriteria?: number[]
   attendees?: Attendee[]
+  selections?: AttendanceSelection[]
   registerStartOffsetMinutes?: number
 }
 
@@ -122,6 +124,7 @@ export const createMockAttendance = (options: CreateMockAttendanceOptions = {}):
     capacity = 50,
     yearCriteria = [1],
     attendees = [],
+    selections = [],
     registerStartOffsetMinutes,
   } = options
 
@@ -151,7 +154,7 @@ export const createMockAttendance = (options: CreateMockAttendanceOptions = {}):
       },
     ],
     attendees,
-    selections: [],
+    selections,
     createdAt: now,
     updatedAt: now,
   }
@@ -222,6 +225,15 @@ export const createMockRegistrationAvailability = (
   ...overrides,
 })
 
+export const mockFoodSelection: AttendanceSelection = {
+  id: "selection-food",
+  name: "Mat",
+  options: [
+    { id: "option-meat", name: "Kjøtt" },
+    { id: "option-vegetarian", name: "Vegetar" },
+  ],
+}
+
 export const createMockCompletionAvailability = (
   attendance: Attendance,
   attendee: Attendee | null,
@@ -235,6 +247,7 @@ export const createMockCompletionAvailability = (
       completionDeadline: null,
       requirements: [],
       missingRequirements: [],
+      missedRequirements: [],
       paymentLink: null,
       ...overrides,
     }
@@ -570,6 +583,131 @@ export const createIneligiblePoolAttendance = (): Attendance =>
   createMockAttendance({
     yearCriteria: [5],
   })
+
+const completedFoodSelectionResponse = {
+  selectionId: mockFoodSelection.id,
+  selectionName: mockFoodSelection.name,
+  optionId: mockFoodSelection.options[0].id,
+  optionName: mockFoodSelection.options[0].name,
+}
+
+export const createAttendanceWithSelectionsPending = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: addMinutes(now, 45),
+    selections: [],
+  })
+
+  return createMockAttendance({
+    attendees: [attendee],
+    selections: [mockFoodSelection],
+  })
+}
+
+export const createAttendanceWithSelectionsComplete = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    selections: [completedFoodSelectionResponse],
+  })
+
+  return createMockAttendance({
+    attendees: [attendee],
+    selections: [mockFoodSelection],
+  })
+}
+
+export const createAttendanceWithPaymentAndSelectionsPending = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: addMinutes(now, 45),
+    paymentLink: "https://example.com/betaling",
+    selections: [],
+  })
+
+  return createMockAttendance({
+    attendancePrice: 100,
+    attendees: [attendee],
+    selections: [mockFoodSelection],
+  })
+}
+
+export const createAttendanceWithPaymentCompleteSelectionsPending = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: addMinutes(now, 45),
+    paymentReservedAt: subMinutes(now, 10),
+    selections: [],
+  })
+
+  return createMockAttendance({
+    attendancePrice: 100,
+    attendees: [attendee],
+    selections: [mockFoodSelection],
+  })
+}
+
+export const createAttendanceWithSelectionsCompletePaymentPending = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: addMinutes(now, 45),
+    paymentLink: "https://example.com/betaling",
+    selections: [completedFoodSelectionResponse],
+  })
+
+  return createMockAttendance({
+    attendancePrice: 100,
+    attendees: [attendee],
+    selections: [mockFoodSelection],
+  })
+}
+
+export const createAttendanceWithSelectionsPendingPastDeregisterDeadline = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: subMinutes(now, 30),
+    selections: [],
+  })
+
+  return {
+    ...createMockAttendance({
+      attendees: [attendee],
+      selections: [mockFoodSelection],
+    }),
+    deregisterDeadline: subHours(now, 1),
+  }
+}
+
+export const createAttendanceWithPaymentAndSelectionsPendingPastDeregisterDeadline = (): Attendance => {
+  const user = createMockUser()
+  const attendee = createMockAttendee({
+    user,
+    registered: true,
+    completionDeadline: subMinutes(now, 30),
+    paymentLink: "https://example.com/betaling",
+    selections: [],
+  })
+
+  return {
+    ...createMockAttendance({
+      attendancePrice: 100,
+      attendees: [attendee],
+      selections: [mockFoodSelection],
+    }),
+    deregisterDeadline: subHours(now, 1),
+  }
+}
 
 export const createLockedDeregisterAttendance = (): { attendance: Attendance; attendee: Attendee } => {
   const user = createMockUser()

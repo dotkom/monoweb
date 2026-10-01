@@ -9,6 +9,7 @@ import {
   type Attendance,
   type AttendancePool,
   type Attendee,
+  attendanceHasCompletionRequirements,
   getAttendablePool,
   getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
@@ -145,11 +146,12 @@ export function ManualCreateUserAttendModal({
                 description="Gir reservert plass med en gang. Uten dette kan brukeren havne i kø hvis gruppen er full, har utsettelse, eller brukeren har prikker."
               />
 
-              {attendance !== undefined && attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && (
+              {attendance !== undefined && attendanceHasCompletionRequirements(attendance) && (
                 <SegmentedControlField
                   control={form.control}
                   name="completionDeadlineHours"
                   label="Fullføringsfrist"
+                  description={getCompletionDeadlineDescription(attendance)}
                   options={[
                     { value: "1", label: "1 time" },
                     { value: "24", label: "24 timer" },
@@ -271,6 +273,21 @@ function getParentRegistrationStatusText(parentEventTitle: string, parentAttende
 
 function isImmediatePayment(completionDeadlineHours: FormResult["completionDeadlineHours"]): boolean {
   return completionDeadlineHours === "1"
+}
+
+function getCompletionDeadlineDescription(attendance: Attendance): string {
+  const hasPayment = attendance.attendancePrice !== null && attendance.attendancePrice > 0
+  const hasSelections = attendance.selections.length > 0
+
+  if (hasPayment && hasSelections) {
+    return "Hvor lenge brukeren har på å betale og gjøre valg."
+  }
+
+  if (hasPayment) {
+    return "Hvor lenge brukeren har på å betale."
+  }
+
+  return "Hvor lenge brukeren har på å gjøre valg."
 }
 
 function getDefaultPoolId(attendance: Attendance | undefined, user: User | undefined): string {

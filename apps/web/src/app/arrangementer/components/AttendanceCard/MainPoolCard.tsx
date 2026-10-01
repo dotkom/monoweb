@@ -7,11 +7,13 @@ import {
   type Attendance,
   type Attendee,
   buildRegistrationAvailabilityCompletionView,
+  getActualDeregisterDeadlineForAttendee,
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
   getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
+  hasAttendeeCompletedSelections,
   hasAttendeePaid,
 } from "@dotkomonline/rpc/attendance"
 import { type User, findActiveMembership } from "@dotkomonline/rpc/user"
@@ -23,6 +25,8 @@ import {
   IconCircleDashedCheck,
   IconClockCheck,
   IconCoins,
+  IconEyeOff,
+  IconEyeSearch,
   IconHourglassEmpty,
   IconUserX,
   IconX,
@@ -37,11 +41,14 @@ import {
   isFuture,
   isWithinInterval,
   roundToNearestHours,
+  secondsToMilliseconds,
   subMinutes,
 } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
-import { useMemo, type FC, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, type FC, type ReactNode } from "react"
+
+export type CompletionHighlightTarget = "payment" | "selections" | "both" | null
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
@@ -57,6 +64,9 @@ interface MainPoolCardProps {
   chargeScheduleDate?: Date | null
   registrationAvailability?: RegistrationAvailability | null
   hasAttachedActionBelow?: boolean
+  setCompletionHighlightTarget: (target: CompletionHighlightTarget) => void
+  isCompletionHighlightHidden: boolean
+  onToggleCompletionHighlightHidden: () => void
 }
 
 export const MainPoolCard: FC<MainPoolCardProps> = ({
@@ -66,11 +76,16 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   chargeScheduleDate,
   registrationAvailability = null,
   hasAttachedActionBelow = false,
+  setCompletionHighlightTarget,
+  isCompletionHighlightHidden,
+  onToggleCompletionHighlightHidden,
 }) => {
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
+  const deregisterDeadlineForAttendee =
+    attendee !== null ? getActualDeregisterDeadlineForAttendee(attendance, attendee) : null
+  const deadlineTick = useDeadlineTick(attendee?.completionDeadline, deregisterDeadlineForAttendee)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
   const completion = useMemo(() => {
@@ -80,6 +95,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
     return registrationAvailability?.completion ?? null
   }, [attendance, attendee, registrationAvailability?.completion, deadlineTick])
+  const highlightEnabled = !isCompletionHighlightHidden
 
   const registerCountdownDisplay = useCountdown(attendance.registerStart, formatRollingCountdown)
   const registerCountdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
@@ -94,6 +110,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const hasMissingRequirements = (completion?.missingRequirements.length ?? 0) > 0
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
+  const selectionsAreMissing = completion?.missingRequirements.includes("SELECTIONS") ?? false
+  const selectionsMissedDeadline = completion?.missedRequirements.includes("SELECTIONS") ?? false
 
   const isWithinCompletionCountdown =
     completionCountdownInterval && hasMissingRequirements ? isWithinInterval(now, completionCountdownInterval) : false
@@ -236,6 +254,26 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               attendee={attendee}
               chargeScheduleDate={chargeScheduleDate}
               hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
+              highlightEnabled={highlightEnabled}
+              onHighlightEnter={() => {
+                setCompletionHighlightTarget("payment")
+              }}
+              onHighlightLeave={() => {
+                setCompletionHighlightTarget(null)
+              }}
+            />
+            <SelectionStatus
+              attendance={attendance}
+              attendee={attendee}
+              hideIncompleteStatus={showCompletionPanel && selectionsAreMissing}
+              selectionsMissedDeadline={selectionsMissedDeadline}
+              highlightEnabled={highlightEnabled}
+              onHighlightEnter={() => {
+                setCompletionHighlightTarget("selections")
+              }}
+              onHighlightLeave={() => {
+                setCompletionHighlightTarget(null)
+              }}
             />
           </div>
         </div>
@@ -261,8 +299,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         visible={showCompletionPanel}
         countdownDisplay={completionCountdownDisplay}
         paymentIsMissing={paymentIsMissing}
+        selectionsAreMissing={selectionsAreMissing}
         hasAttachedActionBelow={hasAttachedActionBelow}
         isQueued={isQueued}
+        highlightEnabled={highlightEnabled}
+        setCompletionHighlightTarget={setCompletionHighlightTarget}
+        onToggleHighlightHidden={onToggleCompletionHighlightHidden}
       />
     </div>
   )
@@ -402,6 +444,9 @@ interface PaymentStatusProps {
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
   hideUnpaidStatus?: boolean
+  highlightEnabled?: boolean
+  onHighlightEnter?: () => void
+  onHighlightLeave?: () => void
 }
 
 interface PriceStatusProps {
@@ -418,14 +463,39 @@ const PriceStatus = ({ price }: PriceStatusProps) => {
   )
 }
 
-const UnpaidStatus = ({ price, registered }: PriceStatusProps) => {
+interface UnpaidStatusProps extends PriceStatusProps {
+  highlightEnabled?: boolean
+  onHighlightEnter?: () => void
+  onHighlightLeave?: () => void
+}
+
+const UnpaidStatus = ({
+  price,
+  registered,
+  highlightEnabled = false,
+  onHighlightEnter,
+  onHighlightLeave,
+}: UnpaidStatusProps) => {
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: hover highlights the payment action below
     <div
       className={cn(
-        "flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm",
+        "flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm transition-colors",
         registered && "bg-orange-200 dark:bg-red-900",
-        !registered && "bg-pink-200 dark:bg-pink-900"
+        !registered && "bg-pink-200 dark:bg-pink-900",
+        highlightEnabled && registered && "cursor-pointer hover:bg-orange-300 dark:hover:bg-red-800",
+        highlightEnabled && !registered && "cursor-pointer hover:bg-pink-300 dark:hover:bg-pink-800"
       )}
+      onMouseEnter={() => {
+        if (highlightEnabled) {
+          onHighlightEnter?.()
+        }
+      }}
+      onMouseLeave={() => {
+        if (highlightEnabled) {
+          onHighlightLeave?.()
+        }
+      }}
     >
       <IconX className="size-[1.25em] text-red-700 dark:text-red-200" />
       <Text>{price} kr ubetalt</Text>
@@ -489,7 +559,15 @@ const ReservedPaymentStatus = ({ price, chargeScheduleDate }: ReservedPaymentSta
   )
 }
 
-const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidStatus = false }: PaymentStatusProps) => {
+const PaymentStatus = ({
+  attendance,
+  attendee,
+  chargeScheduleDate,
+  hideUnpaidStatus = false,
+  highlightEnabled = false,
+  onHighlightEnter,
+  onHighlightLeave,
+}: PaymentStatusProps) => {
   const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
   const price = attendance.attendancePrice
 
@@ -510,7 +588,15 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
       return null
     }
 
-    return <UnpaidStatus price={price} registered={attendee.registered === true} />
+    return (
+      <UnpaidStatus
+        price={price}
+        registered={attendee.registered === true}
+        highlightEnabled={highlightEnabled}
+        onHighlightEnter={onHighlightEnter}
+        onHighlightLeave={onHighlightLeave}
+      />
+    )
   }
 
   if (attendee.paymentRefundedAt) {
@@ -528,31 +614,219 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
   return null
 }
 
+interface SelectionStatusProps {
+  attendance: Attendance
+  attendee: Attendee | null
+  hideIncompleteStatus?: boolean
+  selectionsMissedDeadline?: boolean
+  highlightEnabled?: boolean
+  onHighlightEnter?: () => void
+  onHighlightLeave?: () => void
+}
+
+const SelectionStatus = ({
+  attendance,
+  attendee,
+  hideIncompleteStatus = false,
+  selectionsMissedDeadline = false,
+  highlightEnabled = false,
+  onHighlightEnter,
+  onHighlightLeave,
+}: SelectionStatusProps) => {
+  if (attendee === null || attendee.registered !== true || attendance.selections.length === 0) {
+    return null
+  }
+
+  const hasSelected = hasAttendeeCompletedSelections(attendance.selections, attendee.selections)
+
+  if (!hasSelected) {
+    if (selectionsMissedDeadline) {
+      return (
+        <div className="flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm bg-red-200 dark:bg-red-950">
+          <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
+          <Text>Du fullførte ikke valgene i tide</Text>
+        </div>
+      )
+    }
+
+    if (hideIncompleteStatus) {
+      return null
+    }
+
+    return (
+      // biome-ignore lint/a11y/noStaticElementInteractions: hover highlights the selection form below
+      <div
+        className={cn(
+          "flex flex-row w-fit items-center gap-2 pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm transition-colors",
+          attendee.registered && "bg-orange-200 dark:bg-red-900",
+          !attendee.registered && "bg-pink-200 dark:bg-pink-900",
+          highlightEnabled && attendee.registered && "cursor-pointer hover:bg-orange-300 dark:hover:bg-red-800",
+          highlightEnabled && !attendee.registered && "cursor-pointer hover:bg-pink-300 dark:hover:bg-pink-800"
+        )}
+        onMouseEnter={() => {
+          if (highlightEnabled) {
+            onHighlightEnter?.()
+          }
+        }}
+        onMouseLeave={() => {
+          if (highlightEnabled) {
+            onHighlightLeave?.()
+          }
+        }}
+      >
+        <IconX className="size-[1.25em] text-red-700 dark:text-red-200" />
+        <Text>Du har ikke valgt</Text>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCheck className="size-[1.25em] text-green-700 dark:text-green-200" />
+      <Text>Du har valgt</Text>
+    </div>
+  )
+}
+
 interface CompletionCardProps {
   visible: boolean
   countdownDisplay: ReactNode
   paymentIsMissing: boolean
+  selectionsAreMissing: boolean
   hasAttachedActionBelow: boolean
   isQueued: boolean
+  highlightEnabled: boolean
+  setCompletionHighlightTarget: (target: CompletionHighlightTarget) => void
+  onToggleHighlightHidden: () => void
+}
+
+interface CompletionRequirementRowProps {
+  label: string
+  highlightEnabled: boolean
+  highlightTarget: Exclude<CompletionHighlightTarget, null | "both">
+  setCompletionHighlightTarget: (target: CompletionHighlightTarget) => void
+  onHighlightLeave: () => void
+}
+
+const CompletionRequirementRow = ({
+  label,
+  highlightEnabled,
+  highlightTarget,
+  setCompletionHighlightTarget,
+  onHighlightLeave,
+}: CompletionRequirementRowProps) => {
+  const touchActiveRef = useRef(false)
+  const touchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  useEffect(() => {
+    return () => {
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: hover highlights the related completion action below
+    <div
+      className={cn(
+        "flex flex-row w-fit items-center gap-2 -mx-1 px-1 rounded-sm transition-colors",
+        highlightEnabled && "cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
+      )}
+      onMouseEnter={() => {
+        if (highlightEnabled) {
+          setCompletionHighlightTarget(highlightTarget)
+        }
+      }}
+      onMouseLeave={() => {
+        if (highlightEnabled && !touchActiveRef.current) {
+          onHighlightLeave()
+        }
+      }}
+      onTouchStart={() => {
+        if (!highlightEnabled) {
+          return
+        }
+
+        touchActiveRef.current = true
+        setCompletionHighlightTarget(highlightTarget)
+
+        if (touchTimeoutRef.current) {
+          clearTimeout(touchTimeoutRef.current)
+        }
+
+        touchTimeoutRef.current = setTimeout(() => {
+          touchActiveRef.current = false
+          onHighlightLeave()
+        }, secondsToMilliseconds(5))
+      }}
+    >
+      <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
+      <Text>{label}</Text>
+    </div>
+  )
 }
 
 const CompletionCard = ({
   visible,
   countdownDisplay,
   paymentIsMissing,
+  selectionsAreMissing,
   hasAttachedActionBelow,
   isQueued,
+  highlightEnabled,
+  setCompletionHighlightTarget,
+  onToggleHighlightHidden,
 }: CompletionCardProps) => {
+  const touchActiveRef = useRef(false)
+  const touchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  useEffect(() => {
+    return () => {
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current)
+      }
+    }
+  }, [])
+
   if (!visible) {
     return null
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: card hover highlights all incomplete completion actions
     <div
       className={cn(
-        "w-full shadow-md bg-background",
+        "group/completion w-full shadow-md bg-background",
         hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
       )}
+      onMouseEnter={() => {
+        if (highlightEnabled) {
+          setCompletionHighlightTarget("both")
+        }
+      }}
+      onMouseLeave={() => {
+        if (highlightEnabled && !touchActiveRef.current) {
+          setCompletionHighlightTarget(null)
+        }
+      }}
+      onTouchStart={() => {
+        if (!highlightEnabled) {
+          return
+        }
+
+        touchActiveRef.current = true
+        setCompletionHighlightTarget("both")
+
+        if (touchTimeoutRef.current) {
+          clearTimeout(touchTimeoutRef.current)
+        }
+
+        touchTimeoutRef.current = setTimeout(() => {
+          touchActiveRef.current = false
+          setCompletionHighlightTarget(null)
+        }, secondsToMilliseconds(5))
+      }}
     >
       <div
         className={cn(
@@ -562,6 +836,29 @@ const CompletionCard = ({
           hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
         )}
       >
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                onToggleHighlightHidden()
+              }}
+              aria-label={
+                highlightEnabled ? "Skjul fremheving av uferdig påmelding" : "Vis fremheving av uferdig påmelding"
+              }
+              className={cn(
+                "absolute top-2 right-2 z-10 rounded-sm p-1 transition-opacity",
+                "hover:bg-black/5 dark:hover:bg-white/10",
+                "text-violet-500 saturate-50 hover:text-black dark:text-violet-400 dark:hover:text-white",
+                "opacity-0 group-hover/completion:opacity-100"
+              )}
+            >
+              {!highlightEnabled ? <IconEyeOff className="size-4" /> : <IconEyeSearch className="size-4" />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent sideOffset={12}>{highlightEnabled ? "Skjul tips" : "Vis tips"}</TooltipContent>
+        </Tooltip>
         <span
           className={cn(
             "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
@@ -585,12 +882,30 @@ const CompletionCard = ({
               {countdownDisplay}
             </Text>
 
-            {paymentIsMissing && (
+            {(paymentIsMissing || selectionsAreMissing) && (
               <div className="flex flex-col gap-2 items-start w-fit">
-                <div className="flex flex-row w-fit items-center gap-2 -mx-1 px-1 rounded-sm">
-                  <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
-                  <Text>Du har ikke betalt</Text>
-                </div>
+                {paymentIsMissing && (
+                  <CompletionRequirementRow
+                    label="Du har ikke betalt"
+                    highlightEnabled={highlightEnabled}
+                    highlightTarget="payment"
+                    setCompletionHighlightTarget={setCompletionHighlightTarget}
+                    onHighlightLeave={() => {
+                      setCompletionHighlightTarget("both")
+                    }}
+                  />
+                )}
+                {selectionsAreMissing && (
+                  <CompletionRequirementRow
+                    label="Du har ikke valgt"
+                    highlightEnabled={highlightEnabled}
+                    highlightTarget="selections"
+                    setCompletionHighlightTarget={setCompletionHighlightTarget}
+                    onHighlightLeave={() => {
+                      setCompletionHighlightTarget("both")
+                    }}
+                  />
+                )}
               </div>
             )}
           </div>

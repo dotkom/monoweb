@@ -24,8 +24,10 @@ import {
   type RegistrationRejectionCause,
   type RegistrationUserCause,
   type RegistrationWindowCause,
+  attendanceHasCompletionRequirements,
   buildPoolOccupancies,
   buildRegistrationAvailabilityCompletionView,
+  getActualDeregisterDeadline,
   getMissingAttendanceCompletionRequirements,
   getRegisteredAttendeeCount,
   isAttendable,
@@ -338,6 +340,53 @@ export function getAttendanceService(
   async function clearAttendeeCompletionDeadline(handle: DBHandle, attendeeId: AttendeeId): Promise<void> {
     await cancelPendingAttendeeCompletion(handle, attendeeId)
     await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
+  }
+
+  async function tryStartAttendeeCompletionDeadline(
+    handle: DBHandle,
+    attendee: Attendee,
+    attendance: Attendance,
+    immediatePayment: boolean
+  ): Promise<void> {
+    if (attendee.completionDeadline !== null) {
+      return
+    }
+
+    if (!attendanceHasCompletionRequirements(attendance)) {
+      return
+    }
+
+    const completionDeadline = immediatePayment
+      ? new TZDate(addHours(getCurrentUTC(), 1))
+      : new TZDate(addHours(getCurrentUTC(), 24))
+
+    await startAttendeeCompletionDeadline(handle, attendee.id, completionDeadline)
+    attendee.completionDeadline = completionDeadline
+
+    logger.info(
+      "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event attendance %s",
+      attendee.id,
+      attendee.user.id,
+      completionDeadline.toUTCString(),
+      attendance.id
+    )
+  }
+
+  async function tryClearAttendeeCompletionIfComplete(
+    handle: DBHandle,
+    attendance: Attendance,
+    attendee: Attendee
+  ): Promise<Attendee> {
+    if (getMissingAttendanceCompletionRequirements(attendance, attendee).length > 0) {
+      return attendee
+    }
+
+    await clearAttendeeCompletionDeadline(handle, attendee.id)
+
+    return {
+      ...attendee,
+      completionDeadline: null,
+    }
   }
 
   function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
@@ -787,7 +836,9 @@ export function getAttendanceService(
       // Immediate reservations go through right away, otherwise we schedule a task to handle the reservation at the
       // appropriate time. In this case, the email is sent when the reservation becomes effective.
       if (isImmediateReservation) {
-        if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
+        const needsPayment = attendance.attendancePrice !== null && attendance.attendancePrice > 0
+
+        if (needsPayment) {
           const completionDeadline = options.immediatePayment
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
@@ -807,6 +858,8 @@ export function getAttendanceService(
             payment.url
           )
         }
+
+        await tryStartAttendeeCompletionDeadline(handle, attendee, attendance, options.immediatePayment)
 
         sendEventRegistrationEmail(event, attendance, attendee)
       } else {
@@ -857,7 +910,10 @@ export function getAttendanceService(
       } satisfies AttendeeWrite)
       validateAttendeeWrite(input)
 
-      return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+      let updatedAttendee = await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+      updatedAttendee = await tryClearAttendeeCompletionIfComplete(handle, attendance, updatedAttendee)
+
+      return updatedAttendee
     },
 
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
@@ -910,7 +966,9 @@ export function getAttendanceService(
         attendee.paymentRefundedAt !== null ||
         attendee.paymentChargedAt !== null
 
-      if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
+      const needsPayment = attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment
+
+      if (needsPayment) {
         const completionDeadline = addHours(getCurrentUTC(), 24)
 
         const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
@@ -928,6 +986,8 @@ export function getAttendanceService(
           payment.url
         )
       }
+
+      await tryStartAttendeeCompletionDeadline(handle, attendee, attendance, false)
 
       sendEventRegistrationEmail(event, attendance, attendee)
       emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
@@ -1008,12 +1068,12 @@ export function getAttendanceService(
         return
       }
 
-      // If this event is paid, the new attendee must also receive payment information.
-      if (
+      const needsPayment =
         firstQueuedAdjacentAttendee.paymentId === null &&
         attendance.attendancePrice !== null &&
         attendance.attendancePrice !== 0
-      ) {
+
+      if (needsPayment) {
         const completionDeadline = addHours(getCurrentUTC(), 24)
         const payment = await this.startAttendeePayment(handle, firstQueuedAdjacentAttendee.id, completionDeadline)
         firstQueuedAdjacentAttendee.completionDeadline = completionDeadline
@@ -1028,6 +1088,8 @@ export function getAttendanceService(
           payment.url
         )
       }
+
+      await tryStartAttendeeCompletionDeadline(handle, firstQueuedAdjacentAttendee, attendance, false)
 
       await attendanceRepository.updateAttendeeById(
         handle,
@@ -1401,7 +1463,12 @@ export function getAttendanceService(
         return
       }
 
-      await clearAttendeeCompletionDeadline(handle, attendeeId)
+      const refreshedAttendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+      const refreshedAttendee = refreshedAttendance?.attendees.find((candidate) => candidate.id === attendeeId)
+
+      if (refreshedAttendance !== null && refreshedAttendee !== undefined) {
+        await tryClearAttendeeCompletionIfComplete(handle, refreshedAttendance, refreshedAttendee)
+      }
     },
 
     async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
@@ -1417,53 +1484,103 @@ export function getAttendanceService(
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
-      if (getMissingAttendanceCompletionRequirements(attendance, attendee).length === 0) {
+      const missingRequirements = getMissingAttendanceCompletionRequirements(attendance, attendee)
+
+      if (missingRequirements.length === 0) {
         await clearAttendeeCompletionDeadline(handle, attendeeId)
         return
       }
 
-      if (attendee.paymentId === null || attendee.paymentReservedAt) {
-        return
-      }
+      let shouldDeregister = false
 
-      const payment = await paymentService.getById(attendee.paymentId)
-
-      // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
-      if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
+      if (missingRequirements.includes("SELECTIONS")) {
         const mark = await markService.create(
           handle,
           {
-            details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
-            // We do not have a method for indefinite duration yet.
-            duration: 100_000,
-            title: "Suspensjon for manglende betaling",
-            type: "MISSING_PAYMENT",
-            // Immediate suspension
-            weight: 6,
+            title: `Manglende valg på ${event.title}`,
+            duration: DEFAULT_MARK_DURATION,
+            type: "MISSING_SELECTIONS",
+            weight: 2,
+            details: null,
           },
-          event.hostingGroups.map((g) => g.slug)
+          event.hostingGroups.map((group) => group.slug)
         )
 
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
         logger.info(
-          "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+          "Marked User(ID=%s) for missing selections for Event(ID=%s,Title=%s)",
           attendee.userId,
           event.id,
-          event.title,
-          attendance.deregisterDeadline
+          event.title
         )
-      } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+
+        shouldDeregister = true
+      }
+
+      if (missingRequirements.includes("PAYMENT")) {
+        if (attendee.paymentId === null) {
+          shouldDeregister = true
+        } else if (attendee.paymentReservedAt) {
+          await tryClearAttendeeCompletionIfComplete(handle, attendance, attendee)
+
+          return
+        } else {
+          const payment = await paymentService.getById(attendee.paymentId)
+
+          if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
+            const mark = await markService.create(
+              handle,
+              {
+                details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
+                duration: 100_000,
+                title: "Suspensjon for manglende betaling",
+                type: "MISSING_PAYMENT",
+                weight: 6,
+              },
+              event.hostingGroups.map((group) => group.slug)
+            )
+
+            await personalMarkService.addToUser(handle, attendee.userId, mark.id)
+            logger.info(
+              "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+              attendee.userId,
+              event.id,
+              event.title,
+              attendance.deregisterDeadline
+            )
+          } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+            shouldDeregister = true
+          } else {
+            await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+              paymentReservedAt: getCurrentUTC(),
+              paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
+              paymentLink: null,
+            })
+
+            const updatedAttendee = {
+              ...attendee,
+              paymentReservedAt: getCurrentUTC(),
+              paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : attendee.paymentChargedAt,
+              paymentLink: null,
+            }
+
+            if (getMissingAttendanceCompletionRequirements(attendance, updatedAttendee).length === 0) {
+              await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+              return
+            }
+
+            if (missingRequirements.includes("SELECTIONS")) {
+              shouldDeregister = true
+            }
+          }
+        }
+      }
+
+      if (shouldDeregister) {
         await this.deregisterAttendee(handle, attendeeId, {
-          // TODO: Maybe this should be false?
           ignoreDeregistrationWindow: true,
         })
-      } else {
-        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-          paymentReservedAt: getCurrentUTC(),
-          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-          paymentLink: null,
-        })
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
       }
     },
 
@@ -2003,9 +2120,7 @@ export function buildDeregistrationAvailabilityView(
   attendance: Attendance,
   chargeScheduleDate: Date | null
 ): RegistrationAvailabilityView {
-  const actualDeregisterDeadline = chargeScheduleDate
-    ? min([attendance.deregisterDeadline, chargeScheduleDate])
-    : attendance.deregisterDeadline
+  const actualDeregisterDeadline = getActualDeregisterDeadline(attendance, chargeScheduleDate)
 
   const isPastDeregisterDeadline = !isFuture(actualDeregisterDeadline)
   const hasBeenCharged = isAttendeeChargedAndUnrefunded(attendee)

@@ -10,7 +10,6 @@ import {
   Text,
   cn,
 } from "@dotkomonline/ui"
-import { useEffect } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
 interface SelectionsFormValues {
@@ -22,9 +21,10 @@ interface SelectionsFormProps {
   attendee: Attendee
   onSubmit: (selections: AttendanceSelectionResponse[]) => void
   disabled?: boolean
+  showFieldHighlight?: boolean
 }
 
-export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: SelectionsFormProps) {
+export function SelectionsForm({ attendance, attendee, onSubmit, disabled, showFieldHighlight }: SelectionsFormProps) {
   const prefilledSelections = attendance.selections.map(({ id: selectionId, name: selectionName }) => {
     const savedResponse = attendee.selections.find((selection) => selection.selectionId === selectionId)
     const optionId = savedResponse?.optionId ?? ""
@@ -35,7 +35,6 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
 
   const {
     control,
-    trigger,
     getValues,
     formState: { errors },
   } = useForm<SelectionsFormValues>({
@@ -43,12 +42,6 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
     mode: "onChange",
     reValidateMode: "onChange",
   })
-
-  // This validates the default values without the user having to interact with the form
-  // Makes empty things red immediately
-  useEffect(() => {
-    trigger()
-  }, [trigger])
 
   const { fields: attendeeOptionsFields } = useFieldArray({
     name: "attendeeOptions",
@@ -82,7 +75,8 @@ export function SelectionsForm({ attendance, attendee, onSubmit, disabled }: Sel
               >
                 <SelectTrigger
                   className={cn(
-                    "w-full transition-all",
+                    "w-full transition-none",
+                    showFieldHighlight && "ring-2 ring-offset-2 ring-red-400 dark:ring-red-600",
                     hasError(index) &&
                       "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400 dark:focus:border-red-400"
                   )}
