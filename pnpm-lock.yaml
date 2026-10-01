@@ -1064,6 +1064,9 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.48.0(react@19.2.8)
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tiptap/extension-image':
         specifier: ^3.17.0
         version: 3.31.4(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))

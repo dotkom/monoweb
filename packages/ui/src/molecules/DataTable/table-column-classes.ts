@@ -1,4 +1,4 @@
-import { cn } from "@dotkomonline/ui"
+import { cn } from "../../utils"
 
 export type TableColumnMeta = {
   fit?: boolean

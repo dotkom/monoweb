@@ -1,10 +1,9 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { sortGroupRolesByPriority, type GroupMember, type GroupMembership } from "@dotkomonline/rpc/group"
-import { Button, Text } from "@dotkomonline/ui"
+import { DataTable, Button, Text } from "@dotkomonline/ui"
 import { ogJoin } from "@dotkomonline/utils"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { formatDate } from "date-fns"

@@ -1,9 +1,18 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { useContestEditPermission } from "@/hooks/use-contest-edit-permission"
 import type { ContestantDetail, ContestUserSummary } from "@dotkomonline/rpc/contest"
-import { Avatar, AvatarFallback, AvatarGroup, AvatarImage, Button, cn, Text, TextLink } from "@dotkomonline/ui"
+import {
+  DataTable,
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+  Button,
+  cn,
+  Text,
+  TextLink,
+} from "@dotkomonline/ui"
 import { IconPencil, IconTrash, IconUser, IconUsersGroup } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useCallback, useEffect, useMemo, useState } from "react"

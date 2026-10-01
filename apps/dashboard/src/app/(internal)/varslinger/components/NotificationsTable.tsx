@@ -1,7 +1,6 @@
 "use client"
 
 import { useAuthorization } from "@/auth/authorization-context"
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { EditableRowIndicator } from "@/components/EditableRowIndicator"
 import { useTRPC } from "@/lib/trpc-client"
@@ -12,7 +11,7 @@ import {
   type NotificationManagement,
   type NotificationRecipientStats,
 } from "@dotkomonline/rpc/notification"
-import { Text, TextLink } from "@dotkomonline/ui"
+import { DataTable, Text, TextLink } from "@dotkomonline/ui"
 import { useQueries } from "@tanstack/react-query"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"

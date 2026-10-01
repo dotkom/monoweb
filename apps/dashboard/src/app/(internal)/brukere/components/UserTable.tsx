@@ -1,8 +1,7 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import type { User } from "@dotkomonline/rpc/user"
-import { Avatar, AvatarFallback, AvatarImage } from "@dotkomonline/ui"
+import { DataTable, Avatar, AvatarFallback, AvatarImage } from "@dotkomonline/ui"
 import { IconUser } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import Link from "next/link"

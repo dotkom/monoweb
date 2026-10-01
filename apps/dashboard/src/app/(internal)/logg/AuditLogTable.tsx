@@ -1,9 +1,8 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import type { AuditActivity, AuditLog } from "@dotkomonline/rpc/audit-log"
-import { Badge, Button, Text, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { DataTable, Badge, Button, Text, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconChevronDown, IconChevronRight, IconCornerDownRight, IconEye, IconEyeOff } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useCallback, useMemo, useState } from "react"

@@ -1,9 +1,8 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { arrayOrEqualsFilter } from "@/components/FilterableDataTable"
 import type { Article } from "@dotkomonline/rpc/article"
-import { TextLink } from "@dotkomonline/ui"
+import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
 interface Props {

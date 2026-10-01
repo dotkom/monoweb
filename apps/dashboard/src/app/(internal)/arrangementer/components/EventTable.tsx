@@ -7,12 +7,11 @@ import {
   mapEventStatusToLabel,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
-import { Badge, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { DataTable, Badge, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconEye, IconEyeDotted } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { PermissionTooltip } from "@/components/PermissionTooltip"
 import { useCanEditByGroups } from "@/hooks/use-can-edit-by-groups"

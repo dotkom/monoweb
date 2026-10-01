@@ -1,18 +1,22 @@
-import { getTableColumnClassName } from "@/components/table-column-classes"
-import { cn, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text } from "@dotkomonline/ui"
+"use client"
+
+import { getTableColumnClassName } from "./table-column-classes"
+import { cn } from "../../utils"
+import { Text } from "../../atoms/Typography/Text"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../Table/Table"
 import { IconCaretDownFilled, IconCaretUpDownFilled, IconCaretUpFilled } from "@tabler/icons-react"
 import { flexRender, type Table as ReactTable, type Row } from "@tanstack/react-table"
 import { useEffect, useRef, type CSSProperties, type MouseEvent } from "react"
 
 const INTERACTIVE_ROW_CLICK_SELECTOR = "a, button, input, label, textarea, select"
 
-export interface DataTableProps<T> {
-  readonly table: ReactTable<T>
+export interface DataTableProps<TableData> {
+  readonly table: ReactTable<TableData>
   filterable?: boolean
-  getRowClassName?: (row: Row<T>) => string | undefined
-  getRowStyle?: (row: Row<T>) => CSSProperties | undefined
-  getCellStyle?: (row: Row<T>, columnIndex: number) => CSSProperties | undefined
-  onRowClick?: (row: Row<T>, event: MouseEvent<HTMLTableRowElement>) => void
+  getRowClassName?: (row: Row<TableData>) => string | undefined
+  getRowStyle?: (row: Row<TableData>) => CSSProperties | undefined
+  getCellStyle?: (row: Row<TableData>, columnIndex: number) => CSSProperties | undefined
+  onRowClick?: (row: Row<TableData>, event: MouseEvent<HTMLTableRowElement>) => void
   hasNextPage?: boolean
   isFetchingNextPage?: boolean
   fetchNextPage?: () => void
@@ -20,7 +24,7 @@ export interface DataTableProps<T> {
   isPlaceholderData?: boolean
 }
 
-export function DataTable<T>({
+export function DataTable<TableData>({
   table,
   filterable,
   getRowClassName,
@@ -32,7 +36,7 @@ export function DataTable<T>({
   fetchNextPage,
   isLoading,
   isPlaceholderData = false,
-}: DataTableProps<T>) {
+}: DataTableProps<TableData>) {
   const loaderRef = useRef<HTMLDivElement>(null)
   const scrollParentRef = useRef<HTMLDivElement>(null)
 
@@ -136,11 +140,10 @@ export function DataTable<T>({
   )
 }
 
-// TODO: burn this
-function handleRowClick<T>(
-  row: Row<T>,
+function handleRowClick<TableData>(
+  row: Row<TableData>,
   event: MouseEvent<HTMLTableRowElement>,
-  onRowClick: (row: Row<T>, event: MouseEvent<HTMLTableRowElement>) => void
+  onRowClick: (row: Row<TableData>, event: MouseEvent<HTMLTableRowElement>) => void
 ) {
   if (event.target instanceof Element && event.target.closest(INTERACTIVE_ROW_CLICK_SELECTOR)) {
     return

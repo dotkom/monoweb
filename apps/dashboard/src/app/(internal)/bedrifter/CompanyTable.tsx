@@ -1,8 +1,7 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import type { Company } from "@dotkomonline/rpc/company"
-import { TextLink } from "@dotkomonline/ui"
+import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
 interface Props {
