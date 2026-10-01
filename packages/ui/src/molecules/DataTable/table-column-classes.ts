@@ -18,7 +18,7 @@ export function getTableColumnClassName(meta?: TableColumnMeta, forCell = false)
 
   return cn(
     meta.fit && "w-[1%] whitespace-nowrap",
-    meta.smallPadding && "px-2.5",
+    meta.smallPadding && forCell && "p-1",
     meta.noPadding && forCell && "p-0",
     meta.wrap && "whitespace-normal min-w-0"
   )

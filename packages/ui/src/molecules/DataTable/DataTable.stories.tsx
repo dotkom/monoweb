@@ -91,6 +91,12 @@ export const Loading = () => <MemberTable data={[]} isLoading />
 
 export const Scrollable = () => <MemberTable data={scrollableMembers} sortable />
 
+export const ScrollableInBothDirections = () => (
+  <div className="max-w-64">
+    <MemberTable data={scrollableMembers} sortable />
+  </div>
+)
+
 export const ClickableRows = () => <MemberTable clickable />
 
 type Event = {
@@ -134,7 +140,7 @@ export const LinkedCells = () => {
   const eventColumns: ColumnDef<Event>[] = [
     {
       accessorKey: "title",
-      header: () => <span className="ml-1">Arrangement</span>,
+      header: "Arrangement",
       meta: { smallPadding: true },
       cell: ({ row }) => {
         const event = row.original
@@ -143,21 +149,19 @@ export const LinkedCells = () => {
           <TextLink
             element="a"
             href={`#${event.id}`}
-            className="text-sm"
+            className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
             onClick={(clickEvent: MouseEvent<HTMLAnchorElement>) => {
               clickEvent.preventDefault()
               setSelectedEvent(event)
             }}
           >
-            <span className="block w-full rounded-sm px-1 py-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10">
-              {event.title}
-              {event.isDraft && (
-                <Badge color="orange" variant="secondary" className="inline-flex items-center gap-1 text-xs">
-                  <IconEyeDotted size={14} />
-                  Utkast
-                </Badge>
-              )}
-            </span>
+            {event.title}
+            {event.isDraft && (
+              <Badge color="orange" variant="secondary" className="inline-flex items-center gap-1 text-xs">
+                <IconEyeDotted size={14} />
+                Utkast
+              </Badge>
+            )}
           </TextLink>
         )
       },

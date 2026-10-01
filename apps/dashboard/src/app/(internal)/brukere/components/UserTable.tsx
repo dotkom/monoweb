@@ -30,13 +30,14 @@ export function UserTable({
       columnHelper.accessor((user) => user, {
         id: "name",
         header: () => "Navn",
+        meta: { smallPadding: true },
         cell: (info) => {
           const user = info.getValue()
 
           return (
             <Link
               href={`/brukere/${user.id}`}
-              className="text-sm flex items-center gap-2 px-1 py-1 no-underline transition-colors duration-75 hover:bg-blue-500/10"
+              className="flex w-full items-center gap-2 rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
             >
               <Avatar className="size-6 rounded-sm">
                 {user.imageUrl && <AvatarImage src={user.imageUrl} alt={user.name ?? user.username} />}
