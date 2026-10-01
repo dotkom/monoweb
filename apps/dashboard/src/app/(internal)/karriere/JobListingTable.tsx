@@ -1,9 +1,8 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { type JobListing, getJobListingEmploymentName } from "@dotkomonline/rpc/job-listing"
-import { TextLink } from "@dotkomonline/ui"
+import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 

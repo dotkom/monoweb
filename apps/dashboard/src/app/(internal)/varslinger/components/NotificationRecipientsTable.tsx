@@ -1,9 +1,8 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { ConfirmDeleteModal } from "@/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import type { NotificationRecipientFilterQuery, NotificationRecipientListItem } from "@dotkomonline/rpc/notification"
-import { Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextLink } from "@dotkomonline/ui"
+import { DataTable, Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable, type RowSelectionState } from "@tanstack/react-table"
 import { useState } from "react"
 import { useRemoveNotificationRecipientsMutation } from "../mutations"

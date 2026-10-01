@@ -1,10 +1,9 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
 import { DateTooltip } from "@/components/DateTooltip"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { Mark } from "@dotkomonline/rpc/mark"
-import { TextLink } from "@dotkomonline/ui"
+import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 

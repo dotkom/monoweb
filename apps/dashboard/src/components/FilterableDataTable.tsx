@@ -1,7 +1,6 @@
 "use client"
 
-import { DataTable } from "@/components/DataTable"
-import { TagInput, TextInput } from "@dotkomonline/ui"
+import { DataTable, TagInput, TextInput } from "@dotkomonline/ui"
 import type { Row } from "@tanstack/react-table"
 import {
   type ColumnFiltersState,
