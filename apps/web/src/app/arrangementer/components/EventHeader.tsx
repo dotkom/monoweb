@@ -5,7 +5,6 @@ import { env } from "@/env"
 import type { Event } from "@dotkomonline/rpc/event"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
 import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
-import Image from "next/image"
 import { Link } from "@/components/link"
 import type { FC } from "react"
 import { useState } from "react"
@@ -32,13 +31,12 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
       >
         <div className="group relative w-full aspect-video md:aspect-24/9 overflow-hidden rounded-xl">
           {event.imageUrl ? (
-            <Image
+            // biome-ignore lint/performance/noImgElement: unoptimized next/image crashes iOS Safari (#3062)
+            <img
               src={event.imageUrl}
               alt={event.title}
-              fill
-              sizes="100vw"
               className={cn(
-                "rounded-xl will-change-transform transition-transform duration-500 ease-out",
+                "absolute inset-0 w-full h-full rounded-xl will-change-transform transition-transform duration-500 ease-out",
                 showFullImage ? "object-contain" : "object-cover"
               )}
               onLoad={(loadEvent) => {
