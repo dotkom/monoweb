@@ -14,6 +14,7 @@ import {
   IconHeartHandshake,
   IconPhotoShare,
   IconSitemap,
+  IconShieldLock,
   IconSkull,
   IconUserMinus,
   IconUsers,
@@ -45,6 +46,24 @@ export type NavigationGroup = {
 // For a `createAction` to display in search results,
 // both the parent page and the action must be accessible to the user.
 export const navigationGroups: NavigationGroup[] = [
+  {
+    label: "Administrator",
+    items: [
+      {
+        label: "Admin-side",
+        icon: IconShieldLock,
+        href: "/administrator",
+        canAccess: (authorization) => authorization.isAdministrator,
+      },
+      {
+        label: "Hendelseslogg",
+        icon: IconClipboardList,
+        href: "/logg",
+        keywords: ["hendelseslogg", "logg", "audit"],
+        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
+      },
+    ],
+  },
   {
     label: "Arrangementer",
     items: [
@@ -236,13 +255,6 @@ export const navigationGroups: NavigationGroup[] = [
             resourceName: "fadderuke",
           },
         ],
-      },
-      {
-        label: "Hendelseslogg",
-        icon: IconClipboardList,
-        href: "/logg",
-        keywords: ["hendelseslogg", "logg", "audit"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
       },
     ],
   },
