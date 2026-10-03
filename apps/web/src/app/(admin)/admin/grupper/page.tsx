@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"

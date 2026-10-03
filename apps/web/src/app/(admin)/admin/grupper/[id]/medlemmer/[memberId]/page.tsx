@@ -1,9 +1,9 @@
 "use client"
 
-import { useGroupPermissions } from "@dashboard/app/grupper/use-group-permissions"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { useGroupPermissions } from "@admin/grupper/use-group-permissions"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { getGroupDisplayName, isGroupMembershipActive, sortGroupRolesByPriority } from "@dotkomonline/rpc/group"
 import {
   AlertDialog,

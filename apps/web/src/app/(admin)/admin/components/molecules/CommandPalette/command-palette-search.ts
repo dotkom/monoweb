@@ -1,6 +1,6 @@
 import type { TablerIcon } from "@tabler/icons-react"
 
-import type { Navigation } from "@dashboard/lib/navigation"
+import type { Navigation } from "@admin/lib/navigation"
 
 const CREATE_KEYWORDS = ["ny", "nytt", "opprett", "create"]
 

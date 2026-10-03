@@ -1,7 +1,7 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import type { MarkId, PersonalMarkDetails } from "@dotkomonline/rpc/mark"
 import { Button, TextLink } from "@dotkomonline/ui"
 import { IconTrash } from "@tabler/icons-react"

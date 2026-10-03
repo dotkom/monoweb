@@ -1,4 +1,4 @@
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconEye } from "@tabler/icons-react"
 

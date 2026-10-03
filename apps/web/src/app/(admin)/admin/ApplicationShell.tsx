@@ -1,13 +1,13 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { BreadcrumbTrail } from "@dashboard/components/BreadcrumbTrail"
-import { CommandPalette } from "@dashboard/components/molecules/CommandPalette/CommandPalette"
-import { BreadcrumbProvider } from "@dashboard/lib/breadcrumb-context"
-import { env } from "@dashboard/lib/env"
-import { filterNavigationGroupsUserHasAccessTo, navigationGroups, type Navigation } from "@dashboard/lib/navigation"
-import { setNavigationGroupsCollapsedCookie } from "@dashboard/lib/navigation-group-cookie"
-import { useAuthenticatedUser } from "@dashboard/lib/use-authenticated-user"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { BreadcrumbTrail } from "@admin/components/BreadcrumbTrail"
+import { CommandPalette } from "@admin/components/molecules/CommandPalette/CommandPalette"
+import { BreadcrumbProvider } from "@admin/lib/breadcrumb-context"
+import { env } from "@admin/lib/env"
+import { filterNavigationGroupsUserHasAccessTo, navigationGroups, type Navigation } from "@admin/lib/navigation"
+import { setNavigationGroupsCollapsedCookie } from "@admin/lib/navigation-group-cookie"
+import { useAuthenticatedUser } from "@admin/lib/use-authenticated-user"
 import {
   Alert,
   Button,

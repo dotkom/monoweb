@@ -1,6 +1,6 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
+import { DateTooltip } from "@admin/components/DateTooltip"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { Mark } from "@dotkomonline/rpc/mark"
 import { DataTable, TextLink } from "@dotkomonline/ui"

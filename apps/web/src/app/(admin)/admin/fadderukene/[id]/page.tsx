@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { FadderukeWriteForm } from "../FadderukeWriteForm"
 import { useUpdateFadderukeMutation } from "../mutations"
 import { useFadderukeDetailsContext } from "./provider"

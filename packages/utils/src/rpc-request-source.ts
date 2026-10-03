@@ -4,7 +4,7 @@ export const HTTP_REQUEST_SOURCE_ATTRIBUTE = "http.request.source" as const
 
 export const RpcRequestSource = {
   Web: "onlineweb-web",
-  Dashboard: "onlineweb-dashboard",
+  Admin: "onlineweb-admin",
   Vinstraff: "vinstraff",
   App: "online-app",
 } as const

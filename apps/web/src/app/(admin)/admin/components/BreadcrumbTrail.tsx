@@ -1,6 +1,6 @@
 "use client"
 
-import { breadcrumbPath, resolveBreadcrumbTrailLabels, useBreadcrumbTrail } from "@dashboard/lib/breadcrumb-context"
+import { breadcrumbPath, resolveBreadcrumbTrailLabels, useBreadcrumbTrail } from "@admin/lib/breadcrumb-context"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@dotkomonline/ui"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

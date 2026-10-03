@@ -1,7 +1,7 @@
 "use client"
 
-import { EventSelectInput } from "@dashboard/components/forms/EventSelectInput"
-import { FieldShell } from "@dashboard/components/forms/FieldShell"
+import { EventSelectInput } from "@admin/components/forms/EventSelectInput"
+import { FieldShell } from "@admin/components/forms/FieldShell"
 import { type EventId, getDefaultFeedbackAnswerDeadline } from "@dotkomonline/rpc/event"
 import type { FeedbackFormId, FeedbackFormWrite, FeedbackQuestionWrite } from "@dotkomonline/rpc/feedback-form"
 import { Button, Text, Title } from "@dotkomonline/ui"

@@ -1,7 +1,7 @@
 "use client"
 
-import { Form } from "@dashboard/components/forms/Form"
-import { TextareaField } from "@dashboard/components/forms/TextareaField"
+import { Form } from "@admin/components/forms/Form"
+import { TextareaField } from "@admin/components/forms/TextareaField"
 import type { Attendee } from "@dotkomonline/rpc/attendance"
 import type { EventId } from "@dotkomonline/rpc/event"
 import {

@@ -1,5 +1,5 @@
-import { Form } from "@dashboard/components/forms/Form"
-import { SearchField } from "@dashboard/components/forms/SearchField"
+import { Form } from "@admin/components/forms/Form"
+import { SearchField } from "@admin/components/forms/SearchField"
 import type { NotificationRecipientFilterQuery } from "@dotkomonline/rpc/notification"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"

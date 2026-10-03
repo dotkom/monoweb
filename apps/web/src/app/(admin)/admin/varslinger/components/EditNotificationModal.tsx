@@ -1,9 +1,9 @@
 "use client"
 
-import { RichTextField } from "@dashboard/components/forms/RichTextField"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
-import { TextareaField } from "@dashboard/components/forms/TextareaField"
+import { RichTextField } from "@admin/components/forms/RichTextField"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
+import { TextareaField } from "@admin/components/forms/TextareaField"
 import {
   getNotificationLinkTypeLabel,
   NotificationPayloadTypeSchema,

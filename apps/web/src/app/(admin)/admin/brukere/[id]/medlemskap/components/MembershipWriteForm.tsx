@@ -1,9 +1,9 @@
 "use client"
 
-import { DateTimePickerField } from "@dashboard/components/forms/DateTimePickerField"
-import { combineFieldDisabled, FieldShell, getFieldErrorMessage } from "@dashboard/components/forms/FieldShell"
-import { Form } from "@dashboard/components/forms/Form"
-import { SelectField } from "@dashboard/components/forms/SelectField"
+import { DateTimePickerField } from "@admin/components/forms/DateTimePickerField"
+import { combineFieldDisabled, FieldShell, getFieldErrorMessage } from "@admin/components/forms/FieldShell"
+import { Form } from "@admin/components/forms/Form"
+import { SelectField } from "@admin/components/forms/SelectField"
 import {
   getMembershipTypeName,
   getSpecializationName,

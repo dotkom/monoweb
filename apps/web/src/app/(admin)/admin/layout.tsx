@@ -1,13 +1,13 @@
-import { AuthorizationProvider } from "@dashboard/auth/authorization-context"
+import { AuthorizationProvider } from "@admin/auth/authorization-context"
 import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
-import { auth0 } from "@dashboard/lib/auth"
-import { getServerAccessToken } from "@dashboard/lib/server-access-token"
-import { UNAUTHORIZED_PATH } from "@dashboard/lib/require-permission"
-import { getServerAuthorization } from "@dashboard/lib/server-authorization"
+import { auth0 } from "@admin/lib/auth"
+import { getServerAccessToken } from "@admin/lib/server-access-token"
+import { UNAUTHORIZED_PATH } from "@admin/lib/require-permission"
+import { getServerAuthorization } from "@admin/lib/server-authorization"
 import {
   NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME,
   parseNavigationGroupsCollapsedCookie,
-} from "@dashboard/lib/navigation-group-cookie"
+} from "@admin/lib/navigation-group-cookie"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { cn, Toaster } from "@dotkomonline/ui"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
@@ -79,7 +79,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           "h-dvh overflow-hidden"
         )}
       >
-        <PlausibleProvider domain="dashboard.online.ntnu.no">
+        <PlausibleProvider domain="online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">

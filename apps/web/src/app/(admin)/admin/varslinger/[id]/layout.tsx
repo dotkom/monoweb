@@ -1,9 +1,9 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ResourceDetailError } from "@dashboard/components/ResourceDetailLayout/ResourceDetailError"
-import { ResourceDetailLayout } from "@dashboard/components/ResourceDetailLayout/ResourceDetailLayout"
-import { breadcrumbPath, useBreadcrumbLabel } from "@dashboard/lib/breadcrumb-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
+import { ResourceDetailLayout } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { getNotificationLinkTypeLabel } from "@dotkomonline/rpc/notification"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { type PropsWithChildren, use } from "react"

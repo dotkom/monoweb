@@ -1,8 +1,8 @@
 "use client"
 
-import { useGroupGetQuery } from "@dashboard/app/grupper/queries"
-import { Form } from "@dashboard/components/forms/Form"
-import { MultiSelectField } from "@dashboard/components/forms/MultiSelectField"
+import { useGroupGetQuery } from "@admin/grupper/queries"
+import { Form } from "@admin/components/forms/Form"
+import { MultiSelectField } from "@admin/components/forms/MultiSelectField"
 import { type GroupId, GroupRoleSchema } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"

@@ -1,7 +1,7 @@
 "use client"
 
-import { DateTimePickerField } from "@dashboard/components/forms/DateTimePickerField"
-import { Form } from "@dashboard/components/forms/Form"
+import { DateTimePickerField } from "@admin/components/forms/DateTimePickerField"
+import { Form } from "@admin/components/forms/Form"
 import { AttendanceWriteSchema } from "@dotkomonline/rpc/attendance"
 import { Button, Text } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"

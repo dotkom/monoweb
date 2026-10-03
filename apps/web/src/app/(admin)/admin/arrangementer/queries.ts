@@ -4,7 +4,7 @@ import type { FeedbackFormId } from "@dotkomonline/rpc/feedback-form"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { keepPreviousData, type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
 import { useMemo } from "react"
 

@@ -1,13 +1,13 @@
 "use client"
 
-import { useUpdateEventMutation } from "@dashboard/app/arrangementer/mutations"
+import { useUpdateEventMutation } from "@admin/arrangementer/mutations"
 import {
   useEventChildEventsQuery,
   useEventParentQuery,
   useEventWithAttendancesGetQuery,
-} from "@dashboard/app/arrangementer/queries"
-import { EventSelectInput } from "@dashboard/components/forms/EventSelectInput"
-import { FieldShell } from "@dashboard/components/forms/FieldShell"
+} from "@admin/arrangementer/queries"
+import { EventSelectInput } from "@admin/components/forms/EventSelectInput"
+import { FieldShell } from "@admin/components/forms/FieldShell"
 import type { Event, EventId } from "@dotkomonline/rpc/event"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { Badge, Button, Text, Title } from "@dotkomonline/ui"

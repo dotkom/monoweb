@@ -1,6 +1,6 @@
 "use client"
 
-import { arrayOrEqualsFilter } from "@dashboard/components/FilterableDataTable"
+import { arrayOrEqualsFilter } from "@admin/components/FilterableDataTable"
 import type { Article } from "@dotkomonline/rpc/article"
 import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

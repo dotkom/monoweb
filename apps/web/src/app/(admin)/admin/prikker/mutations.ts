@@ -1,5 +1,5 @@
-import { useQueryGenericMutationNotification, useQueryNotification } from "@dashboard/lib/notifications"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useQueryGenericMutationNotification, useQueryNotification } from "@admin/lib/notifications"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { MarkId } from "@dotkomonline/rpc/mark"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"

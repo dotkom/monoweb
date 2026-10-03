@@ -1,13 +1,13 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ResourceDetailError } from "@dashboard/components/ResourceDetailLayout/ResourceDetailError"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
-} from "@dashboard/components/ResourceDetailLayout/ResourceDetailLayout"
-import { breadcrumbPath, useBreadcrumbLabel } from "@dashboard/lib/breadcrumb-context"
-import { env } from "@dashboard/lib/env"
+} from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { env } from "@admin/lib/env"
 import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconAlertTriangleFilled,

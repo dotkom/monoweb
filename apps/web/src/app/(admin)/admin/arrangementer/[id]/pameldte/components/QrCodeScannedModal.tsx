@@ -1,6 +1,6 @@
 "use client"
 
-import { useIsMobile } from "@dashboard/hooks/use-is-mobile"
+import { useIsMobile } from "@admin/hooks/use-is-mobile"
 import {
   type Attendance,
   type AttendeeId,

@@ -1,4 +1,4 @@
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { useMemo } from "react"
 import { useEventContext } from "./[id]/provider"
 

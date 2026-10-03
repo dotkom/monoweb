@@ -1,10 +1,10 @@
-import { CheckboxField } from "@dashboard/components/forms/CheckboxField"
-import { DateTimePickerField } from "@dashboard/components/forms/DateTimePickerField"
-import { FieldShell } from "@dashboard/components/forms/FieldShell"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { env } from "@dashboard/lib/env"
+import { CheckboxField } from "@admin/components/forms/CheckboxField"
+import { DateTimePickerField } from "@admin/components/forms/DateTimePickerField"
+import { FieldShell } from "@admin/components/forms/FieldShell"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { env } from "@admin/lib/env"
 import type { EventId } from "@dotkomonline/rpc/event"
 import {
   type FeedbackForm,

@@ -93,7 +93,7 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} showDashboardLink={isOrganizer || isAdmin} />
+      <EventHeader event={event} showAdminLink={isOrganizer || isAdmin} />
 
       {publicChildEvents.length > 0 ? (
         <Tabs defaultValue="description">

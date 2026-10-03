@@ -1,6 +1,6 @@
 "use client"
 
-import { useUpdateAttendanceMutation } from "@dashboard/app/arrangementer/mutations"
+import { useUpdateAttendanceMutation } from "@admin/arrangementer/mutations"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"

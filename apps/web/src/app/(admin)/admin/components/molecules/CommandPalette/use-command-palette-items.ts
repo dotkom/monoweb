@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { filterNavigationsUserHasAccessTo, navigations } from "@dashboard/lib/navigation"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
 import { useMemo, useRef } from "react"
 import { searchItems, toPageAndActionSearchItems, type SearchItem } from "./command-palette-search"
 import {

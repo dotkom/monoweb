@@ -1,7 +1,7 @@
 "use client"
 
-import { getFieldErrorMessage } from "@dashboard/components/forms/FieldShell"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { getFieldErrorMessage } from "@admin/components/forms/FieldShell"
+import { TextField } from "@admin/components/forms/TextField"
 import {
   Button,
   DropdownMenu,
@@ -15,7 +15,7 @@ import { IconChevronDown, IconPlus, IconTrash } from "@tabler/icons-react"
 import type { FC } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
-import { templates } from "@dashboard/app/arrangementer/[id]/valg/templates"
+import { templates } from "@admin/arrangementer/[id]/valg/templates"
 
 type TemplateKey = keyof typeof templates
 

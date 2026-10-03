@@ -11,13 +11,13 @@ import { useState } from "react"
 
 interface Props {
   event: Event
-  showDashboardLink: boolean
+  showAdminLink: boolean
 }
 
-export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
+export const EventHeader: FC<Props> = ({ event, showAdminLink }) => {
   const [showFullImage, setShowFullImage] = useState(true)
   const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
-  const dashboardUrl = new URL(`/admin/arrangementer/${event.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
+  const adminUrl = new URL(`/admin/arrangementer/${event.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
 
   return (
     <section className="flex flex-col gap-8">
@@ -82,10 +82,10 @@ export const EventHeader: FC<Props> = ({ event, showDashboardLink }) => {
         <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3">
           {event.title}
         </Title>
-        {showDashboardLink && (
+        {showAdminLink && (
           <Button
             element={Link}
-            href={dashboardUrl}
+            href={adminUrl}
             target="_blank"
             rel="noopener noreferrer"
             variant="secondary"

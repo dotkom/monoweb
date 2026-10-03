@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { Button, cn, Title, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconArrowLeft, IconArrowUpRight, IconCheck, IconCopy, type TablerIcon } from "@tabler/icons-react"
 import Link from "next/link"

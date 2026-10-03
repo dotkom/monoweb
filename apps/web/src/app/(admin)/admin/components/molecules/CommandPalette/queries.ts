@@ -1,5 +1,5 @@
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { useTRPC } from "@admin/lib/trpc-client"
 import { keepPreviousData, useQueries } from "@tanstack/react-query"
 
 const DEFAULT_TAKE = 5

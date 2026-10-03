@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import type { Group } from "@dotkomonline/rpc/group"
 import type { WorkspaceGroup } from "@dotkomonline/rpc/workspace"
 import { Button, Text, Title } from "@dotkomonline/ui"

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@dashboard/app/arrangementer/queries"
+import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@admin/arrangementer/queries"
 import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@dotkomonline/ui"
 import { useEffect, useMemo, useState } from "react"

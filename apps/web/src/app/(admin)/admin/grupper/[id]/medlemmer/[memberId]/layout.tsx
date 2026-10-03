@@ -1,7 +1,7 @@
 "use client"
 
-import { ResourceDetailError } from "@dashboard/components/ResourceDetailLayout/ResourceDetailError"
-import { breadcrumbPath, useBreadcrumbLabel } from "@dashboard/lib/breadcrumb-context"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { type PropsWithChildren, use } from "react"
 import { useGroupMemberGetQuery } from "../../../queries"
 import { GroupMemberDetailsContext } from "./provider"

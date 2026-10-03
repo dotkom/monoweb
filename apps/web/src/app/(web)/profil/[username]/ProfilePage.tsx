@@ -233,7 +233,7 @@ export function ProfilePage() {
   const activeMembership = findActiveMembership(user)
   const grade = activeMembership?.semester != null ? getStudyGrade(activeMembership.semester) : null
 
-  const dashboardUrl = new URL(`/admin/brukere/${user.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
+  const adminUrl = new URL(`/admin/brukere/${user.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
 
   const settingsButton =
     isUser && isAdmin ? (
@@ -252,7 +252,7 @@ export function ProfilePage() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              href={dashboardUrl}
+              href={adminUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-row items-center gap-2"
@@ -275,7 +275,7 @@ export function ProfilePage() {
     ) : isAdmin ? (
       <Button
         element={Link}
-        href={dashboardUrl}
+        href={adminUrl}
         target="_blank"
         rel="noopener noreferrer"
         variant="secondary"
@@ -312,7 +312,7 @@ export function ProfilePage() {
                     {isAdmin && (
                       <Button
                         element={Link}
-                        href={dashboardUrl}
+                        href={adminUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         variant="secondary"

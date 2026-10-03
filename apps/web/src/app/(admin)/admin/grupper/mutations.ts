@@ -1,7 +1,7 @@
-import { useQueryGenericMutationNotification, useQueryNotification } from "@dashboard/lib/notifications"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useQueryGenericMutationNotification, useQueryNotification } from "@admin/lib/notifications"
+import { useTRPC } from "@admin/lib/trpc-client"
 
-import { env } from "@dashboard/lib/env"
+import { env } from "@admin/lib/env"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

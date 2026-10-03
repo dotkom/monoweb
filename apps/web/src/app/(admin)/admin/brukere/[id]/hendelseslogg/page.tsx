@@ -1,8 +1,8 @@
 "use client"
 
-import { AuditLogFilters } from "@dashboard/app/logg/AuditLogFilters"
-import { AuditLogTable } from "@dashboard/app/logg/AuditLogTable"
-import { useAuditActivityInfiniteQuery } from "@dashboard/app/logg/queries"
+import { AuditLogFilters } from "@admin/logg/AuditLogFilters"
+import { AuditLogTable } from "@admin/logg/AuditLogTable"
+import { useAuditActivityInfiniteQuery } from "@admin/logg/queries"
 import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { Title } from "@dotkomonline/ui"
 import { useState } from "react"

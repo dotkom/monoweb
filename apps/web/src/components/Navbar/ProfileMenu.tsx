@@ -171,7 +171,7 @@ const linkGroups: LinkGroup[] = [
     links: [
       {
         icon: IconAdjustments,
-        label: "Dashboard",
+        label: "Adminside",
         href: "/admin",
         openInNewTab: true,
         adminOnly: true,

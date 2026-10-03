@@ -1,9 +1,9 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { EditableRowIndicator } from "@dashboard/components/EditableRowIndicator"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { EditableRowIndicator } from "@admin/components/EditableRowIndicator"
+import { useTRPC } from "@admin/lib/trpc-client"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
   getNotificationLinkTypeLabel,

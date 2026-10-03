@@ -1,6 +1,6 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
+import { DateTooltip } from "@admin/components/DateTooltip"
 import type { AuditActivity, AuditLog } from "@dotkomonline/rpc/audit-log"
 import { DataTable, Badge, Button, Text, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconChevronDown, IconChevronRight, IconCornerDownRight, IconEye, IconEyeOff } from "@tabler/icons-react"

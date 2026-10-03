@@ -1,7 +1,7 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import {
   findLatestGroupMembershipIn,

@@ -1,4 +1,4 @@
-import { isCommitteeAffiliation } from "@dashboard/auth/permissions"
+import { isCommitteeAffiliation } from "@admin/auth/permissions"
 import { EventStatusSchema, EventTypeSchema, EventVisibilitySchema, type EventWrite } from "@dotkomonline/rpc/event"
 import { isAfter } from "date-fns"
 import type { z } from "zod"

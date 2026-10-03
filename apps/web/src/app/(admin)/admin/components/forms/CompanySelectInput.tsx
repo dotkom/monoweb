@@ -1,6 +1,6 @@
 "use client"
 
-import { useCompaniesByIdsQuery, useCompanyAllInfiniteQuery } from "@dashboard/app/bedrifter/queries"
+import { useCompaniesByIdsQuery, useCompanyAllInfiniteQuery } from "@admin/bedrifter/queries"
 import type { Company, CompanyId } from "@dotkomonline/rpc/company"
 import {
   Combobox,

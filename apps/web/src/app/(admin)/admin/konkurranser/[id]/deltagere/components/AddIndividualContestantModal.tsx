@@ -1,6 +1,6 @@
 "use client"
 
-import { UserSearch } from "@dashboard/app/brukere/components/UserSearch"
+import { UserSearch } from "@admin/brukere/components/UserSearch"
 import type { User } from "@dotkomonline/rpc/user"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"

@@ -1,6 +1,6 @@
 "use client"
 
-import { GroupTable } from "@dashboard/app/grupper/components/GroupTable"
+import { GroupTable } from "@admin/grupper/components/GroupTable"
 import { Title } from "@dotkomonline/ui"
 import { useAllMembershipsByUserIdQuery, useGroupAllByMemberQuery } from "../../queries"
 import { useUserDetailsContext } from "../provider"

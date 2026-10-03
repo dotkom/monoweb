@@ -1,6 +1,6 @@
 "use client"
 
-import { UserSearch } from "@dashboard/app/brukere/components/UserSearch"
+import { UserSearch } from "@admin/brukere/components/UserSearch"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"

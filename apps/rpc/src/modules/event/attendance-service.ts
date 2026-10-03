@@ -679,7 +679,7 @@ export function getAttendanceService(
 
         if (pool === undefined) {
           // If this ever happens, there is either a malformed request by a third-party client, or a bug in the web or
-          // dashboard code.
+          // admin code.
           logger.warn(
             "User(ID=%s) attempted to override attendance on Event(ID=%s, Title=%s) with AttendancePool(ID=%s) but no such pool was found.",
             userId,

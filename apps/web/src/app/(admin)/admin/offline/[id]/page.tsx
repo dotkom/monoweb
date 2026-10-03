@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { useEditOfflineMutation } from "../mutations"
 import { OfflineWriteForm } from "../OfflineWriteForm"
 import { useOfflineDetailsContext } from "./provider"

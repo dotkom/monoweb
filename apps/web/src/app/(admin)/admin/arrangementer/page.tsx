@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import type { EventFilterQuery, EventWithAttendance } from "@dotkomonline/rpc/event"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"

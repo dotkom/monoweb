@@ -1,6 +1,6 @@
 import { secondsInDay } from "date-fns/constants"
 
-export const NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME = "dashboard_nav_groups_collapsed"
+export const NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME = "admin_nav_groups_collapsed"
 
 const NAVIGATION_GROUPS_COLLAPSED_COOKIE_MAX_AGE_SECONDS = 365 * secondsInDay
 

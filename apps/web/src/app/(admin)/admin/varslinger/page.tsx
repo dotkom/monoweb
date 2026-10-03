@@ -1,8 +1,8 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { isCommitteeAffiliation } from "@dashboard/auth/permissions"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { isCommitteeAffiliation } from "@admin/auth/permissions"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"

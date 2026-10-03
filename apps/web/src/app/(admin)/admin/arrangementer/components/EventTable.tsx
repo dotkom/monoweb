@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import {
   EventStatusSchema,
   type EventWithAttendance,
@@ -12,9 +12,9 @@ import { IconEye, IconEyeDotted } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
-import { useCanEditByGroups } from "@dashboard/hooks/use-can-edit-by-groups"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { useCanEditByGroups } from "@admin/hooks/use-can-edit-by-groups"
 import { EventHostingGroupList } from "./EventHostingGroupList"
 
 export type EventTableRow = EventWithAttendance & {

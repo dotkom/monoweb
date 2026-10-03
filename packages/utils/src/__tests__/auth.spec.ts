@@ -16,7 +16,7 @@ it("finds Auth0 connection and transaction cookies", () => {
 })
 
 it("leaves unrelated cookies alone", () => {
-  const cookieNames = ["theme", "session", "onlineweb_session_dashboard", "monoweb-link-state"]
+  const cookieNames = ["theme", "session", "onlineweb_session_admin", "monoweb-link-state"]
 
   expect(getAuthSessionCookieNamesToClear(cookieNames, SESSION_COOKIE_NAME)).toEqual([])
 })

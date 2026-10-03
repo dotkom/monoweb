@@ -1,7 +1,7 @@
 "use client"
 
-import { NotificationsTable } from "@dashboard/app/varslinger/components/NotificationsTable"
-import { useNotificationsInfiniteQuery } from "@dashboard/app/varslinger/queries"
+import { NotificationsTable } from "@admin/varslinger/components/NotificationsTable"
+import { useNotificationsInfiniteQuery } from "@admin/varslinger/queries"
 import { Text } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { useEventContext } from "./provider"

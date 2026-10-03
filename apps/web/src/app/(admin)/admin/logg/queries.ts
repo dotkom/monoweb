@@ -1,4 +1,4 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { AuditLogFilterQuery } from "@dotkomonline/rpc/audit-log"
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query"
 import { useMemo } from "react"

@@ -1,7 +1,7 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
