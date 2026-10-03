@@ -1,0 +1,148 @@
+import { useTRPC } from "@dashboard/lib/trpc-client"
+import { isTrpcErrorCode } from "@dashboard/lib/trpc-errors"
+import type {
+  NotificationFilterQuery,
+  NotificationRecipientFilterQuery,
+  NotificationRecipientSelection,
+  NotificationType,
+} from "@dotkomonline/rpc/notification"
+import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
+import { useDebounce } from "use-debounce"
+
+export function useRecipientSelectionPreview(
+  recipientSelection: NotificationRecipientSelection | null,
+  type: NotificationType
+) {
+  const trpc = useTRPC()
+  const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
+  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
+
+  const queryInput =
+    debouncedSerializedRecipientSelection === null
+      ? skipToken
+      : {
+          recipientSelection: JSON.parse(debouncedSerializedRecipientSelection) as NotificationRecipientSelection,
+          type,
+        }
+
+  const query = useQuery({
+    ...trpc.notification.previewRecipientSelection.queryOptions(queryInput),
+    retry: false,
+  })
+
+  const isDebouncing = serializedRecipientSelection !== debouncedSerializedRecipientSelection
+
+  return {
+    preview: query.data,
+    isPending: serializedRecipientSelection === null || isDebouncing || query.isFetching,
+    isForbidden: isTrpcErrorCode(query.error, "FORBIDDEN"),
+  }
+}
+
+export function useRecipientSelectionPreviewInfinite(
+  recipientSelection: NotificationRecipientSelection | null,
+  type: NotificationType,
+  search = ""
+) {
+  const trpc = useTRPC()
+  const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
+  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
+  const trimmedSearch = search.trim()
+  const [debouncedSearch] = useDebounce(trimmedSearch, 300)
+
+  const queryInput =
+    debouncedSerializedRecipientSelection === null
+      ? skipToken
+      : {
+          recipientSelection: JSON.parse(debouncedSerializedRecipientSelection) as NotificationRecipientSelection,
+          type,
+          ...(debouncedSearch.length > 0 ? { search: debouncedSearch } : {}),
+        }
+
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.notification.previewRecipientSelection.infiniteQueryOptions(queryInput),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    retry: false,
+  })
+
+  const isDebouncing =
+    serializedRecipientSelection !== debouncedSerializedRecipientSelection || trimmedSearch !== debouncedSearch
+  const recipients = useMemo(() => data?.pages.flatMap((page) => page.sample) ?? [], [data])
+
+  return {
+    ...query,
+    preview: data?.pages[0],
+    recipients,
+    isPending: serializedRecipientSelection === null || isDebouncing || query.isPending,
+    isForbidden: isTrpcErrorCode(query.error, "FORBIDDEN"),
+  }
+}
+
+export function useNotificationsInfiniteQuery(filters: NotificationFilterQuery = {}) {
+  const trpc = useTRPC()
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.notification.findMany.infiniteQueryOptions({
+      filters,
+    }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (data) => data.pages.flatMap((page) => page.items),
+  })
+
+  const notifications = useMemo(() => data ?? [], [data])
+
+  return {
+    notifications,
+    ...query,
+  }
+}
+
+export function useNotificationGetQuery(notificationId: string) {
+  const trpc = useTRPC()
+
+  return useQuery({
+    ...trpc.notification.get.queryOptions(notificationId),
+    retry: false,
+  })
+}
+
+export function useNotificationRecipientStatsQuery(notificationId: string, enabled = true) {
+  const trpc = useTRPC()
+  const queryInput = enabled ? notificationId : skipToken
+
+  return useQuery({
+    ...trpc.notification.getRecipientStats.queryOptions(queryInput),
+    retry: false,
+  })
+}
+
+export function useNotificationRecipientsInfiniteQuery(
+  notificationId: string,
+  filters: NotificationRecipientFilterQuery,
+  enabled = true
+) {
+  const trpc = useTRPC()
+  const queryInput = enabled ? { notificationId, filters } : skipToken
+  const { data, ...query } = useInfiniteQuery({
+    ...trpc.notification.findRecipients.infiniteQueryOptions(queryInput),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: (data) => data.pages.flatMap((page) => page.items),
+    placeholderData: keepPreviousData,
+    retry: false,
+  })
+
+  const recipients = useMemo(() => data ?? [], [data])
+
+  return {
+    recipients,
+    ...query,
+  }
+}
+
+export function useNotificationCreatedByQuery(createdById: string | null | undefined) {
+  const trpc = useTRPC()
+  return useQuery({
+    ...trpc.user.get.queryOptions(createdById ?? ""),
+    enabled: createdById !== null && createdById !== undefined,
+  })
+}

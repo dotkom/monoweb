@@ -4,6 +4,7 @@ import { defineConfig } from "vite"
 export default defineConfig({
   resolve: {
     alias: {
+      "@/app": path.resolve(__dirname, "./src/app/(web)"),
       "@": path.resolve(__dirname, "./src"),
       "next/link": path.resolve(__dirname, "./.ladle/unoptimized-link.tsx"),
       "next/link.js": path.resolve(__dirname, "./.ladle/unoptimized-link.tsx"),

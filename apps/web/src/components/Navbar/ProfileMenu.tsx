@@ -3,7 +3,6 @@
 import { SessionRecoveryDropdown } from "@/components/auth/SessionRecoveryDropdown"
 import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { Link } from "@/components/link"
-import { env } from "@/env"
 import type { AuthState } from "@/utils/authenticated-user-state"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -173,7 +172,7 @@ const linkGroups: LinkGroup[] = [
       {
         icon: IconAdjustments,
         label: "Dashboard",
-        href: env.NEXT_PUBLIC_DASHBOARD_URL,
+        href: "/admin",
         openInNewTab: true,
         adminOnly: true,
       },

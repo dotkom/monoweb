@@ -124,22 +124,6 @@ jobs:
         with:
           package: grades
 
-  build-dashboard:
-    name: dashboard
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-dashboard
-        with:
-          deploy: false
-          environment: prd
-          git-hash: ${{ github.sha }}
-
   build-rpc:
     name: rpc
     runs-on: ubuntu-24.04-arm

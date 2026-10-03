@@ -14,6 +14,11 @@ const config: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/admin",
+        destination: "/admin/arrangementer",
+        permanent: false,
+      },
+      {
         source: "/wiki/:path*",
         destination: "https://wiki.online.ntnu.no/:path*",
         permanent: true,
