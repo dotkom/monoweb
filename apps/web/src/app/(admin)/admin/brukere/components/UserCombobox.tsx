@@ -1,6 +1,6 @@
 "use client"
 
-import { useUserAllQuery } from "@dashboard/app/brukere/queries"
+import { useUserAllQuery } from "@admin/brukere/queries"
 import type { User } from "@dotkomonline/rpc/user"
 import {
   Combobox,

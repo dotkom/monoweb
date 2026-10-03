@@ -1,8 +1,8 @@
 "use client"
 
-import { useGroupPermissions } from "@dashboard/app/grupper/use-group-permissions"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
+import { useGroupPermissions } from "@admin/grupper/use-group-permissions"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import type { GroupRole } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { useState } from "react"

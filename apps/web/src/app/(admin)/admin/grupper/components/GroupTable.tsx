@@ -1,6 +1,6 @@
 "use client"
 
-import { arrayOrEqualsFilter, FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { arrayOrEqualsFilter, FilterableDataTable } from "@admin/components/FilterableDataTable"
 import {
   findActiveGroupMembershipIn,
   getGroupTypeName,

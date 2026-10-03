@@ -1,9 +1,9 @@
 "use client"
 
-import { CheckboxGroupField } from "@dashboard/components/forms/CheckboxGroupField"
-import { TextField } from "@dashboard/components/forms/TextField"
-import { FieldShell, getFieldErrorMessage } from "@dashboard/components/forms/FieldShell"
-import { notifyFail } from "@dashboard/lib/notifications"
+import { CheckboxGroupField } from "@admin/components/forms/CheckboxGroupField"
+import { TextField } from "@admin/components/forms/TextField"
+import { FieldShell, getFieldErrorMessage } from "@admin/components/forms/FieldShell"
+import { notifyFail } from "@admin/lib/notifications"
 import { MAX_MERGE_DELAY_HOURS } from "@dotkomonline/rpc/attendance"
 import { createPoolName } from "@dotkomonline/utils"
 import { Button, TextInput } from "@dotkomonline/ui"

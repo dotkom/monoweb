@@ -1,6 +1,6 @@
 "use client"
 
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import type { NotificationRecipientFilterQuery, NotificationRecipientListItem } from "@dotkomonline/rpc/notification"
 import { DataTable, Avatar, AvatarFallback, AvatarImage, Button, Checkbox, Text, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable, type RowSelectionState } from "@tanstack/react-table"

@@ -1,4 +1,4 @@
-import { FilterableDataTable, arrayOrEqualsFilter, dateSort } from "@dashboard/components/FilterableDataTable"
+import { FilterableDataTable, arrayOrEqualsFilter, dateSort } from "@admin/components/FilterableDataTable"
 import type {
   Attendance,
   AttendancePool,
@@ -26,10 +26,7 @@ import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore }
 import { nb } from "date-fns/locale"
 import { useMemo, useState } from "react"
 import { ManualDeleteUserAttendModal } from "./ManualDeleteUserAttendModal"
-import {
-  useUpdateAttendeeRegisteredMutation,
-  useUpdateEventAttendanceMutation,
-} from "@dashboard/app/arrangementer/mutations"
+import { useUpdateAttendeeRegisteredMutation, useUpdateEventAttendanceMutation } from "@admin/arrangementer/mutations"
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 

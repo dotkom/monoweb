@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { getNotificationTypeLabel, type NotificationRecipientFilterQuery } from "@dotkomonline/rpc/notification"
 import { Button, Separator, Text, Title } from "@dotkomonline/ui"
 import { IconBell, IconMail, IconMailOpened, IconUsers } from "@tabler/icons-react"

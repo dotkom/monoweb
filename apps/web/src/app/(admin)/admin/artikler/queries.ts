@@ -1,4 +1,4 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
 import type { Pageable } from "@dotkomonline/utils"
 import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"

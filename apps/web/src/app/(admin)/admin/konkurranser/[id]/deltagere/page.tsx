@@ -1,6 +1,6 @@
 "use client"
 
-import { useContestEditPermission } from "@dashboard/hooks/use-contest-edit-permission"
+import { useContestEditPermission } from "@admin/hooks/use-contest-edit-permission"
 import { Button } from "@dotkomonline/ui"
 import { IconUserPlus, IconUsersPlus } from "@tabler/icons-react"
 import { useCallback, useMemo, useState } from "react"

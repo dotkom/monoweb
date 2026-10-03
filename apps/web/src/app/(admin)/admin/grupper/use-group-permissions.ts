@@ -1,5 +1,5 @@
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { useGroupDetailsContext } from "@dashboard/app/grupper/[id]/provider"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { useGroupDetailsContext } from "@admin/grupper/[id]/provider"
 
 export function useGroupPermissions() {
   const { group } = useGroupDetailsContext()

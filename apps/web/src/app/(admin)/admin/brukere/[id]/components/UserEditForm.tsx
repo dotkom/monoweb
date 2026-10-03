@@ -1,11 +1,11 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { Form } from "@dashboard/components/forms/Form"
-import { ImageUploadModalField } from "@dashboard/components/forms/ImageUploadModalField"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
-import { TextareaField } from "@dashboard/components/forms/TextareaField"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { Form } from "@admin/components/forms/Form"
+import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
+import { TextareaField } from "@admin/components/forms/TextareaField"
 import {
   GenderSchema,
   USER_IMAGE_MAX_SIZE_KIB,

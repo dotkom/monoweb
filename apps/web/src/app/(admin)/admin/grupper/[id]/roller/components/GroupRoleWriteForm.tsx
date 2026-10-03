@@ -1,8 +1,8 @@
 "use client"
 
-import { Form } from "@dashboard/components/forms/Form"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { Form } from "@admin/components/forms/Form"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
 import { getGroupRoleTypeName, GroupRoleTypeEnum, GroupRoleWriteSchema } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"

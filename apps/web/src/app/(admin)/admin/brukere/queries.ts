@@ -1,4 +1,4 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import type { UserFilterQuery, UserId } from "@dotkomonline/rpc/user"
 import type { Pageable } from "@dotkomonline/utils"

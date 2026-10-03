@@ -1,7 +1,7 @@
 "use client"
 
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { notifyFail } from "@dashboard/lib/notifications"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { notifyFail } from "@admin/lib/notifications"
 import {
   type Attendance,
   type AttendancePool,

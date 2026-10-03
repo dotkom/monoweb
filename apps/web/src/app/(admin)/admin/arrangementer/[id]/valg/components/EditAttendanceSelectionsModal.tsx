@@ -3,7 +3,7 @@
 import type { Attendance, AttendanceSelection } from "@dotkomonline/rpc/attendance"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import { useUpdateAttendanceMutation } from "@dashboard/app/arrangementer/mutations"
+import { useUpdateAttendanceMutation } from "@admin/arrangementer/mutations"
 import { SelectionsForm, type SelectionsFormValues } from "./SelectionForm"
 
 type EditAttendanceSelectionsModalProps = {

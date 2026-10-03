@@ -1,4 +1,4 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import { getGroupDisplayName, type GroupId } from "@dotkomonline/rpc/group"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { useQuery } from "@tanstack/react-query"

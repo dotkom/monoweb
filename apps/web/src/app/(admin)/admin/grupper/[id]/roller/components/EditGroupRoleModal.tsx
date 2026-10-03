@@ -3,7 +3,7 @@
 import type { GroupRole } from "@dotkomonline/rpc/group"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import { useUpdateGroupRoleMutation } from "@dashboard/app/grupper/mutations"
+import { useUpdateGroupRoleMutation } from "@admin/grupper/mutations"
 import { GroupRoleWriteForm } from "./GroupRoleWriteForm"
 
 type EditGroupRoleModalProps = {

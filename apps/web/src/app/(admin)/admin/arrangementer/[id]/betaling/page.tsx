@@ -1,7 +1,7 @@
 "use client"
 
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
+import { TextField } from "@admin/components/forms/TextField"
 import {
   type Attendee,
   type AttendeePaymentStatus,

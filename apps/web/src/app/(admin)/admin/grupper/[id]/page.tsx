@@ -1,7 +1,7 @@
 "use client"
 
-import { useGroupPermissions } from "@dashboard/app/grupper/use-group-permissions"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
+import { useGroupPermissions } from "@admin/grupper/use-group-permissions"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { GroupWorkspaceLinkCard } from "../components/GroupWorkspaceLinkCard"
 import { GroupWriteForm } from "../components/GroupWriteForm"
 import { useUpdateGroupMutation } from "../mutations"

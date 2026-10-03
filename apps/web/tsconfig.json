@@ -12,8 +12,7 @@
     "paths": {
       "*": ["./*"],
       "@/app/*": ["./src/app/(web)/*", "./src/app/*"],
-      "@dashboard/app/*": ["./src/app/(admin)/admin/*"],
-      "@dashboard/*": ["./src/dashboard/*"],
+      "@admin/*": ["./src/app/(admin)/admin/*"],
       "@/*": ["./src/*"]
     },
     "incremental": true,

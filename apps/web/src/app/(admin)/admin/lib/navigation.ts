@@ -1,6 +1,6 @@
 "use client"
 
-import type { useAuthorization } from "@dashboard/auth/authorization-context"
+import type { useAuthorization } from "@admin/auth/authorization-context"
 import { GroupTypeSchema } from "@dotkomonline/rpc/group"
 import {
   IconArticle,

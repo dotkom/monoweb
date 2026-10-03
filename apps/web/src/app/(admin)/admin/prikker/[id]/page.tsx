@@ -1,6 +1,6 @@
 "use client"
 
-import { UserSearch } from "@dashboard/app/brukere/components/UserSearch"
+import { UserSearch } from "@admin/brukere/components/UserSearch"
 import { Button, Popover, PopoverContent, PopoverTrigger, Separator, Title } from "@dotkomonline/ui"
 import { IconUserPlus } from "@tabler/icons-react"
 import { useState } from "react"

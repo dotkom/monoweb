@@ -1,7 +1,7 @@
 "use client"
 
-import { env } from "@dashboard/lib/env"
-import { TRPCProvider } from "@dashboard/lib/trpc-client"
+import { env } from "@admin/lib/env"
+import { TRPCProvider } from "@admin/lib/trpc-client"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
 import {
@@ -67,7 +67,7 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
           async fetch(url, options) {
             try {
               const headers = new Headers(options?.headers)
-              headers.set(HTTP_REQUEST_SOURCE_HEADER, RpcRequestSource.Dashboard)
+              headers.set(HTTP_REQUEST_SOURCE_HEADER, RpcRequestSource.Admin)
 
               try {
                 const token = await fetchSharedAccessToken()

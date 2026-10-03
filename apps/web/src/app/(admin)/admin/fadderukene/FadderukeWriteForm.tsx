@@ -1,8 +1,8 @@
 "use client"
 
-import { EventSelectField } from "@dashboard/components/forms/EventSelectField"
-import { Form } from "@dashboard/components/forms/Form"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { EventSelectField } from "@admin/components/forms/EventSelectField"
+import { Form } from "@admin/components/forms/Form"
+import { TextField } from "@admin/components/forms/TextField"
 import { FadderukeWriteSchema, type FadderukeWrite } from "@dotkomonline/rpc/fadderuke"
 import { Button } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"

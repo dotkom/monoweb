@@ -1,4 +1,4 @@
-import { navigations } from "@dashboard/lib/navigation"
+import { navigations } from "@admin/lib/navigation"
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Company } from "@dotkomonline/rpc/company"
 import type { Contest } from "@dotkomonline/rpc/contest"

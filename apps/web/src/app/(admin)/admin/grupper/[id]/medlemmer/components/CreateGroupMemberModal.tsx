@@ -4,7 +4,7 @@ import type { Group } from "@dotkomonline/rpc/group"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
-import { useStartGroupMembershipMutation } from "@dashboard/app/grupper/mutations"
+import { useStartGroupMembershipMutation } from "@admin/grupper/mutations"
 import { GroupMemberWriteForm } from "./GroupMemberWriteForm"
 
 type CreateGroupMemberModalProps = {

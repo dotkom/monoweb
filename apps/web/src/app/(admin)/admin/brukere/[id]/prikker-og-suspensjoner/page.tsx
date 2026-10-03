@@ -1,7 +1,7 @@
 "use client"
 
-import { MarkTable } from "@dashboard/app/prikker/MarkTable"
-import { useMarkFindManyInfiniteQuery } from "@dashboard/app/prikker/queries"
+import { MarkTable } from "@admin/prikker/MarkTable"
+import { useMarkFindManyInfiniteQuery } from "@admin/prikker/queries"
 import { Title } from "@dotkomonline/ui"
 import { useUserDetailsContext } from "../provider"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { navigationBreadcrumbLabels } from "@dashboard/lib/navigation"
+import { navigationBreadcrumbLabels } from "@admin/lib/navigation"
 import {
   createContext,
   useContext,

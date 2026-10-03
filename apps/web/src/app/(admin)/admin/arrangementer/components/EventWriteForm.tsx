@@ -1,15 +1,15 @@
 "use client"
 
-import { useGroupAllQuery } from "@dashboard/app/grupper/queries"
-import { useContestFindManyQuery } from "@dashboard/app/konkurranser/queries"
-import { CompanySelectField } from "@dashboard/components/forms/CompanySelectField"
-import { DateTimePickerField } from "@dashboard/components/forms/DateTimePickerField"
-import { Form } from "@dashboard/components/forms/Form"
-import { ImageUploadModalField } from "@dashboard/components/forms/ImageUploadModalField"
-import { MultiSelectField } from "@dashboard/components/forms/MultiSelectField"
-import { RichTextField } from "@dashboard/components/forms/RichTextField"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { useGroupAllQuery } from "@admin/grupper/queries"
+import { useContestFindManyQuery } from "@admin/konkurranser/queries"
+import { CompanySelectField } from "@admin/components/forms/CompanySelectField"
+import { DateTimePickerField } from "@admin/components/forms/DateTimePickerField"
+import { Form } from "@admin/components/forms/Form"
+import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
+import { MultiSelectField } from "@admin/components/forms/MultiSelectField"
+import { RichTextField } from "@admin/components/forms/RichTextField"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
 import {
   EVENT_IMAGE_MAX_SIZE_KIB,
   type EventStatus,

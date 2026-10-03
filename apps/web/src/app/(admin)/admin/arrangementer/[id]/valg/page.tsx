@@ -1,7 +1,7 @@
 "use client"
 
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { Attendance, AttendanceSelection } from "@dotkomonline/rpc/attendance"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconEdit, IconTrash } from "@tabler/icons-react"

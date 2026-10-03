@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import type { EventId } from "@dotkomonline/rpc/event"
 import { useState } from "react"
 import { EventWriteForm } from "../components/EventWriteForm"

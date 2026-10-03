@@ -1,6 +1,6 @@
 "use client"
 
-import { useUserEditPermission } from "@dashboard/hooks/use-user-edit-permission"
+import { useUserEditPermission } from "@admin/hooks/use-user-edit-permission"
 import { UserWriteSchema } from "@dotkomonline/rpc/user"
 import { Title } from "@dotkomonline/ui"
 import { useUpdateUserMutation } from "../mutations"

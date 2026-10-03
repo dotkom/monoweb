@@ -1,7 +1,7 @@
 "use client"
 
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { Button, Checkbox, Field, FieldContent, FieldDescription, FieldLabel, Title } from "@dotkomonline/ui"
 import { IconTrash } from "@tabler/icons-react"

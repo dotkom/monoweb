@@ -1,5 +1,5 @@
-import { useUserDetailsContext } from "@dashboard/app/brukere/[id]/provider"
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useUserDetailsContext } from "@admin/brukere/[id]/provider"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { useUser } from "@auth0/nextjs-auth0/client"
 
 export function useUserEditPermission() {

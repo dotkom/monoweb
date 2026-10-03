@@ -1,9 +1,9 @@
 "use client"
 
-import { UserSearch } from "@dashboard/app/brukere/components/UserSearch"
-import { useGroupPermissions } from "@dashboard/app/grupper/use-group-permissions"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
-import { ReadOnlyNotice } from "@dashboard/components/ReadOnlyNotice"
+import { UserSearch } from "@admin/brukere/components/UserSearch"
+import { useGroupPermissions } from "@admin/grupper/use-group-permissions"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { type GroupMember, isGroupMemberActive } from "@dotkomonline/rpc/group"
 import type { UserId } from "@dotkomonline/rpc/user"
 import type { WorkspaceMemberLink, WorkspaceMemberSyncState } from "@dotkomonline/rpc/workspace"

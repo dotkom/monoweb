@@ -1,6 +1,6 @@
 "use client"
 
-import { UserCombobox, type UserMemberOption } from "@dashboard/app/brukere/components/UserCombobox"
+import { UserCombobox, type UserMemberOption } from "@admin/brukere/components/UserCombobox"
 import {
   AlertDialog,
   AlertDialogCancel,

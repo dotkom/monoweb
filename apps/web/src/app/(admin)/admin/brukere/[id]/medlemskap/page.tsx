@@ -1,7 +1,7 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { compareDesc } from "date-fns"
 import { useMemo, useState } from "react"

@@ -1,12 +1,12 @@
 "use client"
 
-import { CheckboxField } from "@dashboard/components/forms/CheckboxField"
-import { Form } from "@dashboard/components/forms/Form"
-import { ImageUploadModalField } from "@dashboard/components/forms/ImageUploadModalField"
-import { RichTextField } from "@dashboard/components/forms/RichTextField"
-import { SegmentedControlField } from "@dashboard/components/forms/SegmentedControlField"
-import { SelectField } from "@dashboard/components/forms/SelectField"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { CheckboxField } from "@admin/components/forms/CheckboxField"
+import { Form } from "@admin/components/forms/Form"
+import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
+import { RichTextField } from "@admin/components/forms/RichTextField"
+import { SegmentedControlField } from "@admin/components/forms/SegmentedControlField"
+import { SelectField } from "@admin/components/forms/SelectField"
+import { TextField } from "@admin/components/forms/TextField"
 import {
   getGroupDisplayName,
   getGroupMemberVisibilityName,

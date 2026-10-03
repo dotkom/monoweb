@@ -1,7 +1,7 @@
 "use client"
 
-import { EventTable } from "@dashboard/app/arrangementer/components/EventTable"
-import { useEventAllInfiniteQuery } from "@dashboard/app/arrangementer/queries"
+import { EventTable } from "@admin/arrangementer/components/EventTable"
+import { useEventAllInfiniteQuery } from "@admin/arrangementer/queries"
 import { Text, Title } from "@dotkomonline/ui"
 import { useGroupDetailsContext } from "../provider"
 

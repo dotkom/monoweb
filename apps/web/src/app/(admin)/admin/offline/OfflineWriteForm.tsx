@@ -1,9 +1,9 @@
-import { useOfflineFileUploadMutation, useOfflineImageUploadMutation } from "@dashboard/app/offline/mutations"
-import { DateTimePickerField } from "@dashboard/components/forms/DateTimePickerField"
-import { FileField } from "@dashboard/components/forms/FileField"
-import { Form } from "@dashboard/components/forms/Form"
-import { ImageUploadModalField } from "@dashboard/components/forms/ImageUploadModalField"
-import { TextField } from "@dashboard/components/forms/TextField"
+import { useOfflineFileUploadMutation, useOfflineImageUploadMutation } from "@admin/offline/mutations"
+import { DateTimePickerField } from "@admin/components/forms/DateTimePickerField"
+import { FileField } from "@admin/components/forms/FileField"
+import { Form } from "@admin/components/forms/Form"
+import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
+import { TextField } from "@admin/components/forms/TextField"
 import {
   OFFLINE_FILE_MAX_SIZE_KIB,
   OFFLINE_FILE_WARN_SIZE_KIB,

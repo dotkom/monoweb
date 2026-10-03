@@ -1,10 +1,10 @@
 "use client"
 
-import { useEventWithAttendancesGetQuery } from "@dashboard/app/arrangementer/queries"
-import { UserSearch } from "@dashboard/app/brukere/components/UserSearch"
-import { useGroupAllQuery } from "@dashboard/app/grupper/queries"
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { EventSelectInput } from "@dashboard/components/forms/EventSelectInput"
+import { useEventWithAttendancesGetQuery } from "@admin/arrangementer/queries"
+import { UserSearch } from "@admin/brukere/components/UserSearch"
+import { useGroupAllQuery } from "@admin/grupper/queries"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { EventSelectInput } from "@admin/components/forms/EventSelectInput"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type {
   NotificationRecipientAttendanceSelectionOption,

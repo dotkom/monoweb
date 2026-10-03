@@ -1,13 +1,13 @@
 "use client"
 
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { PermissionTooltip } from "@dashboard/components/PermissionTooltip"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 
 interface Props {
   roles: GroupRole[]

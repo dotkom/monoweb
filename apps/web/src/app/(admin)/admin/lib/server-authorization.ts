@@ -1,7 +1,7 @@
-import { getServerAccessToken } from "@dashboard/lib/server-access-token"
-import { server } from "@dashboard/lib/trpc-server"
+import { getServerAccessToken } from "@admin/lib/server-access-token"
+import { server } from "@admin/lib/trpc-server"
 import { cache } from "react"
-import { createAuthorizationState } from "@dashboard/auth/permissions"
+import { createAuthorizationState } from "@admin/auth/permissions"
 
 const EMPTY_AUTHORIZATION_VALUE = {
   isAdministrator: false,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useUpdateGroupMembershipMutation } from "@dashboard/app/grupper/mutations"
+import { useUpdateGroupMembershipMutation } from "@admin/grupper/mutations"
 import { isGroupMembershipActive, type GroupMembership } from "@dotkomonline/rpc/group"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Text } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"

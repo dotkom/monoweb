@@ -1,4 +1,4 @@
-import { DateTooltip } from "@dashboard/components/DateTooltip"
+import { DateTooltip } from "@admin/components/DateTooltip"
 import { type DeregisterReasonWithEvent, mapDeregisterReasonTypeToLabel } from "@dotkomonline/rpc/event"
 import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"

@@ -1,6 +1,6 @@
 "use client"
 
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import type { Fadderuke } from "@dotkomonline/rpc/fadderuke"
 import { TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"

@@ -1,5 +1,5 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
-import { isTrpcErrorCode } from "@dashboard/lib/trpc-errors"
+import { useTRPC } from "@admin/lib/trpc-client"
+import { isTrpcErrorCode } from "@admin/lib/trpc-errors"
 import type {
   NotificationFilterQuery,
   NotificationRecipientFilterQuery,

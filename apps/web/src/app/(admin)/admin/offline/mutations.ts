@@ -1,10 +1,10 @@
-import { useQueryNotification } from "@dashboard/lib/notifications"
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useQueryNotification } from "@admin/lib/notifications"
+import { useTRPC } from "@admin/lib/trpc-client"
 import { useRouter } from "next/navigation"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { env } from "@dashboard/lib/env"
+import { env } from "@admin/lib/env"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 
 export const useCreateOfflineMutation = () => {

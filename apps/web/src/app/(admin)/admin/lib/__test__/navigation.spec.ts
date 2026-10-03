@@ -1,5 +1,5 @@
-import type { useAuthorization } from "@dashboard/auth/authorization-context"
-import { filterNavigationsUserHasAccessTo, navigations } from "@dashboard/lib/navigation"
+import type { useAuthorization } from "@admin/auth/authorization-context"
+import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
 import { describe, expect, it } from "vitest"
 
 function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {

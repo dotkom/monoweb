@@ -1,5 +1,5 @@
-import { getServerAccessToken } from "@dashboard/lib/server-access-token"
-import { env } from "@dashboard/lib/env"
+import { getServerAccessToken } from "@admin/lib/server-access-token"
+import { env } from "@admin/lib/env"
 import type { AppRouter } from "@dotkomonline/rpc"
 import { RpcRequestSource, getRpcRequestSourceHeaders } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
@@ -12,7 +12,7 @@ export const server = trpc.createTRPCProxyClient<AppRouter>({
       url: `${env.RPC_HOST}/api/trpc`,
       headers: async () => {
         const accessToken = await getServerAccessToken()
-        const headers = getRpcRequestSourceHeaders(RpcRequestSource.Dashboard)
+        const headers = getRpcRequestSourceHeaders(RpcRequestSource.Admin)
 
         if (accessToken === null) {
           return headers

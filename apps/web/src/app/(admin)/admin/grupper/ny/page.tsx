@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { GroupWriteForm } from "../components/GroupWriteForm"
 import { useCreateGroupMutation } from "../mutations"
 

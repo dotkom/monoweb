@@ -1,7 +1,7 @@
 "use client"
 
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { sortGroupRolesByPriority, type GroupMember, type GroupMembership } from "@dotkomonline/rpc/group"
 import { DataTable, Button, Text } from "@dotkomonline/ui"
 import { ogJoin } from "@dotkomonline/utils"
@@ -9,7 +9,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { formatDate } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useCallback, useMemo, useState } from "react"
-import { useDeleteGroupMembershipMutation } from "@dashboard/app/grupper/mutations"
+import { useDeleteGroupMembershipMutation } from "@admin/grupper/mutations"
 import { EditGroupMembershipModal } from "./EditGroupMembershipModal"
 
 interface Props {

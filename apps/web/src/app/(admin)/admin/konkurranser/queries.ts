@@ -1,4 +1,4 @@
-import { useTRPC } from "@dashboard/lib/trpc-client"
+import { useTRPC } from "@admin/lib/trpc-client"
 import type { ContestId } from "@dotkomonline/rpc/contest"
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"

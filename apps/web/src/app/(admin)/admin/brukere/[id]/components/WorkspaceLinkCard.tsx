@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import type { WorkspaceUser } from "@dotkomonline/rpc/workspace"
 import { Button, Text, Title } from "@dotkomonline/ui"

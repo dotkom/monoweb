@@ -1,9 +1,9 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { DateTooltip } from "@dashboard/components/DateTooltip"
-import { FilterableDataTable } from "@dashboard/components/FilterableDataTable"
-import { ConfirmDeleteModal } from "@dashboard/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { FilterableDataTable } from "@admin/components/FilterableDataTable"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { type Membership, getMembershipTypeName, getSpecializationName } from "@dotkomonline/rpc/user"
 import { Button } from "@dotkomonline/ui"
 import { getStudyGrade, isSpringSemester } from "@dotkomonline/utils"

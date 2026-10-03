@@ -1,12 +1,12 @@
 "use client"
 
-import { ResourceDetailError } from "@dashboard/components/ResourceDetailLayout/ResourceDetailError"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
-} from "@dashboard/components/ResourceDetailLayout/ResourceDetailLayout"
-import { breadcrumbPath, useBreadcrumbLabel } from "@dashboard/lib/breadcrumb-context"
-import { env } from "@dashboard/lib/env"
+} from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { env } from "@admin/lib/env"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"

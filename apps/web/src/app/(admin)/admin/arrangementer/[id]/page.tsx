@@ -1,6 +1,6 @@
 "use client"
 
-import { useGroupAllQuery } from "@dashboard/app/grupper/queries"
+import { useGroupAllQuery } from "@admin/grupper/queries"
 import { EventEditForm } from "../components/EventEditForm"
 import { ParentEventCard } from "../components/ParentEventCard"
 import { useUpdateEventMutation } from "../mutations"

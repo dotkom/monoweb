@@ -107,7 +107,7 @@ for (const gmr of groupMembershipRoles) {
 console.log(`Inserted ${groupMembershipRoles.length} group membership roles`)
 
 // Clear workspace IDs since local environment doesn't have Google Workspace integration
-// Without this, the dashboard will try to call workspace APIs that aren't available locally
+// Without this, the admin application will try to call workspace APIs that aren't available locally
 console.log("\nClearing workspace IDs (not available locally)...")
 await localDb.user.updateMany({ data: { workspaceUserId: null } })
 console.log("Cleared workspaceUserId from all users")

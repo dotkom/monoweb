@@ -1,6 +1,6 @@
 import type { User } from "@auth0/nextjs-auth0/types"
 
-import { getServerAccessToken } from "@dashboard/lib/server-access-token"
+import { getServerAccessToken } from "@admin/lib/server-access-token"
 import { auth0 } from "@/lib/auth0"
 
 export type AppSession = User & {

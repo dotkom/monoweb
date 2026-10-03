@@ -1,6 +1,6 @@
 "use client"
 
-import { useContestEditPermission } from "@dashboard/hooks/use-contest-edit-permission"
+import { useContestEditPermission } from "@admin/hooks/use-contest-edit-permission"
 import type { ContestantDetail, ContestUserSummary } from "@dotkomonline/rpc/contest"
 import {
   DataTable,

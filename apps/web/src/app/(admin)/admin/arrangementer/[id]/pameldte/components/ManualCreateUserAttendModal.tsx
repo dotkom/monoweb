@@ -1,10 +1,10 @@
 "use client"
 
-import { CheckboxField } from "@dashboard/components/forms/CheckboxField"
-import { Form } from "@dashboard/components/forms/Form"
-import { SegmentedControlField } from "@dashboard/components/forms/SegmentedControlField"
-import { useIsMobile } from "@dashboard/hooks/use-is-mobile"
-import { notifyFail } from "@dashboard/lib/notifications"
+import { CheckboxField } from "@admin/components/forms/CheckboxField"
+import { Form } from "@admin/components/forms/Form"
+import { SegmentedControlField } from "@admin/components/forms/SegmentedControlField"
+import { useIsMobile } from "@admin/hooks/use-is-mobile"
+import { notifyFail } from "@admin/lib/notifications"
 import {
   type Attendance,
   type AttendancePool,

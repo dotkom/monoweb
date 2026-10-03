@@ -1,12 +1,12 @@
 "use client"
 
-import { useAuthorization } from "@dashboard/auth/authorization-context"
-import { ResourceDetailError } from "@dashboard/components/ResourceDetailLayout/ResourceDetailError"
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
-} from "@dashboard/components/ResourceDetailLayout/ResourceDetailLayout"
-import { breadcrumbPath, useBreadcrumbLabel } from "@dashboard/lib/breadcrumb-context"
+} from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { IconListDetails, IconUsers } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
