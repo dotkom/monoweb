@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
+import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
 import { getAuthenticatedUser } from "@/utils/get-authenticated-user"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
@@ -9,7 +10,6 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
-import { Figtree, Google_Sans_Code, Inter, Marcellus } from "next/font/google"
 import type { PropsWithChildren } from "react"
 import "../../globals.css"
 
@@ -30,11 +30,6 @@ export const metadata: Metadata = {
   },
 }
 
-const fontBody = Inter({ subsets: ["latin"], variable: "--font-body" })
-const fontTitle = Figtree({ subsets: ["latin"], variable: "--font-title" })
-const fontMono = Google_Sans_Code({ subsets: ["latin"], variable: "--font-mono", fallback: ["monospace"] })
-const fontMarcellus = Marcellus({ subsets: ["latin"], variable: "--font-marcellus", weight: ["400"] })
-
 export default async function RootLayout({ children }: PropsWithChildren) {
   const authState = await getAuthenticatedUser()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
@@ -45,10 +40,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang="no" suppressHydrationWarning className="scroll-smooth" data-scroll-behavior="smooth">
       <body
         className={cn(
-          fontTitle.variable,
-          fontBody.variable,
-          fontMono.variable,
-          fontMarcellus.variable,
+          titleFont.variable,
+          bodyFont.variable,
+          monospaceFont.variable,
+          marcellusFont.variable,
           "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
         )}
       >
