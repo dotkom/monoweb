@@ -1,12 +1,28 @@
 import { Text, Title } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { getServerSession } from "@dashboard/lib/auth"
+import { getServerAuthorization } from "@dashboard/lib/server-authorization"
 import { IconShieldLock } from "@tabler/icons-react"
 import type { Metadata } from "next"
+import { redirect } from "next/navigation"
 
 export const metadata: Metadata = {
   title: "Ingen tilgang til adminsider | OnlineWeb",
 }
 
-export default function UnauthorizedPage() {
+export default async function UnauthorizedPage() {
+  const session = await getServerSession()
+
+  if (session === null) {
+    redirect(createAuthorizeUrl({ returnTo: "/admin" }))
+  }
+
+  const { isCommitteeMember } = await getServerAuthorization()
+
+  if (isCommitteeMember) {
+    redirect("/admin")
+  }
+
   return (
     <div className="flex sm:min-h-[55vh] flex-col items-center justify-center w-full">
       <div className="flex flex-col gap-6 max-w-lg">

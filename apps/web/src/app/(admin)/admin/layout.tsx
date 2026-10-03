@@ -10,6 +10,7 @@ import {
 } from "@dashboard/lib/navigation-group-cookie"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { cn, Toaster } from "@dotkomonline/ui"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -47,7 +48,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const accessToken = await getServerAccessToken()
 
   if (session === null || accessToken === null) {
-    redirect(UNAUTHORIZED_PATH)
+    redirect(createAuthorizeUrl({ returnTo: "/admin" }))
   }
 
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
