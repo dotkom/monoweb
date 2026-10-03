@@ -11,6 +11,9 @@
     "jsx": "preserve",
     "paths": {
       "*": ["./*"],
+      "@/app/*": ["./src/app/(web)/*", "./src/app/*"],
+      "@dashboard/app/*": ["./src/app/(admin)/admin/*"],
+      "@dashboard/*": ["./src/dashboard/*"],
       "@/*": ["./src/*"]
     },
     "incremental": true,
