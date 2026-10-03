@@ -1,36 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
-import {
-  type Attendance,
-  type AttendanceId,
-  type AttendancePool,
-  type AttendancePoolId,
-  type AttendancePoolWrite,
-  type AttendanceSelection,
-  type AttendanceSummary,
-  type AttendanceWrite,
-  AttendanceWriteSchema,
-  type Attendee,
-  type AttendeeId,
-  type AttendeePaymentWrite,
-  type AttendeeWrite,
-  AttendeeWriteSchema,
-  DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
-  DEREGISTER_GRACE_PERIOD_MS,
-  MAX_MERGE_DELAY_HOURS,
-  type RegisterChangeEvent,
-  type RegistrationAvailabilityView,
-  type RegistrationRejectionCause,
-  type RegistrationUserCause,
-  type RegistrationWindowCause,
-  buildPoolOccupancies,
-  buildRegistrationAvailabilityCompletionView,
-  getMissingAttendanceCompletionRequirements,
-  getRegisteredAttendeeCount,
-  isAttendable,
-  isAttendeeChargedAndUnrefunded,
-} from "./attendance"
 import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, getStudyGrade, ogJoin } from "@dotkomonline/utils"
 import {
   addDays,
@@ -73,13 +43,43 @@ import {
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
-  type VerifyFeedbackAnsweredTaskDefinition,
   type VerifyAttendanceCompletionTaskDefinition,
+  type VerifyFeedbackAnsweredTaskDefinition,
   tasks,
 } from "../task/task-definition"
 import type { TaskSchedulingService } from "../task/task-scheduling-service"
 import { type Membership, type User, type UserId, findActiveMembership } from "../user/user"
 import type { UserService } from "../user/user-service"
+import {
+  type Attendance,
+  type AttendanceId,
+  type AttendancePool,
+  type AttendancePoolId,
+  type AttendancePoolWrite,
+  type AttendanceSelection,
+  type AttendanceSummary,
+  type AttendanceWrite,
+  AttendanceWriteSchema,
+  type Attendee,
+  type AttendeeId,
+  type AttendeePaymentWrite,
+  type AttendeeWrite,
+  AttendeeWriteSchema,
+  DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
+  DEREGISTER_GRACE_PERIOD_MS,
+  MAX_MERGE_DELAY_HOURS,
+  type RegisterChangeEvent,
+  type RegistrationAvailabilityView,
+  type RegistrationRejectionCause,
+  type RegistrationUserCause,
+  type RegistrationWindowCause,
+  buildPoolOccupancies,
+  buildRegistrationAvailabilityCompletionView,
+  getMissingAttendanceCompletionRequirements,
+  getRegisteredAttendeeCount,
+  isAttendable,
+  isAttendeeChargedAndUnrefunded,
+} from "./attendance"
 
 import type { AttendanceRepository } from "./attendance-repository"
 import { type Event, findFirstHostingGroupEmail } from "./event"
@@ -249,14 +249,22 @@ export interface AttendanceService {
   registerAttendee(handle: DBHandle, availability: RegistrationAvailabilitySuccess): Promise<Attendee>
   getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
-  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
+  executeReserveAttendeeTask(
+    handle: DBHandle,
+    task: InferTaskData<ReserveAttendeeTaskDefinition>,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
   findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, priceNok: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
-  executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
+  executeChargeAttendeeTask(
+    handle: DBHandle,
+    task: InferTaskData<ChargeAttendeeTaskDefinition>,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<void>
   startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, completionDeadline: TZDate): Promise<Payment>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
   /**
@@ -267,14 +275,22 @@ export interface AttendanceService {
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyAttendanceCompletionTask(
     handle: DBHandle,
-    task: InferTaskData<VerifyAttendanceCompletionTaskDefinition>
+    task: InferTaskData<VerifyAttendanceCompletionTaskDefinition>,
+    setAuditTransactionName?: (name: string) => Promise<void>
   ): Promise<void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
-    task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
+    task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>,
+    setAuditTransactionName?: (name: string) => Promise<void>
   ): Promise<void>
-  executeSendFeedbackFormLinkEmailsRecurringTask(handle: DBHandle): Promise<void>
-  executeVerifyAttendeeAttendedTaskRecurringTask(handle: DBHandle): Promise<void>
+  executeSendFeedbackFormLinkEmailsRecurringTask(
+    handle: DBHandle,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<void>
+  executeVerifyAttendeeAttendedTaskRecurringTask(
+    handle: DBHandle,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<void>
 
   /**
    * Register that an attendee has physically attended an event.
@@ -282,14 +298,23 @@ export interface AttendanceService {
    * NOTE: Be careful of the difference between this and {@link registerAttendee}.
    */
   registerAttendance(handle: DBHandle, attendeeId: AttendeeId, registeredAt: TZDate | null): Promise<void>
-  scheduleMergeEventPoolsTask(handle: DBHandle, attendanceId: AttendanceId, mergeTime: TZDate): Promise<TaskId | null>
+  scheduleMergeEventPoolsTask(
+    handle: DBHandle,
+    attendanceId: AttendanceId,
+    mergeTime: TZDate,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<TaskId | null>
   rescheduleMergeEventPoolsTask(
     handle: DBHandle,
     attendanceId: AttendanceId,
     existingTaskId: TaskId | null,
     mergeTime: TZDate | null
   ): Promise<TaskId | null>
-  executeMergeEventPoolsTask(handle: DBHandle, task: InferTaskData<MergeAttendancePoolsTaskDefinition>): Promise<void>
+  executeMergeEventPoolsTask(
+    handle: DBHandle,
+    task: InferTaskData<MergeAttendancePoolsTaskDefinition>,
+    setAuditTransactionName?: (name: string) => Promise<void>
+  ): Promise<void>
 
   notifyAttendees(handle: DBHandle, attendanceId: AttendanceId, message: string): Promise<void>
 }
@@ -860,7 +885,7 @@ export function getAttendanceService(
       return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
     },
 
-    async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
+    async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }, setAuditTransactionName) {
       const attendance = await this.findAttendanceById(handle, attendanceId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
@@ -931,6 +956,12 @@ export function getAttendanceService(
 
       sendEventRegistrationEmail(event, attendance, attendee)
       emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
+
+      if (setAuditTransactionName) {
+        await setAuditTransactionName(
+          `Reserved Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+        )
+      }
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -1175,7 +1206,7 @@ export function getAttendanceService(
       })
     },
 
-    async executeChargeAttendeeTask(handle, { attendeeId }) {
+    async executeChargeAttendeeTask(handle, { attendeeId }, setAuditTransactionName) {
       const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
@@ -1189,6 +1220,13 @@ export function getAttendanceService(
       logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
 
       await this.createAttendeePaymentCharge(handle, attendee.id)
+
+      const event = await eventService.getByAttendanceId(handle, attendance.id)
+      if (setAuditTransactionName !== undefined) {
+        await setAuditTransactionName(
+          `Charged Attendee(ID=${attendee.id},Name=${attendee.user.name}) of Attendance(ID=${attendance.id},Price=${attendance.attendancePrice}) for Event(ID=${event.id},Title=${event.title})`
+        )
+      }
     },
 
     async startAttendeePayment(handle, attendeeId, completionDeadline): Promise<Payment> {
@@ -1404,7 +1442,7 @@ export function getAttendanceService(
       await clearAttendeeCompletionDeadline(handle, attendeeId)
     },
 
-    async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
+    async executeVerifyAttendanceCompletionTask(handle, { attendeeId }, setAuditTransactionName) {
       const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
@@ -1452,11 +1490,23 @@ export function getAttendanceService(
           event.title,
           attendance.deregisterDeadline
         )
+
+        if (setAuditTransactionName !== undefined) {
+          await setAuditTransactionName(
+            `Suspended User(ID=${attendee.userId},Name=${attendee.user.name}) for missing payment for Event(ID=${event.id},Title=${event.title}) with deregister deadline ${attendance.deregisterDeadline}`
+          )
+        }
       } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
         await this.deregisterAttendee(handle, attendeeId, {
           // TODO: Maybe this should be false?
           ignoreDeregistrationWindow: true,
         })
+
+        if (setAuditTransactionName !== undefined) {
+          await setAuditTransactionName(
+            `Deregistered User(ID=${attendee.userId},Name=${attendee.user.name}) for missing payment for Event(ID=${event.id},Title=${event.title}) with deregister deadline ${attendance.deregisterDeadline}`
+          )
+        }
       } else {
         await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
           paymentReservedAt: getCurrentUTC(),
@@ -1464,10 +1514,16 @@ export function getAttendanceService(
           paymentLink: null,
         })
         await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+        if (setAuditTransactionName !== undefined) {
+          await setAuditTransactionName(
+            `Updated Payment(ID=${attendee.paymentId},Status=${payment.status}) for Attendee(ID=${attendeeId},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+          )
+        }
       }
     },
 
-    async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
+    async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }, setAuditTransactionName) {
       const previousTask = await taskSchedulingService.findVerifyFeedbackAnsweredTask(handle, feedbackFormId)
 
       if (previousTask?.status === "COMPLETED") {
@@ -1504,7 +1560,9 @@ export function getAttendanceService(
         (attendee) => !answers.some((answer) => answer.attendeeId === attendee.id)
       )
 
-      if (attendeesWithoutAnswers.length === 0) return
+      if (attendeesWithoutAnswers.length === 0) {
+        return
+      }
 
       const mark = await markService.create(
         handle,
@@ -1523,9 +1581,15 @@ export function getAttendanceService(
       )
 
       await Promise.all([...personalMarkPromises])
+
+      if (setAuditTransactionName !== undefined) {
+        await setAuditTransactionName(
+          `Gave Mark(ID=${mark.id},Title=${mark.title}) to ${attendeesWithoutAnswers.length} attendees for missing feedback on Event(ID=${event.id},Title=${event.title})`
+        )
+      }
     },
 
-    async executeSendFeedbackFormLinkEmailsRecurringTask(handle) {
+    async executeSendFeedbackFormLinkEmailsRecurringTask(handle, setAuditTransactionName) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byHasFeedbackForm: true,
         byEndDate: {
@@ -1533,6 +1597,8 @@ export function getAttendanceService(
           max: new TZDate(endOfYesterday()),
         },
       })
+
+      const emailedEvents: { id: string; title: string; recipientCount: number }[] = []
 
       const promises = eventsEndedYesterday.map(async (event) => {
         if (!event.attendanceId) {
@@ -1585,12 +1651,21 @@ export function getAttendanceService(
             organizerEmail: hostingGroupEmail,
           }
         )
+
+        emailedEvents.push({ id: event.id, title: event.title, recipientCount: bcc.length })
       })
 
       await Promise.all(promises)
+
+      if (setAuditTransactionName !== undefined && emailedEvents.length > 0) {
+        const eventSummaries = emailedEvents
+          .map((event) => `Event(ID=${event.id},Title=${event.title},RecipientCount=${event.recipientCount})`)
+          .join(", ")
+        await setAuditTransactionName(`Sent Feedback Form Link Emails for ${eventSummaries}`)
+      }
     },
 
-    async executeVerifyAttendeeAttendedTaskRecurringTask(handle) {
+    async executeVerifyAttendeeAttendedTaskRecurringTask(handle, setAuditTransactionName) {
       const eventsEndedYesterday = await eventService.findEvents(handle, {
         byEndDate: {
           min: new TZDate(startOfYesterday()),
@@ -1599,6 +1674,7 @@ export function getAttendanceService(
       })
 
       const errors: Error[] = []
+      const eventsCreatedMarkFor: { id: string; title: string; attendeeCount: number }[] = []
 
       for (const event of eventsEndedYesterday) {
         if (!event.attendanceId || !event.markForMissedAttendance) {
@@ -1630,6 +1706,12 @@ export function getAttendanceService(
           await Promise.all(
             attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
           )
+
+          eventsCreatedMarkFor.push({
+            id: event.id,
+            title: event.title,
+            attendeeCount: attendeesNotAttended.length,
+          })
         } catch (e) {
           logger.error("Received error when attempting to create marks: %o", e)
           if (e instanceof Error) {
@@ -1640,6 +1722,13 @@ export function getAttendanceService(
 
       if (errors.length !== 0) {
         throw new AggregateError(errors, "Failed to give marks to one or more attendees")
+      }
+
+      if (setAuditTransactionName !== undefined && eventsCreatedMarkFor.length > 0) {
+        const eventSummaries = eventsCreatedMarkFor
+          .map((event) => `Event(ID=${event.id},Title=${event.title},MarkedCount=${event.attendeeCount} attendees)`)
+          .join(", ")
+        await setAuditTransactionName(`Gave Missed Attendance Marks for ${eventSummaries}`)
       }
     },
 
@@ -1680,7 +1769,7 @@ export function getAttendanceService(
       return await this.scheduleMergeEventPoolsTask(handle, attendanceId, mergeTime)
     },
 
-    async executeMergeEventPoolsTask(handle, { attendanceId }) {
+    async executeMergeEventPoolsTask(handle, { attendanceId }, setAuditTransactionName) {
       const attendance = await this.findAttendanceById(handle, attendanceId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
@@ -1732,6 +1821,15 @@ export function getAttendanceService(
 
       await attendanceRepository.updateAttendeeAttendancePoolIdByAttendancePoolIds(handle, mergeablePoolIds, pool.id)
       await attendanceRepository.deleteAttendancePoolsByIds(handle, mergeablePoolIds)
+
+      if (setAuditTransactionName !== undefined) {
+        const event = await eventService.getByAttendanceId(handle, attendanceId)
+        const mergedPools = mergeablePools.map((p) => `AttendancePool(ID=${p.id},Title=${p.title})`).join(", ")
+
+        await setAuditTransactionName(
+          `Merged ${mergedPools} into AttendancePool(ID=${pool.id},Title=${pool.title}) for Event(ID=${event.id},Title=${event.title})`
+        )
+      }
     },
     async notifyAttendees(handle, attendanceId, message) {
       const attendance = await this.getAttendanceById(handle, attendanceId)
