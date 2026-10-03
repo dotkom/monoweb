@@ -1,4 +1,5 @@
 import { AuthorizationProvider } from "@dashboard/auth/authorization-context"
+import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
 import { auth0 } from "@dashboard/lib/auth"
 import { getServerAccessToken } from "@dashboard/lib/server-access-token"
 import { UNAUTHORIZED_PATH } from "@dashboard/lib/require-permission"
@@ -8,10 +9,7 @@ import {
   parseNavigationGroupsCollapsedCookie,
 } from "@dashboard/lib/navigation-group-cookie"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
-import { Toaster } from "@dotkomonline/ui"
-import "@fontsource-variable/google-sans-code/wght.css"
-import "@fontsource-variable/inter-tight/wght.css"
-import "@fontsource-variable/inter/wght.css"
+import { cn, Toaster } from "@dotkomonline/ui"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -20,7 +18,7 @@ import { ThemeProvider } from "next-themes"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import type { PropsWithChildren } from "react"
-import "../globals.css"
+import "@/globals.css"
 import { ApplicationShell } from "./ApplicationShell"
 import { QueryProvider } from "./QueryProvider"
 import { headers } from "next/headers"
@@ -72,7 +70,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
     <html lang="no" suppressHydrationWarning className="h-dvh overflow-hidden">
-      <body className="h-dvh overflow-hidden">
+      <body
+        className={cn(
+          titleFont.variable,
+          bodyFont.variable,
+          monospaceFont.variable,
+          marcellusFont.variable,
+          "h-dvh overflow-hidden"
+        )}
+      >
         <PlausibleProvider domain="dashboard.online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
