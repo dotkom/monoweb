@@ -309,7 +309,7 @@ importers:
         version: link:../../packages/utils
       '@next/env':
         specifier: ^16.3.4
-        version: 16.3.6
+        version: 16.3.7
       '@sentry/nextjs':
         specifier: ^10.52.0
         version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.6(@opentelemetry/api@1.9.1)(@types/node@22.20.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(postcss@8.5.28))
@@ -631,8 +631,8 @@ importers:
         specifier: ^5.5.7
         version: 5.9.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.89.0(@types/react@19.2.18)(react@19.2.8))(valibot@1.2.0(typescript@5.9.3))(zod@4.6.5)
       '@next/env':
-        specifier: 16.3.6
-        version: 16.3.6
+        specifier: 16.3.7
+        version: 16.3.7
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.2.6(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2522,6 +2522,9 @@ packages:
 
   '@next/env@16.3.6':
     resolution: {integrity: sha512-x9Vblze1EbtltQYnNH38xCPWU3TVfBd1eXqA3+w9+BTpedkkdNpAaltXlGQ/nsc1+E0mVTNrtcbX3GoO09zeLQ==}
+
+  '@next/env@16.3.7':
+    resolution: {integrity: sha512-/HuhBN1CorqNTmewTIh81yXOQri6B8Ye/c9D7+830XqwVaf8qMnJNrgNxDn6dLtihq8YzBbI6NSAuMKvpr+DvQ==}
 
   '@next/swc-darwin-arm64@16.3.6':
     resolution: {integrity: sha512-E/7GEqaUkt8mk/T8v9lAnrhzR06kdq1ZBkC12F8tAMkdIadwNp3H1KqHynDHrpcTlGCUdq/qu6vUL2aYVyYBdw==}
@@ -6875,8 +6878,8 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-  minimizer-webpack-plugin@5.12.0:
-    resolution: {integrity: sha512-PCN1x1OzFeFB2GlP91s46q7Gz8Jf16Z7M45bzpoqrYZlh12QeY6tYVM5h299wbwy1DxnQ69VFmmh8Hb2Ff8mbw==}
+  minimizer-webpack-plugin@5.13.0:
+    resolution: {integrity: sha512-OO1NF2zHj6sf4CNv2AsUWYcS8WEwkVKQDXxxKzlOxx1Xl+WlqYtVC+oNlGNwGkLAOnpj277BSHypWwRtd9w4JQ==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
       '@minify-html/node': '*'
@@ -10185,6 +10188,8 @@ snapshots:
     optional: true
 
   '@next/env@16.3.6': {}
+
+  '@next/env@16.3.7': {}
 
   '@next/swc-darwin-arm64@16.3.6':
     optional: true
@@ -15067,7 +15072,7 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  minimizer-webpack-plugin@5.12.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28)):
+  minimizer-webpack-plugin@5.13.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
@@ -15078,7 +15083,7 @@ snapshots:
       lightningcss: 1.30.2
       postcss: 8.5.28
 
-  minimizer-webpack-plugin@5.12.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28)):
+  minimizer-webpack-plugin@5.13.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
@@ -17150,7 +17155,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.12.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
+      minimizer-webpack-plugin: 5.13.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
@@ -17187,7 +17192,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.12.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28))
+      minimizer-webpack-plugin: 5.13.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28))
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
