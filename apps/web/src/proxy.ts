@@ -1,5 +1,6 @@
 import {
   createClearSessionUrl,
+  createAuthorizeUrl,
   isAccessTokenFetchFailure,
   isAccessTokenUsable,
   toAbsoluteUrl,
@@ -41,8 +42,14 @@ export async function proxy(request: NextRequest) {
 
   const session = await auth0.getSession(request)
 
-  // Requests with no session continue to the pages and RPC procedures, where access is decided.
+  // Admin pages require login before rendering. Keep the requested path for the login callback.
   if (session === null) {
+    if (request.nextUrl.pathname === "/admin" || request.nextUrl.pathname.startsWith("/admin/")) {
+      const loginPath = createAuthorizeUrl({ returnTo: `${request.nextUrl.pathname}${request.nextUrl.search}` })
+
+      return NextResponse.redirect(new URL(loginPath, request.url))
+    }
+
     return authResponse
   }
 
