@@ -10,6 +10,7 @@ import { formatDate } from "date-fns"
 import { useRouter } from "next/navigation"
 import { useCallback, useMemo, useState } from "react"
 import { useDeleteGroupMembershipMutation } from "@admin/grupper/mutations"
+import { useGroupPermissions } from "@admin/grupper/use-group-permissions"
 import { EditGroupMembershipModal } from "./EditGroupMembershipModal"
 
 interface Props {
@@ -25,6 +26,7 @@ export const GroupMembershipTable = ({ groupMember, disabled }: Props) => {
   const [editMembership, setEditMembership] = useState<GroupMembership | null>(null)
   const [deleteModal, setDeleteModal] = useState<DeleteModalState | null>(null)
   const deleteGroupMembership = useDeleteGroupMembershipMutation(groupMember.id)
+  const { canDelete } = useGroupPermissions()
   const router = useRouter()
   const hasOnlyOneMembership = groupMember.groupMemberships.length === 1
 
@@ -80,14 +82,14 @@ export const GroupMembershipTable = ({ groupMember, disabled }: Props) => {
             size="sm"
             variant="destructive"
             onClick={() => openDeleteGroupMembershipModal(info.getValue())}
-            disabled={disabled}
+            disabled={!canDelete}
           >
             Slett
           </Button>
         ),
       }),
     ],
-    [columnHelper, openDeleteGroupMembershipModal, disabled]
+    [columnHelper, openDeleteGroupMembershipModal, disabled, canDelete]
   )
 
   const table = useReactTable({

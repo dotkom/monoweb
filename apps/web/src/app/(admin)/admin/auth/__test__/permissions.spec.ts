@@ -10,6 +10,8 @@ import {
   canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
+  canUpdateGroup,
+  canDeleteGroup,
   createAuthorizationState,
   hasAnyGroupAffiliation,
 } from "../permissions"
@@ -161,6 +163,26 @@ describe("canManageGroupMembership", () => {
     const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
 
     expect(canManageGroupMembership(state, "some-interest-group", true)).toBe(true)
+  })
+})
+
+describe("group editing and deletion", () => {
+  it("requires manager access to edit and administrator access to delete", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.DEPUTY_LEADER] })
+    expect(canUpdateGroup(state, "arrkom", false)).toBe(true)
+    expect(canDeleteGroup(state, "arrkom", false)).toBe(false)
+    expect(canUpdateGroup(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "arrkom", false)).toBe(false)
+    const admin = createState({}, { isAdministrator: true })
+    expect(canUpdateGroup(admin, "arrkom", false)).toBe(true)
+    expect(canDeleteGroup(admin, "arrkom", false)).toBe(true)
+  })
+
+  it("gives Backlog administrator access only to interest groups", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
+    expect(canUpdateGroup(state, "interest", true)).toBe(true)
+    expect(canDeleteGroup(state, "interest", true)).toBe(true)
+    expect(canUpdateGroup(state, "arrkom", false)).toBe(false)
+    expect(canDeleteGroup(state, "arrkom", false)).toBe(false)
   })
 })
 

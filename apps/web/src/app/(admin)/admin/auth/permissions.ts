@@ -200,34 +200,14 @@ export function canCreateGroup(state: AuthorizationState, groupType: GroupType):
  * `group.update` procedure
  */
 export function canUpdateGroup(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, groupId) || isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return isGroupMember(state, groupId)
+  return hasGroupManagerAccess(state, groupId, isInterestGroup)
 }
 
 /**
  * `group.delete` procedure
  */
-export function canDeleteGroup(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER)) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
+export function canDeleteGroup(state: AuthorizationState, _groupId: GroupId, isInterestGroup: boolean): boolean {
+  return hasGroupAdministratorAccess(state, isInterestGroup)
 }
 
 /**
