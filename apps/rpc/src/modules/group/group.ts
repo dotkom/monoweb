@@ -185,7 +185,7 @@ export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPre
   }
 }
 
-export const createGroupPageUrl = (group: Group): string => {
+export const createGroupPageUrl = (group: Pick<Group, "slug" | "type">): string => {
   switch (group.type) {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
@@ -195,6 +195,10 @@ export const createGroupPageUrl = (group: Group): string => {
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
   }
+}
+
+export const getInterestGroupAdminUrl = (slug: string): string => {
+  return `${createGroupPageUrl({ type: "INTEREST_GROUP", slug })}/admin`
 }
 
 export const getGroupTypeName = (type: GroupType | null | undefined): string => {
@@ -332,6 +336,21 @@ export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: Gro
   const typesB = new Set(rolesB.map((role) => role.id))
 
   return typesA.symmetricDifference(typesB).size === 0
+}
+
+export function hasNonDefaultGroupRole(membership: GroupMembership): boolean {
+  return membership.roles.some((role) => role.isDefault === false)
+}
+
+export function canEndInterestGroupMemberships(memberships: GroupMembership[], groupSlug: string): boolean {
+  const activeMembershipsForGroup = getActiveMembershipsForGroup(memberships, groupSlug)
+  const hasNoNonDefaultRoles = activeMembershipsForGroup.every((membership) => !hasNonDefaultGroupRole(membership))
+
+  return hasNoNonDefaultRoles
+}
+
+export function getActiveMembershipsForGroup(memberships: GroupMembership[], groupId: string): GroupMembership[] {
+  return memberships.filter((membership) => membership.groupId === groupId && isGroupMembershipActive(membership))
 }
 
 export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {
