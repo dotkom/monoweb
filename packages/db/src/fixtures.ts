@@ -24,6 +24,7 @@ import { getNotificationPermissionsFixtures } from "./fixtures/notification-perm
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getPrivacyPermissionsFixtures } from "./fixtures/privacy-permissions"
+import { getSidequestFixtures, getSidequestRegistrationFixtures } from "./fixtures/sidequest"
 import { getUserFixtures } from "./fixtures/user"
 import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
 import { createPrisma } from "./index"
@@ -116,6 +117,12 @@ const groupMembershipInput = getGroupMembershipFixtures(userIds)
 await db.groupMembership.createManyAndReturn({ data: groupMembershipInput })
 const groupMembershipRoleInput = getGroupMembershipRoleFixtures(groupRoleIds)
 await db.groupMembershipRole.createMany({ data: groupMembershipRoleInput })
+
+const sidequestInput = getSidequestFixtures()
+await db.sidequest.createMany({ data: sidequestInput })
+await db.sidequestRegistration.createMany({
+  data: getSidequestRegistrationFixtures(userIds),
+})
 
 const attendanceInput = getAttendanceFixtures()
 const attendances = await db.attendance.createManyAndReturn({ data: attendanceInput })

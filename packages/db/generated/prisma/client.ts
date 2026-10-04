@@ -256,3 +256,18 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model Sidequest
+ * 
+ */
+export type Sidequest = Prisma.SidequestModel
+/**
+ * Model SidequestRegistration
+ * 
+ */
+export type SidequestRegistration = Prisma.SidequestRegistrationModel
+/**
+ * Model SidequestRequest
+ * 
+ */
+export type SidequestRequest = Prisma.SidequestRequestModel
