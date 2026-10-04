@@ -1,15 +1,16 @@
-import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
 import { SQSClient } from "@aws-sdk/client-sqs"
 import { createPrisma } from "@dotkomonline/db"
-import { ManagementClient } from "auth0"
 import { admin, type admin_directory_v1 } from "@googleapis/admin"
+import { ManagementClient } from "auth0"
 import { JWT } from "googleapis-common"
+import EventEmitter from "node:events"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, isAmazonSesEmailFeatureEnabled, isGoogleWorkspaceFeatureEnabled } from "../configuration"
 import { IllegalStateError } from "../error"
+import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -19,11 +20,15 @@ import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getContestRepository } from "./contest/contest-repository"
+import { getContestService } from "./contest/contest-service"
 import { getEmailService, getEmptyEmailService } from "./email/email-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
+import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
+import { getFadderukeService } from "./fadderuke/fadderuke-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
 import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
 import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
@@ -31,6 +36,8 @@ import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
+import { getInterestGroupEventRepository } from "./interest-group-event/interest-group-event-repository"
+import { getInterestGroupEventService } from "./interest-group-event/interest-group-event-service"
 import { getJobListingRepository } from "./job-listing/job-listing-repository"
 import { getJobListingService } from "./job-listing/job-listing-service"
 import { getMarkRepository } from "./mark/mark-repository"
@@ -54,15 +61,10 @@ import { getTaskRepository } from "./task/task-repository"
 import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getMembershipService } from "./user/membership-service"
-import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
+import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-import { Auth0JwtService } from "../lib/auth0-jwt"
-import { getContestRepository } from "./contest/contest-repository"
-import { getContestService } from "./contest/contest-service"
-import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
-import { getFadderukeService } from "./fadderuke/fadderuke-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -268,6 +270,13 @@ export async function createServiceLayer(
     clients.webAuth0Client
   )
 
+  const interestGroupEventRepository = getInterestGroupEventRepository()
+  const interestGroupEventService = getInterestGroupEventService(
+    interestGroupEventRepository,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET
+  )
+
   const taskExecutor = getLocalTaskExecutor(
     taskService,
     recurringTaskService,
@@ -311,6 +320,7 @@ export async function createServiceLayer(
     notificationService,
     recurringTaskService,
     workspaceService,
+    interestGroupEventService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,

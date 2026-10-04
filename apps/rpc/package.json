@@ -71,6 +71,10 @@
     "./audit-log": {
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
+    },
+    "./interest-group-event": {
+      "import": "./src/modules/interest-group-event/interest-group-event.ts",
+      "types": "./src/modules/interest-group-event/interest-group-event.ts"
     }
   },
   "scripts": {

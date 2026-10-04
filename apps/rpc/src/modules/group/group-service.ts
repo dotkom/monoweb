@@ -6,7 +6,7 @@ import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns
 import { maxTime } from "date-fns/constants"
 import crypto from "node:crypto"
 import invariant from "tiny-invariant"
-import { FailedPreconditionError, IllegalStateError, NotFoundError } from "../../error"
+import { FailedPreconditionError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { UserId } from "../user/user"
 import type { UserService } from "../user/user-service"
 import {
@@ -26,6 +26,7 @@ import {
   GROUP_IMAGE_MAX_SIZE_KIB,
   GroupRoleTypeEnum,
   areGroupRolesEqual,
+  canEndInterestGroupMemberships,
   getDefaultGroupMemberRoles,
   isGroupMembershipActive,
 } from "./group"
@@ -68,6 +69,13 @@ export interface GroupService {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMember>
   endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
+  /**
+   * End an interest-group membership that has no roles.
+   *
+   * @throws {InvalidArgumentError} if the group is not an interest group
+   * @throws {FailedPreconditionError} if an active membership has a role
+   */
+  endInterestGroupMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
@@ -301,6 +309,23 @@ export function getGroupService(
       )
 
       return await Promise.all(endMembershipPromises)
+    },
+
+    async endInterestGroupMembership(handle, userId, groupSlug) {
+      const group = await this.getBySlug(handle, groupSlug)
+      if (group.type !== "INTEREST_GROUP") {
+        throw new InvalidArgumentError(`Group(Slug=${groupSlug}) is not an interest group`)
+      }
+
+      const memberships = await this.allMembershipsByUserId(handle, userId)
+      if (!canEndInterestGroupMemberships(memberships, groupSlug)) {
+        const user = await userService.getById(handle, userId)
+        throw new FailedPreconditionError(
+          `User(ID=${user.id},Name=${user.name}) cannot end GroupMembership in Group(Slug=${groupSlug}) because they have roles`
+        )
+      }
+
+      return this.endMembership(handle, userId, groupSlug)
     },
 
     async updateMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds) {
