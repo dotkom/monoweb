@@ -426,7 +426,9 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  InterestGroupEvent: 'InterestGroupEvent',
+  InterestGroupEventRegistration: 'InterestGroupEventRegistration'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -442,7 +444,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "interestGroupEvent" | "interestGroupEventRegistration"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3628,6 +3630,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InterestGroupEvent: {
+      payload: Prisma.$InterestGroupEventPayload<ExtArgs>
+      fields: Prisma.InterestGroupEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterestGroupEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterestGroupEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        findFirst: {
+          args: Prisma.InterestGroupEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterestGroupEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        findMany: {
+          args: Prisma.InterestGroupEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>[]
+        }
+        create: {
+          args: Prisma.InterestGroupEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        createMany: {
+          args: Prisma.InterestGroupEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterestGroupEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>[]
+        }
+        delete: {
+          args: Prisma.InterestGroupEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        update: {
+          args: Prisma.InterestGroupEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterestGroupEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterestGroupEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterestGroupEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterestGroupEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventPayload>
+        }
+        aggregate: {
+          args: Prisma.InterestGroupEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterestGroupEvent>
+        }
+        groupBy: {
+          args: Prisma.InterestGroupEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterestGroupEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    InterestGroupEventRegistration: {
+      payload: Prisma.$InterestGroupEventRegistrationPayload<ExtArgs>
+      fields: Prisma.InterestGroupEventRegistrationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterestGroupEventRegistrationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterestGroupEventRegistrationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        findFirst: {
+          args: Prisma.InterestGroupEventRegistrationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterestGroupEventRegistrationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        findMany: {
+          args: Prisma.InterestGroupEventRegistrationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>[]
+        }
+        create: {
+          args: Prisma.InterestGroupEventRegistrationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        createMany: {
+          args: Prisma.InterestGroupEventRegistrationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterestGroupEventRegistrationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>[]
+        }
+        delete: {
+          args: Prisma.InterestGroupEventRegistrationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        update: {
+          args: Prisma.InterestGroupEventRegistrationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterestGroupEventRegistrationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterestGroupEventRegistrationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterestGroupEventRegistrationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterestGroupEventRegistrationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRegistrationPayload>
+        }
+        aggregate: {
+          args: Prisma.InterestGroupEventRegistrationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterestGroupEventRegistration>
+        }
+        groupBy: {
+          args: Prisma.InterestGroupEventRegistrationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventRegistrationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterestGroupEventRegistrationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventRegistrationCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4258,6 +4408,37 @@ export const UserFlagLinkScalarFieldEnum = {
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
+export const InterestGroupEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  title: 'title',
+  description: 'description',
+  start: 'start',
+  end: 'end',
+  registerEnd: 'registerEnd',
+  deregisterDeadline: 'deregisterDeadline',
+  imageUrl: 'imageUrl',
+  locationTitle: 'locationTitle',
+  locationAddress: 'locationAddress',
+  locationLink: 'locationLink',
+  status: 'status',
+  interestGroupId: 'interestGroupId'
+} as const
+
+export type InterestGroupEventScalarFieldEnum = (typeof InterestGroupEventScalarFieldEnum)[keyof typeof InterestGroupEventScalarFieldEnum]
+
+
+export const InterestGroupEventRegistrationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  interestGroupEventId: 'interestGroupEventId'
+} as const
+
+export type InterestGroupEventRegistrationScalarFieldEnum = (typeof InterestGroupEventRegistrationScalarFieldEnum)[keyof typeof InterestGroupEventRegistrationScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4684,6 +4865,20 @@ export type ListEnumContestResultOrderFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'InterestGroupEventStatus'
+ */
+export type EnumInterestGroupEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InterestGroupEventStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'InterestGroupEventStatus[]'
+ */
+export type ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InterestGroupEventStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4849,6 +5044,8 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
+  interestGroupEvent?: Prisma.InterestGroupEventOmit
+  interestGroupEventRegistration?: Prisma.InterestGroupEventRegistrationOmit
 }
 
 /* Types for Logging */
