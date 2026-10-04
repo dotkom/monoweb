@@ -11,8 +11,8 @@ const authMocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/auth0", () => ({ auth0: authMocks }))
 vi.mock("@/lib/link-identity-cookies", () => ({ IDENTITY_LINK_STATUS_COOKIE: "identity_link_status" }))
-vi.mock("@dashboard/lib/auth", () => ({ getServerSession: authMocks.getServerSession }))
-vi.mock("@dashboard/lib/server-authorization", () => ({ getServerAuthorization: authMocks.getServerAuthorization }))
+vi.mock("@admin/lib/auth", () => ({ getServerSession: authMocks.getServerSession }))
+vi.mock("@admin/lib/server-authorization", () => ({ getServerAuthorization: authMocks.getServerAuthorization }))
 vi.mock("@dotkomonline/ui", () => ({ Text: "p", Title: "h1" }))
 vi.mock("@tabler/icons-react", () => ({ IconShieldLock: "svg" }))
 
