@@ -177,19 +177,23 @@ export function canEditFadderuke(state: AuthorizationState): boolean {
   return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.VELKOM)
 }
 
+function hasGroupAdministratorAccess(state: AuthorizationState, isInterestGroup: boolean): boolean {
+  return state.isAdministrator || (isInterestGroup && isGroupMember(state, CommitteeGroupSlug.BACKLOG))
+}
+
+function hasGroupManagerAccess(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
+  return (
+    hasGroupAdministratorAccess(state, isInterestGroup) ||
+    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
+    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
+  )
+}
+
 /**
  * `group.create` procedure
  */
 export function canCreateGroup(state: AuthorizationState, groupType: GroupType): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (groupType === "INTEREST_GROUP") {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
+  return hasGroupAdministratorAccess(state, groupType === "INTEREST_GROUP")
 }
 
 /**
@@ -234,44 +238,14 @@ export function canManageGroupMembership(
   groupId: GroupId,
   isInterestGroup: boolean
 ): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
-  ) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
+  return hasGroupManagerAccess(state, groupId, isInterestGroup)
 }
 
 /**
  * `group.createRole`, `group.updateRole`, `group.deleteRole` procedures
  */
 export function canManageGroupRoles(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
-  ) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
+  return hasGroupManagerAccess(state, groupId, isInterestGroup)
 }
 
 export function canCreateEvents(state: AuthorizationState): boolean {
