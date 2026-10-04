@@ -32,14 +32,7 @@ const createWorkspaceUserProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        isSameSubject((i) => i.userId)
-      )
-    )
-  )
+  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
