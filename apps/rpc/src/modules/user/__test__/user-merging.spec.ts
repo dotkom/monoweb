@@ -77,6 +77,7 @@ describe("mergeUsers", () => {
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
     handle.userFlagLink.findMany.mockResolvedValue([])
+    handle.sidequestRegistration.findMany.mockResolvedValue([])
     deps = {
       groupRepository,
       attendanceService,
@@ -390,6 +391,43 @@ describe("mergeUsers", () => {
         where: { userId: consumed.id, markId: { in: [sharedMarkId] } },
       })
       expect(handle.personalMark.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+  })
+
+  describe("sidequest registration deduplication", () => {
+    it("reassigns consumed registrations when survivor has none of the same events", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+
+      handle.sidequestRegistration.findMany.mockResolvedValue([])
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [] } },
+      })
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+
+    it("deletes the consumed user's registrations that the survivor also has", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const sharedSidequestId = "sidequest-shared"
+
+      handle.sidequestRegistration.findMany.mockResolvedValue([{ sidequestId: sharedSidequestId }] as never)
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [sharedSidequestId] } },
+      })
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })

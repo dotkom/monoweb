@@ -29,4 +29,5 @@ export interface $DbEnums {
   payment_attempt_status: "CREATED" | "CHECKOUT_OPEN" | "PROCESSING" | "AUTHORIZED" | "CAPTURED" | "CANCELLED" | "EXPIRED" | "FAILED"
   payment_capture_mode: "AUTOMATIC" | "MANUAL"
   payment_refund_status: "REQUESTED" | "PENDING" | "SUCCEEDED" | "FAILED" | "CANCELLED"
+  sidequest_status: "IN_REVIEW" | "PUBLISHED" | "REJECTED" | "DELETED"
 }
