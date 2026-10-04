@@ -357,6 +357,35 @@ const CUSTOM_RELATION_MERGERS = {
     }
   },
 
+  // Handling unique constraint errors on (userId, interestGroupEventId).
+  interestGroupEventRegistrations: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    survivor: User,
+    consumed: User
+  ) => {
+    const survivorRegistrations = await handle.interestGroupEventRegistration.findMany({
+      where: { userId: survivor.id },
+      select: { interestGroupEventId: true },
+    })
+
+    const survivorInterestGroupEventIds = new Set(
+      survivorRegistrations.map((registration) => registration.interestGroupEventId)
+    )
+
+    await handle.interestGroupEventRegistration.deleteMany({
+      where: {
+        userId: consumed.id,
+        interestGroupEventId: { in: [...survivorInterestGroupEventIds] },
+      },
+    })
+
+    await handle.interestGroupEventRegistration.updateMany({
+      where: { userId: consumed.id },
+      data: { userId: survivor.id },
+    })
+  },
+
   // Handling FK constraint errors on personal marks.
   personalMark: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMarks = await handle.personalMark.findMany({
