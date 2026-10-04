@@ -110,20 +110,23 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee              Attendee[]
-  personalMark          PersonalMark[]
-  groupMemberships      GroupMembership[]
-  memberships           Membership[]
-  givenMarks            PersonalMark[]          @relation("GivenBy")
-  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
-  auditLogs             AuditLog[]
-  deregisterReasons     DeregisterReason[]
-  notificationsReceived NotificationRecipient[]
-  notificationsCreated  Notification[]          @relation("created_by")
-  notificationsUpdated  Notification[]          @relation("last_updated_by")
-  contestants           Contestant[]
-  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks         UserFlagLink[]
+  attendee                  Attendee[]
+  personalMark              PersonalMark[]
+  groupMemberships          GroupMembership[]
+  memberships               Membership[]
+  givenMarks                PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded         Attendee[]              @relation(name: "RefundedBy")
+  auditLogs                 AuditLog[]
+  deregisterReasons         DeregisterReason[]
+  notificationsReceived     NotificationRecipient[]
+  notificationsCreated      Notification[]          @relation("created_by")
+  notificationsUpdated      Notification[]          @relation("last_updated_by")
+  contestants               Contestant[]
+  contestTeams              ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks             UserFlagLink[]
+  sidequestRegistrations    SidequestRegistration[]
+  sidequestRequests         SidequestRequest[]
+  sidequestRequestsReviewed SidequestRequest[]      @relation("SidequestRequestReviewer")
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -205,12 +208,13 @@ model Group {
   defaultGroupRoleId String    @unique @map("default_group_role_id")
   defaultGroupRole   GroupRole @relation("GroupDefaultRole", fields: [defaultGroupRoleId, slug], references: [id, groupId], onDelete: NoAction, onUpdate: NoAction)
 
-  events              EventHostingGroup[]
-  contests            Contest[]            @relation("ContestOrganizerGroups")
-  memberships         GroupMembership[]
-  marks               MarkGroup[]
-  roles               GroupRole[]
-  notifications       Notification[]
+  events        EventHostingGroup[]
+  sidequests    Sidequest[]
+  contests      Contest[]           @relation("ContestOrganizerGroups")
+  memberships   GroupMembership[]
+  marks         MarkGroup[]
+  roles         GroupRole[]
+  notifications Notification[]
 
   @@unique([defaultGroupRoleId, slug])
   @@map("group")
@@ -910,6 +914,7 @@ enum NotificationPayloadType {
   USER        @map("USER")
   OFFLINE     @map("OFFLINE")
   JOB_LISTING @map("JOB_LISTING")
+  SIDEQUEST   @map("SIDEQUEST")
   NONE        @map("NONE")
 }
 
@@ -948,6 +953,12 @@ enum NotificationType {
   NEW_MARK                           @map("NEW_MARK")
   /// A message about a new feedback form you have received.
   NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
+  /// A new sidequest has been published.
+  NEW_SIDEQUEST                      @map("NEW_SIDEQUEST")
+  /// A new sidequest request has been submitted.
+  NEW_SIDEQUEST_REQUEST              @map("NEW_SIDEQUEST_REQUEST")
+  /// A sidequest request has been reviewed.
+  SIDEQUEST_REQUEST_REVIEWED         @map("SIDEQUEST_REQUEST_REVIEWED")
 }
 
 model Notification {
@@ -1097,4 +1108,78 @@ model UserFlagLink {
   @@index([userId])
   @@index([userFlagId])
   @@map("user_flag_link")
+}
+
+enum SidequestStatus {
+  IN_REVIEW @map("IN_REVIEW")
+  PUBLISHED @map("PUBLISHED")
+  REJECTED  @map("REJECTED")
+  DELETED   @map("DELETED")
+
+  @@map("sidequest_status")
+}
+
+model Sidequest {
+  id                 String          @id @default(uuid())
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  title              String
+  description        String
+  start              DateTime        @db.Timestamptz(3)
+  end                DateTime        @db.Timestamptz(3)
+  registerEnd        DateTime?       @map("register_end") @db.Timestamptz(3)
+  deregisterDeadline DateTime?       @map("deregister_deadline") @db.Timestamptz(3)
+  imageUrl           String?         @map("image_url")
+  locationTitle      String?         @map("location_title")
+  locationAddress    String?         @map("location_address")
+  locationLink       String?         @map("location_link")
+  capacity           Int?
+  status             SidequestStatus @map("status")
+
+  interestGroupId String @map("interest_group_id")
+  interestGroup   Group  @relation(fields: [interestGroupId], references: [slug], onDelete: Cascade)
+
+  registrations SidequestRegistration[]
+  request       SidequestRequest?
+
+  @@index([interestGroupId])
+  @@map("sidequest")
+}
+
+model SidequestRegistration {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sidequestId String    @map("sidequest_id")
+  sidequest   Sidequest @relation(fields: [sidequestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sidequestId])
+  @@index([sidequestId])
+  @@map("sidequest_registration")
+}
+
+model SidequestRequest {
+  id                    String    @id @default(uuid())
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  description           String?
+  /// The amount of money requested for the Sidequest in NOK.
+  requestedAmount       Int?      @map("requested_amount")
+  expectedAttendeeCount Int?      @map("expected_attendee_count")
+  approvedAmount        Int?      @map("approved_amount")
+  reviewedAt            DateTime? @map("reviewed_at") @db.Timestamptz(3)
+  reviewNote            String?   @map("review_note")
+
+  sidequestId   String    @unique @map("sidequest_id")
+  requestedById String    @map("requested_by_id")
+  reviewedById  String?   @map("reviewed_by_id")
+  sidequest     Sidequest @relation(fields: [sidequestId], references: [id], onDelete: Cascade)
+  requestedBy   User      @relation(fields: [requestedById], references: [id])
+  reviewedBy    User?     @relation("SidequestRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@index([requestedById])
+  @@index([reviewedById])
+  @@map("sidequest_request")
 }

@@ -426,7 +426,10 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  Sidequest: 'Sidequest',
+  SidequestRegistration: 'SidequestRegistration',
+  SidequestRequest: 'SidequestRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -442,7 +445,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "sidequest" | "sidequestRegistration" | "sidequestRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3628,6 +3631,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Sidequest: {
+      payload: Prisma.$SidequestPayload<ExtArgs>
+      fields: Prisma.SidequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SidequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SidequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        findFirst: {
+          args: Prisma.SidequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SidequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        findMany: {
+          args: Prisma.SidequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>[]
+        }
+        create: {
+          args: Prisma.SidequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        createMany: {
+          args: Prisma.SidequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SidequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>[]
+        }
+        delete: {
+          args: Prisma.SidequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        update: {
+          args: Prisma.SidequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.SidequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SidequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SidequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.SidequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestPayload>
+        }
+        aggregate: {
+          args: Prisma.SidequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSidequest>
+        }
+        groupBy: {
+          args: Prisma.SidequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SidequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    SidequestRegistration: {
+      payload: Prisma.$SidequestRegistrationPayload<ExtArgs>
+      fields: Prisma.SidequestRegistrationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SidequestRegistrationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SidequestRegistrationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        findFirst: {
+          args: Prisma.SidequestRegistrationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SidequestRegistrationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        findMany: {
+          args: Prisma.SidequestRegistrationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>[]
+        }
+        create: {
+          args: Prisma.SidequestRegistrationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        createMany: {
+          args: Prisma.SidequestRegistrationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SidequestRegistrationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>[]
+        }
+        delete: {
+          args: Prisma.SidequestRegistrationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        update: {
+          args: Prisma.SidequestRegistrationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        deleteMany: {
+          args: Prisma.SidequestRegistrationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SidequestRegistrationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SidequestRegistrationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>[]
+        }
+        upsert: {
+          args: Prisma.SidequestRegistrationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRegistrationPayload>
+        }
+        aggregate: {
+          args: Prisma.SidequestRegistrationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSidequestRegistration>
+        }
+        groupBy: {
+          args: Prisma.SidequestRegistrationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestRegistrationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SidequestRegistrationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestRegistrationCountAggregateOutputType> | number
+        }
+      }
+    }
+    SidequestRequest: {
+      payload: Prisma.$SidequestRequestPayload<ExtArgs>
+      fields: Prisma.SidequestRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SidequestRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SidequestRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.SidequestRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SidequestRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        findMany: {
+          args: Prisma.SidequestRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>[]
+        }
+        create: {
+          args: Prisma.SidequestRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        createMany: {
+          args: Prisma.SidequestRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SidequestRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.SidequestRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        update: {
+          args: Prisma.SidequestRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.SidequestRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SidequestRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SidequestRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.SidequestRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SidequestRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.SidequestRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSidequestRequest>
+        }
+        groupBy: {
+          args: Prisma.SidequestRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SidequestRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SidequestRequestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4258,6 +4483,56 @@ export const UserFlagLinkScalarFieldEnum = {
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
 
 
+export const SidequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  title: 'title',
+  description: 'description',
+  start: 'start',
+  end: 'end',
+  registerEnd: 'registerEnd',
+  deregisterDeadline: 'deregisterDeadline',
+  imageUrl: 'imageUrl',
+  locationTitle: 'locationTitle',
+  locationAddress: 'locationAddress',
+  locationLink: 'locationLink',
+  capacity: 'capacity',
+  status: 'status',
+  interestGroupId: 'interestGroupId'
+} as const
+
+export type SidequestScalarFieldEnum = (typeof SidequestScalarFieldEnum)[keyof typeof SidequestScalarFieldEnum]
+
+
+export const SidequestRegistrationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sidequestId: 'sidequestId'
+} as const
+
+export type SidequestRegistrationScalarFieldEnum = (typeof SidequestRegistrationScalarFieldEnum)[keyof typeof SidequestRegistrationScalarFieldEnum]
+
+
+export const SidequestRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  requestedAmount: 'requestedAmount',
+  expectedAttendeeCount: 'expectedAttendeeCount',
+  approvedAmount: 'approvedAmount',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  sidequestId: 'sidequestId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById'
+} as const
+
+export type SidequestRequestScalarFieldEnum = (typeof SidequestRequestScalarFieldEnum)[keyof typeof SidequestRequestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4684,6 +4959,20 @@ export type ListEnumContestResultOrderFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'SidequestStatus'
+ */
+export type EnumSidequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SidequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SidequestStatus[]'
+ */
+export type ListEnumSidequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SidequestStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4849,6 +5138,9 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
+  sidequest?: Prisma.SidequestOmit
+  sidequestRegistration?: Prisma.SidequestRegistrationOmit
+  sidequestRequest?: Prisma.SidequestRequestOmit
 }
 
 /* Types for Logging */
