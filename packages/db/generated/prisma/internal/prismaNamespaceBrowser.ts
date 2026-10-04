@@ -97,7 +97,10 @@ export const ModelName = {
   UserFlagLink: 'UserFlagLink',
   Payment: 'Payment',
   PaymentAttempt: 'PaymentAttempt',
-  PaymentRefund: 'PaymentRefund'
+  PaymentRefund: 'PaymentRefund',
+  Sidequest: 'Sidequest',
+  SidequestRegistration: 'SidequestRegistration',
+  SidequestRequest: 'SidequestRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -769,6 +772,56 @@ export const PaymentRefundScalarFieldEnum = {
 } as const
 
 export type PaymentRefundScalarFieldEnum = (typeof PaymentRefundScalarFieldEnum)[keyof typeof PaymentRefundScalarFieldEnum]
+
+
+export const SidequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  title: 'title',
+  description: 'description',
+  start: 'start',
+  end: 'end',
+  registerEnd: 'registerEnd',
+  deregisterDeadline: 'deregisterDeadline',
+  imageUrl: 'imageUrl',
+  locationTitle: 'locationTitle',
+  locationAddress: 'locationAddress',
+  locationLink: 'locationLink',
+  capacity: 'capacity',
+  status: 'status',
+  interestGroupId: 'interestGroupId'
+} as const
+
+export type SidequestScalarFieldEnum = (typeof SidequestScalarFieldEnum)[keyof typeof SidequestScalarFieldEnum]
+
+
+export const SidequestRegistrationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sidequestId: 'sidequestId'
+} as const
+
+export type SidequestRegistrationScalarFieldEnum = (typeof SidequestRegistrationScalarFieldEnum)[keyof typeof SidequestRegistrationScalarFieldEnum]
+
+
+export const SidequestRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  requestedAmount: 'requestedAmount',
+  expectedAttendeeCount: 'expectedAttendeeCount',
+  approvedAmount: 'approvedAmount',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  sidequestId: 'sidequestId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById'
+} as const
+
+export type SidequestRequestScalarFieldEnum = (typeof SidequestRequestScalarFieldEnum)[keyof typeof SidequestRequestScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -296,3 +296,13 @@ export const PaymentRefundStatus = {
 } as const
 
 export type PaymentRefundStatus = (typeof PaymentRefundStatus)[keyof typeof PaymentRefundStatus]
+
+
+export const SidequestStatus = {
+  IN_REVIEW: 'IN_REVIEW',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  DELETED: 'DELETED'
+} as const
+
+export type SidequestStatus = (typeof SidequestStatus)[keyof typeof SidequestStatus]
