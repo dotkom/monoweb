@@ -1,7 +1,7 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
-import { hasGroupRole, isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
+import { and, hasGroupRole, isAdministrator, isGroupMember, isSameSubject, or } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { CommitteeGroupSlug } from "../authorization-service"
@@ -36,7 +36,10 @@ const createWorkspaceUserProcedure = procedure
     withAuthorization(
       or(
         isAdministrator(),
-        isSameSubject((i) => i.userId)
+        and(
+          isSameSubject((i) => i.userId),
+          isGroupMember((i) => i.contactCommittee)
+        )
       )
     )
   )
