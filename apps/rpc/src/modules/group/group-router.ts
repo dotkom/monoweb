@@ -6,6 +6,7 @@ import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseT
 import { procedure, t } from "../../trpc"
 import { CommitteeGroupSlug } from "../authorization-service"
 import {
+  type Group,
   GroupByMemberFilterSchema,
   GroupMembershipSchema,
   GroupMembershipWriteSchema,
@@ -16,19 +17,30 @@ import {
   GroupWriteSchema,
 } from "./group"
 
+type GroupScope = [Pick<Group, "type">, ...Pick<Group, "type">[]]
+
+// Backlog counts as an administrator for interest groups
+const hasGroupAdministratorAccess = (...groups: GroupScope) =>
+  groups.every((group) => group.type === "INTEREST_GROUP")
+    ? or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))
+    : isAdministrator()
+
+const hasGroupManagerAccess = (group: Pick<Group, "slug" | "type">, ...groups: Pick<Group, "type">[]) =>
+  or(
+    hasGroupAdministratorAccess(group, ...groups),
+    hasGroupRole(group.slug, GroupRoleTypeEnum.LEADER),
+    hasGroupRole(group.slug, GroupRoleTypeEnum.DEPUTY_LEADER)
+  )
+
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
 export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
   .input(GroupWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    // Backlog is only permitted to create interest groups
-    if (input.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(isAdministrator(), input)
-    }
+    await ctx.addAuthorizationGuard(hasGroupAdministratorAccess(input), input)
 
     const createdGroup = await ctx.groupService.create(ctx.handle, input)
 
@@ -208,31 +220,12 @@ const startMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
-    }
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
 
     const groupMember = await ctx.groupService.startMembership(
       ctx.handle,
@@ -253,31 +246,12 @@ export type EndMembershipOutput = inferProcedureOutput<typeof endMembershipProce
 const endMembershipProcedure = procedure
   .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
-    }
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
 
     const endedMemberships = await ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
     const user = await ctx.userService.getById(ctx.handle, input.userId)
@@ -300,30 +274,14 @@ const updateMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.id, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.id, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getByGroupMembershipId(ctx.handle, input.id)
-
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
+    if (input.data.groupId !== group.slug) {
+      const destination = await ctx.groupService.getBySlug(ctx.handle, input.data.groupId)
+      await ctx.addAuthorizationGuard(hasGroupManagerAccess(destination), input)
     }
 
     const updatedGroupMembership = await ctx.groupService.updateMembership(
@@ -348,33 +306,14 @@ const deleteMembershipProcedure = procedure
   .input(z.object({ id: GroupMembershipSchema.shape.id, groupId: GroupMembershipSchema.shape.groupId }))
   .output(z.void())
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
-
-    // If this is not an interest group, deny Backlog from deleting
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
-    }
-
     const groupMembership = await ctx.groupService.getMembershipById(ctx.handle, input.id)
+    const group = await ctx.groupService.getBySlug(ctx.handle, groupMembership.groupId)
+
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
+
     const user = await ctx.userService.getById(ctx.handle, groupMembership.userId)
 
     await ctx.groupService.deleteManyGroupMemberships(ctx.handle, [input.id])
@@ -389,32 +328,12 @@ export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
 const createRoleProcedure = procedure
   .input(GroupRoleWriteSchema)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.groupId)
 
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          hasGroupRole(input.groupId, GroupRoleTypeEnum.LEADER),
-          hasGroupRole(input.groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
-        ),
-        input
-      )
-    }
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
 
     const createdRole = await ctx.groupService.createRole(ctx.handle, input)
 
@@ -435,31 +354,14 @@ const updateRoleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input.id, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input.id, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input.id)
-
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          hasGroupRole(input.id, GroupRoleTypeEnum.LEADER),
-          hasGroupRole(input.id, GroupRoleTypeEnum.DEPUTY_LEADER)
-        ),
-        input
-      )
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
+    if (input.role.groupId !== group.slug) {
+      const destination = await ctx.groupService.getBySlug(ctx.handle, input.role.groupId)
+      await ctx.addAuthorizationGuard(hasGroupManagerAccess(destination), input)
     }
 
     const updatedRole = await ctx.groupService.updateRole(ctx.handle, input.id, input.role)
@@ -476,19 +378,20 @@ export type DeleteRoleOutput = inferProcedureOutput<typeof deleteRoleProcedure>
 const deleteRoleProcedure = procedure
   .input(GroupRoleSchema.shape.id)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input, GroupRoleTypeEnum.LEADER),
-        hasGroupRole((input) => input, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input)
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        hasGroupRole(group.slug, GroupRoleTypeEnum.LEADER),
+        hasGroupRole(group.slug, GroupRoleTypeEnum.DEPUTY_LEADER),
+        isGroupMember(CommitteeGroupSlug.BACKLOG)
+      ),
+      input
+    )
+
     return ctx.groupService.deleteRole(ctx.handle, input)
   })
 
