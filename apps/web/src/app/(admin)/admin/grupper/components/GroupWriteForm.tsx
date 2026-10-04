@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { CheckboxField } from "@admin/components/forms/CheckboxField"
 import { Form } from "@admin/components/forms/Form"
 import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
@@ -107,9 +108,19 @@ export const GroupWriteForm = ({
   defaultValues = DEFAULT_VALUES,
   disabled,
 }: GroupWriteFormProps) => {
+  const authorization = useAuthorization()
   const { groups } = useGroupAllQuery()
   const existingGroupSlugs = groups.map((group) => group.slug)
   const fileUpload = useGroupFileUploadMutation()
+  const allowedGroupTypes = GroupTypeSchema.options.filter((type) =>
+    defaultValues.slug
+      ? type === defaultValues.type ||
+        authorization.canUpdateGroup(
+          defaultValues.slug,
+          defaultValues.type === "INTEREST_GROUP" && type === "INTEREST_GROUP"
+        )
+      : authorization.canCreateGroup(type)
+  )
 
   const validationSchema = useMemo(
     () =>
@@ -212,7 +223,7 @@ export const GroupWriteForm = ({
         label="Type"
         placeholder="Velg en"
         required
-        options={GroupTypeSchema.options.map((groupType) => ({
+        options={allowedGroupTypes.map((groupType) => ({
           value: groupType,
           label: getGroupTypeName(groupType),
         }))}

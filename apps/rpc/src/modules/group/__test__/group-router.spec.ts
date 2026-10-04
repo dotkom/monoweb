@@ -213,3 +213,98 @@ describe("authorization against the owning group", () => {
     expect(groupService.deleteManyGroupMemberships).not.toHaveBeenCalled()
   })
 })
+
+const groupValues = (type: GroupType = "COMMITTEE") => ({
+  type,
+  slug: groupSlug,
+  name: "Target group",
+  abbreviation: "Target",
+  description: "Description",
+  preferredDisplayName: "NAME" as const,
+  imageUrl: null,
+  email: null,
+  contactUrl: null,
+  slackUrl: null,
+  showLeaderAsContact: false,
+  memberVisibility: "ALL_MEMBERS" as const,
+  deactivatedAt: null,
+  workspaceGroupId: null,
+  recruitmentMethod: "NONE" as const,
+})
+
+describe("group permissions", () => {
+  it.each([
+    [GroupRoleTypeEnum.LEADER, true],
+    [GroupRoleTypeEnum.DEPUTY_LEADER, true],
+    [GroupRoleTypeEnum.COSMETIC, false],
+  ] as const)("grants manager actions to %s: %s", async (role, allowed) => {
+    const { caller, groupService } = createPermissionContext(new Map([[groupSlug, new Set([role])]]))
+    const update = caller.update({ id: groupSlug, values: groupValues() })
+    if (allowed) {
+      await update
+      await caller.updateMembership({
+        id: membershipId,
+        data: { groupId: groupSlug, userId: "other-user", start: new Date("2026-01-01"), end: null },
+        roleIds: [],
+      })
+      await caller.updateRole({
+        id: roleId,
+        role: { groupId: groupSlug, name: "Member", type: GroupRoleTypeEnum.COSMETIC },
+      })
+      expect(groupService.update).toHaveBeenCalledOnce()
+    } else {
+      await expect(update).rejects.toMatchObject({ code: "FORBIDDEN" })
+      expect(groupService.update).not.toHaveBeenCalled()
+    }
+  })
+
+  it("denies group and permanent membership deletion to a leader", async () => {
+    const { caller, groupService } = createPermissionContext(
+      new Map([[groupSlug, new Set([GroupRoleTypeEnum.LEADER])]])
+    )
+    await expect(caller.delete(groupSlug)).rejects.toMatchObject({ code: "FORBIDDEN" })
+    await expect(caller.deleteGroupMembership({ id: membershipId, groupId: groupSlug })).rejects.toMatchObject({
+      code: "FORBIDDEN",
+    })
+    expect(groupService.delete).not.toHaveBeenCalled()
+    expect(groupService.deleteManyGroupMemberships).not.toHaveBeenCalled()
+  })
+
+  it("allows administrator deletion and derives the group from the membership", async () => {
+    const { caller, groupService } = createPermissionContext(
+      new Map([[CommitteeGroupSlug.DOTKOM, new Set<GroupRoleType>()]])
+    )
+    await caller.delete(groupSlug)
+    await caller.deleteGroupMembership({ id: membershipId, groupId: groupSlug })
+    expect(groupService.delete).toHaveBeenCalledOnce()
+    expect(groupService.getBySlug).toHaveBeenCalledWith(expect.anything(), groupSlug)
+    expect(groupService.deleteManyGroupMemberships).toHaveBeenCalledWith(expect.anything(), [membershipId])
+  })
+
+  it("restricts Backlog's administrator deletion access to interest groups", async () => {
+    const affiliations = new Map([[CommitteeGroupSlug.BACKLOG, new Set<GroupRoleType>()]])
+    const interest = createPermissionContext(affiliations, "INTEREST_GROUP")
+    await interest.caller.delete(groupSlug)
+    await interest.caller.deleteRole(roleId)
+    await interest.caller.deleteGroupMembership({ id: membershipId, groupId: groupSlug })
+    const committee = createPermissionContext(affiliations)
+    await expect(committee.caller.delete(groupSlug)).rejects.toMatchObject({ code: "FORBIDDEN" })
+    await expect(committee.caller.deleteRole(roleId)).rejects.toMatchObject({ code: "FORBIDDEN" })
+    await expect(
+      committee.caller.deleteGroupMembership({ id: membershipId, groupId: groupSlug })
+    ).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(committee.groupService.delete).not.toHaveBeenCalled()
+    expect(committee.groupService.deleteRole).not.toHaveBeenCalled()
+    expect(committee.groupService.deleteManyGroupMemberships).not.toHaveBeenCalled()
+  })
+
+  it("allows Backlog to edit interest groups without converting them to committees", async () => {
+    const { caller, groupService } = createPermissionContext(
+      new Map([[CommitteeGroupSlug.BACKLOG, new Set<GroupRoleType>()]]),
+      "INTEREST_GROUP"
+    )
+    await caller.update({ id: groupSlug, values: groupValues("INTEREST_GROUP") })
+    await expect(caller.update({ id: groupSlug, values: groupValues() })).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(groupService.update).toHaveBeenCalledOnce()
+  })
+})

@@ -96,30 +96,12 @@ const updateGroupProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        isGroupMember((input) => input.id),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input.id)
 
-    // If this is not an interest group, deny Backlog from modifying
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(
-        or(
-          isAdministrator(),
-          isGroupMember(() => group.slug)
-        ),
-        input
-      )
-    }
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group, input.values), input)
 
     const updatedGroup = await ctx.groupService.update(ctx.handle, input.id, input.values)
 
@@ -133,24 +115,12 @@ export type DeleteGroupOutput = inferProcedureOutput<typeof deleteGroupProcedure
 const deleteGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole((input) => input, GroupRoleTypeEnum.LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      )
-    )
-  )
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getBySlug(ctx.handle, input)
 
-    // If this is not an interest group, remove the Backlog clause
-    if (group.type !== "INTEREST_GROUP") {
-      await ctx.addAuthorizationGuard(or(isAdministrator(), hasGroupRole(input, GroupRoleTypeEnum.LEADER)), input)
-    }
+    await ctx.addAuthorizationGuard(hasGroupAdministratorAccess(group), input)
 
     const deletedGroup = await ctx.groupService.delete(ctx.handle, input)
 
@@ -312,7 +282,7 @@ const deleteMembershipProcedure = procedure
     const groupMembership = await ctx.groupService.getMembershipById(ctx.handle, input.id)
     const group = await ctx.groupService.getBySlug(ctx.handle, groupMembership.groupId)
 
-    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
+    await ctx.addAuthorizationGuard(hasGroupAdministratorAccess(group), input)
 
     const user = await ctx.userService.getById(ctx.handle, groupMembership.userId)
 
@@ -382,15 +352,7 @@ const deleteRoleProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input)
-    await ctx.addAuthorizationGuard(
-      or(
-        isAdministrator(),
-        hasGroupRole(group.slug, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(group.slug, GroupRoleTypeEnum.DEPUTY_LEADER),
-        isGroupMember(CommitteeGroupSlug.BACKLOG)
-      ),
-      input
-    )
+    await ctx.addAuthorizationGuard(hasGroupManagerAccess(group), input)
 
     return ctx.groupService.deleteRole(ctx.handle, input)
   })

@@ -17,7 +17,7 @@ export default function GroupInfoPage() {
       {!canUpdate && canEdit && (
         <ReadOnlyNotice
           title="Du kan ikke redigere gruppen"
-          message="Dette er fordi du ikke er et medlem av gruppen. Kontakt dotkom dersom du mener dette er en feil."
+          message="Redigering krever leder-, nestleder- eller administratortilgang. Kontakt dotkom dersom du mener dette er en feil."
         />
       )}
 
