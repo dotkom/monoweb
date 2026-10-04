@@ -76,6 +76,10 @@
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
     },
+    "./sidequest": {
+      "import": "./src/modules/sidequest/sidequest.ts",
+      "types": "./src/modules/sidequest/sidequest.ts"
+    },
     "./permissions": {
       "import": "./src/permissions/principal.ts",
       "types": "./src/permissions/principal.ts"
@@ -139,6 +143,10 @@
     "./workspace-permissions": {
       "import": "./src/permissions/workspace-permissions.ts",
       "types": "./src/permissions/workspace-permissions.ts"
+    },
+    "./sidequest-permissions": {
+      "import": "./src/permissions/sidequest-permissions.ts",
+      "types": "./src/permissions/sidequest-permissions.ts"
     }
   },
   "scripts": {
