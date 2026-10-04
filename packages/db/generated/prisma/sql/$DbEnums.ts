@@ -26,4 +26,5 @@ export interface $DbEnums {
   NotificationStatus: "DRAFT" | "SENT"
   contest_result_type: "SCORE" | "DURATION" | "WINNER"
   contest_result_order: "asc" | "desc"
+  sidequest_status: "IN_REVIEW" | "PUBLISHED" | "REJECTED" | "DELETED"
 }

@@ -262,3 +262,13 @@ export const ContestResultOrder = {
 } as const
 
 export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]
+
+
+export const SidequestStatus = {
+  IN_REVIEW: 'IN_REVIEW',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  DELETED: 'DELETED'
+} as const
+
+export type SidequestStatus = (typeof SidequestStatus)[keyof typeof SidequestStatus]
