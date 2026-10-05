@@ -489,6 +489,20 @@ const deleteRoleProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getByGroupRoleId(ctx.handle, input)
+
+    // If this is not an interest group, deny Backlog from modifying
+    if (group.type !== "INTEREST_GROUP") {
+      await ctx.addAuthorizationGuard(
+        or(
+          isAdministrator(),
+          hasGroupRole(input, GroupRoleTypeEnum.LEADER),
+          hasGroupRole(input, GroupRoleTypeEnum.DEPUTY_LEADER)
+        ),
+        input
+      )
+    }
+
     return ctx.groupService.deleteRole(ctx.handle, input)
   })
 
