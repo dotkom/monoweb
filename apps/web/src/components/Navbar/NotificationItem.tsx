@@ -66,7 +66,7 @@ export function NotificationItem({
                   "rounded-sm px-1.5 pt-1.5 -mx-1.5 -mt-1.5 py-px -mb-px bg-yellow-100 dark:bg-yellow-400/10 group-hover/container:rounded-tl-md"
               )}
             >
-              <Text element="span" className="min-w-0 line-clamp-2 text-sm font-semibold">
+              <Text element="span" className="min-w-0 line-clamp-2 text-sm font-medium">
                 {notification.title}
               </Text>
 
@@ -84,7 +84,7 @@ export function NotificationItem({
             )}
           </div>
 
-          <Text className="line-clamp-2 text-sm">{notification.shortDescription}</Text>
+          <Text className="line-clamp-2 text-sm text-muted-foreground">{notification.shortDescription}</Text>
         </div>
 
         {children && <div className="pointer-events-auto min-w-0">{children}</div>}
