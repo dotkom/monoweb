@@ -1,6 +1,7 @@
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Group } from "@dotkomonline/rpc/group"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
+import { getNotificationTypeLabel, type NotificationType } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text } from "@dotkomonline/ui"
 import { subHours } from "date-fns"
@@ -150,6 +151,137 @@ export function Broadcast() {
   return <NotificationTypeRow label="Broadcast" notification={createNotification()} renderPayload={() => null} />
 }
 
+export function BroadcastImportant() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("BROADCAST_IMPORTANT")}
+      notification={createNotification({
+        title: "Viktig informasjon fra Hovedstyret",
+        shortDescription: "Les informasjonen og bekreft at du har sett varslingen.",
+        type: "BROADCAST_IMPORTANT",
+      })}
+    />
+  )
+}
+
+function EventNotificationPreview({
+  type,
+  title,
+  shortDescription,
+}: {
+  type: NotificationType
+  title: string
+  shortDescription: string
+}) {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel(type)}
+      notification={createNotification({ type, title, shortDescription, actorGroup: null })}
+      renderPayload={() => <NotificationEventPayload event={event} attendance={attendance} />}
+    />
+  )
+}
+
+export function EventReminder() {
+  return (
+    <EventNotificationPreview
+      type="EVENT_REMINDER"
+      title="Ping med Bekk starter snart"
+      shortDescription="Husk arrangementet du er påmeldt. Vi gleder oss til å se deg!"
+    />
+  )
+}
+
+export function AttendanceRegistration() {
+  return (
+    <EventNotificationPreview
+      type="ATTENDANCE_REGISTRATION"
+      title="Du er påmeldt Ping med Bekk"
+      shortDescription="Påmeldingen din er bekreftet. Se arrangementet for praktisk informasjon."
+    />
+  )
+}
+
+export function AttendanceDeregistration() {
+  return (
+    <EventNotificationPreview
+      type="ATTENDANCE_DEREGISTRATION"
+      title="Du er avmeldt Ping med Bekk"
+      shortDescription="Du har ikke lenger en plass på arrangementet."
+    />
+  )
+}
+
+export function AttendanceRegisteredFromQueue() {
+  return (
+    <EventNotificationPreview
+      type="ATTENDANCE_REGISTRATION_FROM_QUEUE"
+      title="Du har fått plass på Ping med Bekk"
+      shortDescription="Du er flyttet fra ventelisten og er nå påmeldt arrangementet."
+    />
+  )
+}
+
+export function AttendanceQueueUpdate() {
+  return (
+    <EventNotificationPreview
+      type="ATTENDANCE_QUEUE_UPDATE"
+      title="Ny plass på ventelisten til Ping med Bekk"
+      shortDescription="Du er nå nummer 3 på ventelisten. Vi varsler deg hvis du får plass."
+    />
+  )
+}
+
+export function AttendanceCompletionFailed() {
+  return (
+    <EventNotificationPreview
+      type="ATTENDANCE_COMPLETION_FAILED"
+      title="Påmeldingen til Ping med Bekk ble ikke fullført"
+      shortDescription="Fristen for å fullføre påmeldingen har gått ut, og du har mistet plassen din."
+    />
+  )
+}
+
+export function NewEvent() {
+  return (
+    <EventNotificationPreview
+      type="NEW_EVENT"
+      title="Nytt arrangement: Ping med Bekk"
+      shortDescription="Et nytt arrangement er publisert. Se informasjon og påmeldingsfrister."
+    />
+  )
+}
+
+export function JobListingReminder() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("JOB_LISTING_REMINDER")}
+      notification={createNotification({
+        title: "Søknadsfristen hos Bekk nærmer seg",
+        shortDescription: "Husk å sende søknaden din før fristen går ut.",
+        type: "JOB_LISTING_REMINDER",
+        actorGroup: null,
+      })}
+      renderPayload={() => <NotificationJobListingPayload jobListing={jobListing} />}
+    />
+  )
+}
+
+export function NewFeedbackForm() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("NEW_FEEDBACK_FORM")}
+      notification={createNotification({
+        title: "Hva syntes du om Ping med Bekk?",
+        shortDescription: "Gi oss en tilbakemelding på arrangementet før svarfristen går ut.",
+        type: "NEW_FEEDBACK_FORM",
+        actorGroup: null,
+      })}
+      renderPayload={() => <NotificationUrlPayload url={`https://online.ntnu.no/tilbakemelding/${event.id}`} />}
+    />
+  )
+}
+
 export function Url() {
   return (
     <NotificationTypeRow
@@ -257,13 +389,23 @@ export function AllPayloads() {
   return (
     <div className="flex flex-col gap-8">
       <Broadcast />
+      <BroadcastImportant />
       <Url />
       <Event />
+      <EventReminder />
+      <AttendanceRegistration />
+      <AttendanceDeregistration />
+      <AttendanceRegisteredFromQueue />
+      <AttendanceQueueUpdate />
+      <AttendanceCompletionFailed />
+      <NewEvent />
       <ArticlePayload />
       <OfflinePayload />
       <GroupPayload />
       <User />
       <JobListingPayload />
+      <JobListingReminder />
+      <NewFeedbackForm />
     </div>
   )
 }
