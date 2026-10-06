@@ -155,6 +155,10 @@
     "./sidequest-permissions": {
       "import": "./src/permissions/sidequest-permissions.ts",
       "types": "./src/permissions/sidequest-permissions.ts"
+    },
+    "./committee-application-permissions": {
+      "import": "./src/permissions/committee-application-permissions.ts",
+      "types": "./src/permissions/committee-application-permissions.ts"
     }
   },
   "scripts": {
