@@ -1,0 +1,118 @@
+.calendar {
+  --fc-border-color: color-mix(in oklab, var(--border) 75%, transparent);
+  --fc-neutral-bg-color: var(--muted);
+  --fc-page-bg-color: var(--card);
+  --fc-today-bg-color: transparent;
+  --fc-highlight-color: color-mix(
+    in oklab,
+    var(--color-rose-500) 15%,
+    transparent
+  );
+}
+
+.calendar [class~="fc"] {
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.calendar .available {
+  background: color-mix(in oklab, var(--color-emerald-500) 20%, transparent);
+  opacity: 1;
+}
+
+.calendar [class~="fc-scrollgrid"] {
+  border: 0;
+}
+
+.calendar [class~="fc-col-header-cell"] {
+  background: color-mix(in oklab, var(--muted) 30%, var(--card));
+}
+
+.calendar [class~="fc-col-header-cell-cushion"] {
+  display: block;
+  padding: 0;
+}
+
+.calendar [class~="fc-timegrid-slot"] {
+  height: 1.875rem;
+}
+
+.calendar [class~="fc-timegrid-slot-minor"] {
+  border-top-style: solid;
+  border-top-color: color-mix(in oklab, var(--border) 50%, transparent);
+}
+
+.calendar [class~="fc-timegrid-slot-label"] {
+  width: 3.5rem;
+}
+
+.calendar [class~="fc-timegrid-slot-label-cushion"] {
+  padding: 0 0.625rem;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+.calendar [class~="fc-timegrid-col-events"] {
+  margin: 0;
+}
+
+.unavailableSwatch,
+.calendar [class~="fc-timegrid-event"] {
+  background-color: color-mix(in oklab, var(--color-rose-500) 28%, var(--card));
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 6px,
+    color-mix(in oklab, var(--foreground) 9%, transparent) 6px 8px
+  );
+}
+
+.calendar [class~="fc-timegrid-event"] {
+  cursor: default;
+  inset: 0;
+  border: 1px solid
+    color-mix(in oklab, var(--color-rose-500) 65%, var(--border));
+  border-radius: 0;
+  box-shadow: none;
+  transition: background-color 150ms;
+}
+
+.calendar [class~="fc-timegrid-event"]:hover {
+  background-color: color-mix(in oklab, var(--color-rose-500) 35%, var(--card));
+}
+
+.calendar [class~="fc-timegrid-event"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.calendar [class~="fc-timegrid-event"] [class~="fc-event-main"] {
+  container: interview-event / size;
+  height: 100%;
+  padding: 0;
+  color: var(--foreground);
+}
+
+.calendar
+  [class~="fc-timegrid-event-harness"]:has(
+    [data-availability-expanded="true"]
+  ) {
+  /* biome-ignore lint/complexity/noImportantStyles: Override FullCalendar's inline stacking order for the expanded slot. */
+  z-index: 10 !important;
+}
+
+.calendar
+  [class~="fc-timegrid-event"]:has([data-availability-expanded="true"]) {
+  min-height: 4rem;
+  overflow: visible;
+  box-shadow: var(--surface-shadow);
+}
+
+.calendar [class~="fc-event-main"]:has([data-availability-expanded="true"]) {
+  min-height: 4rem;
+}
+
+.calendar [class~="fc-timegrid-event"][class~="fc-event-mirror"] {
+  border-style: dashed;
+  box-shadow: none;
+}
