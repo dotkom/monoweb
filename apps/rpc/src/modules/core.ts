@@ -18,6 +18,7 @@ import { getAuditLogRepository } from "./audit-log/audit-log-repository"
 import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCommitteeApplicationRepository } from "./committee-application/committee-application-repository"
+import { matchCommitteeApplicationInterviews } from "./committee-application/committee-application-interview-matching"
 import { getCommitteeApplicationService } from "./committee-application/committee-application-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
@@ -271,7 +272,10 @@ export async function createServiceLayer(
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
-  const committeeApplicationService = getCommitteeApplicationService(committeeApplicationRepository)
+  const committeeApplicationService = getCommitteeApplicationService(
+    committeeApplicationRepository,
+    matchCommitteeApplicationInterviews
+  )
   const userMergeService = getUserMergingService(
     userService,
     groupRepository,
