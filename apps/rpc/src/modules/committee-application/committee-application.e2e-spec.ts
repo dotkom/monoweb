@@ -5,6 +5,7 @@ import { FailedPreconditionError, NotFoundError } from "../../error"
 import type { CommitteeApplicationInterviewMatcher, CommitteeApplicationSubmit } from "./committee-application"
 import { getCommitteeApplicationRepository } from "./committee-application-repository"
 import { getCommitteeApplicationService } from "./committee-application-service"
+import { matchCommitteeApplicationInterviews } from "./committee-application-interview-matching"
 
 const openTime = new Date("2026-10-06T12:00:00Z")
 const closedTime = new Date("2026-10-11T23:00:00Z")
@@ -117,6 +118,22 @@ async function createApplicationFixture() {
     application,
     submission,
   }
+}
+
+async function generateInterviewSchedule(applicationPeriodId: string) {
+  const proposal = await service.generateInterviews(dbClient, applicationPeriodId)
+
+  return dbClient.$transaction(async (handle) => {
+    return service.saveGeneratedInterviews(handle, applicationPeriodId, proposal)
+  })
+}
+
+async function publishInterviewSchedule(applicationPeriodId: string) {
+  const proposal = await service.prepareInterviewPublication(dbClient, applicationPeriodId)
+
+  return dbClient.$transaction(async (handle) => {
+    return service.confirmInterviews(handle, applicationPeriodId, proposal)
+  })
 }
 
 beforeEach(async () => {
@@ -446,22 +463,115 @@ describe("committee application persistence", () => {
 })
 
 describe("committee application interview lifecycle", () => {
+  it("rejects an obsolete proposal after another draft was saved", async () => {
+    const fixture = await createApplicationFixture()
+
+    vi.setSystemTime(closedTime)
+
+    const first = await service.generateInterviews(dbClient, fixture.applicationPeriod.id)
+    const second = await service.generateInterviews(dbClient, fixture.applicationPeriod.id)
+
+    await dbClient.$transaction(async (handle) => {
+      return service.saveGeneratedInterviews(handle, fixture.applicationPeriod.id, first)
+    })
+
+    const saved = await repository.findManyInterviewsByPeriodId(dbClient, fixture.applicationPeriod.id)
+
+    await expect(
+      dbClient.$transaction(async (handle) => {
+        return service.saveGeneratedInterviews(handle, fixture.applicationPeriod.id, second)
+      })
+    ).rejects.toThrow(FailedPreconditionError)
+
+    await expect(repository.findManyInterviewsByPeriodId(dbClient, fixture.applicationPeriod.id)).resolves.toEqual(
+      saved
+    )
+  })
+
+  it("requires reviewing a fresh draft when delayed publication changes the optimal interview time", async () => {
+    const fixture = await createApplicationFixture()
+    const matchingService = getCommitteeApplicationService(repository, matchCommitteeApplicationInterviews)
+
+    await dbClient.$transaction(async (handle) => {
+      await service.setInterviewBlocks(handle, fixture.exclusiveGroup.id, {
+        interviewDuration: "MINUTES_30",
+        interviewBlocks: [
+          {
+            id: randomUUID(),
+            startsAt: new Date("2026-10-13T12:00:00Z"),
+            endsAt: new Date("2026-10-13T12:30:00Z"),
+            locationName: "Room",
+            locationUrl: null,
+          },
+          {
+            id: randomUUID(),
+            startsAt: new Date("2026-10-13T14:00:00Z"),
+            endsAt: new Date("2026-10-13T14:30:00Z"),
+            locationName: "Room",
+            locationUrl: null,
+          },
+        ],
+      })
+      await service.updateApplication(handle, "applicant", fixture.application.id, {
+        ...fixture.submission,
+        groupSelections: [{ applicationGroupId: fixture.exclusiveGroup.id, rank: 1 }],
+        interviewAvailability: [
+          { startsAt: new Date("2026-10-13T12:00:00Z"), endsAt: new Date("2026-10-13T14:30:00Z") },
+        ],
+      })
+    })
+
+    vi.setSystemTime(closedTime)
+
+    const initialProposal = await matchingService.generateInterviews(dbClient, fixture.applicationPeriod.id)
+
+    await dbClient.$transaction(async (handle) => {
+      return matchingService.saveGeneratedInterviews(handle, fixture.applicationPeriod.id, initialProposal)
+    })
+
+    expect(initialProposal.interviews[0].startsAt).toEqual(new Date("2026-10-13T12:00:00Z"))
+
+    vi.setSystemTime(new Date("2026-10-13T11:00:00Z"))
+
+    await expect(matchingService.prepareInterviewPublication(dbClient, fixture.applicationPeriod.id)).rejects.toThrow(
+      FailedPreconditionError
+    )
+
+    await expect(service.getPeriodById(dbClient, fixture.applicationPeriod.id)).resolves.toMatchObject({
+      interviewsPublishedAt: null,
+    })
+
+    const freshProposal = await matchingService.generateInterviews(dbClient, fixture.applicationPeriod.id)
+
+    expect(freshProposal.interviews[0].startsAt).toEqual(new Date("2026-10-13T14:00:00Z"))
+
+    await dbClient.$transaction(async (handle) => {
+      return matchingService.saveGeneratedInterviews(handle, fixture.applicationPeriod.id, freshProposal)
+    })
+
+    const publication = await matchingService.prepareInterviewPublication(dbClient, fixture.applicationPeriod.id)
+
+    await dbClient.$transaction(async (handle) => {
+      return matchingService.confirmInterviews(handle, fixture.applicationPeriod.id, publication)
+    })
+
+    const published = await service.findApplicantView(dbClient, "applicant", fixture.applicationPeriod.id)
+
+    expect(published?.groups[0].interview?.startsAt).toEqual(new Date("2026-10-13T14:00:00Z"))
+  })
+
   it("regenerates one period without deleting another period's assignments", async () => {
     const original = await createApplicationFixture()
     const other = await createApplicationFixture()
 
     vi.setSystemTime(closedTime)
 
-    await dbClient.$transaction(async (handle) => {
-      return service.generateInterviews(handle, original.applicationPeriod.id)
-    })
+    await generateInterviewSchedule(original.applicationPeriod.id)
 
     const originalInterviews = await repository.findManyInterviewsByPeriodId(dbClient, original.applicationPeriod.id)
 
-    await dbClient.$transaction(async (handle) => {
-      await service.generateInterviews(handle, other.applicationPeriod.id)
-      await service.generateInterviews(handle, other.applicationPeriod.id)
-    })
+    await generateInterviewSchedule(other.applicationPeriod.id)
+    await generateInterviewSchedule(other.applicationPeriod.id)
 
     await expect(repository.findManyInterviewsByPeriodId(dbClient, original.applicationPeriod.id)).resolves.toEqual(
       originalInterviews
@@ -521,9 +631,7 @@ describe("committee application interview lifecycle", () => {
 
     vi.setSystemTime(closedTime)
 
-    const generated = await dbClient.$transaction(async (handle) => {
-      return service.generateInterviews(handle, fixture.applicationPeriod.id)
-    })
+    const generated = await generateInterviewSchedule(fixture.applicationPeriod.id)
     const initialInterview = generated.groups.flatMap((group) => group.matchedInterviews)[0]
 
     expect(generated.totalWantedInterviews).toBe(2)
@@ -534,17 +642,13 @@ describe("committee application interview lifecycle", () => {
 
     expect(unpublished?.groups.every((group) => group.interview === null)).toBe(true)
 
-    const regenerated = await dbClient.$transaction(async (handle) => {
-      return service.generateInterviews(handle, fixture.applicationPeriod.id)
-    })
+    const regenerated = await generateInterviewSchedule(fixture.applicationPeriod.id)
     const regeneratedInterview = regenerated.groups.flatMap((group) => group.matchedInterviews)[0]
 
     expect(regeneratedInterview.id).not.toBe(initialInterview.id)
     expect(regeneratedInterview.attendees).toEqual(initialInterview.attendees)
 
-    await dbClient.$transaction(async (handle) => {
-      return service.confirmInterviews(handle, fixture.applicationPeriod.id)
-    })
+    await publishInterviewSchedule(fixture.applicationPeriod.id)
 
     const published = await service.findApplicantView(dbClient, "applicant", fixture.applicationPeriod.id)
 
@@ -596,9 +700,7 @@ describe("committee application interview lifecycle", () => {
 
     vi.setSystemTime(closedTime)
 
-    await dbClient.$transaction(async (handle) => {
-      return service.generateInterviews(handle, fixture.applicationPeriod.id)
-    })
+    await generateInterviewSchedule(fixture.applicationPeriod.id)
 
     const originalInterviews = await repository.findManyInterviewsByPeriodId(dbClient, fixture.applicationPeriod.id)
 
@@ -651,17 +753,19 @@ describe("committee application interview lifecycle", () => {
 
     vi.setSystemTime(closedTime)
 
+    await generateInterviewSchedule(fixture.applicationPeriod.id)
+
     await dbClient.$transaction(async (handle) => {
-      await service.generateInterviews(handle, fixture.applicationPeriod.id)
       await service.clearInterviews(handle, fixture.applicationPeriod.id)
     })
 
     expect(await dbClient.committeeApplicationInterview.count()).toBe(0)
     expect(await dbClient.committeeApplicationInterviewAttendee.count()).toBe(1)
 
+    await generateInterviewSchedule(fixture.applicationPeriod.id)
+    await publishInterviewSchedule(fixture.applicationPeriod.id)
+
     await dbClient.$transaction(async (handle) => {
-      await service.generateInterviews(handle, fixture.applicationPeriod.id)
-      await service.confirmInterviews(handle, fixture.applicationPeriod.id)
       await service.revertInterviewPublicationAndMatching(handle, fixture.applicationPeriod.id)
     })
 
@@ -691,8 +795,9 @@ describe("committee application interview lifecycle", () => {
 
     vi.setSystemTime(closedTime)
 
+    await generateInterviewSchedule(original.applicationPeriod.id)
+
     await dbClient.$transaction(async (handle) => {
-      await service.generateInterviews(handle, original.applicationPeriod.id)
       await service.deletePeriod(handle, original.applicationPeriod.id)
     })
 
