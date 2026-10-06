@@ -27,7 +27,8 @@ type WithTransaction = {
  * Optionally, specify the transaction isolation level, which defaults to read-commited (default in PostgreSQL).
  */
 export function withDatabaseTransaction<TContext extends TRPCContext, TInput>(
-  isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted"
+  isolationLevel: Prisma.TransactionIsolationLevel = "ReadCommitted",
+  timeoutMilliseconds?: number
 ) {
   const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     return await ctx.prisma.$transaction(
@@ -46,6 +47,7 @@ export function withDatabaseTransaction<TContext extends TRPCContext, TInput>(
       },
       {
         isolationLevel,
+        timeout: timeoutMilliseconds,
       }
     )
   }
