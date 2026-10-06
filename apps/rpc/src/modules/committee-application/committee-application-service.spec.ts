@@ -58,4 +58,33 @@ describe("CommitteeApplicationService", () => {
     expect(repository.delete).toHaveBeenCalledWith(handle, committeeApplication.id)
   })
 
+  it("rejects interview matching for a missing period", async () => {
+    const repository = mockDeep<CommitteeApplicationRepository>()
+    repository.findInterviewMatchingInput.mockResolvedValue(null)
+    const service = getCommitteeApplicationService(repository)
+
+    await expect(service.matchInterviews(handle, "missing-period")).rejects.toThrow(NotFoundError)
+  })
+
+  it("matches the period data without writing interviews to the database", async () => {
+    const repository = mockDeep<CommitteeApplicationRepository>()
+    repository.findInterviewMatchingInput.mockResolvedValue({
+      interviewsPublishedAt: new Date("2026-10-11T21:00:00Z"),
+      applications: [],
+      groups: [],
+      groupSelections: [],
+      availabilityBlocks: [],
+      interviewBlocks: [],
+    })
+    const service = getCommitteeApplicationService(repository)
+
+    await expect(service.matchInterviews(handle, "period-id")).resolves.toMatchObject({
+      solverStatus: "OPTIMAL",
+      totalWantedInterviews: 0,
+      matchedInterviews: 0,
+      interviews: [],
+    })
+    expect(repository.findInterviewMatchingInput).toHaveBeenCalledWith(handle, "period-id")
+    expect(handle.committeeApplicationInterview.createMany).not.toHaveBeenCalled()
+  })
 })
