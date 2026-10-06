@@ -188,7 +188,7 @@ export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPre
   }
 }
 
-export const createGroupPageUrl = (group: Group): string => {
+export const createGroupPageUrl = (group: Pick<Group, "type" | "slug">): string => {
   switch (group.type) {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
@@ -196,7 +196,7 @@ export const createGroupPageUrl = (group: Group): string => {
     case "EMAIL_ONLY":
       return `/grupper/${group.slug}`
     case "INTEREST_GROUP":
-      return `/interessegrupper/${group.slug}`
+      return `/interessegrupper/grupper/${group.slug}`
   }
 }
 

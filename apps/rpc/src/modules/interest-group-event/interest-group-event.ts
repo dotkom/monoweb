@@ -36,7 +36,7 @@ export const InterestGroupEventSchema = z.object({
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
   description: z.string(),
-  imageUrl: z.string(),
+  imageUrl: z.string().nullable(),
   locationTitle: z.string().nullable(),
   locationAddress: z.string().nullable(),
   locationLink: z.string().nullable(),

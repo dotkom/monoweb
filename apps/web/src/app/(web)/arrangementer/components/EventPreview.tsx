@@ -214,7 +214,7 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
           </div>
         )}
 
-        <TimeBox event={event} showAddToCalendar={attendance === null} />
+        <TimeBox event={event} addToCalendarEvent={attendance === null ? event : undefined} />
         <LocationBox event={event} />
 
         {event.hostingGroups.length > 0 || event.companies.length > 0 ? (

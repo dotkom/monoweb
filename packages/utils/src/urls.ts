@@ -152,6 +152,25 @@ export const createAbsoluteEventPageUrl = (
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
 
+export const createInterestGroupEventPageUrl = (
+  interestGroupEventId: string,
+  interestGroupEventTitle?: string
+): `/interessegrupper?arrangement=${string}&id=${string}` => {
+  const slug = interestGroupEventTitle ? slugify(interestGroupEventTitle) : "arrangement"
+
+  return `/interessegrupper?arrangement=${slug}&id=${interestGroupEventId}`
+}
+
+export const createAbsoluteInterestGroupEventPageUrl = (
+  origin: string,
+  interestGroupEventId: string,
+  interestGroupEventTitle?: string
+): `${string}/interessegrupper?arrangement=${string}&id=${string}` => {
+  const slug = interestGroupEventTitle ? slugify(interestGroupEventTitle) : "arrangement"
+
+  return `${origin}/interessegrupper?arrangement=${slug}&id=${interestGroupEventId}`
+}
+
 export const createJobListingSlug = (jobListingTitle: string): string => {
   return slugify(jobListingTitle)
 }

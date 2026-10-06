@@ -61,6 +61,12 @@ const links: MenuLink[] = [
     highlighted: true,
   },
   {
+    title: "Interessegrupper",
+    href: "/interessegrupper",
+    icon: IconUsers,
+    highlighted: true,
+  },
+  {
     title: "Jobbannonser",
     href: "/karriere",
     icon: IconBriefcase,
@@ -80,12 +86,6 @@ const links: MenuLink[] = [
         href: "/grupper",
         icon: IconUsers,
         description: "Informasjon om de ulike komiteene og gruppene i Online.",
-      },
-      {
-        title: "Interessegrupper",
-        href: "/interessegrupper",
-        icon: IconUsers,
-        description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
       },
       {
         title: "Hovedstyret",
@@ -205,7 +205,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
             "flex flex-row items-center justify-between",
             "backdrop-blur-xl shadow-sm",
             "p-3 rounded-[calc(var(--navbar-height)/2)]",
-            showLoginButton && "lg:rounded-r-md"
+            showLoginButton && "min-[1100px]:rounded-r-md"
           )}
         >
           <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
@@ -223,7 +223,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
           <div
             className={cn(
               "flex h-(--navbar-height) shrink-0",
-              "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md",
+              "rounded-[calc(var(--navbar-height)/2)] min-[1100px]:rounded-l-md",
               "shadow-sm backdrop-blur-xl",
               "bg-gray-100/80 dark:bg-stone-800/90"
             )}
@@ -237,7 +237,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
                 "h-full min-w-19 shrink-0",
                 "py-0 pl-3 pr-4 xs:pl-6 xs:pr-8",
                 "font-medium",
-                "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md"
+                "rounded-[calc(var(--navbar-height)/2)] min-[1100px]:rounded-l-md"
               )}
               href={createAuthorizeUrl({ returnTo: fullPathname })}
               icon={<IconLogin2 className="mr-1.5 size-6" />}
@@ -249,7 +249,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
 
         <div
           className={cn(
-            "ml-2 lg:hidden size-(--navbar-height) shrink-0",
+            "ml-2 min-[1100px]:hidden size-(--navbar-height) shrink-0",
             "flex items-center justify-center rounded-full",
             "shadow-xs backdrop-blur-xl",
             "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-300/70 dark:border-stone-700/30"

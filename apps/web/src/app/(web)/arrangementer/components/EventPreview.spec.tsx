@@ -227,7 +227,7 @@ describe("desktop event preview", () => {
     await act(async () => link.click())
     expect(document.querySelector('[data-section="attendance"]')).toBeNull()
     expect(document.querySelector('[data-section="description"]')).not.toBeNull()
-    expect(mocks.time).toHaveBeenCalledWith(expect.objectContaining({ showAddToCalendar: true }))
+    expect(mocks.time).toHaveBeenCalledWith(expect.objectContaining({ addToCalendarEvent: event }))
   })
 
   it("starts the entrance transition each time the preview opens", async () => {
@@ -235,8 +235,18 @@ describe("desktop event preview", () => {
     vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame", "setTimeout", "clearTimeout"] })
     try {
       for (let attempt = 0; attempt < 2; attempt += 1) {
+        let startedEntrance = false
+        const observer = new MutationObserver(() => {
+          if (document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style") === true) {
+            startedEntrance = true
+          }
+        })
+        observer.observe(document.body, { attributes: true, childList: true, subtree: true })
+
         await act(async () => link.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(true)
+        observer.disconnect()
+        expect(startedEntrance).toBe(true)
+
         await act(async () => vi.advanceTimersByTimeAsync(50))
         expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
         const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')

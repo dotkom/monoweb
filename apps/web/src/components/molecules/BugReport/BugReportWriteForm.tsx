@@ -1,11 +1,11 @@
+import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { type BugReportFormResult, BugReportFormSchema } from "@dotkomonline/rpc/user"
 import { Button, Textarea, TextInput, toast } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconMail } from "@tabler/icons-react"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
-import { useTRPC } from "src/utils/trpc/client"
-import { useAuthenticatedUser } from "src/utils/use-authenticated-user"
 
 export interface BugReportProps {
   open: boolean
