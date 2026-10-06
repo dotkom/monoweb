@@ -169,6 +169,7 @@
     "emails:preview": "tsx src/bin/render-email-previews.ts",
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
+    "matching:visualize": "tsx src/bin/visualize-interview-matching.ts",
     "coverage": "vitest run --coverage",
     "stripe:listen": "stripe listen --events checkout.session.completed,checkout.session.expired,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,payment_intent.amount_capturable_updated,payment_intent.succeeded,payment_intent.payment_failed,payment_intent.canceled,charge.refunded,refund.created,refund.updated,refund.failed --forward-to localhost:4444/webhook/stripe"
   },

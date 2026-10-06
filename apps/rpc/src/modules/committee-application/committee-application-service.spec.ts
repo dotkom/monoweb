@@ -854,6 +854,167 @@ describe("interview publication", () => {
     vi.setSystemTime(closedTime)
   })
 
+  it("saves an unchanged proposal in a separate locked operation", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    expect(repository.lockPeriod).not.toHaveBeenCalled()
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+
+    await service.saveGeneratedInterviews(handle, period.id, proposal)
+
+    expect(repository.lockPeriod).toHaveBeenCalledWith(handle, period.id)
+    expect(repository.replaceInterviews).toHaveBeenCalledWith(handle, period.id, [interview])
+  })
+
+  it("rejects saving a proposal after a committee changes its interview duration", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    repository.findInterviewMatchingInput.mockResolvedValue({
+      ...input,
+      groups: input.groups.map((group) => {
+        return { ...group, interviewDuration: "MINUTES_20" }
+      }),
+    })
+
+    await expect(service.saveGeneratedInterviews(handle, period.id, proposal)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+  })
+
+  it("accepts unchanged input returned in a different database order", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    repository.findInterviewMatchingInput.mockResolvedValue({
+      ...input,
+      groups: input.groups.toReversed(),
+      groupSelections: input.groupSelections.toReversed(),
+      interviewBlocks: input.interviewBlocks.toReversed(),
+    })
+
+    await service.saveGeneratedInterviews(handle, period.id, proposal)
+
+    expect(repository.replaceInterviews).toHaveBeenCalledWith(handle, period.id, [interview])
+  })
+
+  it("rejects a proposal after the period configuration changes", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    repository.findPeriodById.mockResolvedValue({
+      ...period,
+      updatedAt: closedTime,
+    })
+
+    await expect(service.saveGeneratedInterviews(handle, period.id, proposal)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+  })
+
+  it("does not overwrite individual corrections made while matching was running", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+
+    await expect(service.saveGeneratedInterviews(handle, period.id, proposal)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+  })
+
+  it("rejects a proposal that became a past interview while the solver was running", async () => {
+    const { service, repository } = setup()
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    vi.setSystemTime(new Date(interview.startsAt.getTime() + 1))
+
+    await expect(service.saveGeneratedInterviews(handle, period.id, proposal)).rejects.toThrow(InvalidArgumentError)
+
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+  })
+
+  it("requires a fresh draft when a better preparation-time schedule exists at publication", async () => {
+    const { service, repository, matcher } = setup()
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+    matcher.mockResolvedValue({
+      interviews: [
+        { ...interview, startsAt: new Date("2026-10-12T11:00:00Z"), endsAt: new Date("2026-10-12T11:30:00Z") },
+      ],
+    })
+
+    await expect(service.prepareInterviewPublication(handle, period.id)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
+    expect(repository.lockPeriod).not.toHaveBeenCalled()
+  })
+
+  it("rechecks that the draft has not changed between publication preparation and confirmation", async () => {
+    const { service, repository } = setup()
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+
+    const proposal = await service.prepareInterviewPublication(handle, period.id)
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([])
+
+    await expect(service.confirmInterviews(handle, period.id, proposal)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
+  })
+
+  it("publishes the reviewed draft when the solver chooses an equally optimal room", async () => {
+    const { service, repository, matcher } = setup()
+    const otherBlock = { ...input.interviewBlocks[0], id: "other-block", locationName: "Other room" }
+
+    repository.findInterviewMatchingInput.mockResolvedValue({
+      ...input,
+      interviewBlocks: [...input.interviewBlocks, otherBlock],
+    })
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+    matcher.mockResolvedValue({ interviews: [{ ...interview, interviewBlockId: otherBlock.id }] })
+
+    const proposal = await service.prepareInterviewPublication(handle, period.id)
+
+    expect(proposal?.interviews).toEqual([interview])
+
+    await service.confirmInterviews(handle, period.id, proposal)
+
+    expect(repository.setInterviewsPublishedAt).toHaveBeenCalledWith(handle, period.id, closedTime)
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
+  })
+
+  it("expires publication preparations instead of accepting a delayed confirmation", async () => {
+    const { service, repository } = setup()
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+
+    const proposal = await service.prepareInterviewPublication(handle, period.id)
+
+    vi.setSystemTime(new Date(closedTime.getTime() + 60_001))
+
+    await expect(service.confirmInterviews(handle, period.id, proposal)).rejects.toThrow(FailedPreconditionError)
+
+    expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
+  })
+
+  it("uses one publication timestamp for scoring and the published record", async () => {
+    const { service, repository } = setup()
+
+    repository.findManyInterviewsByPeriodId.mockResolvedValue([interview])
+
+    const proposal = await service.prepareInterviewPublication(handle, period.id)
+
+    vi.setSystemTime(new Date(closedTime.getTime() + 2_000))
+
+    await service.confirmInterviews(handle, period.id, proposal)
+
+    expect(repository.setInterviewsPublishedAt).toHaveBeenCalledWith(handle, period.id, closedTime)
+  })
+
   it("rejects a missing period without deleting its schedule", async () => {
     const { service, repository } = setup()
 
@@ -901,16 +1062,19 @@ describe("interview publication", () => {
     expect(repository.replaceInterviews).not.toHaveBeenCalled()
   })
 
-  it("generates an unpublished schedule using the current publication reference", async () => {
+  it("computes a proposal without taking a lock or writing a schedule", async () => {
     const { service, repository, matcher } = setup()
 
-    await service.generateInterviews(handle, period.id)
+    const proposal = await service.generateInterviews(handle, period.id)
+
+    expect(proposal.interviews).toEqual([interview])
+    expect(repository.lockPeriod).not.toHaveBeenCalled()
 
     expect(repository.findInterviewMatchingInput).toHaveBeenCalledWith(handle, period.id, closedTime)
 
     expect(matcher).toHaveBeenCalledWith(input)
 
-    expect(repository.replaceInterviews).toHaveBeenCalledWith(handle, period.id, [interview])
+    expect(repository.replaceInterviews).not.toHaveBeenCalled()
 
     expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
@@ -935,7 +1099,9 @@ describe("interview publication", () => {
       interviewsPublishedAt: closedTime,
     })
 
-    await expect(service.confirmInterviews(handle, period.id)).resolves.toMatchObject({
+    const proposal = await service.prepareInterviewPublication(handle, period.id)
+
+    await expect(service.confirmInterviews(handle, period.id, proposal)).resolves.toMatchObject({
       interviewsPublishedAt: closedTime,
     })
 
@@ -945,7 +1111,7 @@ describe("interview publication", () => {
   it("does not publish an empty schedule", async () => {
     const { service, repository } = setup()
 
-    await expect(service.confirmInterviews(handle, period.id)).rejects.toThrow(IllegalStateError)
+    await expect(service.prepareInterviewPublication(handle, period.id)).rejects.toThrow(IllegalStateError)
 
     expect(repository.setInterviewsPublishedAt).not.toHaveBeenCalled()
   })
@@ -958,7 +1124,7 @@ describe("interview publication", () => {
       interviewsPublishedAt: openTime,
     })
 
-    await expect(service.confirmInterviews(handle, period.id)).resolves.toMatchObject({
+    await expect(service.confirmInterviews(handle, period.id, null)).resolves.toMatchObject({
       interviewsPublishedAt: openTime,
     })
 
