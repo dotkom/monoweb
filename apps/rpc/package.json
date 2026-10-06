@@ -88,6 +88,7 @@
     "test": "vitest run",
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
+    "matching:visualize": "tsx src/bin/visualize-interview-matching.ts",
     "coverage": "vitest run --coverage",
     "receive-stripe-webhooks": "stripe listen --forward-to localhost:4444/webhook/stripe"
   },
