@@ -17,6 +17,8 @@ import { getArticleTagRepository } from "./article/article-tag-repository"
 import { getAuditLogRepository } from "./audit-log/audit-log-repository"
 import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
+import { getCommitteeApplicationRepository } from "./committee-application/committee-application-repository"
+import { getCommitteeApplicationService } from "./committee-application/committee-application-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
 import { getEmailService, getEmptyEmailService } from "./email/email-service"
@@ -196,6 +198,7 @@ export async function createServiceLayer(
   const feedbackFormAnswerRepository = getFeedbackFormAnswerRepository()
   const contestRepository = getContestRepository()
   const fadderukeRepository = getFadderukeRepository()
+  const committeeApplicationRepository = getCommitteeApplicationRepository()
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
@@ -260,6 +263,7 @@ export async function createServiceLayer(
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
+  const committeeApplicationService = getCommitteeApplicationService(committeeApplicationRepository)
   const userMergeService = getUserMergingService(
     userService,
     groupRepository,
@@ -308,6 +312,7 @@ export async function createServiceLayer(
     paymentWebhookService,
     contestService,
     fadderukeService,
+    committeeApplicationService,
     notificationService,
     recurringTaskService,
     workspaceService,
