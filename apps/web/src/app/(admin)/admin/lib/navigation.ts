@@ -22,6 +22,7 @@ import {
   IconDeviceMobileShare,
   IconHeartHandshake,
   IconPhotoShare,
+  IconPuzzle,
   IconSitemap,
   IconSkull,
   IconUserMinus,
@@ -32,6 +33,7 @@ import {
 import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
 import { canListUsers } from "@dotkomonline/rpc/user-permissions"
 import { canCreateNotifications, canListNotifications } from "@dotkomonline/rpc/notification-permissions"
+import { canAdminManageSidequests } from "@dotkomonline/rpc/sidequest-permissions"
 
 export type Navigation = {
   label: string
@@ -115,6 +117,21 @@ export const navigationGroups: NavigationGroup[] = [
         href: "/admin/avmeldingsgrunner",
         keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
         canAccess: (authorization) => canListDeregisterReasons(authorization),
+      },
+      {
+        label: "Sidequests",
+        icon: IconPuzzle,
+        href: "/admin/sidequests",
+        keywords: ["sidequest", "Sidequest"],
+        canAccess: (authorization) => canAdminManageSidequests(authorization),
+        createActions: [
+          {
+            label: "Ny Sidequest",
+            href: "/admin/sidequests/ny",
+            resourceName: "Sidequest",
+            canAccess: (authorization) => canAdminManageSidequests(authorization),
+          },
+        ],
       },
     ],
   },

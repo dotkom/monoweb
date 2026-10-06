@@ -3,6 +3,7 @@ import { useTRPC } from "@admin/lib/trpc-client"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { keepPreviousData, useQueries } from "@tanstack/react-query"
+import { canAdminManageSidequests } from "node_modules/@dotkomonline/rpc/src/permissions/sidequest-permissions"
 
 const DEFAULT_TAKE = 5
 
@@ -13,6 +14,7 @@ interface UseCommandPaletteSearchQueryProps {
 
 export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseCommandPaletteSearchQueryProps) => {
   const trpc = useTRPC()
+  const authorization = useAuthorization()
 
   const enabled = !disabled
 
@@ -55,6 +57,15 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
         placeholderData: keepPreviousData,
         enabled,
       },
+      {
+        ...trpc.sidequest.findMany.queryOptions({
+          filter: {
+            bySearchTerm: searchTerm,
+          },
+          take: DEFAULT_TAKE,
+        }),
+        enabled: enabled && canAdminManageSidequests(authorization),
+      },
     ],
   })
 
@@ -65,6 +76,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     { data: jobListingsData },
     { data: companiesData },
     { data: usersData },
+    { data: sidequestsData },
   ] = queryResults
 
   if (!enabled) {
@@ -75,6 +87,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
       jobListings: [],
       companies: [],
       users: [],
+      sidequests: [],
       isFetching: false,
     }
   }
@@ -86,6 +99,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     jobListings: jobListingsData?.items ?? [],
     companies: companiesData?.items ?? [],
     users: usersData?.items ?? [],
+    sidequests: sidequestsData?.items ?? [],
     isFetching: queryResults.some((query) => query.isFetching),
   }
 }

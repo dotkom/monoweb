@@ -1,11 +1,14 @@
-import type { Event } from "@dotkomonline/rpc/event"
 import { cn, Text } from "@dotkomonline/ui"
 import { IconArrowUpRight, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
 interface LocationBoxProps {
-  event: Event
+  event: {
+    locationAddress: string | null
+    locationTitle: string | null
+    locationLink: string | null
+  }
 }
 
 export const LocationBox: FC<LocationBoxProps> = ({ event }) => {

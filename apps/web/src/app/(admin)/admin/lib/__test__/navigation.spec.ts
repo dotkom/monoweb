@@ -74,4 +74,12 @@ describe("filterNavigationsUserHasAccessTo", () => {
   it("keeps audit log when the caller is an administrator", () => {
     expect(pageHrefs(principal({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/logg")
   })
+
+  it("hides sidequests when the caller is not backlog or an administrator", () => {
+    expect(pageHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).not.toContain("/admin/sidequests")
+  })
+
+  it("keeps sidequests when the caller is affiliated with backlog", () => {
+    expect(pageHrefs(principal({ backlog: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/sidequests")
+  })
 })
