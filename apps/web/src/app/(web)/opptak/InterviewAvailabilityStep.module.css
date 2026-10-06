@@ -1,0 +1,90 @@
+.calendar {
+  --fc-border-color: color-mix(in oklab, var(--border) 45%, transparent);
+  --fc-neutral-bg-color: var(--muted);
+  --fc-page-bg-color: var(--card);
+  --fc-today-bg-color: transparent;
+  --fc-highlight-color: color-mix(in oklab, var(--primary) 15%, transparent);
+}
+
+.calendar [class~="fc"] {
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.calendar [class~="fc-scrollgrid"] {
+  border: 0;
+}
+
+.calendar [class~="fc-col-header-cell"] {
+  background: color-mix(in oklab, var(--muted) 30%, var(--card));
+}
+
+.calendar [class~="fc-col-header-cell-cushion"] {
+  display: block;
+  padding: 0;
+}
+
+.calendar [class~="fc-timegrid-slot"] {
+  height: 1.875rem;
+}
+
+.calendar [class~="fc-timegrid-slot-minor"] {
+  border-top-style: solid;
+  border-top-color: color-mix(in oklab, var(--border) 25%, transparent);
+}
+
+.calendar [class~="fc-timegrid-slot-label"] {
+  width: 3.5rem;
+}
+
+.calendar [class~="fc-timegrid-slot-label-cushion"] {
+  padding: 0 0.625rem;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+.calendar [class~="fc-timegrid-col-events"] {
+  margin: 0 0.25rem;
+}
+
+.calendar [class~="fc-timegrid-event"] {
+  cursor: pointer;
+  border: 1px solid color-mix(in oklab, var(--primary) 35%, var(--border));
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--primary) 15%, var(--card));
+  box-shadow: var(--surface-shadow);
+  transition:
+    background-color 150ms,
+    box-shadow 150ms;
+}
+
+.calendar [class~="fc-timegrid-event"]:hover {
+  background: color-mix(in oklab, var(--primary) 23%, var(--card));
+  box-shadow: var(--field-shadow);
+}
+
+.calendar [class~="fc-timegrid-event"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.calendar [class~="fc-timegrid-event"] [class~="fc-event-main"] {
+  padding: 0.375rem 0.5rem;
+  color: var(--foreground);
+}
+
+.calendar [class~="fc-event-time"] {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar [class~="fc-event-title"] {
+  font-size: 0.6875rem;
+}
+
+.calendar [class~="fc-timegrid-event"][class~="fc-event-mirror"] {
+  border-style: dashed;
+  box-shadow: none;
+}
