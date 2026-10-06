@@ -18,7 +18,7 @@ import { isExternal } from "../../utils/is-link-external"
 
 export const MainNavigation: FC<{ links: MenuLink[] }> = ({ links }) => (
   <NavigationMenu
-    className="grow hidden lg:flex"
+    className="grow hidden min-[1100px]:flex"
     viewportClassName="bg-gray-50 dark:bg-stone-800 border-gray-100 dark:border-stone-700/30 shadow-sm rounded-3xl"
   >
     <NavigationMenuList className="mx-auto">
