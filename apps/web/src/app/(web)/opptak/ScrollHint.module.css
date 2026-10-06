@@ -1,0 +1,22 @@
+@media (prefers-reduced-motion: no-preference) {
+  .scrollHint {
+    animation: scroll-hint-bounce 1.2s ease-in-out infinite;
+    transition: opacity 200ms ease;
+  }
+}
+
+@starting-style {
+  .scrollHint {
+    opacity: 0;
+  }
+}
+
+@keyframes scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.25rem);
+  }
+}
