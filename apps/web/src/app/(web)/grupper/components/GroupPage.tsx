@@ -5,6 +5,7 @@ import { server } from "@/utils/trpc/server"
 import {
   type GroupMember,
   GroupRoleTypeEnum,
+  GroupTypeSchema,
   findActiveGroupMembership,
   getGroupDisplayName,
   getGroupSecondaryName,
@@ -31,7 +32,6 @@ import {
   Title,
   cn,
 } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconArrowUpRight,
   IconQuestionMark,
@@ -42,8 +42,14 @@ import {
 import { compareAsc } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import {
+  getFutureInterestGroupEventsQuery,
+  getInterestGroupEventListNow,
+  getPastInterestGroupEventsQuery,
+} from "../../interessegrupper/interest-group-event-list-query"
 import { getGroupEasterEgg } from "./easter-eggs"
 import { GroupEmailLink } from "./GroupEmailLink"
+import { InterestGroupEventListForGroup } from "./InterestGroupEventListForGroup"
 import { WanderingMascot } from "./WanderingMascot"
 
 interface CommitteePageProps {
@@ -53,32 +59,48 @@ interface CommitteePageProps {
 export const GroupPage = async ({ params }: CommitteePageProps) => {
   const { slug } = await params
 
-  const now = getCurrentUTC()
+  const [group, session] = await Promise.all([server.group.get.query(slug), getServerSession()])
 
-  const [session, group, futureEventWithAttendances, pastEventWithAttendances] = await Promise.all([
-    getServerSession(),
-    server.group.get.query(slug),
-    server.event.allSummaries.query({
-      filter: {
-        byOrganizingGroup: [slug],
-        byEndDate: {
-          max: null,
-          min: now,
-        },
-        orderBy: "asc",
-      },
-    }),
-    server.event.allSummaries.query({
-      filter: {
-        byEndDate: {
-          max: now,
-          min: null,
-        },
-        byOrganizingGroup: [slug],
-        orderBy: "desc",
-      },
-    }),
+  const now = getInterestGroupEventListNow()
+  const isInterestGroup = group.type === GroupTypeSchema.enum.INTEREST_GROUP
+
+  const membershipsPromise =
+    session !== null ? server.group.allMembershipsByUserId.query(session.sub) : Promise.resolve([])
+
+  const interestGroupEventsPromise = isInterestGroup
+    ? Promise.all([
+        server.interestGroupEvent.findMany.query(getFutureInterestGroupEventsQuery(now, [slug])),
+        server.interestGroupEvent.findMany.query(getPastInterestGroupEventsQuery(now, [slug])),
+      ])
+    : null
+
+  const eventsPromise = !isInterestGroup
+    ? Promise.all([
+        server.event.allSummaries.query({
+          filter: {
+            byOrganizingGroup: [slug],
+            byEndDate: { max: null, min: now },
+            orderBy: "asc",
+          },
+        }),
+        server.event.allSummaries.query({
+          filter: {
+            byOrganizingGroup: [slug],
+            byEndDate: { max: now, min: null },
+            orderBy: "desc",
+          },
+        }),
+      ])
+    : null
+
+  const [currentUserGroupMemberships, interestGroupEvents, events] = await Promise.all([
+    membershipsPromise,
+    interestGroupEventsPromise,
+    eventsPromise,
   ])
+
+  const [futureInterestGroupEvents, pastInterestGroupEvents] = interestGroupEvents ?? [{ items: [] }, { items: [] }]
+  const [futureEventWithAttendances, pastEventWithAttendances] = events ?? [{ items: [] }, { items: [] }]
 
   if (group.type === "EMAIL_ONLY") {
     return notFound()
@@ -250,10 +272,21 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{displayName ? `${displayName}s` : "Gruppens"} arrangementer</Title>
-        <EventList
-          futureEventWithAttendances={futureEventWithAttendances.items}
-          pastEventWithAttendances={pastEventWithAttendances.items}
-        />
+        {isInterestGroup ? (
+          <InterestGroupEventListForGroup
+            now={now}
+            firstPageOfFutureInterestGroupEvents={futureInterestGroupEvents}
+            firstPageOfPastInterestGroupEvents={pastInterestGroupEvents}
+            interestGroupId={group.slug}
+            userId={session?.sub}
+            currentUserGroupMemberships={currentUserGroupMemberships}
+          />
+        ) : (
+          <EventList
+            futureEventWithAttendances={futureEventWithAttendances.items}
+            pastEventWithAttendances={pastEventWithAttendances.items}
+          />
+        )}
       </div>
 
       {easterEgg?.mascot && <WanderingMascot config={easterEgg.mascot} />}
