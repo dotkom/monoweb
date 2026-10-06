@@ -1,34 +1,32 @@
 import { tz } from "@date-fns/tz"
 import {
-  addMilliseconds,
   addMinutes,
   areIntervalsOverlapping,
   compareAsc,
   differenceInMilliseconds,
+  format,
   getTime,
-  hoursToMilliseconds,
   isAfter,
   isBefore,
-  isSameDay,
   max,
   min,
-  parseISO,
-  startOfDay,
+  minutesToMilliseconds,
   toDate,
 } from "date-fns"
 import loadHighs from "highs"
-import { IllegalStateError, InvalidArgumentError } from "../../error"
+import { IllegalStateError, InvalidArgumentError, ResourceExhaustedError } from "../../error"
 import {
   COMMITTEE_APPLICATION_INTERVIEW_DURATION_MINUTES,
   COMMITTEE_APPLICATION_APPLICANT_BUFFER_MINUTES,
+  COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE,
+  getInterviewPreferencePenalties,
   type CommitteeApplicationInterviewMatchingInput,
   CommitteeApplicationInterviewMatchingInputSchema,
   type CommitteeApplicationInterviewMatchingResult,
 } from "./committee-application"
 
-const CLUSTERING_BASELINE = parseISO("1970-01-01T12:00:00Z")
-const CLUSTERING_SCALE_MILLISECONDS = hoursToMilliseconds(12)
-const dateContext = { in: tz("UTC") }
+const MATCHING_TIME_LIMIT_SECONDS = 60
+const interviewDateContext = { in: tz("Europe/Oslo") }
 
 interface Interval {
   startsAt: Date
@@ -43,6 +41,7 @@ interface InterviewSlot extends Interval {
 
 interface Candidate {
   variableName: string
+  applicationId: string
   groupSelectionId: string
   interviewBlockId: string
   roomName: string
@@ -67,13 +66,6 @@ function mergeAvailability(intervals: Interval[]): Interval[] {
   return mergedIntervals
 }
 
-function timeOnBaselineDay(date: Date): Date {
-  return addMilliseconds(
-    startOfDay(CLUSTERING_BASELINE, dateContext),
-    differenceInMilliseconds(date, startOfDay(date, dateContext))
-  )
-}
-
 function slotsConflict(first: Interval, second: Interval): boolean {
   return areIntervalsOverlapping(
     {
@@ -90,6 +82,7 @@ function slotsConflict(first: Interval, second: Interval): boolean {
 export async function matchCommitteeApplicationInterviews(
   input: CommitteeApplicationInterviewMatchingInput
 ): Promise<CommitteeApplicationInterviewMatchingResult> {
+  const startedAt = performance.now()
   const data = CommitteeApplicationInterviewMatchingInputSchema.parse(input)
   const slotsByGroup = new Map<string, InterviewSlot[]>()
 
@@ -149,6 +142,10 @@ export async function matchCommitteeApplicationInterviews(
     slotsByApplication.set(selection.applicationId, applicationSlots)
 
     for (const slot of groupSlots) {
+      if (isBefore(slot.startsAt, data.publicationReferenceTime)) {
+        continue
+      }
+
       if (
         !availability.some(
           (interval) => !isBefore(slot.startsAt, interval.startsAt) && !isAfter(slot.endsAt, interval.endsAt)
@@ -164,6 +161,7 @@ export async function matchCommitteeApplicationInterviews(
         const candidateIndex = candidates.length
         candidates.push({
           variableName: `assignment_${candidateIndex}`,
+          applicationId: selection.applicationId,
           groupSelectionId: selection.id,
           interviewBlockId,
           roomName,
@@ -191,23 +189,13 @@ export async function matchCommitteeApplicationInterviews(
   }
 
   const clusteringWeight = 1 / candidates.length
-  const firstDayWeight = 1 / candidates.length ** 2
+  const preferencePenalties = candidates.map((candidate) => {
+    return getInterviewPreferencePenalties(candidate.slot, data.publicationReferenceTime)
+  })
 
-  const firstCandidateDay = min(candidates.map((candidate) => candidate.slot.startsAt))
-
-  const objectiveTerms = candidates.map((candidate) => {
-    const startTime = timeOnBaselineDay(candidate.slot.startsAt)
-    let baselineDistance = differenceInMilliseconds(startTime, CLUSTERING_BASELINE)
-
-    if (isBefore(startTime, CLUSTERING_BASELINE)) {
-      baselineDistance = differenceInMilliseconds(CLUSTERING_BASELINE, timeOnBaselineDay(candidate.slot.endsAt))
-    }
-
-    let coefficient = 1 - (clusteringWeight * baselineDistance) / CLUSTERING_SCALE_MILLISECONDS
-
-    if (isSameDay(candidate.slot.startsAt, firstCandidateDay, dateContext)) {
-      coefficient -= firstDayWeight
-    }
+  const objectiveTerms = candidates.map((candidate, candidateIndex) => {
+    const penalties = preferencePenalties[candidateIndex]
+    const coefficient = 1 - clusteringWeight * (penalties.clusteringPenalty + penalties.shortNoticePenalty)
 
     if (coefficient < 0) {
       return `- ${Math.abs(coefficient)} ${candidate.variableName}`
@@ -236,6 +224,36 @@ export async function matchCommitteeApplicationInterviews(
     addConstraint(candidateIndexes, 1)
   }
 
+  const slotsByRoom = new Map<string, Map<InterviewSlot, number[]>>()
+
+  for (const [candidateIndex, candidate] of candidates.entries()) {
+    const roomKey = JSON.stringify([candidate.slot.applicationGroupId, candidate.roomName])
+    const roomSlots = slotsByRoom.get(roomKey) ?? new Map<InterviewSlot, number[]>()
+    const candidateIndexes = roomSlots.get(candidate.slot) ?? []
+    candidateIndexes.push(candidateIndex)
+    roomSlots.set(candidate.slot, candidateIndexes)
+    slotsByRoom.set(roomKey, roomSlots)
+  }
+
+  for (const roomSlots of slotsByRoom.values()) {
+    const slots = [...roomSlots.entries()]
+
+    for (const [slotIndex, [slot, candidateIndexes]] of slots.entries()) {
+      addConstraint(candidateIndexes, 1)
+
+      for (const [otherSlot, otherCandidateIndexes] of slots.slice(slotIndex + 1)) {
+        if (
+          areIntervalsOverlapping(
+            { start: slot.startsAt, end: slot.endsAt },
+            { start: otherSlot.startsAt, end: otherSlot.endsAt }
+          )
+        ) {
+          addConstraint([...candidateIndexes, ...otherCandidateIndexes], 1)
+        }
+      }
+    }
+  }
+
   for (const applicationSlots of slotsByApplication.values()) {
     const slots = [...applicationSlots.entries()]
 
@@ -251,39 +269,246 @@ export async function matchCommitteeApplicationInterviews(
     }
   }
 
-  const model = [
-    "Maximize",
-    `objective: ${objectiveTerms.join(" ")}`,
-    "Subject To",
-    ...constraints,
-    "Binaries",
-    ...candidates.map((candidate) => candidate.variableName),
-    "End",
-  ].join("\n")
+  const assignmentVariableNames = candidates.map((candidate) => candidate.variableName)
+  const interviewCountExpression = assignmentVariableNames.join(" + ")
+  const applicantCoverageVariableNames: string[] = []
+
+  for (const applicationSlots of slotsByApplication.values()) {
+    const candidateIndexes = [...applicationSlots.values()].flat()
+
+    if (candidateIndexes.length === 0) {
+      continue
+    }
+
+    const coverageIndex = applicantCoverageVariableNames.length
+    const coverageVariableName = `applicant_covered_${coverageIndex}`
+    applicantCoverageVariableNames.push(coverageVariableName)
+    const assignmentExpression = candidateIndexes
+      .map((candidateIndex) => candidates[candidateIndex].variableName)
+      .join(" + ")
+    const maximumApplicantInterviews = new Set(
+      candidateIndexes.map((candidateIndex) => candidates[candidateIndex].groupSelectionId)
+    ).size
+
+    // The coverage variable is one exactly when this applicant has at least one assigned interview.
+    constraints.push(
+      `applicant_coverage_lower_${coverageIndex}: ${assignmentExpression} - ${coverageVariableName} >= 0`
+    )
+    constraints.push(
+      `applicant_coverage_upper_${coverageIndex}: ${assignmentExpression} - ${maximumApplicantInterviews} ${coverageVariableName} <= 0`
+    )
+  }
+
+  const variableNames = [...assignmentVariableNames, ...applicantCoverageVariableNames]
+
+  function createModel(objective: string, direction: "Maximize" | "Minimize" = "Maximize"): string {
+    return [
+      direction,
+      `objective: ${objective}`,
+      "Subject To",
+      ...constraints,
+      "Binaries",
+      ...variableNames,
+      "End",
+    ].join("\n")
+  }
 
   if (solverPromise === undefined) {
     solverPromise = loadHighs()
   }
 
   const solver = await solverPromise
-  const solution = solver.solve(model, {
+  const solverOptions = {
     output_flag: false,
     mip_rel_gap: 0,
     mip_abs_gap: 0,
+  }
+
+  function solveModel(objective: string, direction: "Maximize" | "Minimize" = "Maximize") {
+    const elapsedSeconds = (performance.now() - startedAt) / 1_000
+    const remainingSeconds = MATCHING_TIME_LIMIT_SECONDS - elapsedSeconds
+
+    if (remainingSeconds <= 0) {
+      throw new ResourceExhaustedError("Interview matching exceeded its time limit")
+    }
+
+    return solver.solve(createModel(objective, direction), {
+      ...solverOptions,
+      time_limit: remainingSeconds,
+    })
+  }
+
+  // Establish the maximum feasible count independently of all time preferences.
+  const countSolution = solveModel(interviewCountExpression)
+
+  if (countSolution.Status !== "Optimal") {
+    throw new IllegalStateError(`Interview count maximization failed with solver status ${countSolution.Status}`)
+  }
+
+  // Binary assignments make the optimum integral; round away floating-point solver noise.
+  const maximumInterviewCount = Math.round(countSolution.ObjectiveValue)
+  constraints.push(`interview_count: ${interviewCountExpression} = ${maximumInterviewCount}`)
+
+  // Among schedules with that maximum count, serve as many distinct applicants as possible.
+  const applicantCoverageExpression = applicantCoverageVariableNames.join(" + ")
+  const coverageSolution = solveModel(applicantCoverageExpression)
+
+  if (coverageSolution.Status !== "Optimal") {
+    throw new IllegalStateError(`Applicant coverage maximization failed with solver status ${coverageSolution.Status}`)
+  }
+
+  const maximumApplicantCoverage = Math.round(coverageSolution.ObjectiveValue)
+  constraints.push(`applicant_coverage: ${applicantCoverageExpression} = ${maximumApplicantCoverage}`)
+
+  const shortNoticePenaltyTerms = candidates.flatMap((candidate, candidateIndex) => {
+    const penalty = preferencePenalties[candidateIndex].shortNoticePenalty
+
+    if (penalty === 0) {
+      return []
+    }
+
+    return [`${penalty} ${candidate.variableName}`]
   })
 
+  // Skip the short-notice pass when every feasible assignment has zero short-notice penalty.
+  if (shortNoticePenaltyTerms.length > 0) {
+    // Use unscaled penalties so the numerical tolerance does not grow with the candidate count.
+    const shortNoticePenaltyExpression = shortNoticePenaltyTerms.join(" + ")
+    const shortNoticeSolution = solveModel(shortNoticePenaltyExpression, "Minimize")
+
+    if (shortNoticeSolution.Status !== "Optimal") {
+      throw new IllegalStateError(
+        `Short-notice penalty minimization failed with solver status ${shortNoticeSolution.Status}`
+      )
+    }
+
+    constraints.push(
+      `short_notice_penalty: ${shortNoticePenaltyExpression} <= ${shortNoticeSolution.ObjectiveValue + COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE}`
+    )
+  }
+
+  // With interview count, applicant coverage, and short-notice score fixed, optimize noon placement.
+  const preferenceSolution = solveModel(objectiveTerms.join(" "))
+
+  if (preferenceSolution.Status !== "Optimal") {
+    throw new IllegalStateError(`Interview matching failed with solver status ${preferenceSolution.Status}`)
+  }
+
+  const clusteringPenaltyTerms: string[] = []
+  let optimalClusteringPenalty = 0
+
+  for (const [candidateIndex, candidate] of candidates.entries()) {
+    const penalty = preferencePenalties[candidateIndex].clusteringPenalty
+
+    if (penalty === 0) {
+      continue
+    }
+
+    clusteringPenaltyTerms.push(`${penalty} ${candidate.variableName}`)
+    const column = preferenceSolution.Columns[candidate.variableName]
+
+    if ("Primal" in column && column.Primal >= 0.5) {
+      optimalClusteringPenalty += penalty
+    }
+  }
+
+  if (clusteringPenaltyTerms.length > 0) {
+    constraints.push(
+      `noon_penalty: ${clusteringPenaltyTerms.join(" + ")} <= ${optimalClusteringPenalty + COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE}`
+    )
+  }
+
+  const groupingObjectiveTerms: string[] = []
+
+  for (const groupSlots of slotsByGroup.values()) {
+    const slotsByDay = new Map<string, InterviewSlot[]>()
+
+    for (const slot of groupSlots.filter((slot) => slot.candidateIndexes.length > 0)) {
+      const day = format(slot.startsAt, "yyyy-MM-dd", interviewDateContext)
+      const daySlots = slotsByDay.get(day) ?? []
+      daySlots.push(slot)
+      slotsByDay.set(day, daySlots)
+    }
+
+    for (const daySlots of slotsByDay.values()) {
+      const dayIndex = groupingObjectiveTerms.length
+      const startVariableName = `committee_day_start_${dayIndex}`
+      const endVariableName = `committee_day_end_${dayIndex}`
+      const usedVariableName = `committee_day_used_${dayIndex}`
+      variableNames.push(usedVariableName)
+      const origin = min(daySlots.map((slot) => slot.startsAt))
+      const latestEnd = max(daySlots.map((slot) => slot.endsAt))
+      const maximumSpanMinutes = differenceInMilliseconds(latestEnd, origin) / minutesToMilliseconds(1)
+      const dayCandidateIndexes = daySlots.flatMap((slot) => slot.candidateIndexes)
+      const assignmentExpression = dayCandidateIndexes
+        .map((candidateIndex) => candidates[candidateIndex].variableName)
+        .join(" + ")
+      const maximumDayInterviews = new Set(
+        dayCandidateIndexes.map((candidateIndex) => candidates[candidateIndex].groupSelectionId)
+      ).size
+
+      // Unused days contribute zero; used days span the earliest start through the latest end.
+      constraints.push(`committee_day_lower_${dayIndex}: ${assignmentExpression} - ${usedVariableName} >= 0`)
+      constraints.push(
+        `committee_day_upper_${dayIndex}: ${assignmentExpression} - ${maximumDayInterviews} ${usedVariableName} <= 0`
+      )
+      constraints.push(
+        `committee_day_start_bound_${dayIndex}: ${startVariableName} - ${maximumSpanMinutes} ${usedVariableName} <= 0`
+      )
+      constraints.push(
+        `committee_day_end_bound_${dayIndex}: ${endVariableName} - ${maximumSpanMinutes} ${usedVariableName} <= 0`
+      )
+
+      for (const [slotIndex, slot] of daySlots.entries()) {
+        const startMinutes = differenceInMilliseconds(slot.startsAt, origin) / minutesToMilliseconds(1)
+        const endMinutes = differenceInMilliseconds(slot.endsAt, origin) / minutesToMilliseconds(1)
+
+        const slotUsedVariableName = `committee_slot_used_${dayIndex}_${slotIndex}`
+        variableNames.push(slotUsedVariableName)
+        const slotAssignmentExpression = slot.candidateIndexes
+          .map((candidateIndex) => candidates[candidateIndex].variableName)
+          .join(" + ")
+
+        // One occupancy variable per slot avoids repeating span constraints for every applicant and room.
+        constraints.push(
+          `committee_slot_lower_${dayIndex}_${slotIndex}: ${slotAssignmentExpression} - ${slotUsedVariableName} >= 0`
+        )
+        constraints.push(
+          `committee_slot_upper_${dayIndex}_${slotIndex}: ${slotAssignmentExpression} - ${slot.blocksByRoom.size} ${slotUsedVariableName} <= 0`
+        )
+        constraints.push(
+          `committee_start_${dayIndex}_${slotIndex}: ${startVariableName} + ${maximumSpanMinutes} ${slotUsedVariableName} <= ${startMinutes + maximumSpanMinutes}`
+        )
+        constraints.push(
+          `committee_end_${dayIndex}_${slotIndex}: ${endVariableName} - ${endMinutes} ${slotUsedVariableName} >= 0`
+        )
+      }
+
+      groupingObjectiveTerms.push(`+ ${endVariableName} - ${startVariableName}`)
+    }
+  }
+
+  // Compact committee days only after preserving interview count, coverage, and both time preferences.
+  const solution = solveModel(groupingObjectiveTerms.join(" "), "Minimize")
+
   if (solution.Status !== "Optimal") {
-    throw new IllegalStateError(`Interview matching failed with solver status ${solution.Status}`)
+    throw new IllegalStateError(`Interview grouping failed with solver status ${solution.Status}`)
   }
 
   const interviews: CommitteeApplicationInterviewMatchingResult["interviews"] = []
+  const allocatedApplicationIds = new Set<string>()
+  let objectiveValue = 0
 
-  for (const candidate of candidates) {
+  for (const [candidateIndex, candidate] of candidates.entries()) {
     const column = solution.Columns[candidate.variableName]
 
     if (!("Primal" in column) || column.Primal < 0.5) {
       continue
     }
+
+    allocatedApplicationIds.add(candidate.applicationId)
+    const penalties = preferencePenalties[candidateIndex]
+    objectiveValue += 1 - clusteringWeight * (penalties.clusteringPenalty + penalties.shortNoticePenalty)
 
     interviews.push({
       groupSelectionId: candidate.groupSelectionId,
@@ -294,9 +519,21 @@ export async function matchCommitteeApplicationInterviews(
     })
   }
 
+  if (interviews.length !== maximumInterviewCount) {
+    throw new IllegalStateError(
+      `Interview matching returned ${interviews.length} interviews instead of the maximum ${maximumInterviewCount}`
+    )
+  }
+
+  if (allocatedApplicationIds.size !== maximumApplicantCoverage) {
+    throw new IllegalStateError(
+      `Interview matching served ${allocatedApplicationIds.size} applicants instead of the maximum ${maximumApplicantCoverage}`
+    )
+  }
+
   return {
     solverStatus: "OPTIMAL",
-    objectiveValue: solution.ObjectiveValue,
+    objectiveValue,
     totalWantedInterviews: data.groupSelections.length,
     matchedInterviews: interviews.length,
     interviews,
