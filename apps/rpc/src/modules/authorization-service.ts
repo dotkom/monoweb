@@ -98,20 +98,21 @@ export function getAuthorizationService(): AuthorizationService {
       return match
     }
 
-    const memberGroups = await handle.group.findMany({
+    const memberships = await handle.groupMembership.findMany({
       where: {
-        memberships: {
-          some: {
-            userId,
-            end: null,
-          },
-        },
+        userId,
+        end: null,
+        start: { lte: new Date() },
       },
       select: {
-        slug: true,
+        groupId: true,
         roles: {
           select: {
-            type: true,
+            role: {
+              select: {
+                type: true,
+              },
+            },
           },
         },
       },
@@ -119,14 +120,14 @@ export function getAuthorizationService(): AuthorizationService {
 
     const newCache = new Map<GroupId, Set<GroupRoleType>>()
 
-    for (const { slug, roles } of memberGroups) {
-      const groupRoles = newCache.get(slug) ?? new Set<GroupRoleType>()
+    for (const { groupId, roles } of memberships) {
+      const groupRoles = newCache.get(groupId) ?? new Set<GroupRoleType>()
 
-      for (const role of roles) {
+      for (const { role } of roles) {
         groupRoles.add(role.type)
       }
 
-      newCache.set(slug, groupRoles)
+      newCache.set(groupId, groupRoles)
     }
 
     cache.set(userId, newCache)
