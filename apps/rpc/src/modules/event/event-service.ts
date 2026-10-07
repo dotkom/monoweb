@@ -48,13 +48,15 @@ export interface EventService {
     handle: DBHandle,
     userId: UserId,
     query: EventFilterQuery,
-    page?: Pageable
+    page?: Pageable,
+    registeredOnly?: boolean
   ): Promise<Event[]>
   findEventSummariesByAttendingUserId(
     handle: DBHandle,
     userId: UserId,
     query: EventFilterQuery,
-    page?: Pageable
+    page?: Pageable,
+    registeredOnly?: boolean
   ): Promise<EventSummary[]>
   findByParentEventId(
     handle: DBHandle,
@@ -164,8 +166,8 @@ export function getEventService(
       )
     },
 
-    async findEventSummariesByAttendingUserId(handle, userId, query, page) {
-      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId)
+    async findEventSummariesByAttendingUserId(handle, userId, query, page, registeredOnly) {
+      const eventIds = await eventRepository.findIdsByAttendingUserId(handle, userId, registeredOnly)
       if (eventIds.length === 0) {
         return []
       }

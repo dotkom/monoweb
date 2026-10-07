@@ -184,6 +184,7 @@ export function ProfilePage() {
                 max: null,
               },
             },
+            registeredOnly: true,
           },
           { enabled: isLoggedIn && Boolean(user?.id) }
         ),
@@ -200,6 +201,7 @@ export function ProfilePage() {
         min: null,
       },
     },
+    registeredOnly: true,
     enabled: isLoggedIn && Boolean(user?.id),
   })
 

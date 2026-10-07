@@ -18,6 +18,7 @@ interface UseEventAllByAttendingUserIdQueryProps {
   filter: EventFilterQuery
   page?: Pageable
   enabled?: boolean
+  registeredOnly?: boolean
 }
 
 export const useEventAllSummariesQuery = ({ filter, page, enabled }: UseEventAllSummariesQueryProps) => {
@@ -87,6 +88,7 @@ export const useEventAllSummariesByAttendingUserIdInfiniteQuery = ({
   filter,
   page,
   enabled,
+  registeredOnly,
 }: UseEventAllByAttendingUserIdQueryProps) => {
   const trpc = useTRPC()
   const take = page?.take ?? 20
@@ -96,6 +98,7 @@ export const useEventAllSummariesByAttendingUserIdInfiniteQuery = ({
       id,
       filter,
       ...page,
+      registeredOnly,
     }),
     getNextPageParam: (lastPage) => (lastPage.items.length < take ? undefined : lastPage.nextCursor),
     enabled,
