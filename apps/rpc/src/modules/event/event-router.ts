@@ -446,6 +446,7 @@ const allSummariesByAttendingUserIdProcedure = procedure
     BasePaginateInputSchema.extend({
       filter: EventFilterQuerySchema.optional(),
       id: UserSchema.shape.id,
+      registeredOnly: z.boolean().optional(),
     })
   )
   .output(
@@ -457,7 +458,7 @@ const allSummariesByAttendingUserIdProcedure = procedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const { id, filter, ...page } = input
+    const { id, filter, registeredOnly, ...page } = input
 
     const principal = ctx.principal
     const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
@@ -470,7 +471,8 @@ const allSummariesByAttendingUserIdProcedure = procedure
       ctx.handle,
       id,
       { ...filter, excludingVisibility },
-      page
+      page,
+      registeredOnly
     )
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,

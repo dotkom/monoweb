@@ -83,7 +83,7 @@ export interface EventRepository {
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findManySummary(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<EventSummary[]>
 
-  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId): Promise<EventId[]>
+  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId, registeredOnly?: boolean): Promise<EventId[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -427,10 +427,11 @@ export function getEventRepository(): EventRepository {
       })
     },
 
-    async findIdsByAttendingUserId(handle, userId) {
+    async findIdsByAttendingUserId(handle, userId, registeredOnly = false) {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
+          registered: registeredOnly ? true : undefined,
         },
         include: {
           attendance: {
