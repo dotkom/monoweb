@@ -131,15 +131,6 @@ function withTracing(exportSpanOnError: boolean) {
           // This means an error occurred in the procedure call, and we need to report it to the user, and send
           // the telemetry off to the OpenTelemetry backend.
           const traceId = span?.spanContext().traceId ?? "<missing traceId>"
-          logger.error(
-            "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
-            ctx?.principal?.subject ?? "<anonymous>",
-            path,
-            type,
-            traceId,
-            result.error
-          )
-
           let error: TRPCError = result.error
           // If the error cause is an ApplicationError, we can try to remap it to a more specific TRPCError code that we
           // purposely know about.
@@ -156,8 +147,27 @@ function withTracing(exportSpanOnError: boolean) {
 
           // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
           // fault.
-          const isClientError = error.cause instanceof ForbiddenError || error.cause instanceof UnauthorizedError
-          if (!isClientError) {
+          const isClientError = error.code === "FORBIDDEN" || error.code === "UNAUTHORIZED"
+
+          if (isClientError) {
+            logger.warn(
+              "tRPC request rejected for Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %s",
+              ctx.principal?.subject ?? "<anonymous>",
+              path,
+              type,
+              traceId,
+              error.code
+            )
+          } else {
+            logger.error(
+              "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
+              ctx.principal?.subject ?? "<anonymous>",
+              path,
+              type,
+              traceId,
+              error
+            )
+
             captureException(error)
           }
 

@@ -1,20 +1,20 @@
 "use client"
 
 import { useTRPC } from "@/utils/trpc/client"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { useState } from "react"
 import { isTrpcErrorCode } from "./trpc-errors"
+import { useAuthenticatedUser } from "./use-authenticated-user"
 
 const PAGE_SIZE = 10
 
 export function useMyNotifications({ enableLiveUpdates = false }: { enableLiveUpdates?: boolean } = {}) {
   const trpcClient = useTRPC()
   const queryClient = useQueryClient()
-  const { user: sessionUser, isLoading: isSessionLoading } = useUser()
-  const isAuthenticated = !isSessionLoading && sessionUser != null
+  const { sessionUser, dbUser, isLoading, isInvalid } = useAuthenticatedUser()
+  const isAuthenticated = !isLoading && !isInvalid && sessionUser != null && dbUser !== null
   const [stopLiveUpdates, setStopLiveUpdates] = useState(false)
 
   const unreadCountQueryOptions = trpcClient.notification.getMyUnreadCount.queryOptions(undefined, {

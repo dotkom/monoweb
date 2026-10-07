@@ -14,7 +14,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
   createTRPCClient,
-  httpBatchLink,
   httpSubscriptionLink,
   loggerLink,
   splitLink,
@@ -32,6 +31,7 @@ import {
 } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
+import { createRpcHttpLink } from "./http-link"
 
 // connecting is default, pending is when it is open, and idle idk
 export type TRPCSSEConnectionState = "connecting" | "pending" | "idle"
@@ -50,8 +50,6 @@ let recoveryRedirectScheduled = false
 
 // Deduplicate parallel client-side access token fetches into one in-flight request.
 let accessTokenRequest: Promise<string> | null = null
-
-const authenticatedSubscriptionPaths = new Set(["notification.onNewNotification"])
 
 function scheduleRecoveryRedirect(error: unknown): void {
   if (!isAccessTokenFetchFailure(error) || recoveryRedirectScheduled) {
@@ -107,61 +105,29 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
               transformer: superjson,
               url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
               EventSource: EventSourcePolyfill,
-              eventSourceOptions: async ({ op: operation }) => {
-                const requiresAuthentication = authenticatedSubscriptionPaths.has(operation.path)
+              eventSourceOptions: async () => {
+                const headers: Record<string, string> = {
+                  [HTTP_REQUEST_SOURCE_HEADER]: RpcRequestSource.Web,
+                }
 
                 try {
                   const token = await fetchSharedAccessToken()
 
-                  if (token === undefined) {
-                    if (!requiresAuthentication) {
-                      return {}
-                    }
-
-                    throw new Error("Cannot start an authenticated subscription without an access token")
-                  }
-
-                  return {
-                    headers: {
-                      [HTTP_REQUEST_SOURCE_HEADER]: RpcRequestSource.Web,
-                      Authorization: `Bearer ${token}`,
-                    },
+                  if (token !== undefined) {
+                    headers.Authorization = `Bearer ${token}`
                   }
                 } catch (error) {
                   scheduleRecoveryRedirect(error)
-
-                  if (requiresAuthentication) {
-                    throw error
-                  }
-
-                  return {}
                 }
+
+                return { headers }
               },
             }),
           ],
-          false: httpBatchLink({
-            transformer: superjson,
+          false: createRpcHttpLink({
             url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
-            async fetch(url, options) {
-              const headers = new Headers(options?.headers)
-              headers.set(HTTP_REQUEST_SOURCE_HEADER, RpcRequestSource.Web)
-
-              try {
-                const token = await fetchSharedAccessToken()
-
-                if (token !== undefined) {
-                  headers.set("Authorization", `Bearer ${token}`)
-                }
-              } catch (error) {
-                scheduleRecoveryRedirect(error)
-              }
-
-              return fetch(url, {
-                ...options,
-                credentials: "include",
-                headers,
-              })
-            },
+            getAccessToken: fetchSharedAccessToken,
+            onAccessTokenError: scheduleRecoveryRedirect,
           }),
         }),
       ],
