@@ -64,8 +64,94 @@ export default async function App() {
       <div className="flex flex-col gap-8">
         <AuthNotice />
         <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
-        <OnlineHero />
+
       </div>
+
+        <div className="flex flex-col gap-4">
+            <Title className="text-4xl font-bold">Hei, TODO HENTE NAVN!</Title>
+
+            <Title className="text-1xl font-semibold">Dine arrangementer</Title>
+
+
+            {!user ? (
+                <Text className="text-gray-500 dark:text-stone-500">Logg inn for å se arrangementer du er påmeldt.</Text>
+            ) : eventsUserIsAttending.length === 0 ? (
+                <Text className="text-gray-500 dark:text-stone-500">
+                    Du har ingen kommende arrangementer. Meld deg på et arrangement for å se det her!
+                </Text>
+            ) : (
+                <>
+                    <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
+                        {eventsUserIsAttending.map(({ event, attendance }) => (
+                            <EventCard key={event.id} event={event} attendance={attendance} userId={user.id} />
+                        ))}
+
+                        <Tilt
+                            tiltMaxAngleX={0.25}
+                            tiltMaxAngleY={0.25}
+                            scale={1.005}
+                            glareBorderRadius="var(--radius-xl)"
+                            className="h-full"
+                        >
+                            <div className="flex items-center justify-between">
+                                {user && eventsUserIsAttending.length > 0 && (
+                                    <Button
+                                        element={Link}
+                                        href="/arrangementer"
+                                        className={cn(
+                                            "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+                                            "text-brand-800 hover:text-black",
+                                            "bg-blue-200 hover:bg-blue-100",
+                                            "dark:bg-brand dark:hover:bg-brand/75 dark:text-white dark:hover:text-white"
+                                        )}
+                                    >
+                                        Se alle
+                                        <IconArrowRight className="size-4" />
+                                    </Button>
+                                )}
+                            </div>
+                        </Tilt>
+                    </div>
+
+                    <div className="md:hidden md:-mx-4">
+                        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+                            {eventsUserIsAttending.map(({ event, attendance }) => (
+                                <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
+                                    <EventCard event={event} attendance={attendance} userId={user.id} />
+                                </div>
+                            ))}
+
+                            <div className="snap-center pr-4">
+                                <Tilt
+                                    tiltMaxAngleX={0.25}
+                                    tiltMaxAngleY={0.25}
+                                    scale={1.005}
+                                    glareBorderRadius="var(--radius-xl)"
+                                    className="h-full"
+                                >
+                                    <Button
+                                        element={Link}
+                                        href="/arrangementer"
+                                        className={cn(
+                                            "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                                            "bg-blue-200 hover:bg-blue-100",
+                                            "dark:bg-brand dark:hover:bg-brand/75"
+                                        )}
+                                        iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+                                    >
+                                        <Text className="text-lg">Se alle</Text>
+                                    </Button>
+                                </Tilt>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            <OnlineHero />
+
+
+        </div>
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>
@@ -84,19 +170,23 @@ export default async function App() {
                 glareBorderRadius="var(--radius-xl)"
                 className="h-full"
               >
-                <Button
-                  variant="unstyled"
-                  element={Link}
-                  href="/arrangementer"
-                  className={cn(
-                    "flex flex-row items-center gap-3 rounded-xl w-full h-full min-h-48 transition-colors",
-                    "bg-gray-200 hover:bg-gray-100",
-                    "dark:bg-stone-700/60 dark:hover:bg-stone-700"
-                  )}
-                >
-                  <Text className="md:text-xl">Se alle</Text>
-                  <IconArrowRight className="size-6" />
-                </Button>
+                  <div className="flex items-center justify-between">
+                      {user && eventsUserIsAttending.length > 0 && (
+                          <Button
+                              element={Link}
+                              href="/arrangementer"
+                              className={cn(
+                                  "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+                                  "text-brand-800 hover:text-black",
+                                  "bg-blue-200 hover:bg-blue-100",
+                                  "dark:bg-brand dark:hover:bg-brand/75 dark:text-white dark:hover:text-white"
+                              )}
+                          >
+                              Se alle
+                              <IconArrowRight className="size-4" />
+                          </Button>
+                      )}
+                  </div>
               </Tilt>
             </div>
 
@@ -116,18 +206,23 @@ export default async function App() {
                     glareBorderRadius="var(--radius-xl)"
                     className="h-full"
                   >
-                    <Button
-                      element={Link}
-                      href="/arrangementer"
-                      className={cn(
-                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                        "bg-blue-200 hover:bg-blue-100",
-                        "dark:bg-brand dark:hover:bg-brand/75"
-                      )}
-                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
-                    >
-                      <Text className="text-lg">Se alle</Text>
-                    </Button>
+                      <div className="flex items-center justify-between">
+                          {user && eventsUserIsAttending.length > 0 && (
+                              <Button
+                                  element={Link}
+                                  href="/arrangementer"
+                                  className={cn(
+                                      "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors",
+                                      "text-brand-800 hover:text-black",
+                                      "bg-blue-200 hover:bg-blue-100",
+                                      "dark:bg-brand dark:hover:bg-brand/75 dark:text-white dark:hover:text-white"
+                                  )}
+                              >
+                                  Se alle arrangementer
+                                  <IconArrowRight className="size-4" />
+                              </Button>
+                          )}
+                      </div>
                   </Tilt>
                 </div>
               </div>
@@ -136,82 +231,11 @@ export default async function App() {
         ) : (
           <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
         )}
+
+
       </div>
 
-      <div className="flex flex-col gap-4">
-        <Title className="text-3xl font-semibold">Dine arrangementer</Title>
 
-        {!user ? (
-          <Text className="text-gray-500 dark:text-stone-500">Logg inn for å se arrangementer du er påmeldt.</Text>
-        ) : eventsUserIsAttending.length === 0 ? (
-          <Text className="text-gray-500 dark:text-stone-500">
-            Du har ingen kommende arrangementer. Meld deg på et arrangement for å se det her!
-          </Text>
-        ) : (
-          <>
-            <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
-              {eventsUserIsAttending.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} userId={user.id} />
-              ))}
-
-              <Tilt
-                tiltMaxAngleX={0.25}
-                tiltMaxAngleY={0.25}
-                scale={1.005}
-                glareBorderRadius="var(--radius-xl)"
-                className="h-full"
-              >
-                <Button
-                  variant="unstyled"
-                  element={Link}
-                  href="/arrangementer"
-                  className={cn(
-                    "flex flex-row items-center gap-3 rounded-xl w-full h-full min-h-48 transition-colors",
-                    "bg-gray-200 hover:bg-gray-100",
-                    "dark:bg-stone-700/60 dark:hover:bg-stone-700"
-                  )}
-                >
-                  <Text className="md:text-xl">Se alle</Text>
-                  <IconArrowRight className="size-6" />
-                </Button>
-              </Tilt>
-            </div>
-
-            <div className="md:hidden md:-mx-4">
-              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                {eventsUserIsAttending.map(({ event, attendance }) => (
-                  <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
-                    <EventCard event={event} attendance={attendance} userId={user.id} />
-                  </div>
-                ))}
-
-                <div className="snap-center pr-4">
-                  <Tilt
-                    tiltMaxAngleX={0.25}
-                    tiltMaxAngleY={0.25}
-                    scale={1.005}
-                    glareBorderRadius="var(--radius-xl)"
-                    className="h-full"
-                  >
-                    <Button
-                      element={Link}
-                      href="/arrangementer"
-                      className={cn(
-                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                        "bg-blue-200 hover:bg-blue-100",
-                        "dark:bg-brand dark:hover:bg-brand/75"
-                      )}
-                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
-                    >
-                      <Text className="text-lg">Se alle</Text>
-                    </Button>
-                  </Tilt>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
     </section>
   )
 }
