@@ -1,11 +1,11 @@
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Group } from "@dotkomonline/rpc/group"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
-import { getNotificationTypeLabel, type NotificationType } from "@dotkomonline/rpc/notification"
+import { getNotificationTypeLabel, type NotificationType, NotificationTypeSchema } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { Text } from "@dotkomonline/ui"
 import { subHours } from "date-fns"
-import type { ReactNode } from "react"
+import { type ReactNode, useState } from "react"
 import {
   createMockAttendanceSummary,
   createMockAttendee,
@@ -120,6 +120,7 @@ function NotificationTypeRow({
   notification: NotificationItemNotification
   renderPayload?: () => ReactNode
 }) {
+  const [readAt, setReadAt] = useState<Date | null>(null)
   let unreadPayload: ReactNode
   let readPayload: ReactNode
 
@@ -133,7 +134,13 @@ function NotificationTypeRow({
       <Text className="text-sm text-muted-foreground">{label}</Text>
       <div className="grid max-w-5xl grid-cols-1 items-start gap-4 md:grid-cols-2">
         <StoryFrame>
-          <NotificationItem notification={notification} readAt={null}>
+          <NotificationItem
+            notification={notification}
+            readAt={readAt}
+            onMarkAsRead={() => {
+              setReadAt(new Date())
+            }}
+          >
             {unreadPayload}
           </NotificationItem>
         </StoryFrame>
@@ -279,6 +286,52 @@ export function NewFeedbackForm() {
       })}
       renderPayload={() => <NotificationUrlPayload url={`https://online.ntnu.no/tilbakemelding/${event.id}`} />}
     />
+  )
+}
+
+export function AccentColors() {
+  return (
+    <div className="flex flex-col gap-6">
+      {NotificationTypeSchema.options.map((notificationType) => (
+        <NotificationTypeRow
+          key={notificationType}
+          label={getNotificationTypeLabel(notificationType)}
+          notification={createNotification({
+            type: notificationType,
+            title: getNotificationTypeLabel(notificationType),
+            shortDescription: "Dette er en eksempelvarsling med innhold som går over flere linjer i listen.",
+          })}
+        />
+      ))}
+    </div>
+  )
+}
+
+export function NarrowLayout() {
+  const [readAt, setReadAt] = useState<Date | null>(null)
+
+  return (
+    <div className="w-64 max-w-full">
+      <NotificationItem
+        notification={createNotification({
+          title: "Påmelding fra ventelisten til et arrangement med en veldig lang tittel",
+          shortDescription:
+            "Arrangementet har fått en oppdatering: https://online.ntnu.no/en-veldig-lang-lenke-uten-mellomrom",
+          type: "ATTENDANCE_REGISTRATION_FROM_QUEUE",
+          actorGroup: {
+            abbreviation: "Dotkom",
+            name: "Drifts- og utviklingskomiteen med et veldig langt navn",
+            preferredDisplayName: "NAME",
+          },
+        })}
+        readAt={readAt}
+        onMarkAsRead={() => {
+          setReadAt(new Date())
+        }}
+      >
+        <NotificationEventPayload event={event} attendance={attendance} />
+      </NotificationItem>
+    </div>
   )
 }
 
