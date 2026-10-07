@@ -47,6 +47,7 @@ import {
 } from "date-fns"
 import type { EventEmitter } from "node:events"
 import invariant from "tiny-invariant"
+import { z } from "zod"
 import type { Configuration } from "../../configuration"
 import {
   FailedPreconditionError,
@@ -366,7 +367,13 @@ export function getAttendanceService(
       return
     }
 
-    const organizerEmails = event.hostingGroups.map((g) => g.email).filter((email) => email !== null)
+    const organizerEmails = event.hostingGroups
+      .map((group) => group.email)
+      .filter((email): email is string => email !== null && z.email().safeParse(email).success)
+
+    if (organizerEmails.length === 0) {
+      organizerEmails.push("dotkom@online.ntnu.no")
+    }
 
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
