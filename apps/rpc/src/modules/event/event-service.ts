@@ -56,7 +56,7 @@ export interface EventService {
     userId: UserId,
     query: EventFilterQuery,
     page?: Pageable,
-    registeredOnly?: boolean,
+    registeredOnly?: boolean
   ): Promise<EventSummary[]>
   findByParentEventId(
     handle: DBHandle,
