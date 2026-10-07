@@ -36,6 +36,7 @@ import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
+import { patchAttendanceFromRegisterChange } from "./patchAttendanceFromRegisterChange"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
@@ -171,41 +172,7 @@ export const AttendanceCard = ({
         onData: ({ status, attendee: updatedAttendee, poolOccupancies }) => {
           queryClient.setQueryData(
             trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
-            (oldData) => {
-              if (!oldData) {
-                return oldData
-              }
-
-              if (status === "deregistered") {
-                return {
-                  ...oldData,
-                  attendees: oldData.attendees.filter((oldAttendee) => oldAttendee.id !== updatedAttendee.id),
-                }
-              }
-
-              if (status === "reserved") {
-                return {
-                  ...oldData,
-                  attendees: oldData.attendees.map((oldAttendee) => {
-                    if (oldAttendee.id === updatedAttendee.id) {
-                      return updatedAttendee
-                    }
-
-                    return oldAttendee
-                  }),
-                }
-              }
-
-              if (oldData.attendees.some((oldAttendee) => oldAttendee.id === updatedAttendee.id)) {
-                console.warn("Attendee already exists in the list, not updating state.")
-                return oldData
-              }
-
-              return {
-                ...oldData,
-                attendees: [...oldData.attendees, updatedAttendee],
-              }
-            }
+            (oldData) => patchAttendanceFromRegisterChange(oldData, { status, attendee: updatedAttendee })
           )
 
           if (user && updatedAttendee.userId === user.id) {
