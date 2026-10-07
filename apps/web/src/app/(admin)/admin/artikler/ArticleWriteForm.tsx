@@ -17,6 +17,7 @@ const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWriteFormSchema> = {
   isFeatured: false,
   imageUrl: "",
   vimeoId: null,
+  photographer: null,
 }
 
 export const ArticleWriteFormSchema = ArticleWriteSchema.extend({
@@ -57,7 +58,7 @@ export const ArticleWriteForm = ({
         placeholder="Ola Nordmann, Trond-Viggo Torgersen"
         required
       />
-      <TextField control={form.control} name="photographer" label="Fotograf" placeholder="Jahn Teigen" required />
+      <TextField control={form.control} name="photographer" label="Fotograf" placeholder="Jahn Teigen" />
       <ImageUploadModalField
         control={form.control}
         name="imageUrl"
