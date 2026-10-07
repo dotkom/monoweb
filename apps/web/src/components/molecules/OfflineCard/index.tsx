@@ -8,7 +8,7 @@ interface OfflineCardProps {
   showTitle?: boolean
 }
 
-export const OfflineCard = ({ offline, showTitle=true}: OfflineCardProps) => {
+export const OfflineCard = ({ offline, showTitle = true }: OfflineCardProps) => {
   return (
     <div className="flex flex-col gap-3 text-wrap max-w-56">
       {offline.imageUrl && offline.fileUrl && (
@@ -31,7 +31,7 @@ export const OfflineCard = ({ offline, showTitle=true}: OfflineCardProps) => {
           </div>
         </Link>
       )}
-      {showTitle===true && <Text className="text-gray-950 dark:text-white">{offline.title}</Text>}
+      {showTitle === true && <Text className="text-gray-950 dark:text-white">{offline.title}</Text>}
     </div>
   )
 }

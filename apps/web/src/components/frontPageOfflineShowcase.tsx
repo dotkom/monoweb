@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { Button, Title } from "@dotkomonline/ui";
-import Link from "next/link";
-import { OfflineCard } from "./molecules/OfflineCard";
-import { Offline } from "@dotkomonline/rpc/offline";
+import { Button, Title, Text } from "@dotkomonline/ui"
+import Link from "next/link"
+import { OfflineCard } from "./molecules/OfflineCard"
+import type { Offline } from "@dotkomonline/rpc/offline"
 
 interface Props {
-  offline: Offline;
+  offline: Offline
 }
 
 export const FrontPageOfflineShowcase = ({ offline }: Props) => {
@@ -17,20 +17,14 @@ export const FrontPageOfflineShowcase = ({ offline }: Props) => {
         <Title className="text-lg md:text-4xl font-bold">Offline #</Title>
         <Title className="text-lg md:text-s font-bold">2026</Title>
         <Text className=" text-muted-foreground">
-          Offline er Onlines sitt eget tidsskrift. Det gis ut to ganger i
-          semesteret og innholder en fin blanding av underholdende og
-          oppplysende saker for informatikkstudenter.
+          Offline er Onlines sitt eget tidsskrift. Det gis ut to ganger i semesteret og innholder en fin blanding av
+          underholdende og oppplysende saker for informatikkstudenter.
         </Text>
         <div className="flex gap-4 pt-4">
           <Button variant="default" size="lg">
             Les utgaven
           </Button>
-          <Button
-            color="gray"
-            size="lg"
-            element={Link}
-            href="/om-linjeforeningen"
-          >
+          <Button color="gray" size="lg" element={Link} href="/om-linjeforeningen">
             Les mer om oss
           </Button>
         </div>
@@ -39,5 +33,5 @@ export const FrontPageOfflineShowcase = ({ offline }: Props) => {
         <OfflineCard offline={offline} key={offline.id} showTitle={false} />
       </div>
     </div>
-  );
-};
+  )
+}

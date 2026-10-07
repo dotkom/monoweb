@@ -142,7 +142,7 @@ export default async function App() {
         )}
       </div>
 
-      <FrontPageOfflineShowcase offline={featuredOffline}  />
+      <FrontPageOfflineShowcase offline={featuredOffline} />
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Dine arrangementer</Title>
