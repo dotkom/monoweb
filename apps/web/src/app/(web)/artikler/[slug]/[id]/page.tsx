@@ -74,7 +74,9 @@ const ArticleHeader = ({ article }: ArticleHeaderProps) => {
           )}
           <figcaption>
             <Text className="mt-2">
-              <span className="text-black dark:text-gray-100 font-medium">Fotograf: </span>
+              <span className="text-black dark:text-gray-100 font-medium">
+                 {article.photographer !== null ? "Fotograf: " : ""}
+              </span>
               {article.photographer}
             </Text>
           </figcaption>

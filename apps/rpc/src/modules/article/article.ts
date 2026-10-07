@@ -16,7 +16,7 @@ export const ArticleSchema = z.object({
   slug: z.string(),
   title: z.string(),
   author: z.string(),
-  photographer: z.string(),
+  photographer: z.string().nullable(),
   imageUrl: z.string(),
   excerpt: z.string(),
   content: z.string(),

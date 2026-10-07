@@ -194,7 +194,7 @@ export type ArticleGroupByOutputType = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -230,7 +230,7 @@ export type ArticleWhereInput = {
   slug?: Prisma.StringFilter<"Article"> | string
   title?: Prisma.StringFilter<"Article"> | string
   author?: Prisma.StringFilter<"Article"> | string
-  photographer?: Prisma.StringFilter<"Article"> | string
+  photographer?: Prisma.StringNullableFilter<"Article"> | string | null
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
@@ -246,7 +246,7 @@ export type ArticleOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
-  photographer?: Prisma.SortOrder
+  photographer?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -265,7 +265,7 @@ export type ArticleWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ArticleWhereInput | Prisma.ArticleWhereInput[]
   title?: Prisma.StringFilter<"Article"> | string
   author?: Prisma.StringFilter<"Article"> | string
-  photographer?: Prisma.StringFilter<"Article"> | string
+  photographer?: Prisma.StringNullableFilter<"Article"> | string | null
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
@@ -281,7 +281,7 @@ export type ArticleOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
-  photographer?: Prisma.SortOrder
+  photographer?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -302,7 +302,7 @@ export type ArticleScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Article"> | string
   title?: Prisma.StringWithAggregatesFilter<"Article"> | string
   author?: Prisma.StringWithAggregatesFilter<"Article"> | string
-  photographer?: Prisma.StringWithAggregatesFilter<"Article"> | string
+  photographer?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   imageUrl?: Prisma.StringWithAggregatesFilter<"Article"> | string
   excerpt?: Prisma.StringWithAggregatesFilter<"Article"> | string
   content?: Prisma.StringWithAggregatesFilter<"Article"> | string
@@ -317,7 +317,7 @@ export type ArticleCreateInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -333,7 +333,7 @@ export type ArticleUncheckedCreateInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -349,7 +349,7 @@ export type ArticleUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -365,7 +365,7 @@ export type ArticleUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -381,7 +381,7 @@ export type ArticleCreateManyInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -396,7 +396,7 @@ export type ArticleUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -411,7 +411,7 @@ export type ArticleUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -490,7 +490,7 @@ export type ArticleCreateWithoutTagsInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -505,7 +505,7 @@ export type ArticleUncheckedCreateWithoutTagsInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
@@ -536,7 +536,7 @@ export type ArticleUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -551,7 +551,7 @@ export type ArticleUncheckedUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
@@ -672,7 +672,7 @@ export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     slug: string
     title: string
     author: string
-    photographer: string
+    photographer: string | null
     imageUrl: string
     excerpt: string
     content: string
