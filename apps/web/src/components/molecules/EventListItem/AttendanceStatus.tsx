@@ -8,8 +8,8 @@ import {
   type Attendance,
   type AttendanceSummary,
   type Attendee,
+  attendeeHasPendingCompletionDeadline,
   getAttendanceCapacity,
-  hasAttendeePaid,
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
@@ -62,12 +62,11 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     attendee?.createdAt && attendee.completionDeadline
       ? interval(attendee.createdAt, attendee.completionDeadline)
       : null
-  const paymentIsUnpaid = hasAttendeePaid(attendee, attendance.attendancePrice) === false
+  const hasPendingCompletionDeadline = attendeeHasPendingCompletionDeadline(attendance, attendee)
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && paymentIsUnpaid ? isWithinInterval(now, paymentCountdownInterval) : false
+    paymentCountdownInterval && hasPendingCompletionDeadline ? isWithinInterval(now, paymentCountdownInterval) : false
   const paymentDeadlineHasPassed = attendee?.completionDeadline != null && isAfter(now, attendee.completionDeadline)
-  const showPaymentCountdown =
-    paymentIsUnpaid && attendee?.paymentLink != null && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
+  const showPaymentCountdown = hasPendingCompletionDeadline && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 
   const hasCapacity = capacity > 0
 

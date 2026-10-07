@@ -6,10 +6,12 @@ import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type Attendance,
   type Attendee,
+  attendeeHasPendingCompletionDeadline,
   buildRegistrationAvailabilityCompletionView,
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
+  getAttendeePaymentStatus,
   getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
   hasAttendeePaid,
@@ -102,8 +104,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     completion?.completionDeadline != null && isAfter(now, completion.completionDeadline)
 
   const showCompletionPanel =
-    hasMissingRequirements &&
-    completion?.completionDeadline !== null &&
+    attendeeHasPendingCompletionDeadline(attendance, attendee) &&
     (isWithinCompletionCountdown || completionDeadlineHasPassed)
 
   const cardClassname = cn(
@@ -513,15 +514,17 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
     return <UnpaidStatus price={price} registered={attendee.registered === true} />
   }
 
-  if (attendee.paymentRefundedAt) {
+  const paymentStatus = getAttendeePaymentStatus(attendee)
+
+  if (paymentStatus === "refunded" && attendee.paymentRefundedAt !== null) {
     return <RefundedStatus price={price} refundedAt={attendee.paymentRefundedAt} />
   }
 
-  if (attendee.paymentChargedAt) {
+  if (paymentStatus === "charged") {
     return <PaidStatus price={price} registered={attendee.registered === true} />
   }
 
-  if (attendee.paymentReservedAt) {
+  if (paymentStatus === "reserved") {
     return <ReservedPaymentStatus price={price} chargeScheduleDate={chargeScheduleDate} />
   }
 
