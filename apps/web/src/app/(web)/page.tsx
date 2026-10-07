@@ -13,7 +13,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
-import { FrontPageOfflineShowcase } from "@/components/frontPageOfflineShowcase"
+import { FrontPageOfflineShowcase } from "src/components/FrontPageOfflineShowcase"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
