@@ -30,7 +30,6 @@ export const GroupRoleTypeSchema = z.enum([
   "TRUSTEE",
   "EMAIL_ONLY",
   "TEMPORARILY_LEAVE",
-  "EDITOR_IN_CHIEF",
 ])
 export const GroupRoleTypeEnum = GroupRoleTypeSchema.enum
 export type GroupRoleType = z.infer<typeof GroupRoleTypeSchema>
@@ -139,8 +138,6 @@ export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.ex
 })
 export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
 
-// NOTE: We omit `EDITOR_IN_CHIEF` ("Redaktør"), since the role is only relevant for Prokom, the committee managing
-// Online's magazine "Offline".
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
     { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder" },
@@ -157,6 +154,7 @@ export const getGroupDisplayName = (group: Pick<Group, "abbreviation" | "name" |
   if (group.preferredDisplayName === "NAME") {
     return group.name ?? group.abbreviation
   }
+
   return group.abbreviation
 }
 
@@ -171,31 +169,32 @@ export const getGroupSecondaryName = (group: Pick<Group, "abbreviation" | "name"
   return otherName
 }
 
-export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPreferredDisplayName) => {
+export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPreferredDisplayName): string => {
   switch (preferredDisplayName) {
     case "ABBREVIATION":
       return "Kort navn"
     case "NAME":
       return "Offisielt navn"
-    default:
-      return "Ukjent"
   }
 }
 
-export const createGroupPageUrl = (group: Group) => {
+export const createGroupPageUrl = (group: Group): string => {
   switch (group.type) {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
     case "ASSOCIATED":
+    case "EMAIL_ONLY":
       return `/grupper/${group.slug}`
     case "INTEREST_GROUP":
       return `/interessegrupper/${group.slug}`
-    default:
-      throw new Error(`Unknown group type: ${group.type}`)
   }
 }
 
-export const getGroupTypeName = (type: GroupType | null | undefined) => {
+export const getGroupTypeName = (type: GroupType | null | undefined): string => {
+  if (type == null) {
+    return "Ukjent"
+  }
+
   switch (type) {
     case "COMMITTEE":
       return "Komité"
@@ -207,12 +206,14 @@ export const getGroupTypeName = (type: GroupType | null | undefined) => {
       return "Interessegruppe"
     case "EMAIL_ONLY":
       return "E-postgruppe"
-    default:
-      return "Ukjent type"
   }
 }
 
-export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | null | undefined) => {
+export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | null | undefined): string => {
+  if (name == null) {
+    return "Ukjent"
+  }
+
   switch (name) {
     case "ALL_MEMBERS":
       return "Alle medlemmer"
@@ -222,12 +223,10 @@ export const getGroupMemberVisibilityName = (name: GroupMemberVisibilityType | n
       return "Kun leder"
     case "NONE":
       return "Ingen"
-    default:
-      return "Ukjent"
   }
 }
 
-export const getGroupRoleTypeName = (type: GroupRoleType) => {
+export const getGroupRoleTypeName = (type: GroupRoleType): string => {
   switch (type) {
     case GroupRoleTypeEnum.LEADER:
       return "Leder"
@@ -245,24 +244,7 @@ export const getGroupRoleTypeName = (type: GroupRoleType) => {
       return "E-postbruker"
     case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
       return "Permitert"
-    case GroupRoleTypeEnum.EDITOR_IN_CHIEF:
-      return "Redaktør"
-    default:
-      return "Ukjent type"
   }
-}
-
-export const getActiveGroupMembership = (member: GroupMember | null, groupSlug?: GroupId): GroupMembership | null => {
-  if (!member) {
-    return null
-  }
-
-  const isGroup = (inputGroupSlug: GroupId) => (groupSlug ? inputGroupSlug === groupSlug : true)
-
-  // This is to make sure the function is deterministic
-  const sortedMemberships = member.groupMemberships.toSorted((a, b) => compareDesc(a.start, b.start))
-
-  return sortedMemberships.find((membership) => membership.end === null && isGroup(membership.groupId)) ?? null
 }
 
 export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmentMethod): string => {
@@ -282,11 +264,140 @@ export const getGroupRecruitmentMethodName = (recruitmentMethod: GroupRecruitmen
   }
 }
 
+// TODO: Maybe this should check if membership.end is in the future?
+export const isGroupMembershipActive = (membership: GroupMembership): boolean => {
+  return membership.end === null
+}
+
+export const isGroupMemberActive = (member: GroupMember | null, groupId?: GroupId): boolean => {
+  if (member === null) {
+    return false
+  }
+
+  return findActiveGroupMembership(member, groupId) !== null
+}
+
+export function findActiveGroupMembershipIn(
+  groupMemberships: GroupMembership[],
+  groupId?: GroupId
+): GroupMembership | null {
+  const activeMemberships = groupMemberships
+    .toSorted((a, b) => compareDesc(a.start, b.start))
+    .filter((membership) => isGroupMembershipActive(membership))
+
+  if (groupId === undefined) {
+    return activeMemberships.at(0) ?? null
+  }
+
+  return activeMemberships.find((membership) => membership.groupId === groupId) ?? null
+}
+
+export function findActiveGroupMembership(member: GroupMember | null, groupId?: GroupId): GroupMembership | null {
+  if (member === null) {
+    return null
+  }
+
+  return findActiveGroupMembershipIn(member.groupMemberships, groupId)
+}
+
+export function findLatestGroupMembershipIn(
+  groupMemberships: GroupMembership[],
+  groupId?: GroupId
+): GroupMembership | null {
+  return (
+    groupMemberships
+      .filter((m) => groupId == null || m.groupId === groupId)
+      .toSorted((a, b) => compareDesc(a.start, b.start))
+      .at(0) ?? null
+  )
+}
+
+export function findLatestGroupMembership(member: GroupMember | null, groupId?: GroupId): GroupMembership | null {
+  if (member === null) {
+    return null
+  }
+
+  return findLatestGroupMembershipIn(member.groupMemberships, groupId)
+}
+
 export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: GroupMembership["roles"]): boolean => {
   const typesA = new Set(rolesA.map((role) => role.id))
   const typesB = new Set(rolesB.map((role) => role.id))
 
   return typesA.symmetricDifference(typesB).size === 0
+}
+
+export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {
+  return membership.roles.some((role) => role.type === type)
+}
+
+export function isEmailOnlyGroupMembership(membership: GroupMembership): boolean {
+  return membership.roles.every((role) => role.type === GroupRoleTypeEnum.EMAIL_ONLY)
+}
+
+export function isGroupMemberVisible(
+  member: GroupMember,
+  visibility: GroupMemberVisibilityType,
+  viewerUserId?: string | null
+): boolean {
+  const membership = findActiveGroupMembership(member)
+  const isMe = member.id === viewerUserId
+  const isEmailOnly = membership != null && isEmailOnlyGroupMembership(membership)
+
+  if (visibility === "NONE" || (isEmailOnly && !isMe)) {
+    return false
+  }
+
+  if (visibility === "ALL_MEMBERS") {
+    return true
+  }
+
+  if (visibility === "LEADER") {
+    return membership !== null && hasGroupMembershipRoleType(membership, GroupRoleTypeEnum.LEADER)
+  }
+
+  if (visibility === "WITH_ROLES") {
+    return (
+      membership?.roles.some(
+        (role) => role.type !== GroupRoleTypeEnum.COSMETIC && role.type !== GroupRoleTypeEnum.EMAIL_ONLY
+      ) ?? false
+    )
+  }
+
+  return false
+}
+
+export function getGroupRolePriority(role: GroupRole): number {
+  switch (role.type) {
+    case GroupRoleTypeEnum.LEADER:
+      return 8
+    case GroupRoleTypeEnum.DEPUTY_LEADER:
+      return 7
+    case GroupRoleTypeEnum.TREASURER:
+      return 6
+    case GroupRoleTypeEnum.TRUSTEE:
+      return 5
+    case GroupRoleTypeEnum.PUNISHER:
+      return 4
+    case GroupRoleTypeEnum.COSMETIC:
+      return 3
+    case GroupRoleTypeEnum.EMAIL_ONLY:
+      return 2
+    case GroupRoleTypeEnum.TEMPORARILY_LEAVE:
+      return 1
+  }
+}
+
+export function sortGroupRolesByPriority(roles: GroupRole[]): GroupRole[] {
+  return roles.toSorted((a, b) => getGroupRolePriority(b) - getGroupRolePriority(a))
+}
+
+export function getHighestGroupRolePriority(roles: GroupRole[]): number {
+  if (roles.length === 0) {
+    return 0
+  }
+
+  return Math.max(...roles.map(getGroupRolePriority))
 }
 
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024

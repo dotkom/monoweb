@@ -1,24 +1,31 @@
-import { createPrisma } from "./index"
-import { buildAttendancePoolMap, getAttendeeFixtures } from "./fixtures/attendee"
+import { compareAsc, isFuture } from "date-fns"
+import { getArticleFixtures, getArticleTagFixtures, getArticleTagLinkFixtures } from "./fixtures/article"
 import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
+import { buildAttendancePoolMap, getAttendeeFixtures, VOLLEYBALL_ATTENDEE_FIXTURE_IDS } from "./fixtures/attendee"
 import { getCompanyFixtures } from "./fixtures/company"
-import { getEventFixtures } from "./fixtures/event"
-import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
-import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
-import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
-import { getMarkFixtures } from "./fixtures/mark"
-import { getMembershipFixtures } from "./fixtures/membership"
-import { getOfflineFixtures } from "./fixtures/offline"
-import { getUserFixtures } from "./fixtures/user"
-import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
-import { getGroupMembershipFixtures } from "./fixtures/group-membership"
-import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
 import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
-import { FADDERUKE_EVENT_ID } from "./fixtures/event"
+import { getDeregisterReasonFixtures } from "./fixtures/deregister-reason"
+import { FADDERUKE_EVENT_ID, getEventFixtures, VOLLEYBALL_EVENT_ID } from "./fixtures/event"
+import { getEventCompany } from "./fixtures/event-company"
+import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
 import { getFadderukeFixture } from "./fixtures/fadderuke"
 import { getFeedbackFormFixture } from "./fixtures/feedback-form"
-import { compareAsc, isFuture } from "date-fns"
+import { getFeedbackAnswerEventFormFixture, getFeedbackFormAnswerFixtures } from "./fixtures/feedback-form-answers"
+import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
+import { getGroupMembershipFixtures } from "./fixtures/group-membership"
+import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
+import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
+import { getMarkFixtures, getMarkGroupFixtures } from "./fixtures/mark"
+import { getMembershipFixtures } from "./fixtures/membership"
+import { getNotificationFixtures } from "./fixtures/notification"
+import { getNotificationPermissionsFixtures } from "./fixtures/notification-permissions"
+import { getOfflineFixtures } from "./fixtures/offline"
+import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
+import { getPrivacyPermissionsFixtures } from "./fixtures/privacy-permissions"
+import { getUserFixtures } from "./fixtures/user"
+import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
+import { createPrisma } from "./index"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -38,6 +45,26 @@ const userIds = userInput.map((u) => u.id)
 await db.user.createManyAndReturn({ data: userInput })
 const membershipInput = getMembershipFixtures(userIds)
 await db.membership.createManyAndReturn({ data: membershipInput })
+
+const privacyPermissions = await db.privacyPermissions.createManyAndReturn({
+  data: getPrivacyPermissionsFixtures(userIds),
+})
+for (const permission of privacyPermissions) {
+  await db.user.update({
+    where: { id: permission.userId },
+    data: { privacyPermissionsId: permission.id },
+  })
+}
+
+const notificationPermissions = await db.notificationPermissions.createManyAndReturn({
+  data: getNotificationPermissionsFixtures(userIds),
+})
+for (const permission of notificationPermissions) {
+  await db.user.update({
+    where: { id: permission.userId },
+    data: { notificationPermissionsId: permission.id },
+  })
+}
 
 const exceptionallyDistinguishedFlag = await db.userFlag.findUniqueOrThrow({
   where: { name: EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME },
@@ -67,6 +94,9 @@ const attendanceInput = getAttendanceFixtures()
 const attendances = await db.attendance.createManyAndReturn({ data: attendanceInput })
 const eventInput = getEventFixtures(attendances.map((a) => a.id))
 const events = await db.event.createManyAndReturn({ data: eventInput })
+const eventIds = events.map((event) => event.id)
+const companyIds = companies.map((company) => company.id)
+await db.eventCompany.createMany({ data: getEventCompany(eventIds, companyIds) })
 const attendanceIds = attendances.map((attendance) => attendance.id)
 const attendancePoolInput = getPoolFixtures(attendanceIds)
 const attendancePools = await db.attendancePool.createManyAndReturn({ data: attendancePoolInput })
@@ -76,17 +106,43 @@ await db.attendee.createMany({ data: attendeeInput })
 const eventHostingGroupInput = getEventHostingGroupFixtures(events.map((e) => e.id))
 await db.eventHostingGroup.createManyAndReturn({ data: eventHostingGroupInput })
 
-const nearestEvent = events.filter((event) => isFuture(event.start)).toSorted((a, b) => compareAsc(a.start, b.start))[0]
-const feedbackFormInput = getFeedbackFormFixture(nearestEvent)
-await db.feedbackForm.create({ data: feedbackFormInput })
+const nearestEvent = events
+  .filter((event) => isFuture(event.start))
+  .toSorted((a, b) => compareAsc(a.start, b.start))
+  .at(0)
+if (nearestEvent === undefined) {
+  throw new Error("Missing future event for feedback form fixture")
+}
 
-const markInput = getMarkFixtures()
-await db.mark.createManyAndReturn({ data: markInput })
+const volleyballEvent = events.find((event) => event.id === VOLLEYBALL_EVENT_ID)
+if (volleyballEvent === undefined) {
+  throw new Error("Missing volleyball event for feedback form fixture")
+}
+
+await db.feedbackForm.create({ data: getFeedbackFormFixture(nearestEvent) })
+await db.feedbackForm.create({
+  data: getFeedbackAnswerEventFormFixture(volleyballEvent),
+})
+
+for (const feedbackFormAnswer of getFeedbackFormAnswerFixtures(VOLLEYBALL_ATTENDEE_FIXTURE_IDS)) {
+  await db.feedbackFormAnswer.create({ data: feedbackFormAnswer })
+}
+
+const marks = await db.mark.createManyAndReturn({ data: getMarkFixtures() })
+const markIds = marks.map((mark) => mark.id)
+await db.markGroup.createMany({ data: getMarkGroupFixtures(markIds) })
+await db.personalMark.createMany({
+  data: getPersonalMarkFixtures(markIds, userIds[0]),
+})
 
 const jobListingInput = getJobListingFixtures(companies.map((company) => company.id))
 const jobListings = await db.jobListing.createManyAndReturn({ data: jobListingInput })
 const jobListingLocationInput = getJobListingLocationFixtures(jobListings.map((jobListing) => jobListing.id))
 await db.jobListingLocation.createManyAndReturn({ data: jobListingLocationInput })
+
+await db.articleTag.createMany({ data: getArticleTagFixtures() })
+await db.article.createMany({ data: getArticleFixtures() })
+await db.articleTagLink.createMany({ data: getArticleTagLinkFixtures() })
 
 await db.contest.create({ data: getContestFixture() })
 const contestTeamFixtures = getContestTeamFixtures(userIds)
@@ -113,6 +169,17 @@ await db.event.update({
   data: { contestId: FADDERUKE_CONTEST_ID },
 })
 await db.fadderuke.create({ data: getFadderukeFixture() })
+
+await db.deregisterReason.createMany({
+  data: getDeregisterReasonFixtures(userIds[8]),
+})
+
+for (const notification of getNotificationFixtures({
+  createdByUserId: userIds[0],
+  recipientUserIds: userIds.slice(0, 6),
+})) {
+  await db.notification.create({ data: notification })
+}
 
 const offlineInput = getOfflineFixtures()
 await db.offline.createMany({ data: offlineInput })

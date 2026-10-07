@@ -1,30 +1,67 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
+import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { procedure, t } from "../../trpc"
+import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
+import { CompanySchema } from "../company/company"
+import { feedbackRouter } from "../feedback-form/feedback-router"
+import { GroupSchema } from "../group/group"
+import { UserSchema } from "../user/user"
 import { AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
+import { attendanceRouter } from "./attendance-router"
 import {
   BaseEventSchema,
   EventFilterQuerySchema,
   EventSchema,
-  type EventType,
+  type EventVisibility,
   EventWithAttendanceSchema,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
   EventWriteSchema,
 } from "./event"
-import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
-import { CompanySchema } from "../company/company"
-import { GroupSchema } from "../group/group"
-import { UserSchema } from "../user/user"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isAdministrator, isCommitteeMember, or, isSameSubject } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, t } from "../../trpc"
-import { feedbackRouter } from "../feedback-form/feedback-router"
-import { attendanceRouter } from "./attendance-router"
-import { ForbiddenError, InvalidArgumentError, UnauthorizedError } from "../../error"
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
+
+function excludeVisibility(excludedVisibilities: EventVisibility[], visibility: EventVisibility): EventVisibility[] {
+  if (excludedVisibilities.includes(visibility)) {
+    return excludedVisibilities
+  }
+
+  return [...excludedVisibilities, visibility]
+}
+
+function getExcludedVisibilities(
+  requestedExclusions: EventVisibility[],
+  canViewAuthenticatedEvents: boolean,
+  canViewCommitteeOnlyEvents: boolean
+): EventVisibility[] {
+  let excludedVisibilities = requestedExclusions
+
+  if (!canViewAuthenticatedEvents) {
+    excludedVisibilities = excludeVisibility(excludedVisibilities, "AUTHENTICATED")
+  }
+
+  if (!canViewCommitteeOnlyEvents) {
+    excludedVisibilities = excludeVisibility(excludedVisibilities, "COMMITTEE_ONLY")
+  }
+
+  return excludedVisibilities
+}
+
+function canViewEvent(visibility: EventVisibility, hasPrincipal: boolean, isCommitteeMember: boolean): boolean {
+  switch (visibility) {
+    case "PUBLIC":
+      return true
+    case "AUTHENTICATED":
+      return hasPrincipal
+    case "COMMITTEE_ONLY":
+      return isCommitteeMember
+  }
+}
 
 function assertHasCommitteeOrganizer(groupIds: Iterable<string>): void {
   const hasCommitteeOrganizer = [...groupIds].some((groupId) => COMMITTEE_AFFILIATION_SET.has(groupId))
@@ -41,6 +78,14 @@ const getEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input)
+    const isCommitteeMember = ctx.principal
+      ? ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)
+      : false
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null, isCommitteeMember)) {
+      throw new UnauthorizedError("Authentication is required to view this event")
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -55,7 +100,18 @@ const findEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.findEventById(ctx.handle, input)
-    if (!event) return null
+    if (!event) {
+      return null
+    }
+
+    const isCommitteeMember = ctx.principal
+      ? ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)
+      : false
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null, isCommitteeMember)) {
+      return null
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -112,6 +168,9 @@ const createEventProcedure = procedure
       new Set(input.companyIds)
     )
     await ctx.eventService.updateEventParent(ctx.handle, event.id, input.parentId ?? null)
+
+    ctx.setAuditTransactionName(`Create Event(ID=${event.id},Title=${event.title})`)
+
     return { event, attendance: null }
   })
 
@@ -167,6 +226,9 @@ const editEventProcedure = procedure
     const attendance = updatedEventWithoutOrganizers.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, updatedEventWithoutOrganizers.attendanceId)
       : null
+
+    ctx.setAuditTransactionName(`Update Event(ID=${updatedEvent.id},Title=${updatedEvent.title})`)
+
     return { event: updatedEvent, attendance }
   })
 
@@ -194,7 +256,10 @@ const deleteEventProcedure = procedure
       }
     }
 
-    return await ctx.eventService.deleteEvent(ctx.handle, input.id)
+    const deletedEvent = await ctx.eventService.deleteEvent(ctx.handle, input.id)
+    ctx.setAuditTransactionName(`Delete Event(ID=${deletedEvent.id},Title=${deletedEvent.title})`)
+
+    return deletedEvent
   })
 
 export type AllEventsInput = inferProcedureInput<typeof allEventsProcedure>
@@ -212,15 +277,15 @@ const allEventsProcedure = procedure
     const { filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
-    }
+    const excludingVisibility = getExcludedVisibilities(
+      filter?.excludingVisibility ?? [],
+      principal !== null,
+      isCommitteeMember
+    )
 
-    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingType }, page)
+    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -252,15 +317,15 @@ const allEventSummariesProcedure = procedure
     const { filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
-    }
+    const excludingVisibility = getExcludedVisibilities(
+      filter?.excludingVisibility ?? [],
+      principal !== null,
+      isCommitteeMember
+    )
 
-    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingType }, page)
+    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null),
@@ -299,18 +364,18 @@ const allByAttendingUserIdProcedure = procedure
     const { id, filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    // If the user is not staff, we exclude internal events
-    let excludingType = filter?.excludingType ?? []
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
-    }
+    const excludingVisibility = getExcludedVisibilities(
+      filter?.excludingVisibility ?? [],
+      principal !== null,
+      isCommitteeMember
+    )
 
     const events = await ctx.eventService.findEventsByAttendingUserId(
       ctx.handle,
       id,
-      { ...filter, excludingType },
+      { ...filter, excludingVisibility },
       page
     )
     const attendances = await ctx.attendanceService.getAttendancesByIds(
@@ -353,15 +418,11 @@ const allByAttendingUserIdForCalendarProcedure = procedure
     const { id, ...page } = input
 
     const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.handle, id)
-    const isStaff = ctx.authorizationService.isCommitteeMember(userAffiliations)
+    const isCommitteeMember = ctx.authorizationService.isCommitteeMember(userAffiliations)
 
-    let excludingType: EventType[] = []
+    const excludingVisibility = getExcludedVisibilities([], true, isCommitteeMember)
 
-    if (!isStaff) {
-      excludingType = ["INTERNAL"]
-    }
-
-    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingType }, page)
+    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null)
@@ -399,20 +460,16 @@ const allSummariesByAttendingUserIdProcedure = procedure
     const { id, filter, ...page } = input
 
     const principal = ctx.principal
-    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
     const isViewingOwnEvents = principal.subject === id
 
-    let excludingType = filter?.excludingType ?? []
-    const shouldForceExcludeInternal = !isStaff && !isViewingOwnEvents && !excludingType.includes("INTERNAL")
-
-    if (shouldForceExcludeInternal) {
-      excludingType = [...excludingType, "INTERNAL"]
-    }
+    const canViewCommitteeOnly = isCommitteeMember || isViewingOwnEvents
+    const excludingVisibility = getExcludedVisibilities(filter?.excludingVisibility ?? [], true, canViewCommitteeOnly)
 
     const events = await ctx.eventService.findEventSummariesByAttendingUserId(
       ctx.handle,
       id,
-      { ...filter, excludingType },
+      { ...filter, excludingVisibility },
       page
     )
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
@@ -459,10 +516,16 @@ const addAttendanceProcedure = procedure
 
     const attendance = await ctx.attendanceService.createAttendance(ctx.handle, input.values)
     const updatedEvent = await ctx.eventService.updateEventAttendance(ctx.handle, input.eventId, attendance.id)
+
+    ctx.setAuditTransactionName(
+      `Add Attendance(ID=${attendance.id}) to Event(ID=${input.eventId},Title=${event.title})`
+    )
+
     return { event: updatedEvent, attendance }
   })
 
 // TODO: rename this to `updateEventParent`
+// TODO: not used. maybe delete
 export type UpdateParentEventInput = inferProcedureInput<typeof updateParentEventProcedure>
 export type UpdateParentEventOutput = inferProcedureOutput<typeof updateParentEventProcedure>
 const updateParentEventProcedure = procedure
@@ -473,9 +536,12 @@ const updateParentEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const event = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const parentEvent = input.parentEventId
+      ? await ctx.eventService.getEventById(ctx.handle, input.parentEventId)
+      : null
 
-    if (event?.hostingGroups.length) {
+    if (event.hostingGroups.length) {
       const organizerGroups = await ctx.authorizationService.intersectGroupAffiliations(
         ctx.principal.affiliations,
         event.hostingGroups.map((group) => group.slug)
@@ -492,6 +558,14 @@ const updateParentEventProcedure = procedure
     const attendance = updatedEvent.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, updatedEvent.attendanceId)
       : null
+
+    const auditTransactionName =
+      parentEvent !== null
+        ? `Set Event(ID=${event.id},Title=${event.title}) parent to Event(ID=${parentEvent.id},Title=${parentEvent.title})`
+        : `Remove parent from Event(ID=${event.id},Title=${event.title})`
+
+    ctx.setAuditTransactionName(auditTransactionName)
+
     return { event: updatedEvent, attendance }
   })
 
@@ -503,9 +577,27 @@ const findParentEventProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const childEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
-    if (!childEvent?.parentId) return null
+    if (!childEvent?.parentId) {
+      return null
+    }
+
+    const isCommitteeMember = ctx.principal
+      ? ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)
+      : false
+
+    if (!canViewEvent(childEvent.visibility, ctx.principal !== null, isCommitteeMember)) {
+      return null
+    }
+
     const event = await ctx.eventService.findEventById(ctx.handle, childEvent.parentId)
-    if (!event) return null
+    if (!event) {
+      return null
+    }
+
+    if (!canViewEvent(event.visibility, ctx.principal !== null, isCommitteeMember)) {
+      return null
+    }
+
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
@@ -519,7 +611,19 @@ const findChildEventsProcedure = procedure
   .output(EventWithAttendanceSchema.array())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const events = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
+    const parentEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    const isCommitteeMember = ctx.principal
+      ? ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)
+      : false
+
+    if (parentEvent === null || !canViewEvent(parentEvent.visibility, ctx.principal !== null, isCommitteeMember)) {
+      return []
+    }
+
+    const childEvents = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
+    const events = childEvents.filter((event) =>
+      canViewEvent(event.visibility, ctx.principal !== null, isCommitteeMember)
+    )
     const attendances = await ctx.attendanceService.getAttendancesByIds(
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
@@ -596,7 +700,6 @@ const findManyDeregisterReasonsWithEventProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .query(async ({ input, ctx }) => {
     const rows = await ctx.eventService.findManyDeregisterReasonsWithEvent(ctx.handle, input)
     return {
@@ -630,19 +733,19 @@ const findFeaturedEventsProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const principal = ctx.principal
-    const isStaff = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
+    const isCommitteeMember = principal ? ctx.authorizationService.isCommitteeMember(principal.affiliations) : false
 
-    let excludingType = input.filter?.excludingType ?? []
-
-    if (!isStaff && !excludingType.includes("INTERNAL")) {
-      excludingType = [...excludingType, "INTERNAL"]
-    }
+    const excludingVisibility = getExcludedVisibilities(
+      input.filter?.excludingVisibility ?? [],
+      principal !== null,
+      isCommitteeMember
+    )
 
     const events = await ctx.eventService.findFeaturedEvents(
       ctx.handle,
       {
         ...input.filter,
-        excludingType,
+        excludingVisibility,
       },
       input.cursor ?? input.offset,
       input.limit,

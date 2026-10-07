@@ -48,12 +48,12 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    reserved: true,
+    registered: true,
     attendedAt: null,
     earliestReservationAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
-    paymentDeadline: null,
+    completionDeadline: null,
     paymentId: null,
     paymentLink: null,
     paymentChargeDeadline: null,
@@ -122,14 +122,15 @@ describe("buildRegistrationAvailabilityView", () => {
         eventRejectionCause: null,
         userRejectionCause: "SUSPENDED",
         reservationActiveAt: null,
-        willBeUnreserved: false,
+        willBeQueued: false,
         hasMergeDelay: false,
       },
       deregistration: null,
+      completion: null,
     })
   })
 
-  it("returns unreserved state when registration succeeds with delay", () => {
+  it("returns queued state when registration succeeds with delay", () => {
     const reservationActiveAt = addHours(getCurrentUTC(), 2)
     const attendance = createAttendance()
     const punishment: Punishment = { suspended: false, delay: 2 }
@@ -140,7 +141,7 @@ describe("buildRegistrationAvailabilityView", () => {
     expect(view.registration?.canRegister).toBe(true)
     expect(view.registration?.eventRejectionCause).toBeNull()
     expect(view.registration?.userRejectionCause).toBeNull()
-    expect(view.registration?.willBeUnreserved).toBe(true)
+    expect(view.registration?.willBeQueued).toBe(true)
     expect(view.punishment).toEqual(punishment)
     expect(view.pool).toEqual({
       id: attendance.pools[0].id,
@@ -174,7 +175,7 @@ describe("buildRegistrationAvailabilityView", () => {
     expect(view.registration?.eventRejectionCause).toBe("TOO_EARLY")
     expect(view.registration?.userRejectionCause).toBeNull()
     expect(view.registration?.hasMergeDelay).toBe(true)
-    expect(view.registration?.willBeUnreserved).toBe(true)
+    expect(view.registration?.willBeQueued).toBe(true)
     expect(view.pool).toEqual({
       id: pool.id,
       mergeDelayHours: 4,
@@ -198,16 +199,16 @@ describe("buildRegistrationAvailabilityView", () => {
       eventRejectionCause: "TOO_EARLY",
       userRejectionCause: "SUSPENDED",
       reservationActiveAt: null,
-      willBeUnreserved: false,
+      willBeQueued: false,
       hasMergeDelay: false,
     })
   })
 
-  it("marks pool as full when reserved count reaches capacity", () => {
+  it("marks pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", reserved: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", reserved: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
       ],
     })
     const result = createSuccessResult(attendance)
@@ -215,7 +216,7 @@ describe("buildRegistrationAvailabilityView", () => {
     const view = buildRegistrationAvailabilityView(userId, result, null, attendance)
 
     expect(view.pool?.isPoolFull).toBe(true)
-    expect(view.registration?.willBeUnreserved).toBe(true)
+    expect(view.registration?.willBeQueued).toBe(true)
   })
 })
 
@@ -236,6 +237,32 @@ describe("buildDeregistrationAvailabilityView", () => {
         chargeScheduleDate: null,
       })
     )
+    expect(view.completion).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline: null,
+      requirements: [{ requirement: "PAYMENT", completed: false }],
+      missingRequirements: ["PAYMENT"],
+      paymentLink: null,
+    })
+  })
+
+  it("includes reserved completion state when payment is pending", () => {
+    const attendance = createAttendance()
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      paymentLink: "https://example.com/pay",
+    })
+
+    const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
+
+    expect(view.completion).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [{ requirement: "PAYMENT", completed: false }],
+      missingRequirements: ["PAYMENT"],
+      paymentLink: "https://example.com/pay",
+    })
   })
 
   it("requires deregister reason after grace period", () => {
@@ -263,13 +290,13 @@ describe("buildDeregistrationAvailabilityView", () => {
     expect(view.deregistration?.hasBeenCharged).toBe(true)
   })
 
-  it("blocks deregistration after deadline for reserved attendees", () => {
+  it("blocks deregistration after deadline for registered attendees", () => {
     const attendance = createAttendance({
       deregisterDeadline: subHours(getCurrentUTC(), 1),
     })
     const attendee = createAttendee({
       createdAt: subHours(getCurrentUTC(), 3),
-      reserved: true,
+      registered: true,
     })
 
     const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
@@ -293,11 +320,11 @@ describe("buildDeregistrationAvailabilityView", () => {
 })
 
 describe("buildPoolOccupancies", () => {
-  it("marks a pool as full when reserved count reaches capacity", () => {
+  it("marks a pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", reserved: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", reserved: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
       ],
     })
 
@@ -306,24 +333,24 @@ describe("buildPoolOccupancies", () => {
     expect(poolOccupancies).toEqual([
       {
         poolId: attendance.pools[0].id,
-        reservedCount: 2,
+        registeredCount: 2,
         capacity: 2,
         isPoolFull: true,
       },
     ])
   })
 
-  it("ignores unreserved attendees when computing pool fullness", () => {
+  it("ignores queued attendees when computing pool fullness", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", reserved: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", reserved: false }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: false }),
       ],
     })
 
     const poolOccupancies = buildPoolOccupancies(attendance)
 
     expect(poolOccupancies[0]?.isPoolFull).toBe(false)
-    expect(poolOccupancies[0]?.reservedCount).toBe(1)
+    expect(poolOccupancies[0]?.registeredCount).toBe(1)
   })
 })

@@ -25,7 +25,11 @@ const createOfflineProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.create(ctx.handle, input)
+    const createdOffline = await ctx.offlineService.create(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Create Offline(ID=${createdOffline.id},Title=${createdOffline.title})`)
+
+    return createdOffline
   })
 
 export type EditOfflineInput = inferProcedureInput<typeof editOfflineProcedure>
@@ -50,7 +54,11 @@ const editOfflineProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: changes, ctx }) => {
-    return ctx.offlineService.update(ctx.handle, changes.id, changes.input)
+    const updatedOffline = await ctx.offlineService.update(ctx.handle, changes.id, changes.input)
+
+    ctx.setAuditTransactionName(`Update Offline(ID=${updatedOffline.id},Title=${updatedOffline.title})`)
+
+    return updatedOffline
   })
 
 export type AllOfflineInput = inferProcedureInput<typeof allOfflineProcedure>
@@ -92,7 +100,6 @@ const createOfflineFileUploadProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     return ctx.offlineService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
   })
@@ -109,7 +116,6 @@ const createOfflineImageUploadProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     return ctx.offlineService.createImageUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
   })

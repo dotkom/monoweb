@@ -4,7 +4,7 @@ import { Link } from "@/components/link"
 import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { Notification } from "@dotkomonline/rpc/notification"
-import { Text, cn } from "@dotkomonline/ui"
+import { Button, Text, cn } from "@dotkomonline/ui"
 import { IconCheck } from "@tabler/icons-react"
 import type { MouseEvent, PropsWithChildren } from "react"
 
@@ -58,7 +58,7 @@ export function NotificationItem({
 
       <div className="pointer-events-none relative flex min-w-0 grow flex-col gap-2">
         <div className="flex min-w-0 grow flex-col gap-1">
-          <div className="flex w-full min-w-0 items-center gap-1.5">
+          <div className="flex w-full min-w-0 items-center gap-1.5 justify-between">
             <div
               className={cn(
                 "inline-flex min-w-0 items-center gap-1.5",
@@ -74,14 +74,13 @@ export function NotificationItem({
             </div>
 
             {isUnread && (
-              <button
-                type="button"
+              <Button
                 aria-label="Merk som lest"
                 onClick={markAsRead}
-                className="ml-auto shrink-0 rounded-sm p-1 -m-1 border border-gray-200 dark:border-stone-700 opacity-0 pointer-events-none group-hover/container:pointer-events-auto group-hover/container:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 bg-gray-50 hover:bg-gray-200/70 dark:hover:bg-stone-700"
+                className="shrink-0 rounded-sm h-fit p-0.75 -m-0.75 border border-gray-200 dark:border-stone-700 opacity-0 pointer-events-none group-hover/container:pointer-events-auto group-hover/container:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 bg-gray-50 hover:bg-gray-200/70 dark:bg-stone-800 dark:hover:bg-stone-700"
               >
                 <IconCheck className="size-3.5" />
-              </button>
+              </Button>
             )}
           </div>
 

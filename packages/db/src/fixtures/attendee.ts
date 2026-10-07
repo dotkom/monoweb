@@ -1,7 +1,21 @@
-import { roundToNearestHours, subDays } from "date-fns"
+import { addHours, roundToNearestHours, subDays } from "date-fns"
 import type { Prisma } from "../"
+import { getVolleyballEventEnd } from "./event"
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
+
+export const VOLLEYBALL_ATTENDEE_FIXTURE_IDS = [
+  "c1000001-0000-4000-8000-000000000001",
+  "c1000002-0000-4000-8000-000000000002",
+  "c1000003-0000-4000-8000-000000000003",
+  "c1000004-0000-4000-8000-000000000004",
+  "c1000005-0000-4000-8000-000000000005",
+  "c1000006-0000-4000-8000-000000000006",
+  "c1000007-0000-4000-8000-000000000007",
+  "c1000008-0000-4000-8000-000000000008",
+  "c1000009-0000-4000-8000-000000000009",
+  "c1000010-0000-4000-8000-000000000010",
+] as const
 
 export type AttendancePoolKey = `${string}:${string}`
 
@@ -15,7 +29,7 @@ type AttendeeAssignment = {
   poolTitle: string
   userIndex: number
   registeredDaysAgo: number
-  reserved?: boolean
+  registered?: boolean
 }
 
 const attendeeAssignments: AttendeeAssignment[] = [
@@ -110,19 +124,29 @@ export const getAttendeeFixtures = (
   poolMap: ReadonlyMap<AttendancePoolKey, string>,
   attendanceIds: string[],
   userIds: string[]
-) =>
-  attendeeAssignments.map(({ attendanceIndex, poolTitle, userIndex, registeredDaysAgo, reserved = true }) => {
+) => {
+  let volleyballAttendeeIndex = 0
+
+  return attendeeAssignments.map(({ attendanceIndex, poolTitle, userIndex, registeredDaysAgo, registered = true }) => {
     const registeredAt = subDays(now, registeredDaysAgo)
+    const isVolleyballAttendee = attendanceIndex === 10
 
     return {
+      ...(isVolleyballAttendee
+        ? {
+            id: VOLLEYBALL_ATTENDEE_FIXTURE_IDS[volleyballAttendeeIndex++],
+            attendedAt: addHours(getVolleyballEventEnd(), 1),
+          }
+        : {}),
       attendanceId: attendanceIds[attendanceIndex],
       attendancePoolId: resolvePoolId(poolMap, attendanceIds, attendanceIndex, poolTitle),
       userId: userIds[userIndex],
       userGrade: userGrades[userIndex],
-      reserved,
+      registered,
       earliestReservationAt: registeredAt,
       createdAt: registeredAt,
       updatedAt: registeredAt,
       selections: [],
     } satisfies Prisma.AttendeeCreateManyInput
   })
+}

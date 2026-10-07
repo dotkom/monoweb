@@ -380,27 +380,6 @@ const CUSTOM_RELATION_MERGERS = {
       data: { userId: survivor.id },
     })
   },
-
-  birthdayPartyGuess: async (
-    handle: DBHandle,
-    _dependencies: MergeUsersDependencies,
-    survivor: User,
-    consumed: User
-  ) => {
-    const survivorGuess = await handle.birthdayPartyGuess.findUnique({
-      where: { userId: survivor.id },
-      select: { id: true },
-    })
-
-    if (survivorGuess !== null) {
-      return
-    }
-
-    await handle.birthdayPartyGuess.updateMany({
-      where: { userId: consumed.id },
-      data: { userId: survivor.id },
-    })
-  },
 } satisfies Partial<
   Record<
     AllUserKeys,

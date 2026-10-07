@@ -83,6 +83,7 @@ export const ModelName = {
   FeedbackQuestionAnswer: 'FeedbackQuestionAnswer',
   FeedbackQuestionAnswerOptionLink: 'FeedbackQuestionAnswerOptionLink',
   FeedbackFormAnswer: 'FeedbackFormAnswer',
+  AuditTransaction: 'AuditTransaction',
   AuditLog: 'AuditLog',
   DeregisterReason: 'DeregisterReason',
   NotificationRecipient: 'NotificationRecipient',
@@ -92,8 +93,7 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink',
-  BirthdayPartyGuess: 'BirthdayPartyGuess'
+  UserFlagLink: 'UserFlagLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -258,12 +258,12 @@ export const AttendeeScalarFieldEnum = {
   id: 'id',
   userGrade: 'userGrade',
   selections: 'selections',
-  reserved: 'reserved',
+  registered: 'registered',
   earliestReservationAt: 'earliestReservationAt',
   attendedAt: 'attendedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  paymentDeadline: 'paymentDeadline',
+  completionDeadline: 'completionDeadline',
   paymentLink: 'paymentLink',
   paymentId: 'paymentId',
   paymentReservedAt: 'paymentReservedAt',
@@ -282,6 +282,8 @@ export type AttendeeScalarFieldEnum = (typeof AttendeeScalarFieldEnum)[keyof typ
 
 export const EventScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   title: 'title',
   start: 'start',
   end: 'end',
@@ -292,10 +294,9 @@ export const EventScalarFieldEnum = {
   locationTitle: 'locationTitle',
   locationAddress: 'locationAddress',
   locationLink: 'locationLink',
-  type: 'type',
   markForMissedAttendance: 'markForMissedAttendance',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
+  type: 'type',
+  visibility: 'visibility',
   attendanceId: 'attendanceId',
   parentId: 'parentId',
   contestId: 'contestId',
@@ -556,6 +557,17 @@ export const FeedbackFormAnswerScalarFieldEnum = {
 export type FeedbackFormAnswerScalarFieldEnum = (typeof FeedbackFormAnswerScalarFieldEnum)[keyof typeof FeedbackFormAnswerScalarFieldEnum]
 
 
+export const AuditTransactionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  procedure: 'procedure',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AuditTransactionScalarFieldEnum = (typeof AuditTransactionScalarFieldEnum)[keyof typeof AuditTransactionScalarFieldEnum]
+
+
 export const AuditLogScalarFieldEnum = {
   id: 'id',
   tableName: 'tableName',
@@ -564,7 +576,8 @@ export const AuditLogScalarFieldEnum = {
   operation: 'operation',
   rowData: 'rowData',
   transactionId: 'transactionId',
-  userId: 'userId'
+  userId: 'userId',
+  auditTransactionId: 'auditTransactionId'
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
@@ -684,17 +697,6 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
-
-
-export const BirthdayPartyGuessScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  guess: 'guess',
-  userId: 'userId'
-} as const
-
-export type BirthdayPartyGuessScalarFieldEnum = (typeof BirthdayPartyGuessScalarFieldEnum)[keyof typeof BirthdayPartyGuessScalarFieldEnum]
 
 
 export const SortOrder = {

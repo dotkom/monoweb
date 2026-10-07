@@ -1,4 +1,5 @@
-import { getLogger } from "@dotkomonline/logger"
+import { EXPORT_SPAN_ON_ERROR_ATTRIBUTE, getLogger } from "@dotkomonline/logger"
+import { HTTP_REQUEST_SOURCE_ATTRIBUTE } from "@dotkomonline/utils"
 import type { GroupId, GroupRoleType } from "./modules/group/group"
 import type { UserId } from "./modules/user/user"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
@@ -31,10 +32,11 @@ export type Principal = {
   scopes: Set<string>
 }
 
-export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer) => {
+export const createTrpcContext = async (principal: Principal | null, context: ServiceLayer, requestSource: string) => {
   const trpcContext = {
     ...context,
     principal,
+    requestSource,
     addAuthorizationGuard,
   }
 
@@ -93,76 +95,89 @@ export const t = initTRPC.context<TRPCContext>().create({
  * Create a procedure builder that can be used to create procedures.
  *
  * This helper wraps the `t.procedure` builder and adds a middleware to create an OpenTelemetry tracer span for each API
- * server call.
+ * server call. When `exportSpanOnError` is set, the span is still recorded here, but the exporter drops it unless the
+ * call fails.
  */
-export const procedure = t.procedure.use(async ({ ctx, path, type, next }) => {
-  return await trace.getTracer("@dotkomonline/rpc/trpc-request").startActiveSpan(
-    `tRPC/${type}/${path}`,
-    {
-      root: true,
-    },
-    async (span) => {
-      // See https://opentelemetry.io/docs/specs/semconv/registry/attributes/rpc/ and https://opentelemetry.io/docs/specs/semconv/registry/attributes/http/
-      // for the meaning of these attributes.
-      span.setAttribute("rpc.service", "@dotkomonline/rpc")
-      span.setAttribute("rpc.system", "trpc")
-      span.setAttribute("http.request.method", "_OTHER")
-      span.setAttribute("http.request.method_original", type)
-      span.setAttribute("http.route", path)
+function withTracing(exportSpanOnError: boolean) {
+  return t.middleware(async ({ ctx, path, type, next }) => {
+    return await trace.getTracer("@dotkomonline/rpc/trpc-request").startActiveSpan(
+      `tRPC/${type}/${path}`,
+      {
+        root: true,
+      },
+      async (span) => {
+        // See https://opentelemetry.io/docs/specs/semconv/registry/attributes/rpc/ and https://opentelemetry.io/docs/specs/semconv/registry/attributes/http/
+        // for the meaning of these attributes.
+        span.setAttribute("rpc.service", "@dotkomonline/rpc")
+        span.setAttribute("rpc.system", "trpc")
+        span.setAttribute("http.request.method", "_OTHER")
+        span.setAttribute("http.request.method_original", type)
+        span.setAttribute("http.route", path)
+        span.setAttribute(HTTP_REQUEST_SOURCE_ATTRIBUTE, ctx.requestSource)
 
-      try {
-        const logger = getLogger("@dotkomonline/rpc/trpc")
-        const result = await next({ ctx })
-        // This is how tRPC middlewares capture results of the procedure call. In fact, the try-finally block above is
-        // not related to error handling at all, but rather to ensure the OpenTelemetry tracing span is ALWAYS ended.
-        if (result.ok) {
-          span.setStatus({ code: SpanStatusCode.OK })
-          return result
-        }
-        // This means an error occurred in the procedure call, and we need to report it to the user, and send
-        // the telemetry off to the OpenTelemetry backend.
-        const traceId = span?.spanContext().traceId ?? "<missing traceId>"
-        logger.error(
-          "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
-          ctx?.principal?.subject ?? "<anonymous>",
-          path,
-          type,
-          traceId,
-          result.error
-        )
-
-        let error: TRPCError = result.error
-        // If the error cause is an ApplicationError, we can try to remap it to a more specific TRPCError code that we
-        // purposely know about.
-        if (result.error.cause instanceof ApplicationError) {
-          error = new TRPCError({
-            code: getTRPCErrorCode(result.error.cause),
-            message: `${result.error.cause.message} (TraceID=${traceId})`,
-            cause: result.error.cause,
-          })
+        if (exportSpanOnError) {
+          span.setAttribute(EXPORT_SPAN_ON_ERROR_ATTRIBUTE, true)
         }
 
-        span.recordException(error)
-        span.setStatus({ code: SpanStatusCode.ERROR })
+        try {
+          const logger = getLogger("@dotkomonline/rpc/trpc")
+          const result = await next({ ctx })
+          // This is how tRPC middlewares capture results of the procedure call. In fact, the try-finally block above is
+          // not related to error handling at all, but rather to ensure the OpenTelemetry tracing span is ALWAYS ended.
+          if (result.ok) {
+            span.setStatus({ code: SpanStatusCode.OK })
+            return result
+          }
+          // This means an error occurred in the procedure call, and we need to report it to the user, and send
+          // the telemetry off to the OpenTelemetry backend.
+          const traceId = span?.spanContext().traceId ?? "<missing traceId>"
+          logger.error(
+            "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
+            ctx?.principal?.subject ?? "<anonymous>",
+            path,
+            type,
+            traceId,
+            result.error
+          )
 
-        // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
-        // fault.
-        const isClientError = error.cause instanceof ForbiddenError || error.cause instanceof UnauthorizedError
-        if (!isClientError) {
-          captureException(error)
+          let error: TRPCError = result.error
+          // If the error cause is an ApplicationError, we can try to remap it to a more specific TRPCError code that we
+          // purposely know about.
+          if (result.error.cause instanceof ApplicationError) {
+            error = new TRPCError({
+              code: getTRPCErrorCode(result.error.cause),
+              message: `${result.error.cause.message} (TraceID=${traceId})`,
+              cause: result.error.cause,
+            })
+          }
+
+          span.recordException(error)
+          span.setStatus({ code: SpanStatusCode.ERROR })
+
+          // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
+          // fault.
+          const isClientError = error.cause instanceof ForbiddenError || error.cause instanceof UnauthorizedError
+          if (!isClientError) {
+            captureException(error)
+          }
+
+          return {
+            marker: result.marker,
+            ok: false,
+            error,
+          } satisfies MiddlewareResult<unknown>
+        } finally {
+          span.end()
         }
-
-        return {
-          marker: result.marker,
-          ok: false,
-          error,
-        } satisfies MiddlewareResult<unknown>
-      } finally {
-        span.end()
       }
-    }
-  )
-})
+    )
+  })
+}
+
+export const procedure = t.procedure.use(withTracing(false))
+
+/** Traces errors only. Successful calls are recorded in-process and then dropped before export. */
+export const procedureTraceErrorsOnly = t.procedure.use(withTracing(true))
 
 /** Map an ApplicationError to a TRPCError code. */
 function getTRPCErrorCode(error: ApplicationError): TRPC_ERROR_CODE_KEY {

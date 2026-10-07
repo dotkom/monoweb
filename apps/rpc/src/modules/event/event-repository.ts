@@ -179,6 +179,12 @@ export function getEventRepository(): EventRepository {
                       in: query.byType,
                     }
                   : undefined,
+              visibility:
+                query.byVisibility && query.byVisibility.length > 0
+                  ? {
+                      in: query.byVisibility,
+                    }
+                  : undefined,
               parentId: query.excludingChildEvents
                 ? {
                     equals: null,
@@ -210,7 +216,10 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
               type: {
-                notIn: query.excludingType ?? ["INTERNAL"],
+                notIn: query.excludingType ?? [],
+              },
+              visibility: {
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -250,6 +259,7 @@ export function getEventRepository(): EventRepository {
           start: true,
           end: true,
           type: true,
+          visibility: true,
           status: true,
           imageUrl: true,
           parentId: true,
@@ -291,6 +301,12 @@ export function getEventRepository(): EventRepository {
                       in: query.byType,
                     }
                   : undefined,
+              visibility:
+                query.byVisibility && query.byVisibility.length > 0
+                  ? {
+                      in: query.byVisibility,
+                    }
+                  : undefined,
             },
             {
               OR: [
@@ -317,7 +333,10 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
               type: {
-                notIn: query.excludingType ?? ["INTERNAL"],
+                notIn: query.excludingType ?? [],
+              },
+              visibility: {
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -448,10 +467,12 @@ export function getEventRepository(): EventRepository {
           query.byOrganizingCompany ?? [],
           query.byOrganizingGroup ?? [],
           query.excludingOrganizingGroup ?? [],
-          query.excludingType ?? ["INTERNAL"],
+          query.excludingType ?? [],
           query.byHasFeedbackForm ?? null,
           userId,
-          excludeAttendedByUser
+          excludeAttendedByUser,
+          query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
+          query.byVisibility ?? []
         )
       )
 
@@ -607,12 +628,18 @@ export function getEventRepository(): EventRepository {
 
       return rows.map((row) => {
         const { event, ...rest } = row
-        const deregisterReason = {
-          event: {
+        let linkedEvent = null
+
+        if (event !== null) {
+          linkedEvent = {
             ...event,
-            companies: event.companies.map((c) => c.company),
-            hostingGroups: event.hostingGroups.map((g) => g.group),
-          },
+            companies: event.companies.map((eventCompany) => eventCompany.company),
+            hostingGroups: event.hostingGroups.map((eventHostingGroup) => eventHostingGroup.group),
+          }
+        }
+
+        const deregisterReason = {
+          event: linkedEvent,
           ...rest,
         }
 

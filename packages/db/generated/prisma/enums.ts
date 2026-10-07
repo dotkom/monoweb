@@ -92,8 +92,7 @@ export const GroupRoleType = {
   DEPUTY_LEADER: 'DEPUTY_LEADER',
   TRUSTEE: 'TRUSTEE',
   EMAIL_ONLY: 'EMAIL_ONLY',
-  TEMPORARILY_LEAVE: 'TEMPORARILY_LEAVE',
-  EDITOR_IN_CHIEF: 'EDITOR_IN_CHIEF'
+  TEMPORARILY_LEAVE: 'TEMPORARILY_LEAVE'
 } as const
 
 export type GroupRoleType = (typeof GroupRoleType)[keyof typeof GroupRoleType]
@@ -113,12 +112,20 @@ export const EventType = {
   COMPANY: 'COMPANY',
   ACADEMIC: 'ACADEMIC',
   SOCIAL: 'SOCIAL',
-  INTERNAL: 'INTERNAL',
   OTHER: 'OTHER',
   WELCOME: 'WELCOME'
 } as const
 
 export type EventType = (typeof EventType)[keyof typeof EventType]
+
+
+export const EventVisibility = {
+  PUBLIC: 'PUBLIC',
+  AUTHENTICATED: 'AUTHENTICATED',
+  COMMITTEE_ONLY: 'COMMITTEE_ONLY'
+} as const
+
+export type EventVisibility = (typeof EventVisibility)[keyof typeof EventVisibility]
 
 
 export const MarkType = {
@@ -146,7 +153,7 @@ export const TaskType = {
   RESERVE_ATTENDEE: 'RESERVE_ATTENDEE',
   CHARGE_ATTENDEE: 'CHARGE_ATTENDEE',
   MERGE_ATTENDANCE_POOLS: 'MERGE_ATTENDANCE_POOLS',
-  VERIFY_PAYMENT: 'VERIFY_PAYMENT',
+  VERIFY_ATTENDANCE_COMPLETION: 'VERIFY_ATTENDANCE_COMPLETION',
   VERIFY_FEEDBACK_ANSWERED: 'VERIFY_FEEDBACK_ANSWERED',
   SEND_FEEDBACK_FORM_EMAILS: 'SEND_FEEDBACK_FORM_EMAILS',
   VERIFY_ATTENDEE_ATTENDED: 'VERIFY_ATTENDEE_ATTENDED',
@@ -163,7 +170,8 @@ export const TaskStatus = {
   RUNNING: 'RUNNING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
-  CANCELED: 'CANCELED'
+  CANCELED: 'CANCELED',
+  SKIPPED: 'SKIPPED'
 } as const
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]

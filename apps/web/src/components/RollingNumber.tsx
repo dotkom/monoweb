@@ -70,7 +70,7 @@ const buildSlots = (previous: string, current: string, existing: DigitSlot[]): D
  *
  * @example
  * <Text>
- *   <RollingNumber value={reservedAttendeeCount} /> påmeldte
+ *   <RollingNumber value={registeredAttendeeCount} /> påmeldte
  * </Text>
  */
 export const RollingNumber = ({ value, containerClassName, className, minDigits }: RollingNumberProps) => {

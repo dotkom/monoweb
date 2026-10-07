@@ -14,16 +14,9 @@ import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
  * companies, attendance pools, and attendees.
  */
 
-export const EventTypeSchema = z.enum([
-  "GENERAL_ASSEMBLY",
-  "COMPANY",
-  "ACADEMIC",
-  "SOCIAL",
-  "INTERNAL",
-  "OTHER",
-  "WELCOME",
-])
+export const EventTypeSchema = z.enum(["GENERAL_ASSEMBLY", "COMPANY", "ACADEMIC", "SOCIAL", "OTHER", "WELCOME"])
 export const EventStatusSchema = z.enum(["DRAFT", "PUBLIC", "DELETED"])
+export const EventVisibilitySchema = z.enum(["PUBLIC", "AUTHENTICATED", "COMMITTEE_ONLY"])
 
 export type BaseEvent = z.infer<typeof BaseEventSchema>
 export const BaseEventSchema = z.object({
@@ -39,6 +32,7 @@ export const BaseEventSchema = z.object({
   locationAddress: z.string().nullable(),
   locationLink: z.string().nullable(),
   type: EventTypeSchema,
+  visibility: EventVisibilitySchema.default("PUBLIC"),
   markForMissedAttendance: z.boolean().default(true),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -56,11 +50,13 @@ export const EventSchema = BaseEventSchema.extend({
 export type EventId = Event["id"]
 export type EventType = Event["type"]
 export type EventStatus = Event["status"]
+export type EventVisibility = Event["visibility"]
 
 export type EventWrite = z.infer<typeof EventWriteSchema>
 export const EventWriteSchema = EventSchema.pick({
   status: true,
   type: true,
+  visibility: true,
   title: true,
   start: true,
   end: true,
@@ -86,7 +82,9 @@ export const EventFilterQuerySchema = z
     orderBy: createSortOrder(),
     byStatus: buildAnyOfFilter(EventStatusSchema).default(["PUBLIC"]),
     byType: buildAnyOfFilter(EventTypeSchema),
-    excludingType: buildAnyOfFilter(EventTypeSchema).default(["INTERNAL"]),
+    excludingType: buildAnyOfFilter(EventTypeSchema),
+    byVisibility: buildAnyOfFilter(EventVisibilitySchema),
+    excludingVisibility: buildAnyOfFilter(EventVisibilitySchema).default(["COMMITTEE_ONLY"]),
     byHasFeedbackForm: z.boolean(),
     excludingChildEvents: z.boolean().default(false),
   })
@@ -104,6 +102,7 @@ export const EventSummarySchema = EventSchema.pick({
   start: true,
   end: true,
   type: true,
+  visibility: true,
   status: true,
   imageUrl: true,
   parentId: true,
@@ -129,8 +128,6 @@ export const mapEventTypeToLabel = (eventType: EventType) => {
       return "Kurs"
     case "GENERAL_ASSEMBLY":
       return "Generalforsamling"
-    case "INTERNAL":
-      return "Intern"
     case "OTHER":
       return "Annet"
     case "COMPANY":
@@ -139,6 +136,19 @@ export const mapEventTypeToLabel = (eventType: EventType) => {
       return "Sosialt"
     case "WELCOME":
       return "Fadderuke"
+    default:
+      return "Ukjent"
+  }
+}
+
+export const mapEventVisibilityToLabel = (visibility: EventVisibility) => {
+  switch (visibility) {
+    case "PUBLIC":
+      return "Offentlig"
+    case "AUTHENTICATED":
+      return "Kun innloggede brukere"
+    case "COMMITTEE_ONLY":
+      return "Kun komitémedlemmer"
     default:
       return "Ukjent"
   }
@@ -177,12 +187,12 @@ export const DeregisterReasonSchema = z.object({
   details: z.string().nullable(),
   userGrade: z.number().int().nullable(),
   userId: z.string(),
-  eventId: z.string(),
+  eventId: z.string().nullable(),
 })
 
 export type DeregisterReasonWithEvent = z.infer<typeof DeregisterReasonWithEventSchema>
 export const DeregisterReasonWithEventSchema = DeregisterReasonSchema.extend({
-  event: EventSchema,
+  event: EventSchema.nullable(),
 })
 
 export type DeregisterReasonWrite = z.infer<typeof DeregisterReasonWriteSchema>
@@ -193,7 +203,7 @@ export const DeregisterReasonWriteSchema = DeregisterReasonSchema.pick({
   eventId: true,
   registeredAt: true,
   userGrade: true,
-})
+}).extend({ eventId: EventSchema.shape.id })
 
 export const mapDeregisterReasonTypeToLabel = (type: DeregisterReasonType) => {
   switch (type) {

@@ -76,8 +76,8 @@
   --accent: oklch(0.962 0.018 264.542);
   --accent-foreground: oklch(0.21 0.034 264.665);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.928 0.006 264.531);
-  --input: oklch(0.928 0.006 264.531);
+  --border: oklch(0.85 0.006 264);
+  --input: oklch(0.9 0.006 264);
   --ring: var(--color-brand, #0b5374);
   --chart-1: oklch(0.87 0.02 264);
   --chart-2: oklch(0.551 0.027 264.364);
@@ -87,7 +87,7 @@
   --radius: 0.625rem;
   --field-radius: var(--radius);
   --field-bg: var(--card);
-  --field-border: oklch(0.928 0.006 264.531 / 50%);
+  --field-border: oklch(0.925 0.006 264);
   --focus-ring: var(--ring);
   --backdrop: rgba(0, 0, 0, 0.5);
   --field-shadow:
@@ -129,8 +129,8 @@
   --accent: oklch(0.268 0.007 34.298);
   --accent-foreground: oklch(0.985 0.001 106.423);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(1 0 0 / 15%);
+  --input: oklch(1 0 0 / 12%);
   --ring: var(--color-brand, #0b5374);
   --chart-1: oklch(0.869 0.005 56.366);
   --chart-2: oklch(0.553 0.013 58.071);
@@ -138,7 +138,7 @@
   --chart-4: oklch(0.374 0.01 67.558);
   --chart-5: oklch(0.268 0.007 34.298);
   --field-bg: var(--card);
-  --field-border: oklch(1 0 0 / 8%);
+  --field-border: oklch(1 0 0 / 10%);
   --field-shadow: 0 0 0 0 transparent;
   --overlay-shadow:
     0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 8px 24px 0 rgba(0, 0, 0, 0.2);

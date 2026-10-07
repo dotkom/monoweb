@@ -29,7 +29,11 @@ const createMarkProcedure = procedure
       throw new InvalidArgumentError("Email-only groups cannot be used for marks")
     }
 
-    return ctx.markService.create(ctx.handle, input.data, input.groupIds)
+    const createdMark = await ctx.markService.create(ctx.handle, input.data, input.groupIds)
+
+    ctx.setAuditTransactionName(`Create Mark(ID=${createdMark.id},Title=${createdMark.title})`)
+
+    return createdMark
   })
 
 export type EditMarkInput = inferProcedureInput<typeof editMarkProcedure>
@@ -52,13 +56,19 @@ const editMarkProcedure = procedure
       throw new InvalidArgumentError("Email-only groups cannot be used for marks")
     }
 
-    return ctx.markService.update(ctx.handle, input.changes.id, input.changes, input.groupIds)
+    const updatedMark = await ctx.markService.update(ctx.handle, input.changes.id, input.changes, input.groupIds)
+
+    ctx.setAuditTransactionName(`Update Mark(ID=${updatedMark.id},Title=${updatedMark.title})`)
+
+    return updatedMark
   })
 
 export type GetMarkInput = inferProcedureInput<typeof getMarkProcedure>
 export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
 const getMarkProcedure = procedure
   .input(MarkSchema.shape.id)
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.markService.getById(ctx.handle, input))
 
@@ -66,6 +76,8 @@ export type FindMarksInput = inferProcedureInput<typeof findManyProcedure>
 export type FindMarksOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
@@ -85,7 +97,14 @@ const deleteMarkProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .mutation(async ({ input, ctx }) => ctx.markService.delete(ctx.handle, input))
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const deletedMark = await ctx.markService.delete(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Delete Mark(ID=${deletedMark.id},Title=${deletedMark.title})`)
+
+    return deletedMark
+  })
 
 export const markRouter = t.router({
   personal: personalMarkRouter,

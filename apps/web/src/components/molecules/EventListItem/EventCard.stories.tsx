@@ -9,7 +9,7 @@ import {
 } from "../../../../.ladle/fixtures/attendance"
 import { EventCard } from "./EventCard"
 
-const createReservedAttendees = (count: number) =>
+const createRegisteredAttendees = (count: number) =>
   Array.from({ length: count }, (_, index) =>
     createMockAttendee({
       id: `00000000-0000-4000-8000-0000000001${index}`,
@@ -18,7 +18,7 @@ const createReservedAttendees = (count: number) =>
         id: `00000000-0000-4000-8000-0000000000${index + 1}`,
         username: `bruker${index + 1}`,
       }),
-      reserved: true,
+      registered: true,
     })
   )
 
@@ -37,7 +37,7 @@ export const Default = () => {
   const attendance = createMockAttendanceSummary({
     attendancePrice: 100,
     capacity: 20,
-    attendees: createReservedAttendees(4),
+    attendees: createRegisteredAttendees(4),
   })
 
   return (
@@ -49,7 +49,7 @@ export const Default = () => {
 
 export const AllStates = () => {
   const user = createMockUser()
-  const reservedAttendee = createMockAttendee({ user, reserved: true })
+  const registeredAttendee = createMockAttendee({ user, registered: true })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
@@ -60,7 +60,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(4),
+            attendees: createRegisteredAttendees(4),
           })}
         />
       </div>
@@ -69,19 +69,19 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Free event</Text>
         <EventCard
           event={baseEvent}
-          attendance={createMockAttendanceSummary({ capacity: 20, attendees: createReservedAttendees(4) })}
+          attendance={createMockAttendanceSummary({ capacity: 20, attendees: createRegisteredAttendees(4) })}
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Reserved attendee</Text>
+        <Text className="text-sm text-muted-foreground">Registered attendee</Text>
         <EventCard
           event={baseEvent}
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: [reservedAttendee],
-            currentUserAttendee: reservedAttendee,
+            attendees: [registeredAttendee],
+            currentUserAttendee: registeredAttendee,
           })}
           userId={MOCK_USER_ID}
         />
@@ -98,7 +98,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(20),
+            attendees: createRegisteredAttendees(20),
           })}
         />
       </div>
@@ -110,7 +110,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(4),
+            attendees: createRegisteredAttendees(4),
           })}
         />
       </div>
@@ -148,7 +148,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 40,
-            attendees: createReservedAttendees(12),
+            attendees: createRegisteredAttendees(12),
           })}
         />
       </div>
@@ -164,7 +164,7 @@ export const AllStates = () => {
           })}
           attendance={createMockAttendanceSummary({
             capacity: 100,
-            attendees: createReservedAttendees(56),
+            attendees: createRegisteredAttendees(56),
           })}
         />
       </div>
@@ -181,7 +181,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 150,
             capacity: 80,
-            attendees: createReservedAttendees(80),
+            attendees: createRegisteredAttendees(80),
           })}
         />
       </div>
@@ -200,7 +200,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 150,
             capacity: 80,
-            attendees: createReservedAttendees(80),
+            attendees: createRegisteredAttendees(80),
           })}
         />
       </div>

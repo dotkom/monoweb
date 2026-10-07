@@ -41,7 +41,6 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
         eventType={type}
         className="w-full min-w-0"
         imageClassName="aspect-video w-full"
-        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
         showCalendarBox
       />
 

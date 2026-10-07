@@ -5,7 +5,7 @@ terraform {
     region = "eu-north-1"
   }
 
-  required_version = "~> 1.14.0"
+  required_version = "~> 1.16.0"
 
   required_providers {
     aws = {
@@ -45,13 +45,4 @@ provider "aws" {
       Environment = terraform.workspace
     }
   }
-}
-
-locals {
-  valid_workspaces = {
-    dev = 1
-    stg = 1
-    prd = 1
-  }
-  valid_workspaces_current = local.valid_workspaces[terraform.workspace]
 }

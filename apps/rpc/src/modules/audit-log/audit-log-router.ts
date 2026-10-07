@@ -1,10 +1,10 @@
-import { AuditLogFilterQuerySchema, AuditLogSchema } from "./audit-log"
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { isAdministrator } from "../../authorization"
 import { withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import { procedure, t } from "../../trpc"
+import { AuditActivitySchema, AuditLogFilterQuerySchema, AuditLogSchema } from "./audit-log"
 
 export type FindAuditLogsInput = inferProcedureInput<typeof findAuditLogsProcedure>
 export type FindAuditLogsOutput = inferProcedureOutput<typeof findAuditLogsProcedure>
@@ -64,8 +64,44 @@ const getAuditLogsByUserIdProcedure = procedure
     return ctx.auditLogService.findManyByUserId(ctx.handle, ctx.principal.subject, input)
   })
 
+export type FindAuditActivitiesInput = inferProcedureInput<typeof findAuditActivitiesProcedure>
+export type FindAuditActivitiesOutput = inferProcedureOutput<typeof findAuditActivitiesProcedure>
+const findAuditActivitiesProcedure = procedure
+  .input(
+    z.object({
+      filter: AuditLogFilterQuerySchema,
+      cursor: z.int().min(0).default(0),
+      limit: z.int().min(1).max(100).default(20),
+    })
+  )
+  .output(
+    z.object({
+      items: z.array(AuditActivitySchema),
+      nextCursor: z.int().optional(),
+    })
+  )
+  .use(withAuthentication())
+  .use(withAuthorization(isAdministrator()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const auditActivities = await ctx.auditLogService.findManyAuditActivities(
+      ctx.handle,
+      { ...input?.filter },
+      input.cursor,
+      input.limit
+    )
+
+    const nextCursor = auditActivities.length === input.limit ? input.cursor + input.limit : undefined
+
+    return {
+      items: auditActivities,
+      nextCursor,
+    }
+  })
+
 export const auditLogRouter = t.router({
   findAuditLogs: findAuditLogsProcedure,
+  findAuditActivities: findAuditActivitiesProcedure,
   all: allAuditLogsProcedure,
   getById: getAuditLogByIdProcedure,
   getByUserId: getAuditLogsByUserIdProcedure,

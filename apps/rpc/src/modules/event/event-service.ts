@@ -78,6 +78,7 @@ export interface EventService {
    */
   getEventById(handle: DBHandle, eventId: EventId): Promise<Event>
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
+  findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
@@ -133,6 +134,10 @@ export function getEventService(
         throw new NotFoundError(`Event(ID=${eventId}) not found`)
       }
       return event
+    },
+
+    async findByAttendanceId(handle, attendanceId) {
+      return await eventRepository.findByAttendanceId(handle, attendanceId)
     },
 
     async getByAttendanceId(handle, attendanceId) {

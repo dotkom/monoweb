@@ -1,9 +1,28 @@
-import { randomBytes } from "node:crypto"
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { type Group, type GroupId, type GroupMember, getActiveGroupMembership, GroupRoleTypeEnum } from "../group/group"
+import { slugify, type SlugifyOptions } from "@dotkomonline/utils"
+import type { admin_directory_v1 } from "@googleapis/admin"
+import { compareAsc, isAfter } from "date-fns"
+import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
+import { randomBytes } from "node:crypto"
+import invariant from "tiny-invariant"
+import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
+import { NotFoundError } from "../../error"
+import { CommitteeGroupSlug } from "../authorization-service"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import {
+  findActiveGroupMembership,
+  GroupRoleTypeEnum,
+  isGroupMemberActive,
+  type Group,
+  type GroupId,
+  type GroupMember,
+} from "../group/group"
+import type { GroupService } from "../group/group-service"
 import type { User, UserId } from "../user/user"
+import type { UserService } from "../user/user-service"
 import type {
   WorkspaceGroup,
   WorkspaceGroupLink,
@@ -12,18 +31,6 @@ import type {
   WorkspaceMemberSyncState,
   WorkspaceUser,
 } from "./workspace"
-import { slugify, type SlugifyOptions } from "@dotkomonline/utils"
-import { compareAsc, isAfter } from "date-fns"
-import type { admin_directory_v1 } from "@googleapis/admin"
-import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
-import invariant from "tiny-invariant"
-import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
-import { NotFoundError } from "../../error"
-import { CommitteeGroupSlug } from "../authorization-service"
-import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
-import type { GroupService } from "../group/group-service"
-import type { UserService } from "../user/user-service"
 
 // Google Workspace enforces a minimum password length of 8 characters
 const TEMPORARY_PASSWORD_LENGTH = 8
@@ -276,15 +283,11 @@ export function getWorkspaceService(
     const leaders = await groupService.findLeadersBySlug(handle, groupSlug)
     const leader = leaders
       .values()
-      .filter((leader) => {
-        const membership = getActiveGroupMembership(leader, groupSlug)
-
-        return membership?.end === null
-      })
+      .filter((leader) => isGroupMemberActive(leader, groupSlug))
       .toArray()
       .toSorted((a, b) => {
-        const membershipA = getActiveGroupMembership(a, groupSlug)
-        const membershipB = getActiveGroupMembership(b, groupSlug)
+        const membershipA = findActiveGroupMembership(a, groupSlug)
+        const membershipB = findActiveGroupMembership(b, groupSlug)
 
         // sanity check -- they should never be null
         if (membershipA == null || membershipB == null) {
@@ -385,7 +388,7 @@ export function getWorkspaceService(
       return "PENDING_LINK"
     }
 
-    const isActiveMember = getActiveGroupMembership(memberLink.groupMember) !== null
+    const isActiveMember = isGroupMemberActive(memberLink.groupMember)
     const isInWorkspace = memberLink.workspaceMember !== null
 
     if (isActiveMember && !isInWorkspace) {
@@ -419,9 +422,9 @@ export function getWorkspaceService(
     const group = await groupService.getBySlug(handle, contactCommittee)
     const members = await groupService.findMembersBySlug(handle, contactCommittee)
     const existingMember = members.get(userId) ?? null
-    const activeMembership = getActiveGroupMembership(existingMember, contactCommittee)
+    const isMembershipActive = isGroupMemberActive(existingMember, contactCommittee)
 
-    if (activeMembership !== null) {
+    if (isMembershipActive) {
       return
     }
 

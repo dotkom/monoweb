@@ -205,7 +205,7 @@ export type DeregisterReasonGroupByOutputType = {
   details: string | null
   userGrade: number | null
   userId: string
-  eventId: string
+  eventId: string | null
   _count: DeregisterReasonCountAggregateOutputType | null
   _avg: DeregisterReasonAvgAggregateOutputType | null
   _sum: DeregisterReasonSumAggregateOutputType | null
@@ -239,9 +239,9 @@ export type DeregisterReasonWhereInput = {
   details?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
   userGrade?: Prisma.IntNullableFilter<"DeregisterReason"> | number | null
   userId?: Prisma.StringFilter<"DeregisterReason"> | string
-  eventId?: Prisma.StringFilter<"DeregisterReason"> | string
+  eventId?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
+  event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
 }
 
 export type DeregisterReasonOrderByWithRelationInput = {
@@ -252,7 +252,7 @@ export type DeregisterReasonOrderByWithRelationInput = {
   details?: Prisma.SortOrderInput | Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   event?: Prisma.EventOrderByWithRelationInput
 }
@@ -268,9 +268,9 @@ export type DeregisterReasonWhereUniqueInput = Prisma.AtLeast<{
   details?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
   userGrade?: Prisma.IntNullableFilter<"DeregisterReason"> | number | null
   userId?: Prisma.StringFilter<"DeregisterReason"> | string
-  eventId?: Prisma.StringFilter<"DeregisterReason"> | string
+  eventId?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
+  event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
 }, "id">
 
 export type DeregisterReasonOrderByWithAggregationInput = {
@@ -281,7 +281,7 @@ export type DeregisterReasonOrderByWithAggregationInput = {
   details?: Prisma.SortOrderInput | Prisma.SortOrder
   userGrade?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
+  eventId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DeregisterReasonCountOrderByAggregateInput
   _avg?: Prisma.DeregisterReasonAvgOrderByAggregateInput
   _max?: Prisma.DeregisterReasonMaxOrderByAggregateInput
@@ -300,7 +300,7 @@ export type DeregisterReasonScalarWhereWithAggregatesInput = {
   details?: Prisma.StringNullableWithAggregatesFilter<"DeregisterReason"> | string | null
   userGrade?: Prisma.IntNullableWithAggregatesFilter<"DeregisterReason"> | number | null
   userId?: Prisma.StringWithAggregatesFilter<"DeregisterReason"> | string
-  eventId?: Prisma.StringWithAggregatesFilter<"DeregisterReason"> | string
+  eventId?: Prisma.StringNullableWithAggregatesFilter<"DeregisterReason"> | string | null
 }
 
 export type DeregisterReasonCreateInput = {
@@ -311,7 +311,7 @@ export type DeregisterReasonCreateInput = {
   details?: string | null
   userGrade?: number | null
   user: Prisma.UserCreateNestedOneWithoutDeregisterReasonsInput
-  event: Prisma.EventCreateNestedOneWithoutDeregisterReasonsInput
+  event?: Prisma.EventCreateNestedOneWithoutDeregisterReasonsInput
 }
 
 export type DeregisterReasonUncheckedCreateInput = {
@@ -322,7 +322,7 @@ export type DeregisterReasonUncheckedCreateInput = {
   details?: string | null
   userGrade?: number | null
   userId: string
-  eventId: string
+  eventId?: string | null
 }
 
 export type DeregisterReasonUpdateInput = {
@@ -333,7 +333,7 @@ export type DeregisterReasonUpdateInput = {
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutDeregisterReasonsNestedInput
-  event?: Prisma.EventUpdateOneRequiredWithoutDeregisterReasonsNestedInput
+  event?: Prisma.EventUpdateOneWithoutDeregisterReasonsNestedInput
 }
 
 export type DeregisterReasonUncheckedUpdateInput = {
@@ -344,7 +344,7 @@ export type DeregisterReasonUncheckedUpdateInput = {
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeregisterReasonCreateManyInput = {
@@ -355,7 +355,7 @@ export type DeregisterReasonCreateManyInput = {
   details?: string | null
   userGrade?: number | null
   userId: string
-  eventId: string
+  eventId?: string | null
 }
 
 export type DeregisterReasonUpdateManyMutationInput = {
@@ -375,7 +375,7 @@ export type DeregisterReasonUncheckedUpdateManyInput = {
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeregisterReasonListRelationFilter = {
@@ -524,7 +524,7 @@ export type DeregisterReasonCreateWithoutUserInput = {
   type: $Enums.DeregisterReasonType
   details?: string | null
   userGrade?: number | null
-  event: Prisma.EventCreateNestedOneWithoutDeregisterReasonsInput
+  event?: Prisma.EventCreateNestedOneWithoutDeregisterReasonsInput
 }
 
 export type DeregisterReasonUncheckedCreateWithoutUserInput = {
@@ -534,7 +534,7 @@ export type DeregisterReasonUncheckedCreateWithoutUserInput = {
   type: $Enums.DeregisterReasonType
   details?: string | null
   userGrade?: number | null
-  eventId: string
+  eventId?: string | null
 }
 
 export type DeregisterReasonCreateOrConnectWithoutUserInput = {
@@ -574,7 +574,7 @@ export type DeregisterReasonScalarWhereInput = {
   details?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
   userGrade?: Prisma.IntNullableFilter<"DeregisterReason"> | number | null
   userId?: Prisma.StringFilter<"DeregisterReason"> | string
-  eventId?: Prisma.StringFilter<"DeregisterReason"> | string
+  eventId?: Prisma.StringNullableFilter<"DeregisterReason"> | string | null
 }
 
 export type DeregisterReasonCreateWithoutEventInput = {
@@ -630,7 +630,7 @@ export type DeregisterReasonCreateManyUserInput = {
   type: $Enums.DeregisterReasonType
   details?: string | null
   userGrade?: number | null
-  eventId: string
+  eventId?: string | null
 }
 
 export type DeregisterReasonUpdateWithoutUserInput = {
@@ -640,7 +640,7 @@ export type DeregisterReasonUpdateWithoutUserInput = {
   type?: Prisma.EnumDeregisterReasonTypeFieldUpdateOperationsInput | $Enums.DeregisterReasonType
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  event?: Prisma.EventUpdateOneRequiredWithoutDeregisterReasonsNestedInput
+  event?: Prisma.EventUpdateOneWithoutDeregisterReasonsNestedInput
 }
 
 export type DeregisterReasonUncheckedUpdateWithoutUserInput = {
@@ -650,7 +650,7 @@ export type DeregisterReasonUncheckedUpdateWithoutUserInput = {
   type?: Prisma.EnumDeregisterReasonTypeFieldUpdateOperationsInput | $Enums.DeregisterReasonType
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeregisterReasonUncheckedUpdateManyWithoutUserInput = {
@@ -660,7 +660,7 @@ export type DeregisterReasonUncheckedUpdateManyWithoutUserInput = {
   type?: Prisma.EnumDeregisterReasonTypeFieldUpdateOperationsInput | $Enums.DeregisterReasonType
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userGrade?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeregisterReasonCreateManyEventInput = {
@@ -715,7 +715,7 @@ export type DeregisterReasonSelect<ExtArgs extends runtime.Types.Extensions.Inte
   userId?: boolean
   eventId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }, ExtArgs["result"]["deregisterReason"]>
 
 export type DeregisterReasonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -728,7 +728,7 @@ export type DeregisterReasonSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   userId?: boolean
   eventId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }, ExtArgs["result"]["deregisterReason"]>
 
 export type DeregisterReasonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -741,7 +741,7 @@ export type DeregisterReasonSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   userId?: boolean
   eventId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }, ExtArgs["result"]["deregisterReason"]>
 
 export type DeregisterReasonSelectScalar = {
@@ -758,22 +758,22 @@ export type DeregisterReasonSelectScalar = {
 export type DeregisterReasonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "registeredAt" | "type" | "details" | "userGrade" | "userId" | "eventId", ExtArgs["result"]["deregisterReason"]>
 export type DeregisterReasonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }
 export type DeregisterReasonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }
 export type DeregisterReasonIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  event?: boolean | Prisma.EventDefaultArgs<ExtArgs>
+  event?: boolean | Prisma.DeregisterReason$eventArgs<ExtArgs>
 }
 
 export type $DeregisterReasonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DeregisterReason"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    event: Prisma.$EventPayload<ExtArgs>
+    event: Prisma.$EventPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -783,7 +783,7 @@ export type $DeregisterReasonPayload<ExtArgs extends runtime.Types.Extensions.In
     details: string | null
     userGrade: number | null
     userId: string
-    eventId: string
+    eventId: string | null
   }, ExtArgs["result"]["deregisterReason"]>
   composites: {}
 }
@@ -1179,7 +1179,7 @@ readonly fields: DeregisterReasonFieldRefs;
 export interface Prisma__DeregisterReasonClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  event<T extends Prisma.EventDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EventDefaultArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  event<T extends Prisma.DeregisterReason$eventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeregisterReason$eventArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1624,6 +1624,25 @@ export type DeregisterReasonDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many DeregisterReasons to delete.
    */
   limit?: number
+}
+
+/**
+ * DeregisterReason.event
+ */
+export type DeregisterReason$eventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Event
+   */
+  select?: Prisma.EventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Event
+   */
+  omit?: Prisma.EventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventInclude<ExtArgs> | null
+  where?: Prisma.EventWhereInput
 }
 
 /**

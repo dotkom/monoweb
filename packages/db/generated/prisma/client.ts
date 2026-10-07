@@ -202,6 +202,11 @@ export type FeedbackQuestionAnswerOptionLink = Prisma.FeedbackQuestionAnswerOpti
  */
 export type FeedbackFormAnswer = Prisma.FeedbackFormAnswerModel
 /**
+ * Model AuditTransaction
+ * 
+ */
+export type AuditTransaction = Prisma.AuditTransactionModel
+/**
  * Model AuditLog
  * 
  */
@@ -251,8 +256,3 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
-/**
- * Model BirthdayPartyGuess
- * 
- */
-export type BirthdayPartyGuess = Prisma.BirthdayPartyGuessModel

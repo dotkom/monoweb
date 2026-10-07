@@ -1,0 +1,69 @@
+import { withSentryConfig } from "@sentry/nextjs/config"
+import type { NextConfig } from "next"
+
+const config: NextConfig = {
+  reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_LOGIN_ROUTE: "/api/auth/authorize",
+    NEXT_PUBLIC_PROFILE_ROUTE: "/api/auth/session",
+    NEXT_PUBLIC_ACCESS_TOKEN_ROUTE: "/api/auth/access-token",
+  },
+  images: {
+    unoptimized: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: "/admin",
+        destination: "/admin/arrangementer",
+        permanent: false,
+      },
+      {
+        source: "/wiki/:path*",
+        destination: "https://wiki.online.ntnu.no/:path*",
+        permanent: true,
+      },
+    ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/calendar/all.ics",
+        destination: "/api/calendar/all",
+      },
+      {
+        source: "/api/calendar/u/:token/calendar.ics",
+        destination: "/api/calendar/u/:token",
+      },
+    ]
+  },
+
+  // This is to help with version mismatches for `import-in-the-middle` and `require-in-the-middle` in OTEL packages
+  transpilePackages: [
+    "import-in-the-middle",
+    "require-in-the-middle",
+    "@opentelemetry/instrumentation",
+    "@sentry/node",
+    "@sentry/node-core",
+  ],
+
+  // Explicitly ensure the transpiled packages are not treated as external.
+  // zod must be external because zod v4 has internal ESM circular imports that bundlers cannot linearize safely.
+  serverExternalPackages: ["zod"],
+}
+
+export default withSentryConfig(config, {
+  org: "dotkom",
+  project: "monoweb-web",
+  sentryUrl: "https://sentry.io/",
+  tunnelRoute: "/pulse",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  sourcemaps: {
+    disable: true,
+  },
+  _experimental: {
+    turbopackReactComponentAnnotation: { enabled: true },
+    turbopackApplicationKey: "monoweb-web",
+  },
+})

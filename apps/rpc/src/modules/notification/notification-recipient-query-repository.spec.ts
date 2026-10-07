@@ -9,7 +9,7 @@ const paidAttendeePaymentConditions = [
   { paymentChargedAt: { not: null } },
   { paymentReservedAt: { not: null } },
   {
-    AND: [{ paymentRefundedAt: { not: null } }, { paymentDeadline: null }],
+    AND: [{ paymentRefundedAt: { not: null } }, { completionDeadline: null }],
   },
 ]
 
@@ -47,7 +47,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: true,
+      registered: true,
     })
   })
 
@@ -69,7 +69,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: false,
+      registered: false,
     })
   })
 
@@ -81,7 +81,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: true,
+      registered: true,
       OR: paidAttendeePaymentConditions,
     })
   })
@@ -94,7 +94,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: true,
+      registered: true,
       NOT: {
         OR: paidAttendeePaymentConditions,
       },
@@ -112,7 +112,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: true,
+      registered: true,
       OR: [
         {
           selections: {
@@ -136,7 +136,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      reserved: true,
+      registered: true,
       AND: [
         {
           OR: paidAttendeePaymentConditions,

@@ -1,5 +1,10 @@
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import type { Attendance, AttendanceSummary, Attendee } from "@dotkomonline/rpc/attendance"
+import {
+  type Attendance,
+  type AttendanceSummary,
+  type Attendee,
+  buildRegistrationAvailabilityCompletionView,
+} from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { Punishment } from "@dotkomonline/rpc/mark"
 import type { User } from "@dotkomonline/rpc/user"
@@ -20,7 +25,7 @@ export type CreateMockAttendanceOptions = {
   status?: MockAttendanceStatus
   attendancePrice?: number | null
   capacity?: number
-  reservedAttendeeCount?: number
+  registeredAttendeeCount?: number
   yearCriteria?: number[]
   attendees?: Attendee[]
   registerStartOffsetMinutes?: number
@@ -67,12 +72,12 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     attendancePoolId: MOCK_POOL_ID,
     createdAt: now,
     updatedAt: now,
-    reserved: true,
+    registered: true,
     attendedAt: null,
     earliestReservationAt: now,
     paymentChargedAt: null,
     paymentRefundedAt: null,
-    paymentDeadline: null,
+    completionDeadline: null,
     paymentId: null,
     paymentLink: null,
     paymentChargeDeadline: null,
@@ -157,12 +162,12 @@ export const createMockAttendanceSummary = (
 ): AttendanceSummary => {
   const { currentUserAttendee = null, ...attendanceOptions } = options
   const attendance = createMockAttendance(attendanceOptions)
-  const reservedAttendeeCount = attendance.attendees.filter((attendee) => attendee.reserved).length
+  const registeredAttendeeCount = attendance.attendees.filter((attendee) => attendee.registered).length
 
   return {
     ...attendance,
     currentUserAttendee,
-    reservedAttendeeCount,
+    registeredAttendeeCount,
   }
 }
 
@@ -174,6 +179,7 @@ export const createMockEvent = (overrides: Partial<Event> = {}): Event => ({
   end: addDays(now, 7),
   type: "SOCIAL",
   status: "PUBLIC",
+  visibility: "PUBLIC",
   imageUrl: null,
   locationTitle: "Kontoret",
   locationAddress: "A4-137, Realfagbygget",
@@ -208,12 +214,81 @@ export const createMockRegistrationAvailability = (
     eventRejectionCause: null,
     userRejectionCause: null,
     reservationActiveAt: null,
-    willBeUnreserved: false,
+    willBeQueued: false,
     hasMergeDelay: false,
   },
   deregistration: null,
+  completion: null,
   ...overrides,
 })
+
+export const createMockCompletionAvailability = (
+  attendance: Attendance,
+  attendee: Attendee | null,
+  overrides: Partial<NonNullable<RegistrationAvailability["completion"]>> = {}
+): NonNullable<RegistrationAvailability["completion"]> => {
+  const completionView = attendee === null ? null : buildRegistrationAvailabilityCompletionView(attendance, attendee)
+
+  if (completionView === null) {
+    return {
+      attendeeState: "REGISTERED",
+      completionDeadline: null,
+      requirements: [],
+      missingRequirements: [],
+      paymentLink: null,
+      ...overrides,
+    }
+  }
+
+  return {
+    ...completionView,
+    ...overrides,
+  }
+}
+
+export const createMockRegistrationAvailabilityForAttendee = (
+  attendance: Attendance,
+  attendee: Attendee | null,
+  overrides: Partial<RegistrationAvailability> = {}
+): RegistrationAvailability =>
+  createMockRegistrationAvailability({
+    registration: null,
+    deregistration: attendee
+      ? {
+          attendeeId: attendee.id,
+          canDeregister: true,
+          rejectionCause: null,
+          isWithinGracePeriod: true,
+          requiresDeregisterReason: false,
+          actualDeregisterDeadline: attendance.deregisterDeadline,
+          isPastDeregisterDeadline: false,
+          hasBeenCharged: false,
+          chargeScheduleDate: null,
+        }
+      : null,
+    completion: createMockCompletionAvailability(attendance, attendee),
+    ...overrides,
+  })
+
+export const createMockRegistrationAvailabilityPastDeregisterDeadline = (
+  attendance: Attendance,
+  attendee: Attendee,
+  overrides: Partial<RegistrationAvailability> = {}
+): RegistrationAvailability =>
+  createMockRegistrationAvailabilityForAttendee(attendance, attendee, {
+    deregistration: {
+      attendeeId: attendee.id,
+      canDeregister: false,
+      rejectionCause: "DEREGISTER_DEADLINE_PASSED",
+      isWithinGracePeriod: false,
+      requiresDeregisterReason: true,
+      actualDeregisterDeadline: attendance.deregisterDeadline,
+      isPastDeregisterDeadline: true,
+      hasBeenCharged: false,
+      chargeScheduleDate: null,
+    },
+    ...overrides,
+  })
 
 export const createMockPunishment = (overrides: Partial<Punishment> = {}): Punishment => ({
   suspended: false,
@@ -242,7 +317,7 @@ type ViewerPlace = "absent" | "reserved" | "queued"
 
 type CreateQueueAttendanceOptions = {
   capacity?: number
-  reservedOtherCount?: number
+  registeredOtherCount?: number
   queuedOtherCount?: number
   viewer?: ViewerPlace
   viewerQueuePosition?: number
@@ -252,7 +327,7 @@ type CreateQueueAttendanceOptions = {
 
 export const createAttendanceWithQueue = ({
   capacity = 2,
-  reservedOtherCount = 2,
+  registeredOtherCount = 2,
   queuedOtherCount = 0,
   viewer = "queued",
   viewerQueuePosition = 1,
@@ -263,9 +338,9 @@ export const createAttendanceWithQueue = ({
   const viewerEarliestReservationAt = viewerAttendee?.earliestReservationAt ?? viewerCreatedAt
   const peopleAheadOfViewer = viewer === "queued" ? viewerQueuePosition - 1 : 0
 
-  const reservedOthers = Array.from({ length: reservedOtherCount }, (_, index) =>
+  const registeredOthers = Array.from({ length: registeredOtherCount }, (_, index) =>
     createOtherAttendee(index + 1, {
-      reserved: true,
+      registered: true,
       createdAt: subHours(now, 3),
       earliestReservationAt: subHours(now, 3),
     })
@@ -278,21 +353,21 @@ export const createAttendanceWithQueue = ({
       ? subMinutes(viewerEarliestReservationAt, minutesFromViewer)
       : addMinutes(viewerEarliestReservationAt, minutesFromViewer)
 
-    return createOtherAttendee(reservedOtherCount + index + 1, {
-      reserved: false,
+    return createOtherAttendee(registeredOtherCount + index + 1, {
+      registered: false,
       createdAt: earliestReservationAt,
       earliestReservationAt,
     })
   })
 
-  const attendees = [...reservedOthers, ...queuedOthers]
+  const attendees = [...registeredOthers, ...queuedOthers]
 
   if (viewer === "reserved") {
     const user = createMockUser()
     attendees.push(
       createMockAttendee({
         user,
-        reserved: true,
+        registered: true,
         createdAt: viewerCreatedAt,
         earliestReservationAt: viewerEarliestReservationAt,
         ...viewerAttendee,
@@ -305,7 +380,7 @@ export const createAttendanceWithQueue = ({
     attendees.push(
       createMockAttendee({
         user,
-        reserved: false,
+        registered: false,
         createdAt: viewerCreatedAt,
         earliestReservationAt: viewerEarliestReservationAt,
         ...viewerAttendee,
@@ -320,9 +395,9 @@ export const createAttendanceWithQueue = ({
   })
 }
 
-export const createAttendanceWithReservedUser = (): Attendance => {
+export const createAttendanceWithRegisteredUser = (): Attendance => {
   const user = createMockUser()
-  const attendee = createMockAttendee({ user, reserved: true })
+  const attendee = createMockAttendee({ user, registered: true })
 
   return createMockAttendance({
     attendees: [attendee],
@@ -332,20 +407,22 @@ export const createAttendanceWithReservedUser = (): Attendance => {
 export const createAttendanceWithWaitlistedUser = (queueSize = 2): Attendance =>
   createAttendanceWithQueue({
     capacity: 2,
-    reservedOtherCount: 2,
+    registeredOtherCount: 2,
     queuedOtherCount: Math.max(queueSize - 1, 0),
     viewer: "queued",
     viewerQueuePosition: queueSize,
   })
 
-export const createAttendanceWithPaymentCountdown = (reserved = true): Attendance => {
+export const createAttendanceWithPaymentCountdown = (registered = true): Attendance => {
   const user = createMockUser()
+  const createdAt = subMinutes(now, 15)
   const attendee = createMockAttendee({
     user,
-    reserved,
-    paymentDeadline: addMinutes(now, 45),
+    registered,
+    completionDeadline: addMinutes(now, 45),
     paymentLink: "https://example.com/betaling",
-    createdAt: subMinutes(now, 15),
+    createdAt,
+    earliestReservationAt: createdAt,
   })
 
   return createMockAttendance({
@@ -354,10 +431,25 @@ export const createAttendanceWithPaymentCountdown = (reserved = true): Attendanc
   })
 }
 
+export const createAttendanceWithReservedPayment = (): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    registeredOtherCount: 1,
+    queuedOtherCount: 2,
+    viewer: "reserved",
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 15),
+      earliestReservationAt: subMinutes(now, 15),
+      completionDeadline: addMinutes(now, 45),
+      paymentLink: "https://example.com/betaling",
+    },
+  })
+
 export const createAttendanceWithQueuedPayment = (): Attendance =>
   createAttendanceWithQueue({
     capacity: 2,
-    reservedOtherCount: 2,
+    registeredOtherCount: 2,
     queuedOtherCount: 1,
     viewer: "queued",
     viewerQueuePosition: 2,
@@ -365,7 +457,7 @@ export const createAttendanceWithQueuedPayment = (): Attendance =>
     viewerAttendee: {
       createdAt: subMinutes(now, 15),
       earliestReservationAt: subMinutes(now, 10),
-      paymentDeadline: addMinutes(now, 45),
+      completionDeadline: addMinutes(now, 45),
       paymentLink: "https://example.com/betaling",
     },
   })
@@ -376,7 +468,7 @@ export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attend
   const user = createMockUser()
   const attendee = createMockAttendee({
     user,
-    reserved: true,
+    registered: true,
     paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
     paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
     paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
@@ -388,6 +480,39 @@ export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attend
   })
 }
 
+export const createAttendanceWithRegisteredPaymentRecord = (record: PaymentRecord): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    registeredOtherCount: 1,
+    queuedOtherCount: 2,
+    viewer: "reserved",
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 30),
+      earliestReservationAt: subMinutes(now, 30),
+      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
+      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
+      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+    },
+  })
+
+export const createAttendanceWithQueuedPaymentRecord = (record: PaymentRecord): Attendance =>
+  createAttendanceWithQueue({
+    capacity: 2,
+    registeredOtherCount: 2,
+    queuedOtherCount: 1,
+    viewer: "queued",
+    viewerQueuePosition: 2,
+    attendancePrice: 100,
+    viewerAttendee: {
+      createdAt: subMinutes(now, 30),
+      earliestReservationAt: subMinutes(now, 30),
+      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
+      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
+      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+    },
+  })
+
 export const createAttendanceWithServingPunishment = ({
   withPayment = false,
 }: {
@@ -395,7 +520,7 @@ export const createAttendanceWithServingPunishment = ({
 } = {}): Attendance =>
   createAttendanceWithQueue({
     capacity: 4,
-    reservedOtherCount: 2,
+    registeredOtherCount: 2,
     queuedOtherCount: 0,
     viewer: "queued",
     viewerQueuePosition: 1,
@@ -403,7 +528,7 @@ export const createAttendanceWithServingPunishment = ({
     viewerAttendee: {
       createdAt: subMinutes(now, 20),
       earliestReservationAt: addHours(now, 4),
-      paymentDeadline: withPayment ? addMinutes(now, 45) : null,
+      completionDeadline: withPayment ? addMinutes(now, 45) : null,
       paymentLink: withPayment ? "https://example.com/betaling" : null,
     },
   })
@@ -425,13 +550,13 @@ export const createAttendanceWithFullPool = (): Attendance => {
       id: "00000000-0000-4000-8000-000000000031",
       userId: "00000000-0000-4000-8000-000000000011",
       user: createMockUser({ id: "00000000-0000-4000-8000-000000000011", username: "bruker1" }),
-      reserved: true,
+      registered: true,
     }),
     createMockAttendee({
       id: "00000000-0000-4000-8000-000000000032",
       userId: "00000000-0000-4000-8000-000000000012",
       user: createMockUser({ id: "00000000-0000-4000-8000-000000000012", username: "bruker2" }),
-      reserved: true,
+      registered: true,
     }),
   ]
 
@@ -448,7 +573,7 @@ export const createIneligiblePoolAttendance = (): Attendance =>
 
 export const createLockedDeregisterAttendance = (): { attendance: Attendance; attendee: Attendee } => {
   const user = createMockUser()
-  const attendee = createMockAttendee({ user, reserved: true })
+  const attendee = createMockAttendee({ user, registered: true })
 
   return {
     attendance: {

@@ -277,6 +277,7 @@ export const NotificationFilterQuerySchema = z
     byActorGroupId: z.string().array(),
     /** All notifications pointing to a specific entity, e.g. every notification about one event. */
     byLink: NotificationLinkSchema,
+    bySearchTerm: z.string().optional(),
   })
   .partial()
 
@@ -291,6 +292,14 @@ export const NotificationRecipientSchema = z.object({
 
 export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
 export type NotificationRecipientId = NotificationRecipient["id"]
+
+export const NotificationRecipientFilterQuerySchema = z
+  .object({
+    bySearchTerm: z.string().optional(),
+  })
+  .partial()
+
+export type NotificationRecipientFilterQuery = z.infer<typeof NotificationRecipientFilterQuerySchema>
 
 export const NotificationRecipientListItemSchema = NotificationRecipientSchema.omit({
   readAt: true,

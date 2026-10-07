@@ -31,7 +31,7 @@ jobs:
           version: 10.28.2
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
-          node-version: 22.21.1
+          node-version: 22.23.2
           cache: pnpm
       - run: pnpm install --frozen-lockfile
         name: Install dependencies from pnpm lockfile
@@ -41,22 +41,6 @@ jobs:
           config: prd
       - run: pnpm run migrate:deploy
         name: Apply Prisma migrations against prod
-
-  build-dashboard:
-    name: dashboard
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Install local GitHub Actions
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 1
-          sparse-checkout: '.github'
-          sparse-checkout-cone-mode: true
-      - uses: ./.github/actions/build-dashboard
-        with:
-          deploy: true
-          environment: prd
-          git-hash: ${{ env.DEPLOYMENT_TARGET_HASH }}
 
   build-rpc:
     name: rpc

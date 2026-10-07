@@ -1,4 +1,3 @@
-import { buildLimitedDepthJsonSchema } from "@dotkomonline/utils"
 import { z } from "zod"
 
 export const FeedbackQuestionTypeSchema = z.enum(["TEXT", "LONGTEXT", "RATING", "CHECKBOX", "SELECT", "MULTISELECT"])
@@ -79,20 +78,13 @@ export type FeedbackForm = z.infer<typeof FeedbackFormSchema>
 
 export const FeedbackFromPublicResultsTokenSchema = FeedbackFormBaseSchema.pick({ publicResultsToken: true })
 
-export const FeedbackQuestionAnswerSchema = z
-  .object({
-    id: z.string(),
-    value: buildLimitedDepthJsonSchema().nullable(),
-    questionId: z.string(),
-    formAnswerId: z.string(),
-  })
-  .omit({
-    value: true,
-  })
-  .extend({
-    value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
-    selectedOptions: FeedbackQuestionOptionSchema.array(),
-  })
+export const FeedbackQuestionAnswerSchema = z.object({
+  id: z.string(),
+  value: z.union([z.string(), z.number(), z.boolean()]).nullable(),
+  questionId: z.string(),
+  formAnswerId: z.string(),
+  selectedOptions: FeedbackQuestionOptionSchema.array(),
+})
 export type FeedbackQuestionAnswer = z.infer<typeof FeedbackQuestionAnswerSchema>
 export type FeedbackQuestionAnswerId = FeedbackQuestionAnswer["id"]
 
@@ -128,6 +120,10 @@ export type FeedbackQuestionType = FeedbackQuestion["type"]
 export const FeedbackFormIdSchema = FeedbackFormSchema.shape.id
 
 export type FeedbackFormId = z.infer<typeof FeedbackFormIdSchema>
+
+export const FeedbackFormAnswerIdSchema = FeedbackFormAnswerSchema.shape.id
+
+export type FeedbackFormAnswerId = z.infer<typeof FeedbackFormAnswerIdSchema>
 
 export const FeedbackPublicResultsTokenSchema = FeedbackFormBaseSchema.shape.publicResultsToken
 

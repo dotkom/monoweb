@@ -10,10 +10,6 @@ export const EVENT_TYPE_CONFIG = {
     label: "Genfors",
     backgroundColor: "amber",
   },
-  INTERNAL: {
-    label: "Intern",
-    backgroundColor: "amber",
-  },
   OTHER: {
     label: "Annet",
     backgroundColor: "amber",

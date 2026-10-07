@@ -22,6 +22,10 @@ const tomorrow = addDays(now, 1)
 const nextMonth = addMonths(now, 1)
 
 export const FADDERUKE_EVENT_ID = "bd67bc32-debd-46cb-bb06-1213e36be05d"
+export const ITEX_EVENT_ID = "8afc7d51-37cd-4d2f-8ded-b7f7479ff8e6"
+export const VOLLEYBALL_EVENT_ID = "e1f2a3b4-c5d6-4789-a012-3456789abcde"
+
+export const getVolleyballEventEnd = () => setHours(subDays(now, 20), 21)
 
 export function getFadderukeInterval() {
   const augustFirst = new Date(now.getFullYear(), 7, 1)
@@ -239,7 +243,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
-      id: "8afc7d51-37cd-4d2f-8ded-b7f7479ff8e6",
+      id: ITEX_EVENT_ID,
       attendanceId: attendanceIds[4],
       createdAt: subWeeks(now, 1),
       updatedAt: subDays(now, 4),
@@ -335,7 +339,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationTitle: "Twodays kontorer",
       locationAddress: "Karenslyst allé 57, Oslo",
       locationLink: null,
-      parentId: "8afc7d51-37cd-4d2f-8ded-b7f7479ff8e6",
+      parentId: ITEX_EVENT_ID,
     },
     {
       attendanceId: attendanceIds[6],
@@ -394,12 +398,13 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Høgskoleringen 1, Trondheim",
     },
     {
+      id: VOLLEYBALL_EVENT_ID,
       attendanceId: attendanceIds[10],
       createdAt: subDays(now, 28),
       updatedAt: subDays(now, 21),
       title: "Volleyballturnering med NTNUI: PÅMELDING",
       start: setHours(subDays(now, 20), 17),
-      end: setHours(subDays(now, 20), 21),
+      end: getVolleyballEventEnd(),
       status: "PUBLIC",
       type: "SOCIAL",
       description: "<p>Volleyballturnering sammen med NTNUI. Meld deg på i forkant.</p>",

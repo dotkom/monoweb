@@ -14,7 +14,7 @@ import type { Notification } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import type { User } from "@dotkomonline/rpc/user"
 import { AvatarFallback, cn, Text } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import { createJobListingPageUrl, richTextToPlainText } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconBriefcase, IconQuestionMark } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Image from "next/image"
@@ -282,7 +282,7 @@ export function NotificationJobListingPayload({
   jobListing: Pick<JobListing, "company" | "id" | "title">
 }) {
   return (
-    <Link href={`/karriere/${jobListing.id}`} className={payloadCardClassName}>
+    <Link href={createJobListingPageUrl(jobListing.id, jobListing.title)} className={payloadCardClassName}>
       <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
         {jobListing.company.imageUrl === null && <IconBriefcase aria-hidden className="size-6 text-gray-500" />}
 

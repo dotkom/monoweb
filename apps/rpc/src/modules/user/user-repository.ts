@@ -16,8 +16,6 @@ import {
   UserFlagWithUsersSchema,
   type UserFlagWrite,
   normalizeDbUser,
-  type BirthdayPartyGuess,
-  BirthdayPartyGuessSchema,
   type Auth0Provider,
 } from "./user"
 import invariant from "tiny-invariant"
@@ -52,8 +50,6 @@ export interface UserRepository {
   findFlagsByUserId(handle: DBHandle, userId: UserId): Promise<UserFlagWithUsers[]>
   assignFlagToUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
   removeFlagFromUser(handle: DBHandle, userId: UserId, flagName: string): Promise<void>
-
-  findBirthdayPartyGuessByUserId(handle: DBHandle, userId: UserId): Promise<BirthdayPartyGuess | null>
 }
 
 export function getUserRepository(): UserRepository {
@@ -347,16 +343,6 @@ export function getUserRepository(): UserRepository {
           userFlag: { name: flagName },
         },
       })
-    },
-
-    async findBirthdayPartyGuessByUserId(handle, userId) {
-      const birthdayPartyGuess = await handle.birthdayPartyGuess.findUnique({
-        where: {
-          userId,
-        },
-      })
-
-      return parseOrReport(BirthdayPartyGuessSchema.nullable(), birthdayPartyGuess)
     },
   }
 }

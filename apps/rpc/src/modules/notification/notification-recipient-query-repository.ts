@@ -86,7 +86,7 @@ const paidAttendeePaymentConditions: Prisma.AttendeeWhereInput[] = [
   { paymentChargedAt: { not: null } },
   { paymentReservedAt: { not: null } },
   {
-    AND: [{ paymentRefundedAt: { not: null } }, { paymentDeadline: null }],
+    AND: [{ paymentRefundedAt: { not: null } }, { completionDeadline: null }],
   },
 ]
 
@@ -94,11 +94,11 @@ export function buildAttendeeSelectionFilter(options: FindAttendeeUserIdsOptions
   const attendeeFilter: Prisma.AttendeeWhereInput = {}
 
   if (options.reservationStatus === "RESERVED") {
-    attendeeFilter.reserved = true
+    attendeeFilter.registered = true
   }
 
   if (options.reservationStatus === "UNRESERVED") {
-    attendeeFilter.reserved = false
+    attendeeFilter.registered = false
   }
 
   const extraFilters: Prisma.AttendeeWhereInput[] = []

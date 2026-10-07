@@ -1,34 +1,35 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
+import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
+import { maxTime } from "date-fns/constants"
+import crypto from "node:crypto"
+import invariant from "tiny-invariant"
+import { FailedPreconditionError, IllegalStateError, NotFoundError } from "../../error"
+import type { UserId } from "../user/user"
+import type { UserService } from "../user/user-service"
 import {
   type Group,
+  type GroupByMemberFilter,
   type GroupId,
   type GroupMember,
   type GroupMembership,
   type GroupMembershipId,
   type GroupMembershipWrite,
+  type GroupMembershipWriteWithRoles,
   type GroupRole,
   type GroupRoleId,
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
-  GroupRoleTypeEnum,
-  getDefaultGroupMemberRoles,
   GROUP_IMAGE_MAX_SIZE_KIB,
+  GroupRoleTypeEnum,
   areGroupRolesEqual,
-  type GroupMembershipWriteWithRoles,
-  type GroupByMemberFilter,
+  getDefaultGroupMemberRoles,
+  isGroupMembershipActive,
 } from "./group"
-import type { UserId } from "../user/user"
-import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
-import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
-import { maxTime } from "date-fns/constants"
-import invariant from "tiny-invariant"
-import { FailedPreconditionError, IllegalStateError, NotFoundError } from "../../error"
-import type { UserService } from "../user/user-service"
 import type { GroupRepository } from "./group-repository"
-import crypto from "node:crypto"
 
 export interface GroupService {
   create(handle: DBHandle, data: GroupWrite): Promise<Group>
@@ -58,6 +59,8 @@ export interface GroupService {
   findMembersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
   findLeadersBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Map<UserId, GroupMember>>
 
+  getMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership>
+  allMembershipsByUserId(handle: DBHandle, userId: UserId): Promise<GroupMembership[]>
   startMembership(
     handle: DBHandle,
     userId: UserId,
@@ -90,6 +93,7 @@ export interface GroupService {
 
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
+  deleteRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
 
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
@@ -142,7 +146,9 @@ export function getGroupService(
 
     async getBySlug(handle, groupSlug) {
       const group = await this.findBySlug(handle, groupSlug)
-      if (!group) throw new NotFoundError(`Group(ID=${groupSlug}) not found`)
+      if (!group) {
+        throw new NotFoundError(`Group(Slug=${groupSlug}) not found`)
+      }
       return group
     },
 
@@ -165,7 +171,7 @@ export function getGroupService(
     async getBySlugAndType(handle, groupSlug, groupType) {
       const group = await groupRepository.findBySlug(handle, groupSlug)
       if (!group || group.type !== groupType) {
-        throw new NotFoundError(`Group(ID=${groupSlug}, Type=${groupType}) not found`)
+        throw new NotFoundError(`Group(Slug=${groupSlug}, Type=${groupType}) not found`)
       }
       return group
     },
@@ -239,7 +245,7 @@ export function getGroupService(
           .sort((a, b) => compareDesc(a.start, b.start))
 
         if (groupMemberships.length === 0) {
-          throw new IllegalStateError(`No group memberships found for User(ID=${user.id}) in Group(ID=${groupSlug})`)
+          throw new IllegalStateError(`No group memberships found for User(ID=${user.id}) in Group(Slug=${groupSlug})`)
         }
 
         members.set(user.id, {
@@ -249,6 +255,19 @@ export function getGroupService(
       }
 
       return members
+    },
+
+    async getMembershipById(handle, groupMembershipId) {
+      const membership = await groupRepository.findGroupMembershipById(handle, groupMembershipId)
+      if (membership === null) {
+        throw new NotFoundError(`GroupMembership(ID=${groupMembershipId}) not found`)
+      }
+
+      return membership
+    },
+
+    async allMembershipsByUserId(handle, userId) {
+      return groupRepository.findManyGroupMemberships(handle, null, userId)
     },
 
     async startMembership(handle, userId, groupSlug, groupRoleIds) {
@@ -267,7 +286,7 @@ export function getGroupService(
 
     async endMembership(handle, userId, groupSlug) {
       const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
-      const activeMemberships = memberships.filter((membership) => !membership.end)
+      const activeMemberships = memberships.filter(isGroupMembershipActive)
 
       const endMembershipPromises = activeMemberships.map((membership) =>
         groupRepository.updateGroupMembership(
@@ -327,6 +346,10 @@ export function getGroupService(
 
     async updateRole(handle, groupRoleId, groupRoleData) {
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
+    },
+
+    async deleteRole(handle, groupRoleId) {
+      return await groupRepository.deleteGroupRole(handle, groupRoleId)
     },
 
     simplifyMemberships(memberships) {
@@ -402,7 +425,7 @@ type Segment = {
  *     AB----   BC-
  */
 export function simplifyGroupMemberships(memberships: GroupMembership[]): GroupMembershipWriteWithRoles[] {
-  const hasOngoingMembership = memberships.some((membership) => membership.end === null)
+  const hasOngoingMembership = memberships.some(isGroupMembershipActive)
 
   // This set collects membership boundary points so we can recreate segments for merging roles into.
   const boundaryTimestamps = new Set<number>()
