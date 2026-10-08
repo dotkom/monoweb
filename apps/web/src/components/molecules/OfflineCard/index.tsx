@@ -10,7 +10,6 @@ interface OfflineCardProps {
 export const OfflineCard = ({ offline }: OfflineCardProps) => {
   return (
     <div className="flex flex-col gap-3 text-wrap max-w-56">
-      {
         <Link href={offline.fileUrl}>
           <div className="perspective-[1000px] bg-gray-300 rounded-r-md">
             <div
@@ -29,7 +28,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
             </div>
           </div>
         </Link>
-      }
+      
       <Text className="text-gray-950 dark:text-white">{offline.title}</Text>
     </div>
   )
