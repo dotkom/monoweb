@@ -5,11 +5,11 @@ import { Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconMapPin } from "@tabler/icons-react"
 import { isPast } from "date-fns"
-import Link from "next/link"
 import type { FC } from "react"
 import { AttendanceStatus } from "./AttendanceStatus"
 import { EventImage } from "./EventImage"
 import { EventPrice } from "./EventPrice"
+import { EventPreviewLink } from "./EventPreviewLink"
 
 export interface EventCardProps {
   event: Event | EventSummary
@@ -24,7 +24,8 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
   const eventHasEnded = isPast(event.end)
 
   return (
-    <Link
+    <EventPreviewLink
+      event={event}
       href={createEventPageUrl(id, title)}
       className={cn(
         "group flex flex-col w-full min-w-0 h-fit gap-3 p-3 rounded-2xl transition-colors",
@@ -82,7 +83,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
           )}
         </div>
       </div>
-    </Link>
+    </EventPreviewLink>
   )
 }
 

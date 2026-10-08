@@ -3,11 +3,11 @@ import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import { Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
-import Link from "next/link"
 import type { FC } from "react"
 import { AttendanceStatus } from "./AttendanceStatus"
 import { DateAndTime } from "./DateAndTime"
 import { Thumbnail } from "./Thumbnail"
+import { EventPreviewLink } from "./EventPreviewLink"
 
 export interface EventListItemProps {
   event: Event | EventSummary
@@ -26,7 +26,8 @@ export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps)
   const past = isPast(event.end)
 
   return (
-    <Link
+    <EventPreviewLink
+      event={event}
       href={createEventPageUrl(id, title)}
       className={cn(
         // [calc(100%+1rem)] is to offset the -mx-2
@@ -67,7 +68,7 @@ export const EventListItem: FC<EventListItemProps> = (props: EventListItemProps)
           )}
         </div>
       </div>
-    </Link>
+    </EventPreviewLink>
   )
 }
 

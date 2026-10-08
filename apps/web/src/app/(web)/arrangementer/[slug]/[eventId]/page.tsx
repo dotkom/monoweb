@@ -1,12 +1,9 @@
 import { getServerSession } from "@/auth"
-import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
-import type { Company } from "@dotkomonline/rpc/company"
 import type { Event } from "@dotkomonline/rpc/event"
-import { type Group, createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { User } from "@dotkomonline/rpc/user"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
 import {
@@ -25,15 +22,7 @@ import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
 import { LocationBox } from "../../components/TimeLocationBox/LocationBox"
 import { TimeBox } from "../../components/TimeLocationBox/TimeBox"
-import Link from "next/link"
-
-const createOrganizerPageUrl = (item: Group | Company) => {
-  if ("type" in item) {
-    return createGroupPageUrl(item)
-  }
-
-  return `/bedrifter/${item.slug}`
-}
+import { OrganizerPill } from "../../components/OrganizerPill"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
@@ -216,36 +205,6 @@ const EventContent = ({
         )}
       </div>
     </div>
-  )
-}
-
-interface OrganizerPillProps {
-  item: Group | Company
-}
-
-function OrganizerPill({ item }: OrganizerPillProps) {
-  const displayName = "type" in item ? getGroupDisplayName(item) : item.name
-
-  return (
-    <Link
-      href={createOrganizerPageUrl(item)}
-      key={item.name}
-      className="group/organizer-pill flex flex-row gap-2.5 items-center p-1.5 -mx-1.5 rounded-md transition-colors border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
-    >
-      {item.imageUrl && (
-        <GroupLogo
-          src={item.imageUrl}
-          alt={displayName}
-          width={22}
-          height={22}
-          containerClassName="rounded-sm p-0.5 size-5.5"
-        />
-      )}
-
-      <Text className="text-sm font-medium text-muted-foreground group-hover/organizer-pill:text-foreground">
-        {displayName}
-      </Text>
-    </Link>
   )
 }
 
