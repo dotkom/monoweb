@@ -22,7 +22,7 @@ import { NotificationItem } from "./NotificationItem"
 import { NotificationPayload } from "./NotificationPayload"
 
 const triggerClassName =
-  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-blue-200 dark:hover:bg-stone-700"
+  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700"
 
 const contentClassName =
   "flex w-[min(24rem,calc(100vw-2rem))] max-h-[min(34rem,calc(100dvh-var(--navbar-height)-5rem))] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white p-0 shadow-md dark:border-stone-700 dark:bg-stone-900"
@@ -70,7 +70,7 @@ function AuthenticatedNotificationDropdown() {
           {hasUnreadNotifications && (
             <span
               aria-hidden
-              className="absolute right-0 top-0 size-3 rounded-full border-2 border-blue-100 bg-red-500 dark:border-stone-800"
+              className="absolute right-0 top-0 size-3 rounded-full border-2 border-gray-100 bg-red-500 dark:border-stone-800"
             />
           )}
         </button>
@@ -254,6 +254,7 @@ function UnauthenticatedNotificationDropdown() {
           <Button
             element="a"
             variant="default"
+            color="gray"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
             icon={<IconLogin2 className="size-5" />}
             className="w-fit"

@@ -63,10 +63,10 @@ export const ThemeToggle = () => {
                 size="lg"
                 variant="default"
                 className={cn(
-                  "p-0.5",
-                  "hover:bg-white dark:hover:bg-stone-700",
-                  "aria-pressed:bg-white data-[state=on]:bg-white",
-                  "aria-pressed:border data-[state=on]:border aria-pressed:border-gray-200 dark:aria-pressed:border-none",
+                  "p-0.5 border border-transparent",
+                  "hover:bg-gray-100 hover:border-gray-200 dark:hover:bg-stone-700/25 dark:hover:border-stone-700",
+                  "aria-pressed:bg-gray-100 aria-pressed:border-gray-200 data-[state=on]:bg-gray-100 data-[state=on]:border-gray-200",
+                  "aria-pressed:border-gray-200 dark:aria-pressed:border-transparent",
                   "aria-pressed:dark:bg-stone-700 data-[state=on]:dark:bg-stone-700",
                   item.className
                 )}

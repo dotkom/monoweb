@@ -75,7 +75,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           side="bottom"
           sideOffset={8}
           positionMethod="fixed"
-          className="w-[calc(100vw-2rem)] mx-2.75 mt-4 p-0 lg:hidden bg-blue-50 z-50 dark:bg-stone-800 border-gray-300/70 dark:border-stone-700 shadow-md rounded-3xl"
+          className="w-[calc(100vw-2rem)] mx-2.75 mt-4 p-0 lg:hidden bg-gray-50 z-50 dark:bg-stone-800 border-gray-300/70 dark:border-stone-700 shadow-md rounded-3xl"
         >
           <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
             <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">
@@ -103,7 +103,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                       "items" in link && link.items.length > 0 ? (
                         <div key={link.title}>
                           <Collapsible defaultOpen={false}>
-                            <CollapsibleTrigger className="cursor-pointer w-full flex items-center justify-between xs:justify-start gap-2 text-base px-3 py-2 rounded-lg hover:bg-blue-100/80 dark:hover:bg-stone-700/50 transition-colors">
+                            <CollapsibleTrigger className="cursor-pointer w-full flex items-center justify-between xs:justify-start gap-2 text-base px-3 py-2 rounded-lg hover:bg-gray-100/80 data-highlighted:bg-gray-100/80 dark:hover:bg-stone-700/50 dark:data-highlighted:bg-stone-700/50 transition-colors">
                               <Text className="text-lg">{link.title}</Text>
                               <IconChevronDown className="transition-transform size-4" />
                             </CollapsibleTrigger>
@@ -112,8 +112,9 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                                 {link.items.map((subLink) => (
                                   <DropdownMenuItem
                                     asChild
+                                    variant="uncolored"
                                     key={subLink.title}
-                                    className="flex items-start gap-2 group hover:bg-blue-100/80 dark:hover:bg-stone-700/50 select-none rounded-lg p-3 leading-none no-underline transition-colors"
+                                    className="flex items-start gap-2 group hover:bg-gray-100/80 data-highlighted:bg-gray-100/80 dark:hover:bg-stone-700/50 dark:data-highlighted:bg-stone-700/50 select-none rounded-lg p-3 leading-none no-underline transition-colors"
                                   >
                                     <Link href={subLink.href}>
                                       {(() => {
@@ -146,8 +147,9 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
                           return (
                             <DropdownMenuItem
                               asChild
+                              variant="uncolored"
                               key={item.title}
-                              className="px-3 py-2 rounded-lg hover:bg-blue-100/80 dark:hover:bg-stone-700/50 transition-colors"
+                              className="px-3 py-2 rounded-lg hover:bg-gray-100/80 data-highlighted:bg-gray-100/80 dark:hover:bg-stone-700/50 dark:data-highlighted:bg-stone-700/50 transition-colors"
                             >
                               <Link href={item.href} onClick={() => setOpen(false)}>
                                 <Text className="text-lg">{item.title}</Text>
