@@ -48,6 +48,7 @@ import { NotificationDropdown } from "./NotificationDropdown"
 import { ThemeToggle } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
 import { BugReportModal } from "../molecules/BugReport/BugReportModal"
+import { GroupLogo } from "../atoms/GroupLogo"
 
 const DEBUG_CONTACT_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
@@ -96,41 +97,68 @@ const ContactDebugDropdown: FC = () => (
 
     <DropdownMenuContent
       align="end"
-      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
+      className="w-[calc(100vw-2rem)] mx-2.75 xs:mx-0 xs:w-90 p-3 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
       sideOffset={24}
       positionMethod="fixed"
     >
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <IconMessageReport width={24} height={24} />
-          <Title size="md" className="font-semibold text-gray-900 dark:text-white">
-            Opplevd noe ugreit?
-          </Title>
-        </div>
-        <Text className="text-sm px-1 text-gray-700 dark:text-stone-200">
-          Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
-          innsyn fra ledelsen i Online.
+      <div className="flex flex-col gap-5">
+        <Title size="md" element="h3" className="px-3 pt-1.5">
+          Har du opplevd noe ugreit?
+        </Title>
+
+        <Link
+          href="/grupper/debug"
+          className={cn(
+            "flex flex-row items-center gap-3 p-3 pl-1 bg-white dark:bg-transparent rounded-xl transition-colors",
+            "border border-transparent hover:border-gray-300 dark:hover:border-stone-700"
+          )}
+        >
+          <GroupLogo
+            src="/debug-logo.png"
+            alt="Debug"
+            width={42}
+            height={42}
+            containerClassName="rounded-full p-1.25"
+          />
+
+          <div className="flex flex-col gap-0">
+            <Title element="p" size="md">
+              Debug
+            </Title>
+
+            <Text className="text-sm text-muted-foreground">Onlines uavhengige varslingsorgan</Text>
+          </div>
+        </Link>
+
+        <Text className="px-3 text-sm">
+          Alle Debug-medlemmer har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten innsyn fra
+          ledelsen i Online.
         </Text>
+
         <div className="flex flex-col gap-2">
           <Button
             element={Link}
-            variant="unstyled"
+            variant="default"
+            size="xl"
             href={DEBUG_CONTACT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-stone-700 hover:bg-gray-200 dark:hover:bg-stone-600 transition-colors"
           >
-            <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
-            <IconArrowUpRight width={16} height={16} />
+            <Text element="span">
+              Ta kontakt <span className="hidden sm:inline">med Debug</span>
+            </Text>
+            <IconArrowUpRight className="size-5" />
           </Button>
+
           <Button
             element={Link}
             variant="ghost"
             href="/grupper/debug"
             rel="noopener noreferrer"
-            className="w-fit text-gray-600 dark:text-stone-300"
+            className="w-fit hover:bg-gray-200 dark:hover:bg-stone-700"
           >
-            <span className="text-sm">Les mer om Debug</span>
+            Les mer om Debug
+            <IconArrowUpRight className="size-4" />
           </Button>
         </div>
       </div>
