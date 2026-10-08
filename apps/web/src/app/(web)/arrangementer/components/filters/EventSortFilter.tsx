@@ -1,15 +1,6 @@
 "use client"
 
-import {
-  cn,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@dotkomonline/ui"
+import { cn, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import type { EventListViewMode } from "../EventList"
 import { IconCalendar, IconUsersPlus } from "@tabler/icons-react"
 
@@ -26,30 +17,23 @@ interface EventSortFilterProps {
 
 export const EventSortFilter = ({ value, onChange, className }: EventSortFilterProps) => {
   return (
-    <div className={cn("h-full self-stretch", className)}>
-      <Select
-        items={sortOptions}
-        value={value}
-        onValueChange={(selectedValue) => onChange(selectedValue as EventListViewMode)}
-      >
-        <SelectTrigger className="rounded-lg min-w-43 font-normal h-10 md:h-full!">
-          <span className="flex items-center gap-1.5">
-            <span className="text-muted-foreground max-md:hidden">Sorter:</span>
-            <SelectValue className="font-medium text-foreground" />
-          </span>
-        </SelectTrigger>
-        <SelectContent position="popper" className="rounded-lg shadow-md">
-          <SelectGroup>
-            <SelectLabel className="font-medium">Sorter etter</SelectLabel>
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value} className="h-9">
-                <option.icon className="size-4.5" />
-                <span className="text-sm font-medium">{option.label}</span>
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
+    <ToggleGroup
+      aria-label="Sorter arrangementer"
+      className={cn("shrink-0 h-10 min-w-48", className)}
+      multiple={false}
+      spacing={0}
+      value={[value]}
+      onValueChange={(values) => {
+        const selected = sortOptions.find((option) => option.value === values.at(0))
+        if (selected) onChange(selected.value)
+      }}
+    >
+      {sortOptions.map((option) => (
+        <ToggleGroupItem key={option.value} value={option.value} className="h-full gap-2 border-field-border">
+          <option.icon className="size-4.5" />
+          {option.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   )
 }
