@@ -162,8 +162,8 @@ export type OfflineGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type OfflineGroupByOutputType = {
   id: string
   title: string
-  fileUrl: string | null
-  imageUrl: string | null
+  fileUrl: string
+  imageUrl: string
   publishedAt: Date
   createdAt: Date
   updatedAt: Date
@@ -193,8 +193,8 @@ export type OfflineWhereInput = {
   NOT?: Prisma.OfflineWhereInput | Prisma.OfflineWhereInput[]
   id?: Prisma.StringFilter<"Offline"> | string
   title?: Prisma.StringFilter<"Offline"> | string
-  fileUrl?: Prisma.StringNullableFilter<"Offline"> | string | null
-  imageUrl?: Prisma.StringNullableFilter<"Offline"> | string | null
+  fileUrl?: Prisma.StringFilter<"Offline"> | string
+  imageUrl?: Prisma.StringFilter<"Offline"> | string
   publishedAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
@@ -203,8 +203,8 @@ export type OfflineWhereInput = {
 export type OfflineOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  fileUrl?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -216,8 +216,8 @@ export type OfflineWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.OfflineWhereInput[]
   NOT?: Prisma.OfflineWhereInput | Prisma.OfflineWhereInput[]
   title?: Prisma.StringFilter<"Offline"> | string
-  fileUrl?: Prisma.StringNullableFilter<"Offline"> | string | null
-  imageUrl?: Prisma.StringNullableFilter<"Offline"> | string | null
+  fileUrl?: Prisma.StringFilter<"Offline"> | string
+  imageUrl?: Prisma.StringFilter<"Offline"> | string
   publishedAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Offline"> | Date | string
@@ -226,8 +226,8 @@ export type OfflineWhereUniqueInput = Prisma.AtLeast<{
 export type OfflineOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  fileUrl?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -242,8 +242,8 @@ export type OfflineScalarWhereWithAggregatesInput = {
   NOT?: Prisma.OfflineScalarWhereWithAggregatesInput | Prisma.OfflineScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Offline"> | string
   title?: Prisma.StringWithAggregatesFilter<"Offline"> | string
-  fileUrl?: Prisma.StringNullableWithAggregatesFilter<"Offline"> | string | null
-  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Offline"> | string | null
+  fileUrl?: Prisma.StringWithAggregatesFilter<"Offline"> | string
+  imageUrl?: Prisma.StringWithAggregatesFilter<"Offline"> | string
   publishedAt?: Prisma.DateTimeWithAggregatesFilter<"Offline"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Offline"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Offline"> | Date | string
@@ -252,8 +252,8 @@ export type OfflineScalarWhereWithAggregatesInput = {
 export type OfflineCreateInput = {
   id?: string
   title: string
-  fileUrl?: string | null
-  imageUrl?: string | null
+  fileUrl: string
+  imageUrl: string
   publishedAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -262,8 +262,8 @@ export type OfflineCreateInput = {
 export type OfflineUncheckedCreateInput = {
   id?: string
   title: string
-  fileUrl?: string | null
-  imageUrl?: string | null
+  fileUrl: string
+  imageUrl: string
   publishedAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -272,8 +272,8 @@ export type OfflineUncheckedCreateInput = {
 export type OfflineUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -282,8 +282,8 @@ export type OfflineUpdateInput = {
 export type OfflineUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -292,8 +292,8 @@ export type OfflineUncheckedUpdateInput = {
 export type OfflineCreateManyInput = {
   id?: string
   title: string
-  fileUrl?: string | null
-  imageUrl?: string | null
+  fileUrl: string
+  imageUrl: string
   publishedAt: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -302,8 +302,8 @@ export type OfflineCreateManyInput = {
 export type OfflineUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -312,8 +312,8 @@ export type OfflineUpdateManyMutationInput = {
 export type OfflineUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -399,8 +399,8 @@ export type $OfflinePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
-    fileUrl: string | null
-    imageUrl: string | null
+    fileUrl: string
+    imageUrl: string
     publishedAt: Date
     createdAt: Date
     updatedAt: Date

@@ -600,8 +600,8 @@ model JobListingLocation {
 model Offline {
   id          String   @id @default(uuid())
   title       String
-  fileUrl     String?  @map("file_url")
-  imageUrl    String?  @map("image_url")
+  fileUrl     String   @map("file_url")
+  imageUrl    String   @map("image_url")
   publishedAt DateTime @map("published_at") @db.Timestamptz(3)
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)

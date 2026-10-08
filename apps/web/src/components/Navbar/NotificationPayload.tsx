@@ -213,9 +213,7 @@ export function NotificationOfflinePayload({ offline }: { offline: Pick<Offline,
   return (
     <Link href={href} className={payloadCardClassName}>
       <div className="relative h-16 w-auto aspect-[0.777] shrink-0 overflow-hidden rounded-sm bg-gray-200 dark:bg-stone-700">
-        {offline.imageUrl !== null && (
-          <Image src={offline.imageUrl} alt="" fill sizes="64px" className="object-cover" />
-        )}
+        {<Image src={offline.imageUrl} alt="" fill sizes="64px" className="object-cover" />}
       </div>
 
       <Text className="line-clamp-2 text-sm font-medium">{offline.title}</Text>
