@@ -3,7 +3,6 @@
 import * as React from "react"
 import { cn } from "#lib/utils"
 import { DayPicker, getDefaultClassNames, type DayButton, type Locale } from "react-day-picker"
-
 import { Button, buttonVariants } from "./button"
 import { IconChevronLeft, IconChevronRight, IconChevronDown } from "@tabler/icons-react"
 
@@ -95,7 +94,8 @@ function Calendar({
           defaultClassNames.range_end
         ),
         today: cn(
-          "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+          "rounded-(--cell-radius) bg-muted text-foreground",
+          props.mode === "range" && "data-[selected=true]:rounded-none",
           defaultClassNames.today
         ),
         outside: cn("text-muted-foreground aria-selected:text-muted-foreground", defaultClassNames.outside),
@@ -141,8 +141,8 @@ function CalendarDayButton({
   ...props
 }: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
   const defaultClassNames = getDefaultClassNames()
-
   const ref = React.useRef<HTMLButtonElement>(null)
+
   React.useEffect(() => {
     if (modifiers.focused) ref.current?.focus()
   }, [modifiers.focused])
@@ -159,7 +159,20 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
+        "relative isolate z-10 aspect-square size-auto w-full min-w-(--cell-size)",
+        "flex flex-col gap-1",
+        "leading-none font-normal",
+        "border border-transparent",
+        "dark:hover:text-foreground",
+        "group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10",
+        "data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius)",
+        "data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius)",
+        "data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground",
+        "data-[selected-single=true]:bg-gray-200 data-[selected-single=true]:border-gray-300",
+        "dark:data-[selected-single=true]:bg-stone-700 dark:data-[selected-single=true]:border-white/5",
+        "data-[range-start=true]:bg-gray-200 dark:data-[range-start=true]:bg-stone-700",
+        "data-[range-end=true]:bg-gray-200 dark:data-[range-end=true]:bg-stone-700",
+        "[&>span]:text-xs [&>span]:opacity-70",
         defaultClassNames.day,
         className
       )}
