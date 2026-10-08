@@ -12,6 +12,9 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Title,
   ToggleGroup,
@@ -231,7 +234,14 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
       </div>
 
       <div className={cn("flex min-w-0 justify-between gap-x-2 gap-y-3", isCalendar && "flex-wrap")}>
-        <div className={cn("flex min-w-0 gap-2", isCalendar ? "flex-wrap" : "w-full")}>
+        <div
+          className={cn(
+            "flex min-w-0 gap-2",
+            isCalendar
+              ? "flex-wrap"
+              : "w-full sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] lg:grid-cols-[minmax(max-content,1fr)_minmax(0,22.5rem)_minmax(max-content,1fr)]"
+          )}
+        >
           <ToggleGroup
             className="shrink-0 h-10"
             multiple={false}
@@ -298,7 +308,17 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
           </ToggleGroup>
 
           {isEventListView && (
-            <div className="flex justify-end items-stretch gap-2 w-full">
+            <div className="max-sm:hidden flex min-w-0 justify-center">
+              <SearchInput
+                initialValue={filters.search}
+                onDebouncedChange={(value) => updateFilters({ search: value })}
+                className="w-full min-w-0 max-w-90"
+              />
+            </div>
+          )}
+
+          {isEventListView && (
+            <div className="ml-auto flex shrink-0 justify-self-end justify-end items-stretch gap-2">
               <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
                 <DrawerTrigger asChild className="md:hidden">
                   <Button variant="outline" className="relative rounded-lg size-10 sm:w-fit sm:h-full">
@@ -348,6 +368,33 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
                 </DrawerContent>
               </Drawer>
 
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="max-md:hidden shrink-0 rounded-lg h-10 gap-2">
+                    <IconFilter2 className="size-5" />
+                    Filter
+                    {filters.types.length + filters.groups.length > 0 && (
+                      <span className="size-5 flex items-center justify-center text-xs rounded-full bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
+                        {filters.types.length + filters.groups.length}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="max-md:hidden w-[36rem] max-w-[calc(100vw-2rem)] max-h-[min(80dvh,var(--available-height))] overflow-y-auto p-5"
+                >
+                  <div className="grid grid-cols-2 gap-6">
+                    <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} />
+                    <EventGroupFilter
+                      value={filters.groups}
+                      onChange={(groups) => updateFilters({ groups })}
+                      groups={groups ?? []}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+
               <Button
                 variant="outline"
                 size="icon-xl"
@@ -356,12 +403,6 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
               >
                 {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}
               </Button>
-
-              <SearchInput
-                initialValue={filters.search}
-                onDebouncedChange={(value) => updateFilters({ search: value })}
-                className="max-sm:hidden w-full max-w-90"
-              />
 
               <EventSortFilter
                 value={filters.viewModeSort}
@@ -430,18 +471,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
       )}
 
       {isEventListView && (
-        <div className="md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0">
-          <div className="max-md:hidden mt-4">
-            <EventTypeFilter value={filters.types} onChange={(types) => updateFilters({ types })} />
-            <div className="mt-6">
-              <EventGroupFilter
-                value={filters.groups}
-                onChange={(groups) => updateFilters({ groups })}
-                groups={groups ?? []}
-              />
-            </div>
-          </div>
-
+        <div className="min-w-0">
           <div className="mt-2 min-w-0">
             {hasActiveFilters && (
               <EventListFilterChips
