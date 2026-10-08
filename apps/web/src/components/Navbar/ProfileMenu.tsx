@@ -22,6 +22,9 @@ import {
   DropdownMenuTrigger,
   Text,
   Title,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@dotkomonline/ui"
 import { createLogoutUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import {
@@ -70,15 +73,27 @@ const ThemeDropdown: FC = () => {
 
 const ContactDebugDropdown: FC = () => (
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <button
-        aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center size-10 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition-colors"
-        type="button"
-      >
-        <IconMessageReport className="size-6" />
-      </button>
-    </DropdownMenuTrigger>
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="unstyled"
+              aria-label="Kontakt debug, les mer om debug"
+              className={cn(
+                "transition-colors",
+                "flex items-center justify-center size-10 rounded-full",
+                "hover:bg-gray-200 dark:hover:bg-stone-700/50"
+              )}
+            >
+              <IconMessageReport className="size-6" strokeWidth={1.6} />
+            </Button>
+          }
+        />
+      </TooltipTrigger>
+      <TooltipContent>Opplevd noe ugreit?</TooltipContent>
+    </Tooltip>
+
     <DropdownMenuContent
       align="end"
       className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"

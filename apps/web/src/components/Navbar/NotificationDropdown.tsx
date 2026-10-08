@@ -63,18 +63,25 @@ function AuthenticatedNotificationDropdown() {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <button type="button" aria-label={triggerAriaLabel} className={triggerClassName}>
-          <IconBell className="size-6" />
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger
+            render={
+              <button type="button" aria-label={triggerAriaLabel} className={triggerClassName}>
+                <IconBell className="size-6" />
 
-          {hasUnreadNotifications && (
-            <span
-              aria-hidden
-              className="absolute right-0 top-0 size-3 rounded-full border-2 border-gray-100 bg-red-500 dark:border-stone-800"
-            />
-          )}
-        </button>
-      </DropdownMenuTrigger>
+                {hasUnreadNotifications && (
+                  <span
+                    aria-hidden
+                    className="absolute right-0 top-0 size-3 rounded-full border-2 border-gray-100 bg-red-500 dark:border-stone-800"
+                  />
+                )}
+              </button>
+            }
+          />
+        </TooltipTrigger>
+        <TooltipContent>{triggerAriaLabel}</TooltipContent>
+      </Tooltip>
 
       <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
         <div className="flex shrink-0 items-center justify-between gap-2 px-4 pt-4">
@@ -237,11 +244,18 @@ function UnauthenticatedNotificationDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button type="button" aria-label="Åpne varslinger" className={triggerClassName}>
-          <IconBell className="size-6" />
-        </button>
-      </DropdownMenuTrigger>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger
+            render={
+              <button type="button" aria-label="Åpne varslinger" className={triggerClassName}>
+                <IconBell className="size-6" />
+              </button>
+            }
+          />
+        </TooltipTrigger>
+        <TooltipContent>Åpne varslinger</TooltipContent>
+      </Tooltip>
 
       <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
         <div className="flex flex-col gap-4 p-4">
