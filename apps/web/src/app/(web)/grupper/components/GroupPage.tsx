@@ -218,8 +218,8 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
           <Tabs defaultValue="active">
             <TabsList variant="default" className="h-12!">
-              <GroupMemberListTabTrigger value="active" label="Nåværende medlemmer" count={activeMembers.length} />
-              <GroupMemberListTabTrigger value="inactive" label="Tidligere medlemmer" count={inactiveMembers.length} />
+              <GroupMemberListTabTrigger value="active" label="Nåværende" count={activeMembers.length} />
+              <GroupMemberListTabTrigger value="inactive" label="Tidligere" count={inactiveMembers.length} />
             </TabsList>
 
             <TabsContent value="active">
