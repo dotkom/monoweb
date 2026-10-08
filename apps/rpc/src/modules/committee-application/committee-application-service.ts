@@ -4,10 +4,13 @@ import { NotFoundError } from "../../error"
 import type {
   CommitteeApplication,
   CommitteeApplicationId,
+  CommitteeApplicationInterviewMatchingResult,
+  CommitteeApplicationPeriodId,
   CommitteeApplicationPeriodSummary,
   CommitteeApplicationWrite,
 } from "./committee-application"
 import type { CommitteeApplicationRepository } from "./committee-application-repository"
+import { matchCommitteeApplicationInterviews } from "./committee-application-interview-matching"
 
 export interface CommitteeApplicationService {
   create(handle: DBHandle, data: CommitteeApplicationWrite): Promise<CommitteeApplication>
@@ -21,12 +24,26 @@ export interface CommitteeApplicationService {
   findById(handle: DBHandle, committeeApplicationId: CommitteeApplicationId): Promise<CommitteeApplication | null>
   findMany(handle: DBHandle, page: Pageable): Promise<CommitteeApplication[]>
   findOpenPeriod(handle: DBHandle): Promise<CommitteeApplicationPeriodSummary | null>
+  matchInterviews(
+    handle: DBHandle,
+    applicationPeriodId: CommitteeApplicationPeriodId
+  ): Promise<CommitteeApplicationInterviewMatchingResult>
 }
 
 export function getCommitteeApplicationService(
   committeeApplicationRepository: CommitteeApplicationRepository
 ): CommitteeApplicationService {
   return {
+    async matchInterviews(handle, applicationPeriodId) {
+      const input = await committeeApplicationRepository.findInterviewMatchingInput(handle, applicationPeriodId)
+
+      if (input === null) {
+        throw new NotFoundError(`CommitteeApplicationPeriod(ID=${applicationPeriodId}) not found`)
+      }
+
+      return await matchCommitteeApplicationInterviews(input)
+    },
+
     async create(handle, data) {
       return await committeeApplicationRepository.create(handle, data)
     },
