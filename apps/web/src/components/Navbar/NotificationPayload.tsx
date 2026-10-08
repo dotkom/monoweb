@@ -208,7 +208,6 @@ export function NotificationArticlePayload({
 }
 
 export function NotificationOfflinePayload({ offline }: { offline: Pick<Offline, "fileUrl" | "imageUrl" | "title"> }) {
-
   return (
     <Link href={offline.fileUrl} className={payloadCardClassName}>
       <div className="relative h-16 w-auto aspect-[0.777] shrink-0 overflow-hidden rounded-sm bg-gray-200 dark:bg-stone-700">
