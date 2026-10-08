@@ -153,13 +153,18 @@ afterEach(async () => {
   vi.unstubAllGlobals()
 })
 
-async function renderPreview() {
+async function renderPreview(nextEvent?: typeof event) {
   await act(async () => {
     root.render(
       <EventPreview>
         <EventPreviewLink event={event} href="/arrangementer/testevent/event-one">
           Testevent
         </EventPreviewLink>
+        {nextEvent !== undefined && (
+          <EventPreviewLink event={nextEvent} href="/arrangementer/next-event/event-two">
+            Next event
+          </EventPreviewLink>
+        )}
       </EventPreview>
     )
   })
@@ -263,6 +268,58 @@ describe("desktop event preview", () => {
     await act(async () => container.querySelector("a")?.click())
     expect(prevented).toBe(false)
     expect(mocks.query).not.toHaveBeenCalled()
+  })
+
+  it("unlocks the page during closing and can open another event before the animation ends", async () => {
+    const getComputedStyle = window.getComputedStyle.bind(window)
+
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element) => {
+      const styles = getComputedStyle(element)
+
+      if (element.matches('[data-slot="drawer-content"], [data-slot="drawer-overlay"]')) {
+        Object.defineProperty(styles, "animationName", {
+          get: () => (element.getAttribute("data-state") === "open" ? "drawer-open" : "drawer-close"),
+        })
+      }
+
+      return styles
+    })
+
+    const link = await renderPreview({ ...event, id: "event-two", title: "Next event" })
+
+    await act(async () => link.click())
+
+    expect(document.body.getAttribute("data-scroll-locked")).not.toBeNull()
+
+    const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+
+    await act(async () => close?.click())
+
+    const closingDrawer = document.querySelector<HTMLElement>('[data-slot="drawer-content"]')
+
+    expect(closingDrawer?.getAttribute("data-state")).toBe("closed")
+    expect(closingDrawer?.style.pointerEvents).toBe("none")
+    expect(document.querySelector('[data-slot="drawer-overlay"]')).toBeNull()
+    expect(document.body.getAttribute("data-scroll-locked")).toBeNull()
+    expect(document.body.style.pointerEvents).not.toBe("none")
+
+    const nextLink = container.querySelector<HTMLAnchorElement>('a[href="/arrangementer/next-event/event-two"]')
+
+    expect(nextLink).not.toBeNull()
+
+    const focus = vi.spyOn(nextLink as HTMLAnchorElement, "focus")
+
+    await act(async () => nextLink?.click())
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10))
+    })
+
+    expect(focus).not.toHaveBeenCalled()
+    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBe(closingDrawer)
+    expect(document.querySelector('[data-slot="drawer-content"]')?.getAttribute("data-state")).toBe("open")
+    expect(document.querySelector('[data-slot="drawer-title"]')?.textContent).toBe("Next event")
+    expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ["event", "event-two"] }))
+    expect(document.body.getAttribute("data-scroll-locked")).not.toBeNull()
   })
 
   it("shows a retry action if event loading fails", async () => {

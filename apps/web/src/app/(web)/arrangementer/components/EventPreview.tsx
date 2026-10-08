@@ -34,19 +34,31 @@ import { TimeBox } from "./TimeLocationBox/TimeBox"
 export function EventPreview({ children, className }: PropsWithChildren<{ className?: string }>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
   const [open, setOpen] = useState(false)
+  const [drawerSession, setDrawerSession] = useState(0)
 
   const { icon, copy } = useCopyToClipboard()
 
   const triggerRef = useRef<HTMLAnchorElement | null>(null)
+  const drawerSessionRef = useRef(0)
 
-  const openPreview = useCallback((event: PreviewEvent, trigger: HTMLAnchorElement) => {
-    if (trigger.closest('[data-slot="drawer-content"]') === null) {
-      triggerRef.current = trigger
-    }
+  const openPreview = useCallback(
+    (event: PreviewEvent, trigger: HTMLAnchorElement) => {
+      if (trigger.closest('[data-slot="drawer-content"]') === null) {
+        triggerRef.current = trigger
+      }
 
-    setSelectedEvent(event)
-    setOpen(true)
-  }, [])
+      // Start fresh if the previous drawer is still running its closing animation.
+      if (open === false) {
+        drawerSessionRef.current += 1
+
+        setDrawerSession(drawerSessionRef.current)
+      }
+
+      setSelectedEvent(event)
+      setOpen(true)
+    },
+    [open]
+  )
 
   useEffect(() => {
     if (open === false) {
@@ -73,9 +85,12 @@ export function EventPreview({ children, className }: PropsWithChildren<{ classN
   return (
     <EventPreviewContext.Provider value={openPreview}>
       <div className={className}>{children}</div>
-      <Drawer direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
+      <Drawer key={drawerSession} direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
+        {/* The overlay locks page scrolling, so remove it as soon as closing starts. */}
         <DrawerContent
           aria-describedby={undefined}
+          showOverlay={open}
+          style={open ? undefined : { pointerEvents: "none" }}
           overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
           className={cn(
             "overflow-hidden border border-field-border shadow-xl",
@@ -87,6 +102,11 @@ export function EventPreview({ children, className }: PropsWithChildren<{ classN
           )}
           onCloseAutoFocus={(event) => {
             event.preventDefault()
+
+            // An old drawer's cleanup must not move focus away from a newer preview.
+            if (drawerSession !== drawerSessionRef.current) {
+              return
+            }
 
             const trigger = triggerRef.current
 
