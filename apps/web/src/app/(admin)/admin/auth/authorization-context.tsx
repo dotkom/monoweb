@@ -23,6 +23,7 @@ import {
   hasAnyGroupAffiliation,
   hasGroupRole,
   isGroupMember,
+  canEditApplication,
 } from "./permissions"
 
 export interface AuthorizationProviderProps {
@@ -89,6 +90,7 @@ export function useAuthorization() {
       canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
       canEditOffline: () => canEditOffline(state),
       canEditFadderuke: () => canEditFadderuke(state),
+      canEditApplication: () => canEditApplication(state),
       canCreateGroup: (groupType: GroupType) => canCreateGroup(state, groupType),
       canUpdateGroup: (groupId: GroupId, isInterestGroup: boolean) => canUpdateGroup(state, groupId, isInterestGroup),
       canDeleteGroup: (groupId: GroupId, isInterestGroup: boolean) => canDeleteGroup(state, groupId, isInterestGroup),

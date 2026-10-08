@@ -178,6 +178,13 @@ export function canEditFadderuke(state: AuthorizationState): boolean {
 }
 
 /**
+ * `opptake` create/update/delete procedures
+ */
+export function canEditApplication(state: AuthorizationState): boolean {
+  return state.isAdministrator
+}
+
+/**
  * `group.create` procedure
  */
 export function canCreateGroup(state: AuthorizationState, groupType: GroupType): boolean {

@@ -12,6 +12,7 @@ import {
   IconConfetti,
   IconDeviceMobileShare,
   IconHeartHandshake,
+  IconMoodHappy,
   IconPhotoShare,
   IconSitemap,
   IconSkull,
@@ -234,6 +235,20 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny fadderuke",
             href: "/admin/fadderukene/ny",
             resourceName: "fadderuke",
+          },
+        ],
+      },
+      {
+        label: "Komitéopptak",
+        icon: IconMoodHappy,
+        href: "/admin/opptak",
+        keywords: ["komitéopptak"],
+        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditApplication(),
+        createActions: [
+          {
+            label: "Nytt komitéopptak",
+            href: "/admin/opptak/ny",
+            resourceName: "komitéopptak",
           },
         ],
       },

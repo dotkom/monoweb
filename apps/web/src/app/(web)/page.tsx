@@ -13,6 +13,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
+import { ActiveApplicationSection } from "@/components/activeapplicationsection"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -63,6 +64,7 @@ export default async function App() {
     <section className="flex flex-col gap-16 w-full">
       <div className="flex flex-col gap-8">
         <AuthNotice />
+        <ActiveApplicationSection />
         <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
         <OnlineHero />
       </div>
