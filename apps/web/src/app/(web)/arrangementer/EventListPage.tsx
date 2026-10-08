@@ -32,7 +32,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 import { roundToNearestMinutes } from "date-fns"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { CalendarMonthNavigation } from "./components/calendar/EventMonthCalendar/CalendarMonthNavigation"
 import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/EventMonthCalendar"
@@ -83,6 +83,47 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchBarOpen, setSearchBarOpen] = useState(filters.search.length > 0)
   const [registeredEventsOpen, setRegisteredEventsOpen] = useState(false)
+  const filterRowRef = useRef<HTMLDivElement>(null)
+  const [isFilterRowSticky, setIsFilterRowSticky] = useState(false)
+
+  // This is used to add shadow-xs to the sticky filter row when the sticky scroll is used
+  useEffect(() => {
+    const row = filterRowRef.current
+
+    if (!isEventListView || row === null) {
+      return
+    }
+
+    let frame: number | undefined
+
+    const updateStickyState = () => {
+      frame = undefined
+
+      const stickyTop = Number.parseFloat(window.getComputedStyle(row).top)
+
+      setIsFilterRowSticky(row.getBoundingClientRect().top <= stickyTop)
+    }
+
+    const scheduleUpdate = () => {
+      if (frame === undefined) {
+        frame = window.requestAnimationFrame(updateStickyState)
+      }
+    }
+
+    scheduleUpdate()
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true })
+    window.addEventListener("resize", scheduleUpdate)
+
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate)
+      window.removeEventListener("resize", scheduleUpdate)
+
+      if (frame !== undefined) {
+        window.cancelAnimationFrame(frame)
+      }
+    }
+  }, [isEventListView])
 
   const queryFilter: EventFilterQuery = useMemo(
     () => ({
@@ -233,7 +274,16 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
         </div>
       </div>
 
-      <div className={cn("flex min-w-0 justify-between gap-x-2 gap-y-3", isCalendar && "flex-wrap")}>
+      <div
+        ref={filterRowRef}
+        className={cn(
+          "flex min-w-0 justify-between gap-x-2 gap-y-3",
+          isCalendar && "flex-wrap",
+          isEventListView &&
+            "sticky top-[calc(var(--navbar-height)+(--spacing(6)))] z-30 -m-2 bg-background p-2 rounded-2xl transition-shadow",
+          isEventListView && isFilterRowSticky && "shadow-md"
+        )}
+      >
         <div
           className={cn(
             "flex min-w-0 gap-2",
@@ -243,7 +293,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
           )}
         >
           <ToggleGroup
-            className="shrink-0 h-10"
+            className="shrink-0 h-10 bg-background"
             multiple={false}
             spacing={0}
             value={[tabValue]}
@@ -381,6 +431,8 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
+                  sideOffset={12}
+                  positionMethod="fixed"
                   align="end"
                   className="max-md:hidden w-[36rem] max-w-[calc(100vw-2rem)] max-h-[min(80dvh,var(--available-height))] overflow-y-auto p-5"
                 >
