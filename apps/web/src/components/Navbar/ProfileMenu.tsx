@@ -12,6 +12,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -51,7 +52,7 @@ const DEBUG_CONTACT_URL =
 const ThemeDropdown: FC = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
+      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700">
         <IconSun width={22} height={22} className="dark:hidden" />
         <IconMoon width={22} height={22} className="hidden dark:block" />
       </DropdownMenuTrigger>
@@ -59,7 +60,7 @@ const ThemeDropdown: FC = () => {
         align="end"
         sideOffset={24}
         positionMethod="fixed"
-        className="w-fit -mr-3 rounded-xl border border-gray-300/70 bg-blue-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
+        className="w-fit -mr-3 rounded-xl border border-gray-300/70 bg-gray-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
       >
         <ThemeToggle />
       </DropdownMenuContent>
@@ -72,7 +73,7 @@ const ContactDebugDropdown: FC = () => (
     <DropdownMenuTrigger asChild>
       <button
         aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center size-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
+        className="flex items-center justify-center size-10 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition-colors"
         type="button"
       >
         <IconMessageReport className="size-6" />
@@ -80,7 +81,7 @@ const ContactDebugDropdown: FC = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent
       align="end"
-      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
+      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
       sideOffset={24}
       positionMethod="fixed"
     >
@@ -102,7 +103,7 @@ const ContactDebugDropdown: FC = () => (
             href={DEBUG_CONTACT_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
+            className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-stone-700 hover:bg-gray-200 dark:hover:bg-stone-600 transition-colors"
           >
             <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
             <IconArrowUpRight width={16} height={16} />
@@ -277,7 +278,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           >
             <Avatar className="h-10 w-10">
               <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-              <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
+              <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-800 dark:from-blue-400 dark:to-blue-800 text-white">
                 <IconUser className="size-5" />
               </AvatarFallback>
             </Avatar>
@@ -288,7 +289,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
+          className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
           sideOffset={24}
           positionMethod="fixed"
         >
@@ -325,7 +326,12 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
                         variant="uncolored"
                         onClick={() => setOpen(false)}
                         key={link.label}
-                        className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+                        className={cn(
+                          "rounded-lg transition-colors cursor-pointer",
+                          "hover:bg-gray-100 focus:bg-gray-100 data-highlighted:bg-gray-100",
+                          "dark:hover:bg-stone-700/25 dark:focus:bg-stone-700/25 dark:data-highlighted:bg-stone-700/25",
+                          "border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+                        )}
                       >
                         <Link
                           className="flex items-center gap-3 min-h-9 px-3"
@@ -369,7 +375,12 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             asChild
             onClick={() => setBugReportModalOpen(true)}
             variant="uncolored"
-            className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
+            className={cn(
+              "rounded-lg transition-colors cursor-pointer",
+              "hover:bg-gray-100 focus:bg-gray-100 data-highlighted:bg-gray-100",
+              "dark:hover:bg-stone-700/25 dark:focus:bg-stone-700/25 dark:data-highlighted:bg-stone-700/25",
+              "border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+            )}
           >
             <div className="flex items-center w-full gap-3 text-sm py-2">
               <IconBug className="size-5" />

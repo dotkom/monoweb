@@ -201,9 +201,9 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
         <div
           className={cn(
             "min-w-0 w-full grow h-(--navbar-height)",
-            "bg-blue-100/80 dark:bg-stone-800/90 border border-gray-300/70 dark:border-stone-700/30",
+            "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-200 dark:border-stone-700/30",
             "flex flex-row items-center justify-between",
-            "backdrop-blur-xl shadow-xs",
+            "backdrop-blur-xl shadow-sm",
             "p-3 rounded-[calc(var(--navbar-height)/2)]",
             showLoginButton && "lg:rounded-r-md"
           )}
@@ -225,12 +225,13 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
               "flex h-(--navbar-height) shrink-0",
               "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md",
               "shadow-sm backdrop-blur-xl",
-              "bg-blue-100/80 dark:bg-stone-800/90"
+              "bg-gray-100/80 dark:bg-stone-800/90"
             )}
           >
             <Button
               element="a"
               variant="default"
+              color="gray"
               size="lg"
               className={cn(
                 "h-full min-w-19 shrink-0",
@@ -251,7 +252,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
             "ml-2 lg:hidden size-(--navbar-height) shrink-0",
             "flex items-center justify-center rounded-full",
             "shadow-xs backdrop-blur-xl",
-            "bg-blue-100/80 dark:bg-stone-800/90 border border-gray-300/70 dark:border-stone-700/30"
+            "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-300/70 dark:border-stone-700/30"
           )}
         >
           <MobileNavigation links={links} />
