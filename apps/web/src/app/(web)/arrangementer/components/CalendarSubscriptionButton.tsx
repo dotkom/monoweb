@@ -105,93 +105,100 @@ export function CalendarSubscriptionButton({ triggerVariant = "outline" }: Calen
   }
 
   return (
-    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <PopoverAnchor className="inline-flex">
-        <PopoverTrigger asChild>
-          <Button
-            variant={triggerVariant}
-            className="h-10 rounded-r-none shrink-0"
-            icon={<IconCalendarPlus className="size-4" />}
-          >
-            <Text element="span" className="max-sm:hidden">
-              {mainLabel}
-            </Text>
+    <div className="flex flex-col gap-2">
+      <Text element="p" className="mt-2 text-xs text-muted-foreground">
+        Få dine eller alle arrangementene rett i kalenderen.
+      </Text>
 
-            <Text element="span" className="sm:hidden">
-              {shortLabel}
-            </Text>
-          </Button>
-        </PopoverTrigger>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+        <PopoverAnchor className="inline-flex">
+          <PopoverTrigger asChild>
             <Button
               variant={triggerVariant}
-              aria-label="Bytt kalender"
-              className="h-10 w-8 rounded-l-none border-l-0 px-0 shrink-0"
+              className="h-10 rounded-r-none shrink-0"
+              icon={<IconCalendarPlus className="size-4" />}
             >
-              <IconChevronDown className="size-4" />
+              <Text element="span" className="max-sm:hidden">
+                {mainLabel}
+              </Text>
+
+              <Text element="span" className="sm:hidden">
+                {shortLabel}
+              </Text>
             </Button>
-          </DropdownMenuTrigger>
+          </PopoverTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={triggerVariant}
+                aria-label="Bytt kalender"
+                className="h-10 w-8 rounded-l-none border-l-0 px-0 shrink-0"
+              >
+                <IconChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedFeed("personal")
-                setPopoverOpen(true)
-              }}
-            >
-              <UserProfileAvatar imageUrl={dbUser?.imageUrl} name={dbUser?.name} />
-              Dine arrangementer
-              {personalSelectedIcon}
-            </DropdownMenuItem>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedFeed("personal")
+                  setPopoverOpen(true)
+                }}
+              >
+                <UserProfileAvatar imageUrl={dbUser?.imageUrl} name={dbUser?.name} />
+                Dine arrangementer
+                {personalSelectedIcon}
+              </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() => {
-                setSelectedFeed("all")
-                setPopoverOpen(true)
-              }}
-            >
-              <IconCalendarEvent className="ml-2 size-4 text-muted-foreground" />
-              Alle arrangementer
-              {allEventsSelectedIcon}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </PopoverAnchor>
-      <PopoverContent align="end" className="w-60">
-        <div className="flex flex-col gap-2">
-          <Text className="text-sm text-muted-foreground">{selectedFeedDescription}</Text>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSelectedFeed("all")
+                  setPopoverOpen(true)
+                }}
+              >
+                <IconCalendarEvent className="ml-2 size-4 text-muted-foreground" />
+                Alle arrangementer
+                {allEventsSelectedIcon}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PopoverAnchor>
 
-          {isPersonalFeed && !isLoggedIn && (
-            <Button
-              element="a"
-              href={createAuthorizeUrl({ returnTo: "/arrangementer" })}
-              variant="default"
-              className="w-fit"
-            >
-              Logg inn
-            </Button>
-          )}
+        <PopoverContent align="end" positionMethod="fixed" className="w-60">
+          <div className="flex flex-col gap-2">
+            <Text className="text-sm text-muted-foreground">{selectedFeedDescription}</Text>
 
-          {isPersonalFeed && isLoggedIn && personalCalendarTokenQuery.isLoading && (
-            <div className="flex flex-row items-center gap-2 text-muted-foreground">
-              <IconLoader2 className="size-4 animate-spin" />
-              <Text className="text-sm">Henter kalenderlenke…</Text>
-            </div>
-          )}
+            {isPersonalFeed && !isLoggedIn && (
+              <Button
+                element="a"
+                href={createAuthorizeUrl({ returnTo: "/arrangementer" })}
+                variant="default"
+                className="w-fit"
+              >
+                Logg inn
+              </Button>
+            )}
 
-          {isPersonalFeed && isLoggedIn && personalCalendarTokenQuery.isError && (
-            <Text className="text-sm text-red-600 dark:text-red-400">
-              Kunne ikke hente kalenderlenken. Prøv igjen senere.
-            </Text>
-          )}
+            {isPersonalFeed && isLoggedIn && personalCalendarTokenQuery.isLoading && (
+              <div className="flex flex-row items-center gap-2 text-muted-foreground">
+                <IconLoader2 className="size-4 animate-spin" />
+                <Text className="text-sm">Henter kalenderlenke…</Text>
+              </div>
+            )}
 
-          {selectedCalendarUrl && !(isPersonalFeed && personalCalendarTokenQuery.isLoading) && (
-            <CalendarFeedActions calendarName={shortLabel} calendarUrl={selectedCalendarUrl} />
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
+            {isPersonalFeed && isLoggedIn && personalCalendarTokenQuery.isError && (
+              <Text className="text-sm text-red-600 dark:text-red-400">
+                Kunne ikke hente kalenderlenken. Prøv igjen senere.
+              </Text>
+            )}
+
+            {selectedCalendarUrl && !(isPersonalFeed && personalCalendarTokenQuery.isLoading) && (
+              <CalendarFeedActions calendarName={shortLabel} calendarUrl={selectedCalendarUrl} />
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }
 

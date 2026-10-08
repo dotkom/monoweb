@@ -12,6 +12,7 @@ const EventFiltersSchema = z.object({
   types: z.array(EventTypeSchema),
   groups: z.array(GroupSchema.shape.slug),
   viewModeSort: EventListViewModeSchema,
+  date: z.iso.date().nullable().catch(null),
 })
 
 type EventFilters = z.infer<typeof EventFiltersSchema>
@@ -26,6 +27,7 @@ export const useEventFilters = () => {
       types: searchParams.getAll("type"),
       groups: searchParams.getAll("group"),
       viewModeSort: searchParams.get("sort") ?? "ATTENDANCE",
+      date: searchParams.get("date"),
     })
   }, [searchParams])
 
@@ -35,26 +37,30 @@ export const useEventFilters = () => {
 
       const next = { ...filters, ...partial }
 
-      // search
       params.delete("q")
-      if (next.search) params.set("q", next.search)
-
-      // types
       params.delete("type")
+      params.delete("group")
+      params.delete("sort")
+      params.delete("date")
+
+      if (next.search) {
+        params.set("q", next.search)
+      }
+
       for (const t of next.types) {
         params.append("type", t)
       }
 
-      // groups
-      params.delete("group")
       for (const g of next.groups) {
         params.append("group", g)
       }
 
-      // sort
-      params.delete("sort")
       if (next.viewModeSort !== "ATTENDANCE") {
         params.set("sort", next.viewModeSort)
+      }
+
+      if (next.date) {
+        params.set("date", next.date)
       }
 
       router.replace(`?${params.toString()}`, { scroll: false })
@@ -68,6 +74,7 @@ export const useEventFilters = () => {
     params.delete("type")
     params.delete("group")
     params.delete("sort")
+    params.delete("date")
     router.replace(`?${params.toString()}`, { scroll: false })
   }, [router, searchParams])
 
