@@ -40,6 +40,8 @@ import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { CalendarSubscriptionButton } from "./components/CalendarSubscriptionButton"
 import { EventList, EventListSkeleton } from "./components/EventList"
+import { EventListCalendar } from "./components/EventListCalendar"
+import { getEventDateRange } from "./utils/event-date"
 import { EventListFilterChips } from "./components/filters/EventFilterChips"
 import { EventGroupFilter } from "./components/filters/EventGroupFilter"
 import { EventSortFilter } from "./components/filters/EventSortFilter"
@@ -130,11 +132,12 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
       bySearchTerm: filters.search || undefined,
       byType: filters.types.length > 0 ? filters.types : undefined,
       byOrganizingGroup: filters.groups.length > 0 ? filters.groups : undefined,
+      byStartDate: filters.date ? getEventDateRange(filters.date) : undefined,
     }),
-    [filters.search, filters.types, filters.groups]
+    [filters.search, filters.types, filters.groups, filters.date]
   )
 
-  const isAttendanceSort = filters.viewModeSort === "ATTENDANCE"
+  const isAttendanceSort = filters.viewModeSort === "ATTENDANCE" && !filters.date
 
   const {
     eventDetails: featuredEventWithAttendances,
@@ -256,7 +259,11 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const isLoading = isFutureLoading || (futureEventWithAttendances.length === 0 && isPastLoading)
 
   const hasActiveFilters =
-    filters.search || filters.types.length > 0 || filters.groups.length > 0 || filters.viewModeSort !== "ATTENDANCE"
+    filters.search ||
+    filters.types.length > 0 ||
+    filters.groups.length > 0 ||
+    filters.viewModeSort !== "ATTENDANCE" ||
+    filters.date
 
   const activeFilterCount =
     filters.types.length + filters.groups.length + (filters.viewModeSort !== "ATTENDANCE" ? 1 : 0)
@@ -269,7 +276,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
         <Title element="h1" size="xl">
           Arrangementer
         </Title>
-        <div className="max-sm:hidden">
+        <div className={cn("max-sm:hidden", isEventListView && "md:hidden")}>
           <CalendarSubscriptionButton />
         </div>
       </div>
@@ -523,7 +530,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
       )}
 
       {isEventListView && (
-        <div className="min-w-0">
+        <div className="min-w-0 md:grid md:grid-cols-[minmax(0,1fr)_18rem] md:gap-6 lg:gap-8">
           <div className="mt-2 min-w-0">
             {hasActiveFilters && (
               <EventListFilterChips
@@ -532,7 +539,11 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
                 groupFilters={filters.groups}
                 viewMode={filters.viewModeSort}
                 groups={groups ?? []}
+                date={filters.date}
                 onRemoveFilter={(type, value) => {
+                  if (type === "date") {
+                    updateFilters({ date: null })
+                  }
                   if (type === "search") {
                     updateFilters({ search: "" })
                   }
@@ -557,7 +568,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
               />
             )}
 
-            <div className="mt-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
               {dbUser && (
                 <RegisteredEventsCard
                   eventsWithAttendance={registeredEvents}
@@ -580,6 +591,15 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
               )}
               {isLoading && <EventListSkeleton displayMode={isCards ? "cards" : "list"} />}
             </div>
+          </div>
+
+          <div className="max-md:hidden self-start sticky top-40 mt-3 flex flex-col gap-3">
+            <EventListCalendar
+              filter={queryFilter}
+              selectedDate={filters.date}
+              onSelectDate={(date) => updateFilters({ date })}
+            />
+            <CalendarSubscriptionButton />
           </div>
         </div>
       )}

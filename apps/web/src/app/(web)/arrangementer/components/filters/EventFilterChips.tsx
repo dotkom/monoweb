@@ -3,8 +3,11 @@ import type { EventType } from "@dotkomonline/rpc/event"
 import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import type { EventListViewMode } from "../EventList"
+import { format } from "date-fns"
+import { nb } from "date-fns/locale"
+import { getEventDateRange } from "../../utils/event-date"
 
-type FilterType = "search" | "type" | "group" | "sort"
+type FilterType = "search" | "type" | "group" | "sort" | "date"
 
 interface EventListFilterChipsProps {
   searchTerm: string
@@ -12,6 +15,7 @@ interface EventListFilterChipsProps {
   groupFilters: string[]
   viewMode: EventListViewMode
   groups: Group[]
+  date: string | null
   onRemoveFilter: (filterType: FilterType, value?: string) => void
   onResetAll: () => void
 }
@@ -22,10 +26,19 @@ export const EventListFilterChips = ({
   groupFilters,
   viewMode,
   groups,
+  date,
   onRemoveFilter,
   onResetAll,
 }: EventListFilterChipsProps) => {
   const chips: FilterChip[] = []
+
+  if (date) {
+    chips.push({
+      key: `date-${date}`,
+      label: format(getEventDateRange(date).min, "d. MMMM yyyy", { locale: nb }),
+      onRemove: () => onRemoveFilter("date"),
+    })
+  }
 
   if (searchTerm) {
     chips.push({ key: `search-${searchTerm}`, label: `'${searchTerm}'`, onRemove: () => onRemoveFilter("search") })
