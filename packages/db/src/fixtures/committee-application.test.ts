@@ -21,9 +21,11 @@ test("application windows follow Oslo calendar weeks, including daylight saving 
     const { applicationPeriod } = getCommitteeApplicationFixtures(getUserFixtures(), new Date(currentTime))
     assert.equal(applicationPeriod.applicationsOpenAt.toISOString(), expectedOpen)
     assert.equal(applicationPeriod.applicationsCloseAt.toISOString(), expectedClose)
-    assert.equal(applicationPeriod.interviewStartDate.toISOString().slice(0, 10), expectedInterviewStart)
+    assert.equal(applicationPeriod.interviewsStartDate.toISOString().slice(0, 10), expectedInterviewStart)
     assert.equal(applicationPeriod.isDraft, true)
     assert.equal(applicationPeriod.isEnabled, true)
+    assert.ok(applicationPeriod.interviewsPublishedAt >= applicationPeriod.applicationsCloseAt)
+    assert.ok(applicationPeriod.interviewsPublishedAt < applicationPeriod.interviewsStartDate)
   }
 })
 
@@ -132,13 +134,13 @@ test("randomized fixtures obey eligibility, ranking, availability and interview 
         assert.equal(selections.get(interview.groupSelectionId)?.applicationGroupId, group.id)
         const startsAt = new TZDate(interview.startsAt, "Europe/Oslo")
         const endsAt = new TZDate(interview.endsAt, "Europe/Oslo")
-        assert.ok(startsAt.getHours() >= 8)
+        assert.ok(startsAt.getHours() >= 9)
         assert.ok(endsAt.getHours() < 17 || (endsAt.getHours() === 17 && endsAt.getMinutes() === 0))
         assert.ok(startsAt.getDay() >= 1 && startsAt.getDay() <= 5)
         assert.equal(startsAt.getDate(), endsAt.getDate())
         const interviewCalendarDate = Date.UTC(startsAt.getFullYear(), startsAt.getMonth(), startsAt.getDate())
-        assert.ok(interviewCalendarDate >= fixtures.applicationPeriod.interviewStartDate.getTime())
-        assert.ok(interviewCalendarDate <= fixtures.applicationPeriod.interviewEndDate.getTime())
+        assert.ok(interviewCalendarDate >= fixtures.applicationPeriod.interviewsStartDate.getTime())
+        assert.ok(interviewCalendarDate <= fixtures.applicationPeriod.interviewsEndDate.getTime())
         let expectedMinutes = 20
 
         if (group.interviewDuration === CommitteeApplicationInterviewDuration.MINUTES_30) {
@@ -164,13 +166,13 @@ test("larger applicant lists split full days into compact blocks and extend the 
   const fixtures = getCommitteeApplicationFixtures(users, new Date("2026-10-06T12:00:00Z"))
   assert.ok(fixtures.applications.length > 0)
   assert.equal(fixtures.interviews.length, fixtures.groupSelections.length)
-  assert.ok(fixtures.applicationPeriod.interviewEndDate > new Date("2026-10-16"))
+  assert.ok(fixtures.applicationPeriod.interviewsEndDate > new Date("2026-10-16"))
 
   for (const block of fixtures.interviewBlocks) {
     const startsAt = new TZDate(block.startsAt, "Europe/Oslo")
     const endsAt = new TZDate(block.endsAt, "Europe/Oslo")
     assert.equal(startsAt.getDate(), endsAt.getDate())
-    assert.ok(startsAt.getHours() >= 8)
+    assert.ok(startsAt.getHours() >= 9)
     assert.ok(endsAt.getHours() < 17 || (endsAt.getHours() === 17 && endsAt.getMinutes() === 0))
   }
 })
