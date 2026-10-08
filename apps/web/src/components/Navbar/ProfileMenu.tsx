@@ -72,10 +72,10 @@ const ContactDebugDropdown: FC = () => (
     <DropdownMenuTrigger asChild>
       <button
         aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
+        className="flex items-center justify-center size-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
         type="button"
       >
-        <IconMessageReport width={24} height={24} />
+        <IconMessageReport className="size-6" />
       </button>
     </DropdownMenuTrigger>
     <DropdownMenuContent
@@ -215,18 +215,22 @@ export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
 
   if (isInvalid && sessionRecoveryMessages !== null) {
     return (
-      <div className="flex gap-2">
-        <NotificationDropdown isAuthenticated={false} />
-        <ContactDebugDropdown />
+      <div className="flex gap-2.5">
+        <div className="flex gap-0.5">
+          <ContactDebugDropdown />
+          <NotificationDropdown isAuthenticated={false} />
+        </div>
         <SessionRecoveryDropdown {...sessionRecoveryMessages} returnTo={fullPathname} />
       </div>
     )
   }
 
   return (
-    <div className="flex gap-2">
-      <NotificationDropdown isAuthenticated />
-      <ContactDebugDropdown />
+    <div className="flex gap-2.5">
+      <div className="flex gap-0.5">
+        <ContactDebugDropdown />
+        <NotificationDropdown isAuthenticated />
+      </div>
       <AvatarDropdown dbUser={dbUser} />
     </div>
   )
