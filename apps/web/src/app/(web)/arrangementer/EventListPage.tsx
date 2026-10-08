@@ -42,6 +42,7 @@ import { CalendarSubscriptionButton } from "./components/CalendarSubscriptionBut
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { EventListCalendar } from "./components/EventListCalendar"
 import { getEventDateRange } from "./utils/event-date"
+import { EventPreview } from "./components/EventPreview"
 import { EventListFilterChips } from "./components/filters/EventFilterChips"
 import { EventGroupFilter } from "./components/filters/EventGroupFilter"
 import { EventSortFilter } from "./components/filters/EventSortFilter"
@@ -271,7 +272,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const tabValue = isCalendar ? "calendar" : view
 
   return (
-    <div className="flex flex-col gap-4">
+    <EventPreview className="flex flex-col gap-4">
       <div className="flex flex-row flex-wrap items-center justify-between gap-3">
         <Title element="h1" size="xl">
           Arrangementer
@@ -610,6 +611,6 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
           {view === "month" && <EventMonthCalendar year={calendarNavigation.year} month={calendarNavigation.month} />}
         </div>
       )}
-    </div>
+    </EventPreview>
   )
 }
