@@ -68,6 +68,7 @@ export const OfflineWriteForm = ({
         label="Bilde"
         maxSizeKiB={OFFLINE_IMAGE_MAX_SIZE_KIB}
         onFileUpload={imageUpload}
+        required
       />
 
       <Button type="submit" variant="default" className="w-fit" disabled={form.formState.disabled}>
