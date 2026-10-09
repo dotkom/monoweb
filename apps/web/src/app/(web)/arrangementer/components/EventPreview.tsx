@@ -225,6 +225,9 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
 
   const { event, attendance } = eventDetail
 
+  const showAttendanceCard = attendance !== null
+  const showDescription = event.description !== ""
+
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EventHeader event={event} showAdminLink={isOrganizer === true || isAdmin === true} />
@@ -257,13 +260,16 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
         )}
       </section>
 
-      {event.description !== "" && (
-        <ReadMore maxLines={8}>
+      {showDescription &&
+        (showAttendanceCard ? (
+          <ReadMore maxLines={8}>
+            <EventDescription description={event.description} />
+          </ReadMore>
+        ) : (
           <EventDescription description={event.description} />
-        </ReadMore>
-      )}
+        ))}
 
-      {attendance !== null && (
+      {showAttendanceCard && (
         <AttendanceCard
           initialAttendance={attendance}
           initialRegistrationAvailability={null}
