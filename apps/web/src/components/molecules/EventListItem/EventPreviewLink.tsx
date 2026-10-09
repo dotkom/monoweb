@@ -19,6 +19,7 @@ export function EventPreviewLink({ event, onClick, ...props }: ComponentProps<ty
 
   return (
     <Link
+      prefetch={false}
       {...props}
       onClick={(click) => {
         // We run the caller's click handler first so they can cancel the click before we decide to open the drawer.
