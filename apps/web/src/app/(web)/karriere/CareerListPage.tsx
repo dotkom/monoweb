@@ -188,17 +188,18 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
           </ToggleGroup>
 
           <div className="flex justify-end items-stretch gap-2 w-full">
-            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} repositionInputs={false}>
-              <DrawerTrigger asChild className="md:hidden">
-                <Button variant="outline" className="relative rounded-lg size-10 sm:w-fit sm:h-full">
-                  <IconFilter2 className="size-5" />
-                  <span className="hidden sm:block text-sm pl-1">Filter</span>
-                  {activeFilterCount > 0 && (
-                    <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
-                      {activeFilterCount}
-                    </div>
-                  )}
-                </Button>
+            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+              <DrawerTrigger
+                className="md:hidden"
+                render={<Button variant="outline" className="relative rounded-lg size-10 sm:w-fit sm:h-full" />}
+              >
+                <IconFilter2 className="size-5" />
+                <span className="hidden sm:block text-sm pl-1">Filter</span>
+                {activeFilterCount > 0 && (
+                  <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
+                    {activeFilterCount}
+                  </div>
+                )}
               </DrawerTrigger>
               <DrawerContent>
                 <div className="px-4 overflow-y-auto max-h-[80dvh]">
