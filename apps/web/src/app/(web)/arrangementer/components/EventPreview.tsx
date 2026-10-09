@@ -250,6 +250,7 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
           event={event}
           enableTurnstile={enableTurnstile}
           deferTurnstile
+          showAttendeeActions={false}
         />
       )}
     </div>

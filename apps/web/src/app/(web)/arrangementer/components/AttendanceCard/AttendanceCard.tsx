@@ -54,6 +54,7 @@ interface AttendanceCardProps {
   parentEvent: Event | null
   enableTurnstile?: boolean
   deferTurnstile?: boolean
+  showAttendeeActions?: boolean
 }
 
 export const AttendanceCard = ({
@@ -63,6 +64,7 @@ export const AttendanceCard = ({
   initialRegistrationAvailability,
   enableTurnstile = true,
   deferTurnstile = false,
+  showAttendeeActions = true,
 }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -404,16 +406,18 @@ export const AttendanceCard = ({
         <NonAttendablePoolsBox attendance={attendance} user={user} />
 
         <div className="flex flex-col gap-4 w-full">
-          <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
-            {attendee?.registered && <TicketButton attendee={attendee} />}
+          {showAttendeeActions && (
+            <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
+              {attendee?.registered && <TicketButton attendee={attendee} />}
 
-            <ViewAttendeesButton
-              attendance={attendance}
-              user={user}
-              attendeeListOpen={attendeeListOpen}
-              setAttendeeListOpen={setAttendeeListOpen}
-            />
-          </div>
+              <ViewAttendeesButton
+                attendance={attendance}
+                user={user}
+                attendeeListOpen={attendeeListOpen}
+                setAttendeeListOpen={setAttendeeListOpen}
+              />
+            </div>
+          )}
 
           <RegistrationButton
             registerForAttendance={registerForAttendance}
