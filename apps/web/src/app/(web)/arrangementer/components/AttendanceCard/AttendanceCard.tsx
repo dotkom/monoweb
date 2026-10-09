@@ -20,7 +20,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInMilliseconds, differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
-import Turnstile from "react-turnstile"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import { useEffect, useMemo, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
@@ -29,6 +28,7 @@ import { getAttendanceStatus } from "../attendanceStatus"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
+import { AttendanceTurnstile } from "./AttendanceTurnstile"
 import { EventRules } from "./EventRules"
 import { MainPoolCard } from "./MainPoolCard"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
@@ -39,6 +39,7 @@ import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistr
 import { patchAttendanceFromRegisterChange } from "./patchAttendanceFromRegisterChange"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
+import { useEventTurnstile } from "../EventTurnstileProvider"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
@@ -51,6 +52,8 @@ interface AttendanceCardProps {
   user: User | null
   event: Event
   parentEvent: Event | null
+  enableTurnstile?: boolean
+  deferTurnstile?: boolean
 }
 
 export const AttendanceCard = ({
@@ -58,10 +61,14 @@ export const AttendanceCard = ({
   event,
   initialAttendance,
   initialRegistrationAvailability,
+  enableTurnstile = true,
+  deferTurnstile = false,
 }: AttendanceCardProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
+  const backgroundVerification = useEventTurnstile()
+  const backgroundToken = backgroundVerification?.token ?? null
 
   const fullPathname = useFullPathname()
   const authorizeUrl = createAuthorizeUrl({ returnTo: fullPathname })
@@ -69,8 +76,10 @@ export const AttendanceCard = ({
   const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
+  const [turnstileHasStarted, setTurnstileHasStarted] = useState(false)
   const [turnstileHasFailed, setTurnstileHasFailed] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileGeneration, setTurnstileGeneration] = useState(0)
   const [hideTurnstile, setHideTurnstile] = useState(false)
 
   const { data: attendance } = useQuery(
@@ -118,18 +127,23 @@ export const AttendanceCard = ({
   }, [attendance])
 
   useEffect(() => {
-    if (turnstileToken) {
-      setTimeout(() => {
-        setHideTurnstile(true)
-      }, 1500)
-    } else {
+    if (turnstileToken === null) {
       setHideTurnstile(false)
+
+      return
     }
+
+    const timeoutId = setTimeout(() => {
+      setHideTurnstile(true)
+    }, 1500)
+
+    return () => clearTimeout(timeoutId)
   }, [turnstileToken])
 
   const attendee = getAttendee(attendance, user)
   const deregistration = registrationAvailability?.deregistration ?? null
   const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
+  const requiresLocalTurnstile = requiresTurnstile && backgroundToken === null
 
   const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
 
@@ -143,7 +157,11 @@ export const AttendanceCard = ({
   }, [attendance, attendee, registrationAvailability?.completion, deadlineTick])
 
   useEffect(() => {
-    if (!requiresTurnstile) {
+    if (
+      requiresLocalTurnstile === false ||
+      enableTurnstile === false ||
+      (deferTurnstile && turnstileHasStarted === false)
+    ) {
       return
     }
 
@@ -158,7 +176,15 @@ export const AttendanceCard = ({
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [requiresTurnstile, turnstileHasLoaded, turnstileHasFailed, turnstileToken])
+  }, [
+    requiresLocalTurnstile,
+    enableTurnstile,
+    deferTurnstile,
+    turnstileHasStarted,
+    turnstileHasLoaded,
+    turnstileHasFailed,
+    turnstileToken,
+  ])
 
   useSubscription(
     trpc.event.attendance.onRegisterChange.subscriptionOptions(
@@ -262,11 +288,19 @@ export const AttendanceCard = ({
   const showPaymentLink = paymentIsMissing && paymentLink !== null
 
   const registerForAttendance = () => {
-    if (!turnstileToken) {
-      console.error("No turnstile token, cannot register")
+    const token = turnstileToken ?? backgroundVerification?.takeToken() ?? null
+
+    if (token === null) {
       return
     }
-    registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })
+
+    setTurnstileToken(null)
+    setTurnstileHasLoaded(false)
+    setTurnstileHasStarted(false)
+    setTurnstileHasFailed(false)
+    setTurnstileGeneration((generation) => generation + 1)
+
+    registerMutation.mutate({ attendanceId: attendance.id, turnstileToken: token })
   }
 
   const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult | null) => {
@@ -294,7 +328,7 @@ export const AttendanceCard = ({
 
   const turnstileStatus = getTurnstileStatus({
     requiresTurnstile,
-    turnstileToken,
+    turnstileToken: turnstileToken ?? backgroundToken,
     turnstileHasFailed,
     turnstileHasLoaded,
   })
@@ -392,9 +426,13 @@ export const AttendanceCard = ({
             setDeregisterModalOpen={setDeregisterModalOpen}
           />
 
-          {requiresTurnstile && (
+          {requiresLocalTurnstile && isRegisterActionPending === false && (
             <div className={cn({ hidden: hideTurnstile }, "relative rounded-md bg-gray-200 dark:bg-stone-700")}>
-              <Turnstile
+              <AttendanceTurnstile
+                key={turnstileGeneration}
+                enabled={enableTurnstile}
+                defer={deferTurnstile}
+                onStart={() => setTurnstileHasStarted(true)}
                 sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
                 retry="auto"
                 refreshExpired="auto"

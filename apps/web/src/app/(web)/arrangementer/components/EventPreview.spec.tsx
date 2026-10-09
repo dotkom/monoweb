@@ -190,7 +190,7 @@ describe("desktop event preview", () => {
       Array.from(dialog?.querySelectorAll("[data-section]") ?? [], (section) => section.getAttribute("data-section"))
     ).toEqual(["header", "time", "location", "organizer", "description", "attendance"])
     expect(mocks.attendance).toHaveBeenCalledWith(
-      expect.objectContaining({ initialAttendance: { id: "attendance-one" } })
+      expect.objectContaining({ initialAttendance: { id: "attendance-one" }, deferTurnstile: true })
     )
     const overlay = document.querySelector('[data-slot="drawer-overlay"]')
     expect(overlay?.className).toContain("bg-black/20")

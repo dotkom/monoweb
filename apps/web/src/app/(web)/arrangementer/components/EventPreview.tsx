@@ -30,6 +30,7 @@ import { EventHeader, SkeletonEventHeader } from "./EventHeader"
 import { OrganizerPill } from "./OrganizerPill"
 import { LocationBox } from "./TimeLocationBox/LocationBox"
 import { TimeBox } from "./TimeLocationBox/TimeBox"
+import { EventTurnstileProvider } from "./EventTurnstileProvider"
 
 export function EventPreview({ children, className }: PropsWithChildren<{ className?: string }>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
@@ -83,99 +84,103 @@ export function EventPreview({ children, className }: PropsWithChildren<{ classN
   }, [open])
 
   return (
-    <EventPreviewContext.Provider value={openPreview}>
-      <div className={className}>{children}</div>
-      <Drawer key={drawerSession} direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
-        {/* The overlay locks page scrolling, so remove it as soon as closing starts. */}
-        <DrawerContent
-          aria-describedby={undefined}
-          showOverlay={open}
-          style={open ? undefined : { pointerEvents: "none" }}
-          overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
-          className={cn(
-            "overflow-hidden border border-field-border shadow-xl",
-            "data-[vaul-drawer-direction=right]:inset-y-4",
-            "data-[vaul-drawer-direction=right]:right-4",
-            "data-[vaul-drawer-direction=right]:rounded-xl",
-            "data-[vaul-drawer-direction=right]:w-[min(--spacing(152),60vw)]",
-            "data-[vaul-drawer-direction=right]:sm:max-w-none"
-          )}
-          onCloseAutoFocus={(event) => {
-            event.preventDefault()
+    <EventTurnstileProvider backgroundEnabled={open === false}>
+      <EventPreviewContext.Provider value={openPreview}>
+        <div className={className}>{children}</div>
+        <Drawer key={drawerSession} direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
+          {/* The overlay locks page scrolling, so remove it as soon as closing starts. */}
+          <DrawerContent
+            aria-describedby={undefined}
+            showOverlay={open}
+            style={open ? undefined : { pointerEvents: "none" }}
+            overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
+            className={cn(
+              "overflow-hidden border border-field-border shadow-xl",
+              "data-[vaul-drawer-direction=right]:inset-y-4",
+              "data-[vaul-drawer-direction=right]:right-4",
+              "data-[vaul-drawer-direction=right]:rounded-xl",
+              "data-[vaul-drawer-direction=right]:w-[min(--spacing(152),60vw)]",
+              "data-[vaul-drawer-direction=right]:sm:max-w-none"
+            )}
+            onCloseAutoFocus={(event) => {
+              event.preventDefault()
 
-            // An old drawer's cleanup must not move focus away from a newer preview.
-            if (drawerSession !== drawerSessionRef.current) {
-              return
-            }
+              // An old drawer's cleanup must not move focus away from a newer preview.
+              if (drawerSession !== drawerSessionRef.current) {
+                return
+              }
 
-            const trigger = triggerRef.current
+              const trigger = triggerRef.current
 
-            if (trigger !== null) {
-              trigger.focus()
-            }
-          }}
-        >
-          <DrawerHeader className="shrink-0 border-b border-field-border">
-            <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>
-
-            <div className="flex flex-row items-center gap-5">
-              <DrawerClose asChild>
-                <Button variant="ghost" size="icon" aria-label="Lukk arrangement">
-                  <IconChevronsRight className="size-5" />
-                </Button>
-              </DrawerClose>
-
-              <div className="flex flex-row items-center gap-2">
-                {selectedEvent !== null && (
-                  <Button
-                    onClick={() => {
-                      const eventUrl = createAbsoluteEventPageUrl(
-                        env.NEXT_PUBLIC_ORIGIN,
-                        selectedEvent.id,
-                        selectedEvent.title
-                      )
-
-                      void copy(eventUrl)
-                    }}
-                  >
-                    {icon === "check" ? <IconCheck className="size-4" /> : <IconCopy className="size-4" />}
-                    Kopier lenke
-                  </Button>
-                )}
-
-                {selectedEvent !== null && (
-                  <Button element={Link} href={createEventPageUrl(selectedEvent.id, selectedEvent.title)}>
-                    Åpne arrangementsiden
-                    <IconArrowUpRight className="size-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          </DrawerHeader>
-
-          <ScrollArea.Root
-            key={selectedEvent?.id}
-            data-vaul-no-drag
-            type="auto"
-            className="min-h-0 flex-1 overflow-hidden"
+              if (trigger !== null) {
+                trigger.focus()
+              }
+            }}
           >
-            <ScrollArea.Viewport className="h-full w-full overscroll-contain">
-              <div className="p-4">
-                {selectedEvent !== null && <EventPreviewDetails key={selectedEvent.id} eventId={selectedEvent.id} />}
-              </div>
-            </ScrollArea.Viewport>
+            <DrawerHeader className="shrink-0 border-b border-field-border">
+              <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>
 
-            <ScrollArea.Scrollbar orientation="vertical" className="flex w-2.5 touch-none select-none p-0.5">
-              <ScrollArea.Thumb className="flex-1 rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
-            </ScrollArea.Scrollbar>
-          </ScrollArea.Root>
-        </DrawerContent>
-      </Drawer>
-    </EventPreviewContext.Provider>
+              <div className="flex flex-row items-center gap-5">
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon" aria-label="Lukk arrangement">
+                    <IconChevronsRight className="size-5" />
+                  </Button>
+                </DrawerClose>
+
+                <div className="flex flex-row items-center gap-2">
+                  {selectedEvent !== null && (
+                    <Button
+                      onClick={() => {
+                        const eventUrl = createAbsoluteEventPageUrl(
+                          env.NEXT_PUBLIC_ORIGIN,
+                          selectedEvent.id,
+                          selectedEvent.title
+                        )
+
+                        void copy(eventUrl)
+                      }}
+                    >
+                      {icon === "check" ? <IconCheck className="size-4" /> : <IconCopy className="size-4" />}
+                      Kopier lenke
+                    </Button>
+                  )}
+
+                  {selectedEvent !== null && (
+                    <Button element={Link} href={createEventPageUrl(selectedEvent.id, selectedEvent.title)}>
+                      Åpne arrangementsiden
+                      <IconArrowUpRight className="size-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </DrawerHeader>
+
+            <ScrollArea.Root
+              key={selectedEvent?.id}
+              data-vaul-no-drag
+              type="auto"
+              className="min-h-0 flex-1 overflow-hidden"
+            >
+              <ScrollArea.Viewport className="h-full w-full overscroll-contain">
+                <div className="p-4">
+                  {selectedEvent !== null && (
+                    <EventPreviewDetails key={selectedEvent.id} eventId={selectedEvent.id} enableTurnstile={open} />
+                  )}
+                </div>
+              </ScrollArea.Viewport>
+
+              <ScrollArea.Scrollbar orientation="vertical" className="flex w-2.5 touch-none select-none p-0.5">
+                <ScrollArea.Thumb className="flex-1 rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
+              </ScrollArea.Scrollbar>
+            </ScrollArea.Root>
+          </DrawerContent>
+        </Drawer>
+      </EventPreviewContext.Provider>
+    </EventTurnstileProvider>
   )
 }
 
-function EventPreviewDetails({ eventId }: { eventId: string }) {
+function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; enableTurnstile: boolean }) {
   const trpc = useTRPC()
   const { dbUser } = useAuthenticatedUser()
 
@@ -261,6 +266,8 @@ function EventPreviewDetails({ eventId }: { eventId: string }) {
           parentEvent={parent?.event ?? null}
           user={dbUser}
           event={event}
+          enableTurnstile={enableTurnstile}
+          deferTurnstile
         />
       )}
     </div>
