@@ -32,7 +32,11 @@ import { LocationBox } from "./TimeLocationBox/LocationBox"
 import { TimeBox } from "./TimeLocationBox/TimeBox"
 import { EventTurnstileProvider } from "./EventTurnstileProvider"
 
-export function EventPreview({ children, className }: PropsWithChildren<{ className?: string }>) {
+export function EventPreview({
+  children,
+  className,
+  backgroundVerificationEnabled = true,
+}: PropsWithChildren<{ className?: string; backgroundVerificationEnabled?: boolean }>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
   const [open, setOpen] = useState(false)
   const [drawerSession, setDrawerSession] = useState(0)
@@ -84,7 +88,7 @@ export function EventPreview({ children, className }: PropsWithChildren<{ classN
   }, [open])
 
   return (
-    <EventTurnstileProvider backgroundEnabled={open === false}>
+    <EventTurnstileProvider backgroundEnabled={backgroundVerificationEnabled && open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
         <Drawer key={drawerSession} direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
