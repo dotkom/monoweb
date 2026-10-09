@@ -1,15 +1,6 @@
 "use client"
 
-import { env } from "@/env"
-import {
-  createAllEventsCalendarUrl,
-  createGoogleCalendarSubscribeUrl,
-  createOutlookCalendarSubscribeUrl,
-  createPersonalCalendarSubscriptionUrl,
-  createWebcalUrl,
-  fetchPersonalCalendarToken,
-} from "@/app/arrangementer/components/calendar-subscription"
-import { AppleCalendarLogo } from "@/app/arrangementer/components/AppleCalendarLogo"
+import { CalendarSubscriptionPanel } from "@/app/arrangementer/components/CalendarSubscriptionPanel"
 import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { FeideIcon } from "@/components/icons/FeideIcon"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
@@ -21,39 +12,22 @@ import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link
 import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
 import { useFeideLinkNudge } from "@/utils/use-feide-link-nudge"
 import { useFullPathname } from "@/utils/use-full-pathname"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Text,
-  TextInput,
-  Title,
-  ToggleGroup,
-  ToggleGroupItem,
-  cn,
-} from "@dotkomonline/ui"
+import { Button, Text, TextInput, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLinkIdentityAuthorizeUrl, resolveAuthErrorMessage } from "@dotkomonline/utils"
 import {
   IconAlertTriangle,
   IconAlertTriangleFilled,
-  IconCalendarEvent,
   IconCheck,
   IconCopy,
   IconEyeOff,
   IconLink,
-  IconLoader2,
   IconMail,
   IconPassword,
-  IconUser,
   IconX,
 } from "@tabler/icons-react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { redirect, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import Image from "next/image"
-
-type CalendarFeed = "personal" | "all"
 
 export default function MinBrukerPage() {
   const fullPathname = useFullPathname()
@@ -69,11 +43,9 @@ export default function MinBrukerPage() {
   } = useAuthenticatedUser()
 
   const [newEmail, setNewEmail] = useState("")
-  const [selectedCalendarFeed, setSelectedCalendarFeed] = useState<CalendarFeed>("personal")
   const identityLinkRequiresLogin = useIdentityLinkRequiresLogin()
 
   const { icon: copyEmailIcon, copy: copyEmail } = useCopyToClipboard()
-  const { icon: copyCalendarIcon, copy: copyCalendarUrl } = useCopyToClipboard()
 
   const linkErrorMessage = resolveAuthErrorMessage(searchParams.get("error"))
   const linkStatus = searchParams.get("link_status")
@@ -100,13 +72,6 @@ export default function MinBrukerPage() {
   const isUsernamePasswordLinked = auth0Connections?.hasUsernamePassword === true
   const hasLoadedAuth0Connections = auth0Connections !== undefined && !auth0ConnectionsIsLoading
   const bothLoginMethodsLinked = hasLoadedAuth0Connections && isUsernamePasswordLinked && isFeideLinked
-
-  const isPersonalCalendarFeed = selectedCalendarFeed === "personal"
-  const personalCalendarTokenQuery = useQuery({
-    queryKey: ["calendar", "me"],
-    queryFn: fetchPersonalCalendarToken,
-    enabled: sessionUser != null && !isInvalid && isPersonalCalendarFeed && !identityLinkRequiresLogin,
-  })
 
   const user = dbUser
 
@@ -189,35 +154,6 @@ export default function MinBrukerPage() {
     isFeideLinked || auth0ConnectionsIsLoading ? { disabled: true } : { element: "a", href: linkFeideUrl }
 
   const CopyEmailIcon = copyEmailIcon === "copy" ? IconCopy : IconCheck
-  const hasCopiedCalendarUrl = copyCalendarIcon === "check"
-  const CopyCalendarIcon = hasCopiedCalendarUrl ? IconCheck : IconCopy
-  const copyCalendarIconClassName = hasCopiedCalendarUrl
-    ? "size-4 text-green-600 dark:text-green-400"
-    : "size-4 text-muted-foreground"
-
-  const allEventsCalendarUrl = createAllEventsCalendarUrl(env.NEXT_PUBLIC_ORIGIN)
-  let selectedCalendarUrl = allEventsCalendarUrl
-  let selectedCalendarFeedDescription = "Offentlige arrangementer fra Online."
-
-  if (isPersonalCalendarFeed) {
-    selectedCalendarUrl = personalCalendarTokenQuery.data
-      ? createPersonalCalendarSubscriptionUrl(env.NEXT_PUBLIC_ORIGIN, personalCalendarTokenQuery.data)
-      : ""
-    selectedCalendarFeedDescription = "Arrangementer du er påmeldt. Lenken er personlig, så ikke del den."
-  }
-
-  const selectedCalendarName = isPersonalCalendarFeed ? "Dine arrangementer" : "Alle arrangementer"
-
-  let googleCalendarSubscribeUrl = ""
-  let outlookCalendarSubscribeUrl = ""
-  let appleCalendarSubscribeUrl = ""
-
-  if (selectedCalendarUrl) {
-    googleCalendarSubscribeUrl = createGoogleCalendarSubscribeUrl(selectedCalendarUrl)
-    outlookCalendarSubscribeUrl = createOutlookCalendarSubscribeUrl(selectedCalendarUrl, selectedCalendarName)
-    appleCalendarSubscribeUrl = createWebcalUrl(selectedCalendarUrl)
-  }
-
   return (
     <div className="flex flex-col gap-6">
       {isLinkStatusFailed ? (
@@ -450,93 +386,9 @@ export default function MinBrukerPage() {
             Kalender
           </Title>
 
-          <Text className="text-sm">Få en automatisk oppdatert kalender med Onlines arrangementer.</Text>
-
-          <div className="flex flex-col gap-3">
-            <ToggleGroup
-              className="h-12"
-              spacing={0}
-              color="blue"
-              multiple={false}
-              value={[selectedCalendarFeed]}
-              onValueChange={(value) => {
-                const nextFeed = value.at(0)
-
-                if (nextFeed === "personal" || nextFeed === "all") {
-                  setSelectedCalendarFeed(nextFeed)
-                }
-              }}
-            >
-              <ToggleGroupItem value="personal" className="flex h-full flex-row items-center justify-center gap-2">
-                <Avatar className="size-6 shrink-0">
-                  <AvatarImage src={user.imageUrl ?? undefined} alt={user.name ?? "Profilbilde"} />
-                  <AvatarFallback className="bg-gray-300 dark:bg-stone-700">
-                    <IconUser className="size-3.75" />
-                  </AvatarFallback>
-                </Avatar>
-                <Text element="span" className="truncate">
-                  <span className="min-[400px]:hidden">Dine arr.</span>
-                  <span className="max-[400px]:hidden">Dine arrangementer</span>
-                </Text>
-              </ToggleGroupItem>
-
-              <ToggleGroupItem value="all" className="flex h-full flex-row items-center justify-center gap-2">
-                <IconCalendarEvent className="size-5 shrink-0 text-muted-foreground" />
-                <Text element="span" className="truncate">
-                  <span className="min-[400px]:hidden">Alle arr.</span>
-                  <span className="max-[400px]:hidden">Alle arrangementer</span>
-                </Text>
-              </ToggleGroupItem>
-            </ToggleGroup>
-
-            <Text className="text-sm text-muted-foreground">{selectedCalendarFeedDescription}</Text>
+          <div className="w-full max-w-96 rounded-xl border border-field-border bg-background p-4">
+            <CalendarSubscriptionPanel />
           </div>
-
-          {isPersonalCalendarFeed && personalCalendarTokenQuery.isLoading && (
-            <div className="flex flex-row items-center gap-2 text-muted-foreground">
-              <IconLoader2 className="size-4 animate-spin" />
-              <Text className="text-sm">Henter kalenderlenke…</Text>
-            </div>
-          )}
-
-          {isPersonalCalendarFeed && personalCalendarTokenQuery.isError && (
-            <Text className="text-sm text-red-600 dark:text-red-400">
-              Kunne ikke hente kalenderlenken. Prøv igjen senere.
-            </Text>
-          )}
-
-          {selectedCalendarUrl && !(isPersonalCalendarFeed && personalCalendarTokenQuery.isLoading) && (
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Button element="a" href={googleCalendarSubscribeUrl} target="_blank" rel="noopener noreferrer">
-                <Image src="/logo-google-calendar.svg" alt="Google Calendar" width={16} height={16} />
-                Google Kalender
-              </Button>
-
-              <Button element="a" href={outlookCalendarSubscribeUrl} target="_blank" rel="noopener noreferrer">
-                <Image src="/logo-microsoft-outlook.svg" alt="Microsoft Outlook" width={16} height={16} />
-                Outlook
-              </Button>
-
-              <Button element="a" href={appleCalendarSubscribeUrl}>
-                <AppleCalendarLogo />
-                Apple Kalender
-              </Button>
-
-              <Button
-                variant="outline"
-                icon={<CopyCalendarIcon aria-hidden className={copyCalendarIconClassName} />}
-                onClick={() => {
-                  void copyCalendarUrl(selectedCalendarUrl)
-                }}
-              >
-                {hasCopiedCalendarUrl ? "Kopiert" : "Kopier lenke"}
-              </Button>
-
-              <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-                {hasCopiedCalendarUrl ? "Kalenderlenken er kopiert til utklippstavlen." : ""}
-              </span>
-            </div>
-          )}
         </div>
       </div>
     </div>

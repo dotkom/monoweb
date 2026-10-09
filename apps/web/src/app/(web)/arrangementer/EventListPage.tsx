@@ -600,7 +600,10 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
               selectedDate={filters.date}
               onSelectDate={(date) => updateFilters({ date })}
             />
-            <CalendarSubscriptionButton />
+
+            <div className="flex self-end">
+              <CalendarSubscriptionButton />
+            </div>
           </div>
         </div>
       )}
