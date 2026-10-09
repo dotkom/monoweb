@@ -62,7 +62,7 @@ export function AttendanceTurnstile({ enabled, defer = false, onStart, ...props 
   }
 
   return (
-    <div ref={containerRef} className="h-[4.05rem]" data-vaul-no-drag>
+    <div ref={containerRef} className="h-[4.05rem]" data-base-ui-swipe-ignore>
       {enabled && visible && <Turnstile {...props} />}
     </div>
   )

@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { EventPreviewLink } from "@/components/molecules/EventListItem/EventPreviewLink"
 import { EventPreview } from "./EventPreview"
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
 
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
@@ -37,10 +38,12 @@ vi.mock("@tanstack/react-query", () => ({ useQuery: mocks.query }))
 
 vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
+  const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
+    ...dialog,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
     Button: ({
@@ -89,8 +92,25 @@ vi.mock("./EventDescription", () => ({ EventDescription: () => <div data-section
 vi.mock("./AttendanceCard/AttendanceCard", () => ({
   AttendanceCard: (props: unknown) => {
     mocks.attendance(props)
+    const [attendeeListOpen, setAttendeeListOpen] = React.useState(false)
 
-    return <div data-section="attendance">Attendance</div>
+    return (
+      <div data-section="attendance">
+        Attendance
+        <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
+          <DialogTrigger>Vis påmeldte</DialogTrigger>
+          <DialogContent onOutsideClick={() => setAttendeeListOpen(false)}>
+            <DialogTitle>Påmeldingsliste</DialogTitle>
+            <section aria-label="Påmeldte" style={{ maxHeight: 200, overflowY: "auto" }}>
+              {Array.from({ length: 80 }, (_, index) => `Attendee ${index + 1}`).map((name) => (
+                <div key={name}>{name}</div>
+              ))}
+            </section>
+            <DialogClose>Lukk påmeldingsliste</DialogClose>
+          </DialogContent>
+        </Dialog>
+      </div>
+    )
   },
 }))
 
@@ -151,6 +171,7 @@ afterEach(async () => {
   container.remove()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
+  Reflect.deleteProperty(Element.prototype, "getAnimations")
 })
 
 async function renderPreview(nextEvent?: typeof event) {
@@ -181,11 +202,11 @@ describe("desktop event preview", () => {
 
     const dialog = document.querySelector('[role="dialog"]')
     expect(dialog).not.toBeNull()
-    expect(dialog?.getAttribute("data-vaul-drawer-direction")).toBe("right")
-    expect(dialog?.className).toContain("data-[vaul-drawer-direction=right]:w-[min(--spacing(152),60vw)]")
-    expect(dialog?.className).toContain("data-[vaul-drawer-direction=right]:inset-y-4")
-    expect(dialog?.className).toContain("data-[vaul-drawer-direction=right]:right-4")
-    expect(dialog?.className).not.toContain("data-[vaul-drawer-direction=right]:inset-y-0")
+    expect(dialog?.getAttribute("data-swipe-direction")).toBe("right")
+    expect(dialog?.className).toContain("data-[swipe-direction=right]:w-[min(--spacing(152),60vw)]")
+    expect(dialog?.className).toContain("data-[swipe-direction=right]:inset-y-4")
+    expect(dialog?.className).toContain("data-[swipe-direction=right]:right-4")
+    expect(dialog?.className).not.toContain("data-[swipe-direction=right]:inset-y-0")
     expect(
       Array.from(dialog?.querySelectorAll("[data-section]") ?? [], (section) => section.getAttribute("data-section"))
     ).toEqual(["header", "time", "location", "organizer", "description", "attendance"])
@@ -207,6 +228,24 @@ describe("desktop event preview", () => {
     expect(document.querySelector('[data-section="attendance"]')).toBeNull()
     expect(document.querySelector('[data-section="description"]')).not.toBeNull()
     expect(mocks.time).toHaveBeenCalledWith(expect.objectContaining({ showAddToCalendar: true }))
+  })
+
+  it("starts the entrance transition each time the preview opens", async () => {
+    const link = await renderPreview()
+    vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame", "setTimeout", "clearTimeout"] })
+    try {
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        await act(async () => link.click())
+        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(true)
+        await act(async () => vi.advanceTimersByTimeAsync(50))
+        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
+        const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+        await act(async () => close?.click())
+        expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+      }
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("keeps mobile and modified clicks as normal links", async () => {
@@ -270,37 +309,94 @@ describe("desktop event preview", () => {
     expect(mocks.query).not.toHaveBeenCalled()
   })
 
+  it("allows scrolling a nested attendee modal and returns focus to its button when closed", async () => {
+    const link = await renderPreview()
+    await act(async () => link.click())
+    const attendeeButton = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent === "Vis påmeldte"
+    )
+    attendeeButton?.focus()
+    await act(async () => attendeeButton?.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+
+    const attendeeDialog = document.querySelector('[data-slot="dialog-content"]')
+    expect(attendeeDialog).not.toBeNull()
+    const list = attendeeDialog?.querySelector('[aria-label="Påmeldte"]') as HTMLElement
+    Object.defineProperties(list, { scrollHeight: { value: 1600 }, clientHeight: { value: 200 } })
+    const wheel = new WheelEvent("wheel", { deltaY: 100, bubbles: true, cancelable: true })
+    await act(async () => list.dispatchEvent(wheel))
+    expect(wheel.defaultPrevented).toBe(false)
+
+    await act(async () => list.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })))
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
+    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
+    expect(document.activeElement).toBe(attendeeButton)
+
+    await act(async () => attendeeButton?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })))
+    expect(document.querySelector('[role="dialog"]')).toBeNull()
+    expect(document.activeElement).toBe(link)
+  })
+
+  it("dismisses the attendee list on an outside click, then the preview on the next outside click", async () => {
+    const link = await renderPreview()
+    await act(async () => link.click())
+    const attendeeButton = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent === "Vis påmeldte"
+    )
+    await act(async () => attendeeButton?.click())
+    const attendeeDialog = document.querySelector<HTMLElement>('[data-slot="dialog-content"]')
+    expect(attendeeDialog).not.toBeNull()
+    await act(async () => attendeeDialog?.click())
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBe(attendeeDialog)
+
+    const attendeeOverlay = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]')
+    expect(attendeeOverlay).not.toBeNull()
+    await act(async () => attendeeOverlay?.click())
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
+    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
+
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+    const previewOverlay = document.querySelector<HTMLElement>('[data-slot="drawer-overlay"]')
+    expect(previewOverlay).not.toBeNull()
+    await act(async () => {
+      previewOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      previewOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      previewOverlay?.click()
+    })
+    expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+  })
+
   it("unlocks the page during closing and can open another event before the animation ends", async () => {
-    const getComputedStyle = window.getComputedStyle.bind(window)
-
-    vi.spyOn(window, "getComputedStyle").mockImplementation((element) => {
-      const styles = getComputedStyle(element)
-
-      if (element.matches('[data-slot="drawer-content"], [data-slot="drawer-overlay"]')) {
-        Object.defineProperty(styles, "animationName", {
-          get: () => (element.getAttribute("data-state") === "open" ? "drawer-open" : "drawer-close"),
-        })
-      }
-
-      return styles
+    let finishClosing: () => void = () => {}
+    const closingAnimation = new Promise<void>((resolve) => {
+      finishClosing = resolve
+    })
+    // JSDOM has no animation API. Keep the outgoing drawer mounted until its transition completes.
+    Object.defineProperty(Element.prototype, "getAnimations", {
+      configurable: true,
+      value: function (this: Element) {
+        return this.matches('[data-slot="drawer-content"][data-ending-style]') ? [{ finished: closingAnimation }] : []
+      },
     })
 
     const link = await renderPreview({ ...event, id: "event-two", title: "Next event" })
 
     await act(async () => link.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
 
-    expect(document.body.getAttribute("data-scroll-locked")).not.toBeNull()
+    expect(document.body.style.overflowY).toBe("hidden")
 
     const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
 
     await act(async () => close?.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
 
     const closingDrawer = document.querySelector<HTMLElement>('[data-slot="drawer-content"]')
 
-    expect(closingDrawer?.getAttribute("data-state")).toBe("closed")
+    expect(closingDrawer?.hasAttribute("data-ending-style")).toBe(true)
     expect(closingDrawer?.style.pointerEvents).toBe("none")
     expect(document.querySelector('[data-slot="drawer-overlay"]')).toBeNull()
-    expect(document.body.getAttribute("data-scroll-locked")).toBeNull()
+    expect(document.body.style.overflowY).not.toBe("hidden")
     expect(document.body.style.pointerEvents).not.toBe("none")
 
     const nextLink = container.querySelector<HTMLAnchorElement>('a[href="/arrangementer/next-event/event-two"]')
@@ -311,15 +407,16 @@ describe("desktop event preview", () => {
 
     await act(async () => nextLink?.click())
     await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 10))
+      finishClosing()
+      await new Promise((resolve) => setTimeout(resolve, 30))
     })
 
     expect(focus).not.toHaveBeenCalled()
-    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBe(closingDrawer)
-    expect(document.querySelector('[data-slot="drawer-content"]')?.getAttribute("data-state")).toBe("open")
+    expect(document.querySelector('[data-slot="drawer-content"]')).toBe(closingDrawer)
+    expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-open")).toBe(true)
     expect(document.querySelector('[data-slot="drawer-title"]')?.textContent).toBe("Next event")
     expect(mocks.query).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ["event", "event-two"] }))
-    expect(document.body.getAttribute("data-scroll-locked")).not.toBeNull()
+    expect(document.body.style.overflowY).toBe("hidden")
   })
 
   it("shows a retry action if event loading fails", async () => {

@@ -39,31 +39,19 @@ export function EventPreview({
 }: PropsWithChildren<{ className?: string; backgroundVerificationEnabled?: boolean }>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
   const [open, setOpen] = useState(false)
-  const [drawerSession, setDrawerSession] = useState(0)
 
   const { icon, copy } = useCopyToClipboard()
 
   const triggerRef = useRef<HTMLAnchorElement | null>(null)
-  const drawerSessionRef = useRef(0)
 
-  const openPreview = useCallback(
-    (event: PreviewEvent, trigger: HTMLAnchorElement) => {
-      if (trigger.closest('[data-slot="drawer-content"]') === null) {
-        triggerRef.current = trigger
-      }
+  const openPreview = useCallback((event: PreviewEvent, trigger: HTMLAnchorElement) => {
+    if (trigger.closest('[data-slot="drawer-content"]') === null) {
+      triggerRef.current = trigger
+    }
 
-      // Start fresh if the previous drawer is still running its closing animation.
-      if (open === false) {
-        drawerSessionRef.current += 1
-
-        setDrawerSession(drawerSessionRef.current)
-      }
-
-      setSelectedEvent(event)
-      setOpen(true)
-    },
-    [open]
-  )
+    setSelectedEvent(event)
+    setOpen(true)
+  }, [])
 
   useEffect(() => {
     if (open === false) {
@@ -91,44 +79,28 @@ export function EventPreview({
     <EventTurnstileProvider backgroundEnabled={backgroundVerificationEnabled && open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
-        <Drawer key={drawerSession} direction="right" open={open} onOpenChange={setOpen} repositionInputs={false}>
-          {/* The overlay locks page scrolling, so remove it as soon as closing starts. */}
+        <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
           <DrawerContent
             aria-describedby={undefined}
             showOverlay={open}
             style={open ? undefined : { pointerEvents: "none" }}
             overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
             className={cn(
-              "overflow-hidden border border-field-border shadow-xl",
-              "data-[vaul-drawer-direction=right]:inset-y-4",
-              "data-[vaul-drawer-direction=right]:right-4",
-              "data-[vaul-drawer-direction=right]:rounded-xl",
-              "data-[vaul-drawer-direction=right]:w-[min(--spacing(152),60vw)]",
-              "data-[vaul-drawer-direction=right]:sm:max-w-none"
+              "overflow-hidden border border-field-border shadow-xl [--drawer-inset:1rem]",
+              "data-[swipe-direction=right]:inset-y-4",
+              "data-[swipe-direction=right]:right-4",
+              "data-[swipe-direction=right]:rounded-xl",
+              "data-[swipe-direction=right]:w-[min(--spacing(152),60vw)]",
+              "data-[swipe-direction=right]:sm:max-w-none"
             )}
-            onCloseAutoFocus={(event) => {
-              event.preventDefault()
-
-              // An old drawer's cleanup must not move focus away from a newer preview.
-              if (drawerSession !== drawerSessionRef.current) {
-                return
-              }
-
-              const trigger = triggerRef.current
-
-              if (trigger !== null) {
-                trigger.focus()
-              }
-            }}
+            finalFocus={triggerRef}
           >
             <DrawerHeader className="shrink-0 border-b border-field-border">
               <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>
 
               <div className="flex flex-row items-center gap-5">
-                <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" aria-label="Lukk arrangement">
-                    <IconChevronsRight className="size-5" />
-                  </Button>
+                <DrawerClose render={<Button variant="ghost" size="icon" aria-label="Lukk arrangement" />}>
+                  <IconChevronsRight className="size-5" />
                 </DrawerClose>
 
                 <div className="flex flex-row items-center gap-2">
@@ -161,7 +133,7 @@ export function EventPreview({
 
             <ScrollArea.Root
               key={selectedEvent?.id}
-              data-vaul-no-drag
+              data-base-ui-swipe-ignore
               type="auto"
               className="min-h-0 flex-1 overflow-hidden"
             >

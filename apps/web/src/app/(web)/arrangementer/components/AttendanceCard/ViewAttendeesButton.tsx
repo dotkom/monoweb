@@ -1,17 +1,17 @@
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
   Button,
   Text,
   Title,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  DialogClose,
 } from "@dotkomonline/ui"
 import { IconUsers, IconX } from "@tabler/icons-react"
 import { compareAsc } from "date-fns"
@@ -62,18 +62,18 @@ export const ViewAttendeesButton = ({
   }
 
   return (
-    <AlertDialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
-      <AlertDialogTrigger asChild>{button}</AlertDialogTrigger>
-      <AlertDialogContent size="lg" className="p-0!" onOutsideClick={() => setAttendeeListOpen(false)}>
+    <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
+      <DialogTrigger asChild>{button}</DialogTrigger>
+      <DialogContent size="lg" className="p-0!" onOutsideClick={() => setAttendeeListOpen(false)}>
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
-          <AlertDialogTitle asChild>
+          <DialogTitle asChild>
             <Title element="h1" size="lg">
               Påmeldingsliste
             </Title>
-          </AlertDialogTitle>
-          <AlertDialogCancel>
+          </DialogTitle>
+          <DialogClose>
             <IconX className="size-[1.25em]" />
-          </AlertDialogCancel>
+          </DialogClose>
         </div>
 
         <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
@@ -94,7 +94,7 @@ export const ViewAttendeesButton = ({
             </div>
           )}
         </div>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>
+    </Dialog>
   )
 }
