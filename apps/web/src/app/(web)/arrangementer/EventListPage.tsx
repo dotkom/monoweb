@@ -39,6 +39,7 @@ import { EventMonthCalendar } from "./components/calendar/EventMonthCalendar/Eve
 import { CalendarWeekNavigation } from "./components/calendar/EventWeekCalendar/CalendarWeekNavigation"
 import { EventWeekCalendar } from "./components/calendar/EventWeekCalendar/EventWeekCalendar"
 import { CalendarSubscriptionButton } from "./components/CalendarSubscriptionButton"
+import { EventRules } from "./components/AttendanceCard/EventRules"
 import { EventList, EventListSkeleton } from "./components/EventList"
 import { EventListCalendar } from "./components/EventListCalendar"
 import { getEventDateRange } from "./utils/event-date"
@@ -277,8 +278,9 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
         <Title element="h1" size="xl">
           Arrangementer
         </Title>
-        <div className={cn("max-sm:hidden", isEventListView && "md:hidden")}>
+        <div className={cn("flex items-center gap-3 max-sm:hidden", isEventListView && "md:hidden")}>
           <CalendarSubscriptionButton />
+          <EventRules className="text-foreground" />
         </div>
       </div>
 
@@ -601,8 +603,9 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
               onSelectDate={(date) => updateFilters({ date })}
             />
 
-            <div className="flex self-end">
-              <CalendarSubscriptionButton />
+            <div className="flex items-center gap-2">
+              <CalendarSubscriptionButton className="text-muted-foreground px-1.5" />
+              <EventRules className="text-muted-foreground px-1.5" />
             </div>
           </div>
         </div>

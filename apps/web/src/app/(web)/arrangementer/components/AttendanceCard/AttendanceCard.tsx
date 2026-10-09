@@ -13,7 +13,7 @@ import {
 } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
-import { Text, Title, cn } from "@dotkomonline/ui"
+import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconCoins, IconEdit } from "@tabler/icons-react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
@@ -407,20 +407,22 @@ export const AttendanceCard = ({
               />
             </div>
           )}
-        </div>
 
-        <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
-          <EventRules className="text-gray-700 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors" />
+          <div className="flex flex-row flex-wrap gap-x-3 gap-y-2 -mx-1.5">
+            <EventRules className="text-muted-foreground px-1.5" />
 
-          <Link
-            href="/innstillinger/profil"
-            className="flex flex-row gap-2 items-center text-gray-700 hover:text-black dark:text-stone-300 dark:hover:text-stone-100 transition-colors"
-          >
-            <IconEdit className="size-[1.25em]" />
-            <Text className="text-sm">Oppdater matpreferanser</Text>
-          </Link>
+            <Button
+              element={Link}
+              variant="ghost"
+              href="/innstillinger/profil"
+              className="text-muted-foreground px-1.5"
+            >
+              <IconEdit className="size-4" />
+              Oppdater matpreferanser
+            </Button>
 
-          {attendance.attendancePrice && <PaymentExplanationDialog />}
+            {attendance.attendancePrice && <PaymentExplanationDialog />}
+          </div>
         </div>
       </div>
     </section>

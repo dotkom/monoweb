@@ -7,15 +7,21 @@ import { CalendarSubscriptionPanel } from "./CalendarSubscriptionPanel"
 
 interface CalendarSubscriptionButtonProps {
   triggerVariant?: ButtonProps["variant"]
+  className?: string
 }
 
-export function CalendarSubscriptionButton({ triggerVariant = "ghost" }: CalendarSubscriptionButtonProps) {
+export function CalendarSubscriptionButton({ triggerVariant = "ghost", className }: CalendarSubscriptionButtonProps) {
   const [popoverOpen, setPopoverOpen] = useState(false)
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
-        <Button variant={triggerVariant} aria-label="Abonner på arrangementer" title="Få arrangementene i kalenderen">
+        <Button
+          variant={triggerVariant}
+          aria-label="Abonner på arrangementer"
+          title="Få arrangementene i kalenderen"
+          className={className}
+        >
           <IconCalendarPlus className="size-4" />
           Abonner
         </Button>
