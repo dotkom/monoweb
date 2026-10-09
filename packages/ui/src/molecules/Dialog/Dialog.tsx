@@ -44,7 +44,7 @@ type DialogContentProps = Omit<ComponentProps<typeof ShadcnDialogContent>, "size
 export function DialogContent({ size = "md", onOutsideClick, className, ...props }: DialogContentProps) {
   return (
     <DialogPortal>
-      <DialogOverlay onClick={onOutsideClick} />
+      <DialogOverlay forceRender={onOutsideClick !== undefined} onClick={onOutsideClick} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         data-size={size}

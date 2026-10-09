@@ -161,6 +161,7 @@
   }
 
   body {
+    position: relative;
     @apply font-body;
   }
 
