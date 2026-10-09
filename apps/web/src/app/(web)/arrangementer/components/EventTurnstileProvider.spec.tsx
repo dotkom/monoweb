@@ -29,6 +29,7 @@ vi.mock("react-turnstile", () => ({
 let root: Root
 let container: HTMLDivElement
 let verification: ReturnType<typeof useEventTurnstile>
+let idleCallback: IdleRequestCallback | null
 
 function Preview() {
   verification = useEventTurnstile()
@@ -40,6 +41,15 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
+  idleCallback = null
+  vi.stubGlobal("requestIdleCallback", (callback: IdleRequestCallback) => {
+    idleCallback = callback
+
+    return 1
+  })
+  vi.stubGlobal("cancelIdleCallback", vi.fn())
+  vi.stubGlobal("matchMedia", () => ({ matches: true }))
+  vi.spyOn(document, "readyState", "get").mockReturnValue("complete")
   mocks.auth.mockReturnValue({ dbUser: { id: "user-one" } })
 
   container = document.createElement("div")
@@ -50,10 +60,11 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount())
   container.remove()
+  vi.restoreAllMocks()
   vi.unstubAllGlobals()
 })
 
-async function render(backgroundEnabled = true) {
+async function render(backgroundEnabled = true, runIdle = true) {
   await act(async () => {
     root.render(
       <EventTurnstileProvider backgroundEnabled={backgroundEnabled}>
@@ -61,6 +72,13 @@ async function render(backgroundEnabled = true) {
       </EventTurnstileProvider>
     )
   })
+
+  if (runIdle && idleCallback !== null) {
+    const callback = idleCallback
+    idleCallback = null
+
+    await act(async () => callback({} as IdleDeadline))
+  }
 }
 
 function bound(): BoundTurnstileObject {
@@ -76,6 +94,47 @@ async function verify(token = "background-token") {
 }
 
 describe("background event verification", () => {
+  it("does not start verification in the initial render", async () => {
+    await render(true, false)
+
+    expect(mocks.widget).not.toHaveBeenCalled()
+
+    await render()
+
+    expect(mocks.widget).toHaveBeenCalled()
+  })
+
+  it("waits for page resources to load before requesting idle time", async () => {
+    vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+
+    await render()
+
+    expect(idleCallback).toBeNull()
+    expect(mocks.widget).not.toHaveBeenCalled()
+
+    await act(async () => window.dispatchEvent(new Event("load")))
+    await render()
+
+    expect(mocks.widget).toHaveBeenCalled()
+  })
+
+  it("cancels scheduled startup when a preview opens before the browser is idle", async () => {
+    await render(true, false)
+    await render(false, false)
+
+    expect(window.cancelIdleCallback).toHaveBeenCalledWith(1)
+    expect(mocks.widget).not.toHaveBeenCalled()
+  })
+
+  it("does not run background verification on mobile", async () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: false }))
+
+    await render()
+
+    expect(idleCallback).toBeNull()
+    expect(mocks.widget).not.toHaveBeenCalled()
+  })
+
   it("shares the token while keeping its widget mounted for expiry notifications", async () => {
     await render()
 

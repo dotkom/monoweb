@@ -25,6 +25,7 @@ export function EventTurnstileProvider({
   const tokenRef = useRef<CachedToken | null>(null)
   const widgetRef = useRef<BoundTurnstileObject | null>(null)
   const [backgroundStopped, setBackgroundStopped] = useState(false)
+  const [readyUserId, setReadyUserId] = useState<string | null>(null)
 
   const storeToken = useCallback((token: CachedToken | null) => {
     tokenRef.current = token
@@ -36,6 +37,42 @@ export function EventTurnstileProvider({
     storeToken(null)
     setBackgroundStopped(false)
   }, [userId, storeToken])
+
+  useEffect(() => {
+    if (userId === null || backgroundEnabled === false) {
+      setReadyUserId(null)
+
+      return
+    }
+
+    if (window.matchMedia("(min-width: 768px)").matches === false) {
+      return
+    }
+
+    let cancelStartup = () => {}
+
+    // Let the list and page resources load before scheduling verification during idle time.
+    const scheduleStartup = () => {
+      if (typeof window.requestIdleCallback === "function") {
+        const idleId = window.requestIdleCallback(() => setReadyUserId(userId))
+        cancelStartup = () => window.cancelIdleCallback(idleId)
+      } else {
+        const timeoutId = setTimeout(() => setReadyUserId(userId), 1000)
+        cancelStartup = () => clearTimeout(timeoutId)
+      }
+    }
+
+    if (document.readyState === "complete") {
+      scheduleStartup()
+    } else {
+      window.addEventListener("load", scheduleStartup, { once: true })
+    }
+
+    return () => {
+      window.removeEventListener("load", scheduleStartup)
+      cancelStartup()
+    }
+  }, [userId, backgroundEnabled])
 
   const clearToken = () => {
     storeToken(null)
@@ -75,33 +112,35 @@ export function EventTurnstileProvider({
     >
       {children}
 
-      {userId !== null && (backgroundEnabled || cachedToken !== null) && backgroundStopped === false && (
-        <div aria-hidden className="pointer-events-none fixed bottom-0 right-0">
-          <Turnstile
-            key={userId}
-            sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            appearance="interaction-only"
-            retry="never"
-            refreshExpired="manual"
-            onLoad={(_, widget) => {
-              widgetRef.current = widget
-            }}
-            onVerify={(value, widget) => {
-              if (widget === widgetRef.current) {
-                storeToken({ value, userId })
-              }
-            }}
-            onExpire={(_, widget) => {
-              if (widget === widgetRef.current) {
-                clearToken()
-              }
-            }}
-            onError={stopBackground}
-            onTimeout={stopBackground}
-            onBeforeInteractive={stopBackground}
-          />
-        </div>
-      )}
+      {userId !== null &&
+        ((backgroundEnabled && readyUserId === userId) || cachedToken !== null) &&
+        backgroundStopped === false && (
+          <div aria-hidden className="pointer-events-none fixed bottom-0 right-0">
+            <Turnstile
+              key={userId}
+              sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              appearance="interaction-only"
+              retry="never"
+              refreshExpired="manual"
+              onLoad={(_, widget) => {
+                widgetRef.current = widget
+              }}
+              onVerify={(value, widget) => {
+                if (widget === widgetRef.current) {
+                  storeToken({ value, userId })
+                }
+              }}
+              onExpire={(_, widget) => {
+                if (widget === widgetRef.current) {
+                  clearToken()
+                }
+              }}
+              onError={stopBackground}
+              onTimeout={stopBackground}
+              onBeforeInteractive={stopBackground}
+            />
+          </div>
+        )}
     </EventTurnstileContext.Provider>
   )
 }
