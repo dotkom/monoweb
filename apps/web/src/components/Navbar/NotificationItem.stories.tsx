@@ -1,5 +1,6 @@
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Group } from "@dotkomonline/rpc/group"
+import type { SidequestSummary } from "@dotkomonline/rpc/sidequest"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { getNotificationTypeLabel, NotificationTypeSchema } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
@@ -18,6 +19,7 @@ import {
   NotificationArticlePayload,
   NotificationEventPayload,
   NotificationGroupPayload,
+  NotificationSidequestPayload,
   NotificationJobListingPayload,
   NotificationOfflinePayload,
   NotificationUrlPayload,
