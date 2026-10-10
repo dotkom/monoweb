@@ -1,14 +1,14 @@
 "use client"
 
+import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { GroupLogoAvatar } from "@/components/atoms/GroupLogo"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { useTRPC } from "@/utils/trpc/client"
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Attendance, AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { Event, EventSummary } from "@dotkomonline/rpc/event"
-import type { Group } from "@dotkomonline/rpc/group"
-import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
+import type { InterestGroupEventSummary } from "@dotkomonline/rpc/interest-group-event"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import type { Notification } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
@@ -19,6 +19,7 @@ import { IconArrowUpRight, IconBriefcase, IconQuestionMark } from "@tabler/icons
 import { useQuery } from "@tanstack/react-query"
 import Image from "next/image"
 import Link from "next/link"
+import { InterestGroupEventCard } from "src/app/(web)/interessegrupper/components/InterestGroupEventCard"
 
 const payloadCardClassName =
   "flex min-w-0 items-center gap-3 rounded-lg border border-gray-200 p-2 transition-colors bg-white/75 hover:bg-white hover:border-muted-foreground dark:border-white/8 dark:bg-white/8 dark:hover:bg-white/15"
@@ -49,6 +50,8 @@ export function NotificationPayload({ notification }: { notification: Notificati
       return <OfflinePayload offlineId={notification.link.offlineId} />
     case "JOB_LISTING":
       return <JobListingPayload jobListingId={notification.link.jobListingId} />
+    case "INTEREST_GROUP_EVENT":
+      return <InterestGroupEventPayload interestGroupEventId={notification.link.interestGroupEventId} />
   }
 }
 
@@ -140,6 +143,21 @@ function JobListingPayload({ jobListingId }: { jobListingId: string }) {
   }
 
   return <NotificationJobListingPayload jobListing={query.data} />
+}
+
+function InterestGroupEventPayload({ interestGroupEventId }: { interestGroupEventId: string }) {
+  const trpcClient = useTRPC()
+  const query = useQuery(trpcClient.interestGroupEvent.findById.queryOptions(interestGroupEventId))
+
+  if (query.isPending) {
+    return <PayloadSkeleton />
+  }
+
+  if (query.isError || query.data === null) {
+    return <UnavailablePayload />
+  }
+
+  return <NotificationInterestGroupEventPayload interestGroupEvent={query.data} />
 }
 
 export function NotificationUrlPayload({ url }: { url: string }) {
@@ -292,5 +310,24 @@ export function NotificationJobListingPayload({
         <Text className="mt-0.5 truncate text-xs text-gray-600 dark:text-stone-400">{jobListing.company.name}</Text>
       </div>
     </Link>
+  )
+}
+
+export function NotificationInterestGroupEventPayload({
+  interestGroupEvent,
+}: {
+  interestGroupEvent: InterestGroupEventSummary
+}) {
+  return (
+    <div className={cn(payloadCardClassName, "p-0")}>
+      <InterestGroupEventCard
+        interestGroupEvent={interestGroupEvent}
+        isCurrentUserMemberOfInterestGroup={false}
+        hasAppointedRole={false}
+        isLoggedIn={false}
+        compact
+        className="mx-0 w-full min-w-0 last:mb-0 rounded-lg"
+      />
+    </div>
   )
 }

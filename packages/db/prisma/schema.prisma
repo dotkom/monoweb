@@ -907,6 +907,7 @@ enum NotificationPayloadType {
   USER        @map("USER")
   OFFLINE     @map("OFFLINE")
   JOB_LISTING @map("JOB_LISTING")
+  INTEREST_GROUP_EVENT @map("INTEREST_GROUP_EVENT")
   NONE        @map("NONE")
 }
 
@@ -945,6 +946,12 @@ enum NotificationType {
   NEW_MARK                           @map("NEW_MARK")
   /// A message about a new feedback form you have received.
   NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
+  /// A new interest group event has been published for an interest group you are subscribed to.
+  NEW_INTEREST_GROUP_EVENT           @map("NEW_INTEREST_GROUP_EVENT")
+  /// A new interest group event request has been submitted.
+  NEW_INTEREST_GROUP_EVENT_REQUEST   @map("NEW_INTEREST_GROUP_EVENT_REQUEST")
+  /// An interest group event request has been reviewed.
+  INTEREST_GROUP_EVENT_REQUEST_REVIEWED @map("INTEREST_GROUP_EVENT_REQUEST_REVIEWED")
 }
 
 model Notification {

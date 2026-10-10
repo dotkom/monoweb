@@ -1,18 +1,18 @@
 import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { DateAndTime } from "@/components/molecules/EventListItem/DateAndTime"
 import { useUser } from "@auth0/nextjs-auth0"
-import { createInterestGroupEventPageUrl } from "@dotkomonline/utils"
 import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
   type InterestGroupEventSummary,
   isUserRegisteredForInterestGroupEvent,
 } from "@dotkomonline/rpc/interest-group-event"
 import { cn, Title } from "@dotkomonline/ui"
+import { createInterestGroupEventPageUrl } from "@dotkomonline/utils"
 import { IconBellFilled, IconChevronRight, IconShieldFilled } from "@tabler/icons-react"
 import { isPast } from "date-fns"
 import Link from "next/link"
-import { InterestGroupEventRegistrations } from "./InterestGroupEventRegistrations"
 import { InterestGroupEventJoinButton } from "./InterestGroupEventJoinButton"
+import { InterestGroupEventRegistrations } from "./InterestGroupEventRegistrations"
 
 export interface InterestGroupEventCardProps {
   interestGroupEvent: InterestGroupEventSummary
@@ -20,7 +20,8 @@ export interface InterestGroupEventCardProps {
   hasAppointedRole: boolean
   isLoggedIn: boolean
   className?: string
-  onRegistrationToggle: (interestGroupEvent: InterestGroupEventSummary) => void
+  onRegistrationToggle?: (interestGroupEvent: InterestGroupEventSummary) => void
+  compact?: boolean
 }
 
 export const InterestGroupEventCard = ({
@@ -30,6 +31,7 @@ export const InterestGroupEventCard = ({
   isLoggedIn,
   className,
   onRegistrationToggle,
+  compact = false,
 }: InterestGroupEventCardProps) => {
   const { user } = useUser()
   const userId = user?.sub
@@ -44,18 +46,19 @@ export const InterestGroupEventCard = ({
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-4 rounded-xl p-2 -mx-2 last:-mb-2",
+        "group relative flex flex-col rounded-xl p-2 -mx-2 last:-mb-2",
         "sm:flex-row",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
+        compact ? "gap-3" : "gap-4",
         isEndInPast && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
         className
       )}
     >
       <div
         className={cn(
-          "relative shrink-0 overflow-hidden rounded-md bg-gray-100 dark:bg-stone-800",
+          "relative shrink-0 overflow-hidden bg-gray-100 dark:bg-stone-800",
           "aspect-video w-full",
-          "sm:h-22 sm:w-auto lg:h-28"
+          compact ? "rounded-sm sm:h-16 sm:w-auto" : "rounded-md sm:h-22 sm:w-auto lg:h-28"
         )}
       >
         {
@@ -69,7 +72,7 @@ export const InterestGroupEventCard = ({
         />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:gap-1.5">
+      <div className={cn("flex min-w-0 flex-1 flex-col", compact ? "gap-0.5" : "gap-2 sm:gap-1.5")}>
         <div className="flex items-center justify-start gap-1.5">
           <Link
             href={createGroupPageUrl(interestGroup)}
@@ -90,7 +93,7 @@ export const InterestGroupEventCard = ({
           )}
         </div>
 
-        <div className="flex min-w-0 flex-col gap-2 sm:gap-1.5">
+        <div className={cn("flex min-w-0 flex-col", compact ? "gap-0.5" : "gap-2 sm:gap-1.5")}>
           <Link
             href={createInterestGroupEventPageUrl(interestGroupEvent.id, interestGroupEvent.title)}
             scroll={false}
@@ -100,31 +103,49 @@ export const InterestGroupEventCard = ({
               "focus-visible:after:ring-2 focus-visible:after:ring-ring/30"
             )}
           >
-            <Title element="h3" size="sm" className="line-clamp-2 text-lg font-medium wrap-break-word sm:text-base">
+            <Title
+              element="h3"
+              size="sm"
+              className={cn(
+                "line-clamp-2 font-medium wrap-break-word",
+                compact ? "text-xs sm:text-sm" : "text-lg sm:text-base"
+              )}
+            >
               {interestGroupEvent.title}
             </Title>
 
-            <IconChevronRight className="hidden group-hover:block size-4 text-muted-foreground" />
+            {!compact && <IconChevronRight className="hidden group-hover:block size-4 text-muted-foreground" />}
           </Link>
 
-          <DateAndTime start={interestGroupEvent.start} end={interestGroupEvent.end} stackAt={false} />
+          <DateAndTime
+            start={interestGroupEvent.start}
+            end={interestGroupEvent.end}
+            compact={compact}
+            stackAt={false}
+          />
 
-          <div className="mt-1 flex flex-row-reverse sm:flex-row justify-between sm:justify-start items-center gap-1 sm:mt-0.5">
-            <InterestGroupEventJoinButton
-              isLoggedIn={isLoggedIn}
-              isUserRegistered={isUserRegisteredForEvent}
-              eventHasEnded={isEndInPast}
-              onRegistrationClick={() => onRegistrationToggle(interestGroupEvent)}
-              size="sm"
-              className="relative z-10 w-fit"
-            />
+          {!compact && (
+            <div className="mt-1 flex flex-row-reverse sm:flex-row justify-between sm:justify-start items-center gap-1 sm:mt-0.5">
+              <InterestGroupEventJoinButton
+                isLoggedIn={isLoggedIn}
+                isUserRegistered={isUserRegisteredForEvent}
+                eventHasEnded={isEndInPast}
+                onRegistrationClick={() => {
+                  if (onRegistrationToggle !== undefined) {
+                    onRegistrationToggle(interestGroupEvent)
+                  }
+                }}
+                size="sm"
+                className="relative z-10 w-fit"
+              />
 
-            <InterestGroupEventRegistrations
-              registrations={interestGroupEvent.registrations}
-              eventHasEnded={isEndInPast}
-              userId={userId ?? null}
-            />
-          </div>
+              <InterestGroupEventRegistrations
+                registrations={interestGroupEvent.registrations}
+                eventHasEnded={isEndInPast}
+                userId={userId ?? null}
+              />
+            </div>
+          )}
         </div>
       </div>
     </article>
