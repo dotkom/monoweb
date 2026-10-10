@@ -266,3 +266,8 @@ export type InterestGroupEvent = Prisma.InterestGroupEventModel
  * 
  */
 export type InterestGroupEventRegistration = Prisma.InterestGroupEventRegistrationModel
+/**
+ * Model InterestGroupEventRequest
+ * 
+ */
+export type InterestGroupEventRequest = Prisma.InterestGroupEventRequestModel

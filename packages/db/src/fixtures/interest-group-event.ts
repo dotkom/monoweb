@@ -20,6 +20,10 @@ export const JUL_GLOGG_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111301"
 export const VODKA_BYMARKA_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111401"
 export const FAXE_RITUALE_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111501"
 export const MINELINE_BUILD_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111601"
+export const X_SPORT_RAFTING_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111102"
+export const RACINGLINE_SPA_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111202"
+export const JUL_LUCIA_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111302"
+export const MINELINE_SPEEDRUN_EVENT_ID = "a1b2c3d4-e5f6-4789-a012-111111111602"
 
 export const getInterestGroupEventFixtures = () =>
   [
@@ -137,6 +141,7 @@ export const getInterestGroupEventFixtures = () =>
       locationLink: null,
     },
     {
+      id: X_SPORT_RAFTING_EVENT_ID,
       createdAt: subDays(now, 4),
       updatedAt: subDays(now, 1),
       title: "Rafting på Driva",
@@ -239,6 +244,7 @@ export const getInterestGroupEventFixtures = () =>
       locationLink: null,
     },
     {
+      id: RACINGLINE_SPA_EVENT_ID,
       createdAt: subDays(now, 3),
       updatedAt: subDays(now, 3),
       title: "Nattlig Spa-Francorchamps watch party",
@@ -335,6 +341,7 @@ export const getInterestGroupEventFixtures = () =>
       locationLink: null,
     },
     {
+      id: JUL_LUCIA_EVENT_ID,
       createdAt: subDays(now, 2),
       updatedAt: subDays(now, 2),
       title: "Lucia-tog gjennom A4",
@@ -623,6 +630,7 @@ export const getInterestGroupEventFixtures = () =>
       locationLink: null,
     },
     {
+      id: MINELINE_SPEEDRUN_EVENT_ID,
       createdAt: subDays(now, 1),
       updatedAt: subDays(now, 1),
       title: "Speedrun-kveld: any%",
@@ -841,4 +849,169 @@ export const getInterestGroupEventRegistrationFixtures = (userIds: string[]) => 
   }
 
   return registrations
+}
+
+type InterestGroupEventRequestFixture = {
+  interestGroupEventId: string
+  requestedByUserIndex: number
+  reviewedByUserIndex: number | null
+  description: string
+  requestedAmount: number
+  expectedAttendeeCount: number
+  approvedAmount: number | null
+  reviewNote: string | null
+  createdDaysAgo: number
+  reviewedDaysAgo: number | null
+}
+
+const interestGroupEventRequestFixtures: InterestGroupEventRequestFixture[] = [
+  {
+    interestGroupEventId: X_SPORT_SURF_EVENT_ID,
+    requestedByUserIndex: 3,
+    reviewedByUserIndex: 1,
+    description: "Transport, hytte og utstyrsleie for surfetur til Stadlandet.",
+    requestedAmount: 15000,
+    expectedAttendeeCount: 16,
+    approvedAmount: 12000,
+    reviewNote: "Godkjent med noe redusert ramme. Prioriter transport og overnatting.",
+    createdDaysAgo: 14,
+    reviewedDaysAgo: 10,
+  },
+  {
+    interestGroupEventId: X_SPORT_RAFTING_EVENT_ID,
+    requestedByUserIndex: 3,
+    reviewedByUserIndex: null,
+    description: "Guidet rafting på Driva. Inkluderer utstyr og transport fra Trondheim.",
+    requestedAmount: 8000,
+    expectedAttendeeCount: 15,
+    approvedAmount: null,
+    reviewNote: null,
+    createdDaysAgo: 4,
+    reviewedDaysAgo: null,
+  },
+  {
+    interestGroupEventId: RACINGLINE_MONACO_EVENT_ID,
+    requestedByUserIndex: 2,
+    reviewedByUserIndex: 1,
+    description: "Snacks, drikke og premier til tippekamp under Monaco GP.",
+    requestedAmount: 2000,
+    expectedAttendeeCount: 20,
+    approvedAmount: 2000,
+    reviewNote: "Godkjent som søkt.",
+    createdDaysAgo: 14,
+    reviewedDaysAgo: 7,
+  },
+  {
+    interestGroupEventId: RACINGLINE_SPA_EVENT_ID,
+    requestedByUserIndex: 2,
+    reviewedByUserIndex: 1,
+    description: "Nattlig watch party med snacks. Trenger tilgang til kontoret etter midnatt.",
+    requestedAmount: 1500,
+    expectedAttendeeCount: 12,
+    approvedAmount: null,
+    reviewNote: "Avslått. For sent på natten for kontoret, og vi vil ikke sette presedens for nattlige arrangementer.",
+    createdDaysAgo: 3,
+    reviewedDaysAgo: 2,
+  },
+  {
+    interestGroupEventId: JUL_GLOGG_EVENT_ID,
+    requestedByUserIndex: 5,
+    reviewedByUserIndex: 1,
+    description: "Gløgg, pepperkaker og premier til julequiz.",
+    requestedAmount: 1500,
+    expectedAttendeeCount: 25,
+    approvedAmount: 1500,
+    reviewNote: "Godkjent. Koselig og lavterskel.",
+    createdDaysAgo: 8,
+    reviewedDaysAgo: 5,
+  },
+  {
+    interestGroupEventId: JUL_LUCIA_EVENT_ID,
+    requestedByUserIndex: 5,
+    reviewedByUserIndex: null,
+    description: "Lussekatter og stearinlys til Lucia-tog gjennom A4.",
+    requestedAmount: 2500,
+    expectedAttendeeCount: 40,
+    approvedAmount: null,
+    reviewNote: null,
+    createdDaysAgo: 2,
+    reviewedDaysAgo: null,
+  },
+  {
+    interestGroupEventId: VODKA_BYMARKA_EVENT_ID,
+    requestedByUserIndex: 6,
+    reviewedByUserIndex: 1,
+    description: "Ved og engangsgrill til kveld i Bymarka. Drikke tar folk selv.",
+    requestedAmount: 800,
+    expectedAttendeeCount: 18,
+    approvedAmount: 500,
+    reviewNote: "Godkjent med redusert beløp. Bruk offentlig grillplass.",
+    createdDaysAgo: 6,
+    reviewedDaysAgo: 4,
+  },
+  {
+    interestGroupEventId: FAXE_RITUALE_EVENT_ID,
+    requestedByUserIndex: 7,
+    reviewedByUserIndex: 1,
+    description: "Faxe og tilbehør til ordenens rituale.",
+    requestedAmount: 3000,
+    expectedAttendeeCount: 22,
+    approvedAmount: 3000,
+    reviewNote: "Godkjent. Husk aldersgrense og rydding.",
+    createdDaysAgo: 9,
+    reviewedDaysAgo: 6,
+  },
+  {
+    interestGroupEventId: MINELINE_BUILD_EVENT_ID,
+    requestedByUserIndex: 0,
+    reviewedByUserIndex: 1,
+    description: "Pizza til build night på Discord og kontoret.",
+    requestedAmount: 1000,
+    expectedAttendeeCount: 14,
+    approvedAmount: 1000,
+    reviewNote: "Godkjent.",
+    createdDaysAgo: 5,
+    reviewedDaysAgo: 3,
+  },
+  {
+    interestGroupEventId: MINELINE_SPEEDRUN_EVENT_ID,
+    requestedByUserIndex: 0,
+    reviewedByUserIndex: null,
+    description: "Premier og snacks til speedrun-kveld.",
+    requestedAmount: 500,
+    expectedAttendeeCount: 10,
+    approvedAmount: null,
+    reviewNote: null,
+    createdDaysAgo: 1,
+    reviewedDaysAgo: null,
+  },
+]
+
+export const getInterestGroupEventRequestFixtures = (userIds: string[]) => {
+  const requests: Prisma.InterestGroupEventRequestCreateManyInput[] = []
+
+  for (const fixture of interestGroupEventRequestFixtures) {
+    const requestedById = userIds[fixture.requestedByUserIndex]
+    if (requestedById === undefined) {
+      continue
+    }
+
+    const reviewedById =
+      fixture.reviewedByUserIndex === null ? null : (userIds[fixture.reviewedByUserIndex] ?? null)
+
+    requests.push({
+      interestGroupEventId: fixture.interestGroupEventId,
+      requestedById,
+      reviewedById,
+      description: fixture.description,
+      requestedAmount: fixture.requestedAmount,
+      expectedAttendeeCount: fixture.expectedAttendeeCount,
+      approvedAmount: fixture.approvedAmount,
+      reviewNote: fixture.reviewNote,
+      createdAt: subDays(now, fixture.createdDaysAgo),
+      reviewedAt: fixture.reviewedDaysAgo === null ? null : subDays(now, fixture.reviewedDaysAgo),
+    })
+  }
+
+  return requests
 }

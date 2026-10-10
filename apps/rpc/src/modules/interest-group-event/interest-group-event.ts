@@ -74,6 +74,55 @@ export const InterestGroupEventWriteSchema = InterestGroupEventSchema.pick({
 
 export type InterestGroupEventWrite = z.infer<typeof InterestGroupEventWriteSchema>
 
+export const RequestedInterestGroupEventWriteSchema = InterestGroupEventWriteSchema.pick({
+  title: true,
+  start: true,
+  end: true,
+  registerEnd: true,
+  deregisterDeadline: true,
+  description: true,
+  imageUrl: true,
+  locationTitle: true,
+  locationAddress: true,
+  locationLink: true,
+})
+
+export type RequestedInterestGroupEventWrite = z.infer<typeof RequestedInterestGroupEventWriteSchema>
+
+export const InterestGroupEventRequestSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  description: z.string().nullable(),
+  requestedAmount: z.int().positive(),
+  expectedAttendeeCount: z.int().positive(),
+  approvedAmount: z.int().nonnegative().nullable(),
+  reviewedAt: z.date().nullable(),
+  reviewNote: z.string().nullable(),
+  interestGroupEventId: z.string(),
+  requestedById: z.string(),
+  reviewedById: z.string().nullable(),
+})
+
+export type InterestGroupEventRequest = z.infer<typeof InterestGroupEventRequestSchema>
+export type InterestGroupEventRequestId = InterestGroupEventRequest["id"]
+
+export const InterestGroupEventRequestWriteSchema = InterestGroupEventRequestSchema.pick({
+  description: true,
+  requestedAmount: true,
+  expectedAttendeeCount: true,
+})
+
+export type InterestGroupEventRequestWrite = z.infer<typeof InterestGroupEventRequestWriteSchema>
+
+export const InterestGroupEventRequestUpdateSchema = InterestGroupEventRequestSchema.pick({
+  approvedAmount: true,
+  reviewNote: true,
+  reviewedById: true,
+  reviewedAt: true,
+})
+export type InterestGroupEventRequestUpdate = z.infer<typeof InterestGroupEventRequestUpdateSchema>
+
 export const InterestGroupEventFilterQuerySchema = z
   .object({
     byInterestGroupId: buildAnyOfFilter(GroupSchema.shape.slug),
@@ -86,11 +135,42 @@ export const InterestGroupEventFilterQuerySchema = z
   .partial()
 export type InterestGroupEventFilterQuery = z.infer<typeof InterestGroupEventFilterQuerySchema>
 
-export const INTEREST_GROUP_EVENT_IMAGE_MAX_SIZE_KIB = 1024 * 5
+export const InterestGroupEventSummaryWithRequestSchema = InterestGroupEventSummarySchema.extend({
+  request: InterestGroupEventRequestSchema.nullable(),
+})
+export type InterestGroupEventSummaryWithRequest = z.infer<typeof InterestGroupEventSummaryWithRequestSchema>
+
+export const InterestGroupEventRequestReviewWriteSchema = z.discriminatedUnion("status", [
+  z.object({
+    status: z.literal("PUBLISHED"),
+    approvedAmount: z.int().nonnegative(),
+    reviewNote: z.string().nullable(),
+  }),
+  z.object({
+    status: z.literal("REJECTED"),
+    reviewNote: z.string().nullable(),
+  }),
+])
+export type InterestGroupEventRequestReviewWrite = z.infer<typeof InterestGroupEventRequestReviewWriteSchema>
+
+export const INTEREST_GROUP_EVENT_IMAGE_MAX_SIZE_KIB = 5 * 1024
 
 export function isUserRegisteredForInterestGroupEvent(
   userId: string | null,
   interestGroupEvent: Pick<InterestGroupEventSummary, "registrations">
 ) {
   return interestGroupEvent.registrations.some((registration) => registration.userId === userId)
+}
+
+export function mapInterestGroupEventStatusToRequestStatusLabel(status: InterestGroupEventStatus) {
+  switch (status) {
+    case "IN_REVIEW":
+      return "Til vurdering"
+    case "PUBLISHED":
+      return "Godkjent og publisert"
+    case "REJECTED":
+      return "Avvist"
+    case "DELETED":
+      return "Slettet"
+  }
 }

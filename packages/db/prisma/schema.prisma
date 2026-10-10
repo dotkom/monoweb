@@ -125,6 +125,8 @@ model User {
   contestTeams                       ContestTeam[]                    @relation("ContestTeamMember")
   userFlagLinks                      UserFlagLink[]
   interestGroupEventRegistrations    InterestGroupEventRegistration[]
+  interestGroupEventRequests         InterestGroupEventRequest[]
+  interestGroupEventRequestsReviewed InterestGroupEventRequest[]      @relation("InterestGroupEventRequestReviewer")
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -1123,6 +1125,7 @@ model InterestGroupEvent {
   interestGroup   Group  @relation(fields: [interestGroupId], references: [slug], onDelete: Cascade)
 
   registrations InterestGroupEventRegistration[]
+  request       InterestGroupEventRequest?
 
   @@index([interestGroupId])
   @@map("interest_group_event")
@@ -1140,4 +1143,28 @@ model InterestGroupEventRegistration {
   @@unique([userId, interestGroupEventId])
   @@index([interestGroupEventId])
   @@map("interest_group_event_registration")
+}
+
+model InterestGroupEventRequest {
+  id                    String    @id @default(uuid())
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  description           String?
+  /// The amount of money requested for the event in NOK.
+  requestedAmount       Int       @map("requested_amount")
+  expectedAttendeeCount Int       @map("expected_attendee_count")
+  approvedAmount        Int?      @map("approved_amount")
+  reviewedAt            DateTime? @map("reviewed_at") @db.Timestamptz(3)
+  reviewNote            String?   @map("review_note")
+
+  interestGroupEventId String             @unique @map("interest_group_event_id")
+  requestedById        String             @map("requested_by_id")
+  reviewedById         String?            @map("reviewed_by_id")
+  interestGroupEvent   InterestGroupEvent @relation(fields: [interestGroupEventId], references: [id], onDelete: Cascade)
+  requestedBy          User               @relation(fields: [requestedById], references: [id])
+  reviewedBy           User?              @relation("InterestGroupEventRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@index([requestedById])
+  @@index([reviewedById])
+  @@map("interest_group_event_request")
 }

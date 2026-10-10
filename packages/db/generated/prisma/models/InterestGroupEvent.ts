@@ -264,6 +264,7 @@ export type InterestGroupEventWhereInput = {
   interestGroupId?: Prisma.StringFilter<"InterestGroupEvent"> | string
   interestGroup?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   registrations?: Prisma.InterestGroupEventRegistrationListRelationFilter
+  request?: Prisma.XOR<Prisma.InterestGroupEventRequestNullableScalarRelationFilter, Prisma.InterestGroupEventRequestWhereInput> | null
 }
 
 export type InterestGroupEventOrderByWithRelationInput = {
@@ -284,6 +285,7 @@ export type InterestGroupEventOrderByWithRelationInput = {
   interestGroupId?: Prisma.SortOrder
   interestGroup?: Prisma.GroupOrderByWithRelationInput
   registrations?: Prisma.InterestGroupEventRegistrationOrderByRelationAggregateInput
+  request?: Prisma.InterestGroupEventRequestOrderByWithRelationInput
 }
 
 export type InterestGroupEventWhereUniqueInput = Prisma.AtLeast<{
@@ -307,6 +309,7 @@ export type InterestGroupEventWhereUniqueInput = Prisma.AtLeast<{
   interestGroupId?: Prisma.StringFilter<"InterestGroupEvent"> | string
   interestGroup?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   registrations?: Prisma.InterestGroupEventRegistrationListRelationFilter
+  request?: Prisma.XOR<Prisma.InterestGroupEventRequestNullableScalarRelationFilter, Prisma.InterestGroupEventRequestWhereInput> | null
 }, "id">
 
 export type InterestGroupEventOrderByWithAggregationInput = {
@@ -368,6 +371,7 @@ export type InterestGroupEventCreateInput = {
   status: $Enums.InterestGroupEventStatus
   interestGroup: Prisma.GroupCreateNestedOneWithoutInterestGroupEventsInput
   registrations?: Prisma.InterestGroupEventRegistrationCreateNestedManyWithoutInterestGroupEventInput
+  request?: Prisma.InterestGroupEventRequestCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventUncheckedCreateInput = {
@@ -387,6 +391,7 @@ export type InterestGroupEventUncheckedCreateInput = {
   status: $Enums.InterestGroupEventStatus
   interestGroupId: string
   registrations?: Prisma.InterestGroupEventRegistrationUncheckedCreateNestedManyWithoutInterestGroupEventInput
+  request?: Prisma.InterestGroupEventRequestUncheckedCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventUpdateInput = {
@@ -406,6 +411,7 @@ export type InterestGroupEventUpdateInput = {
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   interestGroup?: Prisma.GroupUpdateOneRequiredWithoutInterestGroupEventsNestedInput
   registrations?: Prisma.InterestGroupEventRegistrationUpdateManyWithoutInterestGroupEventNestedInput
+  request?: Prisma.InterestGroupEventRequestUpdateOneWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventUncheckedUpdateInput = {
@@ -425,6 +431,7 @@ export type InterestGroupEventUncheckedUpdateInput = {
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   interestGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   registrations?: Prisma.InterestGroupEventRegistrationUncheckedUpdateManyWithoutInterestGroupEventNestedInput
+  request?: Prisma.InterestGroupEventRequestUncheckedUpdateOneWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventCreateManyInput = {
@@ -609,6 +616,20 @@ export type InterestGroupEventUpdateOneRequiredWithoutRegistrationsNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.InterestGroupEventUpdateToOneWithWhereWithoutRegistrationsInput, Prisma.InterestGroupEventUpdateWithoutRegistrationsInput>, Prisma.InterestGroupEventUncheckedUpdateWithoutRegistrationsInput>
 }
 
+export type InterestGroupEventCreateNestedOneWithoutRequestInput = {
+  create?: Prisma.XOR<Prisma.InterestGroupEventCreateWithoutRequestInput, Prisma.InterestGroupEventUncheckedCreateWithoutRequestInput>
+  connectOrCreate?: Prisma.InterestGroupEventCreateOrConnectWithoutRequestInput
+  connect?: Prisma.InterestGroupEventWhereUniqueInput
+}
+
+export type InterestGroupEventUpdateOneRequiredWithoutRequestNestedInput = {
+  create?: Prisma.XOR<Prisma.InterestGroupEventCreateWithoutRequestInput, Prisma.InterestGroupEventUncheckedCreateWithoutRequestInput>
+  connectOrCreate?: Prisma.InterestGroupEventCreateOrConnectWithoutRequestInput
+  upsert?: Prisma.InterestGroupEventUpsertWithoutRequestInput
+  connect?: Prisma.InterestGroupEventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.InterestGroupEventUpdateToOneWithWhereWithoutRequestInput, Prisma.InterestGroupEventUpdateWithoutRequestInput>, Prisma.InterestGroupEventUncheckedUpdateWithoutRequestInput>
+}
+
 export type InterestGroupEventCreateWithoutInterestGroupInput = {
   id?: string
   createdAt?: Date | string
@@ -625,6 +646,7 @@ export type InterestGroupEventCreateWithoutInterestGroupInput = {
   locationLink?: string | null
   status: $Enums.InterestGroupEventStatus
   registrations?: Prisma.InterestGroupEventRegistrationCreateNestedManyWithoutInterestGroupEventInput
+  request?: Prisma.InterestGroupEventRequestCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventUncheckedCreateWithoutInterestGroupInput = {
@@ -643,6 +665,7 @@ export type InterestGroupEventUncheckedCreateWithoutInterestGroupInput = {
   locationLink?: string | null
   status: $Enums.InterestGroupEventStatus
   registrations?: Prisma.InterestGroupEventRegistrationUncheckedCreateNestedManyWithoutInterestGroupEventInput
+  request?: Prisma.InterestGroupEventRequestUncheckedCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventCreateOrConnectWithoutInterestGroupInput = {
@@ -708,6 +731,7 @@ export type InterestGroupEventCreateWithoutRegistrationsInput = {
   locationLink?: string | null
   status: $Enums.InterestGroupEventStatus
   interestGroup: Prisma.GroupCreateNestedOneWithoutInterestGroupEventsInput
+  request?: Prisma.InterestGroupEventRequestCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventUncheckedCreateWithoutRegistrationsInput = {
@@ -726,6 +750,7 @@ export type InterestGroupEventUncheckedCreateWithoutRegistrationsInput = {
   locationLink?: string | null
   status: $Enums.InterestGroupEventStatus
   interestGroupId: string
+  request?: Prisma.InterestGroupEventRequestUncheckedCreateNestedOneWithoutInterestGroupEventInput
 }
 
 export type InterestGroupEventCreateOrConnectWithoutRegistrationsInput = {
@@ -760,6 +785,7 @@ export type InterestGroupEventUpdateWithoutRegistrationsInput = {
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   interestGroup?: Prisma.GroupUpdateOneRequiredWithoutInterestGroupEventsNestedInput
+  request?: Prisma.InterestGroupEventRequestUpdateOneWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventUncheckedUpdateWithoutRegistrationsInput = {
@@ -778,6 +804,99 @@ export type InterestGroupEventUncheckedUpdateWithoutRegistrationsInput = {
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   interestGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  request?: Prisma.InterestGroupEventRequestUncheckedUpdateOneWithoutInterestGroupEventNestedInput
+}
+
+export type InterestGroupEventCreateWithoutRequestInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  title: string
+  description: string
+  start: Date | string
+  end: Date | string
+  registerEnd: Date | string
+  deregisterDeadline: Date | string
+  imageUrl: string
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  status: $Enums.InterestGroupEventStatus
+  interestGroup: Prisma.GroupCreateNestedOneWithoutInterestGroupEventsInput
+  registrations?: Prisma.InterestGroupEventRegistrationCreateNestedManyWithoutInterestGroupEventInput
+}
+
+export type InterestGroupEventUncheckedCreateWithoutRequestInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  title: string
+  description: string
+  start: Date | string
+  end: Date | string
+  registerEnd: Date | string
+  deregisterDeadline: Date | string
+  imageUrl: string
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  status: $Enums.InterestGroupEventStatus
+  interestGroupId: string
+  registrations?: Prisma.InterestGroupEventRegistrationUncheckedCreateNestedManyWithoutInterestGroupEventInput
+}
+
+export type InterestGroupEventCreateOrConnectWithoutRequestInput = {
+  where: Prisma.InterestGroupEventWhereUniqueInput
+  create: Prisma.XOR<Prisma.InterestGroupEventCreateWithoutRequestInput, Prisma.InterestGroupEventUncheckedCreateWithoutRequestInput>
+}
+
+export type InterestGroupEventUpsertWithoutRequestInput = {
+  update: Prisma.XOR<Prisma.InterestGroupEventUpdateWithoutRequestInput, Prisma.InterestGroupEventUncheckedUpdateWithoutRequestInput>
+  create: Prisma.XOR<Prisma.InterestGroupEventCreateWithoutRequestInput, Prisma.InterestGroupEventUncheckedCreateWithoutRequestInput>
+  where?: Prisma.InterestGroupEventWhereInput
+}
+
+export type InterestGroupEventUpdateToOneWithWhereWithoutRequestInput = {
+  where?: Prisma.InterestGroupEventWhereInput
+  data: Prisma.XOR<Prisma.InterestGroupEventUpdateWithoutRequestInput, Prisma.InterestGroupEventUncheckedUpdateWithoutRequestInput>
+}
+
+export type InterestGroupEventUpdateWithoutRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registerEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deregisterDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
+  interestGroup?: Prisma.GroupUpdateOneRequiredWithoutInterestGroupEventsNestedInput
+  registrations?: Prisma.InterestGroupEventRegistrationUpdateManyWithoutInterestGroupEventNestedInput
+}
+
+export type InterestGroupEventUncheckedUpdateWithoutRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registerEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deregisterDeadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
+  interestGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  registrations?: Prisma.InterestGroupEventRegistrationUncheckedUpdateManyWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventCreateManyInterestGroupInput = {
@@ -813,6 +932,7 @@ export type InterestGroupEventUpdateWithoutInterestGroupInput = {
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   registrations?: Prisma.InterestGroupEventRegistrationUpdateManyWithoutInterestGroupEventNestedInput
+  request?: Prisma.InterestGroupEventRequestUpdateOneWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventUncheckedUpdateWithoutInterestGroupInput = {
@@ -831,6 +951,7 @@ export type InterestGroupEventUncheckedUpdateWithoutInterestGroupInput = {
   locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumInterestGroupEventStatusFieldUpdateOperationsInput | $Enums.InterestGroupEventStatus
   registrations?: Prisma.InterestGroupEventRegistrationUncheckedUpdateManyWithoutInterestGroupEventNestedInput
+  request?: Prisma.InterestGroupEventRequestUncheckedUpdateOneWithoutInterestGroupEventNestedInput
 }
 
 export type InterestGroupEventUncheckedUpdateManyWithoutInterestGroupInput = {
@@ -899,6 +1020,7 @@ export type InterestGroupEventSelect<ExtArgs extends runtime.Types.Extensions.In
   interestGroupId?: boolean
   interestGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   registrations?: boolean | Prisma.InterestGroupEvent$registrationsArgs<ExtArgs>
+  request?: boolean | Prisma.InterestGroupEvent$requestArgs<ExtArgs>
   _count?: boolean | Prisma.InterestGroupEventCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["interestGroupEvent"]>
 
@@ -962,6 +1084,7 @@ export type InterestGroupEventOmit<ExtArgs extends runtime.Types.Extensions.Inte
 export type InterestGroupEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   interestGroup?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   registrations?: boolean | Prisma.InterestGroupEvent$registrationsArgs<ExtArgs>
+  request?: boolean | Prisma.InterestGroupEvent$requestArgs<ExtArgs>
   _count?: boolean | Prisma.InterestGroupEventCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type InterestGroupEventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -976,6 +1099,7 @@ export type $InterestGroupEventPayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     interestGroup: Prisma.$GroupPayload<ExtArgs>
     registrations: Prisma.$InterestGroupEventRegistrationPayload<ExtArgs>[]
+    request: Prisma.$InterestGroupEventRequestPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1389,6 +1513,7 @@ export interface Prisma__InterestGroupEventClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   interestGroup<T extends Prisma.GroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupDefaultArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   registrations<T extends Prisma.InterestGroupEvent$registrationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InterestGroupEvent$registrationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterestGroupEventRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  request<T extends Prisma.InterestGroupEvent$requestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.InterestGroupEvent$requestArgs<ExtArgs>>): Prisma.Prisma__InterestGroupEventRequestClient<runtime.Types.Result.GetResult<Prisma.$InterestGroupEventRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1864,6 +1989,25 @@ export type InterestGroupEvent$registrationsArgs<ExtArgs extends runtime.Types.E
   take?: number
   skip?: number
   distinct?: Prisma.InterestGroupEventRegistrationScalarFieldEnum | Prisma.InterestGroupEventRegistrationScalarFieldEnum[]
+}
+
+/**
+ * InterestGroupEvent.request
+ */
+export type InterestGroupEvent$requestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InterestGroupEventRequest
+   */
+  select?: Prisma.InterestGroupEventRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InterestGroupEventRequest
+   */
+  omit?: Prisma.InterestGroupEventRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterestGroupEventRequestInclude<ExtArgs> | null
+  where?: Prisma.InterestGroupEventRequestWhereInput
 }
 
 /**
