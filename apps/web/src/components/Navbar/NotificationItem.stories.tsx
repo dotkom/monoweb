@@ -1,5 +1,6 @@
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Group } from "@dotkomonline/rpc/group"
+import type { SidequestSummary } from "@dotkomonline/rpc/sidequest"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { getNotificationTypeLabel, type NotificationType, NotificationTypeSchema } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
@@ -17,6 +18,7 @@ import {
   NotificationArticlePayload,
   NotificationEventPayload,
   NotificationGroupPayload,
+  NotificationSidequestPayload,
   NotificationJobListingPayload,
   NotificationOfflinePayload,
   NotificationUrlPayload,
@@ -105,6 +107,48 @@ const jobListing: Pick<JobListing, "company" | "id" | "title"> = {
   id: "jobb-bekk",
   title: "Sommerjobb som utvikler",
   company,
+}
+
+const sidequest: SidequestSummary = {
+  id: "sidequest-surf",
+  title: "Surfetur til Stadlandet",
+  imageUrl: "https://placehold.co/100x100/bae6fd/0c4a6e?text=Surf",
+  start: new Date(),
+  status: "PUBLISHED" as const,
+  interestGroup: {
+    defaultGroupRoleId: "default-group-role-id",
+    abbreviation: "X-Sport",
+    name: "X-Sport",
+    preferredDisplayName: "NAME" as const,
+    slug: "x-sport",
+    type: "INTEREST_GROUP" as const,
+    shortDescription: "Surfetur til Stadlandet",
+    description: "Surfetur til Stadlandet",
+    imageUrl: "https://placehold.co/100x100/bae6fd/0c4a6e?text=Surf",
+    email: "surf@x-sport.no",
+    contactUrl: "https://x-sport.no",
+    slackUrl: "https://x-sport.no",
+    showLeaderAsContact: true,
+    createdAt: new Date(),
+    deactivatedAt: null,
+    workspaceGroupId: "workspace-group-id",
+    memberVisibility: "ALL_MEMBERS" as const,
+    recruitmentMethod: "SPRING_APPLICATION" as const,
+    roles: [{ id: "default-group-role-id", name: "Medlem", type: "COSMETIC" as const, groupId: "interest-group-id" }],
+    eventCount: 0,
+  },
+  registrations: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  description: "Surfetur til Stadlandet",
+  end: new Date(),
+  locationTitle: "Stadlandet",
+  locationAddress: "Stadlandet",
+  locationLink: "https://stadlandet.no",
+  registerEnd: new Date(),
+  deregisterDeadline: new Date(),
+  interestGroupId: "interest-group-id",
+  capacity: 10,
 }
 
 function StoryFrame({ children }: { children: ReactNode }) {
@@ -270,6 +314,58 @@ export function JobListingReminder() {
         actorGroup: null,
       })}
       renderPayload={() => <NotificationJobListingPayload jobListing={jobListing} />}
+    />
+  )
+}
+
+export function NewSidequest() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("NEW_SIDEQUEST")}
+      notification={createNotification({
+        title: "Ny Sidequest: Surfetur til Stadlandet",
+        shortDescription: "X-Sport har publisert en ny Sidequest.",
+        type: "NEW_SIDEQUEST",
+        actorGroup: {
+          abbreviation: "X-Sport",
+          name: "X-Sport",
+          preferredDisplayName: "NAME",
+        },
+      })}
+      renderPayload={() => <NotificationSidequestPayload sidequest={sidequest} />}
+    />
+  )
+}
+
+export function NewSidequestRequest() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("NEW_SIDEQUEST_REQUEST")}
+      notification={createNotification({
+        title: "Ny søknad: Surfetur til Stadlandet",
+        shortDescription: "X-Sport har søkt om å arrangere en Sidequest.",
+        type: "NEW_SIDEQUEST_REQUEST",
+        actorGroup: {
+          abbreviation: "X-Sport",
+          name: "X-Sport",
+          preferredDisplayName: "NAME",
+        },
+      })}
+      renderPayload={() => <NotificationUrlPayload url="https://online.ntnu.no/admin/sidequests/sidequest-surf" />}
+    />
+  )
+}
+
+export function SidequestRequestReviewed() {
+  return (
+    <NotificationTypeRow
+      label={getNotificationTypeLabel("SIDEQUEST_REQUEST_REVIEWED")}
+      notification={createNotification({
+        title: "Søknaden din er godkjent: Surfetur til Stadlandet",
+        shortDescription: "«Surfetur til Stadlandet» er publisert og synlig for medlemmer.",
+        type: "SIDEQUEST_REQUEST_REVIEWED",
+      })}
+      renderPayload={() => <NotificationUrlPayload url="https://online.ntnu.no/interessegrupper/x-sport" />}
     />
   )
 }
@@ -459,6 +555,9 @@ export function AllPayloads() {
       <JobListingPayload />
       <JobListingReminder />
       <NewFeedbackForm />
+      <NewSidequest />
+      <NewSidequestRequest />
+      <SidequestRequestReviewed />
     </div>
   )
 }
