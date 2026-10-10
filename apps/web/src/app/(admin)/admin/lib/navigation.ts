@@ -13,6 +13,7 @@ import {
   IconDeviceMobileShare,
   IconHeartHandshake,
   IconPhotoShare,
+  IconPuzzle,
   IconSitemap,
   IconSkull,
   IconUserMinus,
@@ -98,6 +99,22 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconUserMinus,
         href: "/admin/avmeldingsgrunner",
         keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
+      },
+      {
+        label: "Interessegruppearrangementer",
+        icon: IconPuzzle,
+        href: "/admin/interessegruppearrangementer",
+        keywords: ["interessegruppearrangement"],
+        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessInterestGroupEvents(),
+        createActions: [
+          {
+            label: "Nytt interessegruppearrangement",
+            href: "/admin/interessegruppearrangementer/ny",
+            resourceName: "interessegruppearrangement",
+            canAccess: (authorization: ReturnType<typeof useAuthorization>) =>
+              authorization.canAccessInterestGroupEvents(),
+          },
+        ],
       },
     ],
   },

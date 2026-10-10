@@ -11,6 +11,7 @@ import {
   toEventSearchItem,
   toFadderukeSearchItem,
   toGroupSearchItem,
+  toInterestGroupEventSearchItem,
   toJobListingSearchItem,
   toMarkSearchItem,
   toNotificationSearchItem,
@@ -33,10 +34,11 @@ export function useCommandPaletteItems(searchTerm: string, debouncedSearchTerm: 
     disabled: !isInitialDataQueryEnabled,
   })
 
-  const { events, notifications, marks, jobListings, companies, users, isFetching } = useCommandPaletteSearchQuery({
-    searchTerm: debouncedSearchTerm,
-    disabled: !isResourcesQueryEnabled,
-  })
+  const { events, notifications, marks, jobListings, companies, users, interestGroupEvents, isFetching } =
+    useCommandPaletteSearchQuery({
+      searchTerm: debouncedSearchTerm,
+      disabled: !isResourcesQueryEnabled,
+    })
 
   const localCatalog = useMemo(
     () => [
@@ -57,8 +59,9 @@ export function useCommandPaletteItems(searchTerm: string, debouncedSearchTerm: 
       ...jobListings.map(toJobListingSearchItem),
       ...companies.map(toCompanySearchItem),
       ...users.map(toUserSearchItem),
+      ...interestGroupEvents.map(toInterestGroupEventSearchItem),
     ],
-    [events, notifications, marks, jobListings, companies, users]
+    [events, notifications, marks, jobListings, companies, users, interestGroupEvents]
   )
 
   const settledResourcesRef = useRef<SearchItem[]>([])

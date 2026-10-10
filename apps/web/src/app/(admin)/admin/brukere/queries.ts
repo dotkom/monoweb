@@ -1,13 +1,12 @@
 import { useTRPC } from "@admin/lib/trpc-client"
-import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import type { UserFilterQuery, UserId } from "@dotkomonline/rpc/user"
 import type { Pageable } from "@dotkomonline/utils"
-import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 
-export const useUserQuery = (id: AttendanceId) => {
+export const useUserQuery = (id: UserId | null) => {
   const trpc = useTRPC()
-  const { data, isLoading } = useQuery(trpc.user.get.queryOptions(id))
+  const { data, isLoading } = useQuery(trpc.user.get.queryOptions(id ?? skipToken))
   return { data, isLoading }
 }
 
