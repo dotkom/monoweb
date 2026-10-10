@@ -23,6 +23,16 @@ const config: NextConfig = {
         destination: "https://wiki.online.ntnu.no/:path*",
         permanent: true,
       },
+      {
+        source: "/interessegrupper/grupper",
+        destination: "/interessegrupper",
+        permanent: true,
+      },
+      {
+        source: "/interessegrupper/grupper/:slug",
+        destination: "/interessegrupper/:slug",
+        permanent: true,
+      },
     ]
   },
   async rewrites() {

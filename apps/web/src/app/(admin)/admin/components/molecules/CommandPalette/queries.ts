@@ -55,13 +55,13 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
         enabled,
       },
       {
-        ...trpc.interestGroupEvent.findMany.queryOptions({
+        ...trpc.sidequest.findMany.queryOptions({
           filter: {
             bySearchTerm: searchTerm,
           },
           take: DEFAULT_TAKE,
         }),
-        enabled: enabled && authorization.canAccessInterestGroupEvents(),
+        enabled: enabled && authorization.canAccessSidequests(),
       },
     ],
   })
@@ -73,7 +73,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     { data: jobListingsData },
     { data: companiesData },
     { data: usersData },
-    { data: interestGroupEventsData },
+    { data: sidequestsData },
   ] = queryResults
 
   if (!enabled) {
@@ -84,7 +84,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
       jobListings: [],
       companies: [],
       users: [],
-      interestGroupEvents: [],
+      sidequests: [],
       isFetching: false,
     }
   }
@@ -96,7 +96,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     jobListings: jobListingsData?.items ?? [],
     companies: companiesData?.items ?? [],
     users: usersData?.items ?? [],
-    interestGroupEvents: interestGroupEventsData?.items ?? [],
+    sidequests: sidequestsData?.items ?? [],
     isFetching: queryResults.some((query) => query.isFetching),
   }
 }
