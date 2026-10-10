@@ -327,6 +327,20 @@ export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: Gro
   return typesA.symmetricDifference(typesB).size === 0
 }
 
+// Following an interest group creates a membership with no roles.
+// Only allow ending those memberships.
+export function canEndInterestGroupMembership(membership: GroupMembership): boolean {
+  return membership.roles.length === 0
+}
+
+export function getActiveMembershipsForGroup(memberships: GroupMembership[], groupId: string): GroupMembership[] {
+  return memberships.filter((membership) => membership.groupId === groupId && isGroupMembershipActive(membership))
+}
+
+export function canEndInterestGroupMemberships(memberships: GroupMembership[], interestGroupId: string): boolean {
+  return getActiveMembershipsForGroup(memberships, interestGroupId).every(canEndInterestGroupMembership)
+}
+
 export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {
   return membership.roles.some((role) => role.type === type)
 }
@@ -401,3 +415,10 @@ export function getHighestGroupRolePriority(roles: GroupRole[]): number {
 }
 
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024
+
+export const isCurrentUserMemberOfInterestGroup = (
+  currentUserInterestGroups: Group[],
+  interestGroupId: string
+): boolean => {
+  return currentUserInterestGroups.some((currentUserInterestGroup) => currentUserInterestGroup.slug === interestGroupId)
+}

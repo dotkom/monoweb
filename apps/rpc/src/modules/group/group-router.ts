@@ -2,6 +2,7 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { hasGroupRole, isAdministrator, isCommitteeMember, isGroupMember, or } from "../../authorization"
+import { InvalidArgumentError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { CommitteeGroupSlug } from "../authorization-service"
@@ -14,6 +15,7 @@ import {
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
+  getActiveMembershipsForGroup,
 } from "./group"
 
 export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
@@ -522,6 +524,56 @@ const createFileUploadProcedure = procedure
     return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
+export type StartInterestGroupMembershipInput = inferProcedureInput<typeof startInterestGroupMembershipProcedure>
+export type StartInterestGroupMembershipOutput = inferProcedureOutput<typeof startInterestGroupMembershipProcedure>
+const startInterestGroupMembershipProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input)
+    if (group.type !== "INTEREST_GROUP") {
+      throw new InvalidArgumentError(`Group(Slug=${input}) is not an interest group`)
+    }
+
+    const userId = ctx.principal.subject
+    const memberships = await ctx.groupService.allMembershipsByUserId(ctx.handle, userId)
+    const activeMemberships = getActiveMembershipsForGroup(memberships, input)
+
+    if (activeMemberships.length > 0) {
+      return ctx.groupService.getMember(ctx.handle, input, userId)
+    }
+
+    const groupMember = await ctx.groupService.startMembership(ctx.handle, userId, input, new Set())
+
+    ctx.setAuditTransactionName(
+      `Start GroupMembership for User(ID=${groupMember.id},Name=${groupMember.name}) in Group(Slug=${input},Name=${group.name})`
+    )
+
+    return groupMember
+  })
+
+export type EndInterestGroupMembershipInput = inferProcedureInput<typeof endInterestGroupMembershipProcedure>
+export type EndInterestGroupMembershipOutput = inferProcedureOutput<typeof endInterestGroupMembershipProcedure>
+const endInterestGroupMembershipProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input)
+    const userId = ctx.principal.subject
+    const user = await ctx.userService.getById(ctx.handle, userId)
+    const endedMemberships = await ctx.groupService.endInterestGroupMembership(ctx.handle, userId, input)
+
+    ctx.setAuditTransactionName(
+      `End GroupMemberships for User(ID=${user.id},Name=${user.name}) in Group(Slug=${input},Name=${group.name})`
+    )
+
+    return endedMemberships
+  })
+
 export const groupRouter = t.router({
   create: createGroupProcedure,
   all: allGroupsProcedure,
@@ -543,4 +595,6 @@ export const groupRouter = t.router({
   updateRole: updateRoleProcedure,
   deleteRole: deleteRoleProcedure,
   createFileUpload: createFileUploadProcedure,
+  startInterestGroupMembership: startInterestGroupMembershipProcedure,
+  endInterestGroupMembership: endInterestGroupMembershipProcedure,
 })
