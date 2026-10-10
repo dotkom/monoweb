@@ -275,7 +275,9 @@ export async function createServiceLayer(
     interestGroupEventRepository,
     groupService,
     clients.s3Client,
-    configuration.AWS_S3_BUCKET
+    configuration.AWS_S3_BUCKET,
+    notificationService,
+    configuration
   )
 
   const taskExecutor = getLocalTaskExecutor(

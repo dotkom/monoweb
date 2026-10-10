@@ -19,6 +19,9 @@ export const NotificationTypeSchema = z.enum([
   "NEW_OFFLINE",
   "NEW_MARK",
   "NEW_FEEDBACK_FORM",
+  "NEW_INTEREST_GROUP_EVENT",
+  "NEW_INTEREST_GROUP_EVENT_REQUEST",
+  "INTEREST_GROUP_EVENT_REQUEST_REVIEWED",
 ])
 
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
@@ -59,6 +62,9 @@ export const NOTIFICATION_TYPE_CONFIGURATION = {
   NEW_OFFLINE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
   NEW_MARK: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
   NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.STICKY },
+  NEW_INTEREST_GROUP_EVENT: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_INTEREST_GROUP_EVENT_REQUEST: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  INTEREST_GROUP_EVENT_REQUEST_REVIEWED: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
 } as const satisfies Record<NotificationType, NotificationTypeConfiguration>
 
 export function getNotificationTypeConfiguration(notificationType: NotificationType): NotificationTypeConfiguration {
@@ -74,6 +80,7 @@ export const NotificationPayloadTypeSchema = z.enum([
   "USER",
   "OFFLINE",
   "JOB_LISTING",
+  "INTEREST_GROUP_EVENT",
 ])
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
@@ -87,6 +94,7 @@ export const NotificationLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("USER"), userId: z.string() }),
   z.object({ type: z.literal("OFFLINE"), offlineId: z.string() }),
   z.object({ type: z.literal("JOB_LISTING"), jobListingId: z.string() }),
+  z.object({ type: z.literal("INTEREST_GROUP_EVENT"), interestGroupEventId: z.string() }),
 ])
 
 export type NotificationLink = z.infer<typeof NotificationLinkSchema>
@@ -114,6 +122,8 @@ export function serializeNotificationLink(link: NotificationLink): NotificationL
       return { payloadType: "OFFLINE", payload: link.offlineId }
     case "JOB_LISTING":
       return { payloadType: "JOB_LISTING", payload: link.jobListingId }
+    case "INTEREST_GROUP_EVENT":
+      return { payloadType: "INTEREST_GROUP_EVENT", payload: link.interestGroupEventId }
   }
 }
 
@@ -139,6 +149,8 @@ export function parseNotificationLink(columns: NotificationLinkColumns): Notific
       return { type: "OFFLINE", offlineId: payload }
     case "JOB_LISTING":
       return { type: "JOB_LISTING", jobListingId: payload }
+    case "INTEREST_GROUP_EVENT":
+      return { type: "INTEREST_GROUP_EVENT", interestGroupEventId: payload }
   }
 }
 
@@ -393,6 +405,9 @@ export const NOTIFICATION_TYPE_LABELS = {
   NEW_JOB_LISTING: "Ny stillingsutlysning",
   NEW_MARK: "Ny prikk",
   NEW_OFFLINE: "Ny Offline-utgave",
+  NEW_INTEREST_GROUP_EVENT: "Nytt interessegruppearrangement",
+  NEW_INTEREST_GROUP_EVENT_REQUEST: "Ny søknad om interessegruppearrangement",
+  INTEREST_GROUP_EVENT_REQUEST_REVIEWED: "Behandlet søknad om interessegruppearrangement",
 } as const satisfies Record<NotificationType, string>
 
 export function getNotificationTypeLabel(notificationType: NotificationType): string {
@@ -408,6 +423,7 @@ export const NOTIFICATION_LINK_TYPE_LABELS = {
   USER: "Bruker",
   OFFLINE: "Offline",
   JOB_LISTING: "Stillingsutlysning",
+  INTEREST_GROUP_EVENT: "Interessegruppearrangement",
 } as const satisfies Record<NotificationLink["type"], string>
 
 export function getNotificationLinkTypeLabel(linkType: NotificationLink["type"]): string {
