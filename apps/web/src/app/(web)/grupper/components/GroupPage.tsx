@@ -6,6 +6,8 @@ import {
   type GroupMember,
   GroupRoleTypeEnum,
   findActiveGroupMembership,
+  findActiveGroupMembershipIn,
+  getActiveMembershipsForGroup,
   getGroupDisplayName,
   getGroupSecondaryName,
   getGroupTypeName,
@@ -44,6 +46,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
 import { GroupEmailLink } from "./GroupEmailLink"
+import { InterestGroupPageAdminSection } from "./InterestGroupPageAdmin/InterestGroupPageAdminSection"
 import { WanderingMascot } from "./WanderingMascot"
 
 interface CommitteePageProps {
@@ -120,6 +123,15 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
     return membership != null && hasGroupMembershipRoleType(membership, GroupRoleTypeEnum.LEADER)
   })
+
+  const currentUserMemberships =
+    session?.sub !== undefined ? await server.group.allMembershipsByUserId.query(session.sub) : []
+  const currentUserActiveMemberships = getActiveMembershipsForGroup(currentUserMemberships, group.slug)
+
+  const isCurrentUserInterestGroupLeader =
+    group.type === "INTEREST_GROUP" &&
+    currentUserActiveMemberships.some((membership) => hasGroupMembershipRoleType(membership, GroupRoleTypeEnum.LEADER))
+  const currentUserMembership = findActiveGroupMembershipIn(currentUserMemberships, group.slug)
 
   const displayName = getGroupDisplayName(group)
   const secondaryName = getGroupSecondaryName(group)
@@ -202,13 +214,16 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
                 <Text className="text-gray-500 dark:text-stone-400">Ingen kontaktinformasjon</Text>
               ))}
           </div>
-          {group.type === "INTEREST_GROUP" && !activeMembers?.some((m) => m.id === session?.sub) && group.slackUrl && (
+          {/* TODO: This should create a membership. `slackUrl` should be used as a secondary info field instead of this button */}
+          {group.type === "INTEREST_GROUP" && currentUserMembership === null && group.slackUrl && (
             <Button element="a" variant="default" href={group.slackUrl} className="w-fit">
               Meld deg inn!
             </Button>
           )}
         </div>
       </div>
+
+      {isCurrentUserInterestGroupLeader && <InterestGroupPageAdminSection interestGroup={group} />}
 
       {showMembers && (
         <div className="flex flex-col gap-2">
