@@ -175,6 +175,18 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { lastUpdatedById: toId },
     })
   },
+  interestGroupEventRequests: async (handle: DBHandle, fromId: string, toId: string) => {
+    await handle.interestGroupEventRequest.updateMany({
+      where: { requestedById: fromId },
+      data: { requestedById: toId },
+    })
+  },
+  interestGroupEventRequestsReviewed: async (handle: DBHandle, fromId: string, toId: string) => {
+    await handle.interestGroupEventRequest.updateMany({
+      where: { reviewedById: fromId },
+      data: { reviewedById: toId },
+    })
+  },
 } satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
 
 /**
