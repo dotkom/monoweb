@@ -11,6 +11,7 @@ interface UseCommandPaletteSearchQueryProps {
 
 export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseCommandPaletteSearchQueryProps) => {
   const trpc = useTRPC()
+  const authorization = useAuthorization()
 
   const enabled = !disabled
 
@@ -53,6 +54,15 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
         placeholderData: keepPreviousData,
         enabled,
       },
+      {
+        ...trpc.interestGroupEvent.findMany.queryOptions({
+          filter: {
+            bySearchTerm: searchTerm,
+          },
+          take: DEFAULT_TAKE,
+        }),
+        enabled: enabled && authorization.canAccessInterestGroupEvents(),
+      },
     ],
   })
 
@@ -63,6 +73,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     { data: jobListingsData },
     { data: companiesData },
     { data: usersData },
+    { data: interestGroupEventsData },
   ] = queryResults
 
   if (!enabled) {
@@ -73,6 +84,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
       jobListings: [],
       companies: [],
       users: [],
+      interestGroupEvents: [],
       isFetching: false,
     }
   }
@@ -84,6 +96,7 @@ export const useCommandPaletteSearchQuery = ({ searchTerm, disabled }: UseComman
     jobListings: jobListingsData?.items ?? [],
     companies: companiesData?.items ?? [],
     users: usersData?.items ?? [],
+    interestGroupEvents: interestGroupEventsData?.items ?? [],
     isFetching: queryResults.some((query) => query.isFetching),
   }
 }
