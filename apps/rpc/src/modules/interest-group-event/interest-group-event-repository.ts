@@ -5,12 +5,19 @@ import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
 import {
   InterestGroupEventRegistrationSchema,
+  InterestGroupEventRequestSchema,
   InterestGroupEventSummarySchema,
+  InterestGroupEventSummaryWithRequestSchema,
   type InterestGroupEventFilterQuery,
   type InterestGroupEventId,
   type InterestGroupEventRegistration,
   type InterestGroupEventRegistrationId,
+  type InterestGroupEventRequest,
+  type InterestGroupEventRequestId,
+  type InterestGroupEventRequestUpdate,
+  type InterestGroupEventRequestWrite,
   type InterestGroupEventSummary,
+  type InterestGroupEventSummaryWithRequest,
   type InterestGroupEventWrite,
 } from "./interest-group-event"
 
@@ -28,6 +35,17 @@ export interface InterestGroupEventRepository {
     page: Pageable,
     includeUsers: boolean
   ): Promise<InterestGroupEventSummary[]>
+  findManyWithRequest(
+    handle: DBHandle,
+    query: InterestGroupEventFilterQuery,
+    page: Pageable,
+    includeUsers: boolean
+  ): Promise<InterestGroupEventSummaryWithRequest[]>
+  findByIdWithRequest(
+    handle: DBHandle,
+    id: InterestGroupEventId,
+    includeUsers: boolean
+  ): Promise<InterestGroupEventSummaryWithRequest | null>
 
   createRegistration(
     handle: DBHandle,
@@ -43,6 +61,19 @@ export interface InterestGroupEventRepository {
     handle: DBHandle,
     interestGroupEventId: InterestGroupEventId
   ): Promise<InterestGroupEventRegistration[]>
+
+  createRequest(
+    handle: DBHandle,
+    interestGroupEventId: InterestGroupEventId,
+    requestedById: UserId,
+    data: InterestGroupEventRequestWrite
+  ): Promise<InterestGroupEventSummaryWithRequest>
+  findRequestById(handle: DBHandle, id: InterestGroupEventRequestId): Promise<InterestGroupEventRequest | null>
+  updateRequest(
+    handle: DBHandle,
+    id: InterestGroupEventRequestId,
+    data: Partial<InterestGroupEventRequestUpdate>
+  ): Promise<InterestGroupEventSummaryWithRequest>
 }
 
 export function getInterestGroupEventRepository(): InterestGroupEventRepository {
@@ -79,6 +110,25 @@ export function getInterestGroupEventRepository(): InterestGroupEventRepository 
       return parseOrReport(InterestGroupEventSummarySchema.nullable(), toInterestGroupEventSummary(row))
     },
 
+    async findByIdWithRequest(handle, id, includeUsers) {
+      const row = await handle.interestGroupEvent.findUnique({
+        where: { id, status: { not: "DELETED" } },
+        include: {
+          ...getInterestGroupEventInclude(includeUsers),
+          request: true,
+        },
+      })
+
+      if (row === null) {
+        return null
+      }
+
+      return parseOrReport(InterestGroupEventSummaryWithRequestSchema.nullable(), {
+        ...toInterestGroupEventSummary(row),
+        request: row.request,
+      })
+    },
+
     async findMany(handle, query, page, includeUsers) {
       const rows = await handle.interestGroupEvent.findMany({
         where: getInterestGroupEventWhere(query),
@@ -90,6 +140,30 @@ export function getInterestGroupEventRepository(): InterestGroupEventRepository 
       })
 
       return parseOrReport(InterestGroupEventSummarySchema.array(), rows.map(toInterestGroupEventSummary))
+    },
+
+    async findManyWithRequest(handle, query, page, includeUsers) {
+      const rows = await handle.interestGroupEvent.findMany({
+        where: getInterestGroupEventWhere(query),
+        include: {
+          ...getInterestGroupEventInclude(includeUsers),
+          request: true,
+        },
+        ...pageQuery(page),
+        orderBy: {
+          start: query.orderBy ?? "desc",
+        },
+      })
+
+      return parseOrReport(
+        InterestGroupEventSummaryWithRequestSchema.array(),
+        rows.map((row) =>
+          parseOrReport(InterestGroupEventSummaryWithRequestSchema, {
+            ...toInterestGroupEventSummary(row),
+            request: row.request,
+          })
+        )
+      )
     },
 
     async findRegistrationById(handle, id) {
@@ -137,6 +211,45 @@ export function getInterestGroupEventRepository(): InterestGroupEventRepository 
           },
         },
       })
+    },
+
+    async createRequest(handle, interestGroupEventId, requestedById, data) {
+      await handle.interestGroupEventRequest.create({
+        data: {
+          ...data,
+          interestGroupEventId,
+          requestedById,
+        },
+      })
+
+      const interestGroupEvent = await this.findByIdWithRequest(handle, interestGroupEventId, false)
+      invariant(interestGroupEvent !== null, "Connected interestGroupEvent should not be null")
+
+      return interestGroupEvent
+    },
+
+    async findRequestById(handle, id) {
+      const row = await handle.interestGroupEventRequest.findUnique({
+        where: { id, interestGroupEvent: { status: { not: "DELETED" } } },
+      })
+
+      if (row === null) {
+        return null
+      }
+
+      return parseOrReport(InterestGroupEventRequestSchema.nullable(), row)
+    },
+
+    async updateRequest(handle, id, data) {
+      const row = await handle.interestGroupEventRequest.update({
+        where: { id },
+        data,
+      })
+
+      const interestGroupEvent = await this.findByIdWithRequest(handle, row.interestGroupEventId, false)
+      invariant(interestGroupEvent !== null, "Connected interestGroupEvent should not be null")
+
+      return interestGroupEvent
     },
   }
 }

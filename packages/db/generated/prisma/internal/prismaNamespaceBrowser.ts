@@ -95,7 +95,8 @@ export const ModelName = {
   UserFlag: 'UserFlag',
   UserFlagLink: 'UserFlagLink',
   InterestGroupEvent: 'InterestGroupEvent',
-  InterestGroupEventRegistration: 'InterestGroupEventRegistration'
+  InterestGroupEventRegistration: 'InterestGroupEventRegistration',
+  InterestGroupEventRequest: 'InterestGroupEventRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -730,6 +731,24 @@ export const InterestGroupEventRegistrationScalarFieldEnum = {
 } as const
 
 export type InterestGroupEventRegistrationScalarFieldEnum = (typeof InterestGroupEventRegistrationScalarFieldEnum)[keyof typeof InterestGroupEventRegistrationScalarFieldEnum]
+
+
+export const InterestGroupEventRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  requestedAmount: 'requestedAmount',
+  expectedAttendeeCount: 'expectedAttendeeCount',
+  approvedAmount: 'approvedAmount',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  interestGroupEventId: 'interestGroupEventId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById'
+} as const
+
+export type InterestGroupEventRequestScalarFieldEnum = (typeof InterestGroupEventRequestScalarFieldEnum)[keyof typeof InterestGroupEventRequestScalarFieldEnum]
 
 
 export const SortOrder = {

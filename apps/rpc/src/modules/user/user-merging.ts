@@ -386,6 +386,30 @@ const CUSTOM_RELATION_MERGERS = {
     })
   },
 
+  interestGroupEventRequests: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    survivor: User,
+    consumed: User
+  ) => {
+    await handle.interestGroupEventRequest.updateMany({
+      where: { requestedById: consumed.id },
+      data: { requestedById: survivor.id },
+    })
+  },
+
+  interestGroupEventRequestsReviewed: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    survivor: User,
+    consumed: User
+  ) => {
+    await handle.interestGroupEventRequest.updateMany({
+      where: { reviewedById: consumed.id },
+      data: { reviewedById: survivor.id },
+    })
+  },
+
   // Handling FK constraint errors on personal marks.
   personalMark: async (handle: DBHandle, _dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorMarks = await handle.personalMark.findMany({

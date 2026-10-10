@@ -32,7 +32,7 @@ const membershipRoleAssignments = [
   {
     membershipId: "a0870d07-ab9d-44ca-8ffe-7c1c0bd78a4d",
     groupId: "mineline",
-    roleTypes: [GroupRoleType.PUNISHER, GroupRoleType.TRUSTEE],
+    roleTypes: [GroupRoleType.LEADER, GroupRoleType.PUNISHER, GroupRoleType.TRUSTEE],
   },
   {
     membershipId: "743740b7-41f5-4932-ad7e-b79e72ed1adc",
@@ -62,7 +62,7 @@ const membershipRoleAssignments = [
   {
     membershipId: "ea0d59da-e609-45bc-a2ae-aab4b7a6ad3a",
     groupId: "racingline",
-    roleTypes: [GroupRoleType.COSMETIC],
+    roleTypes: [GroupRoleType.LEADER, GroupRoleType.COSMETIC],
   },
   {
     membershipId: "3f775955-9f34-4bd8-b331-20acd67e7798",
@@ -107,7 +107,7 @@ const membershipRoleAssignments = [
   {
     membershipId: "a53626d4-ee6a-4879-8efc-3dd3c11f8eb1",
     groupId: "folk-som-er-glad-i-jul",
-    roleTypes: [GroupRoleType.TRUSTEE],
+    roleTypes: [GroupRoleType.LEADER, GroupRoleType.TRUSTEE],
   },
   {
     membershipId: "1e54a43b-096d-4619-a1a7-1c3c88bbf0e5",
@@ -122,7 +122,7 @@ const membershipRoleAssignments = [
   {
     membershipId: "952d8da0-5c6b-4be9-aeb0-5126a59b4852",
     groupId: "vodka-i-skogen",
-    roleTypes: [GroupRoleType.COSMETIC],
+    roleTypes: [GroupRoleType.LEADER, GroupRoleType.COSMETIC],
   },
   {
     membershipId: "75c85ee8-f4f1-4b0f-9e8a-c45de1006630",
@@ -137,7 +137,7 @@ const membershipRoleAssignments = [
   {
     membershipId: "72ec3f11-65b3-4d1d-8a68-4890b23ffe80",
     groupId: "faxe-ordenen",
-    roleTypes: [GroupRoleType.PUNISHER, GroupRoleType.TREASURER],
+    roleTypes: [GroupRoleType.LEADER, GroupRoleType.PUNISHER, GroupRoleType.TREASURER],
   },
   {
     membershipId: "53cd75d8-f193-41d4-9d66-534b83293de8",
@@ -183,6 +183,16 @@ const membershipRoleAssignments = [
     membershipId: "0264e869-a8f2-455e-b3d4-0b994a4a59ab",
     groupId: "faxe-ordenen",
     roleTypes: [GroupRoleType.TEMPORARILY_LEAVE],
+  },
+  {
+    membershipId: "a41c0e8f-6b72-4d91-9e04-2c8f1a7b5d33",
+    groupId: "backlog",
+    roleTypes: [GroupRoleType.LEADER],
+  },
+  {
+    membershipId: "b52d1f90-7c83-4ea2-8f15-3d9e2b8c6e44",
+    groupId: "backlog",
+    roleTypes: [GroupRoleType.COSMETIC],
   },
 ] as const satisfies readonly MembershipRoleAssignment[]
 

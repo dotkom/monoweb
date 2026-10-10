@@ -11,10 +11,16 @@ import { GroupRoleTypeEnum, GroupSchema } from "../group/group"
 import {
   InterestGroupEventFilterQuerySchema,
   InterestGroupEventRegistrationSchema,
+  InterestGroupEventRequestReviewWriteSchema,
+  InterestGroupEventRequestSchema,
+  InterestGroupEventRequestWriteSchema,
   InterestGroupEventSchema,
   InterestGroupEventStatusSchema,
   InterestGroupEventSummarySchema,
+  InterestGroupEventSummaryWithRequestSchema,
   InterestGroupEventWriteSchema,
+  RequestedInterestGroupEventWriteSchema,
+  type InterestGroupEventSummaryWithRequest,
 } from "./interest-group-event"
 
 export type CreateInterestGroupEventInput = inferProcedureInput<typeof createInterestGroupEventProcedure>
@@ -103,6 +109,28 @@ const getInterestGroupEventProcedure = procedure
     return interestGroupEvent
   })
 
+export type GetInterestGroupEventByIdWithRequestInput = inferProcedureInput<
+  typeof getInterestGroupEventByIdWithRequestProcedure
+>
+export type GetInterestGroupEventByIdWithRequestOutput = inferProcedureOutput<
+  typeof getInterestGroupEventByIdWithRequestProcedure
+>
+const getInterestGroupEventByIdWithRequestProcedure = procedure
+  .input(InterestGroupEventSchema.shape.id)
+  .output(InterestGroupEventSummaryWithRequestSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const interestGroupEventWithRequest = await ctx.interestGroupEventService.getByIdWithRequest(
+      ctx.handle,
+      input,
+      ctx.principal !== null
+    )
+
+    return interestGroupEventWithRequest
+  })
+
 export type CreateInterestGroupEventRegistrationInput = inferProcedureInput<
   typeof createInterestGroupEventRegistrationProcedure
 >
@@ -175,6 +203,92 @@ const findManyInterestGroupEventsProcedure = procedure
     }
   })
 
+export type FindManyInterestGroupEventsWithRequestInput = inferProcedureInput<
+  typeof findManyInterestGroupEventsWithRequestProcedure
+>
+export type FindManyInterestGroupEventsWithRequestOutput = inferProcedureOutput<
+  typeof findManyInterestGroupEventsWithRequestProcedure
+>
+const findManyInterestGroupEventsWithRequestProcedure = procedure
+  .input(BasePaginateInputSchema.extend({ filter: InterestGroupEventFilterQuerySchema.optional() }))
+  .output(
+    z.object({
+      items: InterestGroupEventSummaryWithRequestSchema.array(),
+      nextCursor: z.string().optional(),
+    })
+  )
+  .use(withDatabaseTransaction())
+  .use(withAuthentication())
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
+  .query(async ({ input, ctx }) => {
+    const items = await ctx.interestGroupEventService.findManyWithRequest(
+      ctx.handle,
+      input.filter ?? {},
+      input,
+      ctx.principal !== null
+    )
+
+    return {
+      items,
+      nextCursor: items.at(-1)?.id,
+    }
+  })
+
+export type FindManyInterestGroupEventsWithRequestByInterestGroupIdInput = inferProcedureInput<
+  typeof findManyInterestGroupEventsWithRequestByInterestGroupIdProcedure
+>
+export type FindManyInterestGroupEventsWithRequestByInterestGroupIdOutput = inferProcedureOutput<
+  typeof findManyInterestGroupEventsWithRequestByInterestGroupIdProcedure
+>
+const findManyInterestGroupEventsWithRequestByInterestGroupIdProcedure = procedure
+  .input(
+    BasePaginateInputSchema.extend({
+      interestGroupId: GroupSchema.shape.slug,
+      filter: InterestGroupEventFilterQuerySchema.omit({ byInterestGroupId: true }).optional(),
+    })
+  )
+  .output(
+    z.object({
+      items: InterestGroupEventSummaryWithRequestSchema.array(),
+      nextCursor: z.string().optional(),
+    })
+  )
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.interestGroupId)
+    if (group.type !== "INTEREST_GROUP") {
+      throw new InvalidArgumentError(`Group(Slug=${input.interestGroupId}) is not an interest group`)
+    }
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isGroupMember(CommitteeGroupSlug.BACKLOG),
+        hasGroupRole(input.interestGroupId, GroupRoleTypeEnum.LEADER)
+      ),
+      input
+    )
+
+    const filter = {
+      ...input.filter,
+      byInterestGroupId: [input.interestGroupId],
+    }
+
+    const items = await ctx.interestGroupEventService.findManyWithRequest(
+      ctx.handle,
+      filter,
+      input,
+      ctx.principal !== null
+    )
+
+    const itemsWithoutReviewerIdentity = items.map(stripReviewerIdentity)
+
+    return {
+      items: itemsWithoutReviewerIdentity,
+      nextCursor: itemsWithoutReviewerIdentity.at(-1)?.id,
+    }
+  })
+
 export type FindInterestGroupEventRegistrationsInput = inferProcedureInput<
   typeof findInterestGroupEventRegistrationsProcedure
 >
@@ -193,7 +307,34 @@ const findInterestGroupEventRegistrationsProcedure = procedure
     return ctx.interestGroupEventService.findRegistrations(ctx.handle, input)
   })
 
+export type CreateInterestGroupEventFileUploadInput = inferProcedureInput<
+  typeof createInterestGroupEventFileUploadProcedure
+>
+export type CreateInterestGroupEventFileUploadOutput = inferProcedureOutput<
+  typeof createInterestGroupEventFileUploadProcedure
+>
 const createInterestGroupEventFileUploadProcedure = procedure
+  .input(
+    z.object({
+      filename: z.string(),
+      contentType: z.string(),
+    })
+  )
+  .output(z.custom<PresignedPost>())
+  .use(withAuthentication())
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
+  .use(withDatabaseTransaction())
+  .mutation(async ({ input, ctx }) => {
+    return ctx.interestGroupEventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+  })
+
+export type CreateInterestGroupEventFileUploadForGroupInput = inferProcedureInput<
+  typeof createInterestGroupEventFileUploadForGroupProcedure
+>
+export type CreateInterestGroupEventFileUploadForGroupOutput = inferProcedureOutput<
+  typeof createInterestGroupEventFileUploadForGroupProcedure
+>
+const createInterestGroupEventFileUploadForGroupProcedure = procedure
   .input(
     z.object({
       filename: z.string(),
@@ -222,16 +363,99 @@ const createInterestGroupEventFileUploadProcedure = procedure
     return ctx.interestGroupEventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
+export type CreateInterestGroupEventRequestInput = inferProcedureInput<typeof createInterestGroupEventRequestProcedure>
+export type CreateInterestGroupEventRequestOutput = inferProcedureOutput<
+  typeof createInterestGroupEventRequestProcedure
+>
+const createInterestGroupEventRequestProcedure = procedure
+  .input(
+    z.object({
+      interestGroupId: GroupSchema.shape.slug,
+      interestGroupEvent: RequestedInterestGroupEventWriteSchema,
+      interestGroupEventRequest: InterestGroupEventRequestWriteSchema,
+    })
+  )
+  .output(InterestGroupEventSummaryWithRequestSchema)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.interestGroupId)
+    if (group.type !== "INTEREST_GROUP") {
+      throw new InvalidArgumentError(`Group(Slug=${input.interestGroupId}) is not an interest group`)
+    }
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isGroupMember(CommitteeGroupSlug.BACKLOG),
+        hasGroupRole(input.interestGroupId, GroupRoleTypeEnum.LEADER)
+      ),
+      input
+    )
+
+    const interestGroupEventRequest = await ctx.interestGroupEventService.createRequest(
+      ctx.handle,
+      input.interestGroupId,
+      ctx.principal.subject,
+      input.interestGroupEvent,
+      input.interestGroupEventRequest
+    )
+
+    ctx.setAuditTransactionName(
+      `Create InterestGroupEventRequest(ID=${interestGroupEventRequest.request?.id},Title=${interestGroupEventRequest.title}) for Group(Slug=${input.interestGroupId},Name=${interestGroupEventRequest.interestGroup.name})`
+    )
+
+    return stripReviewerIdentity(interestGroupEventRequest)
+  })
+
+export type ReviewInterestGroupEventRequestInput = inferProcedureInput<typeof reviewInterestGroupEventRequestProcedure>
+export type ReviewInterestGroupEventRequestOutput = inferProcedureOutput<
+  typeof reviewInterestGroupEventRequestProcedure
+>
+const reviewInterestGroupEventRequestProcedure = procedure
+  .input(
+    z.object({
+      id: InterestGroupEventRequestSchema.shape.id,
+      review: InterestGroupEventRequestReviewWriteSchema,
+    })
+  )
+  .output(InterestGroupEventSummaryWithRequestSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const interestGroupEventRequest = await ctx.interestGroupEventService.reviewRequest(
+      ctx.handle,
+      input.id,
+      ctx.principal.subject,
+      input.review
+    )
+
+    ctx.setAuditTransactionName(
+      `Review InterestGroupEventRequest(ID=${interestGroupEventRequest.request?.id},Title=${interestGroupEventRequest.title},Status=${input.review.status})`
+    )
+
+    return interestGroupEventRequest
+  })
+
 export const interestGroupEventRouter = t.router({
   create: createInterestGroupEventProcedure,
   update: updateInterestGroupEventProcedure,
   findById: findInterestGroupEventProcedure,
   getById: getInterestGroupEventProcedure,
+  getByIdWithRequest: getInterestGroupEventByIdWithRequestProcedure,
   findMany: findManyInterestGroupEventsProcedure,
+  findManyWithRequest: findManyInterestGroupEventsWithRequestProcedure,
+  findManyWithRequestByInterestGroupId: findManyInterestGroupEventsWithRequestByInterestGroupIdProcedure,
   findRegistrations: findInterestGroupEventRegistrationsProcedure,
   createFileUpload: createInterestGroupEventFileUploadProcedure,
+  createFileUploadForGroup: createInterestGroupEventFileUploadForGroupProcedure,
   createRegistration: createInterestGroupEventRegistrationProcedure,
   deleteRegistration: deleteInterestGroupEventRegistrationProcedure,
+  createRequest: createInterestGroupEventRequestProcedure,
+  reviewRequest: reviewInterestGroupEventRequestProcedure,
 })
 
 type InterestGroupEventAccess = {
@@ -248,4 +472,17 @@ function canSeeUnpublished(ctx: InterestGroupEventAccess) {
     ctx.authorizationService.isAdministrator(ctx.principal.affiliations) ||
     ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [CommitteeGroupSlug.BACKLOG])
   )
+}
+
+function stripReviewerIdentity(item: InterestGroupEventSummaryWithRequest) {
+  return {
+    ...item,
+    request:
+      item.request === null
+        ? null
+        : {
+            ...item.request,
+            reviewedById: null,
+          },
+  }
 }

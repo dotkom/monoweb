@@ -428,7 +428,8 @@ export const ModelName = {
   UserFlag: 'UserFlag',
   UserFlagLink: 'UserFlagLink',
   InterestGroupEvent: 'InterestGroupEvent',
-  InterestGroupEventRegistration: 'InterestGroupEventRegistration'
+  InterestGroupEventRegistration: 'InterestGroupEventRegistration',
+  InterestGroupEventRequest: 'InterestGroupEventRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -444,7 +445,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "interestGroupEvent" | "interestGroupEventRegistration"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "interestGroupEvent" | "interestGroupEventRegistration" | "interestGroupEventRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3778,6 +3779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InterestGroupEventRequest: {
+      payload: Prisma.$InterestGroupEventRequestPayload<ExtArgs>
+      fields: Prisma.InterestGroupEventRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterestGroupEventRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterestGroupEventRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.InterestGroupEventRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterestGroupEventRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        findMany: {
+          args: Prisma.InterestGroupEventRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>[]
+        }
+        create: {
+          args: Prisma.InterestGroupEventRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        createMany: {
+          args: Prisma.InterestGroupEventRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterestGroupEventRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.InterestGroupEventRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        update: {
+          args: Prisma.InterestGroupEventRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterestGroupEventRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterestGroupEventRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterestGroupEventRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterestGroupEventRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupEventRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.InterestGroupEventRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterestGroupEventRequest>
+        }
+        groupBy: {
+          args: Prisma.InterestGroupEventRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterestGroupEventRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupEventRequestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4439,6 +4514,24 @@ export const InterestGroupEventRegistrationScalarFieldEnum = {
 export type InterestGroupEventRegistrationScalarFieldEnum = (typeof InterestGroupEventRegistrationScalarFieldEnum)[keyof typeof InterestGroupEventRegistrationScalarFieldEnum]
 
 
+export const InterestGroupEventRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  requestedAmount: 'requestedAmount',
+  expectedAttendeeCount: 'expectedAttendeeCount',
+  approvedAmount: 'approvedAmount',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  interestGroupEventId: 'interestGroupEventId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById'
+} as const
+
+export type InterestGroupEventRequestScalarFieldEnum = (typeof InterestGroupEventRequestScalarFieldEnum)[keyof typeof InterestGroupEventRequestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -5046,6 +5139,7 @@ export type GlobalOmitConfig = {
   userFlagLink?: Prisma.UserFlagLinkOmit
   interestGroupEvent?: Prisma.InterestGroupEventOmit
   interestGroupEventRegistration?: Prisma.InterestGroupEventRegistrationOmit
+  interestGroupEventRequest?: Prisma.InterestGroupEventRequestOmit
 }
 
 /* Types for Logging */
