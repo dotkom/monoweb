@@ -72,6 +72,10 @@ export function getNotificationLinkHref(link: NotificationLink): string | null {
     return "/admin/offline"
   }
 
+  if (link.type === "INTEREST_GROUP_EVENT") {
+    return `/admin/interessegrupper/${link.interestGroupEventId}`
+  }
+
   return null
 }
 

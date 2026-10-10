@@ -26,6 +26,9 @@ const PREFERENCE_FIELD_BY_NOTIFICATION_TYPE = {
   NEW_JOB_LISTING: "applications",
   NEW_MARK: ALWAYS,
   NEW_OFFLINE: "standardNotifications",
+  NEW_INTEREST_GROUP_EVENT: "standardNotifications",
+  NEW_INTEREST_GROUP_EVENT_REQUEST: ALWAYS,
+  INTEREST_GROUP_EVENT_REQUEST_REVIEWED: ALWAYS,
 } as const satisfies Record<NotificationType, NotificationPermissionField | typeof ALWAYS>
 
 /**

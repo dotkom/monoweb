@@ -14,7 +14,7 @@ export default function InterestGroupEventsPage() {
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" className="text-4xl">
-        Interessegrupper
+        Interessegruppearrangementer
       </Title>
 
       <Tabs defaultValue="in-review">

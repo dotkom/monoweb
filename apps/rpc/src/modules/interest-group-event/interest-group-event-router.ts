@@ -1,4 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import type { DBHandle } from "@dotkomonline/db"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
@@ -20,8 +21,10 @@ import {
   InterestGroupEventSummaryWithRequestSchema,
   InterestGroupEventWriteSchema,
   RequestedInterestGroupEventWriteSchema,
+  type InterestGroupEventSummary,
   type InterestGroupEventSummaryWithRequest,
 } from "./interest-group-event"
+import type { InterestGroupEventService } from "./interest-group-event-service"
 
 export type CreateInterestGroupEventInput = inferProcedureInput<typeof createInterestGroupEventProcedure>
 export type CreateInterestGroupEventOutput = inferProcedureOutput<typeof createInterestGroupEventProcedure>
@@ -37,7 +40,11 @@ const createInterestGroupEventProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const interestGroupEvent = await ctx.interestGroupEventService.create(ctx.handle, input.interestGroupEvent)
+    const interestGroupEvent = await ctx.interestGroupEventService.create(
+      ctx.handle,
+      input.interestGroupEvent,
+      ctx.principal.subject
+    )
     ctx.setAuditTransactionName(
       `Create InterestGroupEvent(ID=${interestGroupEvent.id},Title=${interestGroupEvent.title})`
     )
@@ -63,7 +70,8 @@ const updateInterestGroupEventProcedure = procedure
     const interestGroupEvent = await ctx.interestGroupEventService.update(
       ctx.handle,
       input.id,
-      input.interestGroupEvent
+      input.interestGroupEvent,
+      ctx.principal.subject
     )
     ctx.setAuditTransactionName(
       `Update InterestGroupEvent(ID=${interestGroupEvent.id},Title=${interestGroupEvent.title})`
@@ -84,8 +92,8 @@ const findInterestGroupEventProcedure = procedure
       return null
     }
 
-    const isPublished = interestGroupEvent.status === InterestGroupEventStatusSchema.enum.PUBLISHED
-    if (!isPublished && !canSeeUnpublished(ctx)) {
+    const canAccess = await canAccessInterestGroupEvent(ctx, interestGroupEvent)
+    if (!canAccess) {
       return null
     }
 
@@ -101,8 +109,8 @@ const getInterestGroupEventProcedure = procedure
   .query(async ({ input, ctx }) => {
     const interestGroupEvent = await ctx.interestGroupEventService.getById(ctx.handle, input, ctx.principal !== null)
 
-    const isPublished = interestGroupEvent.status === InterestGroupEventStatusSchema.enum.PUBLISHED
-    if (!isPublished && !canSeeUnpublished(ctx)) {
+    const canAccess = await canAccessInterestGroupEvent(ctx, interestGroupEvent)
+    if (!canAccess) {
       throw new NotFoundError(`InterestGroupEvent(ID=${input}) not found`)
     }
 
@@ -461,6 +469,8 @@ export const interestGroupEventRouter = t.router({
 type InterestGroupEventAccess = {
   principal: Principal | null
   authorizationService: AuthorizationService
+  interestGroupEventService: InterestGroupEventService
+  handle: DBHandle
 }
 
 function canSeeUnpublished(ctx: InterestGroupEventAccess) {
@@ -472,6 +482,37 @@ function canSeeUnpublished(ctx: InterestGroupEventAccess) {
     ctx.authorizationService.isAdministrator(ctx.principal.affiliations) ||
     ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [CommitteeGroupSlug.BACKLOG])
   )
+}
+
+async function canAccessInterestGroupEvent(ctx: InterestGroupEventAccess, event: InterestGroupEventSummary) {
+  if (event.status === InterestGroupEventStatusSchema.enum.PUBLISHED) {
+    return true
+  }
+
+  if (canSeeUnpublished(ctx)) {
+    return true
+  }
+
+  if (event.status === InterestGroupEventStatusSchema.enum.DELETED) {
+    return false
+  }
+
+  if (ctx.principal === null) {
+    return false
+  }
+
+  const roles = ctx.principal.affiliations.get(event.interestGroupId)
+  if (roles?.has(GroupRoleTypeEnum.LEADER)) {
+    return true
+  }
+
+  const eventWithRequest = await ctx.interestGroupEventService.findByIdWithRequest(ctx.handle, event.id, false)
+  const requestedByCurrentUser = eventWithRequest?.request?.requestedById === ctx.principal.subject
+  if (requestedByCurrentUser) {
+    return true
+  }
+
+  return false
 }
 
 function stripReviewerIdentity(item: InterestGroupEventSummaryWithRequest) {
