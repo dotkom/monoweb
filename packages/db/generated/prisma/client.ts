@@ -256,3 +256,13 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model InterestGroupEvent
+ * 
+ */
+export type InterestGroupEvent = Prisma.InterestGroupEventModel
+/**
+ * Model InterestGroupEventRegistration
+ * 
+ */
+export type InterestGroupEventRegistration = Prisma.InterestGroupEventRegistrationModel
