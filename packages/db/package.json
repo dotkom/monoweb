@@ -17,6 +17,7 @@
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
+    "test": "tsx --test src/fixtures/committee-application.test.ts",
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate --sql",
@@ -24,6 +25,7 @@
     "vinstraff:user-db-sync": "tsx src/vinstraff-user-db-sync.ts"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.5.0",
     "@dotkomonline/logger": "workspace:*",
     "@dotkomonline/utils": "workspace:*",
     "@prisma/adapter-pg": "^7.8.0",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@dotkomonline/config": "workspace:*",
+    "@faker-js/faker": "9.9.0",
     "@types/common-tags": "1.8.4",
     "@types/node": "22.20.4",
     "@types/pg": "8.23.1",

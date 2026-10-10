@@ -212,6 +212,15 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
+      slug: "redaksjonen",
+      abbreviation: "Redaksjonen",
+      name: "Redaksjonen",
+      description: "Redaksjonen lager Onlines tidsskrift Offline og dekker livet i linjeforeningen.",
+      email: "redaksjonen@online.ntnu.no",
+      type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
+    },
+    {
       slug: "rfk",
       abbreviation: "Kjelleren",
       name: "Realfagskjelleren",

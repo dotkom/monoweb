@@ -254,3 +254,19 @@ export const ContestResultOrder = {
 } as const
 
 export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]
+
+
+export const CommitteeApplicationInterviewDuration = {
+  MINUTES_20: 'MINUTES_20',
+  MINUTES_30: 'MINUTES_30'
+} as const
+
+export type CommitteeApplicationInterviewDuration = (typeof CommitteeApplicationInterviewDuration)[keyof typeof CommitteeApplicationInterviewDuration]
+
+
+export const CommitteeApplicationGroupType = {
+  EXCLUSIVE: 'EXCLUSIVE',
+  ADDITIVE: 'ADDITIVE'
+} as const
+
+export type CommitteeApplicationGroupType = (typeof CommitteeApplicationGroupType)[keyof typeof CommitteeApplicationGroupType]

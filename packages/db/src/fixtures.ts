@@ -4,6 +4,7 @@ import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { buildAttendancePoolMap, getAttendeeFixtures, VOLLEYBALL_ATTENDEE_FIXTURE_IDS } from "./fixtures/attendee"
 import { getCompanyFixtures } from "./fixtures/company"
+import { getCommitteeApplicationFixtures } from "./fixtures/committee-application"
 import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
 import { getDeregisterReasonFixtures } from "./fixtures/deregister-reason"
 import { FADDERUKE_EVENT_ID, getEventFixtures, VOLLEYBALL_EVENT_ID } from "./fixtures/event"
@@ -77,6 +78,14 @@ const companies = await db.company.createManyAndReturn({ data: companyInput })
 
 const groupInput = getGroupFixtures()
 await db.group.createManyAndReturn({ data: groupInput })
+const committeeApplicationFixtures = getCommitteeApplicationFixtures(userInput)
+await db.committeeApplicationPeriod.create({ data: committeeApplicationFixtures.applicationPeriod })
+await db.committeeApplicationGroup.createMany({ data: committeeApplicationFixtures.groups })
+await db.committeeApplication.createMany({ data: committeeApplicationFixtures.applications })
+await db.committeeApplicationGroupSelection.createMany({ data: committeeApplicationFixtures.groupSelections })
+await db.committeeApplicationAvailability.createMany({ data: committeeApplicationFixtures.availabilityBlocks })
+await db.committeeApplicationInterviewBlock.createMany({ data: committeeApplicationFixtures.interviewBlocks })
+await db.committeeApplicationInterview.createMany({ data: committeeApplicationFixtures.interviews })
 const groupRoleInput = groupInput.flatMap(getGroupRoleFixtures)
 await db.groupRole.createManyAndReturn({ data: groupRoleInput })
 const groupRoleIds = new Map(
