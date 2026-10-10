@@ -27,7 +27,7 @@ const CommitteePage = async () => {
       <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-stone-300 flex-wrap">
         <span>Er du på utkikk etter en interessegruppe?</span>
         <Link
-          href="/interessegrupper"
+          href="/interessegrupper/grupper"
           className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-4 transition-colors"
         >
           <span>Se alle interessegrupper her</span>

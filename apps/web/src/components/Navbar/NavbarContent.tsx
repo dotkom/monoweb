@@ -61,6 +61,12 @@ const links: MenuLink[] = [
     highlighted: true,
   },
   {
+    title: "Interessegrupper",
+    href: "/interessegrupper",
+    icon: IconUsers,
+    highlighted: true,
+  },
+  {
     title: "Jobbannonser",
     href: "/karriere",
     icon: IconBriefcase,
@@ -80,12 +86,6 @@ const links: MenuLink[] = [
         href: "/grupper",
         icon: IconUsers,
         description: "Informasjon om de ulike komiteene og gruppene i Online.",
-      },
-      {
-        title: "Interessegrupper",
-        href: "/interessegrupper",
-        icon: IconUsers,
-        description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
       },
       {
         title: "Hovedstyret",

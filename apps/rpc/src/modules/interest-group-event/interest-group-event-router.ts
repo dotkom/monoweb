@@ -1,3 +1,4 @@
+import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
@@ -6,6 +7,7 @@ import { InvalidArgumentError, NotFoundError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t, type Principal } from "../../trpc"
 import { CommitteeGroupSlug, type AuthorizationService } from "../authorization-service"
+import { GroupRoleTypeEnum, GroupSchema } from "../group/group"
 import {
   InterestGroupEventFilterQuerySchema,
   InterestGroupEventRegistrationSchema,
@@ -14,8 +16,6 @@ import {
   InterestGroupEventSummarySchema,
   InterestGroupEventWriteSchema,
 } from "./interest-group-event"
-import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import { GroupSchema, GroupRoleTypeEnum } from "../group/group"
 
 export type CreateInterestGroupEventInput = inferProcedureInput<typeof createInterestGroupEventProcedure>
 export type CreateInterestGroupEventOutput = inferProcedureOutput<typeof createInterestGroupEventProcedure>

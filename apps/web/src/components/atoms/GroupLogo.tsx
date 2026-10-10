@@ -1,3 +1,4 @@
+import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { Avatar, AvatarImage, cn } from "@dotkomonline/ui"
 import Image from "next/image"
 import type { ComponentProps, ReactNode } from "react"
@@ -21,7 +22,7 @@ export function GroupLogoAvatar({ src, alt, className, imageClassName, size, fal
 }
 
 type GroupLogoProps = {
-  src: string
+  src?: string | null
   alt: string
   width: number
   height: number
@@ -30,9 +31,15 @@ type GroupLogoProps = {
 }
 
 export function GroupLogo({ src, alt, width, height, className, containerClassName }: GroupLogoProps) {
+  let logo = <OnlineIcon variant="light" width={width} height={height} />
+
+  if (src != null) {
+    logo = <Image src={src} alt={alt} width={width} height={height} className={cn("object-contain", className)} />
+  }
+
   return (
     <div className={cn("flex shrink-0 items-center justify-center overflow-hidden bg-white", containerClassName)}>
-      <Image src={src} alt={alt} width={width} height={height} className={cn("object-contain", className)} />
+      {logo}
     </div>
   )
 }
