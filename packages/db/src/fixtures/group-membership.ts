@@ -236,4 +236,18 @@ export const getGroupMembershipFixtures = (userIds: string[]) =>
       start,
       end: null,
     },
+    {
+      id: "a41c0e8f-6b72-4d91-9e04-2c8f1a7b5d33",
+      userId: userIds[1],
+      groupId: "backlog",
+      start,
+      end: null,
+    },
+    {
+      id: "b52d1f90-7c83-4ea2-8f15-3d9e2b8c6e44",
+      userId: userIds[2],
+      groupId: "backlog",
+      start,
+      end: null,
+    },
   ] as const satisfies Prisma.GroupMembershipCreateManyInput[]

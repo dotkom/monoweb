@@ -36,8 +36,6 @@ import { getFeedbackFormService } from "./feedback-form/feedback-form-service"
 import { getFeideGroupsRepository } from "./feide/feide-groups-repository"
 import { getGroupRepository } from "./group/group-repository"
 import { getGroupService } from "./group/group-service"
-import { getInterestGroupEventRepository } from "./interest-group-event/interest-group-event-repository"
-import { getInterestGroupEventService } from "./interest-group-event/interest-group-event-service"
 import { getJobListingRepository } from "./job-listing/job-listing-repository"
 import { getJobListingService } from "./job-listing/job-listing-service"
 import { getMarkRepository } from "./mark/mark-repository"
@@ -53,6 +51,8 @@ import { getOfflineService } from "./offline/offline-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
 import { getPaymentService } from "./payment/payment-service"
 import { getPaymentWebhookService } from "./payment/payment-webhook-service"
+import { getSidequestRepository } from "./sidequest/sidequest-repository"
+import { getSidequestService } from "./sidequest/sidequest-service"
 import { getRecurringTaskRepository } from "./task/recurring-task-repository"
 import { getRecurringTaskService } from "./task/recurring-task-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
@@ -270,9 +270,9 @@ export async function createServiceLayer(
     clients.webAuth0Client
   )
 
-  const interestGroupEventRepository = getInterestGroupEventRepository()
-  const interestGroupEventService = getInterestGroupEventService(
-    interestGroupEventRepository,
+  const sidequestRepository = getSidequestRepository()
+  const sidequestService = getSidequestService(
+    sidequestRepository,
     groupService,
     clients.s3Client,
     configuration.AWS_S3_BUCKET
@@ -321,7 +321,7 @@ export async function createServiceLayer(
     notificationService,
     recurringTaskService,
     workspaceService,
-    interestGroupEventService,
+    sidequestService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,

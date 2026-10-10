@@ -12,15 +12,15 @@ import { personalMarkRouter } from "./modules/mark/personal-mark-router"
 import { notificationRouter } from "./modules/notification/notification-router"
 import { offlineRouter } from "./modules/offline/offline-router"
 import { rifRouter } from "./modules/rif/rif-router"
+import { sidequestRouter } from "./modules/sidequest/sidequest-router"
 import { userRouter } from "./modules/user/user-router"
 import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
-import { interestGroupEventRouter } from "./modules/interest-group-event/interest-group-event-router"
 import { t } from "./trpc"
 
 export const appRouter = t.router({
   group: groupRouter,
   event: eventRouter,
-  interestGroupEvent: interestGroupEventRouter,
+  sidequest: sidequestRouter,
   user: userRouter,
   company: companyRouter,
   contest: contestRouter,
