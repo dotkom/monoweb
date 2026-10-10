@@ -160,9 +160,9 @@ export function canEditContest(state: AuthorizationState, groupIds: readonly Gro
 }
 
 /**
- * `interestGroupEvent` admin procedures
+ * `sidequest` admin procedures
  */
-export function canAccessInterestGroupEvents(state: AuthorizationState): boolean {
+export function canAccessSidequests(state: AuthorizationState): boolean {
   return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.BACKLOG)
 }
 

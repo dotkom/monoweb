@@ -101,18 +101,17 @@ export const navigationGroups: NavigationGroup[] = [
         keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
       },
       {
-        label: "Interessegruppearrangementer",
+        label: "Sidequests",
         icon: IconPuzzle,
-        href: "/admin/interessegruppearrangementer",
-        keywords: ["interessegruppearrangement"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessInterestGroupEvents(),
+        href: "/admin/sidequests",
+        keywords: ["sidequest", "Sidequest"],
+        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessSidequests(),
         createActions: [
           {
-            label: "Nytt interessegruppearrangement",
-            href: "/admin/interessegruppearrangementer/ny",
-            resourceName: "interessegruppearrangement",
-            canAccess: (authorization: ReturnType<typeof useAuthorization>) =>
-              authorization.canAccessInterestGroupEvents(),
+            label: "Ny Sidequest",
+            href: "/admin/sidequests/ny",
+            resourceName: "Sidequest",
+            canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessSidequests(),
           },
         ],
       },

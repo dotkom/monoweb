@@ -152,23 +152,23 @@ export const createAbsoluteEventPageUrl = (
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
 
-export const createInterestGroupEventPageUrl = (
-  interestGroupEventId: string,
-  interestGroupEventTitle?: string
-): `/interessegrupper?arrangement=${string}&id=${string}` => {
-  const slug = interestGroupEventTitle ? slugify(interestGroupEventTitle) : "arrangement"
+export const createSidequestPageUrl = (
+  sidequestId: string,
+  sidequestTitle?: string
+): `/sidequests?sidequest=${string}&id=${string}` => {
+  const slug = sidequestTitle ? slugify(sidequestTitle) : "sidequest"
 
-  return `/interessegrupper?arrangement=${slug}&id=${interestGroupEventId}`
+  return `/sidequests?sidequest=${slug}&id=${sidequestId}`
 }
 
-export const createAbsoluteInterestGroupEventPageUrl = (
+export const createAbsoluteSidequestPageUrl = (
   origin: string,
-  interestGroupEventId: string,
-  interestGroupEventTitle?: string
-): `${string}/interessegrupper?arrangement=${string}&id=${string}` => {
-  const slug = interestGroupEventTitle ? slugify(interestGroupEventTitle) : "arrangement"
+  sidequestId: string,
+  sidequestTitle?: string
+): `${string}/sidequests?sidequest=${string}&id=${string}` => {
+  const slug = sidequestTitle ? slugify(sidequestTitle) : "sidequest"
 
-  return `${origin}/interessegrupper?arrangement=${slug}&id=${interestGroupEventId}`
+  return `${origin}/sidequests?sidequest=${slug}&id=${sidequestId}`
 }
 
 export const createJobListingSlug = (jobListingTitle: string): string => {

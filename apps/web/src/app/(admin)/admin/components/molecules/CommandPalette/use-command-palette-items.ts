@@ -11,7 +11,7 @@ import {
   toEventSearchItem,
   toFadderukeSearchItem,
   toGroupSearchItem,
-  toInterestGroupEventSearchItem,
+  toSidequestSearchItem,
   toJobListingSearchItem,
   toMarkSearchItem,
   toNotificationSearchItem,
@@ -34,7 +34,7 @@ export function useCommandPaletteItems(searchTerm: string, debouncedSearchTerm: 
     disabled: !isInitialDataQueryEnabled,
   })
 
-  const { events, notifications, marks, jobListings, companies, users, interestGroupEvents, isFetching } =
+  const { events, notifications, marks, jobListings, companies, users, sidequests, isFetching } =
     useCommandPaletteSearchQuery({
       searchTerm: debouncedSearchTerm,
       disabled: !isResourcesQueryEnabled,
@@ -59,9 +59,9 @@ export function useCommandPaletteItems(searchTerm: string, debouncedSearchTerm: 
       ...jobListings.map(toJobListingSearchItem),
       ...companies.map(toCompanySearchItem),
       ...users.map(toUserSearchItem),
-      ...interestGroupEvents.map(toInterestGroupEventSearchItem),
+      ...sidequests.map(toSidequestSearchItem),
     ],
-    [events, notifications, marks, jobListings, companies, users, interestGroupEvents]
+    [events, notifications, marks, jobListings, companies, users, sidequests]
   )
 
   const settledResourcesRef = useRef<SearchItem[]>([])

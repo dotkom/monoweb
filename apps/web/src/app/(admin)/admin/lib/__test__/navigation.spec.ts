@@ -9,7 +9,7 @@ function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
     canEditOffline: () => true,
     canEditFadderuke: () => true,
     canAccessAuditLog: () => true,
-    canAccessInterestGroupEvents: () => true,
+    canAccessSidequests: () => true,
     ...overrides,
   } as ReturnType<typeof useAuthorization>
 }
@@ -46,10 +46,8 @@ describe("filterNavigationsUserHasAccessTo", () => {
     expect(pageHrefs(auth({ canEditFadderuke: () => false }))).not.toContain("/admin/fadderukene")
   })
 
-  it("hides interest group events when canAccessInterestGroupEvents is false", () => {
-    expect(pageHrefs(auth({ canAccessInterestGroupEvents: () => false }))).not.toContain(
-      "/admin/interessegruppearrangementer"
-    )
+  it("hides Sidequests when canAccessSidequests is false", () => {
+    expect(pageHrefs(auth({ canAccessSidequests: () => false }))).not.toContain("/admin/sidequests")
   })
 
   it("hides audit log when canAccessAuditLog is false", () => {

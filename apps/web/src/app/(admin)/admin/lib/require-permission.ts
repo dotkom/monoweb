@@ -1,10 +1,5 @@
 import { redirect } from "next/navigation"
-import {
-  canAccessAuditLog,
-  canAccessInterestGroupEvents,
-  canEditFadderuke,
-  canEditOffline,
-} from "@admin/auth/permissions"
+import { canAccessAuditLog, canAccessSidequests, canEditFadderuke, canEditOffline } from "@admin/auth/permissions"
 import { getServerAuthorizationState } from "@admin/lib/server-authorization"
 
 export const UNAUTHORIZED_PATH = "/admin/ikke-tilgang"
@@ -25,10 +20,10 @@ export async function requireOfflineEditAccess() {
   }
 }
 
-export async function requireInterestGroupEventAccess() {
+export async function requireSidequestAccess() {
   const state = await getServerAuthorizationState()
 
-  if (!canAccessInterestGroupEvents(state)) {
+  if (!canAccessSidequests(state)) {
     redirect(UNAUTHORIZED_PATH)
   }
 }
