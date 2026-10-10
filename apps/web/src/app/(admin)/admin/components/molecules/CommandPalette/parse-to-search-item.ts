@@ -6,6 +6,7 @@ import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { Fadderuke } from "@dotkomonline/rpc/fadderuke"
 import type { Group } from "@dotkomonline/rpc/group"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import type { InterestGroupEventSummary } from "@dotkomonline/rpc/interest-group-event"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import type { Mark } from "@dotkomonline/rpc/mark"
 import type { Notification } from "@dotkomonline/rpc/notification"
@@ -159,6 +160,20 @@ export function toOfflineSearchItem(offline: Offline): SearchItem {
     icon: getIconForHref(href),
     keywords: [],
     resourceId: offline.id,
+  }
+}
+
+export function toInterestGroupEventSearchItem(interestGroupEvent: InterestGroupEventSummary): SearchItem {
+  const href = `/admin/interessegrupper/${interestGroupEvent.id}`
+
+  return {
+    id: `interest-group-event:${interestGroupEvent.id}`,
+    kind: "resource",
+    label: interestGroupEvent.title,
+    href,
+    icon: getIconForHref(href),
+    keywords: [],
+    resourceId: interestGroupEvent.id,
   }
 }
 
