@@ -4,6 +4,7 @@ import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceSt
 import { formatCompactTimeUntil } from "@/utils/countdown/formatCompactTimeUntil"
 import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
 import { useCountdown } from "@/utils/countdown/use-countdown"
+import { useCurrentTime } from "@/utils/use-current-time"
 import {
   type Attendance,
   type AttendanceSummary,
@@ -13,9 +14,8 @@ import {
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconCheck, IconCircleDashedCheck, IconCoins, IconLock, IconPennant, IconUsers } from "@tabler/icons-react"
-import { formatDistanceToNow, interval, isAfter, isFuture, isWithinInterval } from "date-fns"
+import { formatDistance, interval, isAfter, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
 
@@ -42,11 +42,11 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   size = "default",
   classNames,
 }) => {
-  const now = getCurrentUTC()
-  const attendanceStatus = getAttendanceStatus(attendance, now)
+  const currentTime = useCurrentTime()
+  const attendanceStatus = getAttendanceStatus(attendance, currentTime)
   const isRegistered = attendee?.registered === true
   const isQueued = attendee?.registered === false
-  const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, now)
+  const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, currentTime)
   const numberOfAttendees =
     "registeredAttendeeCount" in attendance
       ? attendance.registeredAttendeeCount
@@ -55,7 +55,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   const showLock =
     !eventEndInPast &&
-    (isRegistered || isQueued ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
+    (isRegistered || isQueued ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
 
   const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -64,8 +64,13 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
       : null
   const hasPendingCompletionDeadline = attendeeHasPendingCompletionDeadline(attendance, attendee)
   const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasPendingCompletionDeadline ? isWithinInterval(now, paymentCountdownInterval) : false
-  const paymentDeadlineHasPassed = attendee?.completionDeadline != null && isAfter(now, attendee.completionDeadline)
+    paymentCountdownInterval && hasPendingCompletionDeadline
+      ? isWithinInterval(currentTime, paymentCountdownInterval)
+      : false
+
+  const paymentDeadlineHasPassed =
+    attendee?.completionDeadline != null && isAfter(currentTime, attendee.completionDeadline)
+
   const showPaymentCountdown = hasPendingCompletionDeadline && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 
   const hasCapacity = capacity > 0
@@ -146,14 +151,14 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
               >
                 <IconPennant className={cn(iconSizeClassName, "text-gray-700 dark:text-stone-200")} />
                 <Text className={cn(textSizeClassName, "text-foreground")} suppressHydrationWarning>
-                  Om {formatCompactTimeUntil(attendance.registerStart, now)}
+                  Om {formatCompactTimeUntil(attendance.registerStart, currentTime)}
                 </Text>
               </div>
             </TooltipTrigger>
             <TooltipContent>
               <Text suppressHydrationWarning>
                 Påmeldingen åpner{" "}
-                {formatDistanceToNow(attendance.registerStart, {
+                {formatDistance(attendance.registerStart, currentTime, {
                   locale: nb,
                   addSuffix: true,
                 })}
