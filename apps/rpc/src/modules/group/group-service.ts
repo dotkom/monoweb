@@ -123,8 +123,9 @@ export function getGroupService(
         slug = `${slugify(data.abbreviation)}-${i}`
       }
 
-      await groupRepository.create(handle, slug, data)
-      await groupRepository.createGroupRoles(handle, getDefaultGroupMemberRoles(slug))
+      const { defaultRole, otherRoles } = getDefaultGroupMemberRoles(slug)
+      await groupRepository.create(handle, slug, data, { ...defaultRole, id: crypto.randomUUID() })
+      await groupRepository.createGroupRoles(handle, otherRoles)
 
       return await this.getBySlug(handle, slug)
     },
@@ -280,7 +281,10 @@ export function getGroupService(
         end: null,
       }
 
-      await groupRepository.createGroupMembership(handle, data, groupRoleIds)
+      const group = await this.getBySlug(handle, groupSlug)
+      const roleIds = groupRoleIds.size > 0 ? groupRoleIds : new Set([group.defaultGroupRoleId])
+
+      await groupRepository.createGroupMembership(handle, data, roleIds)
       return await this.getMember(handle, groupSlug, userId)
     },
 
@@ -333,7 +337,10 @@ export function getGroupService(
         }
       }
 
-      return await groupRepository.updateGroupMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds)
+      const group = await this.getByGroupMembershipId(handle, groupMembershipId)
+      const roleIds = groupRoleIds.size > 0 ? groupRoleIds : new Set([group.defaultGroupRoleId])
+
+      return await groupRepository.updateGroupMembership(handle, groupMembershipId, groupMembershipData, roleIds)
     },
 
     async createRole(handle, groupRoleData) {
@@ -349,6 +356,13 @@ export function getGroupService(
     },
 
     async deleteRole(handle, groupRoleId) {
+      const group = await this.getByGroupRoleId(handle, groupRoleId)
+      if (group.defaultGroupRoleId === groupRoleId) {
+        throw new FailedPreconditionError(
+          `Cannot delete GroupRole(ID=${groupRoleId}) because it is the default role for Group(Slug=${group.slug})`
+        )
+      }
+
       return await groupRepository.deleteGroupRole(handle, groupRoleId)
     },
 

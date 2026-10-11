@@ -202,13 +202,17 @@ model Group {
   recruitmentMethod    GroupRecruitmentMethod    @default(NONE) @map("recruitment_method")
   type                 GroupType
 
-  events        EventHostingGroup[]
-  contests      Contest[]           @relation("ContestOrganizerGroups")
-  memberships   GroupMembership[]
-  marks         MarkGroup[]
-  roles         GroupRole[]
-  notifications Notification[]
+  defaultGroupRoleId String    @unique @map("default_group_role_id")
+  defaultGroupRole   GroupRole @relation("GroupDefaultRole", fields: [defaultGroupRoleId, slug], references: [id, groupId], onDelete: NoAction, onUpdate: NoAction)
 
+  events              EventHostingGroup[]
+  contests            Contest[]            @relation("ContestOrganizerGroups")
+  memberships         GroupMembership[]
+  marks               MarkGroup[]
+  roles               GroupRole[]
+  notifications       Notification[]
+
+  @@unique([defaultGroupRoleId, slug])
   @@map("group")
 }
 
@@ -274,8 +278,12 @@ model GroupRole {
   groupId String @map("group_id")
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
 
+  defaultForGroup Group? @relation("GroupDefaultRole")
+
   groupMembershipRoles GroupMembershipRole[]
 
+  /// Lets `Group.defaultGroupRole` reference `(id, groupId)`, so a group's default role must be its own.
+  @@unique([id, groupId])
   @@unique([groupId, name])
   @@map("group_role")
 }

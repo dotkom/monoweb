@@ -54,6 +54,7 @@ describe("GroupService", () => {
       showLeaderAsContact: false,
       recruitmentMethod: "AUTUMN_APPLICATION",
       preferredDisplayName: "ABBREVIATION",
+      defaultGroupRoleId: "default-role",
     }
     vi.spyOn(groupRepository, "findBySlug")
       .mockResolvedValueOnce(null)
@@ -63,7 +64,20 @@ describe("GroupService", () => {
 
     const created = await groupService.create(db, group)
     expect(created).toEqual(group)
-    expect(groupRepository.create).toHaveBeenCalledWith(db, CommitteeGroupSlug.DOTKOM, group)
+    expect(groupRepository.create).toHaveBeenCalledWith(
+      db,
+      CommitteeGroupSlug.DOTKOM,
+      group,
+      expect.objectContaining({
+        groupId: CommitteeGroupSlug.DOTKOM,
+        name: "Medlem",
+        type: "COSMETIC",
+      })
+    )
+    expect(groupRepository.createGroupRoles).toHaveBeenCalledWith(
+      db,
+      expect.not.arrayContaining([expect.objectContaining({ name: "Medlem", type: "COSMETIC" })])
+    )
   })
 
   it("resolves display name from preferred display name setting", () => {

@@ -30,6 +30,7 @@ export default function GroupRolesPage() {
 
       <GroupRoleTable
         roles={group.roles}
+        defaultRoleId={group.defaultGroupRoleId}
         canManageRoles={canManageRoles}
         onEdit={(role) => setEditRole(role)}
         onDelete={(role) => deleteRole.mutate(role.id)}
@@ -61,6 +62,7 @@ export default function GroupRolesPage() {
           }
         }}
         role={editRole}
+        defaultRoleId={group.defaultGroupRoleId}
       />
     </div>
   )
