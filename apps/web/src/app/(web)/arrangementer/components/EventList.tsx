@@ -28,6 +28,7 @@ interface EventListProps {
   alwaysShowChildEvents?: boolean
   viewMode?: EventListViewMode
   displayMode?: EventListDisplayMode
+  registeredEventCount?: number
 }
 
 interface EventItemsProps {
@@ -76,6 +77,7 @@ export const EventList: FC<EventListProps> = ({
   viewMode = "ATTENDANCE",
   displayMode = "list",
   userId,
+  registeredEventCount = 0,
 }: EventListProps) => {
   const currentDate = useCurrentTime()
   const isCardView = displayMode === "cards"
@@ -158,8 +160,13 @@ export const EventList: FC<EventListProps> = ({
     viewMode === "CHRONOLOGICAL"
       ? [
           {
+            key: "your-events",
+            eventsWithAttendance: futureEventWithAttendances.slice(0, registeredEventCount),
+          },
+          {
             key: "future-events",
-            eventsWithAttendance: futureEventWithAttendances,
+            title: registeredEventCount > 0 ? "Kommende arrangementer" : undefined,
+            eventsWithAttendance: futureEventWithAttendances.slice(registeredEventCount),
           },
           {
             key: "past-events",
