@@ -2,7 +2,7 @@ import { GroupLogo } from "@/components/atoms/GroupLogo"
 import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { type Group, createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
-import { IconMoonFilled } from "@tabler/icons-react"
+import { IconMoonFilled, IconQuestionMark } from "@tabler/icons-react"
 import Link from "next/link"
 import type { FC } from "react"
 
@@ -81,8 +81,8 @@ const GroupListItemImage: FC<GroupListItemImageProps> = ({ imageUrl, displayName
             containerClassName="rounded-full size-30 p-3"
           />
         ) : (
-          <div className="flex items-center justify-center bg-gray-50 dark:bg-stone-700 rounded-full size-30">
-            <OnlineIcon variant="light" width={120} height={120} />
+          <div className="flex items-center justify-center bg-gray-200 dark:bg-stone-600 rounded-full size-30">
+            <IconQuestionMark className="size-12 text-muted-foreground" />
           </div>
         )}
       </div>
