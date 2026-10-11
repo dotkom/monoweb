@@ -14,7 +14,6 @@ import type { EmailService } from "../email/email-service"
 import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import {
   findActiveGroupMembership,
-  GroupRoleTypeEnum,
   isGroupMemberActive,
   type Group,
   type GroupId,
@@ -402,24 +401,11 @@ export function getWorkspaceService(
     return "SYNCED"
   }
 
-  function getCosmeticMemberRole(group: Group) {
-    const namedMemberRole = group.roles.find((role) => {
-      return role.type === GroupRoleTypeEnum.COSMETIC && role.name === "Medlem"
-    })
-
-    if (namedMemberRole) {
-      return namedMemberRole
-    }
-
-    return group.roles.find((role) => role.type === GroupRoleTypeEnum.COSMETIC) ?? null
-  }
-
   async function startCommitteeMembershipIfNeeded(
     handle: DBHandle,
     userId: UserId,
     contactCommittee: CommitteeGroupSlug
   ): Promise<void> {
-    const group = await groupService.getBySlug(handle, contactCommittee)
     const members = await groupService.findMembersBySlug(handle, contactCommittee)
     const existingMember = members.get(userId) ?? null
     const isMembershipActive = isGroupMemberActive(existingMember, contactCommittee)
@@ -428,13 +414,7 @@ export function getWorkspaceService(
       return
     }
 
-    const memberRole = getCosmeticMemberRole(group)
-
-    if (memberRole === null) {
-      throw new Error(`Group(Slug=${contactCommittee}) does not have a member role`)
-    }
-
-    await groupService.startMembership(handle, userId, contactCommittee, new Set([memberRole.id]))
+    await groupService.startMembership(handle, userId, contactCommittee)
   }
 
   return {

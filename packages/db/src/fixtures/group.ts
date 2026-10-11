@@ -390,6 +390,7 @@ export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
       groupId: groupInput.slug,
       name: "Medlem",
       type: GroupRoleType.COSMETIC,
+      isDefault: true,
     },
     {
       groupId: groupInput.slug,

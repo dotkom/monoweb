@@ -2,7 +2,7 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 
-  previewFeatures = ["relationJoins", "typedSql"]
+  previewFeatures = ["relationJoins", "typedSql", "partialIndexes"]
 }
 
 datasource db {
@@ -272,6 +272,7 @@ model GroupRole {
   id   String        @id @default(uuid())
   name String
   type GroupRoleType @default(COSMETIC)
+  isDefault Boolean @default(false) @map("is_default")
 
   groupId String @map("group_id")
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
@@ -279,6 +280,7 @@ model GroupRole {
   groupMembershipRoles GroupMembershipRole[]
 
   @@unique([groupId, name])
+  @@unique([groupId], where: raw("is_default = true"))
   @@map("group_role")
 }
 

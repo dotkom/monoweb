@@ -23,6 +23,7 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
+  DEFAULT_GROUP_ROLE_TEMPLATE,
   GROUP_IMAGE_MAX_SIZE_KIB,
   GroupRoleTypeEnum,
   areGroupRolesEqual,
@@ -65,7 +66,7 @@ export interface GroupService {
     handle: DBHandle,
     userId: UserId,
     groupSlug: GroupId,
-    groupRoleIds: Set<GroupRoleId>
+    groupRoleIds?: Set<GroupRoleId>
   ): Promise<GroupMember>
   endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
   /**
@@ -81,10 +82,6 @@ export interface GroupService {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void>
-  createManyGroupMemberships(
-    handle: DBHandle,
-    groupMembershipData: (GroupMembershipWrite & { roleIds: Set<GroupRoleId> })[]
-  ): Promise<GroupMembership[]>
   /**
    * Reduces the array of memberships to its simplest form, removing overlapping memberships and merging memberships
    * which could be merged.
@@ -94,6 +91,7 @@ export interface GroupService {
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   deleteRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
+  getOrCreateDefaultGroupRole(handle: DBHandle, groupSlug: GroupId): Promise<GroupRole>
 
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
@@ -280,7 +278,13 @@ export function getGroupService(
         end: null,
       }
 
-      await groupRepository.createGroupMembership(handle, data, groupRoleIds)
+      let resolvedGroupRoleIds = groupRoleIds
+      if (resolvedGroupRoleIds === undefined || resolvedGroupRoleIds.size === 0) {
+        const defaultRole = await this.getOrCreateDefaultGroupRole(handle, groupSlug)
+        resolvedGroupRoleIds = new Set([defaultRole.id])
+      }
+
+      await groupRepository.createGroupMembership(handle, data, resolvedGroupRoleIds)
       return await this.getMember(handle, groupSlug, userId)
     },
 
@@ -333,10 +337,30 @@ export function getGroupService(
         }
       }
 
-      return await groupRepository.updateGroupMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds)
+      const group = await this.getByGroupMembershipId(handle, groupMembershipId)
+      let resolvedGroupRoleIds = groupRoleIds
+      if (resolvedGroupRoleIds.size === 0) {
+        const defaultRole = await this.getOrCreateDefaultGroupRole(handle, group.slug)
+        resolvedGroupRoleIds = new Set([defaultRole.id])
+      }
+
+      return await groupRepository.updateGroupMembership(
+        handle,
+        groupMembershipId,
+        groupMembershipData,
+        resolvedGroupRoleIds
+      )
     },
 
     async createRole(handle, groupRoleData) {
+      const group = await this.getBySlug(handle, groupRoleData.groupId)
+      const currentDefaultRole = group.roles.find((role) => role.isDefault === true)
+      if (currentDefaultRole !== undefined && groupRoleData.isDefault === true) {
+        await groupRepository.updateGroupRole(handle, currentDefaultRole.id, {
+          isDefault: false,
+        })
+      }
+
       const result = await groupRepository.createGroupRoles(handle, [groupRoleData])
       const role = result.at(0)
       invariant(role !== undefined, "Role should exist after creation")
@@ -345,10 +369,46 @@ export function getGroupService(
     },
 
     async updateRole(handle, groupRoleId, groupRoleData) {
+      const group = await this.getByGroupRoleId(handle, groupRoleId)
+      const role = group.roles.find((role) => role.id === groupRoleId)
+      const currentDefaultRole = group.roles.find((role) => role.isDefault === true)
+
+      if (role === undefined) {
+        throw new NotFoundError(`GroupRole(ID=${groupRoleId}) not found`)
+      }
+
+      const wasPreviouslyDefault = role.isDefault === true
+      const isNowDefault = groupRoleData.isDefault === true
+
+      if (wasPreviouslyDefault && !isNowDefault) {
+        throw new FailedPreconditionError(
+          `Cannot set GroupRole(ID=${groupRoleId}) as non-default because it is the default role for Group(Slug=${group.slug})`
+        )
+      }
+
+      if (
+        !wasPreviouslyDefault &&
+        isNowDefault &&
+        currentDefaultRole !== undefined &&
+        currentDefaultRole.id !== groupRoleId
+      ) {
+        await groupRepository.updateGroupRole(handle, currentDefaultRole.id, {
+          isDefault: false,
+        })
+      }
+
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
 
     async deleteRole(handle, groupRoleId) {
+      const group = await this.getByGroupRoleId(handle, groupRoleId)
+      const role = group.roles.find((role) => role.id === groupRoleId)
+      if (role?.isDefault === true) {
+        throw new FailedPreconditionError(
+          `Cannot delete GroupRole(ID=${groupRoleId}) because it is the default role for Group(Slug=${group.slug})`
+        )
+      }
+
       return await groupRepository.deleteGroupRole(handle, groupRoleId)
     },
 
@@ -370,21 +430,37 @@ export function getGroupService(
       return results
     },
 
-    async createManyGroupMemberships(
-      handle: DBHandle,
-      groupMembershipData: (GroupMembershipWrite & {
-        roleIds: Set<GroupRoleId>
-      })[]
-    ): Promise<GroupMembership[]> {
-      const operations = groupMembershipData.map(({ roleIds, ...membershipData }) =>
-        groupRepository.createGroupMembership(handle, membershipData, roleIds)
-      )
-
-      return await Promise.all(operations)
-    },
-
     async deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void> {
       return groupRepository.deleteGroupMemberships(handle, groupMembershipIds)
+    },
+
+    async getOrCreateDefaultGroupRole(handle: DBHandle, groupSlug: GroupId): Promise<GroupRole> {
+      const group = await this.getBySlug(handle, groupSlug)
+      const defaultRole = group.roles.find((role) => role.isDefault === true)
+      if (defaultRole !== undefined) {
+        return defaultRole
+      }
+
+      // Promote an existing role that matches the default role template,
+      // preferring an exact match.
+      let candidate = group.roles.find(
+        (role) => role.type === DEFAULT_GROUP_ROLE_TEMPLATE.type && role.name === DEFAULT_GROUP_ROLE_TEMPLATE.name
+      )
+      if (candidate === undefined) {
+        candidate = group.roles.find((role) => role.type === DEFAULT_GROUP_ROLE_TEMPLATE.type)
+      }
+
+      if (candidate !== undefined) {
+        return await groupRepository.updateGroupRole(handle, candidate.id, {
+          isDefault: true,
+        })
+      }
+
+      return await this.createRole(handle, {
+        ...DEFAULT_GROUP_ROLE_TEMPLATE,
+        groupId: groupSlug,
+        isDefault: true,
+      })
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {

@@ -28,6 +28,7 @@ export type GroupRoleMinAggregateOutputType = {
   id: string | null
   name: string | null
   type: $Enums.GroupRoleType | null
+  isDefault: boolean | null
   groupId: string | null
 }
 
@@ -35,6 +36,7 @@ export type GroupRoleMaxAggregateOutputType = {
   id: string | null
   name: string | null
   type: $Enums.GroupRoleType | null
+  isDefault: boolean | null
   groupId: string | null
 }
 
@@ -42,6 +44,7 @@ export type GroupRoleCountAggregateOutputType = {
   id: number
   name: number
   type: number
+  isDefault: number
   groupId: number
   _all: number
 }
@@ -51,6 +54,7 @@ export type GroupRoleMinAggregateInputType = {
   id?: true
   name?: true
   type?: true
+  isDefault?: true
   groupId?: true
 }
 
@@ -58,6 +62,7 @@ export type GroupRoleMaxAggregateInputType = {
   id?: true
   name?: true
   type?: true
+  isDefault?: true
   groupId?: true
 }
 
@@ -65,6 +70,7 @@ export type GroupRoleCountAggregateInputType = {
   id?: true
   name?: true
   type?: true
+  isDefault?: true
   groupId?: true
   _all?: true
 }
@@ -145,6 +151,7 @@ export type GroupRoleGroupByOutputType = {
   id: string
   name: string
   type: $Enums.GroupRoleType
+  isDefault: boolean
   groupId: string
   _count: GroupRoleCountAggregateOutputType | null
   _min: GroupRoleMinAggregateOutputType | null
@@ -173,6 +180,7 @@ export type GroupRoleWhereInput = {
   id?: Prisma.StringFilter<"GroupRole"> | string
   name?: Prisma.StringFilter<"GroupRole"> | string
   type?: Prisma.EnumGroupRoleTypeFilter<"GroupRole"> | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFilter<"GroupRole"> | boolean
   groupId?: Prisma.StringFilter<"GroupRole"> | string
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   groupMembershipRoles?: Prisma.GroupMembershipRoleListRelationFilter
@@ -182,6 +190,7 @@ export type GroupRoleOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   group?: Prisma.GroupOrderByWithRelationInput
   groupMembershipRoles?: Prisma.GroupMembershipRoleOrderByRelationAggregateInput
@@ -189,21 +198,23 @@ export type GroupRoleOrderByWithRelationInput = {
 
 export type GroupRoleWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  groupId?: string
   groupId_name?: Prisma.GroupRoleGroupIdNameCompoundUniqueInput
   AND?: Prisma.GroupRoleWhereInput | Prisma.GroupRoleWhereInput[]
   OR?: Prisma.GroupRoleWhereInput[]
   NOT?: Prisma.GroupRoleWhereInput | Prisma.GroupRoleWhereInput[]
   name?: Prisma.StringFilter<"GroupRole"> | string
   type?: Prisma.EnumGroupRoleTypeFilter<"GroupRole"> | $Enums.GroupRoleType
-  groupId?: Prisma.StringFilter<"GroupRole"> | string
+  isDefault?: Prisma.BoolFilter<"GroupRole"> | boolean
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   groupMembershipRoles?: Prisma.GroupMembershipRoleListRelationFilter
-}, "id" | "groupId_name">
+}, "id" | "groupId_name" | "groupId">
 
 export type GroupRoleOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   _count?: Prisma.GroupRoleCountOrderByAggregateInput
   _max?: Prisma.GroupRoleMaxOrderByAggregateInput
@@ -217,6 +228,7 @@ export type GroupRoleScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"GroupRole"> | string
   name?: Prisma.StringWithAggregatesFilter<"GroupRole"> | string
   type?: Prisma.EnumGroupRoleTypeWithAggregatesFilter<"GroupRole"> | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolWithAggregatesFilter<"GroupRole"> | boolean
   groupId?: Prisma.StringWithAggregatesFilter<"GroupRole"> | string
 }
 
@@ -224,6 +236,7 @@ export type GroupRoleCreateInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   group: Prisma.GroupCreateNestedOneWithoutRolesInput
   groupMembershipRoles?: Prisma.GroupMembershipRoleCreateNestedManyWithoutRoleInput
 }
@@ -232,6 +245,7 @@ export type GroupRoleUncheckedCreateInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   groupId: string
   groupMembershipRoles?: Prisma.GroupMembershipRoleUncheckedCreateNestedManyWithoutRoleInput
 }
@@ -240,6 +254,7 @@ export type GroupRoleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   group?: Prisma.GroupUpdateOneRequiredWithoutRolesNestedInput
   groupMembershipRoles?: Prisma.GroupMembershipRoleUpdateManyWithoutRoleNestedInput
 }
@@ -248,6 +263,7 @@ export type GroupRoleUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   groupMembershipRoles?: Prisma.GroupMembershipRoleUncheckedUpdateManyWithoutRoleNestedInput
 }
@@ -256,6 +272,7 @@ export type GroupRoleCreateManyInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   groupId: string
 }
 
@@ -263,12 +280,14 @@ export type GroupRoleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type GroupRoleUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -296,6 +315,7 @@ export type GroupRoleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
 }
 
@@ -303,6 +323,7 @@ export type GroupRoleMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
 }
 
@@ -310,6 +331,7 @@ export type GroupRoleMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
 }
 
@@ -377,6 +399,7 @@ export type GroupRoleCreateWithoutGroupInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   groupMembershipRoles?: Prisma.GroupMembershipRoleCreateNestedManyWithoutRoleInput
 }
 
@@ -384,6 +407,7 @@ export type GroupRoleUncheckedCreateWithoutGroupInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   groupMembershipRoles?: Prisma.GroupMembershipRoleUncheckedCreateNestedManyWithoutRoleInput
 }
 
@@ -420,6 +444,7 @@ export type GroupRoleScalarWhereInput = {
   id?: Prisma.StringFilter<"GroupRole"> | string
   name?: Prisma.StringFilter<"GroupRole"> | string
   type?: Prisma.EnumGroupRoleTypeFilter<"GroupRole"> | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFilter<"GroupRole"> | boolean
   groupId?: Prisma.StringFilter<"GroupRole"> | string
 }
 
@@ -427,6 +452,7 @@ export type GroupRoleCreateWithoutGroupMembershipRolesInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   group: Prisma.GroupCreateNestedOneWithoutRolesInput
 }
 
@@ -434,6 +460,7 @@ export type GroupRoleUncheckedCreateWithoutGroupMembershipRolesInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
   groupId: string
 }
 
@@ -457,6 +484,7 @@ export type GroupRoleUpdateWithoutGroupMembershipRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   group?: Prisma.GroupUpdateOneRequiredWithoutRolesNestedInput
 }
 
@@ -464,6 +492,7 @@ export type GroupRoleUncheckedUpdateWithoutGroupMembershipRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -471,12 +500,14 @@ export type GroupRoleCreateManyGroupInput = {
   id?: string
   name: string
   type?: $Enums.GroupRoleType
+  isDefault?: boolean
 }
 
 export type GroupRoleUpdateWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   groupMembershipRoles?: Prisma.GroupMembershipRoleUpdateManyWithoutRoleNestedInput
 }
 
@@ -484,6 +515,7 @@ export type GroupRoleUncheckedUpdateWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   groupMembershipRoles?: Prisma.GroupMembershipRoleUncheckedUpdateManyWithoutRoleNestedInput
 }
 
@@ -491,6 +523,7 @@ export type GroupRoleUncheckedUpdateManyWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumGroupRoleTypeFieldUpdateOperationsInput | $Enums.GroupRoleType
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -528,6 +561,7 @@ export type GroupRoleSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   id?: boolean
   name?: boolean
   type?: boolean
+  isDefault?: boolean
   groupId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   groupMembershipRoles?: boolean | Prisma.GroupRole$groupMembershipRolesArgs<ExtArgs>
@@ -538,6 +572,7 @@ export type GroupRoleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   name?: boolean
   type?: boolean
+  isDefault?: boolean
   groupId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groupRole"]>
@@ -546,6 +581,7 @@ export type GroupRoleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   name?: boolean
   type?: boolean
+  isDefault?: boolean
   groupId?: boolean
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groupRole"]>
@@ -554,10 +590,11 @@ export type GroupRoleSelectScalar = {
   id?: boolean
   name?: boolean
   type?: boolean
+  isDefault?: boolean
   groupId?: boolean
 }
 
-export type GroupRoleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "groupId", ExtArgs["result"]["groupRole"]>
+export type GroupRoleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "isDefault" | "groupId", ExtArgs["result"]["groupRole"]>
 export type GroupRoleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
   groupMembershipRoles?: boolean | Prisma.GroupRole$groupMembershipRolesArgs<ExtArgs>
@@ -580,6 +617,7 @@ export type $GroupRolePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     name: string
     type: $Enums.GroupRoleType
+    isDefault: boolean
     groupId: string
   }, ExtArgs["result"]["groupRole"]>
   composites: {}
@@ -1009,6 +1047,7 @@ export interface GroupRoleFieldRefs {
   readonly id: Prisma.FieldRef<"GroupRole", 'String'>
   readonly name: Prisma.FieldRef<"GroupRole", 'String'>
   readonly type: Prisma.FieldRef<"GroupRole", 'GroupRoleType'>
+  readonly isDefault: Prisma.FieldRef<"GroupRole", 'Boolean'>
   readonly groupId: Prisma.FieldRef<"GroupRole", 'String'>
 }
     
