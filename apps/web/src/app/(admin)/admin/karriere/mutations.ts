@@ -27,6 +27,7 @@ export const useCreateJobListingMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av stillingsannonsen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -60,6 +61,7 @@ export const useEditJobListingMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av stillingsannonsen: ${err.toString()}.`,
+          error: err,
         })
       },
     })

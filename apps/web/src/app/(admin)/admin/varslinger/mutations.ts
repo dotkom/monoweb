@@ -36,6 +36,7 @@ export function useCreateNotificationMutation() {
         notification.fail({
           title: "Kunne ikke sende",
           message: error.message,
+          error: error,
         })
       },
     })
@@ -125,6 +126,7 @@ export function useAddNotificationRecipientsMutation() {
         notification.fail({
           title: "Kunne ikke legge til mottakere",
           message: error.message,
+          error: error,
         })
       },
     })
@@ -164,6 +166,7 @@ export function useRemoveNotificationRecipientsMutation() {
         notification.fail({
           title: "Kunne ikke fjerne mottakere",
           message: error.message,
+          error: error,
         })
       },
     })
