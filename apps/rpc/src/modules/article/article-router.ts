@@ -1,6 +1,6 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import { TRPCError, type inferProcedureInput, type inferProcedureOutput } from "@trpc/server"
+import { type inferProcedureInput, type inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { isCommitteeMember } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
