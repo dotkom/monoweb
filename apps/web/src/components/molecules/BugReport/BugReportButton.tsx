@@ -68,12 +68,16 @@ export const BugReportButton = ({ message, error }: BugReportButtonProps) => {
       case "sent":
         return "Sendt"
       case "error":
-        ;("Kunne ikke sende e-posten")
+        return "Kunne ikke sende e-posten"
     }
   }
 
   return (
-    <Button onClick={onClick} disabled={sendingState !== "sent"} className="flex flex-row gap-2 items-center">
+    <Button
+      onClick={onClick}
+      disabled={sendingState === "sending" || sendingState === "sent"}
+      className="flex flex-row gap-2 items-center"
+    >
       {sendingState === "sending" ? <IconLoader className="animate-spin" /> : sendingState === "sent" && <IconCheck />}
       {getButtonLabel()}
     </Button>
