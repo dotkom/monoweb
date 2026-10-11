@@ -166,7 +166,7 @@ function ToastList() {
     <Toast key={toastItem.id} toast={toastItem}>
       <ToastContent>
         <ToastIcon type={toastItem.type} />
-        <div className={toastItem.data?.actionLayout ? `flex flex-${toastItem.data?.actionLayout} gap-4` : ""}>
+        <div className={toastItem.data?.actionLayout ? `flex flex-${toastItem.data?.actionLayout} gap-2` : ""}>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <ToastTitle />
             <ToastDescription />

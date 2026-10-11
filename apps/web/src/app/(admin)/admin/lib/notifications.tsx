@@ -36,8 +36,33 @@ type NotifyProps =
 const createNotificationMethod =
   (type: ToastType) =>
   ({ title, message, id, method, autoClose, error }: NotifyProps) => {
+    if (method === "update") {
+      if (type === "error") {
+        return toast.update(id, {
+          type,
+          title,
+          description: message,
+          timeout: getTimeout(autoClose),
+          data: {
+            actionLayout: "col",
+            customAction: true,
+          },
+          actionProps: {
+            children: error ? <BugReportButton message={message} error={error} /> : undefined,
+          },
+        })
+      }
+
+      return toast.update(id, {
+        type,
+        title,
+        description: message,
+        timeout: getTimeout(autoClose),
+      })
+    }
+
     if (type === "error") {
-      return toast.update(id ?? "", {
+      return toast.add({
         type,
         title,
         description: message,
@@ -49,15 +74,7 @@ const createNotificationMethod =
         actionProps: {
           children: error ? <BugReportButton message={message} error={error} /> : undefined,
         },
-      })
-    }
-
-    if (method === "update") {
-      return toast.update(id, {
-        type,
-        title,
-        description: message,
-        timeout: getTimeout(autoClose),
+        id,
       })
     }
 
