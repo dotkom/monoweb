@@ -160,7 +160,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 }
 
 function ToastList() {
-  const { toasts } = ToastPrimitive.useToastManager<{ actionLayout?: "row" | "col", customAction?: boolean }>()
+  const { toasts } = ToastPrimitive.useToastManager<{ actionLayout?: "row" | "col"; customAction?: boolean }>()
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>

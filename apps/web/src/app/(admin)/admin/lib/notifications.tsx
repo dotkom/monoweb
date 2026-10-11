@@ -1,9 +1,8 @@
 import type { AppRouter } from "@dotkomonline/rpc"
-import { Button, Text, toast, type ToastType } from "@dotkomonline/ui"
+import { toast, type ToastType } from "@dotkomonline/ui"
 import type { TRPCClientErrorLike } from "@trpc/client"
 import { useState } from "react"
-import { useTRPC } from "./trpc-client";
-import { BugReportButton } from "src/components/molecules/BugReport/BugReportButton";
+import { BugReportButton } from "src/components/molecules/BugReport/BugReportButton"
 
 export interface NotificationProps {
   title: string
@@ -15,8 +14,22 @@ export interface NotificationProps {
 }
 
 type NotifyProps =
-  | { method?: "add"; id?: string; title: string; message: string; autoClose?: number | false; error?: TRPCClientErrorLike<AppRouter> }
-  | { method: "update"; id: string; title: string; message: string; autoClose?: number | false; error?: TRPCClientErrorLike<AppRouter> }
+  | {
+      method?: "add"
+      id?: string
+      title: string
+      message: string
+      autoClose?: number | false
+      error?: TRPCClientErrorLike<AppRouter>
+    }
+  | {
+      method: "update"
+      id: string
+      title: string
+      message: string
+      autoClose?: number | false
+      error?: TRPCClientErrorLike<AppRouter>
+    }
 
 // Factory function to create a notification method
 // Defaults to adding a notification
@@ -35,10 +48,10 @@ const createNotificationMethod =
         },
         actionProps: {
           children: error ? <BugReportButton message={message} error={error} /> : undefined,
-        }
+        },
       })
     }
-    
+
     if (method === "update") {
       return toast.update(id, {
         type,
