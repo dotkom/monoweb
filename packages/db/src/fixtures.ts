@@ -1,4 +1,5 @@
 import { compareAsc, isFuture } from "date-fns"
+import { randomUUID } from "node:crypto"
 import { getArticleFixtures, getArticleTagFixtures, getArticleTagLinkFixtures } from "./fixtures/article"
 import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
@@ -80,9 +81,35 @@ const companyInput = getCompanyFixtures()
 const companies = await db.company.createManyAndReturn({ data: companyInput })
 
 const groupInput = getGroupFixtures()
-await db.group.createManyAndReturn({ data: groupInput })
-const groupRoleInput = groupInput.flatMap(getGroupRoleFixtures)
-await db.groupRole.createManyAndReturn({ data: groupRoleInput })
+const defaultRoleIdBySlug = new Map(groupInput.map((group) => [group.slug, randomUUID()]))
+await db.$transaction(async (tx) => {
+  await tx.group.createMany({
+    data: groupInput.map((group) => {
+      const defaultGroupRoleId = defaultRoleIdBySlug.get(group.slug)
+      if (!defaultGroupRoleId) {
+        throw new Error(`Missing default role id for Group(Slug=${group.slug})`)
+      }
+
+      return { ...group, defaultGroupRoleId }
+    }),
+  })
+  await tx.groupRole.createMany({
+    data: groupInput.flatMap((group) => {
+      return getGroupRoleFixtures(group).map((role) => {
+        if (role.type !== "COSMETIC" || role.name !== "Medlem") {
+          return role
+        }
+
+        const id = defaultRoleIdBySlug.get(group.slug)
+        if (!id) {
+          throw new Error(`Missing default role id for Group(Slug=${group.slug})`)
+        }
+
+        return { ...role, id }
+      })
+    }),
+  })
+})
 const groupRoleIds = new Map(
   (await db.groupRole.findMany({ select: { id: true, groupId: true, type: true } })).map(
     (role) => [`${role.groupId}:${role.type}`, role.id] as const

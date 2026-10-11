@@ -84,14 +84,14 @@ console.log("Inserting memberships...")
 await localDb.membership.createMany({ data: memberships })
 console.log(`Inserted ${memberships.length} memberships`)
 
-// 3. Groups (no dependencies)
-console.log("Inserting groups...")
-await localDb.group.createMany({ data: groups })
+// 3–4. Groups reference their default role, and roles reference the group, so both inserts
+// have to commit together. The default-role foreign key is deferred until commit.
+console.log("Inserting groups and group roles...")
+await localDb.$transaction(async (tx) => {
+  await tx.group.createMany({ data: groups })
+  await tx.groupRole.createMany({ data: groupRoles })
+})
 console.log(`Inserted ${groups.length} groups`)
-
-// 4. GroupRoles (depends on groups)
-console.log("Inserting group roles...")
-await localDb.groupRole.createMany({ data: groupRoles })
 console.log(`Inserted ${groupRoles.length} group roles`)
 
 // 5. GroupMemberships (depends on users and groups)

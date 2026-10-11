@@ -387,7 +387,7 @@ const deleteMembershipProcedure = procedure
 export type CreateRoleInput = inferProcedureInput<typeof createRoleProcedure>
 export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
 const createRoleProcedure = procedure
-  .input(GroupRoleWriteSchema)
+  .input(GroupRoleWriteSchema.extend({ isDefault: z.boolean().optional() }))
   .use(withAuthentication())
   .use(
     withAuthorization(
@@ -416,7 +416,12 @@ const createRoleProcedure = procedure
       )
     }
 
-    const createdRole = await ctx.groupService.createRole(ctx.handle, input)
+    const { isDefault, ...roleData } = input
+    const createdRole = await ctx.groupService.createRole(ctx.handle, roleData)
+
+    if (input.isDefault) {
+      await ctx.groupService.update(ctx.handle, group.slug, { defaultGroupRoleId: createdRole.id })
+    }
 
     ctx.setAuditTransactionName(
       `Create GroupRole(ID=${createdRole.id},Name=${createdRole.name}) for Group(Slug=${group.slug},Name=${group.name})`
@@ -431,7 +436,7 @@ const updateRoleProcedure = procedure
   .input(
     z.object({
       id: GroupRoleSchema.shape.id,
-      role: GroupRoleWriteSchema,
+      role: GroupRoleWriteSchema.extend({ isDefault: z.boolean().optional() }),
     })
   )
   .use(withAuthentication())
@@ -462,7 +467,12 @@ const updateRoleProcedure = procedure
       )
     }
 
-    const updatedRole = await ctx.groupService.updateRole(ctx.handle, input.id, input.role)
+    const { isDefault, ...roleData } = input.role
+    const updatedRole = await ctx.groupService.updateRole(ctx.handle, input.id, roleData)
+
+    if (input.role.isDefault && updatedRole.id !== group.defaultGroupRoleId) {
+      await ctx.groupService.update(ctx.handle, group.slug, { defaultGroupRoleId: updatedRole.id })
+    }
 
     ctx.setAuditTransactionName(
       `Update GroupRole(ID=${updatedRole.id},Name=${updatedRole.name}) for Group(Slug=${group.slug},Name=${group.name})`

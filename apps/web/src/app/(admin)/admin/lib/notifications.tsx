@@ -9,17 +9,32 @@ export interface NotificationProps {
   id?: string
   method?: "add" | "update"
   autoClose?: number | false
+  error?: TRPCClientErrorLike<AppRouter>
 }
 
 type NotifyProps =
-  | { method?: "add"; id?: string; title: string; message: string; autoClose?: number | false }
-  | { method: "update"; id: string; title: string; message: string; autoClose?: number | false }
+  | {
+      method?: "add"
+      id?: string
+      title: string
+      message: string
+      autoClose?: number | false
+      error?: TRPCClientErrorLike<AppRouter>
+    }
+  | {
+      method: "update"
+      id: string
+      title: string
+      message: string
+      autoClose?: number | false
+      error?: TRPCClientErrorLike<AppRouter>
+    }
 
 // Factory function to create a notification method
 // Defaults to adding a notification
 const createNotificationMethod =
   (type: ToastType) =>
-  ({ title, message, id, method, autoClose }: NotifyProps) => {
+  ({ title, message, id, method, autoClose, error }: NotifyProps) => {
     if (method === "update") {
       return toast.update(id, {
         type,
@@ -114,6 +129,7 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
         id,
         method: "update",
         autoClose: false,
+        error,
       }),
   }
 }
