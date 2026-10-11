@@ -188,7 +188,8 @@ export const GroupScalarFieldEnum = {
   workspaceGroupId: 'workspaceGroupId',
   memberVisibility: 'memberVisibility',
   recruitmentMethod: 'recruitmentMethod',
-  type: 'type'
+  type: 'type',
+  defaultGroupRoleId: 'defaultGroupRoleId'
 } as const
 
 export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]

@@ -1,23 +1,24 @@
 "use client"
 
 import { FilterableDataTable } from "@admin/components/FilterableDataTable"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { type GroupRole, getGroupRoleTypeName } from "@dotkomonline/rpc/group"
 import { Button } from "@dotkomonline/ui"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
-import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
-import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 
 interface Props {
   roles: GroupRole[]
+  defaultRoleId: string
   canManageRoles: boolean
   onEdit: (role: GroupRole) => void
   onDelete: (role: GroupRole) => void
   actions?: React.ReactNode
 }
 
-export const GroupRoleTable = ({ roles, canManageRoles, onEdit, onDelete, actions }: Props) => {
+export const GroupRoleTable = ({ roles, defaultRoleId, canManageRoles, onEdit, onDelete, actions }: Props) => {
   const [roleToDelete, setRoleToDelete] = useState<GroupRole | null>(null)
 
   const columnHelper = createColumnHelper<GroupRole>()
@@ -27,7 +28,14 @@ export const GroupRoleTable = ({ roles, canManageRoles, onEdit, onDelete, action
         id: "name",
         header: () => "Navn",
         sortingFn: "alphanumeric",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const role = info.row.original
+          if (role.id === defaultRoleId) {
+            return `${role.name} (standard)`
+          }
+
+          return role.name
+        },
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
@@ -73,7 +81,7 @@ export const GroupRoleTable = ({ roles, canManageRoles, onEdit, onDelete, action
         ),
       }),
     ],
-    [columnHelper, canManageRoles, onEdit]
+    [columnHelper, canManageRoles, onEdit, defaultRoleId]
   )
 
   const tableOptions = useMemo(

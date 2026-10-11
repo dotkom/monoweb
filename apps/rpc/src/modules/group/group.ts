@@ -68,6 +68,7 @@ export const GroupSchema = z.object({
   memberVisibility: GroupMemberVisibilitySchema.default("ALL_MEMBERS"),
   recruitmentMethod: GroupRecruitmentMethodSchema.default("NONE"),
   type: GroupTypeSchema,
+  defaultGroupRoleId: z.string(),
   roles: GroupRoleSchema.array(),
   eventCount: z.number().optional(),
 })
@@ -97,8 +98,10 @@ export const GroupWriteSchema = GroupSchema.pick({
   deactivatedAt: true,
   workspaceGroupId: true,
   recruitmentMethod: true,
+  defaultGroupRoleId: true,
 }).partial({
   slug: true,
+  defaultGroupRoleId: true,
 })
 
 export type GroupWrite = z.infer<typeof GroupWriteSchema>
@@ -138,17 +141,24 @@ export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.ex
 })
 export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
 
-export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
-  [
+export function getDefaultGroupMemberRoles(groupId: GroupId): {
+  defaultRole: GroupRoleWrite
+  otherRoles: GroupRoleWrite[]
+} {
+  const roles = [
     { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder" },
     { groupId, type: GroupRoleTypeEnum.PUNISHER, name: "Vinstraffansvarlig" },
     { groupId, type: GroupRoleTypeEnum.DEPUTY_LEADER, name: "Nestleder" },
     { groupId, type: GroupRoleTypeEnum.TRUSTEE, name: "Tillitsvalgt" },
     { groupId, type: GroupRoleTypeEnum.TREASURER, name: "Økonomiansvarlig" },
-    { groupId, type: GroupRoleTypeEnum.COSMETIC, name: "Medlem" },
     { groupId, type: GroupRoleTypeEnum.EMAIL_ONLY, name: "E-postbruker" },
     { groupId, type: GroupRoleTypeEnum.TEMPORARILY_LEAVE, name: "Permitert" },
   ] as const satisfies GroupRoleWrite[]
+
+  const defaultRole: GroupRoleWrite = { groupId, type: GroupRoleTypeEnum.COSMETIC, name: "Medlem" }
+
+  return { defaultRole, otherRoles: roles }
+}
 
 export const getGroupDisplayName = (group: Pick<Group, "abbreviation" | "name" | "preferredDisplayName">) => {
   if (group.preferredDisplayName === "NAME") {

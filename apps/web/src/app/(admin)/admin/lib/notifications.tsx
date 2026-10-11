@@ -163,7 +163,7 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
         id,
         method: "update",
         autoClose: false,
-        error: error,
+        error,
       }),
   }
 }
