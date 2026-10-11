@@ -4,9 +4,10 @@ import { Form } from "@admin/components/forms/Form"
 import { SelectField } from "@admin/components/forms/SelectField"
 import { TextField } from "@admin/components/forms/TextField"
 import { getGroupRoleTypeName, GroupRoleTypeEnum, GroupRoleWriteSchema } from "@dotkomonline/rpc/group"
-import { Button } from "@dotkomonline/ui"
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type UseFormReturn } from "react-hook-form"
+import { CheckboxField } from "src/app/(admin)/admin/components/forms/CheckboxField"
 import type z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({
@@ -57,6 +58,20 @@ export const GroupRoleWriteForm = ({
           label: getGroupRoleTypeName(groupRoleType),
         }))}
       />
+      <Tooltip disabled={defaultValues?.isDefault !== true}>
+        <TooltipTrigger>
+          <CheckboxField
+            control={form.control}
+            name="isDefault"
+            label="Standard rolle"
+            description="Bruk rollen som standard for nye medlemmer."
+            disabled={defaultValues?.isDefault === true}
+          />
+          <TooltipContent>
+            For å fjerne denne rollen som standard, må du først sette en annen rolle som standard.
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
       <Button type="submit" variant="default" className="w-fit" disabled={form.formState.disabled}>
         {submitLabel}
       </Button>
