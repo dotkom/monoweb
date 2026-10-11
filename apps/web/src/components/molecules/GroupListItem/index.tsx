@@ -1,5 +1,4 @@
 import { GroupLogo } from "@/components/atoms/GroupLogo"
-import { OnlineIcon } from "@/components/atoms/OnlineIcon"
 import { type Group, createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { Badge, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { IconMoonFilled, IconQuestionMark } from "@tabler/icons-react"
