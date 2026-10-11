@@ -134,7 +134,7 @@ importers:
         version: 16.3.7
       '@sentry/nextjs':
         specifier: ^10.52.0
-        version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(postcss@8.5.28))
+        version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(postcss@8.5.29))
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.48.0(react@19.2.8)
@@ -248,8 +248,8 @@ importers:
         specifier: npm:class-variance-authority@0.7.1
         version: class-variance-authority@0.7.1
       postcss:
-        specifier: 8.5.28
-        version: 8.5.28
+        specifier: 8.5.29
+        version: 8.5.29
       tailwindcss:
         specifier: 4.3.0
         version: 4.3.0
@@ -481,7 +481,7 @@ importers:
         version: 1.2.18(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@sentry/nextjs':
         specifier: ^10.52.0
-        version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
+        version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))
       '@splinetool/react-spline':
         specifier: ^4.0.0
         version: 4.1.0(@splinetool/runtime@1.12.98)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -670,8 +670,8 @@ importers:
         specifier: npm:class-variance-authority@0.7.1
         version: class-variance-authority@0.7.1
       postcss:
-        specifier: 8.5.28
-        version: 8.5.28
+        specifier: 8.5.29
+        version: 8.5.29
       tailwindcss:
         specifier: 4.3.0
         version: 4.3.0
@@ -703,8 +703,8 @@ importers:
         specifier: 0.5.20
         version: 0.5.20(tailwindcss@4.3.0)
       postcss:
-        specifier: 8.5.28
-        version: 8.5.28
+        specifier: 8.5.29
+        version: 8.5.29
       tailwindcss:
         specifier: 4.3.0
         version: 4.3.0
@@ -1032,8 +1032,8 @@ importers:
         specifier: 19.2.18
         version: 19.2.18
       postcss:
-        specifier: 8.5.28
-        version: 8.5.28
+        specifier: 8.5.29
+        version: 8.5.29
       tailwindcss:
         specifier: 4.3.0
         version: 4.3.0
@@ -7343,6 +7343,10 @@ packages:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postcss@8.5.29:
+    resolution: {integrity: sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
   postgres-array@2.0.0:
     resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
     engines: {node: '>=4'}
@@ -11260,7 +11264,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sentry/bundler-plugins@10.75.3(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))':
+  '@sentry/bundler-plugins@10.75.3(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))':
     dependencies:
       '@babel/core': 7.29.7
       '@sentry/cli': 2.58.6
@@ -11271,12 +11275,12 @@ snapshots:
       magic-string: 0.30.21
     optionalDependencies:
       rollup: 4.63.6
-      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.28)
+      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.29)
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@sentry/bundler-plugins@10.75.3(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.28))':
+  '@sentry/bundler-plugins@10.75.3(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.29))':
     dependencies:
       '@babel/core': 7.29.7
       '@sentry/cli': 2.58.6
@@ -11287,7 +11291,7 @@ snapshots:
       magic-string: 0.30.21
     optionalDependencies:
       rollup: 4.63.6
-      webpack: 5.111.1(postcss@8.5.28)
+      webpack: 5.111.1(postcss@8.5.29)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -11346,7 +11350,7 @@ snapshots:
     dependencies:
       '@sentry/core': 10.75.3
 
-  '@sentry/nextjs@10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))':
+  '@sentry/nextjs@10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.63.6)
@@ -11359,7 +11363,7 @@ snapshots:
       '@sentry/react': 10.75.3(react@19.2.8)
       '@sentry/server-utils': 10.75.3
       '@sentry/vercel-edge': 10.75.3
-      '@sentry/webpack-plugin': 5.4.0(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
+      '@sentry/webpack-plugin': 5.4.0(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))
       next: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       rollup: 4.63.6
       stacktrace-parser: 0.1.11
@@ -11372,7 +11376,7 @@ snapshots:
       - supports-color
       - webpack
 
-  '@sentry/nextjs@10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(postcss@8.5.28))':
+  '@sentry/nextjs@10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))(next@16.3.8(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.111.1(postcss@8.5.29))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.63.6)
@@ -11385,7 +11389,7 @@ snapshots:
       '@sentry/react': 10.75.3(react@19.2.8)
       '@sentry/server-utils': 10.75.3
       '@sentry/vercel-edge': 10.75.3
-      '@sentry/webpack-plugin': 5.4.0(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.28))
+      '@sentry/webpack-plugin': 5.4.0(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.29))
       next: 16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       rollup: 4.63.6
       stacktrace-parser: 0.1.11
@@ -11462,19 +11466,19 @@ snapshots:
       '@opentelemetry/api': 1.9.1
       '@sentry/core': 10.75.3
 
-  '@sentry/webpack-plugin@5.4.0(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))':
+  '@sentry/webpack-plugin@5.4.0(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))':
     dependencies:
-      '@sentry/bundler-plugins': 10.75.3(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
-      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.28)
+      '@sentry/bundler-plugins': 10.75.3(rollup@4.63.6)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))
+      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.29)
     transitivePeerDependencies:
       - encoding
       - rollup
       - supports-color
 
-  '@sentry/webpack-plugin@5.4.0(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.28))':
+  '@sentry/webpack-plugin@5.4.0(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.29))':
     dependencies:
-      '@sentry/bundler-plugins': 10.75.3(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.28))
-      webpack: 5.111.1(postcss@8.5.28)
+      '@sentry/bundler-plugins': 10.75.3(rollup@4.63.6)(webpack@5.111.1(postcss@8.5.29))
+      webpack: 5.111.1(postcss@8.5.29)
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -11496,7 +11500,7 @@ snapshots:
       fuzzysort: 3.1.0
       kleur: 4.1.5
       ora: 8.2.0
-      postcss: 8.5.28
+      postcss: 8.5.29
       prompts: 2.4.2
       recast: 0.23.21
       socks: 2.8.10
@@ -11711,7 +11715,7 @@ snapshots:
       '@alloc/quick-lru': 5.3.0
       '@tailwindcss/node': 4.1.18
       '@tailwindcss/oxide': 4.1.18
-      postcss: 8.5.28
+      postcss: 8.5.29
       tailwindcss: 4.1.18
 
   '@tailwindcss/typography@0.5.20(tailwindcss@4.3.0)':
@@ -15018,26 +15022,26 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  minimizer-webpack-plugin@5.13.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28)):
+  minimizer-webpack-plugin@5.13.0(lightningcss@1.30.2)(postcss@8.5.29)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.5.0
       terser: 5.51.2
-      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.28)
+      webpack: 5.111.1(lightningcss@1.30.2)(postcss@8.5.29)
     optionalDependencies:
       lightningcss: 1.30.2
-      postcss: 8.5.28
+      postcss: 8.5.29
 
-  minimizer-webpack-plugin@5.13.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28)):
+  minimizer-webpack-plugin@5.13.0(postcss@8.5.29)(webpack@5.111.1(postcss@8.5.29)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.5.0
       terser: 5.51.2
-      webpack: 5.111.1(postcss@8.5.28)
+      webpack: 5.111.1(postcss@8.5.29)
     optionalDependencies:
-      postcss: 8.5.28
+      postcss: 8.5.29
 
   minipass@7.1.3: {}
 
@@ -15532,6 +15536,12 @@ snapshots:
       source-map-js: 1.2.2
 
   postcss@8.5.28:
+    dependencies:
+      nanoid: 3.3.19
+      picocolors: 1.1.1
+      source-map-js: 1.2.2
+
+  postcss@8.5.29:
     dependencies:
       nanoid: 3.3.19
       picocolors: 1.1.1
@@ -16271,7 +16281,7 @@ snapshots:
       kleur: 4.1.5
       open: 11.0.4
       ora: 8.2.0
-      postcss: 8.5.28
+      postcss: 8.5.29
       postcss-selector-parser: 7.1.6
       prompts: 2.4.2
       recast: 0.23.21
@@ -16971,7 +16981,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
-      postcss: 8.5.28
+      postcss: 8.5.29
       rollup: 4.63.6
       tinyglobby: 0.2.17
     optionalDependencies:
@@ -17101,7 +17111,7 @@ snapshots:
 
   webpack-sources@3.6.0: {}
 
-  webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28):
+  webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29):
     dependencies:
       '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
@@ -17115,7 +17125,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.13.0(lightningcss@1.30.2)(postcss@8.5.28)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.28))
+      minimizer-webpack-plugin: 5.13.0(lightningcss@1.30.2)(postcss@8.5.29)(webpack@5.111.1(lightningcss@1.30.2)(postcss@8.5.29))
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
@@ -17138,7 +17148,7 @@ snapshots:
       - svgo
       - uglify-js
 
-  webpack@5.111.1(postcss@8.5.28):
+  webpack@5.111.1(postcss@8.5.29):
     dependencies:
       '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
@@ -17152,7 +17162,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.13.0(postcss@8.5.28)(webpack@5.111.1(postcss@8.5.28))
+      minimizer-webpack-plugin: 5.13.0(postcss@8.5.29)(webpack@5.111.1(postcss@8.5.29))
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
