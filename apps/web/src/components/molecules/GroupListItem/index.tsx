@@ -103,8 +103,8 @@ const GroupListItemImage: FC<GroupListItemImageProps> = ({ imageUrl, displayName
             containerClassName="rounded-full size-20 p-px"
           />
         ) : (
-          <div className="flex items-center justify-center bg-gray-50 dark:bg-stone-700 rounded-full size-20">
-            <OnlineIcon variant="light" width={80} height={80} />
+          <div className="flex items-center justify-center bg-gray-200 dark:bg-stone-600 rounded-full size-20">
+            <IconQuestionMark className="size-12 text-muted-foreground" />
           </div>
         )}
       </div>
