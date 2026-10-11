@@ -35,7 +35,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.15",
     "@dotkomonline/config": "workspace:*",
     "typescript": "5.9.3"
   }
