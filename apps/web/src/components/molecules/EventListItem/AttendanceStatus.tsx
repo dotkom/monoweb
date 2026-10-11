@@ -94,7 +94,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             attendanceStatus === "NOT_OPENED" && "text-muted-foreground",
             (isRegistered || isQueued) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
             isRegistered && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
-            isQueued && "text-amber-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
+            isQueued && "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
             classNames?.count
           )}
         >
