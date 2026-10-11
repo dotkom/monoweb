@@ -59,6 +59,7 @@ import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
+import { useEventListSubscription } from "./hooks/useEventListSubscription"
 import { usePlausible } from "next-plausible"
 
 interface Props {
@@ -259,6 +260,11 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   ])
 
   const isLoading = isFutureLoading || (futureEventWithAttendances.length === 0 && isPastLoading)
+
+  useEventListSubscription({
+    events: [...futureEventWithAttendances, ...pastEventWithAttendances, ...registeredEvents],
+    enabled: isEventListView,
+  })
 
   const hasActiveFilters =
     filters.search ||

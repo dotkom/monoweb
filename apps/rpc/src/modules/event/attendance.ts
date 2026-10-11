@@ -260,6 +260,47 @@ export const RegisterChangeEventSchema = z.object({
 })
 export type RegisterChangeEvent = z.infer<typeof RegisterChangeEventSchema>
 
+const RegisterChangeAttendeeSchema = AttendeeSchema.pick({
+  id: true,
+  userId: true,
+  attendanceId: true,
+  registered: true,
+})
+
+export const BulkRegisterChangeEventSchema = z.discriminatedUnion("isCurrentUser", [
+  RegisterChangeEventSchema.extend({
+    isCurrentUser: z.literal(true),
+    registeredAttendeeCount: z.number().int().nonnegative(),
+  }),
+  RegisterChangeEventSchema.extend({
+    isCurrentUser: z.literal(false),
+    attendee: RegisterChangeAttendeeSchema,
+    registeredAttendeeCount: z.number().int().nonnegative(),
+  }),
+])
+
+export type BulkRegisterChangeEvent = z.infer<typeof BulkRegisterChangeEventSchema>
+
+export function buildBulkRegisterChangeEvent(
+  registerChangeEvent: RegisterChangeEvent,
+  currentUserId: UserId | null
+): BulkRegisterChangeEvent {
+  const { attendee, status, poolOccupancies } = registerChangeEvent
+  const registeredAttendeeCount = poolOccupancies.reduce((total, occupancy) => total + occupancy.registeredCount, 0)
+
+  if (currentUserId !== null && attendee.userId === currentUserId) {
+    return { isCurrentUser: true, attendee, status, poolOccupancies, registeredAttendeeCount }
+  }
+
+  return {
+    isCurrentUser: false,
+    attendee: RegisterChangeAttendeeSchema.parse(attendee),
+    status,
+    poolOccupancies,
+    registeredAttendeeCount,
+  }
+}
+
 export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
   return attendance.pools.map((pool) => {
     const registeredCount = getRegisteredAttendeeCount(attendance, pool.id)

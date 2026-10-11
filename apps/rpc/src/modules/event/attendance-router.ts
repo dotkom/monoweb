@@ -16,10 +16,12 @@ import {
   AttendancePoolWriteSchema,
   AttendanceSchema,
   AttendanceWriteSchema,
+  buildBulkRegisterChangeEvent,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DEREGISTER_GRACE_PERIOD_MS,
   RegisterChangeEventSchema,
+  type RegisterChangeEvent,
   RegistrationAvailabilityViewSchema,
 } from "./attendance"
 import {
@@ -27,7 +29,7 @@ import {
   buildRegistrationAvailabilityView,
   getRegistrationAvailabilityFailureCause,
 } from "./attendance-service"
-import { DeregisterReasonTypeSchema, EventSchema } from "./event"
+import { DeregisterReasonTypeSchema, EventSchema, type EventVisibility } from "./event"
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -350,6 +352,55 @@ const onRegisterChangeProcedure = procedureTraceErrorsOnly
     }
   })
 
+export type OnBulkRegisterChangeInput = inferProcedureInput<typeof onBulkRegisterChangeProcedure>
+export type OnBulkRegisterChangeOutput = inferProcedureOutput<typeof onBulkRegisterChangeProcedure>
+const onBulkRegisterChangeProcedure = procedureTraceErrorsOnly
+  .input(z.object({ eventIds: EventSchema.shape.id.array().min(1) }))
+  .subscription(async function* ({ input, ctx, signal }) {
+    const eventIds = [...new Set(input.eventIds)]
+    const excludedVisibilities: EventVisibility[] = []
+
+    if (ctx.principal === null) {
+      excludedVisibilities.push("AUTHENTICATED")
+    }
+
+    if (ctx.principal === null || !ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)) {
+      excludedVisibilities.push("COMMITTEE_ONLY")
+    }
+
+    // Start listening before checking visibility so changes during the lookup are buffered.
+    const registerChanges = on(ctx.eventEmitter, "attendance:register-change", { signal })
+
+    try {
+      const events = await ctx.eventService.findEventSummaries(
+        ctx.prisma,
+        {
+          byId: eventIds,
+          excludingVisibility: excludedVisibilities,
+        },
+        {
+          take: eventIds.length,
+        }
+      )
+
+      const attendanceIds = new Set(
+        events.map((event) => event.attendanceId).filter((id): id is NonNullable<typeof id> => id !== null)
+      )
+
+      for await (const [data] of registerChanges) {
+        const registerChangeEvent = data as RegisterChangeEvent
+
+        if (!attendanceIds.has(registerChangeEvent.attendee.attendanceId)) {
+          continue
+        }
+
+        yield buildBulkRegisterChangeEvent(registerChangeEvent, ctx.principal?.subject ?? null)
+      }
+    } finally {
+      await registerChanges.return?.()
+    }
+  })
+
 export type CancelAttendeePaymentInput = inferProcedureInput<typeof cancelAttendeePaymentProcedure>
 export type CancelAttendeePaymentOutput = inferProcedureOutput<typeof cancelAttendeePaymentProcedure>
 const cancelAttendeePaymentProcedure = procedure
@@ -652,6 +703,7 @@ export const attendanceRouter = t.router({
   getRegistrationAvailability: getRegistrationAvailabilityProcedure,
   registerForEvent: registerForEventProcedure,
   onRegisterChange: onRegisterChangeProcedure,
+  onBulkRegisterChange: onBulkRegisterChangeProcedure,
   cancelAttendeePayment: cancelAttendeePaymentProcedure,
   startAttendeePayment: startAttendeePaymentProcedure,
   deregisterForEvent: deregisterForEventProcedure,
