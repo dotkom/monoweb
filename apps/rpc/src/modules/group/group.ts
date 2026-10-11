@@ -38,6 +38,7 @@ export const GroupRoleSchema = z.object({
   id: z.string(),
   name: z.string(),
   type: GroupRoleTypeSchema.default("COSMETIC"),
+  isDefault: z.boolean().default(false),
   groupId: z.string(),
 })
 export type GroupRole = z.infer<typeof GroupRoleSchema>
@@ -47,6 +48,7 @@ export const GroupRoleWriteSchema = GroupRoleSchema.pick({
   groupId: true,
   name: true,
   type: true,
+  isDefault: true,
 })
 export type GroupRoleWrite = z.infer<typeof GroupRoleWriteSchema>
 
@@ -138,16 +140,21 @@ export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.ex
 })
 export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
 
+export const DEFAULT_GROUP_ROLE_TEMPLATE = {
+  type: GroupRoleTypeEnum.COSMETIC,
+  name: "Medlem",
+} as const satisfies Pick<GroupRoleWrite, "type" | "name">
+
 export const getDefaultGroupMemberRoles = (groupId: GroupId) =>
   [
-    { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder" },
-    { groupId, type: GroupRoleTypeEnum.PUNISHER, name: "Vinstraffansvarlig" },
-    { groupId, type: GroupRoleTypeEnum.DEPUTY_LEADER, name: "Nestleder" },
-    { groupId, type: GroupRoleTypeEnum.TRUSTEE, name: "Tillitsvalgt" },
-    { groupId, type: GroupRoleTypeEnum.TREASURER, name: "Økonomiansvarlig" },
-    { groupId, type: GroupRoleTypeEnum.COSMETIC, name: "Medlem" },
-    { groupId, type: GroupRoleTypeEnum.EMAIL_ONLY, name: "E-postbruker" },
-    { groupId, type: GroupRoleTypeEnum.TEMPORARILY_LEAVE, name: "Permitert" },
+    { groupId, type: GroupRoleTypeEnum.LEADER, name: "Leder", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.PUNISHER, name: "Vinstraffansvarlig", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.DEPUTY_LEADER, name: "Nestleder", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.TRUSTEE, name: "Tillitsvalgt", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.TREASURER, name: "Økonomiansvarlig", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.EMAIL_ONLY, name: "E-postbruker", isDefault: false },
+    { groupId, type: GroupRoleTypeEnum.TEMPORARILY_LEAVE, name: "Permitert", isDefault: false },
+    { ...DEFAULT_GROUP_ROLE_TEMPLATE, groupId, isDefault: true },
   ] as const satisfies GroupRoleWrite[]
 
 export const getGroupDisplayName = (group: Pick<Group, "abbreviation" | "name" | "preferredDisplayName">) => {

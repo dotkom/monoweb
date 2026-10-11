@@ -27,7 +27,14 @@ export const GroupRoleTable = ({ roles, canManageRoles, onEdit, onDelete, action
         id: "name",
         header: () => "Navn",
         sortingFn: "alphanumeric",
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const role = info.row.original
+          if (role.isDefault) {
+            return `${role.name} (standard)`
+          }
+
+          return role.name
+        },
       }),
       columnHelper.accessor("type", {
         header: () => "Type",
@@ -64,7 +71,7 @@ export const GroupRoleTable = ({ roles, canManageRoles, onEdit, onDelete, action
               variant="destructive"
               size="sm"
               icon={<IconTrash className="size-4" />}
-              disabled={!canManageRoles}
+              disabled={!canManageRoles || info.getValue().isDefault}
               onClick={() => setRoleToDelete(info.getValue())}
             >
               Slett
