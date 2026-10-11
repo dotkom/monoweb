@@ -34,6 +34,7 @@ export const useCreateOfflineMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelsen av offline-utgaven: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -66,6 +67,7 @@ export const useEditOfflineMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av offline-utgaven: ${err.toString()}.`,
+          error: err,
         })
       },
     })

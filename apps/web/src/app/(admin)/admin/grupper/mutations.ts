@@ -35,6 +35,7 @@ export const useCreateGroupMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelsen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -69,6 +70,7 @@ export const useDeleteGroupMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under slettingen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -101,6 +103,7 @@ export const useUpdateGroupMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -275,10 +278,11 @@ export const useSyncWorkspaceGroupMutation = () => {
 
   return useMutation(
     trpc.workspace.synchronizeGroup.mutationOptions({
-      onError: () => {
+      onError: (err) => {
         notification.fail({
           title: "Feil",
           message: "Det oppsto en feil under synkronisering.",
+          error: err,
         })
       },
       onMutate: () => {
@@ -322,10 +326,11 @@ export const useLinkGroupMutation = () => {
 
         await queryClient.invalidateQueries(trpc.group.get.queryOptions(group.slug))
       },
-      onError: () => {
+      onError: (err) => {
         notification.fail({
           title: "Feil oppsto",
           message: "En feil oppsto under tilknytningen.",
+          error: err,
         })
       },
     })

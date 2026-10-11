@@ -32,6 +32,7 @@ export const useCreateEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av arrangementet: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -67,6 +68,7 @@ export const useUpdateEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av arrangementet: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -99,6 +101,7 @@ export const useDeleteEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under sletting av arrangementet: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -215,6 +218,7 @@ export const useAdminForEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under påmelding: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -247,6 +251,7 @@ export const useRegisterForEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under påmelding: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -279,6 +284,7 @@ export const useDeregisterForEventMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under avmelding: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -309,6 +315,7 @@ export const useUpdateEventAttendanceMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av oppmøte: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -537,6 +544,7 @@ export const useNotifyAttendeesMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under sending av e-post: ${err.toString()}.`,
+          error: err,
         })
       },
     })

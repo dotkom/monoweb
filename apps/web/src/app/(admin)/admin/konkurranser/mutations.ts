@@ -29,6 +29,7 @@ export const useCreateContestMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av konkurransen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -60,6 +61,7 @@ export const useUpdateContestMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av konkurransen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -92,6 +94,7 @@ export const useDeleteContestMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under sletting av konkurransen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -122,6 +125,7 @@ export const useAddContestantMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under tillegging av deltaker: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -152,6 +156,7 @@ export const useUpdateTeamContestantMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av laget: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -183,6 +188,7 @@ export const useRemoveContestantMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under fjerning av deltaker: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -213,6 +219,7 @@ export const useUpdateContestantResultMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av resultatet: ${err.toString()}.`,
+          error: err,
         })
       },
     })

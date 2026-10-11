@@ -32,6 +32,7 @@ export const useCreateFadderukeMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av fadderuken: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -64,6 +65,7 @@ export const useUpdateFadderukeMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av fadderuken: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -98,6 +100,7 @@ export const useDeleteFadderukeMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under sletting av fadderuken: ${err.toString()}.`,
+          error: err,
         })
       },
     })

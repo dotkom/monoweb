@@ -1,7 +1,9 @@
 import type { AppRouter } from "@dotkomonline/rpc"
-import { toast, type ToastType } from "@dotkomonline/ui"
+import { Button, Text, toast, type ToastType } from "@dotkomonline/ui"
 import type { TRPCClientErrorLike } from "@trpc/client"
 import { useState } from "react"
+import { useTRPC } from "./trpc-client";
+import { BugReportButton } from "src/components/molecules/BugReport/BugReportButton";
 
 export interface NotificationProps {
   title: string
@@ -9,17 +11,34 @@ export interface NotificationProps {
   id?: string
   method?: "add" | "update"
   autoClose?: number | false
+  error?: TRPCClientErrorLike<AppRouter>
 }
 
 type NotifyProps =
-  | { method?: "add"; id?: string; title: string; message: string; autoClose?: number | false }
-  | { method: "update"; id: string; title: string; message: string; autoClose?: number | false }
+  | { method?: "add"; id?: string; title: string; message: string; autoClose?: number | false; error?: TRPCClientErrorLike<AppRouter> }
+  | { method: "update"; id: string; title: string; message: string; autoClose?: number | false; error?: TRPCClientErrorLike<AppRouter> }
 
 // Factory function to create a notification method
 // Defaults to adding a notification
 const createNotificationMethod =
   (type: ToastType) =>
-  ({ title, message, id, method, autoClose }: NotifyProps) => {
+  ({ title, message, id, method, autoClose, error }: NotifyProps) => {
+    if (type === "error") {
+      return toast.update(id ?? "", {
+        type,
+        title,
+        description: message,
+        timeout: getTimeout(autoClose),
+        data: {
+          actionLayout: "col",
+          customAction: true,
+        },
+        actionProps: {
+          children: error ? <BugReportButton message={message} error={error} /> : undefined,
+        }
+      })
+    }
+    
     if (method === "update") {
       return toast.update(id, {
         type,
@@ -114,6 +133,7 @@ export const useQueryGenericMutationNotification = ({ method }: Props) => {
         id,
         method: "update",
         autoClose: false,
+        error: error,
       }),
   }
 }

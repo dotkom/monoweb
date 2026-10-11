@@ -34,6 +34,7 @@ export const useCreateArticleMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av artikkelen: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -76,6 +77,7 @@ export const useEditArticleMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av artikkelen: ${err.toString()}.`,
+          error: err,
         })
       },
     })

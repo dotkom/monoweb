@@ -94,10 +94,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   </ApplicationShell>
                 </AuthorizationProvider>
               </ThemeProvider>
+              <Toaster />
             </QueryProvider>
           </Auth0Provider>
         </PlausibleProvider>
-        <Toaster />
       </body>
     </html>
   )

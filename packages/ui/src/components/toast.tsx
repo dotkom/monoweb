@@ -160,17 +160,19 @@ function ToastIcon({ type }: { type: string | undefined }) {
 }
 
 function ToastList() {
-  const { toasts } = ToastPrimitive.useToastManager()
+  const { toasts } = ToastPrimitive.useToastManager<{ actionLayout?: "row" | "col", customAction?: boolean }>()
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
       <ToastContent>
         <ToastIcon type={toastItem.type} />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <ToastTitle />
-          <ToastDescription />
+        <div className={toastItem.data?.actionLayout ? `flex flex-${toastItem.data?.actionLayout} gap-4` : ""}>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <ToastTitle />
+            <ToastDescription />
+          </div>
+          {toastItem.data?.customAction ? toastItem.actionProps?.children : <ToastAction />}
         </div>
-        <ToastAction />
         <ToastClose />
       </ToastContent>
     </Toast>
