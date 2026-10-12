@@ -109,6 +109,43 @@ describe("single attendance registration subscription", () => {
 })
 
 describe("bulk registration subscription", () => {
+  it.each([null, "other-user", attendee.userId])("delivers payment updates to viewer %s", async (currentUserId) => {
+    const { context, eventEmitter } = createContext(currentUserId)
+    const caller = attendanceRouter.createCaller(context)
+
+    const subscription = await caller.onBulkRegisterChange({ eventIds: ["event-one"] })
+
+    const updatedAttendee = {
+      ...attendee,
+      paymentReservedAt: new Date(),
+      completionDeadline: null,
+    }
+
+    const paymentUpdate: RegisterChangeEvent = {
+      ...registerChange,
+      status: "updated",
+      attendee: updatedAttendee,
+    }
+
+    const nextUpdate = subscription.next()
+
+    eventEmitter.emit("attendance:register-change", paymentUpdate)
+
+    const { value: update } = await nextUpdate
+
+    expect(update?.status).toBe("updated")
+    expect(update?.registeredAttendeeCount).toBe(5)
+
+    if (update?.isCurrentUser) {
+      expect(update.attendee).toEqual(paymentUpdate.attendee)
+    } else {
+      expect(update?.attendee).not.toHaveProperty("paymentReservedAt")
+      expect(update?.attendee).not.toHaveProperty("completionDeadline")
+    }
+
+    await subscription.return()
+  })
+
   it.each([null, "other-user"])("strips private attendee fields for viewer %s", async (currentUserId) => {
     const { context, eventEmitter } = createContext(currentUserId)
     const subscription = await attendanceRouter.createCaller(context).onBulkRegisterChange({
@@ -256,6 +293,39 @@ describe("bulk registration subscription", () => {
     abortController.abort()
 
     await expect(nextUpdate).rejects.toThrow()
+    expect(eventEmitter.listenerCount("attendance:register-change")).toBe(0)
+  })
+})
+
+describe("single attendance subscription", () => {
+  it("delivers the final payment and completion deadline update", async () => {
+    const { context, eventEmitter } = createContext(attendee.userId)
+    const caller = attendanceRouter.createCaller(context)
+
+    const subscription = await caller.onRegisterChange({ attendanceId: attendee.attendanceId })
+
+    const updatedAttendee = {
+      ...attendee,
+      paymentChargedAt: new Date(),
+      completionDeadline: null,
+    }
+
+    const paymentUpdate: RegisterChangeEvent = {
+      ...registerChange,
+      status: "updated",
+      attendee: updatedAttendee,
+    }
+
+    const nextUpdate = subscription.next()
+
+    eventEmitter.emit("attendance:register-change", paymentUpdate)
+
+    const { value: update } = await nextUpdate
+
+    expect(update).toEqual(paymentUpdate)
+
+    await subscription.return()
+
     expect(eventEmitter.listenerCount("attendance:register-change")).toBe(0)
   })
 })
