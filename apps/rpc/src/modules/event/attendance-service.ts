@@ -937,7 +937,8 @@ export function getAttendanceService(
       }
 
       sendEventRegistrationEmail(event, attendance, attendee)
-      emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
+
+      emitRegisterChange(eventEmitter, attendance, attendee, "updated")
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -1062,7 +1063,7 @@ export function getAttendanceService(
         registered: true,
       }
 
-      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "reserved")
+      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "updated")
 
       for (const [index, waitlistAttendee] of sortedWaitlist.slice(1, 4).entries()) {
         sendWaitlistNotificationEmail(event, index + 1, waitlistAttendee)

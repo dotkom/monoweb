@@ -108,7 +108,7 @@ export function useEventListSubscription({ events, enabled }: UseEventListSubscr
       }
     )
 
-    if (registerChangeEvent.isCurrentUser && registerChangeEvent.status !== "reserved") {
+    if (registerChangeEvent.isCurrentUser && registerChangeEvent.status !== "updated") {
       refreshEventLists()
     }
   }

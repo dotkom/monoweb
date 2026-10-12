@@ -95,7 +95,7 @@ describe("event payment countdown", () => {
 
   it.each([
     "registered",
-    "reserved",
+    "updated",
   ] as const)("applies a %s event completing an existing attendee's payment", (status) => {
     const attendee = createMockAttendee({
       createdAt: new Date(Date.now() - 60_000),
