@@ -54,8 +54,24 @@ export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}
   )
 }
 
-export const useSetSelectionsOptionsMutation = () => {
-  const trpc = useTRPC()
+interface UseSetSelectionsOptionsMutationInput {
+  attendanceId: string
+}
 
-  return useMutation(trpc.event.attendance.updateSelectionResponses.mutationOptions({}))
+export const useSetSelectionsOptionsMutation = ({ attendanceId }: UseSetSelectionsOptionsMutationInput) => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    trpc.event.attendance.updateSelectionResponses.mutationOptions({
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: attendanceId })),
+          queryClient.invalidateQueries(
+            trpc.event.attendance.getRegistrationAvailability.queryOptions({ attendanceId })
+          ),
+        ])
+      },
+    })
+  )
 }
