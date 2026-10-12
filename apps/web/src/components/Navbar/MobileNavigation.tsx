@@ -13,7 +13,7 @@ import {
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { IconArrowUpRight, IconChevronDown, IconHome } from "@tabler/icons-react"
 import Link from "next/link"
-import { type FC, useEffect, useRef, useState } from "react"
+import { type FC, useEffect, useState } from "react"
 
 import type { MenuItem, MenuLink } from "@/components/Navbar/NavbarContent"
 import { env } from "@/env"
@@ -23,7 +23,6 @@ import { MobileMenuCard } from "./MobileMenuCard"
 
 export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false)
-  const navRef = useRef<HTMLElement>(null)
 
   const homeLink: MenuLink = {
     title: "Hjem",
@@ -65,7 +64,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger
           className="flex flex-row items-center"
-          aria-label={open ? "Close menu" : "Open menu"}
+          aria-label={open ? "Lukk meny" : "Åpne meny"}
           aria-expanded={open}
         >
           <Hamburger open={open} />
@@ -77,7 +76,7 @@ export const MobileNavigation: FC<{ links: MenuLink[] }> = ({ links }) => {
           positionMethod="fixed"
           className="w-[calc(100vw-2rem)] mx-2.75 mt-4 p-0 lg:hidden bg-gray-50 z-50 dark:bg-stone-800 border-gray-300/70 dark:border-stone-700 shadow-md rounded-3xl"
         >
-          <nav ref={navRef} className="max-h-[calc(100dvh-8rem)]">
+          <nav className="max-h-[calc(100dvh-8rem)]">
             <ScrollArea.Root type="always" className="z-50 max-h-[inherit] overflow-hidden">
               <ScrollArea.Viewport className="w-full max-h-[inherit]">
                 <div className="p-4">

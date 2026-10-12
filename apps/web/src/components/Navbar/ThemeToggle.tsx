@@ -1,8 +1,10 @@
-import { cn, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
+import { cn, DropdownMenu, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
+import type { FC } from "react"
+import { NavbarDropdownContent } from "./NavbarDropdownContent"
 
 type Theme = "light" | "dark" | "system"
 
@@ -79,5 +81,22 @@ export const ThemeToggle = () => {
         )
       })}
     </ToggleGroup>
+  )
+}
+
+export const ThemeDropdown: FC = () => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label="Velg fargetema"
+        className="flex items-center justify-center size-10 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
+      >
+        <IconSun width={22} height={22} className="dark:hidden" />
+        <IconMoon width={22} height={22} className="hidden dark:block" />
+      </DropdownMenuTrigger>
+      <NavbarDropdownContent className="w-fit rounded-xl border border-gray-300/70 bg-gray-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5">
+        <ThemeToggle />
+      </NavbarDropdownContent>
+    </DropdownMenu>
   )
 }

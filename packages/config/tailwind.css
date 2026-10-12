@@ -10,17 +10,13 @@
     --content-max-width: var(--container-7xl);
     --navbar-height: 4rem;
     --page-padding-x: 1rem;
-    --navbar-overhang-max: calc(var(--navbar-height) / 2);
-    --navbar-overhang: clamp(
-      0px,
-      calc((100vw - var(--content-max-width)) / 2),
-      var(--navbar-overhang-max)
-    );
+    --navbar-overhang: 0px;
   }
 
   @media (min-width: 64rem) {
     :root {
       --page-padding-x: 3rem;
+      --navbar-overhang: calc(var(--navbar-height) / 2);
     }
   }
 

@@ -34,7 +34,10 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
 }
 
 type DropdownMenuContentProps = MenuPrimitive.Popup.Props &
-  Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "positionMethod"> & {
+  Pick<
+    MenuPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset" | "positionMethod" | "anchor"
+  > & {
     matchTriggerWidth?: boolean
     collisionPadding?: number
   }
@@ -45,6 +48,7 @@ function DropdownMenuContent({
   side = "bottom",
   sideOffset = 4,
   positionMethod = "absolute",
+  anchor,
   matchTriggerWidth = false,
   collisionPadding,
   className,
@@ -59,6 +63,7 @@ function DropdownMenuContent({
         side={side}
         sideOffset={sideOffset}
         positionMethod={positionMethod}
+        anchor={anchor}
         collisionPadding={collisionPadding}
       >
         <MenuPrimitive.Popup
