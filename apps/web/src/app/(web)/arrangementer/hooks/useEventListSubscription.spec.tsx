@@ -2,7 +2,16 @@
 
 import { TRPCProvider, useTRPC } from "@/utils/trpc/client"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { type BulkRegisterChangeEvent, buildBulkRegisterChangeEvent } from "@dotkomonline/rpc/attendance"
+import {
+  type Attendance,
+  type AttendanceView,
+  type BulkRegisterChangeEvent,
+  buildBulkRegisterChangeEvent,
+  getAttendee,
+  getAttendeeQueuePosition,
+  getQueuedAttendeeCount,
+  getRegisteredAttendeeCount,
+} from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createTRPCClient } from "@trpc/client"
@@ -12,10 +21,27 @@ import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   createMockAttendanceSummary,
+  createMockAttendance,
   createMockAttendee,
+  createMockRegistrationAvailability,
   createMockEvent,
+  createMockUser,
 } from "../../../../../.ladle/fixtures/attendance"
 import { useEventListSubscription } from "./useEventListSubscription"
+import { attendanceCardQueryOptions } from "../components/AttendanceCard/attendanceCardQueryOptions"
+import { useAttendanceCardApi } from "../components/AttendanceCard/use-attendance-card-api"
+
+const mutations = vi.hoisted(() => ({ register: vi.fn(), deregister: vi.fn() }))
+
+vi.mock("@/utils/trpc/QueryProvider", () => ({
+  useTRPCSSERegisterChangeConnectionState: () => ({ setTRPCSSERegisterChangeConnectionState: vi.fn() }),
+}))
+
+vi.mock("../components/mutations", () => ({
+  useRegisterMutation: mutations.register,
+  useDeregisterMutation: mutations.deregister,
+  useSetSelectionsOptionsMutation: () => ({ mutate: vi.fn() }),
+}))
 
 let root: Root
 let queryClient: QueryClient
@@ -23,18 +49,31 @@ let queryOptions: ReturnType<typeof useTRPC>
 let sendUpdate: (update: BulkRegisterChangeEvent) => void
 let startConnection: () => void
 const requestInputs: unknown[] = []
+const requestPaths: string[] = []
 const unsubscribe = vi.fn()
+const fetchAttendance = vi.fn()
+let serverAttendance: Attendance
+let previewAttendanceData: AttendanceView | undefined
 
 const trpcClient = createTRPCClient<AppRouter>({
   links: [
     () =>
       ({ op: operation }) =>
         observable((observer) => {
+          if (operation.type === "query") {
+            expect(operation.path).toBe("event.attendance.getAttendance")
+            fetchAttendance(operation.input)
+            observer.next({ result: { data: serverAttendance } })
+            observer.complete()
+            return
+          }
           requestInputs.push(operation.input)
-          expect(operation.path).toBe("event.attendance.onBulkRegisterChange")
+          requestPaths.push(operation.path)
           expect(operation.type).toBe("subscription")
-          sendUpdate = (data) => observer.next({ result: { type: "data", data } })
-          startConnection = () => observer.next({ result: { type: "started" } })
+          if (operation.path === "event.attendance.onBulkRegisterChange") {
+            sendUpdate = (data) => observer.next({ result: { type: "data", data } })
+            startConnection = () => observer.next({ result: { type: "started" } })
+          }
 
           return unsubscribe
         }),
@@ -47,20 +86,57 @@ const secondEvent = {
   attendance: { ...createMockAttendanceSummary(), id: "attendance-two" },
 }
 
-function SubscriptionProbe({ events, enabled }: { events: EventWithAttendanceSummary[]; enabled: boolean }) {
-  queryOptions = useTRPC()
-  useEventListSubscription({ events, enabled })
-
+function AttendanceProbe({
+  attendance,
+  bulkSubscription,
+}: {
+  attendance: Attendance
+  bulkSubscription?: { isConnected: boolean }
+}) {
+  const api = useAttendanceCardApi({
+    initialAttendance: attendance,
+    initialRegistrationAvailability: null,
+    user: null,
+    onDeregisterSuccess: () => {},
+    bulkSubscription,
+  })
+  previewAttendanceData = api.attendance
   return null
+}
+
+function SubscriptionProbe({
+  events,
+  enabled,
+  previewAttendance,
+}: {
+  events: EventWithAttendanceSummary[]
+  enabled: boolean
+  previewAttendance?: Attendance
+}) {
+  queryOptions = useTRPC()
+  const subscription = useEventListSubscription({ events, enabled })
+
+  return previewAttendance ? (
+    <AttendanceProbe
+      attendance={previewAttendance}
+      bulkSubscription={subscription.attendanceIds.includes(previewAttendance.id) ? subscription : undefined}
+    />
+  ) : null
 }
 
 beforeEach(() => {
   requestInputs.length = 0
+  requestPaths.length = 0
+  mutations.register.mockReset().mockReturnValue({ mutate: vi.fn(), isPending: false })
+  mutations.deregister.mockReset().mockReturnValue({ mutate: vi.fn(), isPending: false })
   unsubscribe.mockClear()
+  fetchAttendance.mockClear()
+  serverAttendance = createMockAttendance()
+  previewAttendanceData = undefined
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
   root = createRoot(document.createElement("div"))
-  queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Number.POSITIVE_INFINITY } } })
 })
 
 afterEach(async () => {
@@ -69,12 +145,12 @@ afterEach(async () => {
   vi.unstubAllGlobals()
 })
 
-async function renderSubscription(events = [firstEvent, secondEvent], enabled = true) {
+async function renderSubscription(events = [firstEvent, secondEvent], enabled = true, previewAttendance?: Attendance) {
   await act(async () => {
     root.render(
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <SubscriptionProbe events={events} enabled={enabled} />
+          <SubscriptionProbe events={events} enabled={enabled} previewAttendance={previewAttendance} />
         </QueryClientProvider>
       </TRPCProvider>
     )
@@ -105,6 +181,177 @@ function createUpdate(currentUserId: string | null = null): BulkRegisterChangeEv
 }
 
 describe("event list subscription", () => {
+  it("keeps your full attendee and updates queue positions and counts from other attendees' summaries", async () => {
+    await renderSubscription()
+    const user = createMockUser({ id: "current-user" })
+    const ownAttendee = createMockAttendee({
+      id: "own-attendee",
+      userId: user.id,
+      user,
+      registered: false,
+      earliestReservationAt: new Date("2026-01-02"),
+      completionDeadline: new Date("2026-02-01"),
+      paymentLink: "https://example.com/payment",
+    })
+    const initialAttendance = createMockAttendance({ attendees: [ownAttendee] })
+    const queryKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
+    const fullQueryKey = queryOptions.event.attendance.getAttendance.queryKey({ id: firstEvent.attendance.id })
+    queryClient.setQueryData(queryKey, initialAttendance)
+    queryClient.setQueryData(fullQueryKey, initialAttendance)
+    const otherAttendee = createMockAttendee({
+      id: "other-attendee",
+      registered: false,
+      earliestReservationAt: new Date("2026-01-01"),
+    })
+    const update = buildBulkRegisterChangeEvent(
+      {
+        attendee: otherAttendee,
+        status: "reserved",
+        poolOccupancies: [],
+      },
+      user.id
+    )
+
+    await act(async () => {
+      sendUpdate(update)
+      sendUpdate(update)
+    })
+    const attendance = queryClient.getQueryData(queryKey)
+    expect(attendance?.attendees).toEqual([ownAttendee, update.attendee])
+    expect(getAttendee(attendance ?? null, user)).toEqual(ownAttendee)
+    expect(getAttendee(attendance ?? null, update.attendee.userId)).toBeNull()
+    expect(attendance && getAttendeeQueuePosition(attendance, user)).toBe(2)
+    expect(attendance && getQueuedAttendeeCount(attendance, ownAttendee.attendancePoolId)).toBe(2)
+    expect(queryClient.getQueryData(fullQueryKey)).toEqual(initialAttendance)
+
+    await act(async () =>
+      sendUpdate(
+        buildBulkRegisterChangeEvent(
+          {
+            attendee: { ...otherAttendee, registered: true },
+            status: "registered",
+            poolOccupancies: [],
+          },
+          user.id
+        )
+      )
+    )
+    const afterRegistration = queryClient.getQueryData(queryKey)
+    expect(afterRegistration && getAttendeeQueuePosition(afterRegistration, user)).toBe(1)
+    expect(afterRegistration && getRegisteredAttendeeCount(afterRegistration, ownAttendee.attendancePoolId)).toBe(1)
+
+    await act(async () => sendUpdate({ ...update, status: "deregistered" }))
+    expect(queryClient.getQueryData(queryKey)?.attendees).toEqual([ownAttendee])
+  })
+
+  it("patches another attendee in the preview without fetching or opening another stream", async () => {
+    await renderSubscription([firstEvent], true, createMockAttendance())
+    expect(fetchAttendance).not.toHaveBeenCalled()
+    const update = createUpdate()
+    await act(async () => {
+      sendUpdate(update)
+    })
+    expect(fetchAttendance).not.toHaveBeenCalled()
+    expect(previewAttendanceData?.attendees).toEqual([update.attendee])
+    expect(requestPaths).toEqual(["event.attendance.onBulkRegisterChange"])
+
+    await act(async () => {
+      sendUpdate({ ...update, status: "deregistered" })
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+    expect(previewAttendanceData?.attendees).toEqual([])
+  })
+
+  it("shares the bulk stream with a covered preview and uses its connection state for mutations", async () => {
+    await renderSubscription([firstEvent], true, createMockAttendance())
+    expect(requestPaths).toEqual(["event.attendance.onBulkRegisterChange"])
+    expect(mutations.register).toHaveBeenLastCalledWith(expect.objectContaining({ isSSEConnected: false }))
+
+    await act(async () => startConnection())
+    expect(mutations.register).toHaveBeenLastCalledWith(expect.objectContaining({ isSSEConnected: true }))
+    expect(mutations.deregister).toHaveBeenLastCalledWith(expect.objectContaining({ isSSEConnected: true }))
+    expect(requestPaths).toHaveLength(1)
+
+    await renderSubscription([firstEvent], false, createMockAttendance())
+    expect(requestPaths).toEqual(["event.attendance.onBulkRegisterChange", "event.attendance.onRegisterChange"])
+    expect(mutations.register).toHaveBeenLastCalledWith(expect.objectContaining({ isSSEConnected: false }))
+  })
+
+  it("keeps a single stream for a preview outside the subscribed list", async () => {
+    await renderSubscription([secondEvent], true, createMockAttendance())
+    expect(requestPaths.sort()).toEqual(["event.attendance.onBulkRegisterChange", "event.attendance.onRegisterChange"])
+  })
+
+  it("keeps the single stream for a standalone attendance card", async () => {
+    await act(async () => {
+      root.render(
+        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <AttendanceProbe attendance={createMockAttendance()} />
+          </QueryClientProvider>
+        </TRPCProvider>
+      )
+    })
+    expect(requestPaths).toEqual(["event.attendance.onRegisterChange"])
+  })
+
+  it("patches your preview attendee and refreshes availability on your own updates", async () => {
+    await renderSubscription()
+    const attendanceKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
+    const availabilityKey = queryOptions.event.attendance.getRegistrationAvailability.queryKey({
+      attendanceId: firstEvent.attendance.id,
+    })
+    const otherAttendanceKey = attendanceCardQueryOptions(queryOptions, secondEvent.attendance.id).queryKey
+    queryClient.setQueryData(attendanceKey, createMockAttendance({ attendees: [] }))
+    queryClient.setQueryData(availabilityKey, createMockRegistrationAvailability())
+    queryClient.setQueryData(otherAttendanceKey, { ...createMockAttendance(), id: secondEvent.attendance.id })
+    const update = createUpdate("user-one")
+
+    await act(async () => sendUpdate(update))
+    expect(queryClient.getQueryData(attendanceKey)?.attendees).toEqual([update.attendee])
+    expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(otherAttendanceKey)?.isInvalidated).toBe(false)
+
+    await act(async () => sendUpdate({ ...update, status: "deregistered" }))
+    expect(queryClient.getQueryData(attendanceKey)?.attendees).toEqual([])
+  })
+
+  it("patches other attendees and pool availability without invalidating the preview", async () => {
+    await renderSubscription()
+    const attendanceKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
+    const availabilityKey = queryOptions.event.attendance.getRegistrationAvailability.queryKey({
+      attendanceId: firstEvent.attendance.id,
+    })
+    const attendance = createMockAttendance({ attendees: [] })
+    const availability = createMockRegistrationAvailability()
+    queryClient.setQueryData(attendanceKey, attendance)
+    queryClient.setQueryData(availabilityKey, availability)
+    const update = createUpdate()
+    const poolId = availability.pool?.id ?? ""
+    update.poolOccupancies = [{ poolId, registeredCount: 10, capacity: 10, isPoolFull: true }]
+
+    await act(async () => sendUpdate(update))
+    expect(queryClient.getQueryState(attendanceKey)?.isInvalidated).toBe(false)
+    expect(queryClient.getQueryData(attendanceKey)?.attendees).toEqual([update.attendee])
+    expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(false)
+    expect(queryClient.getQueryData(availabilityKey)?.pool?.isPoolFull).toBe(true)
+    expect(queryClient.getQueryData(availabilityKey)?.registration?.willBeQueued).toBe(true)
+  })
+
+  it("refreshes covered preview queries when the bulk stream reconnects", async () => {
+    await renderSubscription([firstEvent])
+    const attendanceKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
+    const availabilityKey = queryOptions.event.attendance.getRegistrationAvailability.queryKey({
+      attendanceId: firstEvent.attendance.id,
+    })
+    queryClient.setQueryData(attendanceKey, createMockAttendance())
+    queryClient.setQueryData(availabilityKey, createMockRegistrationAvailability())
+
+    await act(async () => startConnection())
+    expect(queryClient.getQueryState(attendanceKey)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(true)
+  })
+
   it("uses one stream for unique event IDs and keeps it stable when events are reordered", async () => {
     await renderSubscription([firstEvent, secondEvent, firstEvent])
     expect(requestInputs).toEqual([{ eventIds: [firstEvent.event.id, secondEvent.event.id].sort() }])

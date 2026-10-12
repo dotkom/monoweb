@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { EventPreviewLink } from "@/components/molecules/EventListItem/EventPreviewLink"
 import { EventPreview } from "./EventPreview"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
+import type { EventListSubscription } from "../hooks/useEventListSubscription"
 
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
@@ -174,10 +175,10 @@ afterEach(async () => {
   Reflect.deleteProperty(Element.prototype, "getAnimations")
 })
 
-async function renderPreview(nextEvent?: typeof event) {
+async function renderPreview(nextEvent?: typeof event, listSubscription?: EventListSubscription) {
   await act(async () => {
     root.render(
-      <EventPreview>
+      <EventPreview listSubscription={listSubscription}>
         <EventPreviewLink event={event} href="/arrangementer/testevent/event-one">
           Testevent
         </EventPreviewLink>
@@ -194,6 +195,14 @@ async function renderPreview(nextEvent?: typeof event) {
 }
 
 describe("desktop event preview", () => {
+  it("passes the list subscription to its attendance card", async () => {
+    const subscription = { attendanceIds: ["attendance-one"], isConnected: true }
+    const link = await renderPreview(undefined, subscription)
+    await act(async () => link.click())
+
+    expect(mocks.attendance).toHaveBeenLastCalledWith(expect.objectContaining({ bulkSubscription: subscription }))
+  })
+
   it("opens a side drawer with ordered details and a dimmed backdrop without blur", async () => {
     const link = await renderPreview()
     expect(mocks.query).not.toHaveBeenCalled()

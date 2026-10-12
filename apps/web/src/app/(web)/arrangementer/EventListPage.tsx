@@ -273,8 +273,8 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
 
   const isLoading = isFutureListLoading || (orderedFutureEvents.length === 0 && isPastLoading)
 
-  useEventListSubscription({
-    events: [...orderedFutureEvents, ...pastEventWithAttendances],
+  const eventListSubscription = useEventListSubscription({
+    events: [...futureEventWithAttendances, ...pastEventWithAttendances, ...registeredEvents],
     enabled: isEventListView,
   })
 
@@ -292,6 +292,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
 
   return (
     <EventPreview
+      listSubscription={eventListSubscription}
       className="flex flex-col gap-4"
       backgroundVerificationEnabled={isEventListView && isLoading === false}
     >

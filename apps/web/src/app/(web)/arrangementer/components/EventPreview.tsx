@@ -31,12 +31,18 @@ import { OrganizerPill } from "./OrganizerPill"
 import { LocationBox } from "./TimeLocationBox/LocationBox"
 import { TimeBox } from "./TimeLocationBox/TimeBox"
 import { EventTurnstileProvider } from "./EventTurnstileProvider"
+import type { EventListSubscription } from "../hooks/useEventListSubscription"
 
 export function EventPreview({
   children,
   className,
   backgroundVerificationEnabled = true,
-}: PropsWithChildren<{ className?: string; backgroundVerificationEnabled?: boolean }>) {
+  listSubscription = null,
+}: PropsWithChildren<{
+  className?: string
+  backgroundVerificationEnabled?: boolean
+  listSubscription?: EventListSubscription | null
+}>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
   const [open, setOpen] = useState(false)
 
@@ -140,7 +146,12 @@ export function EventPreview({
               <ScrollArea.Viewport className="h-full w-full overscroll-contain">
                 <div className="p-4">
                   {selectedEvent !== null && (
-                    <EventPreviewDetails key={selectedEvent.id} eventId={selectedEvent.id} enableTurnstile={open} />
+                    <EventPreviewDetails
+                      key={selectedEvent.id}
+                      eventId={selectedEvent.id}
+                      enableTurnstile={open}
+                      listSubscription={listSubscription}
+                    />
                   )}
                 </div>
               </ScrollArea.Viewport>
@@ -156,7 +167,15 @@ export function EventPreview({
   )
 }
 
-function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; enableTurnstile: boolean }) {
+function EventPreviewDetails({
+  eventId,
+  enableTurnstile,
+  listSubscription,
+}: {
+  eventId: string
+  enableTurnstile: boolean
+  listSubscription: EventListSubscription | null
+}) {
   const trpc = useTRPC()
   const { dbUser } = useAuthenticatedUser()
 
@@ -196,6 +215,9 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
   }
 
   const { event, attendance } = eventDetail
+
+  const bulkSubscription =
+    attendance !== null && listSubscription?.attendanceIds.includes(attendance.id) ? listSubscription : undefined
 
   const showAttendanceCard = attendance !== null
   const showDescription = event.description !== ""
@@ -250,6 +272,7 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
           event={event}
           enableTurnstile={enableTurnstile}
           deferTurnstile
+          bulkSubscription={bulkSubscription}
         />
       )}
     </div>
