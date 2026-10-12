@@ -347,9 +347,10 @@ export function getAttendanceService(
     )
   }
 
-  async function clearAttendeeCompletionDeadline(handle: DBHandle, attendeeId: AttendeeId): Promise<void> {
+  async function clearAttendeeCompletionDeadline(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee> {
     await cancelPendingAttendeeCompletion(handle, attendeeId)
-    await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
+
+    return await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
   }
 
   function sendQueueNotificationEmail(event: Event, position: number, attendee: Attendee) {
@@ -1328,16 +1329,19 @@ export function getAttendanceService(
         return
       }
 
+      let updatedAttendee: Attendee
+
       try {
         await paymentService.charge(attendee.paymentId)
-        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+
+        updatedAttendee = await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
           paymentChargedAt: getCurrentUTC(),
         })
       } catch (e) {
         if (e instanceof ResourceExhaustedError) {
           logger.info(`Attendee ${attendee.id} has already been charged`)
 
-          await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
+          updatedAttendee = await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
             paymentChargedAt: getCurrentUTC(),
           })
         } else {
@@ -1345,6 +1349,8 @@ export function getAttendanceService(
           throw e
         }
       }
+
+      emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
     },
 
     async cancelAttendeePayment(handle, attendeeId, refundedByUserId: UserId) {
@@ -1380,7 +1386,9 @@ export function getAttendanceService(
         paymentRefundedByUserId: refundedByUserId,
       })
 
-      await clearAttendeeCompletionDeadline(handle, attendeeId)
+      const updatedAttendee = await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+      emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
     },
 
     async syncAttendeePayment(handle, attendeeId) {
@@ -1437,18 +1445,17 @@ export function getAttendanceService(
       } else {
         throw new FailedPreconditionError(`Payment(ID=${attendee.paymentId}) has an unknown status: ${payment.status}`)
       }
-      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, updatedPayment)
 
-      if (payment.status === "UNPAID") {
-        return
+      let updatedAttendee = await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, updatedPayment)
+
+      // Send the final payment state, including the cleared completion deadline, in a single update.
+      const shouldClearCompletionDeadline = payment.status !== "UNPAID"
+
+      if (shouldClearCompletionDeadline) {
+        updatedAttendee = await clearAttendeeCompletionDeadline(handle, attendeeId)
       }
 
-      if (payment.status === "CANCELLED") {
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
-        return
-      }
-
-      await clearAttendeeCompletionDeadline(handle, attendeeId)
+      emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
     },
 
     async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
@@ -1464,8 +1471,14 @@ export function getAttendanceService(
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
-      if (getMissingAttendanceCompletionRequirements(attendance, attendee).length === 0) {
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+      const missingCompletionRequirements = getMissingAttendanceCompletionRequirements(attendance, attendee)
+      const hasCompletedAttendance = missingCompletionRequirements.length === 0
+
+      if (hasCompletedAttendance) {
+        const updatedAttendee = await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+        emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
+
         return
       }
 
@@ -1520,12 +1533,19 @@ export function getAttendanceService(
           ignoreDeregistrationWindow: true,
         })
       } else {
+        const hasBeenCharged = payment.status === "PAID"
+        const paymentReservedAt = getCurrentUTC()
+        const paymentChargedAt = hasBeenCharged ? getCurrentUTC() : null
+
         await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-          paymentReservedAt: getCurrentUTC(),
-          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
+          paymentReservedAt,
+          paymentChargedAt,
           paymentLink: null,
         })
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+        const updatedAttendee = await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+        emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
       }
     },
 
