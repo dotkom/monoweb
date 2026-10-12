@@ -1,7 +1,7 @@
 "use client"
 
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
+import { type AttendanceView, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
@@ -73,7 +73,7 @@ const getDisabledText = (
   registrationAvailability: RegistrationAvailability | undefined,
   turnstileStatus: TurnstileStatus,
   isLoggedIn: boolean,
-  attendance: Attendance
+  attendance: AttendanceView
 ): string | null => {
   if (!isLoggedIn) {
     return "Du må være innlogget for å melde deg på"
@@ -132,7 +132,7 @@ const getDisabledText = (
 interface RegistrationButtonProps {
   registerForAttendance: () => void
   unregisterForAttendance: (deregisterReason: DeregisterReasonFormResult | null) => void
-  attendance: Attendance
+  attendance: AttendanceView
   registrationAvailability: RegistrationAvailability | undefined
   user: User | null
   isLoading: boolean

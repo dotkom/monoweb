@@ -6,7 +6,7 @@ import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import { useCurrentTime } from "@/utils/use-current-time"
 import {
-  type Attendance,
+  type AttendanceView,
   type AttendanceSummary,
   type Attendee,
   attendeeHasPendingCompletionDeadline,
@@ -28,7 +28,7 @@ interface AttendanceStatusClassNames {
 }
 
 interface EventListItemAttendanceStatusProps {
-  attendance: AttendanceSummary | Attendance
+  attendance: AttendanceSummary | AttendanceView
   attendee: Attendee | null
   eventEndInPast: boolean
   size?: "default" | "sm" | "lg"

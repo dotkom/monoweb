@@ -76,6 +76,36 @@ export const AttendeeSchema = AttendeeBaseSchema.extend({
   user: UserSchema,
 })
 
+export const AttendeeSummarySchema = AttendeeSchema.pick({
+  id: true,
+  userId: true,
+  attendanceId: true,
+  attendancePoolId: true,
+  registered: true,
+  userGrade: true,
+  earliestReservationAt: true,
+}).extend({
+  user: UserSchema.pick({
+    id: true,
+    name: true,
+    username: true,
+    imageUrl: true,
+  }).extend({
+    flags: UserSchema.shape.flags.element
+      .pick({
+        name: true,
+        description: true,
+        imageUrl: true,
+        awardedAt: true,
+        awardedReason: true,
+      })
+      .array(),
+    memberships: UserSchema.shape.memberships.element.pick({ type: true }).array(),
+  }),
+})
+
+export type AttendeeSummary = z.infer<typeof AttendeeSummarySchema>
+
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export const AttendeeWriteSchema = AttendeeSchema.pick({
   attendedAt: true,
@@ -146,6 +176,10 @@ export const AttendanceSchema = AttendanceBaseSchema.extend({
   pools: z.array(AttendancePoolSchema),
   attendees: z.array(AttendeeSchema),
 })
+
+export type AttendanceView = Omit<Attendance, "attendees"> & {
+  attendees: (Attendee | AttendeeSummary)[]
+}
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export const AttendanceWriteSchema = AttendanceSchema.pick({
@@ -260,13 +294,6 @@ export const RegisterChangeEventSchema = z.object({
 })
 export type RegisterChangeEvent = z.infer<typeof RegisterChangeEventSchema>
 
-const RegisterChangeAttendeeSchema = AttendeeSchema.pick({
-  id: true,
-  userId: true,
-  attendanceId: true,
-  registered: true,
-})
-
 export const BulkRegisterChangeEventSchema = z.discriminatedUnion("isCurrentUser", [
   RegisterChangeEventSchema.extend({
     isCurrentUser: z.literal(true),
@@ -274,7 +301,7 @@ export const BulkRegisterChangeEventSchema = z.discriminatedUnion("isCurrentUser
   }),
   RegisterChangeEventSchema.extend({
     isCurrentUser: z.literal(false),
-    attendee: RegisterChangeAttendeeSchema,
+    attendee: AttendeeSummarySchema,
     registeredAttendeeCount: z.number().int().nonnegative(),
   }),
 ])
@@ -294,7 +321,7 @@ export function buildBulkRegisterChangeEvent(
 
   return {
     isCurrentUser: false,
-    attendee: RegisterChangeAttendeeSchema.parse(attendee),
+    attendee: AttendeeSummarySchema.parse(attendee),
     status,
     poolOccupancies,
     registeredAttendeeCount,
@@ -315,7 +342,7 @@ export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
   })
 }
 
-export function getRegisteredAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+export function getRegisteredAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.registered).length
   }
@@ -323,7 +350,7 @@ export function getRegisteredAttendeeCount(attendance: Attendance, poolId?: Atte
   return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 1 : 0), 0)
 }
 
-export function getQueuedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+export function getQueuedAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
     return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && !attendee.registered)
       .length
@@ -332,7 +359,7 @@ export function getQueuedAttendeeCount(attendance: Attendance, poolId?: Attendan
   return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 0 : 1), 0)
 }
 
-export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary): number {
+export function getAttendanceCapacity(attendance: Pick<Attendance, "pools">): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
@@ -351,7 +378,7 @@ export function isAttendable(user: User, pool: AttendancePool) {
   return pool.yearCriteria.includes(grade)
 }
 
-export const getAttendee = (attendance: Attendance | AttendanceSummary | null, user: User | UserId | null) => {
+export const getAttendee = (attendance: AttendanceView | AttendanceSummary | null, user: User | UserId | null) => {
   if (!attendance) {
     return null
   }
@@ -366,10 +393,14 @@ export const getAttendee = (attendance: Attendance | AttendanceSummary | null, u
 
   const userId = typeof user === "string" ? user : user.id
 
-  return attendance.attendees?.find((attendee) => attendee.userId === userId) ?? null
+  return (
+    attendance.attendees.find(
+      (attendee): attendee is Attendee => attendee.userId === userId && "selections" in attendee
+    ) ?? null
+  )
 }
 
-export const getAttendablePool = (attendance: Attendance, user: User | null) => {
+export const getAttendablePool = (attendance: AttendanceView, user: User | null) => {
   if (!user) {
     return null
   }
@@ -383,7 +414,7 @@ export const getAttendablePool = (attendance: Attendance, user: User | null) => 
   return attendance.pools.find((pool) => isAttendable(user, pool)) ?? null
 }
 
-export const getNonAttendablePools = (attendance: Attendance, user: User | null) => {
+export const getNonAttendablePools = (attendance: AttendanceView, user: User | null) => {
   const attendablePool = getAttendablePool(attendance, user)
 
   return attendance.pools
@@ -398,7 +429,7 @@ export const getNonAttendablePools = (attendance: Attendance, user: User | null)
     })
 }
 
-export const getAttendeeQueuePosition = (attendance: Attendance, user: User | null) => {
+export const getAttendeeQueuePosition = (attendance: AttendanceView, user: User | null) => {
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
 
@@ -491,7 +522,7 @@ export function attendeeHasPendingCompletionDeadline(
 }
 
 export function buildRegistrationAvailabilityCompletionView(
-  attendance: Attendance,
+  attendance: Pick<Attendance, "attendancePrice">,
   attendee: Attendee | null
 ): RegistrationAvailabilityCompletionView | null {
   if (attendee === null) {

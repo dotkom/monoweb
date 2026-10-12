@@ -1,4 +1,4 @@
-import type { Attendance } from "@dotkomonline/rpc/attendance"
+import type { AttendanceView } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import {
   Dialog,
@@ -20,7 +20,7 @@ import { AttendeeList } from "./AttendeeList/AttendeeList"
 interface ViewAttendeesButtonProps {
   attendeeListOpen: boolean
   setAttendeeListOpen: (open: boolean) => void
-  attendance: Attendance
+  attendance: AttendanceView
   user: User | null
 }
 
