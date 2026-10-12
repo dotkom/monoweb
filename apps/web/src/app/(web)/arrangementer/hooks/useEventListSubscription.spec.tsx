@@ -181,6 +181,66 @@ function createUpdate(currentUserId: string | null = null): BulkRegisterChangeEv
 }
 
 describe("event list subscription", () => {
+  it("patches your payment update and refreshes availability without refetching event lists", async () => {
+    await renderSubscription()
+
+    const { summariesKey, registeredEventsKey, featuredEventsKey } = seedLists()
+    const attendee = createMockAttendee({ userId: "user-one", completionDeadline: new Date() })
+
+    const attendanceKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
+    const availabilityKey = queryOptions.event.attendance.getRegistrationAvailability.queryKey({
+      attendanceId: firstEvent.attendance.id,
+    })
+
+    const initialAttendance = createMockAttendance({ attendees: [attendee] })
+    const initialAvailability = createMockRegistrationAvailability()
+
+    queryClient.setQueryData(attendanceKey, initialAttendance)
+    queryClient.setQueryData(availabilityKey, initialAvailability)
+
+    const updatedAttendee = {
+      ...attendee,
+      paymentReservedAt: new Date(),
+      completionDeadline: null,
+    }
+
+    const poolOccupancies = [{ poolId: attendee.attendancePoolId, registeredCount: 1, capacity: 10, isPoolFull: false }]
+
+    const update = buildBulkRegisterChangeEvent(
+      {
+        status: "updated",
+        attendee: updatedAttendee,
+        poolOccupancies,
+      },
+      attendee.userId
+    )
+
+    await act(async () => {
+      sendUpdate(update)
+      sendUpdate(update)
+    })
+
+    const previewAttendance = queryClient.getQueryData(attendanceKey)
+    const availabilityState = queryClient.getQueryState(availabilityKey)
+    const eventSummaries = queryClient.getQueryData(summariesKey)
+    const summaryAttendance = eventSummaries?.pages[0].items[0].attendance
+
+    expect(previewAttendance?.attendees).toEqual([updatedAttendee])
+    expect(availabilityState?.isInvalidated).toBe(true)
+    expect(summaryAttendance?.currentUserAttendee).toEqual(updatedAttendee)
+    expect(summaryAttendance?.registeredAttendeeCount).toBe(1)
+
+    const eventListQueryKeys = [summariesKey, registeredEventsKey, featuredEventsKey]
+
+    for (const queryKey of eventListQueryKeys) {
+      const queryState = queryClient.getQueryState(queryKey)
+
+      expect(queryState?.isInvalidated).toBe(false)
+    }
+
+    expect(fetchAttendance).not.toHaveBeenCalled()
+  })
+
   it("keeps your full attendee and updates queue positions and counts from other attendees' summaries", async () => {
     await renderSubscription()
     const user = createMockUser({ id: "current-user" })
