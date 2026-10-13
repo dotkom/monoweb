@@ -7,7 +7,6 @@ import type { UserNotification } from "@dotkomonline/rpc/notification"
 import {
   Button,
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuTrigger,
   Text,
   Title,
@@ -18,14 +17,15 @@ import {
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconBell, IconChecks, IconLogin2 } from "@tabler/icons-react"
 import { useEffect, useRef, useState } from "react"
+import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationItem } from "./NotificationItem"
 import { NotificationPayload } from "./NotificationPayload"
 
 const triggerClassName =
-  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700"
+  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
 
 const contentClassName =
-  "flex w-[min(24rem,calc(100vw-2rem))] max-h-[min(34rem,calc(100dvh-var(--navbar-height)-5rem))] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white p-0 shadow-md dark:border-stone-700 dark:bg-stone-900"
+  "flex w-[calc(100vw-2rem)] xs:w-96 max-h-[min(34rem,calc(100dvh-var(--navbar-height)-5rem))] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white p-0 shadow-md dark:border-stone-700 dark:bg-stone-900"
 
 export function NotificationDropdown({ isAuthenticated }: { isAuthenticated: boolean }) {
   if (!isAuthenticated) {
@@ -76,7 +76,7 @@ function AuthenticatedNotificationDropdown() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
+      <NavbarDropdownContent className={contentClassName}>
         <div className="flex shrink-0 items-center justify-between gap-2 px-4 pt-4">
           <Title size="md" className="font-semibold text-gray-900 dark:text-white">
             Varslinger
@@ -107,9 +107,7 @@ function AuthenticatedNotificationDropdown() {
           isLoading={notificationsQuery.isLoading}
           hasNextPage={notificationsQuery.hasNextPage === true}
           hasNoNotifications={hasNoNotifications}
-          onFetchNextPage={() => {
-            void notificationsQuery.fetchNextPage()
-          }}
+          onFetchNextPage={notificationsQuery.fetchNextPage}
           onMarkAsRead={(notificationId) => markAsReadMutation.mutate({ notificationId })}
           onNavigate={() => setIsOpen(false)}
         />
@@ -119,7 +117,7 @@ function AuthenticatedNotificationDropdown() {
             Se alle varslinger
           </Button>
         </div>
-      </DropdownMenuContent>
+      </NavbarDropdownContent>
     </DropdownMenu>
   )
 }
@@ -243,7 +241,7 @@ function UnauthenticatedNotificationDropdown() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
+      <NavbarDropdownContent className={contentClassName}>
         <div className="flex flex-col gap-4 p-4">
           <Title size="md" className="font-semibold text-gray-900 dark:text-white">
             Varslinger
@@ -262,7 +260,7 @@ function UnauthenticatedNotificationDropdown() {
             Logg inn
           </Button>
         </div>
-      </DropdownMenuContent>
+      </NavbarDropdownContent>
     </DropdownMenu>
   )
 }
