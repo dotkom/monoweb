@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events"
 import type { TRPCContext } from "../../trpc"
-import type { Attendee, RegisterChangeEvent } from "./attendance"
+import { AttendeeSummarySchema, type Attendee, type RegisterChangeEvent } from "./attendance"
 import { attendanceRouter } from "./attendance-router"
 
 const attendee: Attendee = {
@@ -88,7 +88,23 @@ describe("bulk registration subscription", () => {
 
     expect((await nextUpdate).value).toEqual({
       isCurrentUser: false,
-      attendee: { id: attendee.id, userId: attendee.userId, attendanceId: attendee.attendanceId, registered: true },
+      attendee: {
+        id: attendee.id,
+        userId: attendee.userId,
+        attendanceId: attendee.attendanceId,
+        attendancePoolId: attendee.attendancePoolId,
+        registered: true,
+        userGrade: attendee.userGrade,
+        earliestReservationAt: attendee.earliestReservationAt,
+        user: {
+          id: attendee.user.id,
+          name: attendee.user.name,
+          username: attendee.user.username,
+          imageUrl: attendee.user.imageUrl,
+          flags: attendee.user.flags,
+          memberships: attendee.user.memberships,
+        },
+      },
       status: "registered",
       poolOccupancies: registerChange.poolOccupancies,
       registeredAttendeeCount: 5,
@@ -107,6 +123,55 @@ describe("bulk registration subscription", () => {
     expect((await nextUpdate).value).toEqual({ ...registerChange, isCurrentUser: true, registeredAttendeeCount: 5 })
 
     await subscription.return()
+  })
+
+  it("strips private fields from the public attendee and nested user", () => {
+    const summary = AttendeeSummarySchema.parse({
+      ...attendee,
+      user: {
+        ...attendee.user,
+        flags: [
+          {
+            id: "flag-one",
+            name: "EXCEPTIONALLY_DISTINGUISHED",
+            description: "Badge description",
+            imageUrl: "https://example.com/badge.png",
+            awardedAt: new Date("2025-01-01"),
+            awardedReason: "Award reason",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ],
+        memberships: [
+          {
+            id: "membership-one",
+            type: "KNIGHT",
+            userId: attendee.userId,
+            start: new Date(),
+            end: null,
+            specialization: null,
+            semester: null,
+          },
+        ],
+      },
+    })
+    expect(summary).not.toHaveProperty("paymentLink")
+    expect(summary).not.toHaveProperty("paymentId")
+    expect(summary).not.toHaveProperty("completionDeadline")
+    expect(summary).not.toHaveProperty("selections")
+    expect(summary.user).not.toHaveProperty("email")
+    expect(summary.user).not.toHaveProperty("phone")
+    expect(summary.user).not.toHaveProperty("dietaryRestrictions")
+    expect(summary.user.flags).toEqual([
+      {
+        name: "EXCEPTIONALLY_DISTINGUISHED",
+        description: "Badge description",
+        imageUrl: "https://example.com/badge.png",
+        awardedAt: new Date("2025-01-01"),
+        awardedReason: "Award reason",
+      },
+    ])
+    expect(summary.user.memberships).toEqual([{ type: "KNIGHT" }])
   })
 
   it.each([

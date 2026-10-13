@@ -1,6 +1,6 @@
 import { RollingNumber } from "@/components/RollingNumber"
 import {
-  type Attendance,
+  type AttendanceView,
   type AttendancePool,
   getAttendablePool,
   getNonAttendablePools,
@@ -20,7 +20,7 @@ import {
 import { IconChevronDown, IconHourglassEmpty } from "@tabler/icons-react"
 
 interface NonAttendablePoolsBoxProps {
-  attendance: Attendance
+  attendance: AttendanceView
   user: User | null
 }
 
@@ -56,7 +56,7 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
 
 interface AttendanceBoxPoolSmallProps {
   pool: AttendancePool
-  attendance: Attendance
+  attendance: AttendanceView
 }
 
 const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProps) => {

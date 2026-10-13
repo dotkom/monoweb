@@ -1,4 +1,4 @@
-import { type Attendance, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
+import { type AttendanceView, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
 import { Text, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconLock, IconLockOpen2, IconSquareX } from "@tabler/icons-react"
@@ -40,7 +40,7 @@ const dateComponent = (label: string, date: Date, time: string, showNotice?: boo
 }
 
 interface AttendanceDateInfoProps {
-  attendance: Attendance
+  attendance: AttendanceView
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
 }

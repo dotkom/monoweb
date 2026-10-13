@@ -1,10 +1,10 @@
 import { cn, Text } from "@dotkomonline/ui"
 import { getUserIcons, getUserPlate } from "./UserPlate"
-import type { Attendee } from "@dotkomonline/rpc/attendance"
+import type { AttendeeSummary } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 
 interface AttendeeListProps {
-  attendees: Attendee[]
+  attendees: AttendeeSummary[]
   user: User
   maxNumberOfAttendees: number
 }

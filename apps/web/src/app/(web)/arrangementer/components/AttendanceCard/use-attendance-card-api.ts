@@ -13,6 +13,7 @@ import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "../mutations"
 import { patchAttendanceFromRegisterChange } from "./patchAttendanceFromRegisterChange"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
+import { attendanceCardQueryOptions } from "./attendanceCardQueryOptions"
 
 interface UseAttendanceCardApiOptions {
   initialAttendance: Attendance
@@ -32,18 +33,12 @@ export const useAttendanceCardApi = ({
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
   const [isCloseToEvent, setIsCloseToEvent] = useState(false)
 
-  const { data: attendance } = useQuery(
-    trpcClient.event.attendance.getAttendance.queryOptions(
-      {
-        id: initialAttendance.id,
-      },
-      {
-        initialData: initialAttendance,
-        enabled: Boolean(user),
-        refetchInterval: isCloseToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
-      }
-    )
-  )
+  const { data: attendance } = useQuery({
+    ...attendanceCardQueryOptions(trpcClient, initialAttendance.id),
+    initialData: initialAttendance,
+    enabled: Boolean(user),
+    refetchInterval: isCloseToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
+  })
 
   const { data: registrationAvailability } = useQuery(
     trpcClient.event.attendance.getRegistrationAvailability.queryOptions(
@@ -67,9 +62,8 @@ export const useAttendanceCardApi = ({
           setTRPCSSERegisterChangeConnectionState(state.state)
         },
         onData: ({ status, attendee: updatedAttendee, poolOccupancies }) => {
-          queryClient.setQueryData(
-            trpcClient.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
-            (oldData) => patchAttendanceFromRegisterChange(oldData, { status, attendee: updatedAttendee })
+          queryClient.setQueryData(attendanceCardQueryOptions(trpcClient, initialAttendance.id).queryKey, (oldData) =>
+            patchAttendanceFromRegisterChange(oldData, { status, attendee: updatedAttendee })
           )
 
           if (user && updatedAttendee.userId === user.id) {
@@ -123,6 +117,7 @@ export const useAttendanceCardApi = ({
 
   const registerMutation = useRegisterMutation({ onSuccess: invalidateRegistrationAvailability })
   const deregisterMutation = useDeregisterMutation({ onSuccess: invalidateRegistrationAvailability })
+
   const selectionsMutation = useSetSelectionsOptionsMutation()
 
   const registerForAttendance = (turnstileToken: string) => {

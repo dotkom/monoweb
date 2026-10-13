@@ -4,7 +4,7 @@ import { useCountdown } from "@/utils/countdown/use-countdown"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
-  type Attendance,
+  type AttendanceView,
   type Attendee,
   attendeeHasPendingCompletionDeadline,
   buildRegistrationAvailabilityCompletionView,
@@ -53,7 +53,7 @@ const MAX_REFUND_PROCESSING_DAYS = 12
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
 interface MainPoolCardProps {
-  attendance: Attendance
+  attendance: AttendanceView
   user: User | null
   authorizeUrl: string
   chargeScheduleDate?: Date | null
@@ -334,7 +334,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
 }
 
 interface AttendanceStatusProps {
-  attendance: Attendance
+  attendance: AttendanceView
   attendee: Attendee | null
   actionIsRequired: boolean
 }
@@ -399,7 +399,7 @@ const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: Attendance
 }
 
 interface PaymentStatusProps {
-  attendance: Attendance
+  attendance: AttendanceView
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
   hideUnpaidStatus?: boolean
