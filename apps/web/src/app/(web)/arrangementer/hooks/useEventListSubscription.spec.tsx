@@ -173,7 +173,7 @@ function createUpdate(currentUserId: string | null = null): BulkRegisterChangeEv
   return buildBulkRegisterChangeEvent(
     {
       attendee: createMockAttendee({ userId: "user-one" }),
-      status: "reserved",
+      status: "updated",
       poolOccupancies: [{ poolId: "pool-one", registeredCount: 4, capacity: 10, isPoolFull: false }],
     },
     currentUserId
@@ -206,7 +206,7 @@ describe("event list subscription", () => {
     const update = buildBulkRegisterChangeEvent(
       {
         attendee: otherAttendee,
-        status: "reserved",
+        status: "updated",
         poolOccupancies: [],
       },
       user.id
