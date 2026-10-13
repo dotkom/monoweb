@@ -337,6 +337,23 @@ export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: Gro
   return typesA.symmetricDifference(typesB).size === 0
 }
 
+export function hasNonDefaultGroupRole(membership: GroupMembership, group: Group): boolean {
+  return membership.roles.some((role) => role.id !== group.defaultGroupRoleId)
+}
+
+export function canEndInterestGroupMemberships(memberships: GroupMembership[], group: Group): boolean {
+  const activeMembershipsForGroup = getActiveMembershipsForGroup(memberships, group.slug)
+  const hasNoNonDefaultRoles = activeMembershipsForGroup.every(
+    (membership) => !hasNonDefaultGroupRole(membership, group)
+  )
+
+  return hasNoNonDefaultRoles
+}
+
+export function getActiveMembershipsForGroup(memberships: GroupMembership[], groupId: string): GroupMembership[] {
+  return memberships.filter((membership) => membership.groupId === groupId && isGroupMembershipActive(membership))
+}
+
 export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {
   return membership.roles.some((role) => role.type === type)
 }
