@@ -12,20 +12,18 @@ function getMillisecondsUntilNextDeadline(deadlineTimes: (number | undefined)[],
     return null
   }
 
-  return upcomingDeadlineTimes[0] - now + 50
+  // Browsers clamp overflowing timeouts to a few milliseconds.
+  return Math.min(upcomingDeadlineTimes[0] - now + 50, 2 ** 31 - 1)
 }
 
-export const useDeadlineTick = (
-  firstDeadline: Date | null | undefined,
-  secondDeadline: Date | null | undefined = null
-) => {
+export const useDeadlineTick = (...deadlines: (Date | null | undefined)[]) => {
   const [tick, setTick] = useState(0)
-  const firstDeadlineTime = firstDeadline?.getTime()
-  const secondDeadlineTime = secondDeadline?.getTime()
+  const deadlineTimesKey = JSON.stringify(deadlines.map((deadline) => deadline?.getTime() ?? null))
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we need to re-run the effect when the tick changes
   useEffect(() => {
-    const delay = getMillisecondsUntilNextDeadline([firstDeadlineTime, secondDeadlineTime])
+    const deadlineTimes: (number | null)[] = JSON.parse(deadlineTimesKey)
+    const delay = getMillisecondsUntilNextDeadline(deadlineTimes.map((deadlineTime) => deadlineTime ?? undefined))
 
     if (delay === null) {
       return
@@ -38,7 +36,7 @@ export const useDeadlineTick = (
     return () => {
       clearTimeout(timeout)
     }
-  }, [firstDeadlineTime, secondDeadlineTime, tick])
+  }, [deadlineTimesKey, tick])
 
   return tick
 }

@@ -6,7 +6,7 @@ import { createMockAttendance, createMockAttendee, createMockUser } from "../../
 vi.mock("@dotkomonline/ui", () => ({
   Text: "p",
   Title: "p",
-  Stripes: ({ children }: PropsWithChildren) => children,
+  Stripes: ({ children }: PropsWithChildren) => <div data-testid="completion-warning">{children}</div>,
   Tooltip: ({ children }: PropsWithChildren) => children,
   TooltipContent: ({ children }: PropsWithChildren) => children,
   TooltipTrigger: ({ children }: PropsWithChildren) => children,
@@ -31,6 +31,25 @@ afterEach(() => {
 })
 
 describe("event payment countdown", () => {
+  it("clears payment warnings immediately after deregistration", () => {
+    const attendee = createMockAttendee({
+      createdAt: new Date(Date.now() - 60_000),
+      completionDeadline: new Date(Date.now() + 60_000),
+      paymentLink: "https://example.com/payment",
+    })
+    const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
+    const updatedAttendance = patchAttendanceFromRegisterChange(attendance, { status: "deregistered", attendee })
+
+    const markup = renderToStaticMarkup(
+      <MainPoolCard attendance={updatedAttendance ?? attendance} user={createMockUser()} authorizeUrl="/login" />
+    )
+
+    expect(markup).toContain("Du er ikke påmeldt")
+    expect(markup).not.toContain("completion-warning")
+    expect(markup).not.toContain("Fullfør påmeldingen innen")
+    expect(markup).not.toContain("Du har ikke betalt")
+  })
+
   it.each([false, true])("keeps an unpaid attendance incomplete without a payment link (expired: %s)", (expired) => {
     const attendee = createMockAttendee({
       createdAt: new Date(Date.now() - 60_000),
