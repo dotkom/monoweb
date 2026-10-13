@@ -1,31 +1,20 @@
 "use client"
 
 import { env } from "@/env"
-import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
-import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import {
-  type Attendance,
-  type AttendanceSelectionResponse,
-  buildRegistrationAvailabilityCompletionView,
-  getAttendee,
-} from "@dotkomonline/rpc/attendance"
+import { type Attendance, buildRegistrationAvailabilityCompletionView, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconCoins, IconEdit } from "@tabler/icons-react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSubscription } from "@trpc/tanstack-react-query"
-import { differenceInMilliseconds, differenceInSeconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
+import { differenceInMilliseconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import { useEffect, useMemo, useState } from "react"
-import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { DeregisterModal } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
-import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "./../mutations"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { AttendanceTurnstile } from "./AttendanceTurnstile"
@@ -35,12 +24,11 @@ import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
-import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
-import { patchAttendanceFromRegisterChange } from "./patchAttendanceFromRegisterChange"
 import { SelectionsForm } from "./SelectionsForm"
 import { TicketButton } from "./TicketButton"
 import { useEventTurnstile } from "../EventTurnstileProvider"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
+import { useAttendanceCardApi } from "./use-attendance-card-api"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
@@ -64,16 +52,12 @@ export const AttendanceCard = ({
   enableTurnstile = true,
   deferTurnstile = false,
 }: AttendanceCardProps) => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
   const backgroundVerification = useEventTurnstile()
   const backgroundToken = backgroundVerification?.token ?? null
 
   const fullPathname = useFullPathname()
   const authorizeUrl = createAuthorizeUrl({ returnTo: fullPathname })
 
-  const [closeToEvent, setCloseToEvent] = useState(false)
   const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
   const [turnstileHasStarted, setTurnstileHasStarted] = useState(false)
@@ -82,30 +66,19 @@ export const AttendanceCard = ({
   const [turnstileGeneration, setTurnstileGeneration] = useState(0)
   const [hideTurnstile, setHideTurnstile] = useState(false)
 
-  const { data: attendance } = useQuery(
-    trpc.event.attendance.getAttendance.queryOptions(
-      {
-        id: initialAttendance.id,
-      },
-      {
-        initialData: initialAttendance,
-        enabled: Boolean(user),
-        refetchInterval: closeToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
-      }
-    )
-  )
-
-  const { data: registrationAvailability } = useQuery(
-    trpc.event.attendance.getRegistrationAvailability.queryOptions(
-      {
-        attendanceId: initialAttendance.id,
-      },
-      {
-        initialData: initialRegistrationAvailability ?? undefined,
-        enabled: Boolean(user),
-      }
-    )
-  )
+  const {
+    attendance,
+    registrationAvailability,
+    registerForAttendance: registerWithToken,
+    deregisterForAttendance,
+    setSelectionOptions: handleSelectionChange,
+    isRegisterActionPending,
+  } = useAttendanceCardApi({
+    initialAttendance,
+    initialRegistrationAvailability,
+    user,
+    onDeregisterSuccess: () => setTurnstileToken(null),
+  })
 
   useEffect(() => {
     setAttendanceStatus(getAttendanceStatus(attendance))
@@ -186,102 +159,11 @@ export const AttendanceCard = ({
     turnstileToken,
   ])
 
-  useSubscription(
-    trpc.event.attendance.onRegisterChange.subscriptionOptions(
-      {
-        attendanceId: attendance?.id ?? "",
-      },
-      {
-        onConnectionStateChange: (state) => {
-          setTRPCSSERegisterChangeConnectionState(state.state)
-        },
-        onData: ({ status, attendee: updatedAttendee, poolOccupancies }) => {
-          queryClient.setQueryData(
-            trpc.event.attendance.getAttendance.queryOptions({ id: attendance?.id }).queryKey,
-            (oldData) => patchAttendanceFromRegisterChange(oldData, { status, attendee: updatedAttendee })
-          )
-
-          if (user && updatedAttendee.userId === user.id) {
-            void queryClient.invalidateQueries(
-              trpc.event.attendance.getRegistrationAvailability.queryOptions({
-                attendanceId: attendance?.id ?? "",
-              })
-            )
-
-            return
-          }
-
-          if (!user) {
-            return
-          }
-
-          const queryOptions = trpc.event.attendance.getRegistrationAvailability.queryOptions({
-            attendanceId: attendance?.id ?? "",
-          })
-
-          queryClient.setQueryData(queryOptions.queryKey, (oldData) =>
-            patchRegistrationAvailabilityFromPoolOccupancies(oldData, poolOccupancies)
-          )
-        },
-      }
-    )
-  )
-
   const punishment = registrationAvailability?.punishment ?? null
   const chargeScheduleDate = registrationAvailability?.deregistration?.chargeScheduleDate ?? null
 
-  useEffect(() => {
-    const attendanceEventDateTimes = [
-      registrationAvailability?.completion?.completionDeadline ?? attendee?.completionDeadline ?? null,
-    ]
-    setCloseToEvent(
-      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
-    )
-  }, [attendee, registrationAvailability?.completion?.completionDeadline])
-
   const [attendeeListOpen, setAttendeeListOpen] = useState(false)
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
-
-  const registerMutation = useRegisterMutation({
-    onSuccess: () => {
-      if (!user) {
-        return
-      }
-
-      void queryClient.invalidateQueries(
-        trpc.event.attendance.getRegistrationAvailability.queryOptions({
-          attendanceId: attendance.id,
-        })
-      )
-    },
-  })
-
-  const deregisterMutation = useDeregisterMutation({
-    onSuccess: () => {
-      if (!user) {
-        return
-      }
-
-      void queryClient.invalidateQueries(
-        trpc.event.attendance.getRegistrationAvailability.queryOptions({
-          attendanceId: attendance.id,
-        })
-      )
-    },
-  })
-
-  const selectionsMutation = useSetSelectionsOptionsMutation()
-
-  const handleSelectionChange = (selections: AttendanceSelectionResponse[]) => {
-    if (!attendee) {
-      return
-    }
-
-    selectionsMutation.mutate({
-      attendeeId: attendee.id,
-      options: selections,
-    })
-  }
 
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
   const paymentLink = completion?.paymentLink ?? null
@@ -300,14 +182,7 @@ export const AttendanceCard = ({
     setTurnstileHasFailed(false)
     setTurnstileGeneration((generation) => generation + 1)
 
-    registerMutation.mutate({ attendanceId: attendance.id, turnstileToken: token })
-  }
-
-  const deregisterForAttendance = (deregisterReason: DeregisterReasonFormResult | null) => {
-    deregisterMutation.mutate(
-      { attendanceId: attendance.id, deregisterReason: deregisterReason ?? undefined },
-      { onSuccess: () => setTurnstileToken(null) }
-    )
+    registerWithToken(token)
   }
 
   const handleTurnstileVerify = (token: string) => {
@@ -332,8 +207,6 @@ export const AttendanceCard = ({
     turnstileHasFailed,
     turnstileHasLoaded,
   })
-
-  const isRegisterActionPending = registerMutation.isPending || deregisterMutation.isPending
 
   const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
 
