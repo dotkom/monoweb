@@ -846,7 +846,7 @@ describe("attendance integration tests", async () => {
     expect(alphaAttendee.registered).toBe(true)
     expect(betaAttendee.registered).toBe(true)
 
-    // Manually move both attendees to the waitlist.
+    // Manually move both attendees to the queue.
     await core.attendanceService.updateAttendeeById(dbClient, alphaAttendee.id, {
       registered: false,
     })

@@ -75,13 +75,13 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
     }, {})
   }, [attendance?.pools])
 
-  const waitlists = useMemo(() => {
+  const queues = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
-      const waitlist = attendees
+      const queue = attendees
         .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.registered)
         .sort((a, b) => a.earliestReservationAt.getTime() - b.earliestReservationAt.getTime())
 
-      acc[pool.id] = waitlist.reduce<Record<string, number>>((map, attendee, idx) => {
+      acc[pool.id] = queue.reduce<Record<string, number>>((map, attendee, idx) => {
         map[attendee.id] = idx + 1
         return map
       }, {})
@@ -99,8 +99,8 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
         return poolDiff
       }
 
-      const aSpot = waitlists[a.attendancePoolId]?.[a.id] ?? null
-      const bSpot = waitlists[b.attendancePoolId]?.[b.id] ?? null
+      const aSpot = queues[a.attendancePoolId]?.[a.id] ?? null
+      const bSpot = queues[b.attendancePoolId]?.[b.id] ?? null
 
       if (aSpot === null && bSpot === null) {
         return a.earliestReservationAt.getTime() - b.earliestReservationAt.getTime()
@@ -114,7 +114,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
 
       return aSpot - bSpot
     })
-  }, [attendees, attendance?.pools, waitlists])
+  }, [attendees, attendance?.pools, queues])
 
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
@@ -254,13 +254,14 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
           )
         },
       }),
-      columnHelper.accessor((attendee) => waitlists[attendee.attendancePoolId]?.[attendee.id] ?? null, {
-        id: "waitlistSpot",
-        header: () => "Venteliste",
+      columnHelper.accessor((attendee) => queues[attendee.attendancePoolId]?.[attendee.id] ?? null, {
+        id: "queueSpot",
+        header: () => "Kø",
         filterFn: (row, columnId, filterValue) => {
-          const onWaitlist = row.getValue<number | null>(columnId) !== null
+          const onQueue = row.getValue<number | null>(columnId) !== null
           const selected = Array.isArray(filterValue) ? filterValue : [filterValue]
-          return selected.includes(onWaitlist)
+
+          return selected.includes(onQueue)
         },
         cell: (info) => {
           const attendee = info.row.original
@@ -348,7 +349,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
       columnHelper,
       updateAttendanceMut,
       pools,
-      waitlists,
+      queues,
       updateAttendeeRegisteredMutation,
       attendance,
       feedbackAnswers,
@@ -372,8 +373,8 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
         filters={[
           { columnId: "attendedAt", label: "Møtt", value: true },
           { columnId: "attendedAt", label: "Ikke møtt", value: false },
-          { columnId: "waitlistSpot", label: "På venteliste", value: true },
-          { columnId: "waitlistSpot", label: "Ikke på venteliste", value: false },
+          { columnId: "queueSpot", label: "I kø", value: true },
+          { columnId: "queueSpot", label: "Ikke i kø", value: false },
         ]}
       />
       {deleteTarget && (

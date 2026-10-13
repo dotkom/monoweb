@@ -66,7 +66,7 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
   }) as Attendee
 
 describe("attendance completion helpers", () => {
-  it("returns QUEUED for waitlisted attendees", () => {
+  it("returns QUEUED for queued attendees", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({ registered: false })
 

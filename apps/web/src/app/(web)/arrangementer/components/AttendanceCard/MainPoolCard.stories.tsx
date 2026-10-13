@@ -85,7 +85,7 @@ export const ActiveRegistration = () => {
     return () => clearTimeout(timeout)
   }, [registeredCount])
 
-  // After 20 "registrations", 1 of 3 new registrations have an accompanying waitlist/queue entry
+  // After 20 "registrations", 1 of 3 new registrations have an accompanying queue entry
   const queuedCount = registeredCount < 20 ? 0 : Math.floor((registeredCount - 20) / 3)
   const attendees = [
     ...Array.from({ length: registeredCount }, () => createMockAttendee({ registered: true })),
