@@ -20,6 +20,7 @@ interface UseAttendanceCardApiOptions {
   initialRegistrationAvailability: AttendanceRouter.GetRegistrationAvailabilityOutput | null
   user: User | null
   onDeregisterSuccess: () => void
+  bulkSubscription?: { isConnected: boolean }
 }
 
 export const useAttendanceCardApi = ({
@@ -27,6 +28,7 @@ export const useAttendanceCardApi = ({
   initialRegistrationAvailability,
   user,
   onDeregisterSuccess,
+  bulkSubscription,
 }: UseAttendanceCardApiOptions) => {
   const trpcClient = useTRPC()
   const queryClient = useQueryClient()
@@ -36,7 +38,7 @@ export const useAttendanceCardApi = ({
   const { data: attendance } = useQuery({
     ...attendanceCardQueryOptions(trpcClient, initialAttendance.id),
     initialData: initialAttendance,
-    enabled: Boolean(user),
+    enabled: Boolean(user) || bulkSubscription !== undefined,
     refetchInterval: isCloseToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
   })
 
@@ -52,12 +54,13 @@ export const useAttendanceCardApi = ({
     )
   )
 
-  useSubscription(
+  const subscription = useSubscription(
     trpcClient.event.attendance.onRegisterChange.subscriptionOptions(
       {
         attendanceId: initialAttendance.id,
       },
       {
+        enabled: bulkSubscription === undefined,
         onConnectionStateChange: (state) => {
           setTRPCSSERegisterChangeConnectionState(state.state)
         },
@@ -115,8 +118,17 @@ export const useAttendanceCardApi = ({
     )
   }
 
-  const registerMutation = useRegisterMutation({ onSuccess: invalidateRegistrationAvailability })
-  const deregisterMutation = useDeregisterMutation({ onSuccess: invalidateRegistrationAvailability })
+  const isSSEConnected = bulkSubscription?.isConnected ?? subscription.status === "pending"
+
+  const registerMutation = useRegisterMutation({
+    onSuccess: invalidateRegistrationAvailability,
+    isSSEConnected,
+  })
+
+  const deregisterMutation = useDeregisterMutation({
+    onSuccess: invalidateRegistrationAvailability,
+    isSSEConnected,
+  })
 
   const selectionsMutation = useSetSelectionsOptionsMutation()
 

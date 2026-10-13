@@ -42,6 +42,7 @@ interface AttendanceCardProps {
   parentEvent: Event | null
   enableTurnstile?: boolean
   deferTurnstile?: boolean
+  bulkSubscription?: { isConnected: boolean }
 }
 
 export const AttendanceCard = ({
@@ -51,6 +52,7 @@ export const AttendanceCard = ({
   initialRegistrationAvailability,
   enableTurnstile = true,
   deferTurnstile = false,
+  bulkSubscription,
 }: AttendanceCardProps) => {
   const backgroundVerification = useEventTurnstile()
   const backgroundToken = backgroundVerification?.token ?? null
@@ -77,6 +79,7 @@ export const AttendanceCard = ({
     initialAttendance,
     initialRegistrationAvailability,
     user,
+    bulkSubscription,
     onDeregisterSuccess: () => setTurnstileToken(null),
   })
 
