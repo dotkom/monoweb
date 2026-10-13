@@ -36,11 +36,9 @@ import type { EventListSubscription } from "../hooks/useEventListSubscription"
 export function EventPreview({
   children,
   className,
-  backgroundVerificationEnabled = true,
   listSubscription = null,
 }: PropsWithChildren<{
   className?: string
-  backgroundVerificationEnabled?: boolean
   listSubscription?: EventListSubscription | null
 }>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
@@ -82,7 +80,7 @@ export function EventPreview({
   }, [open])
 
   return (
-    <EventTurnstileProvider backgroundEnabled={backgroundVerificationEnabled && open === false}>
+    <EventTurnstileProvider backgroundEnabled={open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
         <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
