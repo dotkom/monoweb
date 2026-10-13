@@ -291,11 +291,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const tabValue = isCalendar ? "calendar" : view
 
   return (
-    <EventPreview
-      listSubscription={eventListSubscription}
-      className="flex flex-col gap-4"
-      backgroundVerificationEnabled={isEventListView && isLoading === false}
-    >
+    <EventPreview listSubscription={eventListSubscription} className="flex flex-col gap-4">
       <div className="flex flex-row flex-wrap items-center justify-between gap-3">
         <Title element="h1" size="xl">
           Arrangementer
