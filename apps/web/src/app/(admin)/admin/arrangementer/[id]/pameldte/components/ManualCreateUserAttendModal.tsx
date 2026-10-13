@@ -264,7 +264,7 @@ function getParentRegistrationStatusText(parentEventTitle: string, parentAttende
   }
 
   if (!parentAttendee.registered) {
-    return `På venteliste på forelderarrangementet ${parentEventTitle}`
+    return `I køen til forelderarrangementet ${parentEventTitle}`
   }
 
   return `Påmeldt forelderarrangementet ${parentEventTitle}`
@@ -323,12 +323,12 @@ function PoolOccupancyStatus({ pool, attendance }: { pool: AttendancePool; atten
         {poolIsFull && <IconAlertTriangle className="size-5 text-red-600" />}
         <Text className="text-sm">{getPoolOccupancyText(pool, registeredAttendeeCount)}</Text>
       </div>
-      <WaitlistCount count={queuedAttendeeCount} poolTitle={pool.title} />
+      <QueueCount count={queuedAttendeeCount} poolTitle={pool.title} />
     </div>
   )
 }
 
-function WaitlistCount({ count, poolTitle }: { count: number; poolTitle: string }) {
+function QueueCount({ count, poolTitle }: { count: number; poolTitle: string }) {
   if (count === 0) {
     return null
   }
