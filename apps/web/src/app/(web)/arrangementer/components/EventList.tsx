@@ -2,11 +2,11 @@
 
 import { EventCard, EventCardSkeleton } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { useCurrentTime } from "@/utils/use-current-time"
 import { getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendance, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
 import { Fragment, useEffect, useRef, type FC } from "react"
@@ -77,7 +77,7 @@ export const EventList: FC<EventListProps> = ({
   displayMode = "list",
   userId,
 }: EventListProps) => {
-  const currentDate = getCurrentUTC()
+  const currentDate = useCurrentTime()
   const isCardView = displayMode === "cards"
 
   const filteredFutureEventWithAttendances = alwaysShowChildEvents
