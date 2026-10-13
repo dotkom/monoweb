@@ -5,6 +5,7 @@ import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { captureException } from "@sentry/node"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
+import { withAuditContext } from "src/audit-context"
 import type { Configuration } from "../../configuration"
 import { IllegalStateError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
@@ -59,6 +60,11 @@ export function getLocalTaskExecutor(
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
         await client.$transaction(async (handle) => {
+          const { setName: setAuditTransactionName } = await withAuditContext(handle, {
+            path: `Task/${task.type}`,
+            procedure: `task.${task.type}`,
+          })
+
           const definition = getTaskDefinition(task.type)
           const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
 
@@ -66,38 +72,49 @@ export function getLocalTaskExecutor(
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
                 handle,
-                payload as InferTaskData<ReserveAttendeeTaskDefinition>
+                payload as InferTaskData<ReserveAttendeeTaskDefinition>,
+                setAuditTransactionName
               )
 
             case tasks.MERGE_ATTENDANCE_POOLS.type:
               return await attendanceService.executeMergeEventPoolsTask(
                 handle,
-                payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
+                payload as InferTaskData<MergeAttendancePoolsTaskDefinition>,
+                setAuditTransactionName
               )
 
             case tasks.VERIFY_ATTENDANCE_COMPLETION.type:
               return await attendanceService.executeVerifyAttendanceCompletionTask(
                 handle,
-                payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
+                payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>,
+                setAuditTransactionName
               )
 
             case tasks.CHARGE_ATTENDEE.type:
               return await attendanceService.executeChargeAttendeeTask(
                 handle,
-                payload as InferTaskData<ChargeAttendeeTaskDefinition>
+                payload as InferTaskData<ChargeAttendeeTaskDefinition>,
+                setAuditTransactionName
               )
 
             case tasks.VERIFY_FEEDBACK_ANSWERED.type:
               return await attendanceService.executeVerifyFeedbackAnsweredTask(
                 handle,
-                payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
+                payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>,
+                setAuditTransactionName
               )
 
             case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
-              return await attendanceService.executeSendFeedbackFormLinkEmailsRecurringTask(handle)
+              return await attendanceService.executeSendFeedbackFormLinkEmailsRecurringTask(
+                handle,
+                setAuditTransactionName
+              )
 
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
-              return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(handle)
+              return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(
+                handle,
+                setAuditTransactionName
+              )
           }
 
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
