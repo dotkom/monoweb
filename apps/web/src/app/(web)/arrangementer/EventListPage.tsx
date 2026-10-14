@@ -553,7 +553,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
 
       {isEventListView && (
         <div className="min-w-0 md:grid md:grid-cols-[minmax(0,1fr)_18rem] md:gap-6 lg:gap-8">
-          <div className="mt-2 min-w-0">
+          <div className="mt-2 min-w-0 flex flex-col gap-2">
             {hasActiveFilters && (
               <EventListFilterChips
                 searchTerm={filters.search}
