@@ -1,4 +1,4 @@
-import { addMinutes } from "date-fns"
+import { addMinutes, subMinutes } from "date-fns"
 import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -25,7 +25,9 @@ vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceTurnstile", () 
   AttendanceTurnstile: () => null,
 }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/EventRules", () => ({ EventRules: () => null }))
-vi.mock("@/app/arrangementer/components/AttendanceCard/MainPoolCard", () => ({ MainPoolCard: () => null }))
+vi.mock("@/app/arrangementer/components/AttendanceCard/MainPoolCard", () => ({
+  MainPoolCard: () => <div data-testid="main-pool-card" />,
+}))
 vi.mock("@/app/arrangementer/components/AttendanceCard/NonAttendablePoolsBox", () => ({
   NonAttendablePoolsBox: () => null,
 }))
@@ -63,6 +65,8 @@ describe("attendance card payment actions", () => {
     "reserved",
     "charged",
     "queued",
+    "delayed",
+    "delay-expired",
     "unpaid",
   ])("renders the payment link from the current attendee when availability is stale (%s)", (state) => {
     const attendee = createMockAttendee({
@@ -73,7 +77,9 @@ describe("attendance card payment actions", () => {
     const availability = createMockRegistrationAvailabilityForAttendee(initialAttendance, attendee)
     const updatedAttendee = {
       ...attendee,
-      registered: state !== "queued",
+      createdAt: subMinutes(new Date(), 2),
+      registered: !["queued", "delayed", "delay-expired"].includes(state),
+      earliestReservationAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
       paymentReservedAt: state === "reserved" ? new Date() : null,
       paymentChargedAt: state === "charged" ? new Date() : null,
     }
@@ -92,6 +98,13 @@ describe("attendance card payment actions", () => {
         parentEvent={null}
       />
     )
+
+    if (state === "delayed") {
+      expect(markup).toContain("Påmeldingen din behandles")
+      expect(markup.indexOf("main-pool-card")).toBeLessThan(markup.indexOf("Påmeldingen din behandles"))
+    } else {
+      expect(markup).not.toContain("Påmeldingen din behandles")
+    }
 
     if (state === "unpaid") {
       expect(markup).toContain("Gå til betaling")

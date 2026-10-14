@@ -1,0 +1,22 @@
+.hourglass {
+  animation: hourglass-turn 2s cubic-bezier(0.3, 0, 0.15, 1) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes hourglass-turn {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  45%,
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hourglass {
+    animation: none;
+  }
+}

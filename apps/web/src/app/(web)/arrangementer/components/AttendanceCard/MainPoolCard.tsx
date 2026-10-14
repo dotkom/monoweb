@@ -21,6 +21,7 @@ import {
   IconArrowForward,
   IconArrowUpRight,
   IconCheck,
+  IconCircleDashed,
   IconCircleDashedCheck,
   IconClockCheck,
   IconCoins,
@@ -28,21 +29,11 @@ import {
   IconUserX,
   IconX,
 } from "@tabler/icons-react"
-import {
-  addDays,
-  addSeconds,
-  formatDate,
-  formatDistanceToNowStrict,
-  interval,
-  isAfter,
-  isFuture,
-  isWithinInterval,
-  roundToNearestHours,
-  subMinutes,
-} from "date-fns"
+import { addDays, formatDate, interval, isAfter, isWithinInterval, roundToNearestHours, subMinutes } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
+import { hasRegistrationDelay } from "./hasRegistrationDelay"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
@@ -67,7 +58,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  useDeadlineTick(attendee?.completionDeadline)
+  useDeadlineTick(attendee?.completionDeadline, attendee?.earliestReservationAt)
 
   const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
 
@@ -163,10 +154,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
   const hasWaitlist = queuedAttendeeCount > 0
 
-  const servingPunishment =
-    attendee?.earliestReservationAt &&
-    isFuture(attendee.earliestReservationAt) &&
-    isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
+  const isRegistrationDelayed = hasRegistrationDelay(attendee, now)
 
   const actionIsRequired = hasMissingRequirements && canCompletePayment
   const attendeeState = completion?.attendeeState ?? null
@@ -205,8 +193,14 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               <Text
                 className={cn(
                   "text-lg px-2 py-0.5",
-                  isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-800 rounded-md",
-                  isQueued && actionIsRequired && "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
+                  isQueued &&
+                    !isRegistrationDelayed &&
+                    !actionIsRequired &&
+                    "bg-indigo-200 dark:bg-indigo-800 rounded-md",
+                  isQueued &&
+                    !isRegistrationDelayed &&
+                    actionIsRequired &&
+                    "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
                 )}
                 suppressHydrationWarning
               >
@@ -216,8 +210,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           </div>
 
           <div className="flex flex-col gap-2">
-            {servingPunishment ? (
-              <PunishmentStatus attendee={attendee} actionIsRequired={actionIsRequired} />
+            {isRegistrationDelayed ? (
+              <PendingRegistrationStatus />
             ) : (
               <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
             )}
@@ -307,7 +301,7 @@ interface DelayPillProps {
 
 const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
   const content = mergeDelayHours
-    ? `Denne gruppen får plasser ${mergeDelayHours} timer etter påmeldingsstart`
+    ? `Påmeldingen din behandles ${mergeDelayHours} timer etter at du melder deg på. Du får plass dersom det er ledig. Ellers blir du satt bakerst i køen.`
     : "Denne påmeldingsgruppen kan få plasser senere"
 
   return (
@@ -318,9 +312,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
           <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
         </div>
       </TooltipTrigger>
-      <TooltipContent className="font-normal">
-        <Text>{content}</Text>
-      </TooltipContent>
+      <TooltipContent className="font-normal">{content}</TooltipContent>
     </Tooltip>
   )
 }
@@ -345,6 +337,19 @@ const ReservedStatus = () => {
     <div className="flex flex-row items-center gap-2">
       <IconClockCheck className="size-[1.25em]" />
       <Text>Du har reservert plass</Text>
+    </div>
+  )
+}
+
+const PendingRegistrationStatus = () => {
+  return (
+    <div className="flex flex-row items-center gap-2">
+      <IconCircleDashed className="size-[1.25em]" />
+
+      <div className="flex flex-col gap-0 items-start">
+        <Text>Påmeldingen din er utsatt</Text>
+        <Text className="text-xs">Du vil få plass eller køplass senere</Text>
+      </div>
     </div>
   )
 }
@@ -605,32 +610,5 @@ const CompletionCard = ({
         </div>
       </div>
     </div>
-  )
-}
-
-interface PunishmentStatusProps {
-  attendee: Attendee
-  actionIsRequired: boolean
-}
-
-const PunishmentStatus = ({ attendee, actionIsRequired }: PunishmentStatusProps) => {
-  return (
-    <Tooltip delayDuration={100}>
-      <TooltipTrigger asChild>
-        <div className="flex flex-row gap-2 items-center">
-          <IconHourglassEmpty className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
-          <Text>
-            {formatDistanceToNowStrict(attendee.earliestReservationAt, {
-              locale: nb,
-            })}{" "}
-            utsettelse
-          </Text>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent className="font-normal">
-        Utsettelsen varer til{" "}
-        {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-      </TooltipContent>
-    </Tooltip>
   )
 }
