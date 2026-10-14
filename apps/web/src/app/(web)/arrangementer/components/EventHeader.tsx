@@ -79,7 +79,7 @@ export const EventHeader: FC<Props> = ({ event, showAdminLink }) => {
       </Tilt>
 
       <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center">
-        <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3">
+        <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3 leading-snug">
           {event.title}
         </Title>
         {showAdminLink && (
