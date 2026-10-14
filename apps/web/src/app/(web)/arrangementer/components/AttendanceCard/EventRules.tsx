@@ -6,26 +6,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Button,
+  type ButtonProps,
   Text,
   Title,
 } from "@dotkomonline/ui"
 import { IconBook2, IconX } from "@tabler/icons-react"
 import { useState } from "react"
 
-interface EventRulesProps {
-  className?: string
+type EventRulesProps = ButtonProps & {
+  withIcon?: boolean
 }
 
-export const EventRules = ({ className }: EventRulesProps) => {
+export const EventRules = ({ className, variant = "ghost", withIcon = true, ...props }: EventRulesProps) => {
   const [open, setOpen] = useState(false)
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger
         render={
-          <Button variant="ghost" className={className}>
-            <IconBook2 className="size-4" />
-            Arrangementregler
+          <Button variant={variant} {...props} className={className}>
+            {withIcon && <IconBook2 className="size-4" />}
+            Prikkeregler
           </Button>
         }
       />
@@ -33,7 +34,7 @@ export const EventRules = ({ className }: EventRulesProps) => {
         <div className="flex flex-row gap-4 justify-between">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">
-              Arrangementregler
+              Prikkeregler
             </Title>
           </AlertDialogTitle>
 
