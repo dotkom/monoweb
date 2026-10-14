@@ -149,6 +149,7 @@ export default function UserDetailsLayout({
       viewInWebProps={{
         label: "Se brukerprofil",
         href: new URL(`profil/${user.username}`, env.NEXT_PUBLIC_WEB_URL).toString(),
+        prefetch: false,
       }}
     >
       <UserDetailsContext.Provider value={{ user }}>{children}</UserDetailsContext.Provider>
