@@ -39,7 +39,7 @@ import {
   IconUser,
   IconWorld,
 } from "@tabler/icons-react"
-import { compareAsc, compareDesc } from "date-fns"
+import { compareAsc } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
@@ -111,13 +111,17 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
       }
 
       // Find oldest group member
-      const leftOldestGroupmembership = leftMember.groupMemberships.toSorted((leftGroupMembership, rightGroupMembership) => {
-        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
-      }).at(0)
-      const rightOldestGroupmembership = rightMember.groupMemberships.toSorted((leftGroupMembership, rightGroupMembership) => {
-        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
-      }).at(0)
-      
+      const leftOldestGroupmembership = leftMember.groupMemberships
+        .toSorted((leftGroupMembership, rightGroupMembership) => {
+          return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+        })
+        .at(0)
+      const rightOldestGroupmembership = rightMember.groupMemberships
+        .toSorted((leftGroupMembership, rightGroupMembership) => {
+          return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+        })
+        .at(0)
+
       if (leftOldestGroupmembership === undefined || rightOldestGroupmembership === undefined) {
         // Sanity check
         return 0
