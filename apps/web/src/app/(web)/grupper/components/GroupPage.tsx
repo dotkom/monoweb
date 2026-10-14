@@ -39,7 +39,7 @@ import {
   IconUser,
   IconWorld,
 } from "@tabler/icons-react"
-import { compareDesc } from "date-fns"
+import { compareAsc, compareDesc } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
@@ -110,7 +110,20 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         return byRole
       }
 
-      return compareDesc(left.start, right.start)
+      //Finn eldste groupmembership av startdato
+      const leftOldestGroupmembership = leftMember.groupMemberships.toSorted((leftGroupMembership, rightGroupMembership) => {
+        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+      }).at(0)
+      const rightOldestGroupmembership = rightMember.groupMemberships.toSorted((leftGroupMembership, rightGroupMembership) => {
+        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+      }).at(0)
+      
+      if (leftOldestGroupmembership === undefined || rightOldestGroupmembership === undefined) {
+        // Sanity check
+        return 0
+      }
+
+      return compareAsc(leftOldestGroupmembership.start, rightOldestGroupmembership.start)
     })
 
   const inactiveMembers = membersToShow.filter((member) => !isGroupMemberActive(member))
@@ -218,7 +231,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
           <Tabs defaultValue="active">
             <TabsList variant="default" className="h-12!">
-              <GroupMemberListTabTrigger value="active" label="Nåværende" count={activeMembers.length} />
+              <GroupMemberListTabTrigger value="active" label="test" count={activeMembers.length} />
               <GroupMemberListTabTrigger value="inactive" label="Tidligere" count={inactiveMembers.length} />
             </TabsList>
 
