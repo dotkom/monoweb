@@ -110,7 +110,6 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         return byRole
       }
 
-      // Find oldest group member
       const leftOldestGroupmembership = leftMember.groupMemberships
         .toSorted((leftGroupMembership, rightGroupMembership) => {
           return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
