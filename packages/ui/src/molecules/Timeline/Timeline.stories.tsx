@@ -84,6 +84,62 @@ export const Default = () => (
   </div>
 )
 
+export const Horizontal = () => (
+  <div className="max-w-4xl">
+    <Timeline orientation="horizontal">
+      {sampleEvents.map((event) => (
+        <TimelineItem key={event.date.getTime()}>
+          <TimelineDot />
+          <TimelineContent>
+            <Text className="pb-1 font-medium text-muted-foreground text-xs">
+              {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
+            </Text>
+            <EventSummary event={event} />
+          </TimelineContent>
+        </TimelineItem>
+      ))}
+    </Timeline>
+  </div>
+)
+
+export const HorizontalWithSideLabels = () => (
+  <div className="max-w-4xl">
+    <Timeline orientation="horizontal">
+      {sampleEvents.map((event) => (
+        <TimelineItem key={event.date.getTime()}>
+          <TimelineSideLabel>{format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}</TimelineSideLabel>
+          <TimelineDot />
+          <TimelineContent>
+            <EventSummary event={event} />
+          </TimelineContent>
+        </TimelineItem>
+      ))}
+    </Timeline>
+  </div>
+)
+
+export const HorizontalGroupedByDay = () => (
+  <div className="max-w-4xl">
+    <Timeline orientation="horizontal">
+      {groupTimelineEntries(sampleEvents).map((group) => (
+        <Fragment key={group.key}>
+          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
+
+          {group.entries.map((entry) => (
+            <TimelineItem key={entry.date.getTime()}>
+              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
+              <TimelineDot />
+              <TimelineContent>
+                <EventSummary event={entry} />
+              </TimelineContent>
+            </TimelineItem>
+          ))}
+        </Fragment>
+      ))}
+    </Timeline>
+  </div>
+)
+
 export const GroupedByDay = () => (
   <div className="max-w-3xl">
     <Timeline>
