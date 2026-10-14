@@ -21,7 +21,7 @@ export type ResourceDetailNavItem = {
 export type ViewInWebLinkProps = {
   label: string
   href: string
-  prefetch: boolean
+  prefetch?: boolean
   disabled?: boolean
 }
 
