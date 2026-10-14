@@ -44,7 +44,7 @@ function PlateRoot({ attendee, user, smallIcons, largeIcon, isCurrentUser, class
   return (
     <PlateContext.Provider value={contextValue}>
       <div className={cn("relative flex min-w-0 w-full flex-1 items-center", className)}>
-        <Link href={profileHref} className="absolute inset-0 z-0" aria-label={profileLabel} />
+        <Link href={profileHref} className="absolute inset-0 z-0" aria-label={profileLabel} prefetch={false} />
         {children}
       </div>
     </PlateContext.Provider>

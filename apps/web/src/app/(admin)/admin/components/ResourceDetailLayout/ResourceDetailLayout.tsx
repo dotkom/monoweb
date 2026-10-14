@@ -21,6 +21,7 @@ export type ResourceDetailNavItem = {
 export type ViewInWebLinkProps = {
   label: string
   href: string
+  prefetch: boolean
   disabled?: boolean
 }
 
@@ -97,6 +98,7 @@ export function ResourceDetailLayout({
               variant="outline"
               element={Link}
               href={viewInWebProps.href}
+              prefetch={viewInWebProps.prefetch}
               target="_blank"
               rel="noopener noreferrer"
               iconRight={<IconArrowUpRight className="size-3.5" />}

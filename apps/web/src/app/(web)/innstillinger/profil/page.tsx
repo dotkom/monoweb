@@ -88,6 +88,7 @@ const EditProfilePage = () => {
         <Button
           element={Link}
           href={`/profil/${dbUser.username}`}
+          prefetch={false}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
