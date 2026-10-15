@@ -72,9 +72,11 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     attendancePoolId: MOCK_POOL_ID,
     createdAt: now,
     updatedAt: now,
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: now,
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: now,
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -82,7 +84,8 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     paymentLink: null,
     paymentChargeDeadline: null,
     paymentReservedAt: null,
-    paymentRefundedById: null,
+    paymentRefundedByUserId: null,
+    adminRegisteredByUserId: null,
     paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
@@ -162,7 +165,7 @@ export const createMockAttendanceSummary = (
 ): AttendanceSummary => {
   const { currentUserAttendee = null, ...attendanceOptions } = options
   const attendance = createMockAttendance(attendanceOptions)
-  const registeredAttendeeCount = attendance.attendees.filter((attendee) => attendee.registered).length
+  const registeredAttendeeCount = attendance.attendees.filter((attendee) => attendee.registeredAt !== null).length
 
   return {
     ...attendance,
@@ -335,28 +338,28 @@ export const createAttendanceWithQueue = ({
   viewerAttendee,
 }: CreateQueueAttendanceOptions = {}): Attendance => {
   const viewerCreatedAt = viewerAttendee?.createdAt ?? subMinutes(now, 30)
-  const viewerEarliestReservationAt = viewerAttendee?.earliestReservationAt ?? viewerCreatedAt
+  const viewerRegistrationEligibleAt = viewerAttendee?.registrationEligibleAt ?? viewerCreatedAt
   const peopleAheadOfViewer = viewer === "queued" ? viewerQueuePosition - 1 : 0
 
   const registeredOthers = Array.from({ length: registeredOtherCount }, (_, index) =>
     createOtherAttendee(index + 1, {
-      registered: true,
+      registeredAt: new Date(),
       createdAt: subHours(now, 3),
-      earliestReservationAt: subHours(now, 3),
+      registrationEligibleAt: subHours(now, 3),
     })
   )
 
   const queuedOthers = Array.from({ length: queuedOtherCount }, (_, index) => {
     const isAheadOfViewer = index < peopleAheadOfViewer
     const minutesFromViewer = isAheadOfViewer ? peopleAheadOfViewer - index : index - peopleAheadOfViewer + 1
-    const earliestReservationAt = isAheadOfViewer
-      ? subMinutes(viewerEarliestReservationAt, minutesFromViewer)
-      : addMinutes(viewerEarliestReservationAt, minutesFromViewer)
+    const registrationEligibleAt = isAheadOfViewer
+      ? subMinutes(viewerRegistrationEligibleAt, minutesFromViewer)
+      : addMinutes(viewerRegistrationEligibleAt, minutesFromViewer)
 
     return createOtherAttendee(registeredOtherCount + index + 1, {
-      registered: false,
-      createdAt: earliestReservationAt,
-      earliestReservationAt,
+      registeredAt: null,
+      createdAt: registrationEligibleAt,
+      registrationEligibleAt,
     })
   })
 
@@ -367,9 +370,9 @@ export const createAttendanceWithQueue = ({
     attendees.push(
       createMockAttendee({
         user,
-        registered: true,
+        registeredAt: new Date(),
         createdAt: viewerCreatedAt,
-        earliestReservationAt: viewerEarliestReservationAt,
+        registrationEligibleAt: viewerRegistrationEligibleAt,
         ...viewerAttendee,
       })
     )
@@ -380,9 +383,9 @@ export const createAttendanceWithQueue = ({
     attendees.push(
       createMockAttendee({
         user,
-        registered: false,
+        registeredAt: null,
         createdAt: viewerCreatedAt,
-        earliestReservationAt: viewerEarliestReservationAt,
+        registrationEligibleAt: viewerRegistrationEligibleAt,
         ...viewerAttendee,
       })
     )
@@ -397,7 +400,7 @@ export const createAttendanceWithQueue = ({
 
 export const createAttendanceWithRegisteredUser = (): Attendance => {
   const user = createMockUser()
-  const attendee = createMockAttendee({ user, registered: true })
+  const attendee = createMockAttendee({ user, registeredAt: new Date() })
 
   return createMockAttendance({
     attendees: [attendee],
@@ -418,11 +421,11 @@ export const createAttendanceWithPaymentCountdown = (registered = true): Attenda
   const createdAt = subMinutes(now, 15)
   const attendee = createMockAttendee({
     user,
-    registered,
+    registeredAt: registered ? createdAt : null,
     completionDeadline: addMinutes(now, 45),
     paymentLink: "https://example.com/betaling",
     createdAt,
-    earliestReservationAt: createdAt,
+    registrationEligibleAt: createdAt,
   })
 
   return createMockAttendance({
@@ -440,7 +443,7 @@ export const createAttendanceWithReservedPayment = (): Attendance =>
     attendancePrice: 100,
     viewerAttendee: {
       createdAt: subMinutes(now, 15),
-      earliestReservationAt: subMinutes(now, 15),
+      registrationEligibleAt: subMinutes(now, 15),
       completionDeadline: addMinutes(now, 45),
       paymentLink: "https://example.com/betaling",
     },
@@ -456,7 +459,7 @@ export const createAttendanceWithQueuedPayment = (): Attendance =>
     attendancePrice: 100,
     viewerAttendee: {
       createdAt: subMinutes(now, 15),
-      earliestReservationAt: subMinutes(now, 10),
+      registrationEligibleAt: subMinutes(now, 10),
       completionDeadline: addMinutes(now, 45),
       paymentLink: "https://example.com/betaling",
     },
@@ -468,7 +471,7 @@ export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attend
   const user = createMockUser()
   const attendee = createMockAttendee({
     user,
-    registered: true,
+    registeredAt: new Date(),
     paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
     paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
     paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
@@ -489,7 +492,7 @@ export const createAttendanceWithRegisteredPaymentRecord = (record: PaymentRecor
     attendancePrice: 100,
     viewerAttendee: {
       createdAt: subMinutes(now, 30),
-      earliestReservationAt: subMinutes(now, 30),
+      registrationEligibleAt: subMinutes(now, 30),
       paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
       paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
       paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
@@ -506,7 +509,7 @@ export const createAttendanceWithQueuedPaymentRecord = (record: PaymentRecord): 
     attendancePrice: 100,
     viewerAttendee: {
       createdAt: subMinutes(now, 30),
-      earliestReservationAt: subMinutes(now, 30),
+      registrationEligibleAt: subMinutes(now, 30),
       paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
       paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
       paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
@@ -527,7 +530,7 @@ export const createAttendanceWithServingPunishment = ({
     attendancePrice: withPayment ? 100 : null,
     viewerAttendee: {
       createdAt: subMinutes(now, 20),
-      earliestReservationAt: addHours(now, 4),
+      registrationEligibleAt: addHours(now, 4),
       completionDeadline: withPayment ? addMinutes(now, 45) : null,
       paymentLink: withPayment ? "https://example.com/betaling" : null,
     },
@@ -550,13 +553,13 @@ export const createAttendanceWithFullPool = (): Attendance => {
       id: "00000000-0000-4000-8000-000000000031",
       userId: "00000000-0000-4000-8000-000000000011",
       user: createMockUser({ id: "00000000-0000-4000-8000-000000000011", username: "bruker1" }),
-      registered: true,
+      registeredAt: new Date(),
     }),
     createMockAttendee({
       id: "00000000-0000-4000-8000-000000000032",
       userId: "00000000-0000-4000-8000-000000000012",
       user: createMockUser({ id: "00000000-0000-4000-8000-000000000012", username: "bruker2" }),
-      registered: true,
+      registeredAt: new Date(),
     }),
   ]
 
@@ -573,7 +576,7 @@ export const createIneligiblePoolAttendance = (): Attendance =>
 
 export const createLockedDeregisterAttendance = (): { attendance: Attendance; attendee: Attendee } => {
   const user = createMockUser()
-  const attendee = createMockAttendee({ user, registered: true })
+  const attendee = createMockAttendee({ user, registeredAt: new Date() })
 
   return {
     attendance: {

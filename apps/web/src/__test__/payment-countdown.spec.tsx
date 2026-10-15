@@ -33,7 +33,7 @@ afterEach(() => {
 
 describe("attendance deregistration lock", () => {
   it.each([false, true])("keeps queued attendees unlocked (deadline passed: %s)", (deadlinePassed) => {
-    const attendee = createMockAttendee({ registered: false })
+    const attendee = createMockAttendee({ registeredAt: null })
     const attendance = createMockAttendance({ status: deadlinePassed ? "CLOSED" : "OPEN", attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
@@ -49,7 +49,7 @@ describe("attendance deregistration lock", () => {
     null,
     new Date(),
   ])("still locks attendees with a seat after the deregistration deadline (payment reserved: %s)", (paymentReservedAt) => {
-    const attendee = createMockAttendee({ registered: true, paymentReservedAt })
+    const attendee = createMockAttendee({ registeredAt: new Date(), paymentReservedAt })
     const attendance = createMockAttendance({ status: "CLOSED", attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
@@ -64,7 +64,7 @@ describe("attendance deregistration lock", () => {
 describe("event payment countdown", () => {
   it.each([false, true])("hides deadline warnings for queued attendees (expired: %s)", (expired) => {
     const attendee = createMockAttendee({
-      registered: false,
+      registeredAt: null,
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addSeconds(new Date(), expired ? -30 : 60),
       paymentLink: "https://example.com/payment",

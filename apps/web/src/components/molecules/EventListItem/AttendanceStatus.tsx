@@ -57,7 +57,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const isRegistered = completion?.attendeeState === "REGISTERED"
   const isReserved = completion?.attendeeState === "RESERVED"
   const isQueued = completion?.attendeeState === "QUEUED"
-  const isDelayed = isQueued && attendee !== null && isAfter(attendee.earliestReservationAt, currentTime)
+  const isDelayed = isQueued && attendee !== null && isAfter(attendee.registrationEligibleAt, currentTime)
   const hasSeat = isRegistered || isReserved
   const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, currentTime)
   const numberOfAttendees =

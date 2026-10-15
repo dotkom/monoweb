@@ -431,7 +431,7 @@ export function getEventRepository(): EventRepository {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
-          registered: registeredOnly ? true : undefined,
+          registeredAt: registeredOnly ? { not: null } : undefined,
         },
         include: {
           attendance: {

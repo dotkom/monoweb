@@ -10,9 +10,9 @@ import { AttendanceStatusRow } from "./AttendanceStatusRow"
 import styles from "./RegistrationDelayStatus.module.css"
 
 export const RegistrationDelayStatus = ({ attendee }: { attendee: Attendee }) => {
-  const countdownDisplay = useCompactCountdown(attendee.earliestReservationAt)
+  const countdownDisplay = useCompactCountdown(attendee.registrationEligibleAt)
   const countdownDescription = countdownDisplay === "Nå" ? "nå" : `om ${countdownDisplay}`
-  const originalDelayDisplay = formatCompactTimeUntil(attendee.earliestReservationAt, attendee.createdAt)
+  const originalDelayDisplay = formatCompactTimeUntil(attendee.registrationEligibleAt, attendee.createdAt)
 
   return (
     <div className="rounded-t-md rounded-b-xl w-full overflow-hidden bg-gray-200/40 dark:bg-stone-700/40">

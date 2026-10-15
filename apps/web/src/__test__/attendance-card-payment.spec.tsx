@@ -83,8 +83,8 @@ describe("attendance card payment actions", () => {
     const updatedAttendee = {
       ...attendee,
       createdAt: subMinutes(new Date(), 2),
-      registered: !["queued", "delayed", "delay-expired"].includes(state),
-      earliestReservationAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
+      registeredAt: ["queued", "delayed", "delay-expired"].includes(state) ? null : new Date(),
+      registrationEligibleAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
       paymentReservedAt: state === "reserved" ? new Date() : null,
       paymentChargedAt: state === "charged" ? new Date() : null,
     }

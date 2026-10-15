@@ -38,7 +38,7 @@ const MainPoolCardPreview = ({
   chargeScheduleDate?: Date | null
 }) => {
   const attendee = getAttendee(attendance, user)
-  useDeadlineTick(attendee?.earliestReservationAt)
+  useDeadlineTick(attendee?.registrationEligibleAt)
   const isRegistrationDelayed = hasRegistrationDelay(attendee)
 
   return (
@@ -86,8 +86,8 @@ export const ActiveRegistration = () => {
   // After 20 "registrations", 1 of 3 new registrations have an accompanying queue entry
   const queuedCount = registeredCount < 20 ? 0 : Math.floor((registeredCount - 20) / 3)
   const attendees = [
-    ...Array.from({ length: registeredCount }, () => createMockAttendee({ registered: true })),
-    ...Array.from({ length: queuedCount }, () => createMockAttendee({ registered: false })),
+    ...Array.from({ length: registeredCount }, () => createMockAttendee({ registeredAt: new Date() })),
+    ...Array.from({ length: queuedCount }, () => createMockAttendee({ registeredAt: null })),
   ]
 
   const attendance = createMockAttendance({ capacity: SIMULATION_CAPACITY, attendees })
