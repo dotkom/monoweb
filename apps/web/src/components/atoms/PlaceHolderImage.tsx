@@ -3,10 +3,8 @@ import { cn } from "@dotkomonline/ui"
 import type { ImageProps } from "next/image"
 import type { FC } from "react"
 
-type PlaceHolderImageVariant = EventType
-
 type PlaceHolderImageProps = Omit<ImageProps, "src" | "alt"> & {
-  variant?: PlaceHolderImageVariant
+  variant?: EventType
 }
 
 export const PlaceHolderImage: FC<PlaceHolderImageProps> = ({ className, variant = "OTHER" }) => {
