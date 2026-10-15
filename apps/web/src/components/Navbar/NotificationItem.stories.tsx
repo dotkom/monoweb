@@ -224,7 +224,7 @@ export function AttendanceRegisteredFromQueue() {
     <EventNotificationPreview
       type="ATTENDANCE_REGISTRATION_FROM_QUEUE"
       title="Du har fått plass på Ping med Bekk"
-      shortDescription="Du er flyttet fra ventelisten og er nå påmeldt arrangementet."
+      shortDescription="Du er flyttet fra køen og er nå påmeldt arrangementet."
     />
   )
 }
@@ -233,8 +233,8 @@ export function AttendanceQueueUpdate() {
   return (
     <EventNotificationPreview
       type="ATTENDANCE_QUEUE_UPDATE"
-      title="Ny plass på ventelisten til Ping med Bekk"
-      shortDescription="Du er nå nummer 3 på ventelisten. Vi varsler deg hvis du får plass."
+      title="Ny plass på køen til Ping med Bekk"
+      shortDescription="Du er nå nummer 3 på køen. Vi varsler deg hvis du får plass."
     />
   )
 }
@@ -314,7 +314,7 @@ export function NarrowLayout() {
     <div className="w-64 max-w-full">
       <NotificationItem
         notification={createNotification({
-          title: "Påmelding fra ventelisten til et arrangement med en veldig lang tittel",
+          title: "Påmelding fra køen til et arrangement med en veldig lang tittel",
           shortDescription:
             "Arrangementet har fått en oppdatering: https://online.ntnu.no/en-veldig-lang-lenke-uten-mellomrom",
           type: "ATTENDANCE_REGISTRATION_FROM_QUEUE",

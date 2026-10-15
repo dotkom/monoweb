@@ -14,7 +14,7 @@ export type EmailType =
   | "EVENT_ATTENDANCE"
   | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
-  | "WAITLIST_NOTIFICATION"
+  | "QUEUE_NOTIFICATION"
   | "COMMITTEE_EMAIL_CREATED"
   | "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED"
   | "BUG_REPORT"
@@ -155,15 +155,15 @@ export const emails = {
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),
-  WAITLIST_NOTIFICATION: createEmailTemplate({
-    type: "WAITLIST_NOTIFICATION",
+  QUEUE_NOTIFICATION: createEmailTemplate({
+    type: "QUEUE_NOTIFICATION",
     getSchema: () =>
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
         position: z.number(),
       }),
-    getTemplate: async () => fsp.readFile(path.join(templates, "waitlist_notification.mustache"), "utf-8"),
+    getTemplate: async () => fsp.readFile(path.join(templates, "queue_notification.mustache"), "utf-8"),
   }),
   COMMITTEE_EMAIL_CREATED: createEmailTemplate({
     type: "COMMITTEE_EMAIL_CREATED",

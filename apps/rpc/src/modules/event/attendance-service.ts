@@ -341,7 +341,7 @@ export function getAttendanceService(
     await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
   }
 
-  function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
+  function sendQueueNotificationEmail(event: Event, position: number, attendee: Attendee) {
     if (attendee.user.email === null) {
       return
     }
@@ -352,8 +352,8 @@ export function getAttendanceService(
       [attendee.user.email],
       [],
       [],
-      `Du har flyttet opp på ventelisten for ${event.title}`,
-      emails.WAITLIST_NOTIFICATION,
+      `Du har flyttet opp på køen for ${event.title}`,
+      emails.QUEUE_NOTIFICATION,
       {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
@@ -955,7 +955,7 @@ export function getAttendanceService(
         )
       }
 
-      // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.registered`
+      // We must allow people to deregister if they are on the queue, hence the check for `attendee.registered`
       if (attendee.registered && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
@@ -983,7 +983,7 @@ export function getAttendanceService(
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
-      // If the deregistered attendee wasn't registered, no spot was freed up, so no waitlist promotion is needed.
+      // If the deregistered attendee wasn't registered, no spot was freed up, so no queue promotion is needed.
       if (!attendee.registered) {
         return
       }
@@ -1004,13 +1004,13 @@ export function getAttendanceService(
       // 1. The attendee must be in the same pool as the deregistered attendee
       // 2. The attendee must not already be registered
       // 3. The attendee must have a reservation time not in the future
-      const sortedWaitlist = remainingAttendees
+      const sortedQueue = remainingAttendees
         .filter((a) => a.attendancePoolId === pool.id)
-        .filter((waitlistAttendee) => !waitlistAttendee.registered)
+        .filter((queueAttendee) => !queueAttendee.registered)
         .filter((a) => !isFuture(a.earliestReservationAt))
         .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
 
-      const firstQueuedAdjacentAttendee = sortedWaitlist.at(0)
+      const firstQueuedAdjacentAttendee = sortedQueue.at(0)
 
       if (firstQueuedAdjacentAttendee === undefined) {
         return
@@ -1065,8 +1065,8 @@ export function getAttendanceService(
 
       emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "updated")
 
-      for (const [index, waitlistAttendee] of sortedWaitlist.slice(1, 4).entries()) {
-        sendWaitlistNotificationEmail(event, index + 1, waitlistAttendee)
+      for (const [index, queueAttendee] of sortedQueue.slice(1, 4).entries()) {
+        sendQueueNotificationEmail(event, index + 1, queueAttendee)
       }
     },
 

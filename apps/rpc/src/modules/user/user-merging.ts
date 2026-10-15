@@ -260,7 +260,7 @@ const CUSTOM_RELATION_MERGERS = {
     await Promise.all(createGroupMembershipOperations)
   },
 
-  // Handling FK constraint errors, payment cancellations, waitlist promotions, and notifications correctly.
+  // Handling FK constraint errors, payment cancellations, queue promotions, and notifications correctly.
   attendee: async (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorAttendees = await handle.attendee.findMany({
       where: { userId: survivor.id },

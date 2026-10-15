@@ -171,7 +171,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
-  const hasWaitlist = queuedAttendeeCount > 0
+  const hasQueue = queuedAttendeeCount > 0
 
   const servingPunishment =
     attendee?.earliestReservationAt &&
@@ -194,7 +194,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             <Text
               className={cn(
                 "text-3xl px-2 py-1",
-                hasWaitlist &&
+                hasQueue &&
                   (isRegistered || isReserved) &&
                   (actionIsRequired
                     ? "bg-yellow-200 dark:bg-amber-800 dark:saturate-75 rounded-lg"
@@ -211,7 +211,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               )}
             </Text>
 
-            {hasWaitlist && (
+            {hasQueue && (
               <Text
                 className={cn(
                   "text-lg px-2 py-0.5",
