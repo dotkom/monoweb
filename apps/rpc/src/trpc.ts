@@ -142,9 +142,6 @@ function withTracing(exportSpanOnError: boolean) {
             })
           }
 
-          span.recordException(error)
-          span.setStatus({ code: SpanStatusCode.ERROR })
-
           // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
           // fault.
           const isClientError = error.code === "FORBIDDEN" || error.code === "UNAUTHORIZED"
@@ -159,6 +156,8 @@ function withTracing(exportSpanOnError: boolean) {
               error.code
             )
           } else {
+            span.recordException(error)
+            span.setStatus({ code: SpanStatusCode.ERROR })
             logger.error(
               "tRPC error triggered by Principal(Subject=%s) in Request(Path=%s, Method=%s) traced by Trace(TraceID=%s): %o",
               ctx.principal?.subject ?? "<anonymous>",
