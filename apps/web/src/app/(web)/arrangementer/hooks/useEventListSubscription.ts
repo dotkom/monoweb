@@ -108,8 +108,13 @@ export function useEventListSubscription({ events, enabled }: UseEventListSubscr
       }
     )
 
-    if (registerChangeEvent.isCurrentUser && registerChangeEvent.status !== "updated") {
-      refreshEventLists()
+    const attendanceStatusHasChanged =
+      registerChangeEvent.status === "registered" || registerChangeEvent.status === "deregistered"
+
+    const shouldRefreshEventLists = registerChangeEvent.isCurrentUser && attendanceStatusHasChanged
+
+    if (shouldRefreshEventLists) {
+      void refreshEventLists()
     }
   }
 
