@@ -16,5 +16,5 @@ export const parseArticlesListViewMode = (value: string | undefined): ArticleLis
 
 export const setArticlesListViewCookie = (view: ArticleListViewMode) => {
   // biome-ignore lint/suspicious/noDocumentCookie: CookieStore unsupported in Safari/Firefox
-  document.cookie = `${ARTICLE_VIEW_COOKIE_NAME}=${view}; path=/arrangementer; max-age=${ARTICLE_VIEW_COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`
+  document.cookie = `${ARTICLE_VIEW_COOKIE_NAME}=${view}; path=/artikler; max-age=${ARTICLE_VIEW_COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`
 }
