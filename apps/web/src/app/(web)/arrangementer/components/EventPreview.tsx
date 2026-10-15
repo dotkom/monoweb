@@ -20,7 +20,7 @@ import {
 } from "@dotkomonline/ui"
 import { createAbsoluteEventPageUrl, createEventPageUrl } from "@dotkomonline/utils"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
-import { IconArrowUpRight, IconCheck, IconChevronsRight, IconCopy } from "@tabler/icons-react"
+import { IconCheck, IconChevronsRight, IconCopy, IconMaximize } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from "react"
@@ -127,8 +127,8 @@ export function EventPreview({
 
                   {selectedEvent !== null && (
                     <Button element={Link} href={createEventPageUrl(selectedEvent.id, selectedEvent.title)}>
+                      <IconMaximize className="size-4" />
                       Åpne arrangementsiden
-                      <IconArrowUpRight className="size-4" />
                     </Button>
                   )}
                 </div>
