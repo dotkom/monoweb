@@ -10,8 +10,6 @@ interface ArticleImageProps {
 }
 
 export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, className, imageClassName }) => {
-  console.log(imageUrl)
-
   return (
     <Tilt glareBorderRadius="var(--radius-lg)">
       <div className={cn("relative", className)}>

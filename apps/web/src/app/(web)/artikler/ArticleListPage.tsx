@@ -1,6 +1,6 @@
 "use client"
 
-import { Title, ToggleGroup, ToggleGroupItem, Text } from "@dotkomonline/ui"
+import { Title, ToggleGroup, ToggleGroupItem, Text, cn } from "@dotkomonline/ui"
 import type { ArticleListViewMode } from "./hooks/articleViewCookie"
 import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react"
 import { useArticlesView } from "./hooks/useArticlesView"
@@ -28,8 +28,18 @@ export const ArticleListPage = ({ initialListViewMode }: ArticleListPageProps) =
       </Title>
       <Text className="pt-2">Les artikler skrevet av medlemmer i Online.</Text>
 
-      <div className="flex min-w-0 justify-between gap-x-2 gap-y-3 sticky top-[calc(var(--navbar-height)+(--spacing(6)))] z-30 -m-2 bg-background p-2 rounded-2xl transition-shadow">
-        <div className="w-full sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] lg:grid-cols-[minmax(max-content,1fr)_minmax(0,22.5rem)_minmax(max-content,1fr)]">
+      <div
+        className={cn(
+          "flex min-w-0 justify-between gap-x-2 gap-y-3",
+          "sticky top-[calc(var(--navbar-height)+(--spacing(6)))] z-30 -m-2 bg-background p-2 rounded-2xl transition-shadow"
+        )}
+      >
+        <div
+          className={cn(
+            "flex min-w-0 gap-4",
+            "w-full flex-wrap sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] lg:grid-cols-[minmax(max-content,1fr)_minmax(0,22.5rem)_minmax(max-content,1fr)]"
+          )}
+        >
           <ToggleGroup
             className="shrink-0 h-10 bg-background"
             multiple={false}
