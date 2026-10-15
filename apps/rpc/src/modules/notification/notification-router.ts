@@ -125,9 +125,8 @@ const getMyNotificationsProcedure = procedureTraceErrorsOnly
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.notificationService.findManyForUser(ctx.handle, ctx.principal.subject, input)
+    const items = await ctx.notificationService.findManyForUser(ctx.prisma, ctx.principal.subject, input)
 
     return {
       items,
@@ -140,9 +139,8 @@ export type GetMyUnreadCountOutput = inferProcedureOutput<typeof getMyUnreadCoun
 const getMyUnreadCountProcedure = procedureTraceErrorsOnly
   .output(z.number().int().nonnegative())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ ctx }) => {
-    return await ctx.notificationService.countUnreadForUser(ctx.handle, ctx.principal.subject)
+    return await ctx.notificationService.countUnreadForUser(ctx.prisma, ctx.principal.subject)
   })
 
 export type MarkAsReadInput = inferProcedureInput<typeof markAsReadProcedure>
