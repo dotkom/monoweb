@@ -48,9 +48,11 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: getCurrentUTC(),
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -85,6 +87,8 @@ const createSuccessResult = (
 ): RegistrationAvailabilitySuccess => ({
   success: true,
   reservationActiveAt: new TZDate(reservationActiveAt),
+  registrationPoolDelayHours: null,
+  registrationMarkDelayHours: null,
   event: {} as never,
   attendance,
   user: createAttendee().user,
@@ -207,8 +211,8 @@ describe("buildRegistrationAvailabilityView", () => {
   it("marks pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: new Date() }),
       ],
     })
     const result = createSuccessResult(attendance)
@@ -296,7 +300,7 @@ describe("buildDeregistrationAvailabilityView", () => {
     })
     const attendee = createAttendee({
       createdAt: subHours(getCurrentUTC(), 3),
-      registered: true,
+      registeredAt: new Date(),
     })
 
     const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
@@ -323,8 +327,8 @@ describe("buildPoolOccupancies", () => {
   it("marks a pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: new Date() }),
       ],
     })
 
@@ -343,8 +347,8 @@ describe("buildPoolOccupancies", () => {
   it("ignores queued attendees when computing pool fullness", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: false }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: null }),
       ],
     })
 

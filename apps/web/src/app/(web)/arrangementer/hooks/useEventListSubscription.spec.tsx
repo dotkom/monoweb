@@ -188,8 +188,8 @@ describe("event list subscription", () => {
       id: "own-attendee",
       userId: user.id,
       user,
-      registered: false,
-      earliestReservationAt: new Date("2026-01-02"),
+      registeredAt: null,
+      registrationEligibleAt: new Date("2026-01-02"),
       completionDeadline: new Date("2026-02-01"),
       paymentLink: "https://example.com/payment",
     })
@@ -200,8 +200,8 @@ describe("event list subscription", () => {
     queryClient.setQueryData(fullQueryKey, initialAttendance)
     const otherAttendee = createMockAttendee({
       id: "other-attendee",
-      registered: false,
-      earliestReservationAt: new Date("2026-01-01"),
+      registeredAt: null,
+      registrationEligibleAt: new Date("2026-01-01"),
     })
     const update = buildBulkRegisterChangeEvent(
       {
@@ -228,7 +228,7 @@ describe("event list subscription", () => {
       sendUpdate(
         buildBulkRegisterChangeEvent(
           {
-            attendee: { ...otherAttendee, registered: true },
+            attendee: { ...otherAttendee, registeredAt: new Date() },
             status: "registered",
             poolOccupancies: [],
           },

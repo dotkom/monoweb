@@ -15,21 +15,37 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
+  getAttendeeRegistrationEligibleAt,
 } from "./attendance"
 import type { EventId } from "./event"
 import type { TaskId } from "../task/task"
 import { type UserId, normalizeDbUser } from "../user/user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
+import { compareAsc } from "date-fns"
 
-type WithUserFlagLinks = { user: Parameters<typeof normalizeDbUser>[0]; [k: string]: unknown }
-
-function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
-  return { ...attendee, user: normalizeDbUser(attendee.user) }
+type WithUserFlagLinks = Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours"> & {
+  user: Parameters<typeof normalizeDbUser>[0]
+  [key: string]: unknown
 }
 
-function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [k: string]: unknown }>(attendance: T) {
-  return { ...attendance, attendees: attendance.attendees.map(normalizeAttendee) }
+function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
+  return {
+    ...attendee,
+    registrationEligibleAt: getAttendeeRegistrationEligibleAt(attendee),
+    user: normalizeDbUser(attendee.user),
+  }
+}
+
+function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [key: string]: unknown }>(attendance: T) {
+  return {
+    ...attendance,
+    attendees: attendance.attendees
+      .map(normalizeAttendee)
+      .toSorted((firstAttendee, secondAttendee) =>
+        compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+      ),
+  }
 }
 
 export interface AttendanceRepository {
@@ -127,7 +143,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -159,7 +175,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -180,7 +196,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             select: {
               attendees: {
                 where: {
-                  registered: true,
+                  registeredAt: { not: null },
                 },
               },
             },
@@ -202,7 +218,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             where: userId ? { userId } : undefined,
             take: 1,
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -248,7 +264,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -282,7 +298,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -316,7 +332,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -350,7 +366,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },

@@ -66,8 +66,8 @@ const StateShowcase = ({
 
 export const AllStates = () => {
   const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registered: true })
-  const queuedAttendee = createMockAttendee({ user, registered: false })
+  const registeredAttendee = createMockAttendee({ user, registeredAt: new Date() })
+  const queuedAttendee = createMockAttendee({ user, registeredAt: null })
 
   const { attendance: lockedAttendance, attendee: lockedAttendee } = createLockedDeregisterAttendance()
 

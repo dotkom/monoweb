@@ -18,7 +18,7 @@ const createRegisteredAttendees = (count: number) =>
         id: `00000000-0000-4000-8000-0000000000${index + 1}`,
         username: `bruker${index + 1}`,
       }),
-      registered: true,
+      registeredAt: new Date(),
     })
   )
 
@@ -49,7 +49,7 @@ export const Default = () => {
 
 export const AllStates = () => {
   const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registered: true })
+  const registeredAttendee = createMockAttendee({ user, registeredAt: new Date() })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">

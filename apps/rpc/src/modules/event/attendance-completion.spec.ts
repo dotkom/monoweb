@@ -34,9 +34,11 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: getCurrentUTC(),
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -68,7 +70,7 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
 describe("attendance completion helpers", () => {
   it("returns QUEUED for waitlisted attendees", () => {
     const attendance = createAttendance()
-    const attendee = createAttendee({ registered: false })
+    const attendee = createAttendee({ registeredAt: null })
 
     expect(getAttendeeState(attendee, attendance)).toBe("QUEUED")
   })
@@ -113,7 +115,7 @@ describe("attendance completion helpers", () => {
   it("builds completion view for queued attendee with pending payment", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({
-      registered: false,
+      registeredAt: null,
       completionDeadline: addHours(getCurrentUTC(), 24),
       paymentLink: "https://example.com/pay",
     })

@@ -158,7 +158,7 @@ WITH
               WHERE
                 attendee.attendance_id = parent_event.attendance_id
                 AND attendee.user_id = $17
-                AND attendee.registered = TRUE
+                AND attendee.registered_at IS NOT NULL
             )
           )
       )
@@ -189,7 +189,7 @@ WITH
     FROM attendee
     INNER JOIN candidate_attendances
       ON candidate_attendances.attendance_id = attendee.attendance_id
-    WHERE attendee.registered = TRUE
+    WHERE attendee.registered_at IS NOT NULL
     GROUP BY attendee.attendance_pool_id
   ),
 

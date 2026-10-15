@@ -44,8 +44,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 }) => {
   const currentTime = useCurrentTime()
   const attendanceStatus = getAttendanceStatus(attendance, currentTime)
-  const isRegistered = attendee?.registered === true
-  const isQueued = attendee?.registered === false
+  const isRegistered = attendee?.registeredAt != null
+  const isQueued = attendee?.registeredAt === null
   const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, currentTime)
   const numberOfAttendees =
     "registeredAttendeeCount" in attendance

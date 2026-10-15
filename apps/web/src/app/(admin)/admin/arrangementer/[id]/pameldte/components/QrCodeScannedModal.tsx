@@ -116,7 +116,7 @@ export function QRCodeScannedModal({ open, onOpenChange, attendance, attendeeId,
             <UserBox user={attendee.user} isMobile={isMobile} />
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1.5">
-                {attendee.registered ? (
+                {attendee.registeredAt !== null ? (
                   <>
                     <IconCheck className="size-5 text-green-600" />
                     <Text>Reservert plass</Text>

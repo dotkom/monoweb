@@ -78,8 +78,11 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
   const waitlists = useMemo(() => {
     return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
       const waitlist = attendees
-        .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.registered)
-        .sort((a, b) => a.earliestReservationAt.getTime() - b.earliestReservationAt.getTime())
+        .filter((attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt === null)
+        .sort(
+          (firstAttendee, secondAttendee) =>
+            firstAttendee.registrationEligibleAt.getTime() - secondAttendee.registrationEligibleAt.getTime()
+        )
 
       acc[pool.id] = waitlist.reduce<Record<string, number>>((map, attendee, idx) => {
         map[attendee.id] = idx + 1
@@ -103,7 +106,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
       const bSpot = waitlists[b.attendancePoolId]?.[b.id] ?? null
 
       if (aSpot === null && bSpot === null) {
-        return a.earliestReservationAt.getTime() - b.earliestReservationAt.getTime()
+        return a.registrationEligibleAt.getTime() - b.registrationEligibleAt.getTime()
       }
       if (aSpot === null) {
         return -1
@@ -119,23 +122,23 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
   const columnHelper = createColumnHelper<Attendee>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor("earliestReservationAt", {
+      columnHelper.accessor("registrationEligibleAt", {
         header: "Påmeldingstid",
         sortingFn: dateSort(),
         sortDescFirst: false,
         enableSorting: true,
         enableMultiSort: false,
         cell: (info) => {
-          const earliestReservationAt = info.getValue()
+          const registrationEligibleAt = info.getValue()
           const createdAt = info.row.original.createdAt
 
-          const afterRegisterStart = formatDistanceStrict(earliestReservationAt, attendance.registerStart, {
+          const afterRegisterStart = formatDistanceStrict(registrationEligibleAt, attendance.registerStart, {
             locale: nb,
           })
-          const relativeAfterRegisterStart = formatDistanceToNowStrict(earliestReservationAt, { locale: nb })
+          const relativeAfterRegisterStart = formatDistanceToNowStrict(registrationEligibleAt, { locale: nb })
 
           const fullLocale = "EEEE dd. MMM yyyy 'kl.' HH:mm:ss.SSS O"
-          const fullEarliestReservationAt = formatDate(earliestReservationAt, fullLocale, { locale: nb })
+          const fullRegistrationEligibleAt = formatDate(registrationEligibleAt, fullLocale, { locale: nb })
           const fullCreatedAt = formatDate(createdAt, fullLocale, { locale: nb })
 
           return (
@@ -143,7 +146,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
               <PopoverTrigger asChild>
                 <Button type="button" variant="ghost" className="h-auto p-0">
                   <div className="flex flex-col items-start gap-0">
-                    {isBefore(earliestReservationAt, attendance.registerStart) ? (
+                    {isBefore(registrationEligibleAt, attendance.registerStart) ? (
                       <>
                         <Text className="text-sm">Forhåndspåmeldt</Text>
                         <Text className="text-xs">{capitalize(afterRegisterStart)} fp.</Text>
@@ -161,7 +164,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-col gap-0">
                     <Text className="text-sm">Utregnet påmeldingstidspunkt (inkl. prikker og utsettelser):</Text>
-                    <Text className="text-lg">{capitalize(fullEarliestReservationAt)}</Text>
+                    <Text className="text-lg">{capitalize(fullRegistrationEligibleAt)}</Text>
                   </div>
                   <Text className="text-sm">Faktisk påmeldingstidspunkt: {fullCreatedAt}</Text>
                 </div>
