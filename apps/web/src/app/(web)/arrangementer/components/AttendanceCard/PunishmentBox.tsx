@@ -55,7 +55,7 @@ export const PunishmentBox: FC<PunishmentBoxProps> = ({ punishment }) => {
 
       <Text className="text-sm text-pretty col-start-2 col-span-2 text-gray-600 dark:text-stone-400">
         Du{" "}
-        <Text element="span" className="text-black dark:text-white">
+        <Text element="span" className="font-medium text-black dark:text-white">
           kan fortsatt melde deg på
         </Text>{" "}
         ved påmeldingsstart, men du vil være i venteliste til utsettelsen er over.
