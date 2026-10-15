@@ -11,6 +11,7 @@ import { env } from "@admin/lib/env"
 import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconAlertTriangleFilled,
+  IconBell,
   IconCalendarEvent,
   IconCreditCard,
   IconForms,
@@ -49,6 +50,7 @@ export default function EventWithAttendancesLayout({
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id), data?.event.title ?? null)
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "pamelding"), "Påmelding")
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "pameldte"), "Påmeldte")
+  useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "varsler"), "Varsler")
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "valg"), "Valg")
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "betaling"), "Betaling")
   useBreadcrumbLabel(breadcrumbPath("arrangementer", id, "tilbakemeldingsskjema"), "Tilbakemeldingsskjema")
@@ -101,6 +103,12 @@ export default function EventWithAttendancesLayout({
       href: `${basePath}/pameldte`,
       label: "Påmeldte",
       icon: IconUser,
+      disabled: !hasAttendance,
+    },
+    {
+      href: `${basePath}/varsler`,
+      label: "Varsler",
+      icon: IconBell,
       disabled: !hasAttendance,
     },
     {
