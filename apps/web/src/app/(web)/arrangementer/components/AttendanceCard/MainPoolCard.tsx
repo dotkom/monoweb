@@ -1,5 +1,7 @@
 import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown"
+import { formatCompactTimeUntil } from "@/utils/countdown/formatCompactTimeUntil"
 import { RollingNumber } from "@/components/RollingNumber"
+import { useCompactCountdown } from "@/utils/countdown/use-compact-countdown"
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
@@ -33,7 +35,6 @@ import {
   addDays,
   addSeconds,
   formatDate,
-  formatDistanceToNowStrict,
   interval,
   isAfter,
   isFuture,
@@ -72,7 +73,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
+  const deadlineTick = useDeadlineTick(attendee?.completionDeadline, attendee?.earliestReservationAt)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
   const completion = useMemo(() => {
@@ -173,7 +174,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
   const hasWaitlist = queuedAttendeeCount > 0
 
-  const servingPunishment =
+  const hasRegistrationDelay =
     attendee?.earliestReservationAt &&
     isFuture(attendee.earliestReservationAt) &&
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
@@ -226,8 +227,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           </div>
 
           <div className="flex flex-col gap-2">
-            {servingPunishment ? (
-              <PunishmentStatus attendee={attendee} actionIsRequired={actionIsRequired} />
+            {hasRegistrationDelay ? (
+              <RegistrationDelayStatus attendee={attendee} actionIsRequired={actionIsRequired} />
             ) : (
               <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={actionIsRequired} />
             )}
@@ -315,7 +316,7 @@ interface DelayPillProps {
 
 const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
   const content = mergeDelayHours
-    ? `Denne gruppen får plasser ${mergeDelayHours} timer etter påmeldingsstart`
+    ? `Påmeldingen din behandles ${mergeDelayHours} timer etter at du melder deg på. Du får plass dersom det er ledig. Ellers blir du satt bakerst i køen.`
     : "Denne påmeldingsgruppen kan få plasser senere"
 
   return (
@@ -323,7 +324,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
       <TooltipTrigger asChild>
         <div className="flex items-center gap-1">
           <IconHourglassEmpty className="size-4" />
-          <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t` : "TBD"}</Text>
+          <Text className="text-xs">{mergeDelayHours ? `${mergeDelayHours}t behandlingstid` : "TBD"}</Text>
         </div>
       </TooltipTrigger>
       <TooltipContent className="font-normal">
@@ -603,29 +604,49 @@ const CompletionCard = ({
   )
 }
 
-interface PunishmentStatusProps {
+interface RegistrationDelayStatusProps {
   attendee: Attendee
   actionIsRequired: boolean
 }
 
-const PunishmentStatus = ({ attendee, actionIsRequired }: PunishmentStatusProps) => {
+const RegistrationDelayStatus = ({ attendee, actionIsRequired }: RegistrationDelayStatusProps) => {
+  const countdownDisplay = useCompactCountdown(attendee.earliestReservationAt)
+  let countdownDescription = `om ${countdownDisplay}`
+
+  if (countdownDisplay === "Nå") {
+    countdownDescription = "nå"
+  }
+
+  const originalDelayDisplay = formatCompactTimeUntil(attendee.earliestReservationAt, attendee.createdAt)
+
   return (
-    <Tooltip delayDuration={100}>
-      <TooltipTrigger asChild>
-        <div className="flex flex-row gap-2 items-center">
-          <IconHourglassEmpty className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
-          <Text>
-            {formatDistanceToNowStrict(attendee.earliestReservationAt, {
-              locale: nb,
-            })}{" "}
-            utsettelse
-          </Text>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent className="font-normal">
-        Utsettelsen varer til{" "}
-        {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
-      </TooltipContent>
-    </Tooltip>
+    <div
+      className={cn(
+        "rounded-md",
+        !actionIsRequired && "bg-indigo-100 dark:bg-indigo-900",
+        actionIsRequired && "bg-fuchsia-100 dark:bg-fuchsia-900"
+      )}
+    >
+      <div
+        className={cn(
+          "grid grid-cols-[auto_1fr] gap-2 items-start max-w-sm rounded-md dark:bg-black/15 p-3 text-left",
+          !actionIsRequired && "bg-indigo-200/40 dark:bg-black/20",
+          actionIsRequired && "bg-fuchsia-200/40 dark:bg-black/20"
+        )}
+      >
+        <IconHourglassEmpty className="size-5 shrink-0" />
+        <Text className="text-sm font-medium" suppressHydrationWarning>
+          Påmeldingen din behandles {countdownDescription}
+        </Text>
+
+        <Text className="text-sm col-start-2">
+          Du får plass dersom det er ledig. Ellers blir du satt bakerst i køen.
+        </Text>
+
+        <Text className="text-xs col-start-2 text-gray-600 dark:text-stone-300">
+          Du hadde {originalDelayDisplay} utsettelse.
+        </Text>
+      </div>
+    </div>
   )
 }
