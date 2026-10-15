@@ -1,7 +1,6 @@
 import { Text } from "@dotkomonline/ui"
-import { addDays, isPast } from "date-fns"
+import { addDays } from "date-fns"
 import { useEffect, useState, type ReactNode } from "react"
-import { getAttendee } from "@dotkomonline/rpc/attendance"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import {
@@ -19,8 +18,6 @@ import {
   createIneligiblePoolAttendance,
   createMockAttendance,
   createMockAttendee,
-  createMockRegistrationAvailabilityForAttendee,
-  createMockRegistrationAvailabilityPastDeregisterDeadline,
   createMockUser,
 } from "../../../../../../.ladle/fixtures/attendance"
 import { MainPoolCard } from "./MainPoolCard"
@@ -37,22 +34,12 @@ const MainPoolCardPreview = ({
   user: User | null
   chargeScheduleDate?: Date | null
 }) => {
-  const attendee = getAttendee(attendance, user)
-
-  const registrationAvailability =
-    user === null || attendee === null
-      ? null
-      : isPast(attendance.deregisterDeadline)
-        ? createMockRegistrationAvailabilityPastDeregisterDeadline(attendance, attendee)
-        : createMockRegistrationAvailabilityForAttendee(attendance, attendee)
-
   return (
     <MainPoolCard
       attendance={attendance}
       user={user}
       authorizeUrl={AUTHORIZE_URL}
       chargeScheduleDate={chargeScheduleDate}
-      registrationAvailability={registrationAvailability}
     />
   )
 }

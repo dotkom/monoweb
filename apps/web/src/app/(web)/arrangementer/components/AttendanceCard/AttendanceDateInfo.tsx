@@ -106,7 +106,9 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
     </div>
   )
 
-  if (!showDeregisterDeadlineNotice) return element
+  if (!showDeregisterDeadlineNotice) {
+    return element
+  }
 
   return (
     <div className="flex flex-col">

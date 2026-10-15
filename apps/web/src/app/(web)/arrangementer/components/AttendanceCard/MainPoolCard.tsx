@@ -2,7 +2,6 @@ import { formatRollingCountdown } from "@/utils/countdown/formatRollingCountdown
 import { RollingNumber } from "@/components/RollingNumber"
 import { useCountdown } from "@/utils/countdown/use-countdown"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
-import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type AttendanceView,
   type Attendee,
@@ -43,21 +42,18 @@ import {
 } from "date-fns"
 import { nb } from "date-fns/locale"
 import Link from "next/link.js"
-import { useMemo, type FC, type ReactNode } from "react"
+import type { FC, ReactNode } from "react"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
 // See https://support.stripe.com/questions/where-is-my-customers-refund
 const MAX_REFUND_PROCESSING_DAYS = 12
 
-type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
-
 interface MainPoolCardProps {
   attendance: AttendanceView
   user: User | null
   authorizeUrl: string
   chargeScheduleDate?: Date | null
-  registrationAvailability?: RegistrationAvailability | null
   hasAttachedActionBelow?: boolean
 }
 
@@ -66,22 +62,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   user,
   authorizeUrl,
   chargeScheduleDate,
-  registrationAvailability = null,
   hasAttachedActionBelow = false,
 }) => {
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
-  const completion = useMemo(() => {
-    if (attendee !== null) {
-      return buildRegistrationAvailabilityCompletionView(attendance, attendee)
-    }
-
-    return registrationAvailability?.completion ?? null
-  }, [attendance, attendee, registrationAvailability?.completion, deadlineTick])
+  useDeadlineTick(attendee?.completionDeadline)
+  const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
 
   const registerCountdownDisplay = useCountdown(attendance.registerStart, formatRollingCountdown)
   const registerCountdownInterval = interval(subMinutes(attendance.registerStart, 15), attendance.registerStart)
