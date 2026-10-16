@@ -46,7 +46,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
               {formatDate(createdAt, "dd.MM.yyyy")}
             </Text>
           </div>
-          <div className="flex flex-wrap gap-2 items-center self-center max-sm:hidden max-h-[1.5rem] overflow-hidden">
+          <div className="flex flex-wrap gap-2 items-center self-center max-h-[1.5rem] overflow-hidden">
             {tags.map((tag) => (
               <Text
                 key={tag.name}
