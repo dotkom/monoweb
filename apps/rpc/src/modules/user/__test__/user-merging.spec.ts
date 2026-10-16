@@ -75,6 +75,7 @@ describe("mergeUsers", () => {
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
     handle.userFlagLink.findMany.mockResolvedValue([])
+    handle.interestGroupEventRegistration.findMany.mockResolvedValue([])
     deps = { groupRepository, attendanceService }
   })
 
@@ -383,6 +384,45 @@ describe("mergeUsers", () => {
         where: { userId: consumed.id, markId: { in: [sharedMarkId] } },
       })
       expect(handle.personalMark.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+  })
+
+  describe("interest group event registration deduplication", () => {
+    it("reassigns consumed registrations when survivor has none of the same events", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+
+      handle.interestGroupEventRegistration.findMany.mockResolvedValue([])
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.interestGroupEventRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, interestGroupEventId: { in: [] } },
+      })
+      expect(handle.interestGroupEventRegistration.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+
+    it("deletes the consumed user's registrations that the survivor also has", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const sharedEventId = "interest-group-event-shared"
+
+      handle.interestGroupEventRegistration.findMany.mockResolvedValue([
+        { interestGroupEventId: sharedEventId },
+      ] as never)
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.interestGroupEventRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, interestGroupEventId: { in: [sharedEventId] } },
+      })
+      expect(handle.interestGroupEventRegistration.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })

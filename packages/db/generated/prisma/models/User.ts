@@ -278,6 +278,9 @@ export type UserWhereInput = {
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
   userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
+  sidequestRegistrations?: Prisma.SidequestRegistrationListRelationFilter
+  sidequestRequests?: Prisma.SidequestRequestListRelationFilter
+  sidequestRequestsReviewed?: Prisma.SidequestRequestListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -312,6 +315,9 @@ export type UserOrderByWithRelationInput = {
   contestants?: Prisma.ContestantOrderByRelationAggregateInput
   contestTeams?: Prisma.ContestTeamOrderByRelationAggregateInput
   userFlagLinks?: Prisma.UserFlagLinkOrderByRelationAggregateInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationOrderByRelationAggregateInput
+  sidequestRequests?: Prisma.SidequestRequestOrderByRelationAggregateInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -349,6 +355,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   contestants?: Prisma.ContestantListRelationFilter
   contestTeams?: Prisma.ContestTeamListRelationFilter
   userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
+  sidequestRegistrations?: Prisma.SidequestRegistrationListRelationFilter
+  sidequestRequests?: Prisma.SidequestRequestListRelationFilter
+  sidequestRequestsReviewed?: Prisma.SidequestRequestListRelationFilter
 }, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
 
 export type UserOrderByWithAggregationInput = {
@@ -425,6 +434,9 @@ export type UserCreateInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -459,6 +471,9 @@ export type UserUncheckedCreateInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUpdateInput = {
@@ -493,6 +508,9 @@ export type UserUpdateInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -527,6 +545,9 @@ export type UserUncheckedUpdateInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -925,6 +946,50 @@ export type UserUpdateOneRequiredWithoutUserFlagLinksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserFlagLinksInput, Prisma.UserUpdateWithoutUserFlagLinksInput>, Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>
 }
 
+export type UserCreateNestedOneWithoutSidequestRegistrationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedCreateWithoutSidequestRegistrationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRegistrationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSidequestRegistrationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedCreateWithoutSidequestRegistrationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRegistrationsInput
+  upsert?: Prisma.UserUpsertWithoutSidequestRegistrationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSidequestRegistrationsInput, Prisma.UserUpdateWithoutSidequestRegistrationsInput>, Prisma.UserUncheckedUpdateWithoutSidequestRegistrationsInput>
+}
+
+export type UserCreateNestedOneWithoutSidequestRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutSidequestRequestsReviewedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRequestsReviewedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSidequestRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRequestsInput
+  upsert?: Prisma.UserUpsertWithoutSidequestRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSidequestRequestsInput, Prisma.UserUpdateWithoutSidequestRequestsInput>, Prisma.UserUncheckedUpdateWithoutSidequestRequestsInput>
+}
+
+export type UserUpdateOneWithoutSidequestRequestsReviewedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSidequestRequestsReviewedInput
+  upsert?: Prisma.UserUpsertWithoutSidequestRequestsReviewedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSidequestRequestsReviewedInput, Prisma.UserUpdateWithoutSidequestRequestsReviewedInput>, Prisma.UserUncheckedUpdateWithoutSidequestRequestsReviewedInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id: string
   username: string
@@ -956,6 +1021,9 @@ export type UserCreateWithoutMembershipsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -989,6 +1057,9 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1038,6 +1109,9 @@ export type UserUpdateWithoutMembershipsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1071,6 +1145,9 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutGroupMembershipsInput = {
@@ -1104,6 +1181,9 @@ export type UserCreateWithoutGroupMembershipsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -1137,6 +1217,9 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -1186,6 +1269,9 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -1219,6 +1305,9 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutAttendeeInput = {
@@ -1252,6 +1341,9 @@ export type UserCreateWithoutAttendeeInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAttendeeInput = {
@@ -1285,6 +1377,9 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAttendeeInput = {
@@ -1323,6 +1418,9 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
@@ -1356,6 +1454,9 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAttendeesRefundedInput = {
@@ -1405,6 +1506,9 @@ export type UserUpdateWithoutAttendeeInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeeInput = {
@@ -1438,6 +1542,9 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUpsertWithoutAttendeesRefundedInput = {
@@ -1482,6 +1589,9 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
@@ -1515,6 +1625,9 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutPersonalMarkInput = {
@@ -1548,6 +1661,9 @@ export type UserCreateWithoutPersonalMarkInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutPersonalMarkInput = {
@@ -1581,6 +1697,9 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutPersonalMarkInput = {
@@ -1619,6 +1738,9 @@ export type UserCreateWithoutGivenMarksInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutGivenMarksInput = {
@@ -1652,6 +1774,9 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutGivenMarksInput = {
@@ -1701,6 +1826,9 @@ export type UserUpdateWithoutPersonalMarkInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalMarkInput = {
@@ -1734,6 +1862,9 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUpsertWithoutGivenMarksInput = {
@@ -1778,6 +1909,9 @@ export type UserUpdateWithoutGivenMarksInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGivenMarksInput = {
@@ -1811,6 +1945,9 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutPrivacyPermissionsInput = {
@@ -1844,6 +1981,9 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
@@ -1877,6 +2017,9 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutPrivacyPermissionsInput = {
@@ -1926,6 +2069,9 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
@@ -1959,6 +2105,9 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutNotificationPermissionsInput = {
@@ -1992,6 +2141,9 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
@@ -2025,6 +2177,9 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPermissionsInput = {
@@ -2074,6 +2229,9 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
@@ -2107,6 +2265,9 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2140,6 +2301,9 @@ export type UserCreateWithoutAuditLogsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2173,6 +2337,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2222,6 +2389,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2255,6 +2425,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutDeregisterReasonsInput = {
@@ -2288,6 +2461,9 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
@@ -2321,6 +2497,9 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutDeregisterReasonsInput = {
@@ -2370,6 +2549,9 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
@@ -2403,6 +2585,9 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutNotificationsReceivedInput = {
@@ -2436,6 +2621,9 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
@@ -2469,6 +2657,9 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
@@ -2518,6 +2709,9 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
@@ -2551,6 +2745,9 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutNotificationsCreatedInput = {
@@ -2584,6 +2781,9 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
@@ -2617,6 +2817,9 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsCreatedInput = {
@@ -2655,6 +2858,9 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
@@ -2688,6 +2894,9 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsUpdatedInput = {
@@ -2737,6 +2946,9 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
@@ -2770,6 +2982,9 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUpsertWithoutNotificationsUpdatedInput = {
@@ -2814,6 +3029,9 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
@@ -2847,6 +3065,9 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutContestantsInput = {
@@ -2880,6 +3101,9 @@ export type UserCreateWithoutContestantsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutContestantsInput = {
@@ -2913,6 +3137,9 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutContestantsInput = {
@@ -2962,6 +3189,9 @@ export type UserUpdateWithoutContestantsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestantsInput = {
@@ -2995,6 +3225,9 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutContestTeamsInput = {
@@ -3028,6 +3261,9 @@ export type UserCreateWithoutContestTeamsInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutContestTeamsInput = {
@@ -3061,6 +3297,9 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutContestTeamsInput = {
@@ -3136,6 +3375,9 @@ export type UserCreateWithoutUserFlagLinksInput = {
   notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutUserFlagLinksInput = {
@@ -3169,6 +3411,9 @@ export type UserUncheckedCreateWithoutUserFlagLinksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
   contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutUserFlagLinksInput = {
@@ -3218,6 +3463,9 @@ export type UserUpdateWithoutUserFlagLinksInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
@@ -3251,6 +3499,489 @@ export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserCreateWithoutSidequestRegistrationsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutSidequestRegistrationsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutSidequestRegistrationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedCreateWithoutSidequestRegistrationsInput>
+}
+
+export type UserUpsertWithoutSidequestRegistrationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedUpdateWithoutSidequestRegistrationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedCreateWithoutSidequestRegistrationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSidequestRegistrationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRegistrationsInput, Prisma.UserUncheckedUpdateWithoutSidequestRegistrationsInput>
+}
+
+export type UserUpdateWithoutSidequestRegistrationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSidequestRegistrationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserCreateWithoutSidequestRequestsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutSidequestRequestsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutSidequestRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsInput>
+}
+
+export type UserCreateWithoutSidequestRequestsReviewedInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserUncheckedCreateWithoutSidequestRequestsReviewedInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedCreateNestedManyWithoutUserInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserCreateOrConnectWithoutSidequestRequestsReviewedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsReviewedInput>
+}
+
+export type UserUpsertWithoutSidequestRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRequestsInput, Prisma.UserUncheckedUpdateWithoutSidequestRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSidequestRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRequestsInput, Prisma.UserUncheckedUpdateWithoutSidequestRequestsInput>
+}
+
+export type UserUpdateWithoutSidequestRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSidequestRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUpsertWithoutSidequestRequestsReviewedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedUpdateWithoutSidequestRequestsReviewedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedCreateWithoutSidequestRequestsReviewedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSidequestRequestsReviewedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSidequestRequestsReviewedInput, Prisma.UserUncheckedUpdateWithoutSidequestRequestsReviewedInput>
+}
+
+export type UserUpdateWithoutSidequestRequestsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSidequestRequestsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUpdateWithoutContestTeamsInput = {
@@ -3284,6 +4015,9 @@ export type UserUpdateWithoutContestTeamsInput = {
   notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestTeamsInput = {
@@ -3317,6 +4051,9 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRegistrations?: Prisma.SidequestRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  sidequestRequests?: Prisma.SidequestRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  sidequestRequestsReviewed?: Prisma.SidequestRequestUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
@@ -3357,6 +4094,9 @@ export type UserCountOutputType = {
   contestants: number
   contestTeams: number
   userFlagLinks: number
+  sidequestRegistrations: number
+  sidequestRequests: number
+  sidequestRequestsReviewed: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3374,6 +4114,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   contestants?: boolean | UserCountOutputTypeCountContestantsArgs
   contestTeams?: boolean | UserCountOutputTypeCountContestTeamsArgs
   userFlagLinks?: boolean | UserCountOutputTypeCountUserFlagLinksArgs
+  sidequestRegistrations?: boolean | UserCountOutputTypeCountSidequestRegistrationsArgs
+  sidequestRequests?: boolean | UserCountOutputTypeCountSidequestRequestsArgs
+  sidequestRequestsReviewed?: boolean | UserCountOutputTypeCountSidequestRequestsReviewedArgs
 }
 
 /**
@@ -3484,6 +4227,27 @@ export type UserCountOutputTypeCountUserFlagLinksArgs<ExtArgs extends runtime.Ty
   where?: Prisma.UserFlagLinkWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSidequestRegistrationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SidequestRegistrationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSidequestRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SidequestRequestWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSidequestRequestsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SidequestRequestWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3517,6 +4281,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
   userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
+  sidequestRegistrations?: boolean | Prisma.User$sidequestRegistrationsArgs<ExtArgs>
+  sidequestRequests?: boolean | Prisma.User$sidequestRequestsArgs<ExtArgs>
+  sidequestRequestsReviewed?: boolean | Prisma.User$sidequestRequestsReviewedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3592,6 +4359,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   contestants?: boolean | Prisma.User$contestantsArgs<ExtArgs>
   contestTeams?: boolean | Prisma.User$contestTeamsArgs<ExtArgs>
   userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
+  sidequestRegistrations?: boolean | Prisma.User$sidequestRegistrationsArgs<ExtArgs>
+  sidequestRequests?: boolean | Prisma.User$sidequestRequestsArgs<ExtArgs>
+  sidequestRequestsReviewed?: boolean | Prisma.User$sidequestRequestsReviewedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3616,6 +4386,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     contestants: Prisma.$ContestantPayload<ExtArgs>[]
     contestTeams: Prisma.$ContestTeamPayload<ExtArgs>[]
     userFlagLinks: Prisma.$UserFlagLinkPayload<ExtArgs>[]
+    sidequestRegistrations: Prisma.$SidequestRegistrationPayload<ExtArgs>[]
+    sidequestRequests: Prisma.$SidequestRequestPayload<ExtArgs>[]
+    sidequestRequestsReviewed: Prisma.$SidequestRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     /**
@@ -4049,6 +4822,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   contestants<T extends Prisma.User$contestantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contestTeams<T extends Prisma.User$contestTeamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestTeamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestTeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userFlagLinks<T extends Prisma.User$userFlagLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userFlagLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserFlagLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sidequestRegistrations<T extends Prisma.User$sidequestRegistrationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sidequestRegistrationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SidequestRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sidequestRequests<T extends Prisma.User$sidequestRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sidequestRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SidequestRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sidequestRequestsReviewed<T extends Prisma.User$sidequestRequestsReviewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sidequestRequestsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SidequestRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4866,6 +5642,78 @@ export type User$userFlagLinksArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.UserFlagLinkScalarFieldEnum | Prisma.UserFlagLinkScalarFieldEnum[]
+}
+
+/**
+ * User.sidequestRegistrations
+ */
+export type User$sidequestRegistrationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SidequestRegistration
+   */
+  select?: Prisma.SidequestRegistrationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SidequestRegistration
+   */
+  omit?: Prisma.SidequestRegistrationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SidequestRegistrationInclude<ExtArgs> | null
+  where?: Prisma.SidequestRegistrationWhereInput
+  orderBy?: Prisma.SidequestRegistrationOrderByWithRelationInput | Prisma.SidequestRegistrationOrderByWithRelationInput[]
+  cursor?: Prisma.SidequestRegistrationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SidequestRegistrationScalarFieldEnum | Prisma.SidequestRegistrationScalarFieldEnum[]
+}
+
+/**
+ * User.sidequestRequests
+ */
+export type User$sidequestRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SidequestRequest
+   */
+  select?: Prisma.SidequestRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SidequestRequest
+   */
+  omit?: Prisma.SidequestRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SidequestRequestInclude<ExtArgs> | null
+  where?: Prisma.SidequestRequestWhereInput
+  orderBy?: Prisma.SidequestRequestOrderByWithRelationInput | Prisma.SidequestRequestOrderByWithRelationInput[]
+  cursor?: Prisma.SidequestRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SidequestRequestScalarFieldEnum | Prisma.SidequestRequestScalarFieldEnum[]
+}
+
+/**
+ * User.sidequestRequestsReviewed
+ */
+export type User$sidequestRequestsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SidequestRequest
+   */
+  select?: Prisma.SidequestRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SidequestRequest
+   */
+  omit?: Prisma.SidequestRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SidequestRequestInclude<ExtArgs> | null
+  where?: Prisma.SidequestRequestWhereInput
+  orderBy?: Prisma.SidequestRequestOrderByWithRelationInput | Prisma.SidequestRequestOrderByWithRelationInput[]
+  cursor?: Prisma.SidequestRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SidequestRequestScalarFieldEnum | Prisma.SidequestRequestScalarFieldEnum[]
 }
 
 /**
