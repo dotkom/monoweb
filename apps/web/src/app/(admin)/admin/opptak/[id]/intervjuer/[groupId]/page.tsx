@@ -32,9 +32,9 @@ export default function ApplicationGroupInterviewsPage() {
     groupMatching === undefined ? null : (abbreviationBySlug.get(groupMatching.groupId) ?? groupMatching.groupId)
 
   useBreadcrumbLabel(
-    breadcrumbPath("opptak", id, "intervjutider", groupId),
+    breadcrumbPath("opptak", id, "intervjuer", groupId),
     committeeName,
-    breadcrumbPath("opptak", id, "intervjutider")
+    breadcrumbPath("opptak", id, "intervjuer")
   )
 
   const { mutate: setInterviewAttendance } = useSetInterviewAttendanceMutation()
@@ -107,7 +107,8 @@ export default function ApplicationGroupInterviewsPage() {
       <InterviewCalendarHeader canAttend={canAttend} />
 
       <InterviewCalendar
-        initialDate={application.interviewsStartDate}
+        startDate={application.interviewsStartDate}
+        endDate={application.interviewsEndDate}
         interviews={groupMatching.matchedInterviews}
         addedInterviewIds={addedInterviewIds}
         canAttend={canAttend}

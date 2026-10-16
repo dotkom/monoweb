@@ -5,10 +5,20 @@ import type { CalendarOptions } from "@fullcalendar/core"
 import nbLocale from "@fullcalendar/core/locales/nb"
 import FullCalendar from "@fullcalendar/react"
 import timeGridPlugin from "@fullcalendar/timegrid"
-import { IconMapPin, IconX } from "@tabler/icons-react"
-import { formatDate } from "date-fns"
+import { IconChevronLeft, IconChevronRight, IconMapPin, IconX } from "@tabler/icons-react"
+import { addDays, formatDate, isSameDay, subDays } from "date-fns"
 import { nb } from "date-fns/locale"
-import { type CSSProperties, type ReactNode, type Ref, useEffect, useId, useState } from "react"
+import {
+  type CSSProperties,
+  type ReactNode,
+  type Ref,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react"
 import "./calendar-theme.css"
 import { DAY_END_TIME, DAY_START_TIME, GRID_ROW_MINUTES } from "./slot-layout"
 
@@ -44,6 +54,26 @@ const CALENDAR_VARIABLES = {
   "--fc-neutral-text-color": "var(--muted-foreground)",
   "--fc-highlight-color": "color-mix(in oklab, var(--ring) 20%, transparent)",
 } as CSSProperties
+
+const DAY_COLUMN_BREAKPOINTS = [
+  [1024, 5],
+  [768, 4],
+  [640, 3],
+] as const
+
+const getDayColumns = () => DAY_COLUMN_BREAKPOINTS.find(([width]) => window.innerWidth >= width)?.[1] ?? 1
+
+const toLocalDay = (time: number) => {
+  const date = new Date(time)
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+}
+
+const subscribeToResize = (onChange: () => void) => {
+  window.addEventListener("resize", onChange)
+  return () => window.removeEventListener("resize", onChange)
+}
+
+export type PopupSide = "left" | "right" | "below"
 
 const matches = (target: EventTarget | null, selector: string) =>
   target instanceof Element && target.closest(selector) !== null
@@ -128,54 +158,81 @@ export const CalendarEventBody = ({
 export const SlotPopup = ({
   label,
   anchorsToBottom = false,
-  opensToLeft = false,
+  side,
   children,
 }: {
   label: string
   anchorsToBottom?: boolean
-  opensToLeft?: boolean
+  side: PopupSide
   children: ReactNode
-}) => (
-  <>
-    <div
-      role="dialog"
-      aria-label={label}
-      draggable={false}
-      onDragStart={(event) => event.preventDefault()}
-      className={cn(
-        "slot-popup absolute z-50 flex w-[150%] max-w-[calc(100vw-2rem)] cursor-auto select-text flex-col gap-2 rounded-lg border p-2.5 text-popover-foreground shadow-popover",
-        POPUP_SURFACE_CLASSES,
-        anchorsToBottom ? "bottom-0" : "top-0",
-        opensToLeft ? "right-[calc(100%+8px)]" : "left-[calc(100%+8px)]"
-      )}
-    >
-      {children}
-    </div>
-    <span
-      aria-hidden
-      className={cn(
-        "slot-popup absolute top-1/2 z-50 size-3 -translate-y-1/2 rotate-45 border",
-        POPUP_SURFACE_CLASSES,
-        opensToLeft ? "right-[calc(100%+2px)] border-b-0 border-l-0" : "left-[calc(100%+2px)] border-r-0 border-t-0"
-      )}
-    />
-  </>
-)
+}) => {
+  const isVertical = side === "below"
+
+  return (
+    <>
+      <div
+        role="dialog"
+        aria-label={label}
+        draggable={false}
+        onDragStart={(event) => event.preventDefault()}
+        className={cn(
+          "slot-popup absolute z-50 flex max-w-[calc(100vw-2rem)] cursor-auto select-text flex-col gap-2 rounded-lg border p-2.5 text-popover-foreground shadow-popover",
+          POPUP_SURFACE_CLASSES,
+          isVertical
+            ? cn("inset-x-0", anchorsToBottom ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+8px)]")
+            : cn(
+                "w-[150%]",
+                anchorsToBottom ? "bottom-0" : "top-0",
+                side === "left" ? "right-[calc(100%+8px)]" : "left-[calc(100%+8px)]"
+              )
+        )}
+      >
+        {children}
+      </div>
+      <span
+        aria-hidden
+        className={cn(
+          "slot-popup absolute z-50 size-3 rotate-45 border",
+          POPUP_SURFACE_CLASSES,
+          isVertical
+            ? cn(
+                "left-1/2 -translate-x-1/2",
+                anchorsToBottom
+                  ? "bottom-[calc(100%+2px)] border-l-0 border-t-0"
+                  : "top-[calc(100%+2px)] border-b-0 border-r-0"
+              )
+            : cn(
+                "top-1/2 -translate-y-1/2",
+                side === "left"
+                  ? "right-[calc(100%+2px)] border-b-0 border-l-0"
+                  : "left-[calc(100%+2px)] border-r-0 border-t-0"
+              )
+        )}
+      />
+    </>
+  )
+}
 
 type SlotCalendarProps<TSlot> = Omit<CalendarOptions, "eventClick" | "eventContent"> & {
   heading: string
-  initialDate: Date
+  startDate: Date
+  endDate: Date
   className?: string
   style?: CSSProperties
   sectionRef?: Ref<HTMLElement>
   slots: TSlot[]
   getSlotId: (slot: TSlot) => string
   fieldSelector: string
-  renderSlot: (slot: TSlot, context: { timeText: string; isActive: boolean; collapse: () => void }) => ReactNode
+  renderSlot: (
+    slot: TSlot,
+    context: { timeText: string; isActive: boolean; popupSide: PopupSide; collapse: () => void }
+  ) => ReactNode
 }
 
 export function SlotCalendar<TSlot>({
   heading,
+  startDate,
+  endDate,
   className,
   style,
   sectionRef,
@@ -187,7 +244,20 @@ export function SlotCalendar<TSlot>({
   ...calendarOptions
 }: SlotCalendarProps<TSlot>) {
   const headingId = useId()
+  const calendarRef = useRef<FullCalendar>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const startTime = startDate.getTime()
+  const endTime = endDate.getTime()
+  const validRange = useMemo(
+    () => ({ start: toLocalDay(startTime), end: addDays(toLocalDay(endTime), 1) }),
+    [startTime, endTime]
+  )
+  const [visibleRange, setVisibleRange] = useState(validRange)
+  const dayColumns = useSyncExternalStore(subscribeToResize, getDayColumns, () => 5)
+  const views = useMemo(() => ({ slotDays: { type: "timeGrid", duration: { days: dayColumns } } }), [dayColumns])
+  const hasPrevious = visibleRange.start > validRange.start
+  const hasNext = visibleRange.end < validRange.end
+  const lastVisibleDay = subDays(visibleRange.end, 1)
 
   useEffect(() => {
     if (expandedId === null) {
@@ -215,12 +285,43 @@ export function SlotCalendar<TSlot>({
         {heading}
       </Title>
 
+      {(hasPrevious || hasNext) && (
+        <div className="mb-2 flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon-sm"
+            aria-label="Forrige"
+            icon={<IconChevronLeft className="size-4" />}
+            disabled={!hasPrevious}
+            onClick={() => calendarRef.current?.getApi().prev()}
+          />
+          <Button
+            variant="outline"
+            size="icon-sm"
+            aria-label="Neste"
+            icon={<IconChevronRight className="size-4" />}
+            disabled={!hasNext}
+            onClick={() => calendarRef.current?.getApi().next()}
+          />
+          <Text element="span" className="text-sm font-medium">
+            {!isSameDay(visibleRange.start, lastVisibleDay) &&
+              `${formatDate(visibleRange.start, "d. MMMM", { locale: nb })} – `}
+            {formatDate(lastVisibleDay, "d. MMMM", { locale: nb })}
+          </Text>
+        </div>
+      )}
+
       <FullCalendar
+        key={dayColumns}
+        ref={calendarRef}
         plugins={[timeGridPlugin, ...plugins]}
-        initialView="timeGridWeek"
+        views={views}
+        initialView="slotDays"
+        initialDate={validRange.start}
+        validRange={validRange}
+        datesSet={({ start, end }) => setVisibleRange({ start, end })}
         locale={nbLocale}
         headerToolbar={false}
-        weekends={false}
         allDaySlot={false}
         height="auto"
         slotMinTime={DAY_START_TIME}
@@ -245,12 +346,22 @@ export function SlotCalendar<TSlot>({
             setExpandedId((current) => (current === event.id ? null : event.id))
           }
         }}
-        eventContent={({ event, timeText }) => {
+        eventContent={({ event, timeText, view }) => {
           const slot = slots.find((candidate) => getSlotId(candidate) === event.id)
 
           return slot === undefined
             ? null
-            : renderSlot(slot, { timeText, isActive: event.id === expandedId, collapse: () => setExpandedId(null) })
+            : renderSlot(slot, {
+                timeText,
+                isActive: event.id === expandedId,
+                popupSide:
+                  dayColumns === 1
+                    ? "below"
+                    : event.start !== null && isSameDay(event.start, subDays(view.activeEnd, 1))
+                      ? "left"
+                      : "right",
+                collapse: () => setExpandedId(null),
+              })
         }}
       />
     </section>

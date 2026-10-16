@@ -54,7 +54,9 @@ type ForTestingRevertPublishingAndMatchingProps = {
   applicationPeriod: CommitteeApplicationPeriod
 }
 
-export function ForTestingRevertPublishingAndMatching({ applicationPeriod }: ForTestingRevertPublishingAndMatchingProps) {
+export function ForTestingRevertPublishingAndMatching({
+  applicationPeriod,
+}: ForTestingRevertPublishingAndMatchingProps) {
   const revert = useRevertInterviewPublicationAndMatchingMutation()
 
   return (

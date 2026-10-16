@@ -76,5 +76,5 @@ export const interviewTable = {
 
 export function getInterviewHref(applicationPeriodId: string) {
   return (matching: CommitteeApplicationGroupMatching) =>
-    `/admin/opptak/${applicationPeriodId}/intervjutider/${matching.applicationGroupId}`
+    `/admin/opptak/${applicationPeriodId}/intervjuer/${matching.applicationGroupId}`
 }

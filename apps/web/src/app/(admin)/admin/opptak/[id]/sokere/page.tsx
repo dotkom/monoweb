@@ -78,7 +78,7 @@ export default function ApplicationApplicantInfoPage() {
         .get(applicant.applicationId)
         ?.selections.at(0)?.applicationGroupId
 
-      return `/admin/opptak/${application.id}/opplysninger/${applicationGroupId}/${applicant.applicationId}`
+      return `/admin/opptak/${application.id}/sokere/${applicationGroupId}/${applicant.applicationId}`
     },
     [application.id, applicantsByApplicationId]
   )

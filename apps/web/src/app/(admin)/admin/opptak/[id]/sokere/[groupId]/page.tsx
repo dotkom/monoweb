@@ -19,9 +19,9 @@ export default function ApplicationGroupApplicantInfoPage() {
     groupMatching === undefined ? null : (abbreviationBySlug.get(groupMatching.groupId) ?? groupMatching.groupId)
 
   useBreadcrumbLabel(
-    breadcrumbPath("opptak", id, "opplysninger", groupId),
+    breadcrumbPath("opptak", id, "sokere", groupId),
     committeeName,
-    breadcrumbPath("opptak", id, "opplysninger")
+    breadcrumbPath("opptak", id, "sokere")
   )
 
   const applicants: ApplicantRow[] = useMemo(
@@ -41,7 +41,7 @@ export default function ApplicationGroupApplicantInfoPage() {
   )
 
   const getHref = useCallback(
-    (applicant: ApplicantRow) => `/admin/opptak/${id}/opplysninger/${groupId}/${applicant.applicationId}`,
+    (applicant: ApplicantRow) => `/admin/opptak/${id}/sokere/${groupId}/${applicant.applicationId}`,
     [id, groupId]
   )
 

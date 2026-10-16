@@ -77,7 +77,9 @@ export const InterviewLocation = ({ interview }: { interview?: ApplicantIntervie
         <IconMapPin className="size-3.5 shrink-0 opacity-45" stroke={2} />
         {interview.locationName}
       </Text>
-      {interview.locationUrl !== null && <CopyButton value={interview.locationUrl} label="Kopier Mazemap-link" compact />}
+      {interview.locationUrl !== null && (
+        <CopyButton value={interview.locationUrl} label="Kopier link" compact />
+      )}
     </div>
   ) : (
     <EmptyCell>Ingen rom</EmptyCell>

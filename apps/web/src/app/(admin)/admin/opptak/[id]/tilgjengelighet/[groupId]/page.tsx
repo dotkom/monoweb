@@ -75,9 +75,10 @@ export default function ApplicationGroupCalendarPage() {
 
   const [slots, setSlots] = useState<AvailabilitySlot[]>(storedSlots)
   const [interviewDuration, setInterviewDuration] = useState<CommitteeApplicationInterviewDuration>(
-    DEFAULT_COMMITTEE_APPLICATION_INTERVIEW_DURATION
+    applicationGroup?.interviewDuration ?? DEFAULT_COMMITTEE_APPLICATION_INTERVIEW_DURATION
   )
   const hydratedSlotsRef = useRef(storedSlots)
+  const hydratedGroupRef = useRef(applicationGroup)
 
   const hasUnsavedChanges = useMemo(() => {
     if (applicationGroup !== undefined && applicationGroup.interviewDuration !== interviewDuration) {
@@ -103,7 +104,11 @@ export default function ApplicationGroupCalendarPage() {
     })
   }, [slots, storedSlots, applicationGroup, interviewDuration])
 
-  const isHydrated = isSuccess && applicationGroup !== undefined && hydratedSlotsRef.current === storedSlots
+  const isHydrated =
+    isSuccess &&
+    applicationGroup !== undefined &&
+    hydratedGroupRef.current === applicationGroup &&
+    hydratedSlotsRef.current === storedSlots
   const canAutosave = readOnlyReason === undefined && isHydrated
   const isPending = syncInterviewBlocks.isPending
   const saveRef = useRef(() => {})
@@ -116,7 +121,8 @@ export default function ApplicationGroupCalendarPage() {
   }, [storedSlots])
 
   useEffect(() => {
-    if (applicationGroup !== undefined) {
+    if (applicationGroup !== undefined && hydratedGroupRef.current !== applicationGroup) {
+      hydratedGroupRef.current = applicationGroup
       setInterviewDuration(applicationGroup.interviewDuration)
     }
   }, [applicationGroup])
@@ -188,7 +194,8 @@ export default function ApplicationGroupCalendarPage() {
       />
 
       <AvailabilityCalendar
-        initialDate={application.interviewsStartDate}
+        startDate={application.interviewsStartDate}
+        endDate={application.interviewsEndDate}
         interviewDuration={interviewDuration}
         selected={slots}
         onChange={setSlots}

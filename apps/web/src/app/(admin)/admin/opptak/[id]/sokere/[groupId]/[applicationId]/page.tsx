@@ -100,11 +100,11 @@ export default function ApplicantDetailsPage() {
   const committeeName =
     groupSelection === undefined ? null : (abbreviationBySlug.get(groupSelection.groupId) ?? groupSelection.groupId)
 
-  useBreadcrumbLabel(breadcrumbPath("opptak", id, "opplysninger", groupId), committeeName)
+  useBreadcrumbLabel(breadcrumbPath("opptak", id, "sokere", groupId), committeeName)
   useBreadcrumbLabel(
-    breadcrumbPath("opptak", id, "opplysninger", groupId, applicationId),
+    breadcrumbPath("opptak", id, "sokere", groupId, applicationId),
     applicant?.name ?? null,
-    breadcrumbPath("opptak", id, "opplysninger", groupId)
+    breadcrumbPath("opptak", id, "sokere", groupId)
   )
 
   if (isLoading || applicant === undefined) {
@@ -187,7 +187,7 @@ export default function ApplicantDetailsPage() {
                 <div className="flex items-center gap-2">
                   <Text className="text-sm">{groupSelection.interview.locationName}</Text>
                   {groupSelection.interview.locationUrl !== null && (
-                    <CopyButton value={groupSelection.interview.locationUrl} label="Kopier Mazemap-link" compact />
+                    <CopyButton value={groupSelection.interview.locationUrl} label="Kopier link" compact />
                   )}
                 </div>
               </Field>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { useGroupAllQuery } from "@admin/grupper/queries"
 import { useMemo } from "react"
 import { ApplicationWriteForm } from "../ApplicationWriteForm"
@@ -51,13 +50,6 @@ export default function ApplicationInfoPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      {!canEdit && (
-        <ReadOnlyNotice
-          title="Du kan ikke redigere opptaket."
-          message="Dette er fordi du ikke er administrator. Kontakt dotkom dersom du mener dette er en feil."
-        />
-      )}
-
       <ApplicationWriteForm
         onSubmit={(data) => {
           const write = toPeriodWrite(data)

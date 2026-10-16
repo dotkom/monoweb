@@ -1,10 +1,11 @@
 "use client"
 
-import { ConfirmModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
+import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import {
   ACTIVE_SLOT_CLASSES,
   CalendarEventBody,
   CalendarSlot,
+  type PopupSide,
   SlotCalendar,
   SlotPopup,
 } from "../../../../components/Calendar/Calendar"
@@ -19,20 +20,11 @@ import { CopyButton } from "@admin/components/ResourceDetailLayout/ResourceDetai
 import type { CommitteeApplicationMatchedInterview } from "@dotkomonline/rpc/committee-application"
 import { Button, cn, Text } from "@dotkomonline/ui"
 import interactionPlugin from "@fullcalendar/interaction"
-import {
-  IconArrowUpRight,
-  IconMapPin,
-  IconUser,
-  IconUserMinus,
-  IconUserPlus,
-  IconUsers,
-} from "@tabler/icons-react"
-import { getDay } from "date-fns"
+import { IconArrowUpRight, IconMapPin, IconUser, IconUserPlus, IconUsers } from "@tabler/icons-react"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 
 const EXPANDED_ROWS = 10
-const LAST_WEEKDAY = 5
 const POPUP_TARGET_SELECTOR = "button, .slot-popup, [data-slot^='alert-dialog']"
 
 const SELECTION_CLASSES = cn(
@@ -51,6 +43,7 @@ type InterviewSlotProps = {
   interview: CommitteeApplicationMatchedInterview
   timeText: string
   isActive: boolean
+  popupSide: PopupSide
   isAdded: boolean
   canAttend: boolean
   onAdd: () => void
@@ -62,6 +55,7 @@ function InterviewSlot({
   interview,
   timeText,
   isActive,
+  popupSide,
   isAdded,
   canAttend,
   onAdd,
@@ -71,15 +65,23 @@ function InterviewSlot({
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = useState(false)
   const { attendees } = interview
   const attendeeCount = attendees.length === 0 ? "ingen" : attendees.length
+  const accentColor = getInterviewColors(isAdded, attendees.length).border
 
   return (
-    <CalendarSlot isActive={isActive} className="relative flex h-full w-full flex-col rounded-[4px]">
+    <CalendarSlot
+      isActive={isActive}
+      className={cn(
+        "relative flex h-full w-full flex-col rounded-[4px]",
+        isActive && "text-white dark:text-neutral-950"
+      )}
+      style={isActive ? { backgroundColor: `color-mix(in oklab, ${accentColor} 80%, transparent)` } : undefined}
+    >
       <CalendarEventBody
         timeText={timeText}
         title={interview.name}
         locationName={interview.locationName}
         titleIcon={<IconUser className="size-3.5 shrink-0 opacity-45" stroke={2} />}
-        accentColor={getInterviewColors(isAdded, attendees.length).border}
+        accentColor={accentColor}
         trailing={
           <Text
             element="span"
@@ -96,7 +98,7 @@ function InterviewSlot({
         <SlotPopup
           label={`Detaljer for intervju med ${interview.name}`}
           anchorsToBottom={getSlotPanel(interview.startsAt, interview.endsAt, EXPANDED_ROWS).anchorsToBottom}
-          opensToLeft={getDay(interview.startsAt) === LAST_WEEKDAY}
+          side={popupSide}
         >
           <div className="flex items-baseline justify-between gap-2">
             <Text element="span" className="min-w-0 truncate text-sm font-semibold leading-tight">
@@ -113,16 +115,16 @@ function InterviewSlot({
               {interview.locationName}
             </Text>
             {interview.locationUrl !== null && (
-              <CopyButton value={interview.locationUrl} label="Kopier Mazemap-link" compact />
+              <CopyButton value={interview.locationUrl} label="Kopier link" compact />
             )}
           </div>
 
           <button
             type="button"
-            className="-mt-1 flex cursor-pointer items-center gap-0.5 self-start text-xs text-muted-foreground hover:text-foreground hover:underline"
+            className="-mt-1 flex cursor-pointer items-center gap-0.5 self-start text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
             onClick={onOpenApplicant}
           >
-            Søkeropplysninger
+            Se info om søkeren
             <IconArrowUpRight className="size-3.5" stroke={2} />
           </button>
 
@@ -135,7 +137,11 @@ function InterviewSlot({
                 Ingen har meldt seg på ennå
               </Text>
             ) : (
-              attendees.map((attendee) => <InterviewAttendee key={attendee.userId} attendee={attendee} size="sm" />)
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {attendees.map((attendee) => (
+                  <InterviewAttendee key={attendee.userId} attendee={attendee} size="sm" />
+                ))}
+              </div>
             )}
           </div>
 
@@ -153,15 +159,12 @@ function InterviewSlot({
             </div>
           )}
 
-          <ConfirmModal
+          <ConfirmDeleteModal
             open={isRemoveConfirmOpen}
             onOpenChange={setIsRemoveConfirmOpen}
-            size="sm"
             title={`Er du sikker på at du vil melde deg av intervjuet med ${interview.name}?`}
             description="Du blir fjernet som deltager, og andre i komitéen kan melde seg på i stedet."
             confirmLabel="Ja, meld meg av"
-            confirmIcon={<IconUserMinus className="size-4" />}
-            destructive
             onConfirm={onRemove}
           />
         </SlotPopup>
@@ -171,7 +174,8 @@ function InterviewSlot({
 }
 
 type InterviewCalendarProps = {
-  initialDate: Date
+  startDate: Date
+  endDate: Date
   interviews: CommitteeApplicationMatchedInterview[]
   addedInterviewIds: ReadonlySet<string>
   canAttend: boolean
@@ -180,7 +184,8 @@ type InterviewCalendarProps = {
 }
 
 export function InterviewCalendar({
-  initialDate,
+  startDate,
+  endDate,
   interviews,
   addedInterviewIds,
   canAttend,
@@ -207,7 +212,8 @@ export function InterviewCalendar({
   return (
     <SlotCalendar
       heading="Intervjuer"
-      initialDate={initialDate}
+      startDate={startDate}
+      endDate={endDate}
       className={SELECTION_CLASSES}
       plugins={[interactionPlugin]}
       slotEventOverlap={false}
@@ -215,16 +221,17 @@ export function InterviewCalendar({
       slots={interviews}
       getSlotId={(interview) => interview.applicationId}
       fieldSelector={POPUP_TARGET_SELECTOR}
-      renderSlot={(interview, { timeText, isActive }) => (
+      renderSlot={(interview, { timeText, isActive, popupSide }) => (
         <InterviewSlot
           interview={interview}
           timeText={timeText}
           isActive={isActive}
+          popupSide={popupSide}
           isAdded={addedInterviewIds.has(interview.applicationId)}
           canAttend={canAttend}
           onAdd={() => onAddInterview(interview.applicationId)}
           onRemove={() => onRemoveInterview(interview.applicationId)}
-          onOpenApplicant={() => router.push(`/admin/opptak/${id}/opplysninger/${groupId}/${interview.applicationId}`)}
+          onOpenApplicant={() => router.push(`/admin/opptak/${id}/sokere/${groupId}/${interview.applicationId}`)}
         />
       )}
     />

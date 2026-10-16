@@ -39,7 +39,7 @@ export type AvailabilitySlot = SlotInterval & {
   link: string
 }
 
-const MAXIMUM_OVERLAPPING_SLOTS = 4
+const MAXIMUM_OVERLAPPING_SLOTS = 3
 const MINIMUM_INLINE_FIELD_ROWS = 6
 const DEFAULT_COLORS = getSlotColors(0)
 const SLOT_FIELD_SELECTOR = "input, label, button, .slot-popup, [data-slot='mazemap-room']"
@@ -167,14 +167,16 @@ function SlotSelection({
 }
 
 type AvailabilityCalendarProps = {
-  initialDate: Date
+  startDate: Date
+  endDate: Date
   interviewDuration: CommitteeApplicationInterviewDuration
   selected: AvailabilitySlot[]
   onChange: (selected: AvailabilitySlot[]) => void
 }
 
 export function AvailabilityCalendar({
-  initialDate,
+  startDate,
+  endDate,
   interviewDuration,
   selected,
   onChange,
@@ -217,10 +219,11 @@ export function AvailabilityCalendar({
   return (
     <SlotCalendar
       heading="Intervjutider"
-      initialDate={initialDate}
+      startDate={startDate}
+      endDate={endDate}
       sectionRef={sectionRef}
       className={SELECTION_CLASSES}
-      style={mirrorVariables(DEFAULT_COLORS) as CSSProperties}
+      style={{ ...mirrorVariables(DEFAULT_COLORS), "--fc-highlight-color": "transparent" } as CSSProperties}
       plugins={[interactionPlugin]}
       snapDuration={{ minutes: GRID_ROW_MINUTES }}
       selectAllow={({ start, end }) => {

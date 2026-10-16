@@ -10,14 +10,7 @@ import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-contex
 import { CONFIRMED_MESSAGE, Matching } from "../components/Matching"
 import { Progress } from "../components/Progress"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import {
-  IconAddressBook,
-  IconAlertTriangle,
-  IconCalendarEvent,
-  IconCheck,
-  IconListDetails,
-  IconProgressCheck,
-} from "@tabler/icons-react"
+import { IconAlertTriangle, IconCalendar, IconCalendarTime, IconListDetails, IconUserSquare } from "@tabler/icons-react"
 import { useParams, useRouter } from "next/navigation"
 import type { PropsWithChildren } from "react"
 import { useDeleteApplicationPeriodMutation } from "../mutations"
@@ -32,9 +25,9 @@ export default function ApplicationDetailsLayout({ children }: PropsWithChildren
   const remove = useDeleteApplicationPeriodMutation()
 
   useBreadcrumbLabel(breadcrumbPath("opptak", id), data?.name ?? null)
-  useBreadcrumbLabel(breadcrumbPath("opptak", id, "tilgjengelighet"), "Komitéer sin tilgjengelighet")
-  useBreadcrumbLabel(breadcrumbPath("opptak", id, "intervjutider"), "Tidsskjema for intervjuer")
-  useBreadcrumbLabel(breadcrumbPath("opptak", id, "opplysninger"), "Søkeropplysninger")
+  useBreadcrumbLabel(breadcrumbPath("opptak", id, "tilgjengelighet"), "Tilgjengelighet")
+  useBreadcrumbLabel(breadcrumbPath("opptak", id, "intervjuer"), "Intervjuer")
+  useBreadcrumbLabel(breadcrumbPath("opptak", id, "sokere"), "Søkere")
 
   const { canEditApplication, canManageApplicationInterviews, isAdministrator } = useAuthorization()
   const canEdit = canEditApplication()
@@ -69,25 +62,19 @@ export default function ApplicationDetailsLayout({ children }: PropsWithChildren
       ? [
           {
             href: `${basePath}/tilgjengelighet`,
-            label: "Komitéer sin tilgjengelighet",
-            icon: IconCalendarEvent,
+            label: "Tilgjengelighet",
+            icon: IconCalendar,
             disabled: !isAdministrator && data.interviewsPublishedAt !== null,
             disabledReason: CONFIRMED_MESSAGE,
-            status: isAdministrator && (
+            status: isAdministrator && incompleteAvailabilityCount > 0 && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="inline-flex">
-                    {incompleteAvailabilityCount === 0 ? (
-                      <IconCheck className="size-5 shrink-0 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <IconAlertTriangle className="size-5 shrink-0 text-destructive" />
-                    )}
+                    <IconAlertTriangle className="size-5 shrink-0 text-destructive" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {incompleteAvailabilityCount === 0
-                    ? `${applicationGroups.length}/${applicationGroups.length} komitéer har sendt inn gyldig tilgjengelighet`
-                    : `${incompleteAvailabilityCount} av ${applicationGroups.length} komitéer mangler tilgjengelighet`}
+                  {`Kun ${applicationGroups.length - incompleteAvailabilityCount}/${applicationGroups.length} komitéer har fylt ut tilgjengelighet`}
                 </TooltipContent>
               </Tooltip>
             ),
@@ -95,8 +82,8 @@ export default function ApplicationDetailsLayout({ children }: PropsWithChildren
         ]
       : []),
     ...[
-      { href: `${basePath}/intervjutider`, label: "Tidsskjema for intervjuer", icon: IconProgressCheck },
-      { href: `${basePath}/opplysninger`, label: "Søkeropplysninger", icon: IconAddressBook },
+      { href: `${basePath}/intervjuer`, label: "Intervjuer", icon: IconCalendarTime },
+      { href: `${basePath}/sokere`, label: "Søkere", icon: IconUserSquare },
     ].map((item) => ({
       ...item,
       disabled: data.interviewsPublishedAt === null,

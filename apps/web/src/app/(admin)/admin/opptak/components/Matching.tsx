@@ -2,13 +2,21 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
-import { useGroupAbbreviationMap } from "@admin/grupper/queries"
-import { ConfirmModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { useConfirmInterviewsMutation, useRunInterviewMatchingMutation } from "../mutations"
 import { useApplicationPeriodGroupsQuery } from "../queries"
 import type { CommitteeApplicationPeriod } from "@dotkomonline/rpc/committee-application"
-import { Button, cn } from "@dotkomonline/ui"
-import { IconArrowsShuffle } from "@tabler/icons-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  Button,
+  cn,
+} from "@dotkomonline/ui"
+import { IconArrowsShuffle, IconCancel, IconCheck, IconLoader2 } from "@tabler/icons-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -19,16 +27,15 @@ const PERIOD_OPEN_MESSAGE = "Søknadsperioden er ikke ferdig"
 export const Matching = ({ application }: { application: CommitteeApplicationPeriod }) => {
   const router = useRouter()
   const { applicationGroups } = useApplicationPeriodGroupsQuery(application.id)
-  const { abbreviationBySlug } = useGroupAbbreviationMap()
   const { canEditApplication, canViewApplicationMatching } = useAuthorization()
 
   const runInterviewMatching = useRunInterviewMatchingMutation()
   const confirmInterviews = useConfirmInterviewsMutation()
   const [isRunConfirmOpen, setIsRunConfirmOpen] = useState(false)
 
-  const missingAvailability = applicationGroups
-    .filter((group) => group.interviewBlockCount === 0 || !group.hasAllValidRooms)
-    .map((group) => abbreviationBySlug.get(group.groupId) ?? group.groupId)
+  const availableCount = applicationGroups.filter(
+    (group) => group.interviewBlockCount > 0 && group.hasAllValidRooms
+  ).length
 
   const canEdit = canEditApplication()
   const isConfirmed = application.interviewsPublishedAt !== null
@@ -44,7 +51,7 @@ export const Matching = ({ application }: { application: CommitteeApplicationPer
         onSuccess: () =>
           confirmInterviews.mutate(
             { applicationPeriodId: application.id },
-            { onSuccess: () => router.push(`/admin/opptak/${application.id}/intervjutider`) }
+            { onSuccess: () => router.push(`/admin/opptak/${application.id}/intervjuer`) }
           ),
       }
     )
@@ -63,26 +70,48 @@ export const Matching = ({ application }: { application: CommitteeApplicationPer
         <Button
           variant="default"
           icon={<IconArrowsShuffle className="size-3.5" />}
+          iconRight={
+            isPending ? (
+              <IconLoader2 className="size-3.5 animate-spin" />
+            ) : (
+              isConfirmed && <IconCheck className="size-3.5" />
+            )
+          }
           disabled={!canRun || isPending}
-          onClick={() => (missingAvailability.length === 0 ? runAndPublish() : setIsRunConfirmOpen(true))}
+          onClick={() => (availableCount === applicationGroups.length ? runAndPublish() : setIsRunConfirmOpen(true))}
         >
-          Kjør matching og publiser intervjuer
+          {isConfirmed ? "Matching kjørt og intervjuene publisert" : "Kjør matching-algoritme og publiser intervjuene"}
         </Button>
       </PermissionTooltip>
 
-      <ConfirmModal
-        open={isRunConfirmOpen}
-        onOpenChange={setIsRunConfirmOpen}
-        title="Er du sikker på at du vil kjøre matching-algoritmen og publisere intervjuene?"
-        description={
-          <span className="text-destructive">
-            {`${missingAvailability.length} av ${applicationGroups.length} komitéer mangler gyldig tilgjengelighet: ${missingAvailability.join(", ")}.`}
-          </span>
-        }
-        confirmLabel="Ja, kjør og publiser"
-        confirmIcon={<IconArrowsShuffle className="size-4" />}
-        onConfirm={runAndPublish}
-      />
+      <AlertDialog open={isRunConfirmOpen} onOpenChange={setIsRunConfirmOpen}>
+        <AlertDialogContent size="md" onOutsideClick={() => setIsRunConfirmOpen(false)}>
+          <AlertDialogTitle>
+            Er du sikker på at du vil kjøre matching-algoritmen og publisere intervjuene?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            <span className="text-destructive">
+              {`Kun ${availableCount}/${applicationGroups.length} komitéer har fylt ut tilgjengelighet`}
+            </span>
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel type="button" variant="secondary">
+              <IconCancel className="size-4" />
+              Nei
+            </AlertDialogCancel>
+            <AlertDialogAction
+              type="button"
+              onClick={() => {
+                runAndPublish()
+                setIsRunConfirmOpen(false)
+              }}
+            >
+              <IconArrowsShuffle className="size-4" />
+              Ja, kjør og publiser
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

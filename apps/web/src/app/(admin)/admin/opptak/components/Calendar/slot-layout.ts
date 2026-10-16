@@ -144,7 +144,11 @@ export function findIntervalColorIndex(slots: SlotInterval[], candidate: SlotInt
 }
 
 export function exceedsLaneLimit(slots: SlotInterval[], candidate: SlotInterval, laneLimit: number): boolean {
-  const lanes = findSlotLanes([...slots.filter((slot) => slot.id !== candidate.id), candidate])
+  const overlapping = [candidate, ...slots.filter((slot) => slot.id !== candidate.id && overlaps(slot, candidate))]
 
-  return (lanes.get(candidate.id) ?? 0) >= laneLimit
+  return overlapping.some((slot) => {
+    const time = slot.start > candidate.start ? slot.start : candidate.start
+
+    return overlapping.filter((other) => other.start <= time && time < other.end).length > laneLimit
+  })
 }
