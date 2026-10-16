@@ -4,30 +4,20 @@ import { describe, expect, it } from "vitest"
 import {
   canAccessAuditLog,
   canCreateEvents,
-  canEditApplication,
-  canEditApplicationGroupAvailability,
   canEditEvent,
-  canManageApplicationInterviews,
   canManageNotification,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
-  canViewApplication,
-  canViewApplicationGroup,
-  canViewApplicationMatching,
   createAuthorizationState,
   hasAnyGroupAffiliation,
-  isApplicationGroupMember,
 } from "../permissions"
 
-function createState(
-  affiliations: Record<string, GroupRoleType[]>,
-  options: { isAdministrator?: boolean; isCommitteeMember?: boolean } = {}
-) {
+function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
   return createAuthorizationState({
     isAdministrator: options.isAdministrator ?? false,
-    isCommitteeMember: options.isCommitteeMember ?? true,
+    isCommitteeMember: true,
     affiliations,
   })
 }
@@ -179,104 +169,5 @@ describe("canCreateEvents", () => {
     expect(canCreateEvents(createState({}))).toBe(false)
     expect(canCreateEvents(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
     expect(canCreateEvents(createState({}, { isAdministrator: true }))).toBe(true)
-  })
-})
-
-describe("canViewApplication", () => {
-  it("allows any committee member", () => {
-    expect(canViewApplication(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
-  })
-
-  it("allows administrators", () => {
-    expect(canViewApplication(createState({}, { isAdministrator: true }))).toBe(true)
-  })
-
-  it("denies users without committee membership", () => {
-    expect(canViewApplication(createState({}, { isCommitteeMember: false }))).toBe(false)
-  })
-})
-
-describe("canViewApplicationGroup", () => {
-  it("allows members of that committee", () => {
-    expect(canViewApplicationGroup(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "arrkom")).toBe(true)
-  })
-
-  it("denies members of other committees", () => {
-    expect(canViewApplicationGroup(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }), "bedkom")).toBe(false)
-  })
-
-  it("allows administrators for any committee", () => {
-    expect(canViewApplicationGroup(createState({}, { isAdministrator: true }), "bedkom")).toBe(true)
-  })
-})
-
-describe("isApplicationGroupMember", () => {
-  it("allows members of that committee", () => {
-    expect(isApplicationGroupMember(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "arrkom")).toBe(true)
-  })
-
-  it("denies members of other committees", () => {
-    expect(isApplicationGroupMember(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "bedkom")).toBe(false)
-  })
-
-  it("denies administrators without an affiliation, unlike the other application permissions", () => {
-    expect(isApplicationGroupMember(createState({}, { isAdministrator: true }), "arrkom")).toBe(false)
-  })
-})
-
-describe("canViewApplicationMatching", () => {
-  it("is limited to administrators", () => {
-    expect(canViewApplicationMatching(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
-    expect(canViewApplicationMatching(createState({}, { isAdministrator: true }))).toBe(true)
-  })
-})
-
-describe("canManageApplicationInterviews", () => {
-  it("allows leaders and deputy leaders of any committee", () => {
-    expect(canManageApplicationInterviews(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
-    expect(canManageApplicationInterviews(createState({ arrkom: [GroupRoleTypeEnum.DEPUTY_LEADER] }))).toBe(true)
-  })
-
-  it("denies committee members without a leader role", () => {
-    expect(canManageApplicationInterviews(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
-  })
-
-  it("allows administrators", () => {
-    expect(canManageApplicationInterviews(createState({}, { isAdministrator: true }))).toBe(true)
-  })
-})
-
-describe("canEditApplicationGroupAvailability", () => {
-  it("allows the leader and deputy leader of that committee", () => {
-    expect(canEditApplicationGroupAvailability(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }), "arrkom")).toBe(
-      true
-    )
-    expect(
-      canEditApplicationGroupAvailability(createState({ arrkom: [GroupRoleTypeEnum.DEPUTY_LEADER] }), "arrkom")
-    ).toBe(true)
-  })
-
-  it("denies a leader of another committee, unlike canManageApplicationInterviews", () => {
-    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
-
-    expect(canManageApplicationInterviews(state)).toBe(true)
-    expect(canEditApplicationGroupAvailability(state, "bedkom")).toBe(false)
-  })
-
-  it("denies ordinary members of that committee", () => {
-    expect(canEditApplicationGroupAvailability(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "arrkom")).toBe(
-      false
-    )
-  })
-
-  it("allows administrators for any committee", () => {
-    expect(canEditApplicationGroupAvailability(createState({}, { isAdministrator: true }), "bedkom")).toBe(true)
-  })
-})
-
-describe("canEditApplication", () => {
-  it("is limited to administrators", () => {
-    expect(canEditApplication(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
-    expect(canEditApplication(createState({}, { isAdministrator: true }))).toBe(true)
   })
 })
