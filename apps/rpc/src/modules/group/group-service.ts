@@ -23,6 +23,9 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
+  type InterestGroupComment,
+  type InterestGroupCommentId,
+  type InterestGroupCommentWrite,
   DEFAULT_GROUP_ROLE_TEMPLATE,
   GROUP_IMAGE_MAX_SIZE_KIB,
   GroupRoleTypeEnum,
@@ -102,6 +105,18 @@ export interface GroupService {
   getOrCreateDefaultGroupRole(handle: DBHandle, groupSlug: GroupId): Promise<GroupRole>
 
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+
+  createInterestGroupComment(
+    handle: DBHandle,
+    interestGroupId: GroupId,
+    data: InterestGroupCommentWrite,
+    authorId: UserId
+  ): Promise<InterestGroupComment>
+  findManyInterestGroupComments(handle: DBHandle, interestGroupId: GroupId): Promise<InterestGroupComment[]>
+  findInterestGroupCommentById(
+    handle: DBHandle,
+    commentId: InterestGroupCommentId
+  ): Promise<InterestGroupComment | null>
 }
 
 export function getGroupService(
@@ -499,6 +514,36 @@ export function getGroupService(
         contentType,
         createdByUserId,
       })
+    },
+
+    async createInterestGroupComment(handle, interestGroupId, data, authorId) {
+      const group = await this.getBySlug(handle, interestGroupId)
+      if (group.type !== "INTEREST_GROUP") {
+        throw new InvalidArgumentError(`Group(Slug=${interestGroupId}) is not an interest group`)
+      }
+
+      const parentComment =
+        data.parentId != null ? await this.findInterestGroupCommentById(handle, data.parentId) : null
+      if (parentComment != null && parentComment.parentId !== null) {
+        throw new FailedPreconditionError(
+          `InterestGroupComment cannot be created with parent InterestGroupComment(ID=${parentComment.id}), as it already has a parent.`
+        )
+      }
+
+      return groupRepository.createInterestGroupComment(handle, interestGroupId, data, authorId)
+    },
+
+    async findManyInterestGroupComments(handle, interestGroupId) {
+      const group = await this.getBySlug(handle, interestGroupId)
+      if (group.type !== "INTEREST_GROUP") {
+        throw new InvalidArgumentError(`Group(Slug=${interestGroupId}) is not an interest group`)
+      }
+
+      return groupRepository.findManyInterestGroupComments(handle, interestGroupId)
+    },
+
+    async findInterestGroupCommentById(handle, commentId) {
+      return groupRepository.findInterestGroupCommentById(handle, commentId)
     },
   }
 }
