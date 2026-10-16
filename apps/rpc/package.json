@@ -71,6 +71,10 @@
     "./audit-log": {
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
+    },
+    "./sidequest": {
+      "import": "./src/modules/sidequest/sidequest.ts",
+      "types": "./src/modules/sidequest/sidequest.ts"
     }
   },
   "scripts": {
