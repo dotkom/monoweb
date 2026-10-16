@@ -325,9 +325,9 @@ export const getGroupFixtures = () =>
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/1718fff4-9a90-44a7-82ec-bfd8941fc0c5.png",
       type: "INTEREST_GROUP",
     },
-  ] as const satisfies Prisma.GroupCreateManyInput[]
+  ] as const satisfies Omit<Prisma.GroupCreateManyInput, "defaultGroupRoleId">[]
 
-export const getGroupRoleFixtures = (groupInput: Prisma.GroupCreateInput) =>
+export const getGroupRoleFixtures = (groupInput: { slug: string }) =>
   [
     {
       groupId: groupInput.slug,

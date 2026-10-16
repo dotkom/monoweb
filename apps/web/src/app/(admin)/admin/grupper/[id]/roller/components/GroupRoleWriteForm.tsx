@@ -7,19 +7,24 @@ import { getGroupRoleTypeName, GroupRoleTypeEnum, GroupRoleWriteSchema } from "@
 import { Button } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, type UseFormReturn } from "react-hook-form"
-import type z from "zod"
+import { CheckboxField } from "src/app/(admin)/admin/components/forms/CheckboxField"
+import z from "zod"
 
 const FormSchema = GroupRoleWriteSchema.omit({
   groupId: true,
-}).superRefine((data, ctx) => {
-  if (data.name.trim().length < 2) {
-    ctx.addIssue({
-      code: "custom",
-      message: "Navn må være minst 2 tegn lang",
-      path: ["name"],
-    })
-  }
 })
+  .extend({
+    isDefault: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.name.trim().length < 2) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Navn må være minst 2 tegn lang",
+        path: ["name"],
+      })
+    }
+  })
 
 type FormInput = z.input<typeof FormSchema>
 type FormResult = z.output<typeof FormSchema>
@@ -57,6 +62,7 @@ export const GroupRoleWriteForm = ({
           label: getGroupRoleTypeName(groupRoleType),
         }))}
       />
+      <CheckboxField control={form.control} name="isDefault" label="Standard rolle" />
       <Button type="submit" variant="default" className="w-fit" disabled={form.formState.disabled}>
         {submitLabel}
       </Button>
