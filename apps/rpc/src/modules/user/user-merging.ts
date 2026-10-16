@@ -187,6 +187,12 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { reviewedById: toId },
     })
   },
+  interestGroupComments: async (handle: DBHandle, fromId: string, toId: string) => {
+    await handle.interestGroupComment.updateMany({
+      where: { authorId: fromId },
+      data: { authorId: toId },
+    })
+  },
 } satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
 
 /**
