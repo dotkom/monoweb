@@ -1,10 +1,11 @@
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { useGroupDetailsContext } from "@admin/grupper/[id]/provider"
+import { GroupTypeSchema } from "@dotkomonline/rpc/group"
 
 export function useGroupPermissions() {
   const { group } = useGroupDetailsContext()
   const authorization = useAuthorization()
-  const isInterestGroup = group.type === "INTEREST_GROUP"
+  const isInterestGroup = group.type === GroupTypeSchema.enum.INTEREST_GROUP
 
   return {
     canUpdate: authorization.canUpdateGroup(group.slug, isInterestGroup),

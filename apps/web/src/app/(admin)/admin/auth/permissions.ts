@@ -160,6 +160,13 @@ export function canEditContest(state: AuthorizationState, groupIds: readonly Gro
 }
 
 /**
+ * `sidequest` admin procedures
+ */
+export function canAccessSidequests(state: AuthorizationState): boolean {
+  return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.BACKLOG)
+}
+
+/**
  * `offline` create/edit procedures
  */
 export function canEditOffline(state: AuthorizationState): boolean {

@@ -11,11 +11,14 @@ import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { EventCalendarButton } from "../EventCalendarButton"
 
 interface TimeBoxProps {
-  event: Event
-  showAddToCalendar?: boolean
+  event: {
+    start: Date
+    end: Date
+  }
+  addToCalendarEvent?: Event
 }
 
-export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) => {
+export const TimeBox: FC<TimeBoxProps> = ({ event, addToCalendarEvent }) => {
   const { start, end } = event
 
   const sameDay = isSameDay(start, end)
@@ -56,9 +59,9 @@ export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) 
         </div>
       )}
 
-      {showAddToCalendar ? (
-        <div className="lg:ml-auto shrink-0">
-          <EventCalendarButton event={event} />
+      {addToCalendarEvent ? (
+        <div className="shrink-0 lg:ml-auto">
+          <EventCalendarButton event={addToCalendarEvent} />
         </div>
       ) : null}
     </section>

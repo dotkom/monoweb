@@ -1,4 +1,4 @@
-import { compareDesc } from "date-fns"
+import { compareAsc, compareDesc } from "date-fns"
 import { z } from "zod"
 import { UserSchema } from "../user/user"
 
@@ -188,16 +188,20 @@ export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPre
   }
 }
 
-export const createGroupPageUrl = (group: Group): string => {
+export const createGroupPageUrl = (group: Pick<Group, "type" | "slug">): string => {
   switch (group.type) {
-    case "COMMITTEE":
-    case "NODE_COMMITTEE":
-    case "ASSOCIATED":
-    case "EMAIL_ONLY":
+    case GroupTypeSchema.enum.COMMITTEE:
+    case GroupTypeSchema.enum.NODE_COMMITTEE:
+    case GroupTypeSchema.enum.ASSOCIATED:
+    case GroupTypeSchema.enum.EMAIL_ONLY:
       return `/grupper/${group.slug}`
-    case "INTEREST_GROUP":
+    case GroupTypeSchema.enum.INTEREST_GROUP:
       return `/interessegrupper/${group.slug}`
   }
+}
+
+export const getInterestGroupAdminUrl = (slug: string): string => {
+  return `${createGroupPageUrl({ type: "INTEREST_GROUP", slug })}/admin`
 }
 
 export const getGroupTypeName = (type: GroupType | null | undefined): string => {
@@ -425,6 +429,44 @@ export function getHighestGroupRolePriority(roles: GroupRole[]): number {
   }
 
   return Math.max(...roles.map(getGroupRolePriority))
+}
+
+/**
+ * Order group members: highest role priority first,
+ * then earliest membership start among those with the same priority.
+ */
+export function sortGroupMembersByRoleThenSeniority(members: GroupMember[]): GroupMember[] {
+  return members.toSorted((leftMember, rightMember) => {
+    const leftActive = findActiveGroupMembership(leftMember)
+    const rightActive = findActiveGroupMembership(rightMember)
+
+    if (leftActive === null || rightActive === null) {
+      return 0
+    }
+
+    const byRole = getHighestGroupRolePriority(rightActive.roles) - getHighestGroupRolePriority(leftActive.roles)
+    if (byRole !== 0) {
+      return byRole
+    }
+
+    const leftOldestGroupmembership = leftMember.groupMemberships
+      .toSorted((leftGroupMembership, rightGroupMembership) => {
+        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+      })
+      .at(0)
+    const rightOldestGroupmembership = rightMember.groupMemberships
+      .toSorted((leftGroupMembership, rightGroupMembership) => {
+        return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+      })
+      .at(0)
+
+    if (leftOldestGroupmembership === undefined || rightOldestGroupmembership === undefined) {
+      // Sanity check
+      return 0
+    }
+
+    return compareAsc(leftOldestGroupmembership.start, rightOldestGroupmembership.start)
+  })
 }
 
 export const GROUP_IMAGE_MAX_SIZE_KIB = 5 * 1024
