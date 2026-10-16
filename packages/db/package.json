@@ -17,11 +17,12 @@
     "lint": "biome check . --write",
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
-    "test": "tsx --test src/fixtures/committee-application.test.ts",
+    "test": "tsx --test src/fixtures/committee-application.test.ts src/fixtures/applicant.test.ts",
     "prisma": "prisma",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate --sql",
     "apply-fixtures": "tsx src/fixtures.ts",
+    "apply-applicant-fixtures": "tsx src/applicant-fixtures.ts",
     "vinstraff:user-db-sync": "tsx src/vinstraff-user-db-sync.ts"
   },
   "dependencies": {
