@@ -53,6 +53,11 @@ export type GroupMembershipRole = Prisma.GroupMembershipRoleModel
  */
 export type GroupRole = Prisma.GroupRoleModel
 /**
+ * Model InterestGroupComment
+ * 
+ */
+export type InterestGroupComment = Prisma.InterestGroupCommentModel
+/**
  * Model Attendance
  * 
  */
