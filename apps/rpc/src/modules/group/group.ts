@@ -141,6 +141,34 @@ export const GroupMembershipWriteWithRolesSchema = GroupMembershipWriteSchema.ex
 })
 export type GroupMembershipWriteWithRoles = z.infer<typeof GroupMembershipWriteWithRolesSchema>
 
+export const InterestGroupCommentAuthorSchema = UserSchema.pick({
+  id: true,
+  username: true,
+  name: true,
+  imageUrl: true,
+})
+export type InterestGroupCommentAuthor = z.infer<typeof InterestGroupCommentAuthorSchema>
+
+export const InterestGroupCommentSchema = z.object({
+  id: z.string(),
+  createdAt: z.date(),
+  body: z.string(),
+  authorId: z.string(),
+  interestGroupId: z.string(),
+  parentId: z.string().nullable(),
+  author: InterestGroupCommentAuthorSchema,
+})
+export type InterestGroupComment = z.infer<typeof InterestGroupCommentSchema>
+export type InterestGroupCommentId = InterestGroupComment["id"]
+
+export const InterestGroupCommentWriteSchema = InterestGroupCommentSchema.pick({
+  body: true,
+  parentId: true,
+}).partial({
+  parentId: true,
+})
+export type InterestGroupCommentWrite = z.infer<typeof InterestGroupCommentWriteSchema>
+
 export function getDefaultGroupMemberRoles(groupId: GroupId): {
   defaultRole: GroupRoleWrite
   otherRoles: GroupRoleWrite[]
@@ -198,6 +226,15 @@ export const createGroupPageUrl = (group: Pick<Group, "type" | "slug">): string 
     case GroupTypeSchema.enum.INTEREST_GROUP:
       return `/interessegrupper/${group.slug}`
   }
+}
+
+export const getInterestGroupCommentsUrl = (slug: string, commentId?: string): string => {
+  const base = `${createGroupPageUrl({ type: "INTEREST_GROUP", slug })}/kommentarer`
+  if (commentId === undefined) {
+    return base
+  }
+
+  return `${base}/${encodeURIComponent(commentId)}`
 }
 
 export const getInterestGroupAdminUrl = (slug: string): string => {

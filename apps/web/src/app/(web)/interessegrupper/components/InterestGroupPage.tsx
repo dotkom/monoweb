@@ -5,6 +5,7 @@ import {
   type Group,
   type GroupMember,
   GroupRoleTypeEnum,
+  type InterestGroupComment,
   findActiveGroupMembership,
   getGroupDisplayName,
   getInterestGroupAdminUrl,
@@ -28,6 +29,7 @@ import {
   getPastSidequestsQuery,
   getSidequestListNow,
 } from "../../sidequests/sidequest-list-query"
+import { InterestGroupCommentSection } from "../[slug]/components/InterestGroupCommentSection"
 import { useInterestGroupView } from "../use-interest-group-view"
 import { InterestGroupMembers } from "./InterestGroupMembers"
 
@@ -35,18 +37,24 @@ interface Props {
   interestGroup: Group
   userId?: UserId
   initialMembers: Map<UserId, GroupMember>
+  initialComments: InterestGroupComment[]
 }
 
-export const InterestGroupPage = ({ interestGroup, userId, initialMembers }: Props) => {
+export const InterestGroupPage = ({ interestGroup, userId, initialMembers, initialComments }: Props) => {
   const trpc = useTRPC()
   const now = getSidequestListNow()
   const canSeeMembers = interestGroup.memberVisibility !== "NONE"
 
-  const [{ data: members }] = useQueries({
+  const [{ data: members }, { data: comments }] = useQueries({
     queries: [
       {
         ...trpc.group.getMembers.queryOptions(interestGroup.slug),
         initialData: initialMembers,
+      },
+      {
+        ...trpc.group.findManyInterestGroupComments.queryOptions(interestGroup.slug),
+        initialData: initialComments,
+        enabled: userId !== undefined,
       },
     ],
   })
@@ -114,6 +122,14 @@ export const InterestGroupPage = ({ interestGroup, userId, initialMembers }: Pro
           onToggleMembership={handleToggleMembership}
         />
       )}
+
+      <InterestGroupCommentSection
+        interestGroup={interestGroup}
+        comments={comments}
+        user={view.user}
+        isMember={view.isMember}
+        onJoin={handleToggleMembership}
+      />
 
       <div className="flex flex-col gap-2">
         <Title>Sidequests</Title>
