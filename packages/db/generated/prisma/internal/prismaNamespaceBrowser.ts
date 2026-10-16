@@ -256,13 +256,14 @@ export type AttendancePoolScalarFieldEnum = (typeof AttendancePoolScalarFieldEnu
 
 export const AttendeeScalarFieldEnum = {
   id: 'id',
-  userGrade: 'userGrade',
-  selections: 'selections',
-  registered: 'registered',
-  earliestReservationAt: 'earliestReservationAt',
-  attendedAt: 'attendedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  userGrade: 'userGrade',
+  selections: 'selections',
+  registeredAt: 'registeredAt',
+  registrationPoolDelayHours: 'registrationPoolDelayHours',
+  registrationMarkDelayHours: 'registrationMarkDelayHours',
+  attendedAt: 'attendedAt',
   completionDeadline: 'completionDeadline',
   paymentLink: 'paymentLink',
   paymentId: 'paymentId',
@@ -274,7 +275,8 @@ export const AttendeeScalarFieldEnum = {
   attendanceId: 'attendanceId',
   userId: 'userId',
   attendancePoolId: 'attendancePoolId',
-  paymentRefundedById: 'paymentRefundedById'
+  paymentRefundedById: 'paymentRefundedById',
+  adminRegisteredByUserId: 'adminRegisteredByUserId'
 } as const
 
 export type AttendeeScalarFieldEnum = (typeof AttendeeScalarFieldEnum)[keyof typeof AttendeeScalarFieldEnum]

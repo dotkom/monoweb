@@ -132,7 +132,7 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
               />
               <StatisticsTableRow
                 name="Venteliste"
-                value={attendees.filter((attendee) => !attendee.registered).length}
+                value={attendees.filter((attendee) => attendee.registeredAt === null).length}
               />
               <StatisticsTableRow name="Svar" value={answers.length} />
             </TableBody>

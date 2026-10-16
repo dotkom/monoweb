@@ -262,7 +262,7 @@ export const AttendanceCard = ({
           )}
         </div>
 
-        {attendee?.registered && attendance.selections.length > 0 && (
+        {attendee?.registeredAt != null && attendance.selections.length > 0 && (
           <div className="flex flex-col gap-2">
             <Title element="p" size="sm" className="text-base">
               Valg
@@ -280,8 +280,8 @@ export const AttendanceCard = ({
         <NonAttendablePoolsBox attendance={attendance} user={user} />
 
         <div className="flex flex-col gap-4 w-full">
-          <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
-            {attendee?.registered && <TicketButton attendee={attendee} />}
+          <div className={cn("grid grid-cols-1 gap-4", attendee?.registeredAt != null && "sm:grid-cols-2")}>
+            {attendee?.registeredAt != null && <TicketButton attendee={attendee} />}
 
             <ViewAttendeesButton
               attendance={attendance}

@@ -1,5 +1,5 @@
 import { getStudyGrade } from "@dotkomonline/utils"
-import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -44,10 +44,13 @@ export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 
 const AttendeeBaseSchema = z.object({
   id: z.string(),
-  userGrade: z.number().int().nullable(),
+  userGrade: z.int().nullable(),
   selections: z.array(AttendanceSelectionResponseSchema),
-  registered: z.boolean(),
-  earliestReservationAt: z.date(),
+  registeredAt: z.date().nullable(),
+  registrationPoolDelayHours: z.int().nullable(),
+  registrationMarkDelayHours: z.int().nullable(),
+  /** Computed from createdAt + registration delays */
+  registrationEligibleAt: z.date(),
   attendedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -81,9 +84,11 @@ export const AttendeeSummarySchema = AttendeeSchema.pick({
   userId: true,
   attendanceId: true,
   attendancePoolId: true,
-  registered: true,
+  registeredAt: true,
   userGrade: true,
-  earliestReservationAt: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
+  registrationEligibleAt: true,
 }).extend({
   user: UserSchema.pick({
     id: true,
@@ -109,12 +114,22 @@ export type AttendeeSummary = z.infer<typeof AttendeeSummarySchema>
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export const AttendeeWriteSchema = AttendeeSchema.pick({
   attendedAt: true,
-  earliestReservationAt: true,
-  registered: true,
+  registeredAt: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
   selections: true,
   /** The attending user's grade at time of registration. */
   userGrade: true,
 })
+
+export function getAttendeeRegistrationEligibleAt(
+  attendee: Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours">
+): Date {
+  const poolDelayHours = attendee.registrationPoolDelayHours ?? 0
+  const markDelayHours = attendee.registrationMarkDelayHours ?? 0
+
+  return addHours(attendee.createdAt, poolDelayHours + markDelayHours)
+}
 
 export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
 export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
@@ -349,19 +364,22 @@ export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
 
 export function getRegisteredAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.registered).length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt !== null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 1 : 0), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt !== null ? 1 : 0), 0)
 }
 
 export function getQueuedAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && !attendee.registered)
-      .length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt === null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 0 : 1), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt === null ? 1 : 0), 0)
 }
 
 export function getAttendanceCapacity(attendance: Pick<Attendance, "pools">): number {
@@ -443,17 +461,13 @@ export const getAttendeeQueuePosition = (attendance: AttendanceView, user: User 
   }
 
   const queuedAttendees = attendance.attendees
-    .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.registered)
-    .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
-
-  const index = queuedAttendees.indexOf(attendee)
-
-  if (index === -1) {
-    return null
-  }
+    .filter((attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt === null)
+    .toSorted((firstAttendee, secondAttendee) =>
+      compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+    )
 
   // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
-  return index + 1
+  return queuedAttendees.findIndex((a) => a.id === attendee.id) + 1
 }
 
 type AttendeePaymentProps = Pick<
@@ -504,7 +518,7 @@ export function getAttendeeState(
     return null
   }
 
-  if (!attendee.registered) {
+  if (attendee.registeredAt === null) {
     return "QUEUED"
   }
 

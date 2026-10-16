@@ -524,7 +524,7 @@ const adminUpdateAttendeeRegisteredProcedure = procedure
   .input(
     z.object({
       attendeeId: AttendeeSchema.shape.id,
-      registered: AttendeeSchema.shape.registered,
+      registered: z.boolean(),
     })
   )
   .use(withAuthentication())
@@ -532,8 +532,11 @@ const adminUpdateAttendeeRegisteredProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const now = getCurrentUTC()
+    const currentAttendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+
     const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
-      registered: input.registered,
+      registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
     })
 
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)

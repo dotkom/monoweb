@@ -133,6 +133,12 @@ const CUSTOM_SCALAR_MERGERS = {
  * add one entry per FK column, using the corresponding User relation name as the key.
  */
 const REASSIGN_RELATION_HANDLERS = {
+  attendeesAdminRegistered: async (handle: DBHandle, consumedUserId: string, survivorUserId: string) => {
+    await handle.attendee.updateMany({
+      where: { adminRegisteredByUserId: consumedUserId },
+      data: { adminRegisteredByUserId: survivorUserId },
+    })
+  },
   attendeesRefunded: async (handle: DBHandle, fromId: string, toId: string) => {
     await handle.attendee.updateMany({
       where: { paymentRefundedById: fromId },

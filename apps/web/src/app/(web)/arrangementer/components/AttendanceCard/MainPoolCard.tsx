@@ -174,9 +174,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const hasWaitlist = queuedAttendeeCount > 0
 
   const servingPunishment =
-    attendee?.earliestReservationAt &&
-    isFuture(attendee.earliestReservationAt) &&
-    isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
+    attendee?.registrationEligibleAt &&
+    isFuture(attendee.registrationEligibleAt) &&
+    isAfter(attendee.registrationEligibleAt, addSeconds(attendee.createdAt, 1))
 
   const actionIsRequired = (completion?.missingRequirements.length ?? 0) > 0
   const attendeeState = completion?.attendeeState ?? null
@@ -385,7 +385,7 @@ const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: Attendance
     return <NotRegisteredStatus />
   }
 
-  if (attendee.registered === true) {
+  if (attendee.registeredAt !== null) {
     if (actionIsRequired) {
       return <ReservedStatus />
     }
@@ -502,7 +502,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
     return <PriceStatus price={price} registered={false} />
   }
 
-  if (!attendee.registered) {
+  if (attendee.registeredAt === null) {
     return null
   }
 
@@ -511,7 +511,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
       return null
     }
 
-    return <UnpaidStatus price={price} registered={attendee.registered === true} />
+    return <UnpaidStatus price={price} registered={attendee.registeredAt !== null} />
   }
 
   const paymentStatus = getAttendeePaymentStatus(attendee)
@@ -521,7 +521,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
   }
 
   if (paymentStatus === "charged") {
-    return <PaidStatus price={price} registered={attendee.registered === true} />
+    return <PaidStatus price={price} registered={attendee.registeredAt !== null} />
   }
 
   if (paymentStatus === "reserved") {
@@ -615,7 +615,7 @@ const PunishmentStatus = ({ attendee, actionIsRequired }: PunishmentStatusProps)
         <div className="flex flex-row gap-2 items-center">
           <IconHourglassEmpty className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
           <Text>
-            {formatDistanceToNowStrict(attendee.earliestReservationAt, {
+            {formatDistanceToNowStrict(attendee.registrationEligibleAt, {
               locale: nb,
             })}{" "}
             utsettelse
@@ -624,7 +624,7 @@ const PunishmentStatus = ({ attendee, actionIsRequired }: PunishmentStatusProps)
       </TooltipTrigger>
       <TooltipContent className="font-normal">
         Utsettelsen varer til{" "}
-        {formatDate(attendee.earliestReservationAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
+        {formatDate(attendee.registrationEligibleAt, "eeee dd. MMM yyyy 'kl.' HH:mm:ss", { locale: nb })}
       </TooltipContent>
     </Tooltip>
   )

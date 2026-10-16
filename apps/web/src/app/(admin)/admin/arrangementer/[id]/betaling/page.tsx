@@ -53,7 +53,7 @@ export default function EventPaymentPage() {
 
   const updateAttendancePayment = useUpdateAttendancePaymentMutation()
   const registeredAttendees = useMemo(
-    () => attendance?.attendees.filter((attendee) => attendee.registered) ?? [],
+    () => attendance?.attendees.filter((attendee) => attendee.registeredAt !== null) ?? [],
     [attendance]
   )
   const hasPayment = Boolean(attendance?.attendancePrice)
