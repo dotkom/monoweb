@@ -41,6 +41,11 @@ export const auditLogTableMap = {
     label: "Fadderukene",
     path: "/admin/fadderukene",
   },
+  interest_group_event: {
+    label: "Interessegruppearrangement",
+    path: "/admin/interessegruppearrangementer",
+  },
+  interest_group_event_registration: null,
   contestant: null,
   contest_team: null,
   attendance_pool: null,

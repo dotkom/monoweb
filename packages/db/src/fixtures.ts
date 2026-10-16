@@ -15,6 +15,10 @@ import { getFeedbackAnswerEventFormFixture, getFeedbackFormAnswerFixtures } from
 import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
 import { getGroupMembershipFixtures } from "./fixtures/group-membership"
 import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
+import {
+  getInterestGroupEventFixtures,
+  getInterestGroupEventRegistrationFixtures,
+} from "./fixtures/interest-group-event"
 import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures/job-listing"
 import { getMarkFixtures, getMarkGroupFixtures } from "./fixtures/mark"
 import { getMembershipFixtures } from "./fixtures/membership"
@@ -89,6 +93,12 @@ const groupMembershipInput = getGroupMembershipFixtures(userIds)
 await db.groupMembership.createManyAndReturn({ data: groupMembershipInput })
 const groupMembershipRoleInput = getGroupMembershipRoleFixtures(groupRoleIds)
 await db.groupMembershipRole.createMany({ data: groupMembershipRoleInput })
+
+const interestGroupEventInput = getInterestGroupEventFixtures()
+await db.interestGroupEvent.createMany({ data: interestGroupEventInput })
+await db.interestGroupEventRegistration.createMany({
+  data: getInterestGroupEventRegistrationFixtures(userIds),
+})
 
 const attendanceInput = getAttendanceFixtures()
 const attendances = await db.attendance.createManyAndReturn({ data: attendanceInput })
