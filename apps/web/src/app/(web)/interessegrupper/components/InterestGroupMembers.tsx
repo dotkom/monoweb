@@ -7,6 +7,7 @@ import { IconChevronDown, IconChevronUp, IconUserMinus, IconUserPlus } from "@ta
 import { createAuthorizeUrl } from "node_modules/@dotkomonline/utils/src"
 import { useState } from "react"
 import { GroupMemberCard } from "../../grupper/components/GroupMemberCard"
+import { useFullPathname } from "src/utils/use-full-pathname"
 
 interface Props {
   members: GroupMember[]
@@ -46,6 +47,8 @@ const getButtonBreakpointClass = (count: number) => {
 
 export const InterestGroupMembers = ({ members, currentUserId, isMember, canLeave, onToggleMembership }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const fullPathname = useFullPathname()
+  const authorizeUrl = createAuthorizeUrl({ returnTo: fullPathname })
 
   const showMembershipToggleButton = !isMember || canLeave
   const isLoggedIn = currentUserId !== undefined
@@ -61,7 +64,7 @@ export const InterestGroupMembers = ({ members, currentUserId, isMember, canLeav
           <Button
             variant="default"
             element="a"
-            href={createAuthorizeUrl({ returnTo: window.location.href })}
+            href={authorizeUrl}
             icon={<IconUserPlus className="size-4" />}
             className="w-fit"
           >

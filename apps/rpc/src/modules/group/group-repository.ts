@@ -21,6 +21,10 @@ import {
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
+  type InterestGroupComment,
+  type InterestGroupCommentId,
+  InterestGroupCommentSchema,
+  type InterestGroupCommentWrite,
 } from "./group"
 
 const GROUP_TYPE_SORT_ORDER = {
@@ -76,6 +80,18 @@ export interface GroupRepository {
     groupRoleData: Partial<GroupRoleWrite>
   ): Promise<GroupRole>
   deleteGroupRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
+
+  createInterestGroupComment(
+    handle: DBHandle,
+    interestGroupId: GroupId,
+    data: InterestGroupCommentWrite,
+    authorId: UserId
+  ): Promise<InterestGroupComment>
+  findManyInterestGroupComments(handle: DBHandle, interestGroupId: GroupId): Promise<InterestGroupComment[]>
+  findInterestGroupCommentById(
+    handle: DBHandle,
+    commentId: InterestGroupCommentId
+  ): Promise<InterestGroupComment | null>
 }
 
 export function getGroupRepository(): GroupRepository {
@@ -426,6 +442,43 @@ export function getGroupRepository(): GroupRepository {
         where: { id: groupRoleId },
       })
     },
+
+    async createInterestGroupComment(handle, interestGroupId, data, authorId) {
+      const comment = await handle.interestGroupComment.create({
+        data: {
+          ...data,
+          interestGroupId,
+          authorId,
+        },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema, comment)
+    },
+
+    async findManyInterestGroupComments(handle, interestGroupId) {
+      const comments = await handle.interestGroupComment.findMany({
+        where: { interestGroupId },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema.array(), comments)
+    },
+
+    async findInterestGroupCommentById(handle, commentId) {
+      const comment = await handle.interestGroupComment.findUnique({
+        where: { id: commentId },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema.nullable(), comment)
+    },
   }
 }
 
@@ -491,3 +544,14 @@ function getMembershipFilterForUser(userId: UserId, includeEmailOnlyMemberships:
     },
   } as const satisfies Prisma.GroupMembershipWhereInput
 }
+
+const COMMENT_QUERY_WITH_AUTHOR = {
+  author: {
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      imageUrl: true,
+    },
+  },
+} as const satisfies Prisma.InterestGroupCommentInclude

@@ -58,6 +58,7 @@ export const ModelName = {
   GroupMembership: 'GroupMembership',
   GroupMembershipRole: 'GroupMembershipRole',
   GroupRole: 'GroupRole',
+  InterestGroupComment: 'InterestGroupComment',
   Attendance: 'Attendance',
   AttendancePool: 'AttendancePool',
   Attendee: 'Attendee',
@@ -227,6 +228,18 @@ export const GroupRoleScalarFieldEnum = {
 } as const
 
 export type GroupRoleScalarFieldEnum = (typeof GroupRoleScalarFieldEnum)[keyof typeof GroupRoleScalarFieldEnum]
+
+
+export const InterestGroupCommentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  body: 'body',
+  authorId: 'authorId',
+  interestGroupId: 'interestGroupId',
+  parentId: 'parentId'
+} as const
+
+export type InterestGroupCommentScalarFieldEnum = (typeof InterestGroupCommentScalarFieldEnum)[keyof typeof InterestGroupCommentScalarFieldEnum]
 
 
 export const AttendanceScalarFieldEnum = {
