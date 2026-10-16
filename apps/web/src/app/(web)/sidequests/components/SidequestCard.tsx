@@ -21,7 +21,8 @@ export interface SidequestCardProps {
   hasNonDefaultRole: boolean
   isLoggedIn: boolean
   className?: string
-  onRegistrationToggle: (sidequest: SidequestSummary) => void
+  onRegistrationToggle?: (sidequest: SidequestSummary) => void
+  compact?: boolean
 }
 
 export const SidequestCard = ({
@@ -31,6 +32,7 @@ export const SidequestCard = ({
   isLoggedIn,
   className,
   onRegistrationToggle,
+  compact = false,
 }: SidequestCardProps) => {
   const { user } = useUser()
   const userId = user?.sub
@@ -46,18 +48,19 @@ export const SidequestCard = ({
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-4 rounded-xl p-2 -mx-2 last:-mb-2",
+        "group relative flex flex-col rounded-xl p-2 -mx-2 last:-mb-2",
         "sm:flex-row",
         "hover:bg-gray-50 dark:hover:bg-stone-800 transition-colors",
+        compact ? "gap-3" : "gap-4",
         isEndInPast && "text-gray-600 dark:text-stone-200 hover:text-gray-800 dark:hover:text-stone-300",
         className
       )}
     >
       <div
         className={cn(
-          "relative shrink-0 overflow-hidden rounded-md bg-gray-100 dark:bg-stone-800",
+          "relative shrink-0 overflow-hidden bg-gray-100 dark:bg-stone-800",
           "aspect-video w-full",
-          "sm:h-22 sm:w-auto lg:h-28"
+          compact ? "rounded-sm sm:h-16 sm:w-auto" : "rounded-md sm:h-22 sm:w-auto lg:h-28"
         )}
       >
         {sidequest.imageUrl ? (
@@ -74,7 +77,7 @@ export const SidequestCard = ({
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:gap-1.5">
+      <div className={cn("flex min-w-0 flex-1 flex-col", compact ? "gap-0.5" : "gap-2 sm:gap-1.5")}>
         <div className="flex items-center justify-start gap-1.5">
           <Link
             href={createGroupPageUrl(interestGroup)}
@@ -95,7 +98,7 @@ export const SidequestCard = ({
           )}
         </div>
 
-        <div className="flex min-w-0 flex-col gap-2 sm:gap-1.5">
+        <div className={cn("flex min-w-0 flex-col", compact ? "gap-0.5" : "gap-2 sm:gap-1.5")}>
           <Link
             href={createSidequestPageUrl(sidequest.id, sidequest.title)}
             scroll={false}
@@ -105,32 +108,45 @@ export const SidequestCard = ({
               "focus-visible:after:ring-2 focus-visible:after:ring-ring/30"
             )}
           >
-            <Title element="h3" size="sm" className="line-clamp-2 text-lg font-medium wrap-break-word sm:text-base">
+            <Title
+              element="h3"
+              size="sm"
+              className={cn(
+                "line-clamp-2 font-medium wrap-break-word",
+                compact ? "text-xs sm:text-sm" : "text-lg sm:text-base"
+              )}
+            >
               {sidequest.title}
             </Title>
 
-            <IconChevronRight className="hidden group-hover:block size-4 text-muted-foreground" />
+            {!compact && <IconChevronRight className="hidden group-hover:block size-4 text-muted-foreground" />}
           </Link>
 
-          <DateAndTime start={sidequest.start} end={sidequest.end} stackAt={false} />
+          <DateAndTime start={sidequest.start} end={sidequest.end} compact={compact} stackAt={false} />
 
-          <div className="mt-1 flex flex-row-reverse sm:flex-row justify-between sm:justify-start items-center gap-1 sm:mt-0.5">
-            <SidequestJoinButton
-              isLoggedIn={isLoggedIn}
-              isUserRegistered={isUserRegistered}
-              isUserOnWaitlist={isUserOnWaitlist}
-              waitlistPosition={waitlistPosition}
-              isAtCapacity={isAtCapacity}
-              eventHasEnded={isEndInPast}
-              registerEnd={sidequest.registerEnd}
-              deregisterDeadline={sidequest.deregisterDeadline}
-              onRegistrationClick={() => onRegistrationToggle(sidequest)}
-              size="sm"
-              className="relative z-10 w-fit"
-            />
+          {!compact && (
+            <div className="mt-1 flex flex-row-reverse sm:flex-row justify-between sm:justify-start items-center gap-1 sm:mt-0.5">
+              <SidequestJoinButton
+                isLoggedIn={isLoggedIn}
+                isUserRegistered={isUserRegistered}
+                isUserOnWaitlist={isUserOnWaitlist}
+                waitlistPosition={waitlistPosition}
+                isAtCapacity={isAtCapacity}
+                eventHasEnded={isEndInPast}
+                registerEnd={sidequest.registerEnd}
+                deregisterDeadline={sidequest.deregisterDeadline}
+                onRegistrationClick={() => {
+                  if (onRegistrationToggle !== undefined) {
+                    onRegistrationToggle(sidequest)
+                  }
+                }}
+                size="sm"
+                className="relative z-10 w-fit"
+              />
 
-            <SidequestRegistrations sidequest={sidequest} eventHasEnded={isEndInPast} userId={userId ?? null} />
-          </div>
+              <SidequestRegistrations sidequest={sidequest} eventHasEnded={isEndInPast} userId={userId ?? null} />
+            </div>
+          )}
         </div>
       </div>
     </article>
