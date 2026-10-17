@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
 
-  const { isAdministrator, isCommitteeMember, affiliations } = await getServerAuthorization()
+  const { isCommitteeMember, affiliations } = await getServerAuthorization()
 
   if (!isCommitteeMember) {
     redirect(UNAUTHORIZED_PATH)
@@ -84,11 +84,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <AuthorizationProvider
-                  isAdministrator={isAdministrator}
-                  isCommitteeMember={isCommitteeMember}
-                  affiliations={affiliations}
-                >
+                <AuthorizationProvider subject={session.user.sub} affiliations={affiliations}>
                   <ApplicationShell isMac={isMac} collapsedNavigationGroups={collapsedNavigationGroups}>
                     {children}
                   </ApplicationShell>
