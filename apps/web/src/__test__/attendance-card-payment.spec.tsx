@@ -62,6 +62,7 @@ describe("attendance card payment actions", () => {
     "deregistered",
     "reserved",
     "charged",
+    "queued",
     "unpaid",
   ])("renders the payment link from the current attendee when availability is stale (%s)", (state) => {
     const attendee = createMockAttendee({
@@ -72,6 +73,7 @@ describe("attendance card payment actions", () => {
     const availability = createMockRegistrationAvailabilityForAttendee(initialAttendance, attendee)
     const updatedAttendee = {
       ...attendee,
+      registered: state !== "queued",
       paymentReservedAt: state === "reserved" ? new Date() : null,
       paymentChargedAt: state === "charged" ? new Date() : null,
     }

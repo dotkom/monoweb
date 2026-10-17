@@ -462,8 +462,13 @@ type AttendeePaymentProps = Pick<
 >
 
 export function getApplicableAttendanceCompletionRequirements(
-  attendance: Pick<Attendance, "attendancePrice">
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Pick<Attendee, "registered"> | null
 ): AttendanceCompletionRequirement[] {
+  if (attendee?.registered !== true) {
+    return []
+  }
+
   if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
     return ["PAYMENT"]
   }
@@ -491,7 +496,7 @@ export function getMissingAttendanceCompletionRequirements(
   attendance: Pick<Attendance, "attendancePrice">,
   attendee: Attendee | null
 ): AttendanceCompletionRequirement[] {
-  return getApplicableAttendanceCompletionRequirements(attendance).filter(
+  return getApplicableAttendanceCompletionRequirements(attendance, attendee).filter(
     (requirement) => !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice)
   )
 }
@@ -517,9 +522,9 @@ export function getAttendeeState(
 
 export function attendeeHasPendingCompletionDeadline(
   attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "completionDeadline"> | null
+  attendee: Pick<Attendee, "completionDeadline" | "registered"> | null
 ): boolean {
-  if (attendee === null || attendee.completionDeadline === null) {
+  if (attendee === null || attendee.registered !== true || attendee.completionDeadline === null) {
     return false
   }
 
@@ -540,17 +545,17 @@ export function buildRegistrationAvailabilityCompletionView(
     return null
   }
 
-  const requirements = getApplicableAttendanceCompletionRequirements(attendance)
+  const requirements = getApplicableAttendanceCompletionRequirements(attendance, attendee)
 
   return {
     attendeeState,
-    completionDeadline: attendee.completionDeadline,
+    completionDeadline: attendee.registered === true ? attendee.completionDeadline : null,
     requirements: requirements.map((requirement) => ({
       requirement,
       completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
     })),
     missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
-    paymentLink: attendee.paymentLink,
+    paymentLink: attendee.registered === true ? attendee.paymentLink : null,
   }
 }
 
