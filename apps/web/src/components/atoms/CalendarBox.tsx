@@ -80,7 +80,7 @@ const CalendarPage = ({
       </Text>
     </div>
 
-    <div className={cn("flex flex-row items-baseline px-1 py-0.5", dayClassName)}>
+    <div className={cn("my-auto flex flex-row items-baseline px-1 py-0.5", dayClassName)}>
       <div className="flex flex-col items-center">
         <Text className={cn("text-base/4", dayTextClassName)}>{startDay}</Text>
         {includeWeekday && (
@@ -147,7 +147,7 @@ export const CalendarBox = ({
         monthLabel={startMonthLabel}
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
-        className={cn("min-w-11 dark:border-stone-800", className)}
+        className={cn("min-h-11 min-w-11 dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
     )
@@ -162,7 +162,7 @@ export const CalendarBox = ({
         startDayWeekday={startDayWeekday}
         endDay={endDate.day}
         endDayWeekday={endDayWeekday}
-        className={cn("min-w-11 dark:border-stone-800", className)}
+        className={cn("min-h-11 min-w-11 dark:border-stone-800", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
         dayClassName={cn("px-2", dayClassName)}
       />
