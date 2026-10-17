@@ -1,9 +1,11 @@
 import type { useAuthorization } from "@admin/auth/authorization-context"
 import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
+import type { GroupId, GroupRoleType } from "@dotkomonline/rpc/group"
 import { describe, expect, it } from "vitest"
 
 function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
   return {
+    affiliations: new Map<GroupId, Set<GroupRoleType>>(),
     canCreateEvents: () => true,
     canCreateGroup: () => true,
     canEditOffline: () => true,

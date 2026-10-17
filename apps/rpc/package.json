@@ -71,6 +71,10 @@
     "./audit-log": {
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
+    },
+    "./permissions": {
+      "import": "./src/permissions/principal.ts",
+      "types": "./src/permissions/principal.ts"
     }
   },
   "scripts": {
