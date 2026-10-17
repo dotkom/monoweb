@@ -153,6 +153,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
+  const availableSeatCount = Math.max(0, pool.capacity - registeredAttendeeCount)
   const hasWaitlist = queuedAttendeeCount > 0
 
   const isRegistrationDelayed = hasRegistrationDelay(attendee, now)
@@ -175,7 +176,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       <div className="flex grow flex-col gap-6 items-center text-center justify-center">
         {showRegisterCountdown ? (
           <div className="flex flex-col gap-1 items-center">
-            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
+            <Text>{availableSeatCount > 0 ? `${availableSeatCount} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium" suppressHydrationWarning>
               {registerCountdownDisplay}
             </Text>
