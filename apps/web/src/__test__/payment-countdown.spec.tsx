@@ -46,6 +46,9 @@ describe("event payment countdown", () => {
     )
 
     expect(markup).toContain("i køen")
+    expect(markup).toContain("100 kr")
+    expect(markup).toContain("Du betaler når du får plass")
+    expect(markup).not.toContain("ubetalt")
     expect(markup).not.toContain("completion-warning")
     expect(markup).not.toContain("Fullfør påmeldingen innen")
     expect(markup).not.toContain("Du har ikke betalt")
@@ -116,7 +119,7 @@ describe("event payment countdown", () => {
     )
 
     expect(markup).toContain("Fullfør påmeldingen innen")
-    expect(markup).toContain("Du har ikke betalt")
+    expect(markup).toContain("100 kr ubetalt")
     expect(markup).toContain("completion-warning")
     expect(markup).not.toContain("Betalingslenken er ikke tilgjengelig")
   })
