@@ -1,15 +1,14 @@
+import { canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { describe, expect, it } from "vitest"
 import {
   canAccessAuditLog,
-  canCreateEvents,
-  canEditEvent,
-  canManageNotification,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
+  canManageNotification,
   createAuthorizationState,
   hasAnyGroupAffiliation,
 } from "../permissions"

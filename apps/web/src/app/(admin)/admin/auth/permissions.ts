@@ -135,13 +135,6 @@ export function canEditUserProfile(state: AuthorizationState, userId: UserId, cu
 }
 
 /**
- * `event` create/edit/delete and related `attendance` admin procedures
- */
-export function canEditEvent(state: AuthorizationState, hostingGroupIds: readonly GroupId[]): boolean {
-  return hasAnyGroupAffiliation(state, hostingGroupIds)
-}
-
-/**
  * `notification` edit/delete and recipient management procedures
  */
 export function canManageNotification(state: AuthorizationState, actorGroupId: GroupId | null): boolean {
@@ -272,10 +265,6 @@ export function canManageGroupRoles(state: AuthorizationState, groupId: GroupId,
   }
 
   return false
-}
-
-export function canCreateEvents(state: AuthorizationState): boolean {
-  return state.isAdministrator || state.affiliations.size > 0
 }
 
 export function createAuthorizationState(

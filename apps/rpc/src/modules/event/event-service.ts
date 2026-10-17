@@ -82,7 +82,11 @@ export interface EventService {
   getByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event>
   findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
-  findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
+  findManyDeregisterReasonsWithEvent(
+    handle: DBHandle,
+    page: Pageable,
+    byHostingGroupIds?: Set<GroupId>
+  ): Promise<DeregisterReasonWithEvent[]>
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
@@ -244,8 +248,8 @@ export function getEventService(
       return await eventRepository.createDeregisterReason(handle, data)
     },
 
-    async findManyDeregisterReasonsWithEvent(handle, page) {
-      return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
+    async findManyDeregisterReasonsWithEvent(handle, page, byHostingGroupIds) {
+      return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page, byHostingGroupIds)
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {
