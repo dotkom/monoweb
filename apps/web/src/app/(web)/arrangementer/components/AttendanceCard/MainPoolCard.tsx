@@ -166,8 +166,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/7")
 
   const cardBody = (
-    <div className="flex flex-col min-h-40 gap-6 p-2 items-center text-center justify-center w-full">
-      <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+    <div
+      className={cn(
+        "flex flex-col min-h-40 gap-8 px-2 pt-6 pb-2 items-center text-center justify-center w-full",
+        !showCompletionPanel && "pb-6"
+      )}
+    >
+      <div className="flex grow flex-col gap-6 items-center text-center justify-center">
         {showRegisterCountdown ? (
           <div className="flex flex-col gap-1 items-center">
             <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
