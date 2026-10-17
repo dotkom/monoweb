@@ -1,10 +1,27 @@
 import type { useAuthorization } from "@admin/auth/authorization-context"
 import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
+import { type GroupId, type GroupRoleType, GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { describe, expect, it } from "vitest"
+
+function principal(affiliations: Record<string, GroupRoleType[]>): ReturnType<typeof useAuthorization> {
+  const affiliationMap = new Map<GroupId, Set<GroupRoleType>>()
+  for (const [groupId, roles] of Object.entries(affiliations)) {
+    affiliationMap.set(groupId, new Set(roles))
+  }
+
+  return {
+    affiliations: affiliationMap,
+    isAdministrator: false,
+    isCommitteeMember: false,
+    canCreateGroup: () => true,
+    canEditOffline: () => true,
+    canEditFadderuke: () => true,
+    canAccessAuditLog: () => true,
+  } as unknown as ReturnType<typeof useAuthorization>
+}
 
 function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
   return {
-    canCreateEvents: () => true,
     canCreateGroup: () => true,
     canEditOffline: () => true,
     canEditFadderuke: () => true,
@@ -24,13 +41,13 @@ function pageHrefs(authorization: ReturnType<typeof useAuthorization>) {
 }
 
 describe("filterNavigationsUserHasAccessTo", () => {
-  it("hides create event when canCreateEvents is false", () => {
-    expect(actionHrefs(auth({ canCreateEvents: () => false }))).not.toContain("/admin/arrangementer/ny")
-    expect(pageHrefs(auth({ canCreateEvents: () => false }))).toContain("/admin/arrangementer")
+  it("hides create event when the caller has no affiliations", () => {
+    expect(actionHrefs(principal({}))).not.toContain("/admin/arrangementer/ny")
+    expect(pageHrefs(principal({}))).toContain("/admin/arrangementer")
   })
 
-  it("keeps create event when canCreateEvents is true", () => {
-    expect(actionHrefs(auth())).toContain("/admin/arrangementer/ny")
+  it("keeps create event when the caller has an affiliation", () => {
+    expect(actionHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/arrangementer/ny")
   })
 
   it("hides create group when canCreateGroup is false", () => {

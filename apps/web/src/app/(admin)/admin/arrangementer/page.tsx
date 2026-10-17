@@ -1,6 +1,7 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
+import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import type { EventFilterQuery, EventWithAttendance } from "@dotkomonline/rpc/event"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
@@ -41,9 +42,9 @@ export default function EventPage() {
   const timeTab = parseTimeTab(searchParams.get("tab"))
   const scopeFilterFromQuery = parseScopeFilter(searchParams.get("scope"))
 
-  const authorization = useAuthorization()
-  const { canCreateEvents, isAdministrator, affiliations } = authorization
-  const canCreate = canCreateEvents()
+  const principal = useAuthorization()
+  const { isAdministrator, affiliations } = principal
+  const canCreate = canCreateEvents(principal)
 
   const affiliationSlugs = useMemo(() => [...affiliations.keys()], [affiliations])
   const canUseMineFilter = !isAdministrator && affiliationSlugs.length > 0

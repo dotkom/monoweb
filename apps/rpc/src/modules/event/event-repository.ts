@@ -1,4 +1,11 @@
 import { type DBHandle, type Prisma, sql } from "@dotkomonline/db"
+import { getCurrentUTC, type Pageable, pageQuery, snakeCaseToCamelCase } from "@dotkomonline/utils"
+import invariant from "tiny-invariant"
+import z from "zod"
+import { parseOrReport } from "../../invariant"
+import type { CompanyId } from "../company/company"
+import type { GroupId } from "../group/group"
+import type { UserId } from "../user/user"
 import type { AttendanceId } from "./attendance"
 import {
   type BaseEvent,
@@ -17,14 +24,6 @@ import {
   EventWithFeedbackFormSchema,
   type EventWrite,
 } from "./event"
-import type { CompanyId } from "../company/company"
-import type { GroupId } from "../group/group"
-import type { UserId } from "../user/user"
-import { getCurrentUTC, snakeCaseToCamelCase } from "@dotkomonline/utils"
-import invariant from "tiny-invariant"
-import z from "zod"
-import { parseOrReport } from "../../invariant"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
 
 const INCLUDE_COMPANY_AND_GROUPS = {
   companies: {
@@ -90,7 +89,11 @@ export interface EventRepository {
     query: Pick<EventFilterQuery, "orderBy">
   ): Promise<Event[]>
   findEventsWithUnansweredFeedbackFormByUserId(handle: DBHandle, userId: UserId): Promise<EventWithFeedbackFormSchema[]>
-  findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
+  findManyDeregisterReasonsWithEvent(
+    handle: DBHandle,
+    page: Pageable,
+    byHostingGroupIds?: Set<GroupId>
+  ): Promise<DeregisterReasonWithEvent[]>
   // This cannot use `Pageable` due to raw query needing numerical offset and not cursor based pagination
   findFeaturedEvents(
     handle: DBHandle,
@@ -614,7 +617,7 @@ export function getEventRepository(): EventRepository {
       return parseOrReport(DeregisterReasonSchema, row)
     },
 
-    async findManyDeregisterReasonsWithEvent(handle, page) {
+    async findManyDeregisterReasonsWithEvent(handle, page, byHostingGroupIds) {
       const rows = await handle.deregisterReason.findMany({
         ...pageQuery(page),
         orderBy: {
@@ -624,6 +627,17 @@ export function getEventRepository(): EventRepository {
           event: {
             include: INCLUDE_COMPANY_AND_GROUPS,
           },
+        },
+        where: {
+          ...(byHostingGroupIds
+            ? {
+                event: {
+                  hostingGroups: {
+                    some: { groupId: { in: Array.from(byHostingGroupIds.values()) } },
+                  },
+                },
+              }
+            : {}),
         },
       })
 
