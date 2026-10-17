@@ -9,7 +9,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { FC } from "react"
-import { ArticleListItem } from "../../ArticleListItem"
+import { ArticleCard } from "../../components/ArticleCard"
 
 interface ArticlePageProps {
   params: Promise<{
@@ -168,7 +168,7 @@ const RelatedArticles = ({ articles }: RelatedArticlesProps) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-3 auto-rows-fr">
         {articles.length > 0 ? (
-          articles.map((article) => <ArticleListItem article={article} key={article.id} orientation="vertical" />)
+          articles.map((article) => <ArticleCard article={article} key={article.id} />)
         ) : (
           <Text>Ingen relaterte artikler</Text>
         )}
