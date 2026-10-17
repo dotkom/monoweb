@@ -39,6 +39,8 @@ export const AuditLogTable = z.enum([
   "contest_team",
   "fadderuke",
   "notification",
+  "interest_group_event",
+  "interest_group_event_registration",
 ])
 
 export const AuditLogOperation = z.enum(["INSERT", "UPDATE", "DELETE"])

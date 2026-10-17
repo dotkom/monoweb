@@ -688,6 +688,23 @@ export type EnumContestResultOrderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
 }
 
+export type EnumInterestGroupEventStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterestGroupEventStatus | Prisma.EnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel> | $Enums.InterestGroupEventStatus
+}
+
+export type EnumInterestGroupEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterestGroupEventStatus | Prisma.EnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterestGroupEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.InterestGroupEventStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1319,6 +1336,23 @@ export type NestedEnumContestResultOrderWithAggregatesFilter<$PrismaModel = neve
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContestResultOrderFilter<$PrismaModel>
+}
+
+export type NestedEnumInterestGroupEventStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterestGroupEventStatus | Prisma.EnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel> | $Enums.InterestGroupEventStatus
+}
+
+export type NestedEnumInterestGroupEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InterestGroupEventStatus | Prisma.EnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InterestGroupEventStatus[] | Prisma.ListEnumInterestGroupEventStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInterestGroupEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.InterestGroupEventStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInterestGroupEventStatusFilter<$PrismaModel>
 }
 
 
