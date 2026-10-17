@@ -1,39 +1,20 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { GroupId, GroupRoleType } from "./group/group"
-import type { UserId } from "./user/user"
 import { minutesToMilliseconds } from "date-fns"
 import { LRUCache } from "lru-cache"
+import {
+  ADMIN_AFFILIATIONS,
+  COMMITTEE_AFFILIATIONS,
+  CommitteeGroupSlug,
+  hasAnyGroupAffiliation as principalHasAnyGroupAffiliation,
+  hasEveryGroupAffiliation as principalHasEveryGroupAffiliation,
+  intersectGroupAffiliations as principalIntersectGroupAffiliations,
+  isAdministrator as principalIsAdministrator,
+  isCommitteeMember as principalIsCommitteeMember,
+} from "../permissions/principal"
+import type { GroupId, GroupRoleType } from "./group/group"
+import type { UserId } from "./user/user"
 
-export const CommitteeGroupSlug = {
-  HOVEDSTYRET: "hs",
-  DOTKOM: "dotkom",
-  APPKOM: "appkom",
-  ARRKOM: "arrkom",
-  BACKLOG: "backlog",
-  BANKOM: "bankom",
-  BEDKOM: "bedkom",
-  DEBUG: "debug",
-  DOTDAGENE: "dotdagene",
-  EKSKOM: "ekskom",
-  FAGKOM: "fagkom",
-  FEMINIT: "feminit",
-  FOND: "fond",
-  JUBKOM: "jubkom",
-  ONLINE_IL: "online-il",
-  PROKOM: "prokom",
-  REDAKSJONEN: "redaksjonen",
-  TRIKOM: "trikom",
-  VELKOM: "velkom",
-} as const satisfies Record<string, GroupId>
-
-export type CommitteeGroupSlug = (typeof CommitteeGroupSlug)[keyof typeof CommitteeGroupSlug]
-
-export const COMMITTEE_AFFILIATIONS: CommitteeGroupSlug[] = Object.values(CommitteeGroupSlug)
-
-export const ADMIN_AFFILIATIONS = [
-  CommitteeGroupSlug.DOTKOM,
-  CommitteeGroupSlug.HOVEDSTYRET,
-] as const satisfies readonly GroupId[]
+export { ADMIN_AFFILIATIONS, COMMITTEE_AFFILIATIONS, CommitteeGroupSlug }
 
 export interface AuthorizationService {
   /**
@@ -45,41 +26,23 @@ export interface AuthorizationService {
    */
   getGroupAffiliations(handle: DBHandle, userId: UserId): Promise<Map<GroupId, Set<GroupRoleType>>>
 
-  /**
-   * Find the intersection of the user's group affiliations and the given set of affiliations. Prefer to use this over
-   * manually checking affiliations, since this will account for administrator permissions.
-   */
   intersectGroupAffiliations(
     userAffiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
     affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): Set<GroupId>
 
-  /**
-   * Find if the user has AT LEAST one affiliation of the given set of affiliations. Prefer to use this over manually
-   * checking affiliations, since this will account for administrator permissions.
-   */
   hasAnyGroupAffiliation(
     affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
     affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): boolean
 
-  /**
-   * Find if the user has EVERY affiliation of the given set of affiliations. Prefer to use this over manually checking
-   * affiliations, since this will account for administrator permissions.
-   */
   hasEveryGroupAffiliation(
     affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>,
     affiliationsToCompare: Set<GroupId> | ReadonlyArray<GroupId>
   ): boolean
 
-  /**
-   * Helper for using intersectGroupAffiliations with all committee affiliations.
-   */
   isCommitteeMember(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>): boolean
 
-  /**
-   * Helper for using intersectGroupAffiliations with all administrator affiliations.
-   */
   isAdministrator(affiliations: Map<GroupId, Set<GroupRoleType>> | Set<GroupId> | ReadonlyArray<GroupId>): boolean
 }
 
@@ -142,51 +105,23 @@ export function getAuthorizationService(): AuthorizationService {
     },
 
     intersectGroupAffiliations(userAffiliations, affiliationsToCompare) {
-      const a = toSet(userAffiliations)
-      const b = toSet(affiliationsToCompare)
-
-      if (ADMIN_AFFILIATIONS.some((adminAffiliation) => a.has(adminAffiliation))) {
-        return b
-      }
-
-      return a.intersection(b)
+      return principalIntersectGroupAffiliations(userAffiliations, affiliationsToCompare)
     },
 
     hasAnyGroupAffiliation(userAffiliations, affiliationsToCompare) {
-      const intersection = this.intersectGroupAffiliations(userAffiliations, affiliationsToCompare)
-
-      return intersection.size > 0
+      return principalHasAnyGroupAffiliation(userAffiliations, affiliationsToCompare)
     },
 
     hasEveryGroupAffiliation(userAffiliations, affiliationsToCompare) {
-      const intersection = this.intersectGroupAffiliations(userAffiliations, affiliationsToCompare)
-      const desiredSize = toSet(affiliationsToCompare).size
-
-      return intersection.size === desiredSize
+      return principalHasEveryGroupAffiliation(userAffiliations, affiliationsToCompare)
     },
 
     isCommitteeMember(userAffiliations) {
-      const intersection = this.intersectGroupAffiliations(userAffiliations, COMMITTEE_AFFILIATIONS)
-
-      return intersection.size > 0
+      return principalIsCommitteeMember(userAffiliations)
     },
 
     isAdministrator(userAffiliations) {
-      const intersection = this.intersectGroupAffiliations(userAffiliations, ADMIN_AFFILIATIONS)
-
-      return intersection.size > 0
+      return principalIsAdministrator(userAffiliations)
     },
   }
-}
-
-function toSet<T>(input: Map<T, unknown> | Set<T> | ReadonlyArray<T>): Set<T> {
-  if (input instanceof Map) {
-    return new Set(input.keys())
-  }
-
-  if (Array.isArray(input)) {
-    return new Set(input)
-  }
-
-  return input as Set<T>
 }
