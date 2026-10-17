@@ -183,8 +183,10 @@ beforeEach(() => {
 })
 
 afterEach(async () => {
+  vi.useRealTimers()
   await act(async () => root.unmount())
   container.remove()
+  document.body.replaceChildren()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
   Reflect.deleteProperty(Element.prototype, "getAnimations")
@@ -256,19 +258,56 @@ describe("desktop event preview", () => {
 
   it("starts the entrance transition each time the preview opens", async () => {
     const link = await renderPreview()
-    vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame", "setTimeout", "clearTimeout"] })
-    try {
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        await act(async () => link.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(true)
-        await act(async () => vi.advanceTimersByTimeAsync(50))
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
-        const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
-        await act(async () => close?.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
-      }
-    } finally {
-      vi.useRealTimers()
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      let didSeeStartingStyle = false
+      const observer = new MutationObserver((records) => {
+        for (const record of records) {
+          if (record.type === "attributes" && record.attributeName === "data-starting-style") {
+            if ((record.target as Element).hasAttribute("data-starting-style")) {
+              didSeeStartingStyle = true
+            }
+          }
+
+          for (const node of record.addedNodes) {
+            if (node instanceof Element && node.matches('[data-slot="drawer-content"][data-starting-style]')) {
+              didSeeStartingStyle = true
+            }
+
+            if (
+              node instanceof Element &&
+              node.querySelector('[data-slot="drawer-content"][data-starting-style]') !== null
+            ) {
+              didSeeStartingStyle = true
+            }
+          }
+        }
+      })
+
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ["data-starting-style"],
+      })
+
+      await act(async () => link.click())
+      observer.disconnect()
+
+      expect(didSeeStartingStyle).toBe(true)
+
+      await act(async () => {
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve())
+          })
+        })
+      })
+      expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
+
+      const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+      await act(async () => close?.click())
+      expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
     }
   })
 

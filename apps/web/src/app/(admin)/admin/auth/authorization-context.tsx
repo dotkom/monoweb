@@ -7,22 +7,20 @@ import {
   type AffiliatedPrincipalWithSubject,
 } from "@dotkomonline/rpc/permissions"
 import type { UserId } from "@dotkomonline/rpc/user"
-import { createContext, useContext, useMemo } from "react"
 import type { PropsWithChildren } from "react"
+import { createContext, useContext, useMemo } from "react"
 import type { AuthorizationState } from "./permissions"
 import {
   canAccessAuditLog,
-  canCreateEvents,
   canCreateGroup,
   canDeleteGroup,
   canEditContest,
-  canEditEvent,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
-  canManageNotification,
   canManageGroupMembership,
   canManageGroupRoles,
+  canManageNotification,
   canManageUserMemberships,
   canUpdateGroup,
   hasAnyGroupAffiliation,
@@ -105,7 +103,6 @@ export function useAuthorization() {
       canAccessAuditLog: () => canAccessAuditLog(state),
       canManageUserMemberships: () => canManageUserMemberships(state),
       canEditUserProfile: (userId: UserId) => canEditUserProfile(state, userId, context.subject),
-      canEditEvent: (hostingGroupIds: readonly GroupId[]) => canEditEvent(state, hostingGroupIds),
       canEditContest: (groupIds: readonly GroupId[]) => canEditContest(state, groupIds),
       canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
       canEditOffline: () => canEditOffline(state),
@@ -117,7 +114,6 @@ export function useAuthorization() {
         canManageGroupMembership(state, groupId, isInterestGroup),
       canManageGroupRoles: (groupId: GroupId, isInterestGroup: boolean) =>
         canManageGroupRoles(state, groupId, isInterestGroup),
-      canCreateEvents: () => canCreateEvents(state),
     }
   }, [context])
 }

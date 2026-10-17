@@ -1,15 +1,14 @@
+import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { describe, expect, it } from "vitest"
 import {
   canAccessAuditLog,
-  canCreateEvents,
-  canEditEvent,
-  canManageNotification,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
+  canManageNotification,
   createAuthorizationState,
   hasAnyGroupAffiliation,
 } from "../permissions"
@@ -52,13 +51,76 @@ describe("canEditEvent", () => {
   it("allows editing when user hosts the event", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canEditEvent(state, ["arrkom"])).toBe(true)
+    expect(canEditEvent(state, ["arrkom"], ["arrkom"])).toBe(true)
   })
 
   it("denies editing for unrelated committee members", () => {
     const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canEditEvent(state, ["arrkom"])).toBe(false)
+    expect(canEditEvent(state, ["arrkom"], ["arrkom"])).toBe(false)
+  })
+
+  it("allows editing when the user hosts via a committee even if interest groups are also organizers", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, ["backlog", "some-interest-group"], ["backlog", "some-interest-group"])).toBe(true)
+  })
+
+  it("ignores interest-group-only organizers for edit permission", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, ["some-interest-group"], ["some-interest-group"])).toBe(false)
+  })
+
+  it("allows a co-host to add another committee they are not in", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, ["backlog", "arrkom"], ["backlog", "arrkom", "bedkom"])).toBe(true)
+  })
+
+  it("denies a non-host from editing even if they appear in the next organizers", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, ["arrkom"], ["arrkom", "bedkom"])).toBe(false)
+  })
+
+  it("denies non-admins when organizers are empty", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, [], [])).toBe(false)
+  })
+
+  it("allows administrators when organizers are empty", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canEditEvent(state, [], [])).toBe(true)
+  })
+})
+
+describe("canCreateEvent", () => {
+  it("allows creating when the user belongs to at least one committee organizer", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateEvent(state, ["backlog", "some-interest-group"])).toBe(true)
+    expect(canCreateEvent(state, ["backlog", "arrkom"])).toBe(true)
+  })
+
+  it("denies creating when the user belongs to none of the committee organizers", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateEvent(state, ["arrkom"])).toBe(false)
+  })
+
+  it("denies non-admins when organizers are empty", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateEvent(state, [])).toBe(false)
+  })
+
+  it("allows administrators when organizers are empty", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateEvent(state, [])).toBe(true)
   })
 })
 
@@ -168,6 +230,6 @@ describe("canCreateEvents", () => {
   it("requires at least one affiliation for non-admins", () => {
     expect(canCreateEvents(createState({}))).toBe(false)
     expect(canCreateEvents(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
-    expect(canCreateEvents(createState({}, { isAdministrator: true }))).toBe(true)
+    expect(canCreateEvents(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
   })
 })
