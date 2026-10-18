@@ -41,3 +41,20 @@ export const AllStates = () => (
     </div>
   </div>
 )
+
+export const ConnectedMonths = () => (
+  <div className="flex flex-col items-start gap-8">
+    <CalendarBox start={new Date(2026, 7, 28)} end={new Date(2026, 7, 30)} includeWeekday />
+    <CalendarBox start={new Date(2026, 7, 28)} end={new Date(2026, 8, 2)} includeWeekday />
+    <CalendarBox start={new Date(2026, 11, 31)} end={new Date(2027, 0, 1)} includeWeekday />
+    <CalendarBox
+      start={new Date(2026, 11, 31)}
+      end={new Date(2027, 0, 1)}
+      className="rounded-sm border-gray-300 bg-background dark:border-stone-700"
+      titleClassName="rounded-t-sm py-1"
+      titleTextClassName="text-xs"
+      dayTextClassName="text-sm"
+      includeWeekday
+    />
+  </div>
+)
