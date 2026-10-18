@@ -44,7 +44,6 @@ export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
     excerpt: "Nynorskdagen er kvar 12. mai og er svært viktig for nasjonen og dialektane våre.",
     content:
       "<p>Kvar 12. mai markerer me Nynorskdagen. Dagen er sett av til å feire nynorsk som eitt av dei to formelle skriftspråka i Noreg, og til å minnast arbeidet som vart gjort for å gje språket ein offisiell status.</p>",
-    isFeatured: false,
     createdAt: new Date("2026-05-12T00:00:00.000Z"),
   },
 ]
