@@ -164,14 +164,16 @@ function ToastList() {
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
-      <ToastContent>
-        <ToastIcon type={toastItem.type} />
-        <div className={toastItem.data?.actionLayout ? `flex flex-${toastItem.data?.actionLayout} gap-2` : ""}>
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <ToastTitle />
-            <ToastDescription />
+      <ToastContent className="justify-between">
+        <div className="flex items-center gap-4">
+          <ToastIcon type={toastItem.type} />
+          <div className={toastItem.data?.actionLayout ? `flex flex-${toastItem.data?.actionLayout} gap-2` : ""}>
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <ToastTitle />
+              <ToastDescription />
+            </div>
+            {toastItem.data?.customAction ? toastItem.actionProps?.children : <ToastAction />}
           </div>
-          {toastItem.data?.customAction ? toastItem.actionProps?.children : <ToastAction />}
         </div>
         <ToastClose />
       </ToastContent>
