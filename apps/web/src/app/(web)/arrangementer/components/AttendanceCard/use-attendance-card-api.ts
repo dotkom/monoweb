@@ -2,18 +2,23 @@
 
 import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvider"
 import { useTRPC } from "@/utils/trpc/client"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { type Attendance, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
 import { differenceInSeconds, secondsToMilliseconds } from "date-fns"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { useDeregisterMutation, useRegisterMutation, useSetSelectionsOptionsMutation } from "../mutations"
 import { patchAttendanceFromRegisterChange } from "./patchAttendanceFromRegisterChange"
 import { patchRegistrationAvailabilityFromPoolOccupancies } from "./patchRegistrationAvailabilityFromPoolOccupancies"
 import { attendanceCardQueryOptions } from "./attendanceCardQueryOptions"
+import {
+  getAttendanceCardRegistrationAvailability,
+  getDeregisterGracePeriodEnd,
+} from "./getAttendanceCardRegistrationAvailability"
 
 interface UseAttendanceCardApiOptions {
   initialAttendance: Attendance
@@ -33,16 +38,23 @@ export const useAttendanceCardApi = ({
   const trpcClient = useTRPC()
   const queryClient = useQueryClient()
   const { setTRPCSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
-  const [isCloseToEvent, setIsCloseToEvent] = useState(false)
 
   const { data: attendance } = useQuery({
     ...attendanceCardQueryOptions(trpcClient, initialAttendance.id),
     initialData: initialAttendance,
     enabled: Boolean(user) || bulkSubscription !== undefined,
-    refetchInterval: isCloseToEvent ? secondsToMilliseconds(1) : secondsToMilliseconds(60),
+    refetchInterval: (query) => {
+      const attendeeData = query.state.data ?? initialAttendance
+      const attendee = getAttendee(attendeeData, user)
+      const completionDeadline = attendee?.completionDeadline
+      const isCloseToDeadline =
+        completionDeadline != null && Math.abs(differenceInSeconds(completionDeadline, new Date())) < 60
+
+      return secondsToMilliseconds(isCloseToDeadline ? 1 : 60)
+    },
   })
 
-  const { data: registrationAvailability } = useQuery(
+  const { data: cachedRegistrationAvailability } = useQuery(
     trpcClient.event.attendance.getRegistrationAvailability.queryOptions(
       {
         attendanceId: initialAttendance.id,
@@ -96,15 +108,29 @@ export const useAttendanceCardApi = ({
   )
 
   const attendee = getAttendee(attendance, user)
+  const registrationAvailability = getAttendanceCardRegistrationAvailability(
+    attendance,
+    attendee,
+    cachedRegistrationAvailability
+  )
+  const deadlineTick = useDeadlineTick(
+    attendance.registerStart,
+    attendance.registerEnd,
+    attendance.deregisterDeadline,
+    cachedRegistrationAvailability?.deregistration?.chargeScheduleDate,
+    getDeregisterGracePeriodEnd(attendee),
+    attendee?.completionDeadline
+  )
 
   useEffect(() => {
-    const attendanceEventDateTimes = [
-      registrationAvailability?.completion?.completionDeadline ?? attendee?.completionDeadline ?? null,
-    ]
-    setIsCloseToEvent(
-      attendanceEventDateTimes.some((date) => date && Math.abs(differenceInSeconds(date, new Date())) < 60)
+    if (!user || deadlineTick === 0) {
+      return
+    }
+
+    void queryClient.invalidateQueries(
+      trpcClient.event.attendance.getRegistrationAvailability.queryOptions({ attendanceId: initialAttendance.id })
     )
-  }, [attendee, registrationAvailability?.completion?.completionDeadline])
+  }, [deadlineTick, initialAttendance.id, queryClient, trpcClient, user])
 
   const invalidateRegistrationAvailability = () => {
     if (!user) {

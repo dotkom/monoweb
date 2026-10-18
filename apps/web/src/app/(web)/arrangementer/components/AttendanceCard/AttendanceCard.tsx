@@ -7,12 +7,12 @@ import { type Attendance, buildRegistrationAvailabilityCompletionView, getAttend
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
-import { createAuthorizeUrl, getCurrentUTC } from "@dotkomonline/utils"
+import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconCoins, IconEdit } from "@tabler/icons-react"
-import { differenceInMilliseconds, isBefore, isPast, secondsToMilliseconds } from "date-fns"
+import { isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { DeregisterModal } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
@@ -60,7 +60,6 @@ export const AttendanceCard = ({
   const fullPathname = useFullPathname()
   const authorizeUrl = createAuthorizeUrl({ returnTo: fullPathname })
 
-  const [attendanceStatus, setAttendanceStatus] = useState(getAttendanceStatus(initialAttendance))
   const [turnstileHasLoaded, setTurnstileHasLoaded] = useState(false)
   const [turnstileHasStarted, setTurnstileHasStarted] = useState(false)
   const [turnstileHasFailed, setTurnstileHasFailed] = useState(false)
@@ -83,24 +82,9 @@ export const AttendanceCard = ({
     onDeregisterSuccess: () => setTurnstileToken(null),
   })
 
-  useEffect(() => {
-    setAttendanceStatus(getAttendanceStatus(attendance))
+  useDeadlineTick(attendance.registerStart, attendance.registerEnd)
 
-    if (!isBefore(getCurrentUTC(), attendance.registerStart)) {
-      return
-    }
-
-    const timeoutId = setTimeout(
-      () => {
-        setAttendanceStatus(getAttendanceStatus(attendance))
-      },
-      differenceInMilliseconds(attendance.registerStart, getCurrentUTC())
-    )
-
-    return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [attendance])
+  const attendanceStatus = getAttendanceStatus(attendance)
 
   useEffect(() => {
     if (turnstileToken === null) {
@@ -121,16 +105,7 @@ export const AttendanceCard = ({
   const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
   const requiresLocalTurnstile = requiresTurnstile && backgroundToken === null
 
-  const deadlineTick = useDeadlineTick(attendee?.completionDeadline)
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: `deadlineTick` forces recomputation when a completion deadline passes
-  const completion = useMemo(() => {
-    if (attendee !== null) {
-      return buildRegistrationAvailabilityCompletionView(attendance, attendee)
-    }
-
-    return registrationAvailability?.completion ?? null
-  }, [attendance, attendee, registrationAvailability?.completion, deadlineTick])
+  const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
 
   useEffect(() => {
     if (
@@ -243,7 +218,6 @@ export const AttendanceCard = ({
             user={user}
             authorizeUrl={authorizeUrl}
             chargeScheduleDate={chargeScheduleDate}
-            registrationAvailability={registrationAvailability}
             hasAttachedActionBelow={showPaymentLink}
           />
 
