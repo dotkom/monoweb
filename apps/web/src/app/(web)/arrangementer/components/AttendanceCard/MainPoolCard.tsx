@@ -34,6 +34,7 @@ import { nb } from "date-fns/locale"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
+import { QueueCount } from "./QueueCount"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
@@ -182,7 +183,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             </Text>
           </div>
         ) : (
-          <div className="flex flex-col gap-1 items-center">
+          <div className="flex flex-col items-center">
             <Text
               className={cn(
                 "text-3xl px-2 py-1",
@@ -203,24 +204,19 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               )}
             </Text>
 
-            {hasWaitlist && (
-              <Text
-                className={cn(
-                  "text-lg px-2 py-0.5",
-                  isQueued &&
-                    !isRegistrationDelayed &&
-                    !actionIsRequired &&
-                    "bg-indigo-200 dark:bg-indigo-800 rounded-md",
-                  isQueued &&
-                    !isRegistrationDelayed &&
-                    actionIsRequired &&
-                    "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
-                )}
-                suppressHydrationWarning
-              >
-                +<RollingNumber value={queuedAttendeeCount} /> i kø
-              </Text>
-            )}
+            <QueueCount
+              value={queuedAttendeeCount}
+              className={cn(
+                isQueued &&
+                  !isRegistrationDelayed &&
+                  !actionIsRequired &&
+                  "bg-indigo-200 dark:bg-indigo-800 rounded-md",
+                isQueued &&
+                  !isRegistrationDelayed &&
+                  actionIsRequired &&
+                  "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
+              )}
+            />
           </div>
         )}
 
