@@ -1,7 +1,9 @@
 import { addWeeks } from "date-fns"
 import { Prisma, type Prisma as PrismaTypes, type Event } from ".."
+import { fixtureFeedbackFormId } from "./feedback-form"
+import { fixtureVolleyballAttendeeId } from "./attendee"
 
-export const FEEDBACK_ANSWERS_FORM_ID = "f1a2b3c4-d5e6-4789-a012-3456789abcde"
+export const FEEDBACK_ANSWERS_FORM_ID = fixtureFeedbackFormId.volleyballAnswers
 
 const FEEDBACK_ANSWERS_RATING_QUESTION_ID = "a2b3c4d5-e6f7-4890-a123-456789abcdef"
 const FEEDBACK_ANSWERS_LONGTEXT_QUESTION_ID = "b3c4d5e6-f7a8-4901-b234-56789abcdef0"
@@ -58,10 +60,8 @@ export const getFeedbackAnswerEventFormFixture = (event: Event): PrismaTypes.Fee
   },
 })
 
-export const getFeedbackFormAnswerFixtures = (
-  attendeeIds: readonly string[]
-): PrismaTypes.FeedbackFormAnswerUncheckedCreateInput[] =>
-  attendeeIds.map((attendeeId, index) => ({
+export const getFeedbackFormAnswerFixtures = (): PrismaTypes.FeedbackFormAnswerUncheckedCreateInput[] =>
+  fixtureVolleyballAttendeeId.map((attendeeId, index) => ({
     feedbackFormId: FEEDBACK_ANSWERS_FORM_ID,
     attendeeId,
     answers: {

@@ -1,8 +1,9 @@
 import type { Prisma } from "../"
+import { fixtureUserId, fixtureUserKeys } from "./user"
 
-export const getPrivacyPermissionsFixtures = (userIds: string[]): Prisma.PrivacyPermissionsCreateManyInput[] =>
-  userIds.map((userId, index) => ({
-    userId,
+export const getPrivacyPermissionsFixtures = (): Prisma.PrivacyPermissionsCreateManyInput[] =>
+  fixtureUserKeys().map((userKey, index) => ({
+    userId: fixtureUserId[userKey],
     profileVisible: true,
     usernameVisible: index % 3 !== 0,
     emailVisible: index === 0,

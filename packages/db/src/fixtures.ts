@@ -1,13 +1,18 @@
-import { compareAsc, isFuture } from "date-fns"
+import { createPrisma } from "./index"
 import { getArticleFixtures, getArticleTagFixtures, getArticleTagLinkFixtures } from "./fixtures/article"
 import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
-import { buildAttendancePoolMap, getAttendeeFixtures, VOLLEYBALL_ATTENDEE_FIXTURE_IDS } from "./fixtures/attendee"
+import { getAttendeeFixtures } from "./fixtures/attendee"
 import { getCompanyFixtures } from "./fixtures/company"
-import { FADDERUKE_CONTEST_ID, getContestFixture, getContestTeamFixtures } from "./fixtures/contest"
+import {
+  fixtureContestId,
+  getContestFixture,
+  getContestTeamFixtures,
+  getContestTeamMemberIds,
+} from "./fixtures/contest"
 import { getDeregisterReasonFixtures } from "./fixtures/deregister-reason"
-import { FADDERUKE_EVENT_ID, getEventFixtures, VOLLEYBALL_EVENT_ID } from "./fixtures/event"
-import { getEventCompany } from "./fixtures/event-company"
+import { eventId, getEventFixtures } from "./fixtures/event"
+import { getEventCompanyFixtures } from "./fixtures/event-company"
 import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
 import { getFadderukeFixture } from "./fixtures/fadderuke"
 import { getFeedbackFormFixture } from "./fixtures/feedback-form"
@@ -25,7 +30,6 @@ import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getPrivacyPermissionsFixtures } from "./fixtures/privacy-permissions"
 import { getUserFixtures } from "./fixtures/user"
 import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
-import { createPrisma } from "./index"
 
 if (process.env.DATABASE_URL === undefined) {
   throw new Error("Missing database url")
@@ -37,149 +41,308 @@ if (process.env.DATABASE_URL.includes("prod")) {
 
 const db = createPrisma(process.env.DATABASE_URL)
 
-// The ordering of things is *somewhat* important here, as some things depend on others. Developers modifying or adding
-// entires to this file should consider what makes sense for a user of the app to make first.
+// The ordering of things is *somewhat* important here, as some things depend on others.
 
-const userInput = getUserFixtures()
-const userIds = userInput.map((u) => u.id)
-await db.user.createManyAndReturn({ data: userInput })
-const membershipInput = getMembershipFixtures(userIds)
-await db.membership.createManyAndReturn({ data: membershipInput })
-
-const privacyPermissions = await db.privacyPermissions.createManyAndReturn({
-  data: getPrivacyPermissionsFixtures(userIds),
-})
-for (const permission of privacyPermissions) {
-  await db.user.update({
-    where: { id: permission.userId },
-    data: { privacyPermissionsId: permission.id },
+for (const user of getUserFixtures()) {
+  await db.user.upsert({
+    where: { username: user.username },
+    create: user,
+    update: {},
   })
 }
 
-const notificationPermissions = await db.notificationPermissions.createManyAndReturn({
-  data: getNotificationPermissionsFixtures(userIds),
-})
-for (const permission of notificationPermissions) {
+for (const membership of getMembershipFixtures()) {
+  await db.membership.upsert({
+    where: { id: membership.id },
+    create: membership,
+    update: {},
+  })
+}
+
+for (const permission of getPrivacyPermissionsFixtures()) {
+  const row = await db.privacyPermissions.upsert({
+    where: { userId: permission.userId },
+    create: permission,
+    update: {},
+  })
   await db.user.update({
     where: { id: permission.userId },
-    data: { notificationPermissionsId: permission.id },
+    data: { privacyPermissionsId: row.id },
+  })
+}
+
+for (const permission of getNotificationPermissionsFixtures()) {
+  const row = await db.notificationPermissions.upsert({
+    where: { userId: permission.userId },
+    create: permission,
+    update: {},
+  })
+  await db.user.update({
+    where: { id: permission.userId },
+    data: { notificationPermissionsId: row.id },
   })
 }
 
 const exceptionallyDistinguishedFlag = await db.userFlag.findUniqueOrThrow({
   where: { name: EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME },
 })
-const userFlagLinkInput = getUserFlagLinkFixtures(userIds, exceptionallyDistinguishedFlag.id)
-await db.userFlagLink.createMany({ data: userFlagLinkInput })
 
-const companyInput = getCompanyFixtures()
-const companies = await db.company.createManyAndReturn({ data: companyInput })
+for (const userFlagLink of getUserFlagLinkFixtures(exceptionallyDistinguishedFlag.id)) {
+  await db.userFlagLink.upsert({
+    where: { id: userFlagLink.id },
+    create: userFlagLink,
+    update: {},
+  })
+}
+
+for (const company of getCompanyFixtures()) {
+  await db.company.upsert({
+    where: { slug: company.slug },
+    create: company,
+    update: {},
+  })
+}
 
 const groupInput = getGroupFixtures()
-await db.group.createManyAndReturn({ data: groupInput })
-const groupRoleInput = groupInput.flatMap(getGroupRoleFixtures)
-await db.groupRole.createManyAndReturn({ data: groupRoleInput })
+for (const group of groupInput) {
+  await db.group.upsert({
+    where: { slug: group.slug },
+    create: group,
+    update: {},
+  })
+
+  for (const role of getGroupRoleFixtures(group)) {
+    await db.groupRole.upsert({
+      where: {
+        groupId_name: {
+          groupId: role.groupId,
+          name: role.name,
+        },
+      },
+      create: role,
+      update: {},
+    })
+  }
+}
+
 const groupRoleIds = new Map(
   (await db.groupRole.findMany({ select: { id: true, groupId: true, type: true } })).map(
     (role) => [`${role.groupId}:${role.type}`, role.id] as const
   )
 )
 
-const groupMembershipInput = getGroupMembershipFixtures(userIds)
-await db.groupMembership.createManyAndReturn({ data: groupMembershipInput })
-const groupMembershipRoleInput = getGroupMembershipRoleFixtures(groupRoleIds)
-await db.groupMembershipRole.createMany({ data: groupMembershipRoleInput })
+for (const groupMembership of getGroupMembershipFixtures()) {
+  await db.groupMembership.upsert({
+    where: { id: groupMembership.id },
+    create: groupMembership,
+    update: {},
+  })
+}
 
-const attendanceInput = getAttendanceFixtures()
-const attendances = await db.attendance.createManyAndReturn({ data: attendanceInput })
-const eventInput = getEventFixtures(attendances.map((a) => a.id))
-const events = await db.event.createManyAndReturn({ data: eventInput })
-const eventIds = events.map((event) => event.id)
-const companyIds = companies.map((company) => company.id)
-await db.eventCompany.createMany({ data: getEventCompany(eventIds, companyIds) })
-const attendanceIds = attendances.map((attendance) => attendance.id)
-const attendancePoolInput = getPoolFixtures(attendanceIds)
-const attendancePools = await db.attendancePool.createManyAndReturn({ data: attendancePoolInput })
-const attendancePoolMap = buildAttendancePoolMap(attendancePools)
-const attendeeInput = getAttendeeFixtures(attendancePoolMap, attendanceIds, userIds)
-await db.attendee.createMany({ data: attendeeInput })
-const eventHostingGroupInput = getEventHostingGroupFixtures(events.map((e) => e.id))
-await db.eventHostingGroup.createManyAndReturn({ data: eventHostingGroupInput })
+await db.groupMembershipRole.createMany({
+  data: getGroupMembershipRoleFixtures(groupRoleIds),
+  skipDuplicates: true,
+})
 
-const nearestEvent = events
-  .filter((event) => isFuture(event.start))
-  .toSorted((a, b) => compareAsc(a.start, b.start))
-  .at(0)
+for (const attendance of getAttendanceFixtures()) {
+  await db.attendance.upsert({
+    where: { id: attendance.id },
+    create: attendance,
+    update: {},
+  })
+}
+
+for (const event of getEventFixtures()) {
+  await db.event.upsert({
+    where: { id: event.id },
+    create: event,
+    update: {},
+  })
+}
+
+await db.eventCompany.createMany({
+  data: getEventCompanyFixtures(),
+  skipDuplicates: true,
+})
+
+for (const pool of getPoolFixtures()) {
+  await db.attendancePool.upsert({
+    where: { id: pool.id },
+    create: pool,
+    update: {},
+  })
+}
+
+for (const attendee of getAttendeeFixtures()) {
+  await db.attendee.upsert({
+    where: {
+      attendee_unique: {
+        attendanceId: attendee.attendanceId,
+        userId: attendee.userId,
+      },
+    },
+    create: attendee,
+    update: {},
+  })
+}
+
+await db.eventHostingGroup.createMany({
+  data: getEventHostingGroupFixtures(),
+  skipDuplicates: true,
+})
+
+const nearestEvent = (
+  await db.event.findMany({
+    where: { start: { gt: new Date() } },
+    orderBy: { start: "asc" },
+    take: 1,
+  })
+).at(0)
+
 if (nearestEvent === undefined) {
   throw new Error("Missing future event for feedback form fixture")
 }
 
-const volleyballEvent = events.find((event) => event.id === VOLLEYBALL_EVENT_ID)
-if (volleyballEvent === undefined) {
-  throw new Error("Missing volleyball event for feedback form fixture")
-}
-
-await db.feedbackForm.create({ data: getFeedbackFormFixture(nearestEvent) })
-await db.feedbackForm.create({
-  data: getFeedbackAnswerEventFormFixture(volleyballEvent),
+const volleyballEvent = await db.event.findUniqueOrThrow({
+  where: { id: eventId("volleyball") },
 })
 
-for (const feedbackFormAnswer of getFeedbackFormAnswerFixtures(VOLLEYBALL_ATTENDEE_FIXTURE_IDS)) {
-  await db.feedbackFormAnswer.create({ data: feedbackFormAnswer })
+await db.feedbackForm.upsert({
+  where: { eventId: nearestEvent.id },
+  create: getFeedbackFormFixture(nearestEvent),
+  update: {},
+})
+
+await db.feedbackForm.upsert({
+  where: { id: getFeedbackAnswerEventFormFixture(volleyballEvent).id },
+  create: getFeedbackAnswerEventFormFixture(volleyballEvent),
+  update: {},
+})
+
+for (const feedbackFormAnswer of getFeedbackFormAnswerFixtures()) {
+  await db.feedbackFormAnswer.upsert({
+    where: { attendeeId: feedbackFormAnswer.attendeeId },
+    create: feedbackFormAnswer,
+    update: {},
+  })
 }
 
-const marks = await db.mark.createManyAndReturn({ data: getMarkFixtures() })
-const markIds = marks.map((mark) => mark.id)
-await db.markGroup.createMany({ data: getMarkGroupFixtures(markIds) })
+for (const mark of getMarkFixtures()) {
+  await db.mark.upsert({
+    where: { id: mark.id },
+    create: mark,
+    update: {},
+  })
+}
+
+await db.markGroup.createMany({
+  data: getMarkGroupFixtures(),
+  skipDuplicates: true,
+})
+
 await db.personalMark.createMany({
-  data: getPersonalMarkFixtures(markIds, userIds[0]),
+  data: getPersonalMarkFixtures(),
+  skipDuplicates: true,
 })
 
-const jobListingInput = getJobListingFixtures(companies.map((company) => company.id))
-const jobListings = await db.jobListing.createManyAndReturn({ data: jobListingInput })
-const jobListingLocationInput = getJobListingLocationFixtures(jobListings.map((jobListing) => jobListing.id))
-await db.jobListingLocation.createManyAndReturn({ data: jobListingLocationInput })
+for (const jobListing of getJobListingFixtures()) {
+  await db.jobListing.upsert({
+    where: { id: jobListing.id },
+    create: jobListing,
+    update: {},
+  })
+}
 
-await db.articleTag.createMany({ data: getArticleTagFixtures() })
-await db.article.createMany({ data: getArticleFixtures() })
-await db.articleTagLink.createMany({ data: getArticleTagLinkFixtures() })
+await db.jobListingLocation.createMany({
+  data: getJobListingLocationFixtures(),
+  skipDuplicates: true,
+})
 
-await db.contest.create({ data: getContestFixture() })
-const contestTeamFixtures = getContestTeamFixtures(userIds)
-await db.contestant.createMany({ data: contestTeamFixtures.map((fixture) => fixture.contestant) })
+await db.articleTag.createMany({
+  data: getArticleTagFixtures(),
+  skipDuplicates: true,
+})
+
+for (const article of getArticleFixtures()) {
+  await db.article.upsert({
+    where: { slug: article.slug },
+    create: article,
+    update: {},
+  })
+}
+
+await db.articleTagLink.createMany({
+  data: getArticleTagLinkFixtures(),
+  skipDuplicates: true,
+})
+
+await db.contest.upsert({
+  where: { id: fixtureContestId.fadderuke },
+  create: getContestFixture(),
+  update: {},
+})
+
+const contestTeamFixtures = getContestTeamFixtures()
+for (const { contestant } of contestTeamFixtures) {
+  await db.contestant.upsert({
+    where: { id: contestant.id },
+    create: contestant,
+    update: {},
+  })
+}
+
 for (const { team } of contestTeamFixtures) {
-  await db.contestTeam.create({
-    data: {
+  await db.contestTeam.upsert({
+    where: { id: team.id },
+    create: {
       id: team.id,
       name: team.name,
       contestantId: team.contestantId,
       members: {
-        connect: team.memberUserIds.map((memberUserId) => ({ id: memberUserId })),
+        connect: getContestTeamMemberIds(team.memberUserKeys).map((memberUserId) => ({ id: memberUserId })),
       },
     },
+    update: {},
   })
 }
+
 await db.contest.update({
-  where: { id: FADDERUKE_CONTEST_ID },
+  where: { id: fixtureContestId.fadderuke },
   data: { winnerContestantId: contestTeamFixtures[0].contestant.id },
 })
 
 await db.event.update({
-  where: { id: FADDERUKE_EVENT_ID },
-  data: { contestId: FADDERUKE_CONTEST_ID },
-})
-await db.fadderuke.create({ data: getFadderukeFixture() })
-
-await db.deregisterReason.createMany({
-  data: getDeregisterReasonFixtures(userIds[8]),
+  where: { id: eventId("fadderuke") },
+  data: { contestId: fixtureContestId.fadderuke },
 })
 
-for (const notification of getNotificationFixtures({
-  createdByUserId: userIds[0],
-  recipientUserIds: userIds.slice(0, 6),
-})) {
-  await db.notification.create({ data: notification })
+const fadderukeYear = getFadderukeFixture().year
+await db.fadderuke.upsert({
+  where: { year: fadderukeYear },
+  create: getFadderukeFixture(),
+  update: {},
+})
+
+for (const deregisterReason of getDeregisterReasonFixtures()) {
+  await db.deregisterReason.upsert({
+    where: { id: deregisterReason.id },
+    create: deregisterReason,
+    update: {},
+  })
 }
 
-const offlineInput = getOfflineFixtures()
-await db.offline.createMany({ data: offlineInput })
+for (const notification of getNotificationFixtures()) {
+  await db.notification.upsert({
+    where: { id: notification.id },
+    create: notification,
+    update: {},
+  })
+}
+
+for (const offline of getOfflineFixtures()) {
+  await db.offline.upsert({
+    where: { id: offline.id },
+    create: offline,
+    update: {},
+  })
+}
