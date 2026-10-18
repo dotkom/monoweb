@@ -94,7 +94,7 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
       </div>
 
       <div className="flex">
-        <div className="max-md:hidden md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0 max-w-[18rem]">
+        <div className="max-sm:hidden sm:grid sm:grid-cols-[15rem_auto] sm:gap-8 lg:gap-12 min-w-0 max-w-[18rem]">
           <div className="mt-4">
             <ArticleTagFilter
               availableTags={availableTags}
