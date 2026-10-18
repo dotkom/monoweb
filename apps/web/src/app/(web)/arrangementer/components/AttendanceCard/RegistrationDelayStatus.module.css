@@ -1,5 +1,5 @@
 .hourglass {
-  animation: hourglass-turn 2s cubic-bezier(0.3, 0, 0.15, 1) infinite;
+  animation: hourglass-turn 2s var(--ease-smooth) infinite;
   transform-box: fill-box;
   transform-origin: center;
 }

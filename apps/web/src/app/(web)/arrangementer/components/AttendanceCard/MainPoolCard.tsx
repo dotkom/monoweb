@@ -35,6 +35,8 @@ import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
 import { QueueCount } from "./QueueCount"
+import { AttendanceSection } from "./AttendanceSection"
+import transitionStyles from "./AttendanceTransition.module.css"
 
 // Stripe's refund processing time is maximum 10 business days, we therefore
 // add 2 days to the processing time to account for weekends
@@ -164,13 +166,16 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isRegistered = attendeeState === "REGISTERED"
   const isReserved = attendeeState === "RESERVED"
   const isQueued = attendeeState === "QUEUED"
+  const paymentState = attendee ? getAttendeePaymentStatus(attendee) : null
+  const showPaymentStatus = attendance.attendancePrice !== null && !(showCompletionPanel && paymentIsMissing)
   const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-[#614020]")
   const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-amber-100/8")
 
   const cardBody = (
     <div
       className={cn(
-        "flex flex-col min-h-40 gap-8 px-2 pt-6 pb-2 items-center text-center justify-center w-full",
+        "relative flex flex-col min-h-40 px-2 pt-6 pb-2 items-center text-center justify-center w-full",
+        "transition-[padding] duration-260 ease-smooth motion-reduce:transition-none",
         !showCompletionPanel && "pb-6"
       )}
     >
@@ -186,7 +191,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           <div className="flex flex-col items-center">
             <Text
               className={cn(
-                "text-3xl px-2 py-1",
+                "text-3xl px-2 py-1 transition-colors duration-260 ease-smooth motion-reduce:transition-none",
                 hasWaitlist &&
                   (isRegistered || actionIsRequired) &&
                   (actionIsRequired
@@ -220,45 +225,68 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           </div>
         )}
 
-        <div className="flex flex-col gap-2">
-          {isRegistrationDelayed ? (
-            <PendingRegistrationStatus actionIsRequired={actionIsRequired} />
-          ) : (
-            <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
-          )}
+        <div className="flex flex-col text-left">
+          <div
+            key={`${attendeeState}-${isRegistrationDelayed}-${hasMissingRequirements}`}
+            className={transitionStyles.state}
+          >
+            {isRegistrationDelayed ? (
+              <PendingRegistrationStatus actionIsRequired={actionIsRequired} />
+            ) : (
+              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
+            )}
+          </div>
 
-          <PaymentStatus
-            attendance={attendance}
-            attendee={attendee}
-            chargeScheduleDate={chargeScheduleDate}
-            hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
-          />
+          <AttendanceSection contentClassName="pt-2">
+            {showPaymentStatus && (
+              <div key={`${paymentState}-${Boolean(attendee?.registered)}`} className={transitionStyles.state}>
+                <PaymentStatus
+                  attendance={attendance}
+                  attendee={attendee}
+                  chargeScheduleDate={chargeScheduleDate}
+                  hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
+                />
+              </div>
+            )}
+          </AttendanceSection>
         </div>
       </div>
 
-      <CompletionCard
-        visible={showCompletionPanel}
-        countdownDisplay={completionCountdownDisplay}
-        paymentIsMissing={paymentIsMissing}
-        hasAttachedActionBelow={hasAttachedActionBelow}
-        isQueued={isQueued}
-        price={attendance.attendancePrice}
-      />
+      {/** This weird margin padding stuff is to allow the CompletionCard to have a shadow */}
+      <AttendanceSection className="-mx-2 -mb-2 self-stretch" contentClassName="pt-8 px-2 pb-2">
+        {showCompletionPanel && (
+          <CompletionCard
+            countdownDisplay={completionCountdownDisplay}
+            paymentIsMissing={paymentIsMissing}
+            hasAttachedActionBelow={hasAttachedActionBelow}
+            isQueued={isQueued}
+            price={attendance.attendancePrice}
+          />
+        )}
+      </AttendanceSection>
     </div>
   )
 
-  const body = actionIsRequired ? (
-    <Stripes colorA={stripeColorA} colorB={stripeColorB} stripeWidth={24} speed="2.0s" animated className="h-auto">
+  const body = (
+    <div className="relative">
+      {actionIsRequired && (
+        <Stripes
+          colorA={stripeColorA}
+          colorB={stripeColorB}
+          stripeWidth={24}
+          speed="2.0s"
+          animated
+          className={cn("absolute inset-0 pointer-events-none", transitionStyles.state)}
+        />
+      )}
       {cardBody}
-    </Stripes>
-  ) : (
-    cardBody
+    </div>
   )
 
   return (
     <div
       className={cn(
-        "flex flex-col w-full overflow-hidden text-base",
+        "flex flex-col w-full overflow-hidden text-base transition-[background-color,border-radius] duration-260 ease-smooth motion-reduce:transition-none",
         hasAttachedActionBelow ? "rounded-t-xl rounded-b-md" : "rounded-xl",
         !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
         isRegistered && "bg-green-100 dark:bg-green-900",
@@ -268,7 +296,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     >
       <div
         className={cn(
-          "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold",
+          "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold transition-colors duration-260 ease-smooth motion-reduce:transition-none",
           !attendee && "bg-gray-200 dark:bg-stone-700",
           isRegistered && "bg-green-200 dark:bg-green-800",
           isReserved && !actionIsRequired && "bg-gray-200 dark:bg-stone-700",
@@ -546,7 +574,6 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
 }
 
 interface CompletionCardProps {
-  visible: boolean
   countdownDisplay: ReactNode
   paymentIsMissing: boolean
   hasAttachedActionBelow: boolean
@@ -555,35 +582,28 @@ interface CompletionCardProps {
 }
 
 const CompletionCard = ({
-  visible,
   countdownDisplay,
   paymentIsMissing,
   hasAttachedActionBelow,
   isQueued,
   price,
 }: CompletionCardProps) => {
-  if (!visible) {
-    return null
-  }
+  const roundingClassName = hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
 
   return (
-    <div
-      className={cn(
-        "w-full shadow-md bg-background",
-        hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
-      )}
-    >
+    <div className={cn("w-full shadow-md bg-background", roundingClassName)}>
       <div
         className={cn(
           "relative flex flex-col gap-3 w-full overflow-hidden p-3",
           !isQueued && "bg-violet-200 dark:bg-[#413545]",
           isQueued && "bg-blue-200 dark:bg-sky-900/75",
-          hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
+          roundingClassName
         )}
       >
         <span
           className={cn(
             "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
+            roundingClassName,
             "from-white/50 via-white/30 to-transparent",
             "dark:from-white/10 dark:via-white/3 dark:to-transparent"
           )}
@@ -591,6 +611,7 @@ const CompletionCard = ({
         <span
           className={cn(
             "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
+            roundingClassName,
             "from-transparent via-red-300/6 to-red-300/15",
             "dark:from-transparent dark:via-red-300/3 dark:to-red-300/8"
           )}

@@ -5,6 +5,8 @@ import { IconLock, IconLockOpen2, IconSquareX } from "@tabler/icons-react"
 import { format as formatDate, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
 import React from "react"
+import { AttendanceSection } from "./AttendanceSection"
+import transitionStyles from "./AttendanceTransition.module.css"
 
 const dateComponent = (label: string, date: Date, time: string, showNotice?: boolean, icon?: React.ReactNode) => {
   const shortDateStr = formatDate(date, isThisYear(date) ? "dd. MMM" : "dd.MM.yyyy", { locale: nb })
@@ -20,7 +22,7 @@ const dateComponent = (label: string, date: Date, time: string, showNotice?: boo
         <div className="flex flex-col">
           <Text
             className={cn(
-              "w-fit md:text-sm lg:text-base",
+              "w-fit md:text-sm lg:text-base transition-colors duration-260 ease-smooth motion-reduce:transition-none",
               showNotice && "px-0.5 rounded-sm bg-yellow-100 dark:bg-yellow-600/25"
             )}
           >
@@ -95,9 +97,11 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
 
   const element = (
     <div className="flex flex-col justify-between space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-      {sortedElements.map(({ element, key }, index) => (
+      {sortedElements.map(({ element, key, date }, index) => (
         <React.Fragment key={key}>
-          {element}
+          <div key={date.getTime()} className={transitionStyles.state}>
+            {element}
+          </div>
           {index < sortedElements.length - 1 && (
             <span className="self-center grow h-0.5 rounded-full bg-gray-600 dark:bg-stone-600 hidden sm:block" />
           )}
@@ -106,14 +110,14 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
     </div>
   )
 
-  if (!showDeregisterDeadlineNotice) {
-    return element
-  }
-
   return (
     <div className="flex flex-col">
       {element}
-      <Text className="text-xs text-gray-500 dark:text-stone-500">Avmeldingsfrist er endret grunnet betaling.</Text>
+      <AttendanceSection>
+        {showDeregisterDeadlineNotice && (
+          <Text className="text-xs text-gray-500 dark:text-stone-500">Avmeldingsfrist er endret grunnet betaling.</Text>
+        )}
+      </AttendanceSection>
     </div>
   )
 }

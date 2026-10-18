@@ -10,6 +10,7 @@ import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
 import { deregistrationRejectionMessages } from "./deregistrationRejectionMessages"
 import { registrationRejectionMessages } from "./registrationRejectionMessages"
+import transitionStyles from "./AttendanceTransition.module.css"
 
 const DEREGISTER_BUTTON_COLOR = "bg-red-300 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800" as const
 
@@ -168,7 +169,6 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const hasMergeDelay = registrationAvailability?.registration?.hasMergeDelay ?? false
 
   const buttonText = attendee ? "Meld meg av" : "Meld meg på"
-  const buttonIcon = null
 
   const disabledText = getDisabledText(registrationAvailability, turnstileStatus, Boolean(user), attendance)
   const isAvailabilityPending = Boolean(user) && registrationAvailability === undefined
@@ -192,76 +192,64 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     setConfirmDeregister(false)
   }
 
+  const showDeregisterConfirm =
+    attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !isButtonDisabled
+
   const buttonContent = isLoading ? (
     <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
     <>
-      {isButtonDisabled ? (
-        <IconLock className="shrink-0 size-[1.25em]" />
-      ) : attendee ? (
-        <IconUserMinus className="shrink-0 size-[1.25em]" />
-      ) : (
-        <IconUserPlus className="shrink-0 size-[1.25em]" />
-      )}
+      {!showDeregisterConfirm &&
+        (isButtonDisabled ? (
+          <IconLock className="shrink-0 size-[1.25em]" />
+        ) : attendee ? (
+          <IconUserMinus className="shrink-0 size-[1.25em]" />
+        ) : (
+          <IconUserPlus className="shrink-0 size-[1.25em]" />
+        ))}
 
       <Text element="span" className="font-medium">
-        {buttonText}
+        {showDeregisterConfirm ? "Er du sikker?" : buttonText}
       </Text>
     </>
   )
 
-  const registrationButton = (
-    <Button
-      onClick={handleClick}
-      disabled={isButtonDisabled}
-      icon={buttonIcon}
-      className={cn(
-        "text-base rounded-lg h-fit min-h-16 w-full",
-        isButtonDisabled && "text-gray-800 dark:text-stone-300",
-        getButtonColor(isButtonDisabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
-      )}
-    >
-      {buttonContent}
-    </Button>
-  )
-
-  const deregisterConfirmButton = (
+  const actionButton = (
     <div className="flex flex-row gap-2 items-stretch w-full">
       <Button
-        onClick={handleDeregisterConfirm}
-        disabled={isLoading}
-        className={cn("text-base rounded-lg grow min-h-16", DEREGISTER_BUTTON_COLOR)}
-      >
-        {isLoading ? (
-          <IconLoader2 className="shrink-0 size-6 animate-spin" />
-        ) : (
-          <Text element="span" className="font-medium">
-            Er du sikker?
-          </Text>
+        onClick={showDeregisterConfirm ? handleDeregisterConfirm : handleClick}
+        disabled={isButtonDisabled}
+        className={cn(
+          "text-base rounded-lg h-fit min-h-16 min-w-0 flex-1 transition-colors duration-260 ease-smooth motion-reduce:transition-none",
+          isButtonDisabled && "text-gray-800 dark:text-stone-300",
+          getButtonColor(isButtonDisabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
         )}
-      </Button>
-      <Button
-        type="button"
-        onClick={() => setConfirmDeregister(false)}
-        disabled={isLoading}
-        className="rounded-lg aspect-square h-full min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
       >
-        <IconX className="size-[1.25em]" />
+        <span
+          key={`${buttonText}-${isLoading}-${isButtonDisabled}`}
+          className={cn("inline-flex items-center justify-center gap-2", transitionStyles.state)}
+        >
+          {buttonContent}
+        </span>
       </Button>
+      {showDeregisterConfirm && (
+        <Button
+          type="button"
+          aria-label="Avbryt avmelding"
+          onClick={() => setConfirmDeregister(false)}
+          disabled={isLoading}
+          className="rounded-lg aspect-square h-full min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+        >
+          <IconX className="size-[1.25em]" />
+        </Button>
+      )}
     </div>
   )
-
-  const showDeregisterConfirm =
-    attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !isButtonDisabled
-
-  const actionButton = showDeregisterConfirm ? deregisterConfirmButton : registrationButton
 
   if (disabledText) {
     return (
       <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <span className="inline-flex w-full">{registrationButton}</span>
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{actionButton}</TooltipTrigger>
         <TooltipContent sideOffset={-10}>
           <Text>{disabledText}</Text>
         </TooltipContent>
