@@ -92,63 +92,42 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
                 </div>
               </DrawerContent>
             </Drawer>
-
-            <Popover open={true}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="max-sm:hidden shrink-0 rounded-lg h-10 gap-2">
-                  <IconFilter2 className="size-5" />
-                  Filter
-                  {activeTagCount > 0 && (
-                    <span className="size-5 flex items-center justify-center text-xs rounded-full bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
-                      {activeTagCount}
-                    </span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                sideOffset={12}
-                positionMethod="fixed"
-                align="end"
-                className="max-sm:hidden max-w-[calc(100vw-2rem)] max-h-[min(80dvh,var(--available-height))] overflow-y-auto p-5"
-              >
-                <div className="flex flex-col gap-6">
-                  <ArticleTagFilter
-                    availableTags={availableTags}
-                    selectedTags={filters.byTags ?? []}
-                    onChange={(byTags) => updateFilters({ byTags })}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
       </div>
 
-      {hasActiveFilters && (
-        <div className="min-w-0 md:grid md:grid-cols-[minmax(0,1fr)_18rem] md:gap-6 lg:gap-8">
-          <div className="mt-2 min-w-0 flex flex-col gap-2">
-            <ArticleListFilterChips
-              searchTerm={filters.bySearchTerm ?? ""}
-              tagFilter={filters.byTags ?? []}
-              onRemoveFilter={(type, value) => {
-                if (type === "search") {
-                  updateFilters({ bySearchTerm: "" })
-                }
-
-                if (type === "tag") {
-                  updateFilters({
-                    byTags: (filters.byTags ?? []).filter((filterType) => filterType !== value),
-                  })
-                }
-              }}
-              onResetAll={resetFilters}
+      <div className="flex">
+        <div className="max-md:hidden md:grid md:grid-cols-[15rem_auto] md:gap-8 lg:gap-12 min-w-0 max-w-[18rem]">
+          <div className="mt-4">
+            <ArticleTagFilter
+              availableTags={availableTags}
+              selectedTags={filters.byTags ?? []}
+              onChange={(byTags) => updateFilters({ byTags })}
             />
           </div>
         </div>
-      )}
 
-      <div className="min-w-0 md:grid md:grid-cols-[minmax(0,1fr,1fr)_18rem] md:gap-6 lg:gap-8">
         <div className="mt-2 min-w-0 flex flex-col gap-2">
+          <div className="grid grid-cols-[auto_1fr] w-full h-8 items-center">
+            {hasActiveFilters && (
+              <ArticleListFilterChips
+                searchTerm={filters.bySearchTerm ?? ""}
+                tagFilter={filters.byTags ?? []}
+                onRemoveFilter={(type, value) => {
+                  if (type === "search") {
+                    updateFilters({ bySearchTerm: "" })
+                  }
+
+                  if (type === "tag") {
+                    updateFilters({
+                      byTags: (filters.byTags ?? []).filter((filterType) => filterType !== value),
+                    })
+                  }
+                }}
+                onResetAll={resetFilters}
+              />
+            )}
+          </div>
           <div className="flex flex-col gap-4">
             <ArticleList query={filters} />
           </div>
