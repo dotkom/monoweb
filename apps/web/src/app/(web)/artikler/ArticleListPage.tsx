@@ -10,9 +10,6 @@ import {
   DrawerHeader,
   DrawerTrigger,
   Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
 } from "@dotkomonline/ui"
 
 import { IconFilter2 } from "@tabler/icons-react"
