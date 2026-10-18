@@ -7,6 +7,10 @@ import { EventPreviewLink } from "@/components/molecules/EventListItem/EventPrev
 import { EventPreview } from "./EventPreview"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
+import { TicketButton } from "./AttendanceCard/TicketButton"
+import { EventRules } from "./AttendanceCard/EventRules"
+import { PaymentExplanationDialog } from "./AttendanceCard/PaymentExplanationDialog"
+import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
@@ -89,6 +93,7 @@ vi.mock("./TimeLocationBox/LocationBox", () => ({ LocationBox: () => <div data-s
 vi.mock("./OrganizerPill", () => ({ OrganizerPill: () => <div data-section="organizer">Organizer</div> }))
 
 vi.mock("./EventDescription", () => ({ EventDescription: () => <div data-section="description">Description</div> }))
+vi.mock("@/components/PenaltyRules/PenaltyRules", () => ({ PenaltyRules: () => <div>Prikkeregler detaljer</div> }))
 
 vi.mock("./AttendanceCard/AttendanceCard", () => ({
   AttendanceCard: (props: unknown) => {
@@ -100,7 +105,7 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
         Attendance
         <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
           <DialogTrigger>Vis påmeldte</DialogTrigger>
-          <DialogContent onOutsideClick={() => setAttendeeListOpen(false)}>
+          <DialogContent>
             <DialogTitle>Påmeldingsliste</DialogTitle>
             <section aria-label="Påmeldte" style={{ maxHeight: 200, overflowY: "auto" }}>
               {Array.from({ length: 80 }, (_, index) => `Attendee ${index + 1}`).map((name) => (
@@ -110,6 +115,9 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
             <DialogClose>Lukk påmeldingsliste</DialogClose>
           </DialogContent>
         </Dialog>
+        <TicketButton attendee={createMockAttendee()} />
+        <EventRules />
+        <PaymentExplanationDialog />
       </div>
     )
   },
@@ -360,13 +368,59 @@ describe("desktop event preview", () => {
 
     const attendeeOverlay = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]')
     expect(attendeeOverlay).not.toBeNull()
-    await act(async () => attendeeOverlay?.click())
+    await act(async () => {
+      attendeeOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      attendeeOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      attendeeOverlay?.click()
+    })
     expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
     expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
 
     await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
     const previewOverlay = document.querySelector<HTMLElement>('[data-slot="drawer-overlay"]')
     expect(previewOverlay).not.toBeNull()
+    await act(async () => {
+      previewOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      previewOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      previewOverlay?.click()
+    })
+    expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+  })
+
+  it.each([
+    "Vis billett",
+    "Prikkeregler",
+    "Hvordan virker betaling?",
+  ])("dismisses nested information on an outside click without closing the preview (%s)", async (triggerLabel) => {
+    const link = await renderPreview()
+    await act(async () => link.click())
+    const trigger = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent === triggerLabel
+    )
+    expect(trigger).toBeDefined()
+    trigger?.focus()
+    await act(async () => trigger?.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+
+    const dialog = document.querySelector<HTMLElement>('[data-slot="dialog-content"]')
+    expect(dialog).not.toBeNull()
+    expect(dialog?.getAttribute("role")).toBe("dialog")
+    await act(async () => dialog?.click())
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBe(dialog)
+
+    const overlay = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]')
+    expect(overlay).not.toBeNull()
+    await act(async () => {
+      overlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      overlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      overlay?.click()
+    })
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
+    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
+    expect(document.activeElement).toBe(trigger)
+
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+    const previewOverlay = document.querySelector<HTMLElement>('[data-slot="drawer-overlay"]')
     await act(async () => {
       previewOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
       previewOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))

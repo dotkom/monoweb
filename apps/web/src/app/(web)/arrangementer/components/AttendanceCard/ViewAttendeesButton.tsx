@@ -64,7 +64,7 @@ export const ViewAttendeesButton = ({
   return (
     <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <DialogTrigger asChild>{button}</DialogTrigger>
-      <DialogContent size="lg" className="p-0!" onOutsideClick={() => setAttendeeListOpen(false)}>
+      <DialogContent size="lg" className="p-0!">
         <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
           <DialogTitle asChild>
             <Title element="h1" size="lg">
