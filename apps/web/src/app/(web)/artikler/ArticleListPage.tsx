@@ -105,7 +105,7 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
         </div>
 
         <div className="mt-2 min-w-0 flex flex-col gap-2">
-          <div className="grid grid-cols-[auto_1fr] w-full h-8 items-center">
+          <div className="grid grid-cols-[auto_1fr] w-full sm:h-8 items-center">
             {hasActiveFilters && (
               <ArticleListFilterChips
                 searchTerm={filters.bySearchTerm ?? ""}
