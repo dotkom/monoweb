@@ -1,5 +1,5 @@
 import type { GlobalProvider } from "@ladle/react"
-import { cn } from "@dotkomonline/ui"
+import { cn, Toaster } from "@dotkomonline/ui"
 import "@fontsource-variable/figtree/wght.css"
 import "@fontsource-variable/inter/wght.css"
 import "@fontsource-variable/google-sans-code/wght.css"
@@ -19,6 +19,7 @@ export const Provider: GlobalProvider = ({ children, globalState }) => {
         backgroundColor: isDark ? DARK_BACKGROUND : LIGHT_BACKGROUND,
       }}
     >
+      <Toaster />
       {children}
     </div>
   )
