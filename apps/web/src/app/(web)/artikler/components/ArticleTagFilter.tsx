@@ -29,7 +29,7 @@ export const ArticleTagFilter = ({ availableTags, selectedTags, onChange }: Arti
           </Text>
         )}
       </div>
-      <div className="flex flex-col pt-2">
+      <div className="flex flex-col pt-2 max-h-96 overflow-scroll">
         {availableTags.map((tag) => {
           const isSelected = selectedTags.includes(tag)
 
