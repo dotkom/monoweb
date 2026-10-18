@@ -41,11 +41,13 @@ export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
     title: "Nynorskdagen 2026",
     author: "Aasenkom",
     photographer: "Knud Knudsen",
-    imageUrl: "https://cdn.online.ntnu.no/article/1792343050297-0b0f9964-57b3-43ad-b971-907266af1f08-73b1473b-fa67-4887-93ec-15a2c5b66445jpg",
+    imageUrl:
+      "https://cdn.online.ntnu.no/article/1792343050297-0b0f9964-57b3-43ad-b971-907266af1f08-73b1473b-fa67-4887-93ec-15a2c5b66445jpg",
     excerpt: "Nynorskdagen er kvar 12. mai og er svært viktig for nasjonen og dialektane våre.",
-    content: "<p>Kvar 12. mai markerer me Nynorskdagen. Dagen er sett av til å feire nynorsk som eitt av dei to formelle skriftspråka i Noreg, og til å minnast arbeidet som vart gjort for å gje språket ein offisiell status.</p>",
+    content:
+      "<p>Kvar 12. mai markerer me Nynorskdagen. Dagen er sett av til å feire nynorsk som eitt av dei to formelle skriftspråka i Noreg, og til å minnast arbeidet som vart gjort for å gje språket ein offisiell status.</p>",
     isFeatured: false,
-    createdAt: new Date("2026-05-12T00:00:00.000Z")
+    createdAt: new Date("2026-05-12T00:00:00.000Z"),
   },
 ]
 
@@ -64,10 +66,10 @@ export const getArticleTagLinkFixtures = (): Prisma.ArticleTagLinkCreateManyInpu
   },
   {
     articleId: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
-    tagName: "Nyheter"
+    tagName: "Nyheter",
   },
   {
     articleId: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
-    tagName: "Nynorskdagen"
+    tagName: "Nynorskdagen",
   },
 ]
