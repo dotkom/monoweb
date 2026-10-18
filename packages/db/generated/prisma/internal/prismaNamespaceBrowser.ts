@@ -441,7 +441,6 @@ export const ArticleScalarFieldEnum = {
   imageUrl: 'imageUrl',
   excerpt: 'excerpt',
   content: 'content',
-  isFeatured: 'isFeatured',
   vimeoId: 'vimeoId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -111,12 +111,6 @@ const findRelatedArticlesProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
 
-export type FindFeaturedArticlesInput = inferProcedureInput<typeof findFeaturedArticlesProcedure>
-export type FindFeaturedArticlesOutput = inferProcedureOutput<typeof findFeaturedArticlesProcedure>
-const findFeaturedArticlesProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findFeatured(ctx.handle))
-
 export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
 export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
 const getArticleTagsProcedure = procedure
@@ -201,7 +195,6 @@ export const articleRouter = t.router({
   get: getArticleProcedure,
   getBySlug: getArticleBySlugProcedure,
   related: findRelatedArticlesProcedure,
-  featured: findFeaturedArticlesProcedure,
   getTags: getArticleTagsProcedure,
   findTagsOrderedByPopularity: findArticleTagsOrderedByPopularityProcedure,
   addTag: addArticleTagProcedure,
