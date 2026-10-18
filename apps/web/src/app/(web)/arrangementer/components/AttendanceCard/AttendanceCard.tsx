@@ -191,7 +191,7 @@ export const AttendanceCard = ({
   const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
 
   return (
-    <section className="flex flex-col gap-4 min-h-24 sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
+    <section className="flex flex-col gap-4 min-h-24 text-base sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
       <div className="flex flex-row items-center justify-between gap-3">
         <Title element="h2" size="lg">
           Påmelding
@@ -229,7 +229,8 @@ export const AttendanceCard = ({
             <Link
               href={paymentLink}
               className={cn(
-                "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 font-medium min-h-16",
+                "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 min-h-16",
+                "text-base font-medium",
                 "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
               )}
             >

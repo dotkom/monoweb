@@ -90,7 +90,7 @@ export function EventPreview({
             style={open ? undefined : { pointerEvents: "none" }}
             overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
             className={cn(
-              "overflow-hidden border border-field-border shadow-xl [--drawer-inset:1rem]",
+              "overflow-hidden border border-field-border shadow-xl text-base [--drawer-inset:1rem]",
               "data-[swipe-direction=right]:inset-y-4",
               "data-[swipe-direction=right]:right-4",
               "data-[swipe-direction=right]:rounded-xl",
