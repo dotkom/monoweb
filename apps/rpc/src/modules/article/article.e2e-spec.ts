@@ -20,7 +20,6 @@ function getMockArticle(input: Partial<ArticleWrite> = {}): ArticleWrite {
     slug: faker.lorem.slug(),
     excerpt: faker.lorem.sentence(),
     content: faker.lorem.paragraphs(3),
-    isFeatured: false,
     vimeoId: null,
     ...input,
   }
@@ -97,12 +96,6 @@ describe("article integration tests", () => {
     await expect(articleService.addTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(NotFoundError)
     await expect(articleService.removeTag(dbClient, nonExistingArticleId, tag)).rejects.toThrow(NotFoundError)
     await expect(articleService.setTags(dbClient, nonExistingArticleId, [tag])).rejects.toThrow(NotFoundError)
-  })
-
-  it("should be able to find a featured article", async () => {
-    const article = await articleService.create(dbClient, getMockArticle({ isFeatured: true }))
-    const featured = await articleService.findFeatured(dbClient)
-    expect(featured).toContainEqual(expect.objectContaining({ id: article.id }))
   })
 
   it("should find related articles by the same tag", async () => {

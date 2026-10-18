@@ -13,7 +13,6 @@ export default function ArticlePage() {
   const [filter, setFilter] = useState<ArticleFilterQuery>({
     bySearchTerm: null,
     byTags: [],
-    byIsFeatured: null,
   })
 
   const { articles, isLoading, isPlaceholderData, isFetchingNextPage, fetchNextPage, hasNextPage } =

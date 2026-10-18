@@ -146,7 +146,6 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     fetchNextPage: fetchNextFeaturedPage,
     hasNextPage: hasNextFeaturedPage,
     isFetchingNextPage: isFetchingNextFeaturedPage,
-    isLoading: isFeaturedLoading,
   } = useFeaturedEventsInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -183,7 +182,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const futureEventWithAttendances = isAttendanceSort ? featuredEventWithAttendances : futureEventSummaries
   const hasNextFuturePage = isAttendanceSort ? hasNextFeaturedPage : hasNextFutureSummaryPage
   const isFetchingNextFuturePage = isAttendanceSort ? isFetchingNextFeaturedPage : isFetchingNextFutureSummaryPage
-  const isFutureLoading = isAttendanceSort ? isFeaturedLoading : isFutureSummariesLoading
+  const isFutureLoading = isFutureSummariesLoading
 
   const {
     eventDetails: registeredEvents,

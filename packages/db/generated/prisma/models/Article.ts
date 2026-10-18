@@ -33,7 +33,6 @@ export type ArticleMinAggregateOutputType = {
   imageUrl: string | null
   excerpt: string | null
   content: string | null
-  isFeatured: boolean | null
   vimeoId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -48,7 +47,6 @@ export type ArticleMaxAggregateOutputType = {
   imageUrl: string | null
   excerpt: string | null
   content: string | null
-  isFeatured: boolean | null
   vimeoId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,7 +61,6 @@ export type ArticleCountAggregateOutputType = {
   imageUrl: number
   excerpt: number
   content: number
-  isFeatured: number
   vimeoId: number
   createdAt: number
   updatedAt: number
@@ -80,7 +77,6 @@ export type ArticleMinAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -95,7 +91,6 @@ export type ArticleMaxAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -110,7 +105,6 @@ export type ArticleCountAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -198,7 +192,6 @@ export type ArticleGroupByOutputType = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured: boolean
   vimeoId: string | null
   createdAt: Date
   updatedAt: Date
@@ -234,7 +227,6 @@ export type ArticleWhereInput = {
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
-  isFeatured?: Prisma.BoolFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
@@ -250,7 +242,6 @@ export type ArticleOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -269,7 +260,6 @@ export type ArticleWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
-  isFeatured?: Prisma.BoolFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
@@ -285,7 +275,6 @@ export type ArticleOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -306,7 +295,6 @@ export type ArticleScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringWithAggregatesFilter<"Article"> | string
   excerpt?: Prisma.StringWithAggregatesFilter<"Article"> | string
   content?: Prisma.StringWithAggregatesFilter<"Article"> | string
-  isFeatured?: Prisma.BoolWithAggregatesFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Article"> | Date | string
@@ -321,7 +309,6 @@ export type ArticleCreateInput = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -337,7 +324,6 @@ export type ArticleUncheckedCreateInput = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -353,7 +339,6 @@ export type ArticleUpdateInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -369,7 +354,6 @@ export type ArticleUncheckedUpdateInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -385,7 +369,6 @@ export type ArticleCreateManyInput = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -400,7 +383,6 @@ export type ArticleUpdateManyMutationInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -415,7 +397,6 @@ export type ArticleUncheckedUpdateManyInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -430,7 +411,6 @@ export type ArticleCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -445,7 +425,6 @@ export type ArticleMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -460,7 +439,6 @@ export type ArticleMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -494,7 +472,6 @@ export type ArticleCreateWithoutTagsInput = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -509,7 +486,6 @@ export type ArticleUncheckedCreateWithoutTagsInput = {
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -540,7 +516,6 @@ export type ArticleUpdateWithoutTagsInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -555,7 +530,6 @@ export type ArticleUncheckedUpdateWithoutTagsInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -601,7 +575,6 @@ export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -618,7 +591,6 @@ export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -633,7 +605,6 @@ export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -648,13 +619,12 @@ export type ArticleSelectScalar = {
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "author" | "photographer" | "imageUrl" | "excerpt" | "content" | "isFeatured" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "author" | "photographer" | "imageUrl" | "excerpt" | "content" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
 export type ArticleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tags?: boolean | Prisma.Article$tagsArgs<ExtArgs>
   _count?: boolean | Prisma.ArticleCountOutputTypeDefaultArgs<ExtArgs>
@@ -676,7 +646,6 @@ export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     imageUrl: string
     excerpt: string
     content: string
-    isFeatured: boolean
     vimeoId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1112,7 +1081,6 @@ export interface ArticleFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Article", 'String'>
   readonly excerpt: Prisma.FieldRef<"Article", 'String'>
   readonly content: Prisma.FieldRef<"Article", 'String'>
-  readonly isFeatured: Prisma.FieldRef<"Article", 'Boolean'>
   readonly vimeoId: Prisma.FieldRef<"Article", 'String'>
   readonly createdAt: Prisma.FieldRef<"Article", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Article", 'DateTime'>
