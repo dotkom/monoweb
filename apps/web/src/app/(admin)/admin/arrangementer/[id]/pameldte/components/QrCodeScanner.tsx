@@ -1,13 +1,14 @@
 "use client"
 
-import type { Attendance } from "@dotkomonline/rpc/attendance"
-import type { AttendeeId } from "@dotkomonline/rpc/attendance"
+import type { Attendance, AttendeeId } from "@dotkomonline/rpc/attendance"
 import { Button, Text } from "@dotkomonline/ui"
 import { IconFlipVertical, IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
-import { type FC, useRef, useState } from "react"
+import { type FC, useState } from "react"
 import { useZxing } from "react-zxing"
 import z from "zod"
+import { useUpdateEventAttendanceMutation } from "../../../mutations"
 import { QRCodeScannedModal } from "./QrCodeScannedModal"
+import { useQrCodeCheckIn } from "./use-qr-code-check-in"
 
 interface QrCodeScannerProps {
   attendance: Attendance
@@ -15,11 +16,22 @@ interface QrCodeScannerProps {
 }
 
 export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) => {
+  const attendanceMutation = useUpdateEventAttendanceMutation()
   const [scannerOpen, setScannerOpen] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
   const [mirror, setMirror] = useState(false)
-  const [scannedAttendeeId, setScannedAttendeeId] = useState<AttendeeId | null>(null)
-  const paused = useRef(false)
+
+  const handleUpdateAttendance = async (attendeeId: AttendeeId, attendedAt: Date | null) => {
+    const attendanceUpdate = { id: attendeeId, at: attendedAt }
+    await attendanceMutation.mutateAsync(attendanceUpdate)
+  }
+
+  const { checkIn, scanAttendee, registerAttendance, undoAttendance, closeCheckIn } = useQrCodeCheckIn({
+    attendance,
+    onUpdateAttendance: handleUpdateAttendance,
+  })
+
+  const isScanningPaused = !scannerOpen || disabled === true || checkIn !== null
 
   const handleToggle = () => {
     setScannerOpen((open) => {
@@ -30,20 +42,22 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
     })
   }
 
-  const { ref } = useZxing({
+  const { ref: cameraReference } = useZxing({
     onDecodeResult: (result) => {
-      if (paused.current) {
+      if (isScanningPaused) {
         return
       }
 
-      const id = z.guid().safeParse(result.getText())
+      const scannedValue = result.getText()
+      const parsedAttendeeId = z.guid().safeParse(scannedValue)
 
-      if (id.success) {
-        paused.current = true
-        setScannedAttendeeId(id.data)
+      if (!parsedAttendeeId.success) {
+        return
       }
+
+      scanAttendee(parsedAttendeeId.data)
     },
-    paused: !scannerOpen || paused.current,
+    paused: isScanningPaused,
     timeBetweenDecodingAttempts: 150,
     constraints: {
       video: {
@@ -78,7 +92,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
         {scannerOpen && !videoReady && <div className="h-[450px] w-[450px] animate-pulse rounded-sm bg-muted" />}
         <div className={scannerOpen && videoReady ? "relative" : "relative h-0 w-0 overflow-hidden"}>
           <video
-            ref={ref}
+            ref={cameraReference}
             muted
             onCanPlay={() => setVideoReady(true)}
             playsInline
@@ -103,19 +117,13 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
         </div>
       </div>
 
-      {scannedAttendeeId && (
+      {checkIn && (
         <QRCodeScannedModal
-          open={Boolean(scannedAttendeeId)}
-          onOpenChange={(open) => {
-            if (!open) {
-              setScannedAttendeeId(null)
-            }
-          }}
           attendance={attendance}
-          attendeeId={scannedAttendeeId}
-          onClose={() => {
-            paused.current = false
-          }}
+          checkIn={checkIn}
+          onRegisterAttendance={registerAttendance}
+          onUndoAttendance={undoAttendance}
+          onClose={closeCheckIn}
         />
       )}
     </div>

@@ -303,10 +303,13 @@ export const useUpdateEventAttendanceMutation = () => {
           message: "Brukerens oppmøte blir oppdatert.",
         })
       },
-      onSuccess: async (_data) => {
+      onSuccess: async (_data, attendanceUpdate) => {
+        const attendanceWasCleared = attendanceUpdate.at === null
+        const successMessage = attendanceWasCleared ? "Oppmøte er fjernet" : "Oppmøte er registrert"
+
         notification.complete({
           title: "Oppmøte oppdatert",
-          message: "Oppmøte er registrert",
+          message: successMessage,
         })
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.get.queryKey() })
