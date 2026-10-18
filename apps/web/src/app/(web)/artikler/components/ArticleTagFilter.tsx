@@ -10,7 +10,9 @@ interface ArticleTypeFilterProps {
 
 export const ArticleTagFilter = ({ availableTags, selectedTags, onChange }: ArticleTypeFilterProps) => {
   const handleToggle = (selectedTag: string) => {
-    const newTags = selectedTags.includes(selectedTag) ? selectedTags.filter((t) => t !== selectedTag) : [...selectedTags, selectedTag]
+    const newTags = selectedTags.includes(selectedTag)
+      ? selectedTags.filter((t) => t !== selectedTag)
+      : [...selectedTags, selectedTag]
     onChange(newTags)
   }
 

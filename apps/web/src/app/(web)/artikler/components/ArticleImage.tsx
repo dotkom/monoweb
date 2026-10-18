@@ -1,4 +1,4 @@
-import { Tilt, cn } from "@dotkomonline/ui"
+import { Tilt } from "@dotkomonline/ui"
 import type { FC } from "react"
 import Image from "next/image"
 import { PlaceHolderImage } from "src/components/atoms/PlaceHolderImage"

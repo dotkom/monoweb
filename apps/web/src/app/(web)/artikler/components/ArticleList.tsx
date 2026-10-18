@@ -1,5 +1,4 @@
 import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
-import { cn } from "@dotkomonline/ui"
 import { useArticlesInfiniteQuery } from "../queries"
 import { ArticleListItem } from "./ArticleListItem"
 import { useState } from "react"
