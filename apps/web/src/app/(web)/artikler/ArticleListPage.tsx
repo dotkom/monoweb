@@ -27,17 +27,17 @@ interface ArticleListPageProps {
 export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
   const { filters, updateFilters, resetFilters } = useArticleFilters()
 
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const activeTagCount = filters.byTags?.length ?? 0
 
-  const hasActiveFilters = !!filters.bySearchTerm || activeTagCount > 0
+  const hasActiveFilters = filters.bySearchTerm?.trim() !== "" || activeTagCount > 0
 
   return (
     <div className="flex flex-col gap-4">
       <Title element="h1" size="xl">
         Artikler
       </Title>
-      <Text className="pt-2">Les artikler skrevet av medlemmer i Online.</Text>
+      <Text>Les artikler skrevet av medlemmer i Online.</Text>
 
       <div
         className={cn(
@@ -54,7 +54,7 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
           />
 
           <div className="ml-auto flex shrink-0 justify-self-end justify-end items-stretch gap-2">
-            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
               <DrawerTrigger
                 className="sm:hidden"
                 render={<Button variant="outline" className="relative rounded-lg size-12" />}

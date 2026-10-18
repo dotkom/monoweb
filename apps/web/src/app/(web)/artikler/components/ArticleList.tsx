@@ -16,7 +16,7 @@ export const ArticleList = ({ query }: ArticleListProps) => {
 
   return (
     <>
-      <section className={cn("flex w-full min-w-0 flex-col md:gap-2 sm:gap-6")}>
+      <section className="flex w-full min-w-0 flex-col md:gap-2 sm:gap-6">
         <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-3 sm:hidden">
           {articles.map((article) => (
             <ArticleListItem key={article.id} article={article} className="h-full min-w-0" orientation="vertical" />
@@ -30,7 +30,7 @@ export const ArticleList = ({ query }: ArticleListProps) => {
       </section>
       <LoadMoreSentinel
         root={scrollRoot}
-        rootMargin="80px 0px"
+        rootMargin="200px 0px"
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}

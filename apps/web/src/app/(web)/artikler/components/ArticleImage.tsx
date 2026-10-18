@@ -13,11 +13,9 @@ interface ArticleImageProps {
 export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, orientation }) => {
   return (
     <Tilt glareBorderRadius="var(--radius-lg)">
-      <div className="relative w-full">
+      <div className="w-full">
         {orientation === "vertical" ? (
-          <div
-            className={cn("relative bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden aspect-video w-full")}
-          >
+          <div className="bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden aspect-video w-full">
             {imageUrl !== "" ? (
               <Image
                 src={imageUrl}
@@ -26,14 +24,14 @@ export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, orientation
                 height={0}
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="inset-0 w-full h-full object-cover"
               />
             ) : (
               <PlaceHolderImage variant="OTHER" className="object-cover rounded-md" />
             )}
           </div>
         ) : (
-          <div className={cn("relative aspect-16/9 bg-gray-100 dark:bg-stone-800 overflow-hidden", "h-46 rounded-lg")}>
+          <div className="aspect-16/9 bg-gray-100 dark:bg-stone-800 overflow-hidden h-46 rounded-lg">
             {imageUrl !== "" ? (
               <Image
                 src={imageUrl}
@@ -42,7 +40,7 @@ export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, orientation
                 width={0}
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 w-full h-full object-cover rounded-md"
+                className="inset-0 w-full h-full object-cover rounded-md"
               />
             ) : (
               <PlaceHolderImage variant="OTHER" className="object-cover rounded-md" />

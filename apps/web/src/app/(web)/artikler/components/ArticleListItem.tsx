@@ -5,13 +5,13 @@ import { ArticleImage } from "./ArticleImage"
 import { IconCalendar, IconPencil } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 
-interface ArticleCardProps {
+interface ArticleListItemProps {
   article: Article
   className?: string
   orientation: "horizontal" | "vertical"
 }
 
-export const ArticleListItem = ({ article, className, orientation }: ArticleCardProps) => {
+export const ArticleListItem = ({ article, className, orientation }: ArticleListItemProps) => {
   const { id, slug, title, author, imageUrl, tags, createdAt } = article
 
   return (
