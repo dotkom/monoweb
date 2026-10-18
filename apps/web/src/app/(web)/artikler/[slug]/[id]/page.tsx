@@ -9,7 +9,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { FC } from "react"
-import { ArticleListItem } from "../../ArticleListItem"
+import { ArticleListItem } from "../../components/ArticleListItem"
 
 interface ArticlePageProps {
   params: Promise<{
