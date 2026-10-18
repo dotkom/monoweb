@@ -90,7 +90,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const cardClassname = cn(
     "flex flex-col w-full min-h-40 gap-2 p-3 rounded-lg",
-    "items-center text-center justify-center",
+    "items-center text-center text-base justify-center",
     "bg-gray-100 dark:bg-stone-700"
   )
 
@@ -262,7 +262,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   return (
     <div
       className={cn(
-        "flex flex-col w-full overflow-hidden",
+        "flex flex-col w-full overflow-hidden text-base",
         hasAttachedActionBelow ? "rounded-t-xl rounded-b-md" : "rounded-xl",
         !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
         isRegistered && "bg-green-100 dark:bg-green-900",
@@ -594,9 +594,9 @@ const CompletionCard = ({
           )}
         />
 
-        <div className="relative flex flex-col gap-1 items-center justify-center w-full">
+        <div className="relative flex flex-col gap-1 items-center justify-center w-full text-base">
           <div className="relative flex flex-col gap-3">
-            <Text className="text-base font-medium">Fullfør påmeldingen innen</Text>
+            <Text className="font-medium">Fullfør påmeldingen innen</Text>
 
             <Text suppressHydrationWarning className="text-3xl font-medium">
               {countdownDisplay}
