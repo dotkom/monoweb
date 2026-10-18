@@ -20,6 +20,8 @@ import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { AttendanceTurnstile } from "./AttendanceTurnstile"
 import { EventRules } from "./EventRules"
 import { MainPoolCard } from "./MainPoolCard"
+import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
+import { hasRegistrationDelay } from "./hasRegistrationDelay"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
 import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
@@ -82,8 +84,6 @@ export const AttendanceCard = ({
     onDeregisterSuccess: () => setTurnstileToken(null),
   })
 
-  useDeadlineTick(attendance.registerStart, attendance.registerEnd)
-
   const attendanceStatus = getAttendanceStatus(attendance)
 
   useEffect(() => {
@@ -101,6 +101,8 @@ export const AttendanceCard = ({
   }, [turnstileToken])
 
   const attendee = getAttendee(attendance, user)
+  useDeadlineTick(attendance.registerStart, attendance.registerEnd, attendee?.earliestReservationAt)
+  const isRegistrationDelayed = hasRegistrationDelay(attendee)
   const deregistration = registrationAvailability?.deregistration ?? null
   const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
   const requiresLocalTurnstile = requiresTurnstile && backgroundToken === null
@@ -218,8 +220,10 @@ export const AttendanceCard = ({
             user={user}
             authorizeUrl={authorizeUrl}
             chargeScheduleDate={chargeScheduleDate}
-            hasAttachedActionBelow={showPaymentLink}
+            hasAttachedActionBelow={showPaymentLink || isRegistrationDelayed}
           />
+
+          {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
 
           {showPaymentLink && (
             <Link

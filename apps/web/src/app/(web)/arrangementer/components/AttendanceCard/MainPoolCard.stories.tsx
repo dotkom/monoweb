@@ -1,7 +1,8 @@
 import { Text } from "@dotkomonline/ui"
 import { addDays } from "date-fns"
 import { useEffect, useState, type ReactNode } from "react"
-import type { Attendance } from "@dotkomonline/rpc/attendance"
+import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { User } from "@dotkomonline/rpc/user"
 import {
   createAttendanceOpeningSoon,
@@ -21,6 +22,8 @@ import {
   createMockUser,
 } from "../../../../../../.ladle/fixtures/attendance"
 import { MainPoolCard } from "./MainPoolCard"
+import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
+import { hasRegistrationDelay } from "./hasRegistrationDelay"
 
 const AUTHORIZE_URL = "/api/auth/login"
 const SIMULATION_CAPACITY = 120
@@ -34,13 +37,21 @@ const MainPoolCardPreview = ({
   user: User | null
   chargeScheduleDate?: Date | null
 }) => {
+  const attendee = getAttendee(attendance, user)
+  useDeadlineTick(attendee?.earliestReservationAt)
+  const isRegistrationDelayed = hasRegistrationDelay(attendee)
+
   return (
-    <MainPoolCard
-      attendance={attendance}
-      user={user}
-      authorizeUrl={AUTHORIZE_URL}
-      chargeScheduleDate={chargeScheduleDate}
-    />
+    <div className="flex flex-col gap-1.5 w-full">
+      <MainPoolCard
+        attendance={attendance}
+        user={user}
+        authorizeUrl={AUTHORIZE_URL}
+        chargeScheduleDate={chargeScheduleDate}
+        hasAttachedActionBelow={isRegistrationDelayed}
+      />
+      {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
+    </div>
   )
 }
 
