@@ -24,19 +24,10 @@ interface StateShowcaseProps {
   label: string
   withCapacityAttendance: Attendance
   withCapacityAttendee: Attendee | null
-  withoutCapacityAttendance: Attendance
-  withoutCapacityAttendee: Attendee | null
   eventEndInPast: boolean
 }
 
-const StateShowcase = ({
-  label,
-  withCapacityAttendance,
-  withCapacityAttendee,
-  withoutCapacityAttendance,
-  withoutCapacityAttendee,
-  eventEndInPast,
-}: StateShowcaseProps) => (
+const StateShowcase = ({ label, withCapacityAttendance, withCapacityAttendee, eventEndInPast }: StateShowcaseProps) => (
   <div className="flex flex-col gap-3">
     <Text className="text-sm text-muted-foreground">{label}</Text>
 
@@ -53,8 +44,11 @@ const StateShowcase = ({
           />
 
           <AttendanceStatus
-            attendance={withoutCapacityAttendance}
-            attendee={withoutCapacityAttendee}
+            attendance={{
+              ...withCapacityAttendance,
+              pools: withCapacityAttendance.pools.map((pool) => ({ ...pool, capacity: 0 })),
+            }}
+            attendee={withCapacityAttendee}
             eventEndInPast={eventEndInPast}
             size={sizeOption.size}
           />
@@ -80,8 +74,6 @@ export const AllStates = () => {
         label="Open"
         withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
         withCapacityAttendee={null}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
-        withoutCapacityAttendee={null}
         eventEndInPast={false}
       />
 
@@ -89,8 +81,6 @@ export const AllStates = () => {
         label="Not opened"
         withCapacityAttendance={createMockAttendance({ status: "NOT_OPENED" })}
         withCapacityAttendee={null}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "NOT_OPENED" })}
-        withoutCapacityAttendee={null}
         eventEndInPast={false}
       />
 
@@ -98,8 +88,6 @@ export const AllStates = () => {
         label="Closed"
         withCapacityAttendance={createMockAttendance({ status: "CLOSED" })}
         withCapacityAttendee={null}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "CLOSED" })}
-        withoutCapacityAttendee={null}
         eventEndInPast={false}
       />
 
@@ -107,8 +95,6 @@ export const AllStates = () => {
         label="Registered attendee"
         withCapacityAttendance={createMockAttendance({ attendees: [registeredAttendee] })}
         withCapacityAttendee={registeredAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [registeredAttendee] })}
-        withoutCapacityAttendee={registeredAttendee}
         eventEndInPast={false}
       />
 
@@ -116,8 +102,6 @@ export const AllStates = () => {
         label="Waitlist attendee"
         withCapacityAttendance={createMockAttendance({ attendees: [queuedAttendee] })}
         withCapacityAttendee={queuedAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [queuedAttendee] })}
-        withoutCapacityAttendee={queuedAttendee}
         eventEndInPast={false}
       />
 
@@ -125,8 +109,6 @@ export const AllStates = () => {
         label="After deregister deadline"
         withCapacityAttendance={lockedAttendance}
         withCapacityAttendee={lockedAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [lockedAttendee] })}
-        withoutCapacityAttendee={lockedAttendee}
         eventEndInPast={false}
       />
 
@@ -134,8 +116,6 @@ export const AllStates = () => {
         label="Payment countdown"
         withCapacityAttendance={paymentAttendance}
         withCapacityAttendee={paymentAttendee}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, attendees: [paymentAttendee] })}
-        withoutCapacityAttendee={paymentAttendee}
         eventEndInPast={false}
       />
 
@@ -143,8 +123,6 @@ export const AllStates = () => {
         label="Past event"
         withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
         withCapacityAttendee={null}
-        withoutCapacityAttendance={createMockAttendance({ capacity: 0, status: "OPEN" })}
-        withoutCapacityAttendee={null}
         eventEndInPast={true}
       />
     </div>

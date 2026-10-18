@@ -14,7 +14,7 @@ import {
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconCheck, IconCircleDashedCheck, IconCoins, IconLock, IconPennant, IconUsers } from "@tabler/icons-react"
+import { IconCheck, IconCircleDashedCheck, IconCoins, IconLock, IconUsers } from "@tabler/icons-react"
 import { formatDistance, interval, isAfter, isWithinInterval } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
@@ -83,12 +83,36 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const iconSizeClassName = isSm ? "size-3.5" : isLg ? "size-5" : "size-4"
   const textSizeClassName = isSm ? "text-xs" : isLg ? "text-sm md:text-base" : "text-xs md:text-sm"
 
+  if (showRegistrationOpensSoon) {
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className={cn("flex flex-row items-center gap-2", classNames?.root, classNames?.notOpened)}>
+            <IconUsers className={cn(iconSizeClassName, "text-gray-800 dark:text-stone-400")} />
+            <Text className={cn(textSizeClassName, "tracking-wider")} suppressHydrationWarning>
+              Om {formatCompactTimeUntil(attendance.registerStart, currentTime)}
+            </Text>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <Text suppressHydrationWarning>
+            Påmeldingen åpner{" "}
+            {formatDistance(attendance.registerStart, currentTime, {
+              locale: nb,
+              addSuffix: true,
+            })}
+            .
+          </Text>
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
+
   return (
     <div
       className={cn(
         "flex flex-row items-center gap-2",
-        (eventEndInPast || attendanceStatus === "NOT_OPENED") &&
-          "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400",
+        eventEndInPast && "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400",
         classNames?.root
       )}
     >
@@ -99,7 +123,6 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           className={cn(
             "flex flex-row gap-1 items-center py-0.5",
             "tracking-wider",
-            attendanceStatus === "NOT_OPENED" && "text-muted-foreground",
             (isRegistered || isQueued) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
             isRegistered && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
             isQueued && "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
@@ -139,34 +162,6 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             </TooltipTrigger>
             <TooltipContent>
               <Text>{isRegistered || isQueued ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
-            </TooltipContent>
-          </Tooltip>
-        )}
-
-        {showRegistrationOpensSoon && (
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <div
-                className={cn(
-                  "flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm bg-muted",
-                  classNames?.notOpened
-                )}
-              >
-                <IconPennant className={cn(iconSizeClassName, "text-gray-700 dark:text-stone-200")} />
-                <Text className={cn(textSizeClassName, "text-foreground")} suppressHydrationWarning>
-                  Om {formatCompactTimeUntil(attendance.registerStart, currentTime)}
-                </Text>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <Text suppressHydrationWarning>
-                Påmeldingen åpner{" "}
-                {formatDistance(attendance.registerStart, currentTime, {
-                  locale: nb,
-                  addSuffix: true,
-                })}
-                .
-              </Text>
             </TooltipContent>
           </Tooltip>
         )}
