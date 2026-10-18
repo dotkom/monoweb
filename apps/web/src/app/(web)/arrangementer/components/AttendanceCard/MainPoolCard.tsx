@@ -84,6 +84,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const hasMissingRequirements = (completion?.missingRequirements.length ?? 0) > 0
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
+  const canCompletePayment = paymentIsMissing && completion?.paymentLink != null
 
   const isWithinCompletionCountdown =
     completionCountdownInterval && hasMissingRequirements ? isWithinInterval(now, completionCountdownInterval) : false
@@ -92,6 +93,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     completion?.completionDeadline != null && isAfter(now, completion.completionDeadline)
 
   const showCompletionPanel =
+    canCompletePayment &&
     attendeeHasPendingCompletionDeadline(attendance, attendee) &&
     (isWithinCompletionCountdown || completionDeadlineHasPassed)
 
@@ -166,7 +168,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     isFuture(attendee.earliestReservationAt) &&
     isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
 
-  const actionIsRequired = (completion?.missingRequirements.length ?? 0) > 0
+  const actionIsRequired = hasMissingRequirements && canCompletePayment
   const attendeeState = completion?.attendeeState ?? null
   const isRegistered = attendeeState === "REGISTERED"
   const isReserved = attendeeState === "RESERVED"
@@ -183,7 +185,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               className={cn(
                 "text-3xl px-2 py-1",
                 hasWaitlist &&
-                  (isRegistered || isReserved) &&
+                  (isRegistered || actionIsRequired) &&
                   (actionIsRequired
                     ? "bg-yellow-200 dark:bg-amber-800 dark:saturate-75 rounded-lg"
                     : "bg-green-200 dark:bg-green-800 rounded-lg")
@@ -217,7 +219,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             {servingPunishment ? (
               <PunishmentStatus attendee={attendee} actionIsRequired={actionIsRequired} />
             ) : (
-              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={actionIsRequired} />
+              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
             )}
 
             <PaymentStatus
@@ -270,7 +272,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         "flex flex-col w-full overflow-hidden",
         hasAttachedActionBelow ? "rounded-t-xl rounded-b-md" : "rounded-xl",
         !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
-        !actionIsRequired && (isRegistered || isReserved) && "bg-green-100 dark:bg-green-900",
+        isRegistered && "bg-green-100 dark:bg-green-900",
+        isReserved && !actionIsRequired && "bg-gray-100 dark:bg-stone-700",
         !actionIsRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
       )}
     >
@@ -278,7 +281,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         className={cn(
           "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold",
           !attendee && "bg-gray-200 dark:bg-stone-700",
-          (isRegistered || isReserved) && !actionIsRequired && "bg-green-200 dark:bg-green-800",
+          isRegistered && "bg-green-200 dark:bg-green-800",
+          isReserved && !actionIsRequired && "bg-gray-200 dark:bg-stone-700",
           isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-900",
           actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
           actionIsRequired && isReserved && "bg-yellow-200 dark:bg-amber-900/50",
@@ -497,6 +501,19 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
   if (!hasPaid) {
     if (hideUnpaidStatus) {
       return null
+    }
+
+    if (attendee.paymentLink === null) {
+      return (
+        <div className="grid grid-cols-[auto_1fr] gap-x-2 text-left">
+          <IconCoins className="size-[1.25em]" />
+          <Text>{price} kr ubetalt</Text>
+          <Text className="col-start-2 text-sm text-red-600 dark:text-red-400">
+            Betalingslenken er ikke tilgjengelig.
+          </Text>
+          <Text className="col-start-2 text-sm">Kontakt arrangøren for hjelp!</Text>
+        </div>
+      )
     }
 
     return <UnpaidStatus price={price} registered={attendee.registered === true} />

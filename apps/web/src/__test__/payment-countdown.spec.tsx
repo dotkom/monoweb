@@ -32,6 +32,31 @@ afterEach(() => {
 })
 
 describe("event payment countdown", () => {
+  it.each([false, true])("hides deadline warnings for queued attendees (expired: %s)", (expired) => {
+    const attendee = createMockAttendee({
+      registered: false,
+      createdAt: subMinutes(new Date(), 1),
+      completionDeadline: addSeconds(new Date(), expired ? -30 : 60),
+      paymentLink: "https://example.com/payment",
+    })
+    const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
+
+    const markup = renderToStaticMarkup(
+      <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
+    )
+
+    expect(markup).toContain("i køen")
+    expect(markup).not.toContain("completion-warning")
+    expect(markup).not.toContain("Fullfør påmeldingen innen")
+    expect(markup).not.toContain("Du har ikke betalt")
+
+    const listMarkup = renderToStaticMarkup(
+      <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
+    )
+
+    expect(listMarkup).not.toContain("Du har ikke betalt for arrangementet.")
+  })
+
   it("clears payment warnings immediately after deregistration", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
@@ -51,7 +76,7 @@ describe("event payment countdown", () => {
     expect(markup).not.toContain("Du har ikke betalt")
   })
 
-  it.each([false, true])("keeps an unpaid attendance incomplete without a payment link (expired: %s)", (expired) => {
+  it.each([false, true])("explains unavailable payment without prompting an action (expired: %s)", (expired) => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addSeconds(new Date(), expired ? -30 : 60),
@@ -63,9 +88,19 @@ describe("event payment countdown", () => {
       <MainPoolCard attendance={attendance} user={createMockUser()} authorizeUrl="/login" />
     )
 
-    expect(markup).toContain("Fullfør påmeldingen innen")
     expect(markup).toContain("Du har reservert plass")
-    expect(markup).toContain("Du har ikke betalt")
+    expect(markup).toContain("100 kr ubetalt")
+    expect(markup).toContain("Betalingslenken er ikke tilgjengelig.")
+    expect(markup).toContain("Kontakt arrangøren for hjelp!")
+    expect(markup).not.toContain("completion-warning")
+    expect(markup).not.toContain("Fullfør påmeldingen innen")
+    expect(markup).not.toContain("Du er påmeldt")
+
+    const listMarkup = renderToStaticMarkup(
+      <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
+    )
+
+    expect(listMarkup).not.toContain("Du har ikke betalt for arrangementet.")
   })
 
   it("shows the countdown when an unpaid attendee can open payment", () => {
@@ -82,6 +117,8 @@ describe("event payment countdown", () => {
 
     expect(markup).toContain("Fullfør påmeldingen innen")
     expect(markup).toContain("Du har ikke betalt")
+    expect(markup).toContain("completion-warning")
+    expect(markup).not.toContain("Betalingslenken er ikke tilgjengelig")
   })
 
   it.each([

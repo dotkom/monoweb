@@ -71,7 +71,10 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const paymentDeadlineHasPassed =
     attendee?.completionDeadline != null && isAfter(currentTime, attendee.completionDeadline)
 
-  const showPaymentCountdown = hasPendingCompletionDeadline && (isWithinPaymentCountdown || paymentDeadlineHasPassed)
+  const showPaymentCountdown =
+    attendee?.paymentLink != null &&
+    hasPendingCompletionDeadline &&
+    (isWithinPaymentCountdown || paymentDeadlineHasPassed)
 
   const hasCapacity = capacity > 0
 

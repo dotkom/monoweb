@@ -110,7 +110,7 @@ describe("attendance completion helpers", () => {
     })
   })
 
-  it("builds completion view for queued attendee with pending payment", () => {
+  it("ignores leftover payment details while the attendee is queued", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({
       registered: false,
@@ -120,10 +120,33 @@ describe("attendance completion helpers", () => {
 
     expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
       attendeeState: "QUEUED",
-      completionDeadline: attendee.completionDeadline,
+      completionDeadline: null,
+      requirements: [],
+      missingRequirements: [],
+      paymentLink: null,
+    })
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+  })
+
+  it("requires payment after a queued attendee receives a place", () => {
+    const attendance = createAttendance()
+    const attendee = createAttendee({ registered: false })
+
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+
+    const promotedAttendee = {
+      ...attendee,
+      registered: true,
+      completionDeadline: addHours(getCurrentUTC(), 24),
+      paymentLink: "https://example.com/pay",
+    }
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, promotedAttendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline: promotedAttendee.completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
-      paymentLink: "https://example.com/pay",
+      paymentLink: promotedAttendee.paymentLink,
     })
   })
 
