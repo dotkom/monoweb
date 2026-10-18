@@ -1,4 +1,4 @@
-import type { S3Client } from "@aws-sdk/client-s3"
+import { DeleteObjectTaggingCommand, type S3Client } from "@aws-sdk/client-s3"
 import { type PresignedPost, type PresignedPostOptions, createPresignedPost } from "@aws-sdk/s3-presigned-post"
 import { createCloudFrontUrl } from "./urls"
 
@@ -86,4 +86,13 @@ export async function uploadFileToS3PresignedPost(
   } catch (e) {
     throw new Error(`File upload failed: ${e}`)
   }
+}
+
+// removes all s3 tags from the object
+export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key: string): Promise<void> {
+  await s3Client.send(new DeleteObjectTaggingCommand({ Bucket: bucket, Key: key }))
+}
+
+export function getS3KeyFromUrl(url: string): string {
+  return new URL(url).pathname.slice(1)
 }

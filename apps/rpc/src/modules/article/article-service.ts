@@ -12,13 +12,15 @@ import {
   ARTICLE_IMAGE_MAX_SIZE_KIB,
 } from "./article"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, removeEphemeralTag, getS3KeyFromUrl, slugify } from "@dotkomonline/utils"
 import { compareAsc, compareDesc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { ArticleRepository } from "./article-repository"
 import type { ArticleTagLinkRepository } from "./article-tag-link-repository"
 import type { ArticleTagRepository } from "./article-tag-repository"
+
+const EPHEMERAL_TAG = "<Tagging><TagSet><Tag><Key>status</Key><Value>ephemeral</Value></Tag></TagSet></Tagging>"
 
 export interface ArticleService {
   create(handle: DBHandle, data: ArticleWrite): Promise<Article>
@@ -67,12 +69,14 @@ export function getArticleService(
   return {
     async create(handle, data) {
       const existingArticle = await this.findBySlug(handle, data.slug)
-
       if (existingArticle) {
         throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
-
-      return await articleRepository.create(handle, data)
+      const article = await articleRepository.create(handle, data)
+      if (data.imageUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+      return article
     },
 
     async update(handle, articleId, data) {
@@ -85,8 +89,11 @@ export function getArticleService(
           throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
         }
       }
-
-      return await articleRepository.update(handle, article.id, data)
+      const updated = await articleRepository.update(handle, article.id, data)
+      if (data.imageUrl !== undefined && data.imageUrl !== article.imageUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+      return updated
     },
 
     async findManyByTags(handle, articleTags) {
@@ -223,6 +230,7 @@ export function getArticleService(
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        fields: { tagging: EPHEMERAL_TAG },
         maxSizeKiB: ARTICLE_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
