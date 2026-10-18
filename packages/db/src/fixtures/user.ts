@@ -1,12 +1,29 @@
 import { Gender, type Prisma } from "../"
 
-export const HELLE_HUMMER_USER_ID = "9b224590-2f08-4a54-9491-5751cc948a12"
-export const GUNNAR_GAS_USER_ID = "2bdcc7ac-31ac-4a79-b1db-bce64a53c79f"
+export const fixtureUserId = {
+  anders: "6b51d0e4-0c7f-4e91-8f5a-6b5b4f4a0c11",
+  berta: "7d49f7c9-39b0-4c32-a685-0b5a1d0674f3",
+  carl: "d306027f-4666-44d0-9ccc-68f433e57be6",
+  dina: "a1a6ef2a-8f5e-44f1-8c6d-21c6ef3c5c7a",
+  eirik: "f6f7f725-6df6-4e99-b0fb-37787e2b18fa",
+  frida: "0cf26f7d-4094-4112-b9a3-4ed627e72f81",
+  gunnar: "2bdcc7ac-31ac-4a79-b1db-bce64a53c79f",
+  helle: "9b224590-2f08-4a54-9491-5751cc948a12",
+  ivar: "3be3c1c2-95b6-4788-bcb7-7f3ea7df6a88",
+  jenny: "4bd806d5-0708-4d3c-a963-fba9e02d5e7e",
+  kasper: "c72e3e97-bde4-4cbb-81f7-f645efb803c5",
+} as const
+
+export type FixtureUserKey = keyof typeof fixtureUserId
+
+export const userId = (key: FixtureUserKey): string => fixtureUserId[key]
+
+export const fixtureUserKeys = (): FixtureUserKey[] => Object.keys(fixtureUserId) as FixtureUserKey[]
 
 export const getUserFixtures = () =>
   [
     {
-      id: "6b51d0e4-0c7f-4e91-8f5a-6b5b4f4a0c11",
+      id: fixtureUserId.anders,
       name: "Anders And",
       username: "anders",
       email: "anders@and.example.com",
@@ -20,7 +37,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "7d49f7c9-39b0-4c32-a685-0b5a1d0674f3",
+      id: fixtureUserId.berta,
       name: "Berta Bjørn",
       username: "berta",
       email: "berta@bjorn.example.com",
@@ -34,7 +51,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "d306027f-4666-44d0-9ccc-68f433e57be6",
+      id: fixtureUserId.carl,
       name: "Carl Clam",
       username: "carl",
       email: "carl@clam.example.com",
@@ -48,7 +65,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "a1a6ef2a-8f5e-44f1-8c6d-21c6ef3c5c7a",
+      id: fixtureUserId.dina,
       name: "Dina Drage",
       username: "dina",
       email: "dina@drage.example.com",
@@ -62,7 +79,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "f6f7f725-6df6-4e99-b0fb-37787e2b18fa",
+      id: fixtureUserId.eirik,
       name: "Eirik Elg",
       username: "eirik",
       email: "eirik@elg.example.com",
@@ -76,7 +93,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "0cf26f7d-4094-4112-b9a3-4ed627e72f81",
+      id: fixtureUserId.frida,
       name: "Frida Frosk",
       username: "frida",
       email: "frida@frosk.example.com",
@@ -90,7 +107,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: GUNNAR_GAS_USER_ID,
+      id: fixtureUserId.gunnar,
       name: "Gunnar Gås",
       username: "gunnar",
       email: "gunnar@gaas.example.com",
@@ -104,7 +121,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: HELLE_HUMMER_USER_ID,
+      id: fixtureUserId.helle,
       name: "Helle Hummer",
       username: "helle",
       email: "helle@hummer.example.com",
@@ -118,7 +135,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "3be3c1c2-95b6-4788-bcb7-7f3ea7df6a88",
+      id: fixtureUserId.ivar,
       name: "Ivar Ilder",
       username: "ivar",
       email: "ivar@ilder.example.com",
@@ -132,7 +149,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "4bd806d5-0708-4d3c-a963-fba9e02d5e7e",
+      id: fixtureUserId.jenny,
       name: "Jenny Jerv",
       username: "jenny",
       email: "jenny@jerv.example.com",
@@ -146,7 +163,7 @@ export const getUserFixtures = () =>
       notificationPermissionsId: null,
     },
     {
-      id: "c72e3e97-bde4-4cbb-81f7-f645efb803c5",
+      id: fixtureUserId.kasper,
       name: "Kasper Krabbe",
       username: "kasper",
       email: "kasper@krabbe.example.com",
