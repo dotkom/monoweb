@@ -146,6 +146,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     return (
       <div className={cardClassname}>
         <Text>Du kan ikke melde deg på dette arrangementet</Text>
+        <PaymentStatus attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
       </div>
     )
   }
@@ -166,8 +167,15 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const cardBody = (
     <div className="flex flex-col min-h-40 gap-6 p-2 items-center text-center justify-center w-full">
-      {!showRegisterCountdown && (
-        <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+      <div className="flex grow flex-col gap-4 items-center text-center justify-center">
+        {showRegisterCountdown ? (
+          <div className="flex flex-col gap-1 items-center">
+            <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
+            <Text className="text-4xl font-medium" suppressHydrationWarning>
+              {registerCountdownDisplay}
+            </Text>
+          </div>
+        ) : (
           <div className="flex flex-col gap-1 items-center">
             <Text
               className={cn(
@@ -208,39 +216,23 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               </Text>
             )}
           </div>
+        )}
 
-          <div className="flex flex-col gap-2">
-            {isRegistrationDelayed ? (
-              <PendingRegistrationStatus />
-            ) : (
-              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
-            )}
+        <div className="flex flex-col gap-2">
+          {isRegistrationDelayed ? (
+            <PendingRegistrationStatus />
+          ) : (
+            <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
+          )}
 
-            <PaymentStatus
-              attendance={attendance}
-              attendee={attendee}
-              chargeScheduleDate={chargeScheduleDate}
-              hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
-            />
-          </div>
+          <PaymentStatus
+            attendance={attendance}
+            attendee={attendee}
+            chargeScheduleDate={chargeScheduleDate}
+            hideUnpaidStatus={showCompletionPanel && paymentIsMissing}
+          />
         </div>
-      )}
-
-      {showRegisterCountdown && (
-        <div className="flex flex-col gap-1 items-center">
-          <Text>{pool.capacity > 0 ? `${pool.capacity} plasser` : "Påmelding"} åpner om</Text>
-          <Text className="text-4xl font-medium" suppressHydrationWarning>
-            {registerCountdownDisplay}
-          </Text>
-        </div>
-      )}
-
-      {showRegisterCountdown && attendance.attendancePrice !== null && (
-        <div className="flex flex-row gap-2 items-center">
-          <IconCoins className="size-[1.25em]" />
-          <Text>{attendance.attendancePrice} kr</Text>
-        </div>
-      )}
+      </div>
 
       <CompletionCard
         visible={showCompletionPanel}
@@ -248,6 +240,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
         paymentIsMissing={paymentIsMissing}
         hasAttachedActionBelow={hasAttachedActionBelow}
         isQueued={isQueued}
+        price={attendance.attendancePrice}
       />
     </div>
   )
@@ -407,11 +400,14 @@ interface PriceStatusProps {
   registered: boolean
 }
 
-const PriceStatus = ({ price }: PriceStatusProps) => {
+const PriceStatus = ({ price, showPaymentTiming = false }: { price: number; showPaymentTiming?: boolean }) => {
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div className="flex flex-row items-start gap-2">
       <IconCoins className="size-[1.25em]" />
-      <Text>{price} kr</Text>
+      <div className="flex flex-col gap-0 items-start">
+        <Text>{price} kr</Text>
+        {showPaymentTiming && <Text className="text-xs">Du betaler når du får plass</Text>}
+      </div>
     </div>
   )
 }
@@ -496,11 +492,11 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
   }
 
   if (!attendee) {
-    return <PriceStatus price={price} registered={false} />
+    return <PriceStatus price={price} />
   }
 
-  if (!attendee.registered) {
-    return null
+  if ((!attendee.registered && !hasPaid) || price === 0) {
+    return <PriceStatus price={price} showPaymentTiming={!attendee.registered && price > 0} />
   }
 
   if (!hasPaid) {
@@ -547,6 +543,7 @@ interface CompletionCardProps {
   paymentIsMissing: boolean
   hasAttachedActionBelow: boolean
   isQueued: boolean
+  price: number | null
 }
 
 const CompletionCard = ({
@@ -555,6 +552,7 @@ const CompletionCard = ({
   paymentIsMissing,
   hasAttachedActionBelow,
   isQueued,
+  price,
 }: CompletionCardProps) => {
   if (!visible) {
     return null
@@ -602,7 +600,7 @@ const CompletionCard = ({
               <div className="flex flex-col gap-2 items-start w-fit">
                 <div className="flex flex-row w-fit items-center gap-2 -mx-1 px-1 rounded-sm">
                   <IconX className="size-[1.25em] text-red-700 dark:text-red-400" />
-                  <Text>Du har ikke betalt</Text>
+                  {price ? <Text>{price} kr ubetalt</Text> : <Text>Du har ikke betalt</Text>}
                 </div>
               </div>
             )}
