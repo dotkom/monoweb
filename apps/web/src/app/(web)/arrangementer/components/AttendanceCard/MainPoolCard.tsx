@@ -163,8 +163,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isRegistered = attendeeState === "REGISTERED"
   const isReserved = attendeeState === "RESERVED"
   const isQueued = attendeeState === "QUEUED"
-  const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-amber-800/50")
-  const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-white/7")
+  const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-[#614020]")
+  const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-amber-100/8")
 
   const cardBody = (
     <div
@@ -189,7 +189,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
                 hasWaitlist &&
                   (isRegistered || actionIsRequired) &&
                   (actionIsRequired
-                    ? "bg-yellow-200 dark:bg-amber-800 dark:saturate-75 rounded-lg"
+                    ? "bg-yellow-200 dark:bg-[#885221] rounded-lg"
                     : "bg-green-200 dark:bg-green-800 rounded-lg")
               )}
               suppressHydrationWarning
@@ -278,7 +278,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           isReserved && !actionIsRequired && "bg-gray-200 dark:bg-stone-700",
           isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-900",
           actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
-          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-amber-900/50",
+          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-[#6a4422]",
           actionIsRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
         )}
       >
@@ -574,7 +574,7 @@ const CompletionCard = ({
       <div
         className={cn(
           "relative flex flex-col gap-3 w-full overflow-hidden p-3",
-          !isQueued && "bg-violet-200 dark:bg-violet-900/75",
+          !isQueued && "bg-violet-200 dark:bg-[#413545]",
           isQueued && "bg-blue-200 dark:bg-sky-900/75",
           hasAttachedActionBelow ? "rounded-t-md rounded-b-xs" : "rounded-md"
         )}
@@ -590,7 +590,7 @@ const CompletionCard = ({
           className={cn(
             "absolute top-0 left-0 inset-0 bg-linear-to-t pointer-events-none transition-colors duration-400",
             "from-transparent via-red-300/6 to-red-300/15",
-            "dark:from-transparent dark:via-red-500/5 dark:to-red-500/12"
+            "dark:from-transparent dark:via-red-300/3 dark:to-red-300/8"
           )}
         />
 
