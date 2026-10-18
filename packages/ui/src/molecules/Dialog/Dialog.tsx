@@ -44,7 +44,8 @@ type DialogContentProps = Omit<ComponentProps<typeof ShadcnDialogContent>, "size
 export function DialogContent({ size = "md", onOutsideClick, className, ...props }: DialogContentProps) {
   return (
     <DialogPortal>
-      <DialogOverlay forceRender={onOutsideClick !== undefined} onClick={onOutsideClick} />
+      {/* Native outside-click dismissal needs this backdrop when the dialog is nested inside a drawer. */}
+      <DialogOverlay forceRender onClick={onOutsideClick} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         data-size={size}
