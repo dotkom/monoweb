@@ -8,7 +8,7 @@ export const useArticleAllQuery = () => {
   return useQuery(trpc.article.all.queryOptions())
 }
 
-export const useArticleFilterQuery = (filters: ArticleFilterQuery) => {
+export const useArticlesInfiniteQuery = (filters: ArticleFilterQuery) => {
   const trpc = useTRPC()
 
   const { data, ...query } = useInfiniteQuery({

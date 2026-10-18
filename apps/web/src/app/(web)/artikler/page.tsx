@@ -2,9 +2,10 @@ import { ArticleListPage } from "./ArticleListPage"
 import { server } from "@/utils/trpc/server"
 
 const ArticlePage = async () => {
-  const allAvailableTags = (await server.article.findTagsOrderedByPopularity.query()).map((tag) => tag.name)
+  const tagsQuery = await server.article.findTagsOrderedByPopularity.query()
+  const availableTags = tagsQuery.map((tag) => tag.name)
 
-  return <ArticleListPage availableTags={allAvailableTags} />
+  return <ArticleListPage availableTags={availableTags} />
 }
 
 export default ArticlePage

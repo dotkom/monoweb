@@ -1,32 +1,54 @@
 import { Tilt, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
+import Image from "next/image"
 import { PlaceHolderImage } from "src/components/atoms/PlaceHolderImage"
 
 interface ArticleImageProps {
-  imageUrl?: string | null
+  imageUrl: string
   alt: string
   className?: string
-  imageClassName?: string
+  orientation: "horizontal" | "vertical"
 }
 
-export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, className, imageClassName }) => {
+export const ArticleImage: FC<ArticleImageProps> = ({ imageUrl, alt, orientation }) => {
   return (
     <Tilt glareBorderRadius="var(--radius-lg)">
-      <div className={cn("relative", className)}>
-        <div className={cn("relative bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden", imageClassName)}>
-          {imageUrl ? (
-            // biome-ignore lint/performance/noImgElement: unoptimized next/image crashes iOS Safari (#3062)
-            <img
-              src={imageUrl}
-              alt={alt}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            <PlaceHolderImage variant="OTHER" className="object-cover" />
-          )}
-        </div>
+      <div className="relative w-full">
+        {orientation === "vertical" ? (
+          <div
+            className={cn("relative bg-gray-100 dark:bg-stone-800/50 rounded-lg overflow-hidden aspect-video w-full")}
+          >
+            {imageUrl !== "" ? (
+              <Image
+                src={imageUrl}
+                alt={alt}
+                width={0}
+                height={0}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <PlaceHolderImage variant="OTHER" className="object-cover rounded-md" />
+            )}
+          </div>
+        ) : (
+          <div className={cn("relative aspect-16/9 bg-gray-100 dark:bg-stone-800 overflow-hidden", "h-46 rounded-lg")}>
+            {imageUrl !== "" ? (
+              <Image
+                src={imageUrl}
+                alt={alt}
+                height={0}
+                width={0}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover rounded-md"
+              />
+            ) : (
+              <PlaceHolderImage variant="OTHER" className="object-cover rounded-md" />
+            )}
+          </div>
+        )}
       </div>
     </Tilt>
   )

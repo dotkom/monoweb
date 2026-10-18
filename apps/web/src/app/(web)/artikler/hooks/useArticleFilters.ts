@@ -1,24 +1,20 @@
 "use client"
 
+import { ArticleFilterQuerySchema } from "@dotkomonline/rpc/article"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useMemo } from "react"
-import { z } from "zod"
+import type { z } from "zod"
 
-const ArticleFiltersSchema = z.object({
-  search: z.string(),
-  tags: z.array(z.string()),
-})
-
-type ArticleFilters = z.infer<typeof ArticleFiltersSchema>
+type ArticleFilters = z.infer<typeof ArticleFilterQuerySchema>
 
 export const useArticleFilters = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const filters: ArticleFilters = useMemo(() => {
-    return ArticleFiltersSchema.parse({
-      search: searchParams.get("q") ?? "",
-      tags: searchParams.getAll("tag"),
+    return ArticleFilterQuerySchema.parse({
+      bySearchTerm: searchParams.get("q") ?? "",
+      byTags: searchParams.getAll("tag"),
     })
   }, [searchParams])
 
@@ -31,11 +27,11 @@ export const useArticleFilters = () => {
       params.delete("q")
       params.delete("tag")
 
-      if (next.search) {
-        params.set("q", next.search)
+      if (next.bySearchTerm) {
+        params.set("q", next.bySearchTerm)
       }
 
-      for (const t of next.tags) {
+      for (const t of next.byTags ?? []) {
         params.append("tag", t)
       }
 
