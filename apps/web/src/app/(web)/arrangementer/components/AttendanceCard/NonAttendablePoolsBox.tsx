@@ -1,10 +1,10 @@
 import { RollingNumber } from "@/components/RollingNumber"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import {
   type AttendanceView,
   type AttendancePool,
   getAttendablePool,
   getNonAttendablePools,
-  getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@dotkomonline/ui"
 import { IconChevronDown, IconHourglassEmpty } from "@tabler/icons-react"
+import { isAfter } from "date-fns"
 
 interface NonAttendablePoolsBoxProps {
   attendance: AttendanceView
@@ -60,8 +61,17 @@ interface AttendanceBoxPoolSmallProps {
 }
 
 const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProps) => {
+  const now = new Date()
+
+  const queuedAttendees = attendance.attendees.filter(
+    (attendee) => attendee.attendancePoolId === pool.id && !attendee.registered
+  )
+
+  useDeadlineTick(...queuedAttendees.map((attendee) => attendee.earliestReservationAt))
+
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
-  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  // We omit attendees serving a delay from the queue count
+  const queuedAttendeeCount = queuedAttendees.filter((attendee) => !isAfter(attendee.earliestReservationAt, now)).length
 
   return (
     <div

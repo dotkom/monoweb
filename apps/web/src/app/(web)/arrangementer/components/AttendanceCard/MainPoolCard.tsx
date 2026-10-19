@@ -11,7 +11,6 @@ import {
   getAttendee,
   getAttendeeQueuePosition,
   getAttendeePaymentStatus,
-  getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
   hasAttendeePaid,
 } from "@dotkomonline/rpc/attendance"
@@ -63,8 +62,13 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 }) => {
   const now = new Date()
   const attendee = getAttendee(attendance, user)
+  const queuedAttendees = attendance.attendees.filter((attendee) => !attendee.registered)
 
-  useDeadlineTick(attendee?.completionDeadline, attendee?.earliestReservationAt)
+  useDeadlineTick(
+    attendee?.completionDeadline,
+    attendee?.earliestReservationAt,
+    ...queuedAttendees.map((attendee) => attendee.earliestReservationAt).filter((date) => isAfter(date, now))
+  )
 
   const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
 
@@ -159,7 +163,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     )
   }
 
-  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  // We omit attendees serving a delay from the queue count
+  const queuedAttendeeCount = queuedAttendees.filter(
+    (attendee) => attendee.attendancePoolId === pool.id && !isAfter(attendee.earliestReservationAt, now)
+  ).length
+
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
   const availableSeatCount = Math.max(0, pool.capacity - registeredAttendeeCount)
   const hasWaitlist = queuedAttendeeCount > 0

@@ -1,5 +1,6 @@
 "use client"
 
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { notifyFail } from "@admin/lib/notifications"
 import {
@@ -9,6 +10,7 @@ import {
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
 import { Button, Text, Title } from "@dotkomonline/ui"
+import { isAfter } from "date-fns"
 import type { FC } from "react"
 import { useState } from "react"
 import { useDeletePoolMutation } from "../../../mutations"
@@ -24,9 +26,18 @@ interface NormalPoolBoxProps {
 }
 
 const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGroup, canEdit }) => {
+  const now = new Date()
+
+  const delayedAttendees = attendance.attendees.filter(
+    (attendee) =>
+      attendee.attendancePoolId === pool.id && !attendee.registered && isAfter(attendee.earliestReservationAt, now)
+  )
+
+  useDeadlineTick(...delayedAttendees.map((attendee) => attendee.earliestReservationAt))
+
   const [editOpen, setEditOpen] = useState(false)
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
-  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id) - delayedAttendees.length
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const defaultValues: PoolFormValues = {
@@ -47,6 +58,7 @@ const AttendancePoolCard: FC<NormalPoolBoxProps> = ({ pool, attendance, deleteGr
               {pool.capacity > 0 ? `/ ${pool.capacity} påmeldte` : "påmeldte (ledige plasser)"}
             </Text>
             {queuedAttendeeCount > 0 && <Text>{queuedAttendeeCount} i kø</Text>}
+            {delayedAttendees.length > 0 && <Text>{delayedAttendees.length} med utsatt påmelding</Text>}
             <div className="h-2" />
             <Text className="text-sm">Årstrinn: {formatPoolYearCriterias(pool.yearCriteria)}</Text>
             <Text className="text-sm">
