@@ -18,11 +18,16 @@ import { cn } from "../../utils"
  */
 export type TimelineOrientation = "vertical" | "horizontal"
 export type TimelineColor = "brand" | "gray"
+export type TimelineBleed = "start" | "end" | "both"
 
 export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
   orientation?: TimelineOrientation
   color?: TimelineColor
   showRailStubs?: boolean
+  /**
+   * Removes the inset at the chosen ends. This is left/right horizontally and top/bottom vertically.
+   */
+  bleed?: TimelineBleed
 }
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
@@ -34,6 +39,19 @@ const timelineGridClassNames: Record<TimelineOrientation, string> = {
 const timelineColorClassNames: Record<TimelineColor, string> = {
   brand: "[--timeline-color:var(--color-brand)]",
   gray: "[--timeline-color:theme(colors.gray.300)] dark:[--timeline-color:theme(colors.stone.600)]",
+}
+
+const timelineBleedClassNames: Record<TimelineOrientation, Record<TimelineBleed, string>> = {
+  horizontal: {
+    start: "-ml-4 w-[calc(100%+1rem)]",
+    end: "-mr-4 w-[calc(100%+1rem)]",
+    both: "-mx-4 w-[calc(100%+2rem)]",
+  },
+  vertical: {
+    start: "-mt-0.5 has-[>[data-slot=timeline-item]:first-child_[data-slot=timeline-side-label]]:-mt-1.5",
+    end: "-mb-0.5",
+    both: "-my-0.5 has-[>[data-slot=timeline-item]:first-child_[data-slot=timeline-side-label]]:-mt-1.5",
+  },
 }
 
 const timelineRowClassName = cn(
@@ -105,16 +123,20 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
   })
 
 /**
- * Defaults to vertical. Use `orientation="horizontal"` for a scrolling timeline with labels above the rail and content
- * below it. Horizontal items have a minimum width of 12rem, while group headers fit their labels. Override the grid's
- * columns with `className` as needed.
- * `color` defaults to `"brand"` and also supports `"gray"`, coloring both the rail and dot borders.
+ * A vertical or horizontal timeline. It consists of a rail, dots, labels, and content.
+ *
+ * Set `color` to color both the rail and dots.
+ *
  * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
+ *
+ * Use `bleed="start" | "end" | "both"` to remove the inset at the selected container edges along its orientation.
+ * Horizontal bleed cancels 1rem of content padding; vertical bleed removes the dot's inset while keeping it inside.
  */
 export const Timeline: FC<TimelineProps> = ({
   orientation = "vertical",
   color = "brand",
   showRailStubs = true,
+  bleed,
   className,
   children,
   style,
@@ -131,10 +153,12 @@ export const Timeline: FC<TimelineProps> = ({
       data-slot="timeline"
       data-orientation={orientation}
       data-rail-stubs={showRailStubs}
+      data-bleed={bleed}
       className={cn(
         "group/timeline grid w-full",
         timelineGridClassNames[orientation],
         timelineColorClassNames[color],
+        bleed !== undefined && timelineBleedClassNames[orientation][bleed],
         className
       )}
       style={timelineStyle}
