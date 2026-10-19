@@ -5,7 +5,8 @@ import { z } from "zod"
 import { CompanySchema } from "../company/company"
 import { FeedbackFormSchema } from "../feedback-form/feedback-form"
 import { GroupSchema, type GroupType } from "../group/group"
-import { AttendanceSchema, AttendanceSummarySchema } from "./attendance"
+import { AttendanceSchema, AttendanceSummarySchema, AttendanceViewSchema, buildAttendanceView } from "./attendance"
+import type { UserId } from "../user/user"
 
 /**
  * @packageDocumentation
@@ -95,6 +96,21 @@ export const EventWithAttendanceSchema = z.object({
   attendance: AttendanceSchema.nullable(),
 })
 export type EventWithAttendance = z.infer<typeof EventWithAttendanceSchema>
+
+export const EventWithAttendanceViewSchema = EventWithAttendanceSchema.extend({
+  attendance: AttendanceViewSchema.nullable(),
+})
+export type EventWithAttendanceView = z.infer<typeof EventWithAttendanceViewSchema>
+
+export function buildEventWithAttendanceView(
+  { event, attendance }: EventWithAttendance,
+  currentUserId: UserId | null
+): EventWithAttendanceView {
+  return {
+    event,
+    attendance: attendance === null ? null : buildAttendanceView(attendance, currentUserId),
+  }
+}
 
 export const EventSummarySchema = EventSchema.pick({
   id: true,

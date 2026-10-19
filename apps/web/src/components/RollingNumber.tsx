@@ -4,6 +4,10 @@ import { cn, Text } from "@dotkomonline/ui"
 import { useEffect, useRef, useState } from "react"
 import styles from "./RollingNumber.module.css"
 
+// This is used to pad the numbers. Using a regular space will cause the text baseline to shift when new digits are
+// added or removed. Witchcraft
+const NON_BREAKING_SPACE = "\u00a0"
+
 interface RollingNumberProps {
   value: number
   className?: string
@@ -42,8 +46,9 @@ const initSlots = (display: string): DigitSlot[] =>
 
 const buildSlots = (previous: string, current: string, existing: DigitSlot[]): DigitSlot[] => {
   const length = Math.max(previous.length, current.length)
-  const paddedPrevious = previous.padStart(length, " ")
-  const paddedCurrent = current.padStart(length, " ")
+
+  const paddedPrevious = previous.padStart(length, NON_BREAKING_SPACE)
+  const paddedCurrent = current.padStart(length, NON_BREAKING_SPACE)
 
   return Array.from({ length: length }, (_, i) => {
     const key = `pos-${length - 1 - i}`

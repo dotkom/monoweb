@@ -3,7 +3,12 @@
 import { env } from "@/env"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type Attendance, buildRegistrationAvailabilityCompletionView, getAttendee } from "@dotkomonline/rpc/attendance"
+import {
+  type AttendanceView,
+  buildRegistrationAvailabilityCompletionView,
+  getAttendee,
+  getNonAttendablePools,
+} from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
@@ -31,13 +36,15 @@ import { TicketButton } from "./TicketButton"
 import { useEventTurnstile } from "../EventTurnstileProvider"
 import { ViewAttendeesButton } from "./ViewAttendeesButton"
 import { useAttendanceCardApi } from "./use-attendance-card-api"
+import { AttendanceSection } from "./AttendanceSection"
+import transitionStyles from "./AttendanceTransition.module.css"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
 const TURNSTILE_LOAD_TIMEOUT_MS = secondsToMilliseconds(15)
 
 interface AttendanceCardProps {
-  initialAttendance: Attendance
+  initialAttendance: AttendanceView
   initialRegistrationAvailability: RegistrationAvailability | null
   user: User | null
   event: Event
@@ -189,6 +196,7 @@ export const AttendanceCard = ({
   })
 
   const hasPunishment = punishment !== null && (punishment.delay > 0 || punishment.suspended)
+  const showOtherPools = attendance.pools.length === 0 || getNonAttendablePools(attendance, user).length > 0
 
   return (
     <section className="flex flex-col gap-4 min-h-24 text-base sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
@@ -199,7 +207,7 @@ export const AttendanceCard = ({
         <AttendanceCalendarButton event={event} attendance={attendance} />
       </div>
 
-      <div className="flex flex-col gap-8 w-full">
+      <div className="flex flex-col w-full">
         {attendee && deregistration?.requiresDeregisterReason && (
           <DeregisterModal
             open={deregisterModalOpen}
@@ -212,9 +220,11 @@ export const AttendanceCard = ({
 
         <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
 
-        {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
+        <AttendanceSection contentClassName="pt-8">
+          {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
+        </AttendanceSection>
 
-        <div className="flex flex-col gap-1.5 w-full">
+        <div className="flex flex-col w-full pt-8">
           <MainPoolCard
             attendance={attendance}
             user={user}
@@ -223,42 +233,50 @@ export const AttendanceCard = ({
             hasAttachedActionBelow={showPaymentLink || isRegistrationDelayed}
           />
 
-          {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
+          <AttendanceSection contentClassName="pt-1.5">
+            {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
+          </AttendanceSection>
 
-          {showPaymentLink && (
-            <Link
-              href={paymentLink}
-              className={cn(
-                "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 min-h-16",
-                "text-base font-medium",
-                "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
-              )}
-            >
-              <IconCoins className="size-[1.25em]" />
-              <Text>Gå til betaling</Text>
-              <IconArrowUpRight className="size-[1.25em]" />
-            </Link>
-          )}
+          <AttendanceSection contentClassName="pt-1.5">
+            {showPaymentLink && (
+              <Link
+                href={paymentLink}
+                className={cn(
+                  "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 min-h-16",
+                  "text-base font-medium",
+                  "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+                )}
+              >
+                <IconCoins className="size-[1.25em]" />
+                <Text>Gå til betaling</Text>
+                <IconArrowUpRight className="size-[1.25em]" />
+              </Link>
+            )}
+          </AttendanceSection>
         </div>
 
-        {attendee?.registered && attendance.selections.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <Title element="p" size="sm" className="text-base">
-              Valg
-            </Title>
+        <AttendanceSection contentClassName="pt-8">
+          {attendee?.registered && attendance.selections.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <Title element="p" size="sm" className="text-base">
+                Valg
+              </Title>
 
-            <SelectionsForm
-              attendance={attendance}
-              attendee={attendee}
-              onSubmit={handleSelectionChange}
-              disabled={attendanceStatus === "CLOSED"}
-            />
-          </div>
-        )}
+              <SelectionsForm
+                attendance={attendance}
+                attendee={attendee}
+                onSubmit={handleSelectionChange}
+                disabled={attendanceStatus === "CLOSED"}
+              />
+            </div>
+          )}
+        </AttendanceSection>
 
-        <NonAttendablePoolsBox attendance={attendance} user={user} />
+        <AttendanceSection contentClassName="pt-8">
+          {showOtherPools && <NonAttendablePoolsBox attendance={attendance} user={user} />}
+        </AttendanceSection>
 
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full pt-8">
           <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
             {attendee?.registered && <TicketButton attendee={attendee} />}
 
@@ -282,7 +300,13 @@ export const AttendanceCard = ({
           />
 
           {requiresLocalTurnstile && isRegisterActionPending === false && (
-            <div className={cn({ hidden: hideTurnstile }, "relative rounded-md bg-gray-200 dark:bg-stone-700")}>
+            <div
+              className={cn(
+                { hidden: hideTurnstile },
+                "relative rounded-md bg-gray-200 dark:bg-stone-700",
+                transitionStyles.state
+              )}
+            >
               <AttendanceTurnstile
                 key={turnstileGeneration}
                 enabled={enableTurnstile}

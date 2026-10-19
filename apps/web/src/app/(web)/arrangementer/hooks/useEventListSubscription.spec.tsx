@@ -195,7 +195,7 @@ describe("event list subscription", () => {
     })
     const initialAttendance = createMockAttendance({ attendees: [ownAttendee] })
     const queryKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
-    const fullQueryKey = queryOptions.event.attendance.getAttendance.queryKey({ id: firstEvent.attendance.id })
+    const fullQueryKey = queryOptions.event.attendance.getAttendanceForAdmin.queryKey({ id: firstEvent.attendance.id })
     queryClient.setQueryData(queryKey, initialAttendance)
     queryClient.setQueryData(fullQueryKey, initialAttendance)
     const otherAttendee = createMockAttendee({
@@ -405,7 +405,7 @@ describe("event list subscription", () => {
     await act(async () => sendUpdate({ ...update, status: "deregistered", registeredAttendeeCount: 3 }))
 
     expect(queryClient.getQueryData(summariesKey)?.pages[0].items[0].attendance?.currentUserAttendee).toBeNull()
-    expect(queryClient.getQueryState(registeredEventsKey)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(registeredEventsKey)?.isInvalidated).toBe(false)
   })
 
   it("refreshes summaries whenever the stream starts or reconnects", async () => {

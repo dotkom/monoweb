@@ -1453,6 +1453,21 @@ export function getAttendanceService(
         )
 
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
+
+        const missingPaymentMark = await markService.create(
+          handle,
+          {
+            details: `Denne skal ikke fjernes ved fullført betaling. Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
+            duration: DEFAULT_MARK_DURATION,
+            title: `Manglende betaling for ${event.title}`,
+            type: "MISSING_PAYMENT",
+            weight: 1,
+          },
+          event.hostingGroups.map((group) => group.slug)
+        )
+
+        await personalMarkService.addToUser(handle, attendee.userId, missingPaymentMark.id)
+
         logger.info(
           "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,

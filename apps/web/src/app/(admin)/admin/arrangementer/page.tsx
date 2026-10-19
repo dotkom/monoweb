@@ -2,7 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
-import type { EventFilterQuery, EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventFilterQuery, EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconPencil } from "@tabler/icons-react"
@@ -175,7 +175,7 @@ export default function EventPage() {
   )
 }
 
-function sortUpcomingEvents(events: EventWithAttendance[]): EventWithAttendance[] {
+function sortUpcomingEvents(events: EventWithAttendanceView[]): EventWithAttendanceView[] {
   const now = getCurrentUTC()
 
   return events.toSorted((left, right) => {

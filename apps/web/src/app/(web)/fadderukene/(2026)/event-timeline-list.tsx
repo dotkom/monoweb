@@ -2,8 +2,8 @@
 
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
-import type { Event, EventWithAttendance } from "@dotkomonline/rpc/event"
+import { type AttendanceView, getAttendee } from "@dotkomonline/rpc/attendance"
+import type { Event, EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import {
   Button,
   Label,
@@ -27,7 +27,7 @@ import { Link } from "@/components/link"
 import { Fragment, useState } from "react"
 
 type EventTimelineListProps = {
-  eventsWithAttendance: EventWithAttendance[]
+  eventsWithAttendance: EventWithAttendanceView[]
   userId: string | null
 }
 
@@ -42,7 +42,7 @@ export function EventTimelineList({ eventsWithAttendance, userId }: EventTimelin
     ? eventsWithAttendance
     : eventsWithAttendance.filter(({ event }) => !isPastEvent(event))
 
-  const eventsWithAttendanceMap: Map<string, EventWithAttendance> = new Map(
+  const eventsWithAttendanceMap: Map<string, EventWithAttendanceView> = new Map(
     visibleEventsWithAttendance.map((value) => [value.event.id, value])
   )
 
@@ -118,7 +118,7 @@ export function EventTimelineList({ eventsWithAttendance, userId }: EventTimelin
 
 interface EventItemProps {
   event: Event
-  attendance: Attendance | null
+  attendance: AttendanceView | null
   userId: string | null
 }
 

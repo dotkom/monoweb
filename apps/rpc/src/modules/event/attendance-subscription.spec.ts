@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events"
+import type { DBHandle } from "@dotkomonline/db"
 import type { TRPCContext } from "../../trpc"
 import { AttendeeSummarySchema, type Attendee, type RegisterChangeEvent } from "./attendance"
 import { attendanceRouter } from "./attendance-router"
@@ -68,7 +69,9 @@ function createContext(currentUserId: string | null = null, isCommitteeMember = 
 
   const context = {
     principal,
-    prisma: {},
+    prisma: {
+      $transaction: async (callback: (handle: DBHandle) => Promise<unknown>) => callback({} as DBHandle),
+    },
     eventEmitter,
     eventService: { findEventSummaries },
     authorizationService: { isCommitteeMember: () => isCommitteeMember },
@@ -76,6 +79,28 @@ function createContext(currentUserId: string | null = null, isCommitteeMember = 
 
   return { context, eventEmitter, findEventSummaries }
 }
+
+describe("single attendance registration subscription", () => {
+  it.each([null, "other-user", "user-one"])("limits attendee details for viewer %s", async (currentUserId) => {
+    const { context, eventEmitter } = createContext(currentUserId)
+    const subscription = await attendanceRouter
+      .createCaller(context)
+      .onRegisterChange({ attendanceId: attendee.attendanceId })
+    const nextUpdate = subscription.next()
+    eventEmitter.emit("attendance:register-change", registerChange)
+
+    const isCurrentUser = currentUserId === attendee.userId
+    expect((await nextUpdate).value).toEqual({
+      ...registerChange,
+      attendee: isCurrentUser ? attendee : AttendeeSummarySchema.parse(attendee),
+      isCurrentUser,
+      registeredAttendeeCount: 5,
+    })
+
+    await subscription.return()
+    expect(eventEmitter.listenerCount("attendance:register-change")).toBe(0)
+  })
+})
 
 describe("bulk registration subscription", () => {
   it.each([null, "other-user"])("strips private attendee fields for viewer %s", async (currentUserId) => {

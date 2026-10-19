@@ -44,7 +44,7 @@ const createNotificationMethod =
           description: message,
           timeout: getTimeout(autoClose),
           data: {
-            actionLayout: "col",
+            actionLayout: "flex-col",
             customAction: true,
           },
           actionProps: {
@@ -68,7 +68,7 @@ const createNotificationMethod =
         description: message,
         timeout: getTimeout(autoClose),
         data: {
-          actionLayout: "col",
+          actionLayout: "flex-col",
           customAction: true,
         },
         actionProps: {

@@ -1,10 +1,10 @@
 import type { ContestId } from "@dotkomonline/rpc/contest"
-import type { EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { addWeeks, interval, subMonths } from "date-fns"
 
 export type FadderukePageProps = {
-  parentEventWithAttendance: EventWithAttendance | null
-  childEventsWithAttendance: EventWithAttendance[]
+  parentEventWithAttendance: EventWithAttendanceView | null
+  childEventsWithAttendance: EventWithAttendanceView[]
   contestId: ContestId | null
 }
 

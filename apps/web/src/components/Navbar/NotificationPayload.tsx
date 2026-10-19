@@ -5,7 +5,7 @@ import { EventListItem } from "@/components/molecules/EventListItem/EventListIte
 import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { useTRPC } from "@/utils/trpc/client"
 import type { Article } from "@dotkomonline/rpc/article"
-import type { Attendance, AttendanceSummary } from "@dotkomonline/rpc/attendance"
+import type { AttendanceView, AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import type { Group } from "@dotkomonline/rpc/group"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
@@ -162,7 +162,7 @@ export function NotificationEventPayload({
   userId,
 }: {
   event: Event | EventSummary
-  attendance: Attendance | AttendanceSummary | null
+  attendance: AttendanceView | AttendanceSummary | null
   userId?: string | null
 }) {
   return (

@@ -22,6 +22,7 @@ export const FeedbackAnswersPage = async ({ eventId, publicResultsToken }: Props
       questions={feedbackForm.questions}
       answers={answers}
       attendees={attendance?.attendees ?? []}
+      attendedAttendeeCount={attendance?.attendedAttendeeCount ?? 0}
       event={event}
       pools={attendance?.pools ?? []}
       publicResultsToken={publicResultsToken}

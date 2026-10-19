@@ -177,8 +177,24 @@ export const AttendanceSchema = AttendanceBaseSchema.extend({
   attendees: z.array(AttendeeSchema),
 })
 
-export type AttendanceView = Omit<Attendance, "attendees"> & {
-  attendees: (Attendee | AttendeeSummary)[]
+export const AttendanceViewSchema = AttendanceSchema.extend({
+  attendees: z.array(z.union([AttendeeSchema, AttendeeSummarySchema])),
+  attendedAttendeeCount: z.number().int().nonnegative().optional(),
+})
+export type AttendanceView = z.infer<typeof AttendanceViewSchema>
+
+export function buildAttendanceView(attendance: Attendance, currentUserId: UserId | null): AttendanceView {
+  return {
+    ...attendance,
+    attendedAttendeeCount: attendance.attendees.filter((attendee) => attendee.attendedAt !== null).length,
+    attendees: attendance.attendees.map((attendee) => {
+      if (currentUserId !== null && attendee.userId === currentUserId) {
+        return attendee
+      }
+
+      return AttendeeSummarySchema.parse(attendee)
+    }),
+  }
 }
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
