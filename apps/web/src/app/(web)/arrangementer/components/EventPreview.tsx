@@ -262,16 +262,18 @@ function EventPreviewDetails({
         ))}
 
       {showAttendanceCard && (
-        <AttendanceCard
-          initialAttendance={attendance}
-          initialRegistrationAvailability={null}
-          parentEvent={parent?.event ?? null}
-          user={dbUser}
-          event={event}
-          enableTurnstile={enableTurnstile}
-          deferTurnstile
-          bulkSubscription={bulkSubscription}
-        />
+        <div className="w-112 max-w-full self-center">
+          <AttendanceCard
+            initialAttendance={attendance}
+            initialRegistrationAvailability={null}
+            parentEvent={parent?.event ?? null}
+            user={dbUser}
+            event={event}
+            enableTurnstile={enableTurnstile}
+            deferTurnstile
+            bulkSubscription={bulkSubscription}
+          />
+        </div>
       )}
     </div>
   )
