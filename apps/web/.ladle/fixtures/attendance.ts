@@ -404,7 +404,7 @@ export const createAttendanceWithRegisteredUser = (): Attendance => {
   })
 }
 
-export const createAttendanceWithWaitlistedUser = (queueSize = 2): Attendance =>
+export const createAttendanceWithQueuedUser = (queueSize = 2): Attendance =>
   createAttendanceWithQueue({
     capacity: 2,
     registeredOtherCount: 2,

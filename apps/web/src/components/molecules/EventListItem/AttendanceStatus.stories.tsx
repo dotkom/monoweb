@@ -99,7 +99,7 @@ export const AllStates = () => {
       />
 
       <StateShowcase
-        label="Waitlist attendee"
+        label="Queued attendee"
         withCapacityAttendance={createMockAttendance({ attendees: [queuedAttendee] })}
         withCapacityAttendee={queuedAttendee}
         eventEndInPast={false}

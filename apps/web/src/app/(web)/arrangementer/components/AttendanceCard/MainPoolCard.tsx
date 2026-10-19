@@ -162,7 +162,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
   const availableSeatCount = Math.max(0, pool.capacity - registeredAttendeeCount)
-  const hasWaitlist = queuedAttendeeCount > 0
+  const hasQueue = queuedAttendeeCount > 0
 
   const isRegistrationDelayed = hasRegistrationDelay(attendee, now)
 
@@ -197,7 +197,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             <Text
               className={cn(
                 "text-3xl px-2 py-1 transition-colors duration-260 ease-smooth motion-reduce:transition-none",
-                hasWaitlist &&
+                hasQueue &&
                   (isRegistered || isActionRequired) &&
                   (isActionRequired
                     ? "bg-yellow-200 dark:bg-[#885221] rounded-lg"
