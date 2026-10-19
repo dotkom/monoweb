@@ -399,7 +399,7 @@ const QueueStatus = ({ queuePosition, isActionRequired }: QueueStatusProps) => {
     <AttendanceStatusRow
       icon={<IconCircleDashedCheck className={cn(!isActionRequired && "text-indigo-700 dark:text-indigo-200")} />}
     >
-      <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
+      {queuePosition !== null ? <Text>Du er nummer {queuePosition} i køen</Text> : <Text>Du står i kø</Text>}
     </AttendanceStatusRow>
   )
 }
