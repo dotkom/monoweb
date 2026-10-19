@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { nb } from "date-fns/locale"
 import { Fragment } from "react"
+import type { Story } from "@ladle/react"
 import { Badge } from "../../atoms/Badge/Badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"
@@ -13,6 +14,7 @@ import {
   TimelineDot,
   TimelineItem,
   TimelineSideLabel,
+  type TimelineProps,
 } from "./Timeline"
 
 type SampleEvent = {
@@ -117,6 +119,28 @@ export const HorizontalWithSideLabels = () => (
     </Timeline>
   </div>
 )
+
+export const Appearance: Story<TimelineProps> = (timelineProperties) => (
+  <div className="max-w-4xl">
+    <Timeline {...timelineProperties}>
+      {sampleEvents.slice(0, 3).map((event) => (
+        <TimelineItem key={event.date.getTime()}>
+          <TimelineSideLabel>{format(event.date, "HH:mm", { locale: nb })}</TimelineSideLabel>
+          <TimelineDot />
+          <TimelineContent>
+            <EventSummary event={event} />
+          </TimelineContent>
+        </TimelineItem>
+      ))}
+    </Timeline>
+  </div>
+)
+
+Appearance.args = { orientation: "horizontal", color: "gray" }
+Appearance.argTypes = {
+  orientation: { options: ["vertical", "horizontal"], control: { type: "inline-radio" } },
+  color: { options: ["brand", "gray"], control: { type: "inline-radio" } },
+}
 
 export const HorizontalGroupedByDay = () => (
   <div className="max-w-4xl">
