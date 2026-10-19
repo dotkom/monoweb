@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { nb } from "date-fns/locale"
-import { Fragment } from "react"
+import { IconLockFilled, IconPennantFilled, IconSquareRotatedFilled } from "@tabler/icons-react"
+import { Fragment, type ReactNode } from "react"
 import { Badge } from "../../atoms/Badge/Badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"
@@ -25,6 +26,7 @@ type SampleEvent = {
   date: Date
   title: string
   description: string
+  icon: ReactNode
 }
 
 const sampleEvents: SampleEvent[] = [
@@ -32,16 +34,19 @@ const sampleEvents: SampleEvent[] = [
     date: new Date("2026-08-11T10:00:00"),
     title: "Immatrikulering",
     description: "Velkomst og informasjon på Gløshaugen.",
+    icon: <IconPennantFilled className="size-5" />,
   },
   {
     date: new Date("2026-08-11T14:30:00"),
     title: "Gruppeaktivitet",
     description: "Bli kjent med faddergruppen din.",
+    icon: <IconSquareRotatedFilled className="size-5" />,
   },
   {
     date: new Date("2026-09-02T11:00:00"),
     title: "Campus-runde",
     description: "Omvisning på campus og IT-bygget.",
+    icon: <IconLockFilled className="size-5" />,
   },
 ]
 
@@ -57,6 +62,7 @@ type TimelineExampleState = {
   alignments?: TimelineItemAlignment[]
   horizontalOnly?: boolean
   bleed?: TimelineBleed
+  showCustomMarkers?: boolean
 }
 
 const exampleStates: TimelineExampleState[] = [
@@ -82,6 +88,24 @@ const exampleStates: TimelineExampleState[] = [
   },
   { label: "Bleeding both ends with side labels", bleed: "both", showSideLabels: true },
   { label: "Bleeding both ends with group labels", bleed: "both", showSideLabels: true, groupBy: "day" },
+  { label: "Bleeding both ends with custom markers", bleed: "both", showCustomMarkers: true, showSideLabels: true },
+  { label: "Custom markers", showCustomMarkers: true, showSideLabels: true },
+  { label: "Custom markers without rail stubs", showCustomMarkers: true, showSideLabels: true, showRailStubs: false },
+  {
+    label: "Custom markers with mixed alignment",
+    showCustomMarkers: true,
+    showSideLabels: true,
+    alignments: ["start", "center", "end"],
+    horizontalOnly: true,
+  },
+  {
+    label: "Custom markers with mixed alignment without rail stubs",
+    showCustomMarkers: true,
+    showSideLabels: true,
+    showRailStubs: false,
+    alignments: ["start", "center", "end"],
+    horizontalOnly: true,
+  },
   { label: "Grouped by day", groupBy: "day", showSideLabels: true },
   { label: "Grouped without rail stubs", groupBy: "day", showSideLabels: true, showRailStubs: false },
   { label: "Group labels in content", groupBy: "day", groupHeaderPosition: "content" },
@@ -164,6 +188,7 @@ const TimelineExample = ({
   sortOrder,
   alignments,
   bleed,
+  showCustomMarkers = false,
 }: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
   <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs} bleed={bleed}>
     {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
@@ -184,7 +209,11 @@ const TimelineExample = ({
                   {event.marker}
                 </TimelineSideLabel>
               )}
-              <TimelineDot />
+              <TimelineDot
+                render={showCustomMarkers ? event.icon : undefined}
+                size={showCustomMarkers ? 20 : 12}
+                className={cn(showCustomMarkers && "bg-background text-(--timeline-color)")}
+              />
               <TimelineContent>
                 {(!showSideLabels || responsiveLabels) && (
                   <Text
