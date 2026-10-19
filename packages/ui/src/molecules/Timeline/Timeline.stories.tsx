@@ -15,6 +15,7 @@ import {
   TimelineGroupHeader,
   type TimelineGroupHeaderPosition,
   TimelineItem,
+  type TimelineItemAlignment,
   type TimelineOrientation,
   TimelineSideLabel,
 } from "./Timeline"
@@ -52,6 +53,8 @@ type TimelineExampleState = {
   responsiveLabels?: boolean
   richContent?: boolean
   sortOrder?: TimelineSortOrder
+  alignments?: TimelineItemAlignment[]
+  horizontalOnly?: boolean
 }
 
 const exampleStates: TimelineExampleState[] = [
@@ -72,6 +75,29 @@ const exampleStates: TimelineExampleState[] = [
   { label: "Grouped by month", groupBy: "month", showSideLabels: true },
   { label: "Newest first", groupBy: "day", showSideLabels: true, sortOrder: "desc" },
   { label: "Rich content", groupBy: "day", showSideLabels: true, richContent: true },
+  { label: "Centered entries", alignments: ["center"], showSideLabels: true, horizontalOnly: true },
+  {
+    label: "Centered entries without rail stubs",
+    alignments: ["center"],
+    showSideLabels: true,
+    showRailStubs: false,
+    horizontalOnly: true,
+  },
+  { label: "End-aligned entries", alignments: ["end"], showSideLabels: true, horizontalOnly: true },
+  {
+    label: "End-aligned entries without rail stubs",
+    alignments: ["end"],
+    showSideLabels: true,
+    showRailStubs: false,
+    horizontalOnly: true,
+  },
+  { label: "Start, center, end", alignments: ["start", "center", "end"], horizontalOnly: true },
+  {
+    label: "Start, center, end without rail stubs",
+    alignments: ["start", "center", "end"],
+    showRailStubs: false,
+    horizontalOnly: true,
+  },
 ]
 
 const colors: TimelineColor[] = ["brand", "gray"]
@@ -116,6 +142,7 @@ const TimelineExample = ({
   responsiveLabels = false,
   richContent = false,
   sortOrder,
+  alignments,
 }: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
   <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs}>
     {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
@@ -123,27 +150,36 @@ const TimelineExample = ({
         {groupBy !== undefined && (
           <TimelineGroupHeader position={groupHeaderPosition}>{group.label}</TimelineGroupHeader>
         )}
-        {group.entries.map((event) => (
-          <TimelineItem key={event.date.getTime()}>
-            {(showSideLabels || responsiveLabels) && (
-              <TimelineSideLabel className={cn(responsiveLabels && "max-sm:hidden")}>{event.marker}</TimelineSideLabel>
-            )}
-            <TimelineDot />
-            <TimelineContent>
-              {(!showSideLabels || responsiveLabels) && (
-                <Text
-                  className={cn(
-                    "pb-1 font-medium text-muted-foreground text-xs",
-                    responsiveLabels && "leading-6 sm:hidden"
-                  )}
-                >
-                  {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
-                </Text>
+        {group.entries.map((event) => {
+          const eventIndex = sampleEvents.findIndex(
+            (sampleEvent) => sampleEvent.date.getTime() === event.date.getTime()
+          )
+          const alignment = alignments?.[eventIndex] ?? alignments?.[0]
+
+          return (
+            <TimelineItem key={event.date.getTime()} align={alignment}>
+              {(showSideLabels || responsiveLabels) && (
+                <TimelineSideLabel className={cn(responsiveLabels && "max-sm:hidden")}>
+                  {event.marker}
+                </TimelineSideLabel>
               )}
-              <EventSummary event={event} richContent={richContent} />
-            </TimelineContent>
-          </TimelineItem>
-        ))}
+              <TimelineDot />
+              <TimelineContent>
+                {(!showSideLabels || responsiveLabels) && (
+                  <Text
+                    className={cn(
+                      "pb-1 font-medium text-muted-foreground text-xs",
+                      responsiveLabels && "leading-6 sm:hidden"
+                    )}
+                  >
+                    {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
+                  </Text>
+                )}
+                <EventSummary event={event} richContent={richContent} />
+              </TimelineContent>
+            </TimelineItem>
+          )
+        })}
       </Fragment>
     ))}
   </Timeline>
@@ -151,21 +187,23 @@ const TimelineExample = ({
 
 const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) => (
   <div className="flex w-full max-w-6xl flex-col gap-10">
-    {exampleStates.map(({ label, ...exampleProperties }) => (
-      <section key={label} className="flex flex-col gap-4">
-        <Title element="h2" size="sm">
-          {label}
-        </Title>
-        <div className={cn("grid grid-cols-1 items-start gap-6", orientation === "vertical" && "md:grid-cols-2")}>
-          {colors.map((color) => (
-            <div key={color} className="flex min-w-0 flex-col gap-3">
-              <Text className="font-medium text-muted-foreground text-sm capitalize">{color}</Text>
-              <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
-            </div>
-          ))}
-        </div>
-      </section>
-    ))}
+    {exampleStates
+      .filter((exampleState) => orientation === "horizontal" || !exampleState.horizontalOnly)
+      .map(({ label, ...exampleProperties }) => (
+        <section key={label} className="flex flex-col gap-4">
+          <Title element="h2" size="sm">
+            {label}
+          </Title>
+          <div className={cn("grid grid-cols-1 items-start gap-6", orientation === "vertical" && "md:grid-cols-2")}>
+            {colors.map((color) => (
+              <div key={color} className="flex min-w-0 flex-col gap-3">
+                <Text className="font-medium text-muted-foreground text-sm capitalize">{color}</Text>
+                <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
   </div>
 )
 

@@ -37,7 +37,7 @@ const timelineColorClassNames: Record<TimelineColor, string> = {
 }
 
 const timelineRowClassName = cn(
-  "group/timeline-row col-span-full grid grid-cols-subgrid",
+  "group/timeline-row col-span-full grid grid-cols-subgrid [--timeline-dot-position:1.375rem]",
   "group-data-[orientation=horizontal]/timeline:col-span-1 group-data-[orientation=horizontal]/timeline:row-span-full",
   "group-data-[orientation=horizontal]/timeline:grid-cols-none group-data-[orientation=horizontal]/timeline:grid-rows-subgrid"
 )
@@ -68,9 +68,9 @@ const TimelineRailLine = () => (
       "group-data-[orientation=horizontal]/timeline:translate-x-0",
       "group-data-[orientation=horizontal]/timeline:h-1 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
       "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:rounded-l-sm",
+      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:left-[max(0px,calc(var(--timeline-dot-position)-1.375rem))]",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-auto",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:w-11",
+      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-[max(0px,calc(100%-var(--timeline-dot-position)-1.375rem))]",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:rounded-r-sm",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]",
@@ -82,8 +82,8 @@ const TimelineRailLine = () => (
       "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
       "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
       "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-[1.375rem]",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-1.375rem)]",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-(--timeline-dot-position)",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-var(--timeline-dot-position))]",
       "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:w-auto"
     )}
   />
@@ -145,8 +145,30 @@ export const Timeline: FC<TimelineProps> = ({
   )
 }
 
-export const TimelineItem: FC<ComponentPropsWithoutRef<"div">> = ({ className, ...props }) => (
-  <div data-slot="timeline-item" className={cn(timelineRowClassName, className)} {...props} />
+export type TimelineItemAlignment = "start" | "center" | "end"
+
+export type TimelineItemProps = ComponentPropsWithoutRef<"div"> & {
+  /**
+   * Positions horizontal content and side-label blocks relative to the dot, preserving their internal layout.
+   *
+   * Defaults to `start`.
+   */
+  align?: TimelineItemAlignment
+}
+
+const timelineItemAlignmentClassNames: Record<TimelineItemAlignment, string> = {
+  start: "[--timeline-dot-position:1.375rem]",
+  center: "[--timeline-dot-position:50%]",
+  end: "[--timeline-dot-position:calc(100%-1.375rem)]",
+}
+
+export const TimelineItem: FC<TimelineItemProps> = ({ align = "start", className, ...props }) => (
+  <div
+    data-slot="timeline-item"
+    data-align={align}
+    className={cn(timelineRowClassName, timelineItemAlignmentClassNames[align], className)}
+    {...props}
+  />
 )
 
 /**
@@ -165,6 +187,13 @@ export const TimelineSideLabel: FC<ComponentPropsWithoutRef<"div">> = ({ classNa
       "group-data-[orientation=horizontal]/timeline:pt-0 group-data-[orientation=horizontal]/timeline:text-left",
       "group-data-[orientation=horizontal]/timeline:self-end group-data-[orientation=horizontal]/timeline:pr-6",
       "group-data-[orientation=horizontal]/timeline:pb-2 group-data-[orientation=horizontal]/timeline:pl-4",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:px-4",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:w-fit",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:justify-self-center",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:pl-6",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:pr-4",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:w-fit",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:justify-self-end",
       "whitespace-nowrap font-medium text-muted-foreground text-xs",
       className
     )}
@@ -177,7 +206,7 @@ export const TimelineSideLabel: FC<ComponentPropsWithoutRef<"div">> = ({ classNa
  *
  * NOTE: The dot aligns with the first text line of the content (`top-0.5` matches a `text-xs` first line). When the row
  * has a `TimelineSideLabel`, it shifts down to `top-1.5` to align with the side label and a base-size first line
- * instead. In horizontal timelines, its left edge sits 1rem from the item's left edge, aligned with labels and content.
+ * instead. In horizontal timelines, the dot follows the item's `align` setting along with its labels and content.
  * Override with `className` if your content needs a different offset.
  */
 export const TimelineDot: FC<ComponentPropsWithoutRef<"div">> = ({ className, children, ...props }) => (
@@ -189,7 +218,7 @@ export const TimelineDot: FC<ComponentPropsWithoutRef<"div">> = ({ className, ch
       className={cn(
         "absolute left-1/2 z-10 block size-3 -translate-x-1/2 rounded-full",
         "top-0.5 group-has-data-[slot=timeline-side-label]/timeline-row:top-1.5",
-        "group-data-[orientation=horizontal]/timeline:left-4 group-data-[orientation=horizontal]/timeline:translate-x-0",
+        "group-data-[orientation=horizontal]/timeline:left-(--timeline-dot-position)",
         "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
         "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",
         "border-[3px] border-(--timeline-color) bg-white",
@@ -210,6 +239,15 @@ export const TimelineContent: FC<ComponentPropsWithoutRef<"div">> = ({ className
       "group-data-[orientation=horizontal]/timeline:pt-2 group-data-[orientation=horizontal]/timeline:pr-6",
       "group-data-[orientation=horizontal]/timeline:pb-0 group-data-[orientation=horizontal]/timeline:pl-4",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:pr-0",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:w-fit",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:max-w-full",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:justify-self-center",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=center]/timeline-row:px-4",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:w-fit",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:max-w-full",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:justify-self-end",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:pl-6",
+      "group-data-[orientation=horizontal]/timeline:group-data-[align=end]/timeline-row:pr-4",
       className
     )}
     {...props}
