@@ -15,8 +15,10 @@ import {
   AttendancePoolSchema,
   AttendancePoolWriteSchema,
   AttendanceSchema,
+  AttendanceViewSchema,
   AttendanceWriteSchema,
   buildBulkRegisterChangeEvent,
+  buildAttendanceView,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
   DEREGISTER_GRACE_PERIOD_MS,
@@ -348,7 +350,7 @@ const onRegisterChangeProcedure = procedureTraceErrorsOnly
         continue
       }
 
-      yield registerChangeEvent
+      yield buildBulkRegisterChangeEvent(registerChangeEvent, ctx.principal?.subject ?? null)
     }
   })
 
@@ -616,6 +618,17 @@ export type GetAttendanceInput = inferProcedureInput<typeof getAttendanceProcedu
 export type GetAttendanceOutput = inferProcedureOutput<typeof getAttendanceProcedure>
 const getAttendanceProcedure = procedure
   .input(z.object({ id: AttendanceSchema.shape.id }))
+  .output(AttendanceViewSchema)
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
+    return buildAttendanceView(attendance, ctx.principal?.subject ?? null)
+  })
+
+const getAttendanceForAdminProcedure = procedure
+  .input(z.object({ id: AttendanceSchema.shape.id }))
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.attendanceService.getAttendanceById(ctx.handle, input.id))
 
@@ -712,6 +725,7 @@ export const attendanceRouter = t.router({
   registerAttendance: registerAttendanceProcedure,
   updateSelectionResponses: updateSelectionResponsesProcedure,
   getAttendance: getAttendanceProcedure,
+  getAttendanceForAdmin: getAttendanceForAdminProcedure,
   updateAttendance: updateAttendanceProcedure,
   findChargeAttendeeScheduleDate: findChargeAttendeeScheduleDateProcedure,
   notifyAttendees: notifyAttendeesProcedure,

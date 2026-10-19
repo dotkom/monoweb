@@ -4,7 +4,7 @@ import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvi
 import { useTRPC } from "@/utils/trpc/client"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type Attendance, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
+import { type AttendanceView, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
@@ -21,7 +21,7 @@ import {
 } from "./getAttendanceCardRegistrationAvailability"
 
 interface UseAttendanceCardApiOptions {
-  initialAttendance: Attendance
+  initialAttendance: AttendanceView
   initialRegistrationAvailability: AttendanceRouter.GetRegistrationAvailabilityOutput | null
   user: User | null
   onDeregisterSuccess: () => void

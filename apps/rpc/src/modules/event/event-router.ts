@@ -19,6 +19,8 @@ import {
   EventSchema,
   type EventVisibility,
   EventWithAttendanceSchema,
+  EventWithAttendanceViewSchema,
+  buildEventWithAttendanceView,
   EventWithAttendanceSummarySchema,
   EventWithFeedbackFormSchema,
   EventWriteSchema,
@@ -74,7 +76,7 @@ export type GetEventInput = inferProcedureInput<typeof getEventProcedure>
 export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
 const getEventProcedure = procedure
   .input(EventSchema.shape.id)
-  .output(EventWithAttendanceSchema)
+  .output(EventWithAttendanceViewSchema)
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input)
@@ -89,6 +91,21 @@ const getEventProcedure = procedure
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
+
+    return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
+  })
+
+const getEventForAdminProcedure = procedure
+  .input(EventSchema.shape.id)
+  .output(EventWithAttendanceSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(isCommitteeMember()))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(ctx.handle, input)
+    const attendance = event.attendanceId
+      ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
+      : null
     return { event, attendance }
   })
 
@@ -96,7 +113,7 @@ export type FindEventInput = inferProcedureInput<typeof findEventProcedure>
 export type FindEventOutput = inferProcedureOutput<typeof findEventProcedure>
 const findEventProcedure = procedure
   .input(EventSchema.shape.id)
-  .output(EventWithAttendanceSchema.nullable())
+  .output(EventWithAttendanceViewSchema.nullable())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const event = await ctx.eventService.findEventById(ctx.handle, input)
@@ -115,7 +132,8 @@ const findEventProcedure = procedure
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
-    return { event, attendance }
+
+    return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
   })
 
 export type CreateEventInput = inferProcedureInput<typeof createEventProcedure>
@@ -268,7 +286,7 @@ const allEventsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
   .output(
     z.object({
-      items: EventWithAttendanceSchema.array(),
+      items: EventWithAttendanceViewSchema.array(),
       nextCursor: EventSchema.shape.id.optional(),
     })
   )
@@ -296,8 +314,12 @@ const allEventsProcedure = procedure
       attendance: attendances.find((attendance) => attendance.id === event.attendanceId) || null,
     }))
 
+    const items = eventsWithAttendance.map((eventWithAttendance) =>
+      buildEventWithAttendanceView(eventWithAttendance, ctx.principal?.subject ?? null)
+    )
+
     return {
-      items: eventsWithAttendance,
+      items,
       nextCursor: events.at(-1)?.id,
     }
   })
@@ -354,7 +376,7 @@ const allByAttendingUserIdProcedure = procedure
   )
   .output(
     z.object({
-      items: EventWithAttendanceSchema.array(),
+      items: EventWithAttendanceViewSchema.array(),
       nextCursor: EventSchema.shape.id.optional(),
     })
   )
@@ -389,7 +411,9 @@ const allByAttendingUserIdProcedure = procedure
     }))
 
     return {
-      items: eventsWithAttendance,
+      items: eventsWithAttendance.map((eventWithAttendance) =>
+        buildEventWithAttendanceView(eventWithAttendance, ctx.principal.subject)
+      ),
       nextCursor: events.at(-1)?.id,
     }
   })
@@ -402,7 +426,7 @@ const allByAttendingUserIdForCalendarProcedure = procedure
   )
   .output(
     z.object({
-      items: EventWithAttendanceSchema.array(),
+      items: EventWithAttendanceViewSchema.array(),
       nextCursor: EventSchema.shape.id.optional(),
     })
   )
@@ -433,8 +457,12 @@ const allByAttendingUserIdForCalendarProcedure = procedure
       attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
     }))
 
+    const items = eventsWithAttendance.map((eventWithAttendance) =>
+      buildEventWithAttendanceView(eventWithAttendance, input.id)
+    )
+
     return {
-      items: eventsWithAttendance,
+      items,
       nextCursor: events.at(-1)?.id,
     }
   })
@@ -575,7 +603,7 @@ export type FindParentEventInput = inferProcedureInput<typeof findParentEventPro
 export type FindParentEventOutput = inferProcedureOutput<typeof findParentEventProcedure>
 const findParentEventProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
-  .output(EventWithAttendanceSchema.nullable())
+  .output(EventWithAttendanceViewSchema.nullable())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const childEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
@@ -603,14 +631,15 @@ const findParentEventProcedure = procedure
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
-    return { event, attendance }
+
+    return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
   })
 
 export type FindChildEventsInput = inferProcedureInput<typeof findChildEventsProcedure>
 export type FindChildEventsOutput = inferProcedureOutput<typeof findChildEventsProcedure>
 const findChildEventsProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
-  .output(EventWithAttendanceSchema.array())
+  .output(EventWithAttendanceViewSchema.array())
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const parentEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
@@ -630,10 +659,15 @@ const findChildEventsProcedure = procedure
       ctx.handle,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
     )
-    return events.map((event) => ({
-      event,
-      attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
-    }))
+    return events.map((event) =>
+      buildEventWithAttendanceView(
+        {
+          event,
+          attendance: attendances.find((attendance) => attendance.id === event.attendanceId) ?? null,
+        },
+        ctx.principal?.subject ?? null
+      )
+    )
   })
 
 export type FindUnansweredByUserInput = inferProcedureInput<typeof findUnansweredByUserProcedure>
@@ -784,6 +818,7 @@ export const eventRouter = t.router({
   attendance: attendanceRouter,
   feedback: feedbackRouter,
   get: getEventProcedure,
+  getForAdmin: getEventForAdminProcedure,
   find: findEventProcedure,
   create: createEventProcedure,
   edit: editEventProcedure,

@@ -2,7 +2,7 @@ import { getServerSession } from "@/auth"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import type { Attendance } from "@dotkomonline/rpc/attendance"
+import type { AttendanceView } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
 import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
@@ -134,9 +134,9 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
 interface EventContentProps {
   event: Event
-  attendance: Attendance | null
+  attendance: AttendanceView | null
   parentEvent: Event | null
-  parentAttendance: Attendance | null
+  parentAttendance: AttendanceView | null
   registrationAvailability: RegistrationAvailability | null
   user: User | null
 }

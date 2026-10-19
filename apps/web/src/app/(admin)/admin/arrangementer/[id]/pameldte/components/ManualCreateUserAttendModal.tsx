@@ -7,8 +7,9 @@ import { useIsMobile } from "@admin/hooks/use-is-mobile"
 import { notifyFail } from "@admin/lib/notifications"
 import {
   type Attendance,
+  type AttendanceView,
   type AttendancePool,
-  type Attendee,
+  type AttendeeSummary,
   getAttendablePool,
   getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
@@ -243,7 +244,7 @@ function ParentEventRegistrationStatus({
   userId,
 }: {
   parentEvent: Event
-  parentAttendance: Attendance | null
+  parentAttendance: AttendanceView | null
   userId: UserId
 }) {
   const parentAttendee = parentAttendance?.attendees.find((attendee) => attendee.userId === userId) ?? null
@@ -257,7 +258,7 @@ function ParentEventRegistrationStatus({
   )
 }
 
-function getParentRegistrationStatusText(parentEventTitle: string, parentAttendee: Attendee | null): string {
+function getParentRegistrationStatusText(parentEventTitle: string, parentAttendee: AttendeeSummary | null): string {
   if (parentAttendee === null) {
     return `Ikke påmeldt forelderarrangementet ${parentEventTitle}`
   }

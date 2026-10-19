@@ -1,10 +1,10 @@
 import { getServerSession } from "@/auth"
-import type { EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { Text } from "@dotkomonline/ui"
 import { EventTimelineList } from "./event-timeline-list"
 
 type EventTimelineProps = {
-  eventsWithAttendance: EventWithAttendance[]
+  eventsWithAttendance: EventWithAttendanceView[]
 }
 
 export async function EventTimeline({ eventsWithAttendance }: EventTimelineProps) {
