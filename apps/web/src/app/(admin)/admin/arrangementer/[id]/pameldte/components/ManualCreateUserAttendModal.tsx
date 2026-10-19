@@ -1,5 +1,6 @@
 "use client"
 
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import { CheckboxField } from "@admin/components/forms/CheckboxField"
 import { Form } from "@admin/components/forms/Form"
 import { SegmentedControlField } from "@admin/components/forms/SegmentedControlField"
@@ -19,6 +20,7 @@ import type { User, UserId } from "@dotkomonline/rpc/user"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Button, Text } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconAlertTriangle, IconX } from "@tabler/icons-react"
+import { isAfter } from "date-fns"
 import { useEffect } from "react"
 import { type Control, useForm, type UseFormGetValues, type UseFormSetValue, useWatch } from "react-hook-form"
 import { z } from "zod"
@@ -313,8 +315,17 @@ function SelectedPoolOccupancy({
 }
 
 function PoolOccupancyStatus({ pool, attendance }: { pool: AttendancePool; attendance: Attendance }) {
+  const now = new Date()
+
+  const delayedAttendees = attendance.attendees.filter(
+    (attendee) =>
+      attendee.attendancePoolId === pool.id && !attendee.registered && isAfter(attendee.earliestReservationAt, now)
+  )
+
+  useDeadlineTick(...delayedAttendees.map((attendee) => attendee.earliestReservationAt))
+
   const registeredAttendeeCount = getRegisteredAttendeeCount(attendance, pool.id)
-  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id)
+  const queuedAttendeeCount = getQueuedAttendeeCount(attendance, pool.id) - delayedAttendees.length
   const poolIsFull = pool.capacity > 0 && registeredAttendeeCount >= pool.capacity
 
   return (
@@ -323,7 +334,14 @@ function PoolOccupancyStatus({ pool, attendance }: { pool: AttendancePool; atten
         {poolIsFull && <IconAlertTriangle className="size-5 text-red-600" />}
         <Text className="text-sm">{getPoolOccupancyText(pool, registeredAttendeeCount)}</Text>
       </div>
+
       <WaitlistCount count={queuedAttendeeCount} poolTitle={pool.title} />
+
+      {delayedAttendees.length > 0 && (
+        <Text className="text-sm">
+          {delayedAttendees.length} med utsatt påmelding i {pool.title}
+        </Text>
+      )}
     </div>
   )
 }
