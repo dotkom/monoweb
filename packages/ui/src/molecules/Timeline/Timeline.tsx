@@ -1,4 +1,12 @@
-import type { ComponentPropsWithoutRef, FC } from "react"
+import {
+  Children,
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type FC,
+  Fragment,
+  isValidElement,
+  type ReactNode,
+} from "react"
 import { cn } from "../../utils"
 
 /**
@@ -19,7 +27,8 @@ export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
   vertical: "grid-cols-[auto_1.5rem_minmax(0,1fr)]",
-  horizontal: "grid-flow-col auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
+  horizontal:
+    "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
 }
 
 const timelineColorClassNames: Record<TimelineColor, string> = {
@@ -80,9 +89,25 @@ const TimelineRailLine = () => (
   />
 )
 
+const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
+  Children.toArray(children).flatMap((child) => {
+    if (isValidElement<{ children?: ReactNode }>(child)) {
+      if (child.type === Fragment) {
+        return getHorizontalTimelineColumns(child.props.children)
+      }
+
+      if (child.type === TimelineGroupHeader) {
+        return ["max-content"]
+      }
+    }
+
+    return ["minmax(12rem,1fr)"]
+  })
+
 /**
  * Defaults to vertical. Use `orientation="horizontal"` for a scrolling timeline with labels above the rail and content
- * below it. Horizontal items have a minimum width of 12rem; override the grid's auto columns with `className` as needed.
+ * below it. Horizontal items have a minimum width of 12rem, while group headers fit their labels. Override the grid's
+ * columns with `className` as needed.
  * `color` defaults to `"brand"` and also supports `"gray"`, coloring both the rail and dot borders.
  * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
  */
@@ -91,21 +116,34 @@ export const Timeline: FC<TimelineProps> = ({
   color = "brand",
   showRailStubs = true,
   className,
+  children,
+  style,
   ...props
-}) => (
-  <div
-    data-slot="timeline"
-    data-orientation={orientation}
-    data-rail-stubs={showRailStubs}
-    className={cn(
-      "group/timeline grid w-full",
-      timelineGridClassNames[orientation],
-      timelineColorClassNames[color],
-      className
-    )}
-    {...props}
-  />
-)
+}) => {
+  const timelineStyle: CSSProperties & { "--timeline-columns"?: string } = { ...style }
+
+  if (orientation === "horizontal") {
+    timelineStyle["--timeline-columns"] = getHorizontalTimelineColumns(children).join(" ")
+  }
+
+  return (
+    <div
+      data-slot="timeline"
+      data-orientation={orientation}
+      data-rail-stubs={showRailStubs}
+      className={cn(
+        "group/timeline grid w-full",
+        timelineGridClassNames[orientation],
+        timelineColorClassNames[color],
+        className
+      )}
+      style={timelineStyle}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
 
 export const TimelineItem: FC<ComponentPropsWithoutRef<"div">> = ({ className, ...props }) => (
   <div data-slot="timeline-item" className={cn(timelineRowClassName, className)} {...props} />
@@ -218,8 +256,8 @@ const groupHeaderLabelPositionClassNames: Record<TimelineGroupHeaderPosition, st
  *   - below `sm:` -> `content`
  *   - above or equal to `sm:` -> `side`.
  *
- * In horizontal timelines, the header occupies its own column. `side` places its label above the rail and `content`
- * below it; `responsive` switches between these at the same breakpoint.
+ * In horizontal timelines, the header uses a compact column sized to its label, beside the first item in its group.
+ * `side` places its label above the rail and `content` below it; `responsive` switches at the same breakpoint.
  */
 export const TimelineGroupHeader: FC<TimelineGroupHeaderProps> = ({
   position = "side",
@@ -235,7 +273,7 @@ export const TimelineGroupHeader: FC<TimelineGroupHeaderProps> = ({
         className={cn(
           "row-start-1 min-w-0 pt-4 pb-1 group-first/timeline-row:pt-0",
           "group-data-[orientation=horizontal]/timeline:pt-0 group-data-[orientation=horizontal]/timeline:pb-0",
-          "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:pr-6",
+          "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:pr-2",
           "group-data-[orientation=horizontal]/timeline:pl-4",
           "group-data-[orientation=horizontal]/timeline:self-end",
           "whitespace-nowrap font-semibold text-sm",
