@@ -30,7 +30,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) 
         start={start}
         end={end}
         eventType={event.type}
-        className="shrink-0 min-h-11 min-w-11 bg-background dark:bg-stone-800 dark:border-stone-700"
+        className="shrink-0 min-h-11 min-w-11"
         containerClassName="shrink-0"
       />
 

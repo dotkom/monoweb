@@ -70,7 +70,7 @@ const CalendarPage = ({
 }: CalendarPageProps) => (
   <div
     className={cn(
-      "flex h-fit min-w-8 flex-col items-center overflow-hidden rounded-md border border-gray-200 dark:border-stone-700",
+      "flex h-fit min-w-8 flex-col items-center overflow-hidden rounded-md border border-gray-300 bg-background dark:border-stone-700 dark:bg-stone-800",
       endDay && "grid w-16 grid-cols-[1fr_auto_1fr] grid-rows-[auto_1fr] items-stretch",
       endDay && showYear && "w-22.5",
       className
@@ -78,7 +78,7 @@ const CalendarPage = ({
   >
     <div
       className={cn(
-        "flex h-4.25 w-full flex-row items-center justify-center bg-gray-200 dark:bg-stone-700",
+        "flex h-4.25 w-full flex-row justify-center bg-gray-200 pt-0.5 dark:bg-stone-700",
         endDay && "col-span-3 px-1.5",
         endMonthLabel && "grid grid-cols-subgrid items-center",
         titleClassName
@@ -187,7 +187,7 @@ export const CalendarBox = ({
         monthLabel={startMonthLabel}
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
-        className={cn("min-h-9 min-w-9 dark:border-stone-800", className)}
+        className={cn("min-h-9 min-w-9", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
     )
@@ -202,7 +202,7 @@ export const CalendarBox = ({
         startDayWeekday={startDayWeekday}
         endDay={endDate.day}
         endDayWeekday={endDayWeekday}
-        className={cn("min-h-11 min-w-11 dark:border-stone-800", className)}
+        className={cn("min-h-11 min-w-11", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
     )
@@ -217,7 +217,7 @@ export const CalendarBox = ({
       startDayWeekday={startDayWeekday}
       endDay={endDate.day}
       endDayWeekday={endDayWeekday}
-      className={cn("min-h-11 min-w-11 dark:border-stone-800", className, containerClassName)}
+      className={cn("min-h-11 min-w-11", className, containerClassName)}
       titleClassName={cn("dark:bg-stone-800", titleClassName)}
     />
   )

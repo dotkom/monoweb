@@ -90,7 +90,7 @@ export const EventImage: FC<EventImageProps> = ({
               start={start}
               end={end}
               eventType={eventType}
-              className="bg-background dark:bg-stone-800 border-gray-300 dark:border-stone-700 rounded-sm"
+              className="bg-background border-gray-300 dark:border-stone-700 rounded-sm"
               dayTextClassName="text-sm"
               weekdayTextClassName="sm:hidden"
               includeWeekday

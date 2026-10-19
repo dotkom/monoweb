@@ -3,7 +3,7 @@
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import { cn } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { endOfISOWeek, setISOWeek, setISOWeekYear, startOfISOWeek, subDays } from "date-fns"
 import type { FC } from "react"
@@ -140,7 +140,7 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
           {eventTypeGuideItems.map(({ type, classes, shortLabel }) => (
             <span key={type} className="flex items-center">
               <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
-              {shortLabel}
+              <Text element="span">{shortLabel}</Text>
             </span>
           ))}
         </div>

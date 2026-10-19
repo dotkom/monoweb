@@ -50,7 +50,7 @@ export const ConnectedMonths = () => (
     <CalendarBox
       start={new Date(2026, 11, 31)}
       end={new Date(2027, 0, 1)}
-      className="rounded-sm border-gray-300 bg-background dark:border-stone-700"
+      className="rounded-sm"
       titleClassName="rounded-t-sm py-1"
       titleTextClassName="text-xs"
       dayTextClassName="text-sm"
