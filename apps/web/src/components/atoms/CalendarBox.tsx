@@ -44,7 +44,7 @@ interface CalendarPageProps {
 
 const getCalendarDateParts = (date: Date): CalendarDateParts => ({
   year: formatDate(date, "yy", { locale: nb }),
-  month: formatDate(date, "MMM", { locale: nb }).replace(".", ""),
+  month: formatDate(date, "MMM", { locale: nb }).replace(".", "").slice(0, 3),
   day: formatDate(date, "dd", { locale: nb }),
 })
 
