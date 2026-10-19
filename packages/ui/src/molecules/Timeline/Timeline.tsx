@@ -61,7 +61,7 @@ const timelineRowClassName = cn(
 )
 
 const timelineRailClassName = cn(
-  "relative col-start-2 row-start-1",
+  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem]",
   "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:row-start-2"
 )
 
@@ -76,9 +76,10 @@ const TimelineRailLine = () => (
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
       "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
-      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-8",
+      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2)]",
       "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_55%,transparent)]",
+      // Keep the fade length fixed as the marker grows (45% of the original 2rem segment).
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_calc(100%-0.9rem),transparent)]",
       // Overlap horizontal segments so fractional column widths do not leave seams.
       "group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-right-px",
       "group-data-[orientation=horizontal]/timeline:top-1/2",
@@ -86,9 +87,9 @@ const TimelineRailLine = () => (
       "group-data-[orientation=horizontal]/timeline:translate-x-0",
       "group-data-[orientation=horizontal]/timeline:h-1 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
       "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:rounded-l-sm",
-      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:left-[max(0px,calc(var(--timeline-dot-position)-1.375rem))]",
+      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:left-[max(0px,calc(var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-[max(0px,calc(100%-var(--timeline-dot-position)-1.375rem))]",
+      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-[max(0px,calc(100%-var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:rounded-r-sm",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
       "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]",
@@ -225,34 +226,79 @@ export const TimelineSideLabel: FC<ComponentPropsWithoutRef<"div">> = ({ classNa
   />
 )
 
+export type TimelineDotProps = ComponentPropsWithoutRef<"div"> &
+  (
+    | {
+        render?: undefined
+        size?: number
+      }
+    | {
+        /**
+         * Replaces the circular marker with custom content.
+         */
+        render: ReactNode
+        /**
+         * Marker size in pixels.
+         */
+        size: number
+      }
+  )
+
+type TimeDotMarkerStyle = CSSProperties & { "--timeline-marker-size"?: string }
+
 /**
  * The dot on the rail. Renders the rail line segment for its row as well.
  *
- * NOTE: The dot aligns with the first text line of the content (`top-0.5` matches a `text-xs` first line). When the row
- * has a `TimelineSideLabel`, it shifts down to `top-1.5` to align with the side label and a base-size first line
+ * NOTE: The dot's center aligns with the first text line of the content (`top-2` matches a `text-xs` first line). When
+ * the row has a `TimelineSideLabel`, it shifts down to `top-3` to align with the side label and a base-size first line
  * instead. In horizontal timelines, the dot follows the item's `align` setting along with its labels and content.
  * Override with `className` if your content needs a different offset.
  */
-export const TimelineDot: FC<ComponentPropsWithoutRef<"div">> = ({ className, children, ...props }) => (
-  <div data-slot="timeline-dot" className={timelineRailClassName} {...props}>
-    <TimelineRailLine />
+export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render, size, style, ...props }) => {
+  let markerClassName = "block border-[3px] border-(--timeline-color) bg-white"
+  const markerStyle: TimeDotMarkerStyle = { ...style }
 
-    <span
-      aria-hidden="true"
+  if (size !== undefined) {
+    markerStyle["--timeline-marker-size"] = `${size}px`
+  }
+
+  if (render !== undefined) {
+    markerClassName = "flex items-center justify-center"
+  }
+
+  return (
+    <div
+      data-slot="timeline-dot"
       className={cn(
-        "absolute left-1/2 z-10 block size-3 -translate-x-1/2 rounded-full",
-        "top-0.5 group-has-data-[slot=timeline-side-label]/timeline-row:top-1.5",
-        "group-data-[orientation=horizontal]/timeline:left-(--timeline-dot-position)",
-        "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
-        "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",
-        "border-[3px] border-(--timeline-color) bg-white",
-        className
+        timelineRailClassName,
+        "group-data-[align=start]/timeline-row:[--timeline-dot-position:calc(1rem+var(--timeline-marker-size)/2)]",
+        "group-data-[align=end]/timeline-row:[--timeline-dot-position:calc(100%-1rem-var(--timeline-marker-size)/2)]"
       )}
-    />
+      style={markerStyle}
+      {...props}
+    >
+      <TimelineRailLine />
 
-    {children}
-  </div>
-)
+      <span
+        data-slot="timeline-marker"
+        aria-hidden="true"
+        className={cn(
+          "absolute left-1/2 z-10 size-(--timeline-marker-size) -translate-x-1/2 -translate-y-1/2 rounded-full",
+          "top-2 group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+          "group-data-[orientation=horizontal]/timeline:left-(--timeline-dot-position)",
+          "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
+          "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",
+          markerClassName,
+          className
+        )}
+      >
+        {render}
+      </span>
+
+      {children}
+    </div>
+  )
+}
 
 export const TimelineContent: FC<ComponentPropsWithoutRef<"div">> = ({ className, ...props }) => (
   <div
