@@ -19,6 +19,7 @@ import {
   TimelineItem,
   type TimelineItemAlignment,
   type TimelineOrientation,
+  type TimelineRail,
   TimelineSideLabel,
 } from "./Timeline"
 
@@ -53,6 +54,7 @@ const sampleEvents: SampleEvent[] = [
 type TimelineExampleState = {
   label: string
   showRailStubs?: boolean
+  rail?: TimelineRail
   showSideLabels?: boolean
   groupBy?: TimelineGroupBy
   groupHeaderPosition?: TimelineGroupHeaderPosition
@@ -70,6 +72,17 @@ const exampleStates: TimelineExampleState[] = [
   { label: "Without rail stubs", showRailStubs: false },
   { label: "With side labels", showSideLabels: true },
   { label: "Side labels without rail stubs", showSideLabels: true, showRailStubs: false },
+  { label: "Segmented rail", rail: "segmented", showSideLabels: true },
+  { label: "Segmented rail with custom markers", rail: "segmented", showCustomMarkers: true, showSideLabels: true },
+  { label: "Segmented rail with group labels", rail: "segmented", showCustomMarkers: true, groupBy: "day" },
+  {
+    label: "Segmented rail with mixed alignment",
+    rail: "segmented",
+    showCustomMarkers: true,
+    showSideLabels: true,
+    alignments: ["start", "center", "end"],
+    horizontalOnly: true,
+  },
   { label: "Bleeding start", bleed: "start" },
   { label: "Bleeding start without rail stubs", bleed: "start", showRailStubs: false },
   { label: "Bleeding end", bleed: "end", alignments: ["start", "center", "end"] },
@@ -180,6 +193,7 @@ const TimelineExample = ({
   orientation,
   color,
   showRailStubs = true,
+  rail,
   showSideLabels = false,
   groupBy,
   groupHeaderPosition = "side",
@@ -190,7 +204,7 @@ const TimelineExample = ({
   bleed,
   showCustomMarkers = false,
 }: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
-  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs} bleed={bleed}>
+  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs} rail={rail} bleed={bleed}>
     {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
       <Fragment key={group.key}>
         {groupBy !== undefined && (
@@ -212,7 +226,10 @@ const TimelineExample = ({
               <TimelineDot
                 render={showCustomMarkers ? event.icon : undefined}
                 size={showCustomMarkers ? 20 : 12}
-                className={cn(showCustomMarkers && "bg-background text-(--timeline-color)")}
+                className={cn(
+                  showCustomMarkers && "text-(--timeline-color)",
+                  showCustomMarkers && rail !== "segmented" && "bg-background"
+                )}
               />
               <TimelineContent>
                 {(!showSideLabels || responsiveLabels) && (

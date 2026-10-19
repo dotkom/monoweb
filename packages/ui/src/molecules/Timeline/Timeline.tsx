@@ -19,11 +19,16 @@ import { cn } from "../../utils"
 export type TimelineOrientation = "vertical" | "horizontal"
 export type TimelineColor = "brand" | "gray"
 export type TimelineBleed = "start" | "end" | "both"
+export type TimelineRail = "continuous" | "segmented"
 
 export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
   orientation?: TimelineOrientation
   color?: TimelineColor
   showRailStubs?: boolean
+  /**
+   * Rounded segments with a gap around each marker. Segmented rails never show outer stubs.
+   */
+  rail?: TimelineRail
   /**
    * Removes the inset at the chosen ends. This is left/right horizontally and top/bottom vertically.
    */
@@ -61,51 +66,114 @@ const timelineRowClassName = cn(
 )
 
 const timelineRailClassName = cn(
-  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem]",
+  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem] [--timeline-dot-offset:0.5rem]",
+  "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:0.75rem]",
   "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:row-start-2"
 )
 
-const TimelineRailLine = () => (
-  <span
-    aria-hidden="true"
-    className={cn(
-      "absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-(--timeline-color)",
-      "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
-      // Start at the first dot's center, including its lower offset when a side label is present.
-      "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
-      "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
-      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
-      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2)]",
-      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
-      // Keep the fade length fixed as the marker grows (45% of the original 2rem segment).
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_calc(100%-0.9rem),transparent)]",
-      // Overlap horizontal segments so fractional column widths do not leave seams.
-      "group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-right-px",
-      "group-data-[orientation=horizontal]/timeline:top-1/2",
-      "group-data-[orientation=horizontal]/timeline:bottom-auto group-data-[orientation=horizontal]/timeline:w-auto",
-      "group-data-[orientation=horizontal]/timeline:translate-x-0",
-      "group-data-[orientation=horizontal]/timeline:h-1 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
-      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:rounded-l-sm",
-      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:left-[max(0px,calc(var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-[max(0px,calc(100%-var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:rounded-r-sm",
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
-      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]",
-      // Without stubs, hide headers outside the dot range and stop each end at the dot's center.
-      "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
-      "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-2",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-(--timeline-dot-position)",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-var(--timeline-dot-position))]",
-      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:w-auto"
-    )}
-  />
+const timelineSegmentClassName = cn(
+  "absolute hidden w-1 bg-(--timeline-color) group-data-[rail=segmented]/timeline:block",
+  "left-1/2 -translate-x-1/2",
+  "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:h-1",
+  "group-data-[orientation=horizontal]/timeline:w-auto group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
+  "group-data-[orientation=horizontal]/timeline:translate-x-0"
+)
+
+const TimelineRailSegments = ({ hasMarker }: { hasMarker: boolean }) => {
+  if (!hasMarker) {
+    return (
+      <span
+        data-slot="timeline-segment-bridge"
+        aria-hidden="true"
+        className={cn(
+          timelineSegmentClassName,
+          "-top-4 bottom-4",
+          "group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-right-px",
+          "group-data-[orientation=horizontal]/timeline:bottom-auto",
+          "group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
+          "group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden"
+        )}
+      />
+    )
+  }
+
+  return (
+    <>
+      <span
+        data-slot="timeline-segment-before"
+        aria-hidden="true"
+        className={cn(
+          timelineSegmentClassName,
+          // Join adjacent rows above the marker so even a large marker has room for its gap.
+          "-top-4 bottom-[calc(100%-var(--timeline-dot-offset)+var(--timeline-marker-size)/2+0.25rem)] rounded-b-full",
+          "group-data-[orientation=horizontal]/timeline:left-0",
+          "group-data-[orientation=horizontal]/timeline:right-[calc(100%-var(--timeline-dot-position)+var(--timeline-marker-size)/2+0.25rem)]",
+          "group-data-[orientation=horizontal]/timeline:bottom-auto group-data-[orientation=horizontal]/timeline:rounded-none",
+          "group-data-[orientation=horizontal]/timeline:rounded-r-full",
+          "group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:hidden"
+        )}
+      />
+      <span
+        data-slot="timeline-segment-after"
+        aria-hidden="true"
+        className={cn(
+          timelineSegmentClassName,
+          "top-[calc(var(--timeline-dot-offset)+var(--timeline-marker-size)/2+0.25rem)] bottom-4 rounded-t-full",
+          "group-data-[orientation=horizontal]/timeline:left-[calc(var(--timeline-dot-position)+var(--timeline-marker-size)/2+0.25rem)]",
+          "group-data-[orientation=horizontal]/timeline:-right-px group-data-[orientation=horizontal]/timeline:bottom-auto",
+          "group-data-[orientation=horizontal]/timeline:rounded-none group-data-[orientation=horizontal]/timeline:rounded-l-full",
+          "group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:hidden"
+        )}
+      />
+    </>
+  )
+}
+
+const TimelineRailLine = ({ hasMarker = false }: { hasMarker?: boolean }) => (
+  <>
+    <span
+      aria-hidden="true"
+      className={cn(
+        "absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-(--timeline-color)",
+        "group-data-[rail=segmented]/timeline:hidden",
+        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
+        "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
+        // Start at the first dot's center, including its lower offset when a side label is present.
+        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
+        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
+        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2)]",
+        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
+        // Keep the fade length fixed as the marker grows (45% of the original 2rem segment).
+        "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_calc(100%-0.9rem),transparent)]",
+        // Overlap horizontal segments so fractional column widths do not leave seams.
+        "group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-right-px",
+        "group-data-[orientation=horizontal]/timeline:top-1/2",
+        "group-data-[orientation=horizontal]/timeline:bottom-auto group-data-[orientation=horizontal]/timeline:w-auto",
+        "group-data-[orientation=horizontal]/timeline:translate-x-0",
+        "group-data-[orientation=horizontal]/timeline:h-1 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
+        "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:rounded-l-sm",
+        "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:left-[max(0px,calc(var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
+        "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
+        "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-[max(0px,calc(100%-var(--timeline-dot-position)-var(--timeline-marker-size)/2-1rem))]",
+        "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:rounded-r-sm",
+        "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
+        "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]",
+        // Without stubs, hide headers outside the dot range and stop each end at the dot's center.
+        "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
+        "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-2",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-(--timeline-dot-position)",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-var(--timeline-dot-position))]",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:w-auto"
+      )}
+    />
+    <TimelineRailSegments hasMarker={hasMarker} />
+  </>
 )
 
 const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
@@ -129,6 +197,7 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
  * Set `color` to color both the rail and dots.
  *
  * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
+ * Set `rail="segmented"` for rounded segments with a gap around every dot and no outer stubs.
  *
  * Use `bleed="start" | "end" | "both"` to remove the inset at the selected container edges along its orientation.
  * Horizontal bleed cancels 1rem of content padding; vertical bleed removes the dot's inset while keeping it inside.
@@ -137,6 +206,7 @@ export const Timeline: FC<TimelineProps> = ({
   orientation = "vertical",
   color = "brand",
   showRailStubs = true,
+  rail = "continuous",
   bleed,
   className,
   children,
@@ -153,7 +223,8 @@ export const Timeline: FC<TimelineProps> = ({
     <div
       data-slot="timeline"
       data-orientation={orientation}
-      data-rail-stubs={showRailStubs}
+      data-rail-stubs={rail === "continuous" && showRailStubs}
+      data-rail={rail}
       data-bleed={bleed}
       className={cn(
         "group/timeline grid w-full",
@@ -277,7 +348,7 @@ export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render,
       style={markerStyle}
       {...props}
     >
-      <TimelineRailLine />
+      <TimelineRailLine hasMarker />
 
       <span
         data-slot="timeline-marker"
