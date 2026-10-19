@@ -29,7 +29,7 @@ export const QueueCount = ({ value, className }: QueueCountProps) => {
       <div className="min-h-0 overflow-hidden">
         <Text
           className={cn(
-            "text-lg mt-1 px-2 py-0.5 transform-gpu transition-opacity duration-260 ease-smooth motion-reduce:transition-none",
+            "text-lg font-medium mt-1 px-2 py-0.5 transform-gpu transition-opacity duration-260 ease-smooth motion-reduce:transition-none",
             isVisible ? "opacity-100" : "opacity-0",
             lastVisibleContent.className
           )}
