@@ -4,7 +4,7 @@ import { EventCard, EventCardSkeleton } from "@/components/molecules/EventListIt
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
 import { useCurrentTime } from "@/utils/use-current-time"
 import { getAttendee } from "@dotkomonline/rpc/attendance"
-import type { EventWithAttendance, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, cn } from "@dotkomonline/ui"
 import { IconMoodConfuzed } from "@tabler/icons-react"
@@ -18,11 +18,11 @@ export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 export type EventListDisplayMode = "cards" | "list"
 
-export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
+export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendanceView
 
 interface EventListProps {
-  futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
-  pastEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
+  futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendanceView[]
+  pastEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendanceView[]
   userId?: UserId
   onLoadMore?(): void
   alwaysShowChildEvents?: boolean

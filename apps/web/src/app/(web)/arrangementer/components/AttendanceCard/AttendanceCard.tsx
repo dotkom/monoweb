@@ -4,7 +4,7 @@ import { env } from "@/env"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
-  type Attendance,
+  type AttendanceView,
   buildRegistrationAvailabilityCompletionView,
   getAttendee,
   getNonAttendablePools,
@@ -44,7 +44,7 @@ type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutp
 const TURNSTILE_LOAD_TIMEOUT_MS = secondsToMilliseconds(15)
 
 interface AttendanceCardProps {
-  initialAttendance: Attendance
+  initialAttendance: AttendanceView
   initialRegistrationAvailability: RegistrationAvailability | null
   user: User | null
   event: Event

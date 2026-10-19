@@ -1,6 +1,6 @@
 "use client"
 
-import type { AttendancePool, Attendee } from "@dotkomonline/rpc/attendance"
+import type { AttendancePool, AttendeeSummary } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { FeedbackFormAnswer, FeedbackPublicResultsToken, FeedbackQuestion } from "@dotkomonline/rpc/feedback-form"
 import { Table, TableBody, TableCell, TableRow, Text, Title } from "@dotkomonline/ui"
@@ -16,13 +16,22 @@ const formatPoolYears = (yearCriterias: number[][]): string => {
 interface Props {
   questions: FeedbackQuestion[]
   answers: FeedbackFormAnswer[]
-  attendees: Attendee[]
+  attendees: AttendeeSummary[]
+  attendedAttendeeCount: number
   event: Event
   pools: AttendancePool[]
   publicResultsToken?: FeedbackPublicResultsToken
 }
 
-export const FeedbackResults = ({ questions, answers, attendees, event, pools, publicResultsToken }: Props) => {
+export const FeedbackResults = ({
+  questions,
+  answers,
+  attendees,
+  attendedAttendeeCount,
+  event,
+  pools,
+  publicResultsToken,
+}: Props) => {
   const sortedQuestions = questions.toSorted((a, b) => a.order - b.order)
 
   const formattedYears = formatPoolYears(pools.map((pool) => pool.yearCriteria))
@@ -54,7 +63,7 @@ export const FeedbackResults = ({ questions, answers, attendees, event, pools, p
         </div>
       </div>
       <div className="mt-8">
-        <Statistics answers={answers} attendees={attendees} />
+        <Statistics answers={answers} attendees={attendees} attendedAttendeeCount={attendedAttendeeCount} />
       </div>
       <div className="flex flex-col gap-16">
         {ratingQuestions.length > 0 && (
@@ -108,7 +117,15 @@ const QuestionCardList = ({ questions, answers, title, canDelete }: QuestionCard
   )
 }
 
-const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; attendees: Attendee[] }) => {
+const Statistics = ({
+  answers,
+  attendees,
+  attendedAttendeeCount,
+}: {
+  answers: FeedbackFormAnswer[]
+  attendees: AttendeeSummary[]
+  attendedAttendeeCount: number
+}) => {
   const gradeLevels = attendees.map((attendee) => attendee.userGrade).filter((gradelevel) => gradelevel !== null)
   const uniqueGradeLevels = Array.from(new Set(gradeLevels))
 
@@ -126,10 +143,7 @@ const Statistics = ({ answers, attendees }: { answers: FeedbackFormAnswer[]; att
           <Table>
             <TableBody>
               <StatisticsTableRow name="Påmeldte" value={attendees.length} />
-              <StatisticsTableRow
-                name="Oppmøtte"
-                value={attendees.filter((attendee) => attendee.attendedAt !== null).length}
-              />
+              <StatisticsTableRow name="Oppmøtte" value={attendedAttendeeCount} />
               <StatisticsTableRow
                 name="Venteliste"
                 value={attendees.filter((attendee) => !attendee.registered).length}

@@ -3,7 +3,7 @@
 import { useAuthorization } from "@admin/auth/authorization-context"
 import {
   EventStatusSchema,
-  type EventWithAttendance,
+  type EventWithAttendanceView,
   mapEventStatusToLabel,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
@@ -17,12 +17,12 @@ import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { useCanEditByGroups } from "@admin/hooks/use-can-edit-by-groups"
 import { EventHostingGroupList } from "./EventHostingGroupList"
 
-export type EventTableRow = EventWithAttendance & {
+export type EventTableRow = EventWithAttendanceView & {
   canEdit: boolean
 }
 
 interface Props {
-  events: EventWithAttendance[]
+  events: EventWithAttendanceView[]
   isLoading: boolean
   isPlaceholderData: boolean
   isFetchingNextPage: boolean
