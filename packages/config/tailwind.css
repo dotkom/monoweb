@@ -145,6 +145,7 @@
 
 @theme {
   --font-marcellus: Marcellus, "serif";
+  --ease-smooth: cubic-bezier(0.3, 0, 0.15, 1);
 
   --breakpoint-xs: 30rem;
   --animate-flicker: flicker 0.25s infinite;

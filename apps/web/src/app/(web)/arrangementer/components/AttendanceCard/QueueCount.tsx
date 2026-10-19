@@ -22,14 +22,14 @@ export const QueueCount = ({ value, className }: QueueCountProps) => {
     <div
       aria-hidden={!isVisible}
       className={cn(
-        "grid transition-[grid-template-rows] duration-260 ease-in-out motion-reduce:transition-none",
+        "grid transition-[grid-template-rows] duration-260 ease-smooth motion-reduce:transition-none",
         isVisible ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
       )}
     >
       <div className="min-h-0 overflow-hidden">
         <Text
           className={cn(
-            "text-lg mt-1 px-2 py-0.5 transform-gpu transition-opacity duration-260 ease-in-out motion-reduce:transition-none",
+            "text-lg mt-1 px-2 py-0.5 transform-gpu transition-opacity duration-260 ease-smooth motion-reduce:transition-none",
             isVisible ? "opacity-100" : "opacity-0",
             lastVisibleContent.className
           )}
