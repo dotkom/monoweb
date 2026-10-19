@@ -26,6 +26,7 @@ import {
   IconClockCheck,
   IconCoins,
   IconHourglassEmpty,
+  IconPennant,
   IconUserX,
   IconX,
 } from "@tabler/icons-react"
@@ -185,12 +186,12 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     >
       <div className="flex grow flex-col gap-6 items-center text-center justify-center w-full">
         {showRegisterCountdown ? (
-          <div className="flex flex-col gap-1 items-center">
+          <AttendanceStatusRow icon={<IconPennant className="text-muted-foreground" />} contentClassName="gap-1">
             <Text>{availableSeatCount > 0 ? `${availableSeatCount} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium" suppressHydrationWarning>
               {registerCountdownDisplay}
             </Text>
-          </div>
+          </AttendanceStatusRow>
         ) : (
           <div className="flex flex-col items-center">
             <Text
