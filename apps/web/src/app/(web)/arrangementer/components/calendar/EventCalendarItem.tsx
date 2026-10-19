@@ -6,7 +6,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger, Text, Title, cn } from "
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconClock, IconMapPin } from "@tabler/icons-react"
 import Link from "next/link"
-import { eventCategories } from "./eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 import type { EventDisplayProps } from "./types"
 
 // helper functions so tailwind picks up the class names correctly
@@ -67,12 +67,12 @@ export const EventCalendarItem = ({ eventDetail, userId, eventDisplayProps, clas
 
   const attendee = getAttendee(eventDetail.attendance, userId ?? null)
 
-  const category = event.type ? eventCategories[event.type] : undefined
+  const category = event.type ? EVENT_TYPE_STYLES[event.type] : undefined
   const triggerClasses = category?.classes.item ?? "bg-gray-100 dark:bg-stone-800"
   const borderClasses = category?.classes.itemBorder ?? "border-gray-500 dark:border-stone-500"
   const cardClasses = category?.classes.card ?? "bg-gray-100 border-gray-300 dark:bg-stone-800 dark:border-stone-600"
   const badgeClasses = category?.classes.badge ?? ""
-  const categoryName = category?.displayName ?? ""
+  const categoryName = category?.shortLabel ?? ""
   const fadeClasses = category?.classes.itemFade ?? ""
 
   return (

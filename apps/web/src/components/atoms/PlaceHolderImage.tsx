@@ -1,3 +1,4 @@
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 import type { EventType } from "@dotkomonline/rpc/event"
 import { cn } from "@dotkomonline/ui"
 import type { ImageProps } from "next/image"
@@ -8,20 +9,11 @@ type PlaceHolderImageProps = Omit<ImageProps, "src" | "alt"> & {
 }
 
 export const PlaceHolderImage: FC<PlaceHolderImageProps> = ({ className, variant = "OTHER" }) => {
-  const lightColorMap: Record<NonNullable<PlaceHolderImageProps["variant"]>, string> = {
-    SOCIAL: "fill-[#A7D9B6] dark:fill-[#1f3d2a]", // muted green
-    COMPANY: "fill-[#E6B5B5] dark:fill-[#4f2626]", // muted red
-    ACADEMIC: "fill-[#AFC5E3] dark:fill-[#2a3553]", // muted blue
-    WELCOME: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
-    GENERAL_ASSEMBLY: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
-    OTHER: "fill-[#EBD4A0] dark:fill-[#4a3522]", // muted amber
-  }
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="-102 -102 372 372"
-      className={cn(lightColorMap[variant], "object-cover h-full w-full", className)}
+      className={cn(EVENT_TYPE_STYLES[variant].classes.placeholder, "object-cover h-full w-full", className)}
     >
       <title>Event image placeholder</title>
       <path d="M124.905 11.06L87.031 67.129l37.212.475-72.599 92.573 29.028-74.663-36.85-.094L85.854 0s11.014.306 20.49 2.973c9.448 2.66 18.56 8.087 18.56 8.087z" />

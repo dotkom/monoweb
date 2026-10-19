@@ -2,7 +2,7 @@ import type { EventType } from "@dotkomonline/rpc/event"
 import { Badge, Tilt, cn } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
-import { EVENT_TYPE_CONFIG } from "./eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 
 interface EventListItemThumbnailProps {
   imageUrl?: string | null
@@ -19,7 +19,7 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({
   eventType,
   compact = false,
 }) => {
-  const { label, backgroundColor } = EVENT_TYPE_CONFIG[eventType]
+  const { shortLabel, badgeColor } = EVENT_TYPE_STYLES[eventType]
 
   return (
     <Tilt>
@@ -65,7 +65,7 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({
           )}
         >
           <Badge
-            color={backgroundColor}
+            color={badgeColor}
             className={cn(
               "rounded-sm flex",
               !compact && "px-1 py-0.5 text-xs",
@@ -73,7 +73,7 @@ export const Thumbnail: FC<EventListItemThumbnailProps> = ({
               startInPast && "grayscale group-hover:grayscale-50 transition-all"
             )}
           >
-            {label}
+            {shortLabel}
           </Badge>
         </div>
       </div>
