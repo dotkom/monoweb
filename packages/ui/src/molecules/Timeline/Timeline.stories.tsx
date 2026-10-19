@@ -1,65 +1,171 @@
 import { format } from "date-fns"
 import { nb } from "date-fns/locale"
 import { Fragment } from "react"
-import type { Story } from "@ladle/react"
 import { Badge } from "../../atoms/Badge/Badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../atoms/Collapsible/Collapsible"
 import { Text } from "../../atoms/Typography/Text"
 import { Title } from "../../atoms/Typography/Title"
-import { groupTimelineEntries } from "./group-timeline-entries"
+import { cn } from "../../utils"
+import { groupTimelineEntries, type TimelineGroupBy, type TimelineSortOrder } from "./group-timeline-entries"
 import {
   Timeline,
+  type TimelineColor,
   TimelineContent,
-  TimelineGroupHeader,
   TimelineDot,
+  TimelineGroupHeader,
+  type TimelineGroupHeaderPosition,
   TimelineItem,
+  type TimelineOrientation,
   TimelineSideLabel,
-  type TimelineProps,
 } from "./Timeline"
 
 type SampleEvent = {
   date: Date
   title: string
   description: string
-  badge?: string
 }
 
 const sampleEvents: SampleEvent[] = [
   {
     date: new Date("2026-08-11T10:00:00"),
     title: "Immatrikulering",
-    description: "Møt opp på Gløshaugen for velkomst og informasjon.",
-    badge: "Faddergruppe",
+    description: "Velkomst og informasjon på Gløshaugen.",
   },
   {
     date: new Date("2026-08-11T14:30:00"),
     title: "Gruppeaktivitet",
     description: "Bli kjent med faddergruppen din.",
-    badge: "Faddergruppe",
   },
   {
-    date: new Date("2026-08-11T18:00:00"),
-    title: "Kveldsarrangement",
-    description: "Felles middag og quiz.",
-  },
-  {
-    date: new Date("2026-08-12T11:00:00"),
+    date: new Date("2026-09-02T11:00:00"),
     title: "Campus-runde",
-    description: "Omvisning på Gløshaugen og IT-bygget.",
-  },
-  {
-    date: new Date("2026-08-19T16:00:00"),
-    title: "Linjeforeningsfest",
-    description: "Avslutning av fadderukene.",
+    description: "Omvisning på campus og IT-bygget.",
   },
 ]
 
-const EventSummary = ({ event }: { event: SampleEvent }) => (
-  <div className="flex flex-col gap-1">
-    <Text className="font-medium">{event.title}</Text>
-    <Text size="sm" className="text-muted-foreground">
-      {event.description}
-    </Text>
+type TimelineExampleState = {
+  label: string
+  showRailStubs?: boolean
+  showSideLabels?: boolean
+  groupBy?: TimelineGroupBy
+  groupHeaderPosition?: TimelineGroupHeaderPosition
+  responsiveLabels?: boolean
+  richContent?: boolean
+  sortOrder?: TimelineSortOrder
+}
+
+const exampleStates: TimelineExampleState[] = [
+  { label: "With rail stubs" },
+  { label: "Without rail stubs", showRailStubs: false },
+  { label: "With side labels", showSideLabels: true },
+  { label: "Side labels without rail stubs", showSideLabels: true, showRailStubs: false },
+  { label: "Grouped by day", groupBy: "day", showSideLabels: true },
+  { label: "Grouped without rail stubs", groupBy: "day", showSideLabels: true, showRailStubs: false },
+  { label: "Group labels in content", groupBy: "day", groupHeaderPosition: "content" },
+  {
+    label: "Responsive labels",
+    groupBy: "day",
+    groupHeaderPosition: "responsive",
+    responsiveLabels: true,
+  },
+  { label: "Grouped by week", groupBy: "week", showSideLabels: true },
+  { label: "Grouped by month", groupBy: "month", showSideLabels: true },
+  { label: "Newest first", groupBy: "day", showSideLabels: true, sortOrder: "desc" },
+  { label: "Rich content", groupBy: "day", showSideLabels: true, richContent: true },
+]
+
+const colors: TimelineColor[] = ["brand", "gray"]
+
+const EventSummary = ({ event, richContent }: { event: SampleEvent; richContent?: boolean }) => {
+  if (richContent) {
+    return (
+      <Collapsible className="rounded-xl border border-border p-3">
+        <CollapsibleTrigger className="flex w-full flex-col items-start gap-2 text-left">
+          <Badge color="gray">Faddergruppe</Badge>
+          <Text className="font-medium">{event.title}</Text>
+          <Text size="sm" className="text-muted-foreground">
+            Vis detaljer
+          </Text>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <Text size="sm" className="pt-2 text-muted-foreground">
+            {event.description}
+          </Text>
+        </CollapsibleContent>
+      </Collapsible>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Text className="font-medium">{event.title}</Text>
+      <Text size="sm" className="text-muted-foreground">
+        {event.description}
+      </Text>
+    </div>
+  )
+}
+
+const TimelineExample = ({
+  orientation,
+  color,
+  showRailStubs = true,
+  showSideLabels = false,
+  groupBy,
+  groupHeaderPosition = "side",
+  responsiveLabels = false,
+  richContent = false,
+  sortOrder,
+}: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
+  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs}>
+    {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
+      <Fragment key={group.key}>
+        {groupBy !== undefined && (
+          <TimelineGroupHeader position={groupHeaderPosition}>{group.label}</TimelineGroupHeader>
+        )}
+        {group.entries.map((event) => (
+          <TimelineItem key={event.date.getTime()}>
+            {(showSideLabels || responsiveLabels) && (
+              <TimelineSideLabel className={cn(responsiveLabels && "max-sm:hidden")}>{event.marker}</TimelineSideLabel>
+            )}
+            <TimelineDot />
+            <TimelineContent>
+              {(!showSideLabels || responsiveLabels) && (
+                <Text
+                  className={cn(
+                    "pb-1 font-medium text-muted-foreground text-xs",
+                    responsiveLabels && "leading-6 sm:hidden"
+                  )}
+                >
+                  {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
+                </Text>
+              )}
+              <EventSummary event={event} richContent={richContent} />
+            </TimelineContent>
+          </TimelineItem>
+        ))}
+      </Fragment>
+    ))}
+  </Timeline>
+)
+
+const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) => (
+  <div className="flex w-full max-w-6xl flex-col gap-10">
+    {exampleStates.map(({ label, ...exampleProperties }) => (
+      <section key={label} className="flex flex-col gap-4">
+        <Title element="h2" size="sm">
+          {label}
+        </Title>
+        <div className={cn("grid grid-cols-1 items-start gap-6", orientation === "vertical" && "md:grid-cols-2")}>
+          {colors.map((color) => (
+            <div key={color} className="flex min-w-0 flex-col gap-3">
+              <Text className="font-medium text-muted-foreground text-sm capitalize">{color}</Text>
+              <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
   </div>
 )
 
@@ -68,290 +174,6 @@ export default {
   component: Timeline,
 }
 
-export const Default = () => (
-  <div className="max-w-xl">
-    <Timeline>
-      {sampleEvents.map((event) => (
-        <TimelineItem key={event.date.getTime()}>
-          <TimelineDot />
-          <TimelineContent>
-            <Text className="pb-1 font-medium text-muted-foreground text-xs">
-              {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
-            </Text>
-            <EventSummary event={event} />
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
-  </div>
-)
+export const Vertical = () => <TimelineGallery orientation="vertical" />
 
-export const Horizontal = () => (
-  <div className="max-w-4xl">
-    <Timeline orientation="horizontal">
-      {sampleEvents.map((event) => (
-        <TimelineItem key={event.date.getTime()}>
-          <TimelineDot />
-          <TimelineContent>
-            <Text className="pb-1 font-medium text-muted-foreground text-xs">
-              {format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}
-            </Text>
-            <EventSummary event={event} />
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const HorizontalWithSideLabels = () => (
-  <div className="max-w-4xl">
-    <Timeline orientation="horizontal">
-      {sampleEvents.map((event) => (
-        <TimelineItem key={event.date.getTime()}>
-          <TimelineSideLabel>{format(event.date, "dd. MMM 'kl.' HH:mm", { locale: nb })}</TimelineSideLabel>
-          <TimelineDot />
-          <TimelineContent>
-            <EventSummary event={event} />
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const Appearance: Story<TimelineProps> = (timelineProperties) => (
-  <div className="max-w-4xl">
-    <Timeline {...timelineProperties}>
-      {sampleEvents.slice(0, 3).map((event) => (
-        <TimelineItem key={event.date.getTime()}>
-          <TimelineSideLabel>{format(event.date, "HH:mm", { locale: nb })}</TimelineSideLabel>
-          <TimelineDot />
-          <TimelineContent>
-            <EventSummary event={event} />
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
-  </div>
-)
-
-Appearance.args = { orientation: "horizontal", color: "gray" }
-Appearance.argTypes = {
-  orientation: { options: ["vertical", "horizontal"], control: { type: "inline-radio" } },
-  color: { options: ["brand", "gray"], control: { type: "inline-radio" } },
-}
-
-export const HorizontalGroupedByDay = () => (
-  <div className="max-w-4xl">
-    <Timeline orientation="horizontal">
-      {groupTimelineEntries(sampleEvents).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const GroupedByDay = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const LabelsAboveContent = () => (
-  <div className="max-w-xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader position="content">{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineDot />
-              <TimelineContent>
-                <Text className="pb-1 font-medium text-muted-foreground text-xs">{entry.marker}</Text>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const Responsive = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader position="responsive">{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel className="max-sm:hidden">{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <Text className="pb-1 font-medium text-muted-foreground text-xs leading-6 sm:hidden">
-                  {entry.marker}
-                </Text>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const FreeformContent = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      <TimelineGroupHeader>11. aug</TimelineGroupHeader>
-
-      <TimelineItem>
-        <TimelineSideLabel>10:00</TimelineSideLabel>
-        <TimelineDot />
-        <TimelineContent>
-          <div className="flex flex-row gap-3 rounded-xl border border-gray-200 p-3 dark:border-stone-700">
-            <div className="aspect-video h-20 shrink-0 rounded-lg bg-gray-300 dark:bg-stone-600" />
-            <div className="flex min-w-0 flex-col gap-1">
-              <Title element="h3" size="sm" className="font-normal">
-                Immatrikulering
-              </Title>
-              <Text size="sm" className="text-muted-foreground">
-                Møt opp på Gløshaugen for velkomst og informasjon.
-              </Text>
-              <Badge color="gray">Faddergruppe</Badge>
-            </div>
-          </div>
-        </TimelineContent>
-      </TimelineItem>
-
-      <TimelineItem>
-        <TimelineSideLabel>14:30</TimelineSideLabel>
-        <TimelineDot />
-        <TimelineContent>
-          <Collapsible className="rounded-xl border border-gray-200 p-3 dark:border-stone-700">
-            <CollapsibleTrigger className="w-full text-left">
-              <Text className="font-medium">Gruppeaktivitet (klikk for detaljer)</Text>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div className="flex flex-col gap-2 pt-2">
-                <Text size="sm" className="text-muted-foreground">
-                  Bli kjent med faddergruppen din. Vi møtes utenfor hovedbygget og går samlet til aktivitetsområdet.
-                </Text>
-                <Text size="sm" className="text-muted-foreground">
-                  Ta med godt humør og klær etter været. Arrangementet varer i omtrent tre timer.
-                </Text>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </TimelineContent>
-      </TimelineItem>
-
-      <TimelineItem>
-        <TimelineSideLabel>18:00</TimelineSideLabel>
-        <TimelineDot />
-        <TimelineContent>
-          <Text className="font-medium">Kveldsarrangement</Text>
-        </TimelineContent>
-      </TimelineItem>
-    </Timeline>
-  </div>
-)
-
-export const GroupedByWeek = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents, { groupBy: "week" }).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const GroupedByMonth = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents, { groupBy: "month" }).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
-
-export const Descending = () => (
-  <div className="max-w-3xl">
-    <Timeline>
-      {groupTimelineEntries(sampleEvents, { sortOrder: "desc" }).map((group) => (
-        <Fragment key={group.key}>
-          <TimelineGroupHeader>{group.label}</TimelineGroupHeader>
-
-          {group.entries.map((entry) => (
-            <TimelineItem key={entry.date.getTime()}>
-              <TimelineSideLabel>{entry.marker}</TimelineSideLabel>
-              <TimelineDot />
-              <TimelineContent>
-                <EventSummary event={entry} />
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Fragment>
-      ))}
-    </Timeline>
-  </div>
-)
+export const Horizontal = () => <TimelineGallery orientation="horizontal" />

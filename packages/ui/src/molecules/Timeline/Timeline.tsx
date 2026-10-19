@@ -14,6 +14,7 @@ export type TimelineColor = "brand" | "gray"
 export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
   orientation?: TimelineOrientation
   color?: TimelineColor
+  showRailStubs?: boolean
 }
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
@@ -43,14 +44,14 @@ const TimelineRailLine = () => (
     className={cn(
       "absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-(--timeline-color)",
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
-      "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
       // Start at the first dot's center, including its lower offset when a side label is present.
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
       "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
       "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-8",
       "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
-      "group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_55%,transparent)]",
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_55%,transparent)]",
       // Overlap horizontal segments so fractional column widths do not leave seams.
       "group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-right-px",
       "group-data-[orientation=horizontal]/timeline:top-1/2",
@@ -58,12 +59,23 @@ const TimelineRailLine = () => (
       "group-data-[orientation=horizontal]/timeline:translate-x-0",
       "group-data-[orientation=horizontal]/timeline:h-1 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
       "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:rounded-l-sm",
-      "group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-first/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem)]",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:right-auto",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:w-11",
       "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:rounded-r-sm",
-      "group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
-      "group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]"
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-last/timeline-row:mask-[linear-gradient(to_right,black_calc(100%-1rem),transparent)]",
+      "group-data-[rail-stubs=true]/timeline:group-data-[orientation=horizontal]/timeline:group-only/timeline-row:mask-[linear-gradient(to_right,transparent,black_1rem,black_calc(100%-1rem),transparent)]",
+      // Without stubs, hide headers outside the dot range and stop each end at the dot's center.
+      "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
+      "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-2",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-[1.375rem]",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-1.375rem)]",
+      "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:w-auto"
     )}
   />
 )
@@ -72,11 +84,19 @@ const TimelineRailLine = () => (
  * Defaults to vertical. Use `orientation="horizontal"` for a scrolling timeline with labels above the rail and content
  * below it. Horizontal items have a minimum width of 12rem; override the grid's auto columns with `className` as needed.
  * `color` defaults to `"brand"` and also supports `"gray"`, coloring both the rail and dot borders.
+ * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
  */
-export const Timeline: FC<TimelineProps> = ({ orientation = "vertical", color = "brand", className, ...props }) => (
+export const Timeline: FC<TimelineProps> = ({
+  orientation = "vertical",
+  color = "brand",
+  showRailStubs = true,
+  className,
+  ...props
+}) => (
   <div
     data-slot="timeline"
     data-orientation={orientation}
+    data-rail-stubs={showRailStubs}
     className={cn(
       "group/timeline grid w-full",
       timelineGridClassNames[orientation],
