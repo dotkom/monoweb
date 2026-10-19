@@ -51,7 +51,7 @@ const sampleEvents: SampleEvent[] = [
   },
 ]
 
-type TimelineExampleState = {
+export type TimelineExampleState = {
   label: string
   showRailStubs?: boolean
   rail?: TimelineRail
@@ -67,94 +67,132 @@ type TimelineExampleState = {
   showCustomMarkers?: boolean
 }
 
-const exampleStates: TimelineExampleState[] = [
-  { label: "With rail stubs" },
-  { label: "Without rail stubs", showRailStubs: false },
-  { label: "With side labels", showSideLabels: true },
-  { label: "Side labels without rail stubs", showSideLabels: true, showRailStubs: false },
-  { label: "Segmented rail", rail: "segmented", showSideLabels: true },
-  { label: "Segmented rail with custom markers", rail: "segmented", showCustomMarkers: true, showSideLabels: true },
-  { label: "Segmented rail with group labels", rail: "segmented", showCustomMarkers: true, groupBy: "day" },
+export const timelineExamples = {
+  colors: [{ label: "Brand and gray" }],
+  rail: [
+    { label: "With rail stubs" },
+    { label: "Without rail stubs", showRailStubs: false },
+    { label: "Segmented rail", rail: "segmented", showSideLabels: true },
+    { label: "Segmented rail with custom markers", rail: "segmented", showCustomMarkers: true, showSideLabels: true },
+    { label: "Segmented rail with group labels", rail: "segmented", showCustomMarkers: true, groupBy: "day" },
+    {
+      label: "Segmented rail with mixed alignment",
+      rail: "segmented",
+      showCustomMarkers: true,
+      showSideLabels: true,
+      alignments: ["start", "center", "end"],
+      horizontalOnly: true,
+    },
+  ],
+  labels: [
+    { label: "Labels in content" },
+    { label: "Side labels", showSideLabels: true },
+    { label: "Side labels without rail stubs", showSideLabels: true, showRailStubs: false },
+    {
+      label: "Responsive labels",
+      groupBy: "day",
+      groupHeaderPosition: "responsive",
+      responsiveLabels: true,
+    },
+  ],
+  bleed: [
+    { label: "Bleeding start", bleed: "start" },
+    { label: "Bleeding start without rail stubs", bleed: "start", showRailStubs: false },
+    { label: "Bleeding end", bleed: "end", alignments: ["start", "center", "end"] },
+    {
+      label: "Bleeding end without rail stubs",
+      bleed: "end",
+      showRailStubs: false,
+      alignments: ["start", "center", "end"],
+    },
+    { label: "Bleeding both ends", bleed: "both", alignments: ["start", "center", "end"] },
+    {
+      label: "Bleeding both ends without rail stubs",
+      bleed: "both",
+      showRailStubs: false,
+      alignments: ["start", "center", "end"],
+    },
+    { label: "Bleeding both ends with side labels", bleed: "both", showSideLabels: true },
+    { label: "Bleeding both ends with group labels", bleed: "both", showSideLabels: true, groupBy: "day" },
+    { label: "Bleeding both ends with custom markers", bleed: "both", showCustomMarkers: true, showSideLabels: true },
+  ],
+  customMarkers: [
+    { label: "Custom markers", showCustomMarkers: true, showSideLabels: true },
+    { label: "Custom markers without rail stubs", showCustomMarkers: true, showSideLabels: true, showRailStubs: false },
+    {
+      label: "Custom markers with mixed alignment",
+      showCustomMarkers: true,
+      showSideLabels: true,
+      alignments: ["start", "center", "end"],
+      horizontalOnly: true,
+    },
+    {
+      label: "Custom markers with mixed alignment without rail stubs",
+      showCustomMarkers: true,
+      showSideLabels: true,
+      showRailStubs: false,
+      alignments: ["start", "center", "end"],
+      horizontalOnly: true,
+    },
+  ],
+  grouping: [
+    { label: "Grouped by day", groupBy: "day", showSideLabels: true },
+    { label: "Grouped without rail stubs", groupBy: "day", showSideLabels: true, showRailStubs: false },
+    { label: "Group labels in content", groupBy: "day", groupHeaderPosition: "content" },
+    { label: "Grouped by week", groupBy: "week", showSideLabels: true },
+    { label: "Grouped by month", groupBy: "month", showSideLabels: true },
+  ],
+  sorting: [
+    { label: "Oldest first", groupBy: "day", showSideLabels: true, sortOrder: "asc" },
+    { label: "Newest first", groupBy: "day", showSideLabels: true, sortOrder: "desc" },
+  ],
+  richContent: [{ label: "Expandable content", groupBy: "day", showSideLabels: true, richContent: true }],
+  alignment: [
+    { label: "Centered entries", alignments: ["center"], showSideLabels: true },
+    {
+      label: "Centered entries without rail stubs",
+      alignments: ["center"],
+      showSideLabels: true,
+      showRailStubs: false,
+    },
+    { label: "End-aligned entries", alignments: ["end"], showSideLabels: true },
+    {
+      label: "End-aligned entries without rail stubs",
+      alignments: ["end"],
+      showSideLabels: true,
+      showRailStubs: false,
+    },
+    { label: "Start, center, end", alignments: ["start", "center", "end"] },
+    { label: "Start, center, end without rail stubs", alignments: ["start", "center", "end"], showRailStubs: false },
+  ],
+} satisfies Record<string, TimelineExampleState[]>
+
+const overviewExamples: (TimelineExampleState & { color: TimelineColor })[] = [
+  { label: "Brand with rail stubs", color: "brand" },
+  { label: "Gray with side labels", color: "gray", showSideLabels: true, showRailStubs: false },
   {
-    label: "Segmented rail with mixed alignment",
+    label: "Custom markers and segmented rail",
+    color: "brand",
     rail: "segmented",
     showCustomMarkers: true,
     showSideLabels: true,
-    alignments: ["start", "center", "end"],
-    horizontalOnly: true,
-  },
-  { label: "Bleeding start", bleed: "start" },
-  { label: "Bleeding start without rail stubs", bleed: "start", showRailStubs: false },
-  { label: "Bleeding end", bleed: "end", alignments: ["start", "center", "end"] },
-  {
-    label: "Bleeding end without rail stubs",
-    bleed: "end",
-    showRailStubs: false,
-    alignments: ["start", "center", "end"],
-  },
-  { label: "Bleeding both ends", bleed: "both", alignments: ["start", "center", "end"] },
-  {
-    label: "Bleeding both ends without rail stubs",
-    bleed: "both",
-    showRailStubs: false,
-    alignments: ["start", "center", "end"],
-  },
-  { label: "Bleeding both ends with side labels", bleed: "both", showSideLabels: true },
-  { label: "Bleeding both ends with group labels", bleed: "both", showSideLabels: true, groupBy: "day" },
-  { label: "Bleeding both ends with custom markers", bleed: "both", showCustomMarkers: true, showSideLabels: true },
-  { label: "Custom markers", showCustomMarkers: true, showSideLabels: true },
-  { label: "Custom markers without rail stubs", showCustomMarkers: true, showSideLabels: true, showRailStubs: false },
-  {
-    label: "Custom markers with mixed alignment",
-    showCustomMarkers: true,
-    showSideLabels: true,
-    alignments: ["start", "center", "end"],
-    horizontalOnly: true,
   },
   {
-    label: "Custom markers with mixed alignment without rail stubs",
-    showCustomMarkers: true,
-    showSideLabels: true,
-    showRailStubs: false,
-    alignments: ["start", "center", "end"],
-    horizontalOnly: true,
-  },
-  { label: "Grouped by day", groupBy: "day", showSideLabels: true },
-  { label: "Grouped without rail stubs", groupBy: "day", showSideLabels: true, showRailStubs: false },
-  { label: "Group labels in content", groupBy: "day", groupHeaderPosition: "content" },
-  {
-    label: "Responsive labels",
+    label: "Groups, responsive labels and newest first",
+    color: "gray",
     groupBy: "day",
     groupHeaderPosition: "responsive",
     responsiveLabels: true,
+    sortOrder: "desc",
   },
-  { label: "Grouped by week", groupBy: "week", showSideLabels: true },
-  { label: "Grouped by month", groupBy: "month", showSideLabels: true },
-  { label: "Newest first", groupBy: "day", showSideLabels: true, sortOrder: "desc" },
-  { label: "Rich content", groupBy: "day", showSideLabels: true, richContent: true },
-  { label: "Centered entries", alignments: ["center"], showSideLabels: true, horizontalOnly: true },
   {
-    label: "Centered entries without rail stubs",
-    alignments: ["center"],
-    showSideLabels: true,
-    showRailStubs: false,
-    horizontalOnly: true,
-  },
-  { label: "End-aligned entries", alignments: ["end"], showSideLabels: true, horizontalOnly: true },
-  {
-    label: "End-aligned entries without rail stubs",
-    alignments: ["end"],
-    showSideLabels: true,
-    showRailStubs: false,
-    horizontalOnly: true,
-  },
-  { label: "Start, center, end", alignments: ["start", "center", "end"], horizontalOnly: true },
-  {
-    label: "Start, center, end without rail stubs",
+    label: "Bleeding both ends",
+    color: "brand",
+    bleed: "both",
     alignments: ["start", "center", "end"],
-    showRailStubs: false,
-    horizontalOnly: true,
+    showSideLabels: true,
   },
+  { label: "Expandable content", color: "gray", richContent: true, showSideLabels: true },
 ]
 
 const colors: TimelineColor[] = ["brand", "gray"]
@@ -252,9 +290,26 @@ const TimelineExample = ({
   </Timeline>
 )
 
-const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) => (
+const TimelineExampleFrame = ({
+  bleed,
+  ...exampleProperties
+}: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
+  <div className={cn("min-w-0", bleed && "p-4")}>
+    <div className={cn("flex min-w-0 flex-col", bleed && "outline outline-border outline-dashed")}>
+      <TimelineExample bleed={bleed} {...exampleProperties} />
+    </div>
+  </div>
+)
+
+export const TimelineGallery = ({
+  orientation,
+  examples,
+}: {
+  orientation: TimelineOrientation
+  examples: TimelineExampleState[]
+}) => (
   <div className="flex w-full max-w-6xl flex-col gap-10">
-    {exampleStates
+    {examples
       .filter((exampleState) => orientation === "horizontal" || !exampleState.horizontalOnly)
       .map(({ label, ...exampleProperties }) => (
         <section key={label} className="flex flex-col gap-4">
@@ -265,16 +320,7 @@ const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) 
             {colors.map((color) => (
               <div key={color} className="flex min-w-0 flex-col gap-3">
                 <Text className="font-medium text-muted-foreground text-sm capitalize">{color}</Text>
-                <div className={cn("min-w-0", exampleProperties.bleed && "p-4")}>
-                  <div
-                    className={cn(
-                      "flex min-w-0 flex-col",
-                      exampleProperties.bleed && "outline outline-border outline-dashed"
-                    )}
-                  >
-                    <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
-                  </div>
-                </div>
+                <TimelineExampleFrame orientation={orientation} color={color} {...exampleProperties} />
               </div>
             ))}
           </div>
@@ -283,11 +329,20 @@ const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) 
   </div>
 )
 
-export default {
-  title: "Timeline",
-  component: Timeline,
-}
-
-export const Vertical = () => <TimelineGallery orientation="vertical" />
-
-export const Horizontal = () => <TimelineGallery orientation="horizontal" />
+export const TimelineOverview = ({ orientation }: { orientation: TimelineOrientation }) => (
+  <div
+    className={cn(
+      "grid w-full max-w-6xl grid-cols-1 items-start gap-10",
+      orientation === "vertical" && "md:grid-cols-2"
+    )}
+  >
+    {overviewExamples.map(({ label, ...exampleProperties }) => (
+      <section key={label} className="flex min-w-0 flex-col gap-4">
+        <Title element="h2" size="sm">
+          {label}
+        </Title>
+        <TimelineExampleFrame orientation={orientation} {...exampleProperties} />
+      </section>
+    ))}
+  </div>
+)
