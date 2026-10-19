@@ -9,6 +9,7 @@ import { cn } from "../../utils"
 import { groupTimelineEntries, type TimelineGroupBy, type TimelineSortOrder } from "./group-timeline-entries"
 import {
   Timeline,
+  type TimelineBleed,
   type TimelineColor,
   TimelineContent,
   TimelineDot,
@@ -55,6 +56,7 @@ type TimelineExampleState = {
   sortOrder?: TimelineSortOrder
   alignments?: TimelineItemAlignment[]
   horizontalOnly?: boolean
+  bleed?: TimelineBleed
 }
 
 const exampleStates: TimelineExampleState[] = [
@@ -62,6 +64,24 @@ const exampleStates: TimelineExampleState[] = [
   { label: "Without rail stubs", showRailStubs: false },
   { label: "With side labels", showSideLabels: true },
   { label: "Side labels without rail stubs", showSideLabels: true, showRailStubs: false },
+  { label: "Bleeding start", bleed: "start" },
+  { label: "Bleeding start without rail stubs", bleed: "start", showRailStubs: false },
+  { label: "Bleeding end", bleed: "end", alignments: ["start", "center", "end"] },
+  {
+    label: "Bleeding end without rail stubs",
+    bleed: "end",
+    showRailStubs: false,
+    alignments: ["start", "center", "end"],
+  },
+  { label: "Bleeding both ends", bleed: "both", alignments: ["start", "center", "end"] },
+  {
+    label: "Bleeding both ends without rail stubs",
+    bleed: "both",
+    showRailStubs: false,
+    alignments: ["start", "center", "end"],
+  },
+  { label: "Bleeding both ends with side labels", bleed: "both", showSideLabels: true },
+  { label: "Bleeding both ends with group labels", bleed: "both", showSideLabels: true, groupBy: "day" },
   { label: "Grouped by day", groupBy: "day", showSideLabels: true },
   { label: "Grouped without rail stubs", groupBy: "day", showSideLabels: true, showRailStubs: false },
   { label: "Group labels in content", groupBy: "day", groupHeaderPosition: "content" },
@@ -143,8 +163,9 @@ const TimelineExample = ({
   richContent = false,
   sortOrder,
   alignments,
+  bleed,
 }: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
-  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs}>
+  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs} bleed={bleed}>
     {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
       <Fragment key={group.key}>
         {groupBy !== undefined && (
@@ -198,7 +219,16 @@ const TimelineGallery = ({ orientation }: { orientation: TimelineOrientation }) 
             {colors.map((color) => (
               <div key={color} className="flex min-w-0 flex-col gap-3">
                 <Text className="font-medium text-muted-foreground text-sm capitalize">{color}</Text>
-                <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
+                <div className={cn("min-w-0", exampleProperties.bleed && "p-4")}>
+                  <div
+                    className={cn(
+                      "flex min-w-0 flex-col",
+                      exampleProperties.bleed && "outline outline-border outline-dashed"
+                    )}
+                  >
+                    <TimelineExample orientation={orientation} color={color} {...exampleProperties} />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
