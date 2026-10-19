@@ -107,10 +107,6 @@ export function useEventListSubscription({ events, enabled }: UseEventListSubscr
         }
       }
     )
-
-    if (registerChangeEvent.isCurrentUser && registerChangeEvent.status !== "updated") {
-      refreshEventLists()
-    }
   }
 
   const subscription = useSubscription(
