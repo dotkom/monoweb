@@ -226,7 +226,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
         <div className="flex flex-col gap-2">
           {isRegistrationDelayed ? (
-            <PendingRegistrationStatus />
+            <PendingRegistrationStatus actionIsRequired={actionIsRequired} />
           ) : (
             <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
           )}
@@ -340,10 +340,14 @@ const ReservedStatus = () => {
   )
 }
 
-const PendingRegistrationStatus = () => {
+interface PendingRegistrationStatusProps {
+  actionIsRequired: boolean
+}
+
+const PendingRegistrationStatus = ({ actionIsRequired }: PendingRegistrationStatusProps) => {
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconCircleDashed className="size-[1.25em]" />
+      <IconCircleDashed className={cn("size-[1.25em]", !actionIsRequired && "text-indigo-700 dark:text-indigo-200")} />
 
       <div className="flex flex-col gap-0 items-start">
         <Text>Påmeldingen din er utsatt</Text>
@@ -370,7 +374,9 @@ interface QueueStatusProps {
 const QueueStatus = ({ queuePosition, actionIsRequired }: QueueStatusProps) => {
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconCircleDashedCheck className={cn("size-[1.25em]", !actionIsRequired && "dark:text-indigo-200")} />
+      <IconCircleDashedCheck
+        className={cn("size-[1.25em]", !actionIsRequired && "text-indigo-700 dark:text-indigo-200")}
+      />
       <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
     </div>
   )
