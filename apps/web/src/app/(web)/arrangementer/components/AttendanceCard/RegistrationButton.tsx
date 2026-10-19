@@ -4,7 +4,16 @@ import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { type AttendanceView, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
-import { IconLoader2, IconLock, IconUserMinus, IconUserPlus, IconX } from "@tabler/icons-react"
+import {
+  IconBan,
+  IconLoader2,
+  IconLock,
+  IconPennant,
+  IconSquareRotated,
+  IconUserMinus,
+  IconUserPlus,
+  IconX,
+} from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
 import type { DeregisterReasonFormResult } from "../DeregisterModal"
 import { getAttendanceStatus } from "../attendanceStatus"
@@ -195,13 +204,35 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const showDeregisterConfirm =
     attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !isButtonDisabled
 
+  let DisabledIcon = IconBan
+
+  if (
+    deregistration?.canDeregister === false &&
+    (deregistration.rejectionCause === "DEREGISTER_DEADLINE_PASSED" ||
+      deregistration.rejectionCause === "PAYMENT_COMPLETED")
+  ) {
+    DisabledIcon = IconLock
+  }
+
+  if (attendee === null) {
+    const attendanceStatus = getAttendanceStatus(attendance)
+
+    if (attendanceStatus === "NOT_OPENED") {
+      DisabledIcon = IconPennant
+    }
+
+    if (attendanceStatus === "CLOSED") {
+      DisabledIcon = IconSquareRotated
+    }
+  }
+
   const buttonContent = isLoading ? (
     <IconLoader2 className="shrink-0 size-6 animate-spin" />
   ) : (
     <>
       {!showDeregisterConfirm &&
         (isButtonDisabled ? (
-          <IconLock className="shrink-0 size-[1.25em]" />
+          <DisabledIcon aria-hidden className="shrink-0 size-[1.25em]" />
         ) : attendee ? (
           <IconUserMinus className="shrink-0 size-[1.25em]" />
         ) : (
