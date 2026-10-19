@@ -199,8 +199,8 @@ export const AttendanceCard = ({
   const showOtherPools = attendance.pools.length === 0 || getNonAttendablePools(attendance, user).length > 0
 
   return (
-    <section className="flex flex-col gap-4 min-h-24 text-base sm:p-4 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
-      <div className="flex flex-row items-center justify-between gap-3">
+    <section className="flex flex-col gap-4 min-h-24 text-base sm:p-2 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
+      <div className="flex flex-row items-center justify-between gap-3 pl-3 pt-3">
         <Title element="h2" size="lg">
           Påmelding
         </Title>
@@ -218,7 +218,9 @@ export const AttendanceCard = ({
           />
         )}
 
-        <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+        <div className="px-3">
+          <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+        </div>
 
         <AttendanceSection contentClassName="pt-8">
           {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
@@ -255,7 +257,7 @@ export const AttendanceCard = ({
           </AttendanceSection>
         </div>
 
-        <AttendanceSection contentClassName="pt-8">
+        <AttendanceSection contentClassName="pt-8 px-3">
           {attendee?.registered && attendance.selections.length > 0 && (
             <div className="flex flex-col gap-2">
               <Title element="p" size="sm" className="text-base">
@@ -325,7 +327,7 @@ export const AttendanceCard = ({
             </div>
           )}
 
-          <div className="flex flex-row flex-wrap gap-x-3 gap-y-2 -mx-1.5">
+          <div className="flex flex-row flex-wrap gap-x-0.5 gap-y-0.5 px-1.5">
             <EventRules className="text-muted-foreground px-1.5" />
 
             <Button
@@ -363,10 +365,10 @@ export const AttendanceCardSkeleton = () => {
   const button = <div className="min-h-16 rounded-lg bg-gray-300 dark:bg-stone-600 animate-pulse" />
 
   return (
-    <section className="flex flex-col gap-4 min-h-24 rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-4 sm:rounded-xl">
-      {title}
+    <section className="flex flex-col gap-4 min-h-24 rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-2 sm:rounded-xl">
+      <div className="pl-3 pt-3">{title}</div>
 
-      <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-row gap-2 items-center px-3">
         {dateInfo()}
         <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse invisible sm:visible" />
         {dateInfo()}
