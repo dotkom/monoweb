@@ -161,7 +161,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const isRegistrationDelayed = hasRegistrationDelay(attendee, now)
 
-  const actionIsRequired = hasMissingRequirements && canCompletePayment
+  const isActionRequired = hasMissingRequirements && canCompletePayment
   const attendeeState = completion?.attendeeState ?? null
   const isRegistered = attendeeState === "REGISTERED"
   const isReserved = attendeeState === "RESERVED"
@@ -193,8 +193,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               className={cn(
                 "text-3xl px-2 py-1 transition-colors duration-260 ease-smooth motion-reduce:transition-none",
                 hasWaitlist &&
-                  (isRegistered || actionIsRequired) &&
-                  (actionIsRequired
+                  (isRegistered || isActionRequired) &&
+                  (isActionRequired
                     ? "bg-yellow-200 dark:bg-[#885221] rounded-lg"
                     : "bg-green-200 dark:bg-green-800 rounded-lg")
               )}
@@ -214,11 +214,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
               className={cn(
                 isQueued &&
                   !isRegistrationDelayed &&
-                  !actionIsRequired &&
+                  !isActionRequired &&
                   "bg-indigo-200 dark:bg-indigo-800 rounded-md",
                 isQueued &&
                   !isRegistrationDelayed &&
-                  actionIsRequired &&
+                  isActionRequired &&
                   "bg-fuchsia-200 dark:bg-fuchsia-800 dark:saturate-80 rounded-md"
               )}
             />
@@ -231,9 +231,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             className={transitionStyles.state}
           >
             {isRegistrationDelayed ? (
-              <PendingRegistrationStatus actionIsRequired={actionIsRequired} />
+              <PendingRegistrationStatus isActionRequired={isActionRequired} />
             ) : (
-              <AttendanceStatus attendance={attendance} attendee={attendee} actionIsRequired={hasMissingRequirements} />
+              <AttendanceStatus attendance={attendance} attendee={attendee} isActionRequired={hasMissingRequirements} />
             )}
           </div>
 
@@ -269,7 +269,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const body = (
     <div className="relative">
-      {actionIsRequired && (
+      {isActionRequired && (
         <Stripes
           colorA={stripeColorA}
           colorB={stripeColorB}
@@ -288,10 +288,10 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
       className={cn(
         "flex flex-col w-full overflow-hidden text-base transition-[background-color,border-radius] duration-260 ease-smooth motion-reduce:transition-none",
         hasAttachedActionBelow ? "rounded-t-xl rounded-b-md" : "rounded-xl",
-        !actionIsRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
+        !isActionRequired && !attendee && "bg-gray-100 dark:bg-stone-700/50",
         isRegistered && "bg-green-100 dark:bg-green-900",
-        isReserved && !actionIsRequired && "bg-gray-100 dark:bg-stone-700",
-        !actionIsRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
+        isReserved && !isActionRequired && "bg-gray-100 dark:bg-stone-700",
+        !isActionRequired && isQueued && "bg-indigo-100 dark:bg-indigo-900/75"
       )}
     >
       <div
@@ -299,11 +299,11 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
           "flex flex-row gap-2 px-3 py-2 justify-center text-sm font-bold transition-colors duration-260 ease-smooth motion-reduce:transition-none",
           !attendee && "bg-gray-200 dark:bg-stone-700",
           isRegistered && "bg-green-200 dark:bg-green-800",
-          isReserved && !actionIsRequired && "bg-gray-200 dark:bg-stone-700",
-          isQueued && !actionIsRequired && "bg-indigo-200 dark:bg-indigo-900",
-          actionIsRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
-          actionIsRequired && isReserved && "bg-yellow-200 dark:bg-[#6a4422]",
-          actionIsRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
+          isReserved && !isActionRequired && "bg-gray-200 dark:bg-stone-700",
+          isQueued && !isActionRequired && "bg-indigo-200 dark:bg-indigo-900",
+          isActionRequired && !attendee && "bg-gray-200 dark:bg-stone-700/50",
+          isActionRequired && isReserved && "bg-yellow-200 dark:bg-[#6a4422]",
+          isActionRequired && isQueued && "bg-fuchsia-200 dark:bg-fuchsia-900/75"
         )}
       >
         <Title element="p" className="text-base">
@@ -343,7 +343,7 @@ const DelayPill = ({ mergeDelayHours }: DelayPillProps) => {
 interface AttendanceStatusProps {
   attendance: AttendanceView
   attendee: Attendee | null
-  actionIsRequired: boolean
+  isActionRequired: boolean
 }
 
 const NotRegisteredStatus = () => {
@@ -365,13 +365,13 @@ const ReservedStatus = () => {
 }
 
 interface PendingRegistrationStatusProps {
-  actionIsRequired: boolean
+  isActionRequired: boolean
 }
 
-const PendingRegistrationStatus = ({ actionIsRequired }: PendingRegistrationStatusProps) => {
+const PendingRegistrationStatus = ({ isActionRequired }: PendingRegistrationStatusProps) => {
   return (
     <div className="flex flex-row items-center gap-2">
-      <IconCircleDashed className={cn("size-[1.25em]", !actionIsRequired && "text-indigo-700 dark:text-indigo-200")} />
+      <IconCircleDashed className={cn("size-[1.25em]", !isActionRequired && "text-indigo-700 dark:text-indigo-200")} />
 
       <div className="flex flex-col gap-0 items-start">
         <Text>Påmeldingen din er utsatt</Text>
@@ -392,27 +392,27 @@ const RegisteredStatus = () => {
 
 interface QueueStatusProps {
   queuePosition: number | null
-  actionIsRequired: boolean
+  isActionRequired: boolean
 }
 
-const QueueStatus = ({ queuePosition, actionIsRequired }: QueueStatusProps) => {
+const QueueStatus = ({ queuePosition, isActionRequired }: QueueStatusProps) => {
   return (
     <div className="flex flex-row items-center gap-2">
       <IconCircleDashedCheck
-        className={cn("size-[1.25em]", !actionIsRequired && "text-indigo-700 dark:text-indigo-200")}
+        className={cn("size-[1.25em]", !isActionRequired && "text-indigo-700 dark:text-indigo-200")}
       />
       <Text>Du er {queuePosition !== null && `${queuePosition}. `}i køen</Text>
     </div>
   )
 }
 
-const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: AttendanceStatusProps) => {
+const AttendanceStatus = ({ attendance, attendee, isActionRequired }: AttendanceStatusProps) => {
   if (!attendee) {
     return <NotRegisteredStatus />
   }
 
   if (attendee.registered === true) {
-    if (actionIsRequired) {
+    if (isActionRequired) {
       return <ReservedStatus />
     }
 
@@ -421,7 +421,7 @@ const AttendanceStatus = ({ attendance, attendee, actionIsRequired }: Attendance
 
   const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
-  return <QueueStatus queuePosition={queuePosition} actionIsRequired={actionIsRequired} />
+  return <QueueStatus queuePosition={queuePosition} isActionRequired={isActionRequired} />
 }
 
 interface PaymentStatusProps {
