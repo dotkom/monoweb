@@ -9,14 +9,21 @@ import { cn } from "../../utils"
  * Horizontal timelines transpose this into three shared rows, with each item occupying a column.
  */
 export type TimelineOrientation = "vertical" | "horizontal"
+export type TimelineColor = "brand" | "gray"
 
 export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
   orientation?: TimelineOrientation
+  color?: TimelineColor
 }
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
   vertical: "grid-cols-[auto_1.5rem_minmax(0,1fr)]",
   horizontal: "grid-flow-col auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
+}
+
+const timelineColorClassNames: Record<TimelineColor, string> = {
+  brand: "[--timeline-color:var(--color-brand)]",
+  gray: "[--timeline-color:theme(colors.gray.300)] dark:[--timeline-color:theme(colors.stone.600)]",
 }
 
 const timelineRowClassName = cn(
@@ -34,7 +41,7 @@ const TimelineRailLine = () => (
   <span
     aria-hidden="true"
     className={cn(
-      "absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-brand",
+      "absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 bg-(--timeline-color)",
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
       "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
       // Start at the first dot's center, including its lower offset when a side label is present.
@@ -64,12 +71,18 @@ const TimelineRailLine = () => (
 /**
  * Defaults to vertical. Use `orientation="horizontal"` for a scrolling timeline with labels above the rail and content
  * below it. Horizontal items have a minimum width of 12rem; override the grid's auto columns with `className` as needed.
+ * `color` defaults to `"brand"` and also supports `"gray"`, coloring both the rail and dot borders.
  */
-export const Timeline: FC<TimelineProps> = ({ orientation = "vertical", className, ...props }) => (
+export const Timeline: FC<TimelineProps> = ({ orientation = "vertical", color = "brand", className, ...props }) => (
   <div
     data-slot="timeline"
     data-orientation={orientation}
-    className={cn("group/timeline grid w-full", timelineGridClassNames[orientation], className)}
+    className={cn(
+      "group/timeline grid w-full",
+      timelineGridClassNames[orientation],
+      timelineColorClassNames[color],
+      className
+    )}
     {...props}
   />
 )
@@ -121,7 +134,7 @@ export const TimelineDot: FC<ComponentPropsWithoutRef<"div">> = ({ className, ch
         "group-data-[orientation=horizontal]/timeline:left-4 group-data-[orientation=horizontal]/timeline:translate-x-0",
         "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
         "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",
-        "border-[3px] border-brand bg-white",
+        "border-[3px] border-(--timeline-color) bg-white",
         className
       )}
     />
