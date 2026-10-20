@@ -99,6 +99,10 @@
     "./fadderuke-permissions": {
       "import": "./src/permissions/fadderuke-permissions.ts",
       "types": "./src/permissions/fadderuke-permissions.ts"
+    },
+    "./company-permissions": {
+      "import": "./src/permissions/company-permissions.ts",
+      "types": "./src/permissions/company-permissions.ts"
     }
   },
   "scripts": {
