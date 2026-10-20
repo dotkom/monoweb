@@ -83,6 +83,10 @@
     "./attendance-permissions": {
       "import": "./src/permissions/attendance-permissions.ts",
       "types": "./src/permissions/attendance-permissions.ts"
+    },
+    "./article-permissions": {
+      "import": "./src/permissions/article-permissions.ts",
+      "types": "./src/permissions/article-permissions.ts"
     }
   },
   "scripts": {
