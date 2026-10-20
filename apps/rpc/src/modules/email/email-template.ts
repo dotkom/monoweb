@@ -161,9 +161,14 @@ export const emails = {
         title: z.string(),
         details: z.string().nullable(),
         markCountLabel: z.string().min(1),
+        totalMarkCountLabel: z.string().min(1),
+        responsibleGroups: z.array(z.object({ name: z.string(), email: z.string().nullable() })),
+        isSuspension: z.boolean(),
+        isSuspended: z.boolean(),
         endsAt: z
           .string()
-          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb }))
+          .nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),
