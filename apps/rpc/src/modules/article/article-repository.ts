@@ -20,7 +20,7 @@ export interface ArticleRepository {
   findBySlug(handle: DBHandle, articleSlug: ArticleSlug): Promise<Article | null>
   findMany(handle: DBHandle, query: ArticleFilterQuery, page: Pageable): Promise<Article[]>
   findManyByTags(handle: DBHandle, articleTags: ArticleTagName[], page?: Pageable): Promise<Article[]>
-  findTagsOrderedByPopularity(handle: DBHandle, take: number): Promise<ArticleTag[]>
+  findTagsOrderedByPopularity(handle: DBHandle): Promise<ArticleTag[]>
 }
 
 export function getArticleRepository(): ArticleRepository {
@@ -96,7 +96,7 @@ export function getArticleRepository(): ArticleRepository {
       return articles.map((article) => mapArticle(article, article.tags))
     },
 
-    async findTagsOrderedByPopularity(handle, take) {
+    async findTagsOrderedByPopularity(handle) {
       const tags = await handle.articleTagLink.groupBy({
         by: "tagName",
         _count: {
@@ -107,7 +107,6 @@ export function getArticleRepository(): ArticleRepository {
             tagName: "desc",
           },
         },
-        take: take,
       })
 
       return tags.map((tag) =>

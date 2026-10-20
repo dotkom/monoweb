@@ -206,8 +206,7 @@ export function getArticleService(
     },
 
     async findTagsOrderedByPopularity(handle) {
-      // magic number
-      return articleRepository.findTagsOrderedByPopularity(handle, 30)
+      return articleRepository.findTagsOrderedByPopularity(handle)
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {
