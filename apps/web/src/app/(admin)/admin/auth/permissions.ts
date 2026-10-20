@@ -139,13 +139,6 @@ export function canManageNotification(state: AuthorizationState, actorGroupId: G
 }
 
 /**
- * `contest` mutations
- */
-export function canEditContest(state: AuthorizationState, groupIds: readonly GroupId[]): boolean {
-  return hasAnyGroupAffiliation(state, groupIds)
-}
-
-/**
  * `group.create` procedure
  */
 export function canCreateGroup(state: AuthorizationState, groupType: GroupType): boolean {

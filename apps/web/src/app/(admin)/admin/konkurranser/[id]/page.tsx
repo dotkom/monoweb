@@ -1,13 +1,13 @@
 "use client"
 
-import { useContestEditPermission } from "@admin/hooks/use-contest-edit-permission"
+import { useContestManagePermission } from "@admin/hooks/use-contest-manage-permission"
 import { ContestWriteForm } from "../ContestWriteForm"
 import { useUpdateContestMutation } from "../mutations"
 import { useContestContext } from "./provider"
 
 export default function ContestInfoPage() {
   const { contest } = useContestContext()
-  const canEdit = useContestEditPermission()
+  const canEdit = useContestManagePermission()
   const updateContest = useUpdateContestMutation()
 
   return (

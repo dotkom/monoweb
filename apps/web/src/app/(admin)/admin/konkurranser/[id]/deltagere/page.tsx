@@ -1,6 +1,6 @@
 "use client"
 
-import { useContestEditPermission } from "@admin/hooks/use-contest-edit-permission"
+import { useContestManagePermission } from "@admin/hooks/use-contest-manage-permission"
 import { Button } from "@dotkomonline/ui"
 import { IconUserPlus, IconUsersPlus } from "@tabler/icons-react"
 import { useCallback, useMemo, useState } from "react"
@@ -26,7 +26,7 @@ function getResultSuffix(resultType: string): string | undefined {
 
 export default function ContestantsPage() {
   const { contest, contestants } = useContestContext()
-  const canEdit = useContestEditPermission()
+  const canEdit = useContestManagePermission()
   const addContestant = useAddContestantMutation()
   const [modal, setModal] = useState<PageModalState | null>(null)
 
