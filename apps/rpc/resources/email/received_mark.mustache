@@ -6,7 +6,7 @@
     <meta name="x-apple-disable-message-reformatting" />
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
-    <title>Du har fått {{ markCountLabel }}</title>
+    <title>{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }}</title>
     <style>
       @font-face {
         font-family: Inter;
@@ -19,20 +19,20 @@
       }
       :root { color-scheme: light dark; supported-color-schemes: light dark; }
       @media (prefers-color-scheme: dark) {
-        .button-secondary { background-color: #23201e !important; color: #fafaf9 !important; }
         .email-bg { background-color: #1c1917 !important; }
         .text-primary { color: #fafaf9 !important; }
         .text-secondary { color: #a8a29e !important; }
         .text-muted { color: #a8a29e !important; }
+        .mark-card { background-color: #351a19 !important; }
         .footer { border-color: #44403c !important; }
         .logo-light { display: none !important; }
         .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
       }
-      [data-ogsc] .button-secondary { background-color: #23201e !important; color: #fafaf9 !important; }
       [data-ogsc] .email-bg { background-color: #1c1917 !important; }
       [data-ogsc] .text-primary { color: #fafaf9 !important; }
       [data-ogsc] .text-secondary { color: #a8a29e !important; }
       [data-ogsc] .text-muted { color: #a8a29e !important; }
+      [data-ogsc] .mark-card { background-color: #351a19 !important; }
       [data-ogsc] .footer { border-color: #44403c !important; }
       [data-ogsc] .logo-light { display: none !important; }
       [data-ogsc] .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
@@ -45,7 +45,7 @@
   </head>
   <body class="email-bg text-primary" style="margin: 0; padding: 0; background-color: #ffffff; color: #000000; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; -webkit-text-size-adjust: 100%;">
     <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;" aria-hidden="true">
-      Du har fått {{ markCountLabel }} for: {{ title }}.
+      {{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }} for: {{ title }}.
     </div>
     <table class="email-bg" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
       <tbody>
@@ -69,19 +69,49 @@
                 <tr>
                   <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
                     <p style="margin: 0 0 16px;">Hei!</p>
-                    <p style="margin: 0;">Du har fått {{ markCountLabel }} for: {{ title }}.</p>
+                    <p style="margin: 0;">{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }} for:</p>
                   </td>
                 </tr>
-                {{# details }}
                 <tr>
-                  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-                    <p style="margin: 0;"><span style="white-space: pre-wrap;">{{ details }}</span></p>
+                  <td style="padding: 16px 0 0;">
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td class="mark-card text-primary" bgcolor="#fee2e2" style="padding: 16px; border-radius: 8px; background-color: #fee2e2; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                            <p style="margin: 0;">{{ title }}</p>
+                            {{# details }}
+                            <p style="margin: 16px 0 0; font-size: 14px; line-height: 22px;"><span style="white-space: pre-wrap;">{{ details }}</span></p>
+                            {{/ details }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </td>
                 </tr>
-                {{/ details }}
+                {{# responsibleGroups.length }}
                 <tr>
                   <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-                    <p style="margin: 0;">Du har fått {{ markCountLabel }} som varer frem til {{ endsAt }}.</p>
+                    <p style="margin: 0 0 8px;">Du har fått prikker fra:</p>
+                    <ul style="margin: 0; padding-left: 24px;">
+                      {{# responsibleGroups }}
+                      <li>{{ name }}{{# email }} <span class="text-secondary" style="color: #4b5563;">(<a href="mailto:{{ email }}" style="color: inherit; text-decoration: underline;">{{ email }}</a>)</span>{{/ email }}</li>
+                      {{/ responsibleGroups }}
+                    </ul>
+                  </td>
+                </tr>
+                {{/ responsibleGroups.length }}
+                <tr>
+                  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    {{# endsAt }}
+                    <p style="margin: 0 0 16px;">Utløpsdato: {{ endsAt }}.</p>
+                    {{/ endsAt }}
+                    {{^ endsAt }}
+                    <p style="margin: 0 0 16px;">Suspensjonen gjelder inntil videre.</p>
+                    {{/ endsAt }}
+                    {{# isSuspended }}
+                    <p class="text-secondary" style="margin: 16px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">Du er suspendert fra å melde deg på Onlines arrangementer.</p>
+                    {{/ isSuspended }}
+                    <p class="text-secondary" style="margin: 0; color: #4b5563; font-size: 14px; line-height: 22px;">Du har nå totalt {{ totalMarkCountLabel }}.</p>
                   </td>
                 </tr>
                 <tr>
@@ -100,13 +130,18 @@
                     <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="display: inline-table; vertical-align: top; margin: 0 8px 8px 0;">
                       <tbody>
                         <tr>
-                          <td class="button-secondary" bgcolor="#f3f4f5" style="background-color: #f3f4f5; border-radius: 8px; mso-padding-alt: 6px 12px;">
-                            <a class="button-secondary" href="https://online.ntnu.no/profil" style="display: inline-block; padding: 6px 12px; border-radius: 8px; background-color: #f3f4f5; color: #000000; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none; mso-padding-alt: 0;">Se profilen din<span aria-hidden="true" style="padding-left: 6px; font-family: Arial, sans-serif; font-size: 18px; line-height: 20px; vertical-align: -3px;">&#8599;</span></a>
+                          <td bgcolor="#0b5374" style="background-color: #0b5374; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06); mso-padding-alt: 6px 12px;">
+                            <a href="https://online.ntnu.no/profil" style="display: inline-block; padding: 6px 12px; border-radius: 8px; background-color: #0b5374; color: #ffffff; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none; mso-padding-alt: 0;">Se prikkene dine<span aria-hidden="true" style="padding-left: 6px; font-family: Arial, sans-serif; font-size: 18px; line-height: 20px; vertical-align: -3px;">&#8599;</span></a>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                     <!--[if mso]></td></tr></table><![endif]-->
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">
+                    <p style="margin: 0;">Hvis du mener dette er en feil, {{# responsibleGroups.length }}ta kontakt med de ansvarlige gruppene som er oppført ovenfor. Hvis det ikke er mulig, kan du kontakte{{/ responsibleGroups.length }}{{^ responsibleGroups.length }}kan du kontakte{{/ responsibleGroups.length }} Hovedstyret på <a href="mailto:hs@online.ntnu.no" style="color: inherit; text-decoration: underline;">hs@online.ntnu.no</a>.</p>
                   </td>
                 </tr>
                 <tr>
