@@ -20,6 +20,7 @@ import {
   IconWheelchair,
   type TablerIcon,
 } from "@tabler/icons-react"
+import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
@@ -97,6 +98,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny konkurranse",
             href: "/admin/konkurranser/ny",
             resourceName: "konkurranse",
+            canAccess: (authorization) => canCreateContests(authorization),
           },
         ],
       },
