@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
@@ -10,8 +11,8 @@ import { useFadderukeFindManyQuery } from "./queries"
 
 export default function FadderukenePage() {
   const { fadderuker, isLoading } = useFadderukeFindManyQuery()
-  const { canEditFadderuke } = useAuthorization()
-  const canEdit = canEditFadderuke()
+  const authorization = useAuthorization()
+  const canEdit = canManageFadderuker(authorization)
 
   return (
     <div className="flex flex-col gap-4">

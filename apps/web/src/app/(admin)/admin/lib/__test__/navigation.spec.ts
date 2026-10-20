@@ -15,7 +15,6 @@ function principal(affiliations: Record<string, GroupRoleType[]>): ReturnType<ty
     isAdministrator: false,
     isCommitteeMember: false,
     canCreateGroup: () => true,
-    canEditFadderuke: () => true,
   } as unknown as ReturnType<typeof useAuthorization>
 }
 
@@ -23,7 +22,6 @@ function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
   return {
     affiliations: new Map<GroupId, Set<GroupRoleType>>(),
     canCreateGroup: () => true,
-    canEditFadderuke: () => true,
     ...overrides,
   } as ReturnType<typeof useAuthorization>
 }
@@ -60,8 +58,12 @@ describe("filterNavigationsUserHasAccessTo", () => {
     expect(pageHrefs(principal({ redaksjonen: [GroupRoleTypeEnum.LEADER] }))).toContain("/admin/offline")
   })
 
-  it("hides fadderukene when canEditFadderuke is false", () => {
-    expect(pageHrefs(auth({ canEditFadderuke: () => false }))).not.toContain("/admin/fadderukene")
+  it("hides fadderukene when the caller is not affiliated with Velkom", () => {
+    expect(pageHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).not.toContain("/admin/fadderukene")
+  })
+
+  it("keeps fadderukene when the caller is affiliated with Velkom", () => {
+    expect(pageHrefs(principal({ velkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/fadderukene")
   })
 
   it("hides audit log when the caller is not an administrator", () => {

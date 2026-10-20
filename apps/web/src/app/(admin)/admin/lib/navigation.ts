@@ -23,6 +23,7 @@ import {
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 
 export type Navigation = {
@@ -234,7 +235,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconConfetti,
         href: "/admin/fadderukene",
         keywords: ["fadderuke", "fadderuker", "fadderukene"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditFadderuke(),
+        canAccess: (authorization) => canManageFadderuker(authorization),
         createActions: [
           {
             label: "Ny fadderuke",

@@ -7,6 +7,7 @@ import {
   type ResourceDetailNavItem,
 } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -19,8 +20,8 @@ export default function FadderukeDetailsLayout({ children }: PropsWithChildren) 
   const id = decodeURIComponent(rawId)
   const { data, isLoading, isError, error } = useFadderukeGetByIdQuery(id)
   const deleteFadderuke = useDeleteFadderukeMutation()
-  const { canEditFadderuke } = useAuthorization()
-  const canEdit = canEditFadderuke()
+  const authorization = useAuthorization()
+  const canEdit = canManageFadderuker(authorization)
 
   useBreadcrumbLabel(breadcrumbPath("fadderukene", id), data ? `Fadderukene ${data.year}` : null)
 
