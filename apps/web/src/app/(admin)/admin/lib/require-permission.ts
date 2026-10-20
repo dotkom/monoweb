@@ -1,7 +1,8 @@
-import { redirect } from "next/navigation"
-import { canEditFadderuke, canEditOffline } from "@admin/auth/permissions"
-import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canEditFadderuke } from "@admin/auth/permissions"
 import { getServerAuthorizationState } from "@admin/lib/server-authorization"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
+import { redirect } from "next/navigation"
 
 export const UNAUTHORIZED_PATH = "/admin/ikke-tilgang"
 
@@ -16,7 +17,7 @@ export async function requireAuditLogAccess() {
 export async function requireOfflineEditAccess() {
   const state = await getServerAuthorizationState()
 
-  if (!canEditOffline(state)) {
+  if (!canManageOfflines(state)) {
     redirect(UNAUTHORIZED_PATH)
   }
 }

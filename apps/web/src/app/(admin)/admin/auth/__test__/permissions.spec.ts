@@ -2,10 +2,10 @@ import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
 import {
   canEditFadderuke,
-  canEditOffline,
   canEditUserProfile,
   canManageGroupMembership,
   canManageNotification,
@@ -184,23 +184,29 @@ describe("canEditUserProfile", () => {
   })
 })
 
-describe("canEditOffline", () => {
+describe("canManageOfflines", () => {
   it("allows redaksjonen leaders", () => {
     const state = createState({ redaksjonen: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canEditOffline(state)).toBe(true)
+    expect(canManageOfflines(state)).toBe(true)
   })
 
   it("allows redaksjonen deputy leaders", () => {
     const state = createState({ redaksjonen: [GroupRoleTypeEnum.DEPUTY_LEADER] })
 
-    expect(canEditOffline(state)).toBe(true)
+    expect(canManageOfflines(state)).toBe(true)
+  })
+
+  it("allows administrators", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageOfflines(state)).toBe(true)
   })
 
   it("denies unrelated committee members", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canEditOffline(state)).toBe(false)
+    expect(canManageOfflines(state)).toBe(false)
   })
 })
 
