@@ -1,24 +1,14 @@
 "use client"
 
-import {
-  Title,
-  Text,
-  cn,
-  Drawer,
-  DrawerContent,
-  DrawerTitle,
-  DrawerHeader,
-  DrawerTrigger,
-  Button,
-} from "@dotkomonline/ui"
+import { Button, Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, Text, Title } from "@dotkomonline/ui"
 
 import { IconFilter2 } from "@tabler/icons-react"
+import { useState } from "react"
 import { SearchInput } from "src/components/molecules/ListFilters/SearchInput"
-import { useArticleFilters } from "./hooks/useArticleFilters"
 import { ArticleList } from "./components/ArticleList"
 import { ArticleListFilterChips } from "./components/ArticleListFilterChips"
-import { useState } from "react"
 import { ArticleTagFilter } from "./components/ArticleTagFilter"
+import { useArticleFilters } from "./hooks/useArticleFilters"
 
 interface ArticleListPageProps {
   availableTags: string[]
@@ -33,79 +23,67 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
   const hasActiveFilters = filters.bySearchTerm?.trim() !== "" || activeTagCount > 0
 
   return (
-    <div className="flex flex-col gap-4">
-      <Title element="h1" size="xl">
-        Artikler
-      </Title>
-      <Text>Les artikler skrevet av medlemmer i Online.</Text>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Title element="h1" size="xl">
+            Artikler
+          </Title>
+          <Text className="text-gray-600 dark:text-stone-400">Les artikler skrevet av medlemmer i Online.</Text>
+        </div>
 
-      <div
-        className={cn(
-          "flex min-w-0 justify-between gap-x-2 gap-y-3",
-          "sticky top-[calc(var(--navbar-height)+(--spacing(6)))] z-30 -m-2 bg-background p-2 rounded-2xl transition-shadow"
-        )}
-      >
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 max-sm:mx-3">
           <SearchInput
             initialValue={filters.bySearchTerm ?? ""}
             placeholder="Søk etter artikler..."
             onDebouncedChange={(value) => updateFilters({ bySearchTerm: value })}
-            className="w-full max-w-[32rem]"
+            className="min-w-0 flex-1 md:max-w-lg"
+            containerClassName="sm:h-12 md:h-full"
           />
 
-          <div className="ml-auto flex shrink-0 justify-self-end justify-end items-stretch gap-2">
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-              <DrawerTrigger
-                className="sm:hidden"
-                render={<Button variant="outline" className="relative rounded-lg size-12" />}
-              >
-                <IconFilter2 className="size-5" />
-                {activeTagCount > 0 && (
-                  <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
-                    {activeTagCount}
-                  </div>
-                )}
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="px-4 overflow-y-auto max-h-[80dvh]">
-                  <DrawerHeader>
-                    <DrawerTitle className="flex items-center gap-2">
-                      <IconFilter2 className="size-[1.25em]" />
-                      Filtrer artikler
-                    </DrawerTitle>
-                  </DrawerHeader>
-
-                  <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
-                    <div>
-                      <div className="mt-6">
-                        <ArticleTagFilter
-                          availableTags={availableTags}
-                          selectedTags={filters.byTags ?? []}
-                          onChange={(byTags) => updateFilters({ byTags })}
-                        />
-                      </div>
-                    </div>
-                  </div>
+          <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+            <DrawerTrigger
+              className="md:hidden"
+              render={<Button variant="outline" className="relative rounded-lg size-12" />}
+            >
+              <IconFilter2 className="size-5" />
+              {activeTagCount > 0 && (
+                <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
+                  {activeTagCount}
                 </div>
-              </DrawerContent>
-            </Drawer>
-          </div>
+              )}
+            </DrawerTrigger>
+            <DrawerContent className="px-4 overflow-y-auto max-h-[80dvh]">
+              <DrawerHeader>
+                <DrawerTitle className="flex items-center gap-2">
+                  <IconFilter2 className="size-[1.25em]" />
+                  Filtrer artikler
+                </DrawerTitle>
+              </DrawerHeader>
+
+              <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
+                <ArticleTagFilter
+                  availableTags={availableTags}
+                  selectedTags={filters.byTags ?? []}
+                  onChange={(byTags) => updateFilters({ byTags })}
+                />
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
 
-      <div className="flex">
-        <div className="max-sm:hidden sm:grid sm:grid-cols-[15rem_auto] sm:gap-8 lg:gap-12 min-w-0 max-w-[18rem]">
-          <div className="mt-4">
-            <ArticleTagFilter
-              availableTags={availableTags}
-              selectedTags={filters.byTags ?? []}
-              onChange={(byTags) => updateFilters({ byTags })}
-            />
-          </div>
-        </div>
+      <div className="md:grid md:grid-cols-[15rem_minmax(0,1fr)] md:gap-8 lg:gap-12 min-w-0">
+        <aside className="max-md:hidden">
+          <ArticleTagFilter
+            availableTags={availableTags}
+            selectedTags={filters.byTags ?? []}
+            onChange={(byTags) => updateFilters({ byTags })}
+          />
+        </aside>
 
-        <div className="mt-2 min-w-0 flex flex-col gap-2">
-          <div className="grid grid-cols-[auto_1fr] w-full sm:min-h-8 items-center">
+        <div className="min-w-0 flex flex-col gap-2">
+          <div className="grid grid-cols-[auto_1fr] min-w-0 md:min-h-8 items-center max-sm:mx-3">
             {hasActiveFilters && (
               <ArticleListFilterChips
                 searchTerm={filters.bySearchTerm ?? ""}
@@ -125,9 +103,8 @@ export const ArticleListPage = ({ availableTags }: ArticleListPageProps) => {
               />
             )}
           </div>
-          <div className="flex flex-col gap-4">
-            <ArticleList query={filters} />
-          </div>
+
+          <ArticleList query={filters} />
         </div>
       </div>
     </div>
