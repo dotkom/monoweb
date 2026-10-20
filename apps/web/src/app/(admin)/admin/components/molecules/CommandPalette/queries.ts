@@ -1,5 +1,6 @@
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { useTRPC } from "@admin/lib/trpc-client"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { keepPreviousData, useQueries } from "@tanstack/react-query"
 
@@ -125,7 +126,7 @@ export const useCommandPaletteCatalogQuery = ({ disabled }: UseCommandPaletteCat
       },
       {
         ...trpc.fadderuke.findMany.queryOptions(),
-        enabled: enabled && authorization.canEditFadderuke(),
+        enabled: enabled && canManageFadderuker(authorization),
       },
     ],
   })

@@ -5,12 +5,12 @@ import {
   canEditEvent,
   canSetEventOrganizers,
 } from "@dotkomonline/rpc/event-permissions"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
 import {
-  canEditFadderuke,
   canEditUserProfile,
   canManageGroupMembership,
   canManageNotification,
@@ -196,11 +196,23 @@ describe("canManageOfflines", () => {
   })
 })
 
-describe("canEditFadderuke", () => {
+describe("canManageFadderuker", () => {
   it("allows velkom members", () => {
     const state = createState({ velkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(canEditFadderuke(state)).toBe(true)
+    expect(canManageFadderuker(state)).toBe(true)
+  })
+
+  it("allows administrators", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canManageFadderuker(state)).toBe(true)
+  })
+
+  it("denies unrelated committee members", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageFadderuker(state)).toBe(false)
   })
 })
 
