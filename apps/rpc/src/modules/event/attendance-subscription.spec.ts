@@ -65,6 +65,9 @@ function createContext(currentUserId: string | null = null, isCommitteeMember = 
 
   if (currentUserId !== null) {
     principal = { subject: currentUserId, affiliations: new Map(), scopes: new Set() }
+    if (isCommitteeMember) {
+      principal.affiliations.set("dotkom", new Set())
+    }
   }
 
   const context = {

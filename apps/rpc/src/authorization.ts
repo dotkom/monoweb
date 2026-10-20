@@ -39,6 +39,7 @@ import type { UserId } from "./modules/user/user"
 import {
   isAdministrator as principalIsAdministrator,
   isCommitteeMember as principalIsCommitteeMember,
+  isSameSubject as principalIsSameSubject,
 } from "./permissions/principal"
 import type { Principal, TRPCContext } from "./trpc"
 
@@ -286,7 +287,7 @@ export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): 
 
       const selectedPrincipal = selector(context.input)
 
-      return selectedPrincipal === context.principal.subject
+      return principalIsSameSubject(context.principal, selectedPrincipal)
     },
   }
 }
