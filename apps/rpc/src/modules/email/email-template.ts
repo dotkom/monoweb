@@ -47,6 +47,15 @@ export function getReplyToAddresses(addresses: string[]): string[] {
   return [DEFAULT_EMAIL_SOURCE]
 }
 
+export function formatMarkCount(weight: number): string {
+  return `${weight} ${weight === 1 ? "prikk" : "prikker"}`
+}
+
+const EventImageUrlSchema = z
+  .url({ protocol: /^https?$/ })
+  .nullish()
+  .catch(null)
+
 export const emails = {
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
     type: "COMPANY_COLLABORATION_RECEIPT",
@@ -109,6 +118,7 @@ export const emails = {
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         feedbackLink: z.url(),
         eventStart: z
           .string()
@@ -126,6 +136,7 @@ export const emails = {
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         deregistrationDeadline: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
@@ -138,6 +149,7 @@ export const emails = {
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         message: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
@@ -148,7 +160,7 @@ export const emails = {
       z.object({
         title: z.string(),
         details: z.string().nullable(),
-        weight: z.number(),
+        markCountLabel: z.string().min(1),
         endsAt: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
@@ -161,6 +173,7 @@ export const emails = {
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         position: z.number(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "queue_notification.mustache"), "utf-8"),

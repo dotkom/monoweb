@@ -1,33 +1,110 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="nb">
-
-<head>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-  <meta name="x-apple-disable-message-reformatting" />
-</head>
-
-<body style="background-color: rgb(255, 255, 255);">
-  <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
-    style="max-width: 37.5em">
-    <tbody>
-      <tr style="width: 100%">
-        <td>
-          <h2>{{ title }}</h2>
-          {{#email}}
-            <p>Sendt av {{ email }}</p>
-          {{/email}}
-          <p style="white-space: pre-wrap;">{{ body }}</p>
-        </td>
-      </tr>
-      <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du rapporterte et problem via OnlineWeb</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Problem rapportert: {{ title }}</title>
+    <style>
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.2.8/files/inter-latin-wght-normal.woff2") format("woff2");
+        mso-font-alt: Arial;
+        mso-generic-font-family: swiss;
+      }
+      :root { color-scheme: light dark; supported-color-schemes: light dark; }
+      @media (prefers-color-scheme: dark) {
+        .email-bg { background-color: #1c1917 !important; }
+        .text-primary { color: #fafaf9 !important; }
+        .text-secondary { color: #a8a29e !important; }
+        .text-muted { color: #a8a29e !important; }
+        .footer { border-color: #44403c !important; }
+        .logo-light { display: none !important; }
+        .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
+      }
+      [data-ogsc] .email-bg { background-color: #1c1917 !important; }
+      [data-ogsc] .text-primary { color: #fafaf9 !important; }
+      [data-ogsc] .text-secondary { color: #a8a29e !important; }
+      [data-ogsc] .text-muted { color: #a8a29e !important; }
+      [data-ogsc] .footer { border-color: #44403c !important; }
+      [data-ogsc] .logo-light { display: none !important; }
+      [data-ogsc] .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
+    </style>
+    <!--[if mso]>
+      <style>
+        body, table, td, p, a { font-family: Arial, sans-serif !important; }
+      </style>
+    <![endif]-->
+  </head>
+  <body class="email-bg text-primary" style="margin: 0; padding: 0; background-color: #ffffff; color: #000000; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; -webkit-text-size-adjust: 100%;">
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;" aria-hidden="true">
+      Et problem er rapportert via OnlineWeb.
+    </div>
+    <table class="email-bg" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
+      <tbody>
+        <tr>
+          <td align="center" style="padding: 0 20px;">
+            <!--[if mso]>
+              <table width="570" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td>
+            <![endif]-->
+            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 570px; table-layout: fixed;">
+              <tbody>
+                <tr>
+                  <td style="padding: 32px 0;">
+                    <a href="https://online.ntnu.no" aria-label="Linjeforeningen Online" style="display: inline-block; text-decoration: none;">
+                      <img class="logo-light" src="https://cdn.online.ntnu.no/branding/online-logo.png" alt="Online" width="116" height="30" style="display: block; width: 116px; height: 30px; border: 0; color: #0b5374; font-size: 24px;" />
+                      <!--[if !mso]><!-->
+                      <img class="logo-dark" src="https://cdn.online.ntnu.no/branding/online-logo--white.png" alt="Online" width="116" height="30" style="display: none; width: 0; height: 0; max-height: 0; overflow: hidden; border: 0; color: #ffffff; font-size: 24px; mso-hide: all;" />
+                      <!--<![endif]-->
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    <p style="margin: 0 0 16px;">Hei Dotkom!</p>
+                    <p style="margin: 0;">Et problem er rapportert via OnlineWeb: {{ title }}.</p>
+                  </td>
+                </tr>
+                {{# email }}
+                <tr>
+                  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    <p style="margin: 0;">Sendt av {{ email }}.</p>
+                  </td>
+                </tr>
+                {{/ email }}
+                <tr>
+                  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    <p style="margin: 0;"><span style="white-space: pre-wrap;">{{ body }}</span></p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 44px 0 0;">
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td class="footer text-muted" style="padding: 28px 0 40px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px; line-height: 19px; overflow-wrap: anywhere; word-wrap: break-word;">
+                            <p style="margin: 0 0 12px; font-size: 14px; line-height: 21px;">Linjeforeningen Online</p>
+                            <p style="margin: 0 0 12px;">Du mottar denne e-posten fordi et problem er rapportert via OnlineWeb.</p>
+                            <p style="margin: 0;">Org. nr. 992 548 045 &middot; Høgskoleringen 5, 7034 Trondheim</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <!--[if mso]>
+              </td></tr></table>
+            <![endif]-->
           </td>
         </tr>
-    </tbody>
-  </table>
-</body>
-
+      </tbody>
+    </table>
+  </body>
 </html>
