@@ -106,13 +106,6 @@ export function hasGroupRole(state: AuthorizationState, groupId: GroupId, role: 
 }
 
 /**
- * `auditLog` router procedures
- */
-export function canAccessAuditLog(state: AuthorizationState): boolean {
-  return state.isAdministrator
-}
-
-/**
  * `user.createMembership`, `user.updateMembership`, `user.deleteMembership`
  */
 export function canManageUserMemberships(state: AuthorizationState): boolean {

@@ -17,7 +17,6 @@ function principal(affiliations: Record<string, GroupRoleType[]>): ReturnType<ty
     canCreateGroup: () => true,
     canEditOffline: () => true,
     canEditFadderuke: () => true,
-    canAccessAuditLog: () => true,
   } as unknown as ReturnType<typeof useAuthorization>
 }
 
@@ -27,7 +26,6 @@ function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
     canCreateGroup: () => true,
     canEditOffline: () => true,
     canEditFadderuke: () => true,
-    canAccessAuditLog: () => true,
     ...overrides,
   } as ReturnType<typeof useAuthorization>
 }
@@ -64,7 +62,11 @@ describe("filterNavigationsUserHasAccessTo", () => {
     expect(pageHrefs(auth({ canEditFadderuke: () => false }))).not.toContain("/admin/fadderukene")
   })
 
-  it("hides audit log when canAccessAuditLog is false", () => {
-    expect(pageHrefs(auth({ canAccessAuditLog: () => false }))).not.toContain("/admin/logg")
+  it("hides audit log when the caller is not an administrator", () => {
+    expect(pageHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).not.toContain("/admin/logg")
+  })
+
+  it("keeps audit log when the caller is an administrator", () => {
+    expect(pageHrefs(principal({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/logg")
   })
 })
