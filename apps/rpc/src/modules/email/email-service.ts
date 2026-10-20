@@ -4,12 +4,11 @@ import { DeleteMessageCommand, type Message, ReceiveMessageCommand } from "@aws-
 import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import { getLogger } from "@dotkomonline/logger"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
-import mustache from "mustache"
 import z from "zod"
 import type { ConfigurationWithAmazonSesEmail } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import { InvalidArgumentError } from "../../error"
-import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails } from "./email-template"
+import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails, renderEmailTemplate } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
 
 function formatSesSourceAddress(source: string): string {
@@ -117,9 +116,8 @@ export function getEmailService(
           throw new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`)
         }
 
-        const template = await emailTemplate.getTemplate()
+        const html = await renderEmailTemplate(emailTemplate, payload.data.data)
 
-        const html = mustache.render(template, payload.data.data)
         const sendEmailCommand = new SendEmailCommand({
           Source: formatSesSourceAddress(payload.data.source),
           ReplyToAddresses: payload.data.replyTo,
