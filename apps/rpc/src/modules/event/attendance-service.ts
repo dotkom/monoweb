@@ -1459,7 +1459,7 @@ export function getAttendanceService(
         const missingPaymentMark = await markService.create(
           handle,
           {
-            details: `Denne skal ikke fjernes ved fullført betaling. Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
+            details: `Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
             duration: DEFAULT_MARK_DURATION,
             title: `Manglende betaling for ${event.title}`,
             type: "MISSING_PAYMENT",
