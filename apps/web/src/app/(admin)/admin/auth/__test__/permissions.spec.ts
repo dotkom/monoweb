@@ -9,6 +9,7 @@ import {
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
 import {
@@ -246,5 +247,15 @@ describe("canManageCompanies", () => {
 
   it("denies callers with no committee affiliations", () => {
     expect(canManageCompanies(createState({}))).toBe(false)
+  })
+})
+
+describe("canManageJobListings", () => {
+  it("allows committee members", () => {
+    expect(canManageJobListings(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("denies callers with no committee affiliations", () => {
+    expect(canManageJobListings(createState({}))).toBe(false)
   })
 })

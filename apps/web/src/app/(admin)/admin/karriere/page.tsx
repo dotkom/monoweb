@@ -1,17 +1,21 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import type { JobListingFilterQuery } from "@dotkomonline/rpc/job-listing"
-import { useState } from "react"
-
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
+import { useState } from "react"
 import { JobListingFilters } from "./JobListingFilters"
 import { JobListingTable } from "./JobListingTable"
 import { useJobListingAllQuery } from "./queries"
 
 export default function JobListingPage() {
   const [filter, setFilter] = useState<JobListingFilterQuery>({})
+  const authorization = useAuthorization()
+  const canEdit = canManageJobListings(authorization)
   const { jobListings, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useJobListingAllQuery({ filter })
 
@@ -23,9 +27,18 @@ export default function JobListingPage() {
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <JobListingFilters onChange={setFilter} defaultValues={filter} />
-          <Button variant="default" size="lg" element={Link} href="/admin/karriere/ny" icon={<IconPencil />}>
-            Ny stillingsannonse
-          </Button>
+          <PermissionTooltip allowed={canEdit}>
+            <Button
+              variant="default"
+              size="lg"
+              element={Link}
+              href="/admin/karriere/ny"
+              icon={<IconPencil />}
+              disabled={!canEdit}
+            >
+              Ny stillingsannonse
+            </Button>
+          </PermissionTooltip>
         </div>
 
         <JobListingTable
