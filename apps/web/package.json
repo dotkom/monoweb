@@ -56,7 +56,6 @@
     "@trpc/server": "11.8.1",
     "@trpc/tanstack-react-query": "11.8.1",
     "axios": "1.20.0",
-    "browser-image-compression": "^2.0.2",
     "core-js": "^3.45.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",

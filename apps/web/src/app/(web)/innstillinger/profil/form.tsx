@@ -1,14 +1,7 @@
 "use client"
 
-import { useUserFileUploadMutation } from "@/app/innstillinger/mutations"
 import { useTRPC } from "@/utils/trpc/client"
-import {
-  GenderSchema,
-  USER_IMAGE_MAX_SIZE_KIB,
-  type User,
-  UserWriteSchema,
-  getGenderName,
-} from "@dotkomonline/rpc/user"
+import { GenderSchema, type User, UserWriteSchema, getGenderName } from "@dotkomonline/rpc/user"
 import {
   Button,
   Label,
@@ -25,12 +18,10 @@ import {
   cn,
 } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconAlertTriangle, IconCheck, IconLoader, IconLoader2, IconX } from "@tabler/icons-react"
+import { IconAlertTriangle, IconCheck, IconLoader, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
-import imageCompression from "browser-image-compression"
 import { secondsToMilliseconds } from "date-fns"
-import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import { useDebounce } from "use-debounce"
 import type { z } from "zod"
@@ -44,10 +35,21 @@ const ProfileFormSchema = UserWriteSchema.omit({
   workspaceUserId: true,
   name: true,
   email: true,
+  imageUrl: true,
 })
 
 export type FormUserWrite = z.output<typeof ProfileFormSchema>
 type FormUserWriteInput = z.input<typeof ProfileFormSchema>
+
+function getProfileFormValues(user: User): FormUserWrite {
+  return {
+    username: user.username,
+    biography: user.biography ?? null,
+    phone: user.phone ?? null,
+    gender: user.gender,
+    dietaryRestrictions: user.dietaryRestrictions ?? null,
+  }
+}
 
 interface FormProps {
   user: User
@@ -59,26 +61,16 @@ interface FormProps {
 }
 
 export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, resetSaveState }: FormProps) {
-  const defaultValues: FormUserWrite = {
-    username: user.username,
-    imageUrl: user.imageUrl ?? null,
-    biography: user.biography ?? null,
-    phone: user.phone ?? null,
-    gender: user.gender,
-    dietaryRestrictions: user.dietaryRestrictions ?? null,
-  }
+  const savedValues = getProfileFormValues(user)
 
   const {
     register,
     control,
     reset,
-    setError,
-    clearErrors,
-    trigger,
     formState: { errors, isDirty },
     handleSubmit,
   } = useForm<FormUserWriteInput, unknown, FormUserWrite>({
-    defaultValues,
+    defaultValues: savedValues,
     mode: "onTouched",
     reValidateMode: "onBlur",
     resolver: zodResolver(ProfileFormSchema),
@@ -86,7 +78,6 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
 
   const username = useWatch({ control, name: "username" })
   const [debouncedSlug] = useDebounce(username, 500)
-  const [isCompressing, setIsCompressing] = useState(false)
 
   const trpc = useTRPC()
 
@@ -98,7 +89,13 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
     })
   )
 
-  const fileUpload = useUserFileUploadMutation()
+  useEffect(() => {
+    if (isDirty) {
+      return
+    }
+
+    reset(getProfileFormValues(user))
+  }, [user, isDirty, reset])
 
   // Clear the success/error message after x seconds
   useEffect(() => {
@@ -106,64 +103,12 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
       return
     }
 
+    reset(getProfileFormValues(user))
+
     const timeout = setTimeout(() => resetSaveState?.(), secondsToMilliseconds(2.5))
 
     return () => clearTimeout(timeout)
-  }, [saveSuccess, resetSaveState])
-
-  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>, onChange: (value: string) => void) => {
-    const file = event.target.files?.[0]
-
-    if (!file) {
-      return
-    }
-
-    let compressedFile: File | null = null
-    try {
-      // We don't compress GIFs because they would lose their animation.
-      if (file.type === "image/gif") {
-        compressedFile = file
-      } else {
-        setIsCompressing(true)
-        compressedFile = await imageCompression(file, {
-          maxSizeMB: USER_IMAGE_MAX_SIZE_KIB / 1024,
-          maxWidthOrHeight: 1024,
-        })
-      }
-    } catch {
-      setError("imageUrl", {
-        type: "manual",
-        message: "Kunne ikke behandle bildet. Prøv et annet bildeformat.",
-      })
-      return
-    } finally {
-      setIsCompressing(false)
-    }
-
-    if (compressedFile.size > USER_IMAGE_MAX_SIZE_KIB * 1024) {
-      setError("imageUrl", {
-        type: "manual",
-        message: `Filen er for stor. Maks filstørrelse er ${USER_IMAGE_MAX_SIZE_KIB / 1024} MiB.`,
-      })
-      return
-    }
-
-    clearErrors("imageUrl")
-
-    const result = await fileUpload(compressedFile).catch(() => null)
-
-    if (!result) {
-      setError("imageUrl", {
-        type: "manual",
-        message: "Opplasting av profilbilde feilet.",
-      })
-      return
-    }
-
-    onChange(result)
-
-    await trigger("imageUrl")
-  }
+  }, [saveSuccess, resetSaveState, user, reset])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -213,53 +158,6 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
             disabled
           />
         </div>
-
-        <Controller
-          control={control}
-          name="imageUrl"
-          render={({ field: { onChange, value } }) => (
-            <div className="w-full flex flex-col gap-1">
-              <Label htmlFor="pfp" className="text-sm">
-                Profilbilde
-              </Label>
-              <Text className="text-xs text-gray-500 dark:text-stone-500">
-                Maksstørrelse er {(USER_IMAGE_MAX_SIZE_KIB / 1024).toFixed(1).replace(".", ",")} MiB.
-              </Text>
-              <TextInput
-                id="pfp"
-                type="file"
-                accept="image/*"
-                onChange={(event) => onFileChange(event, onChange)}
-                placeholder="https://example.com/image.jpg"
-                disabled={isCompressing}
-              />
-              {isCompressing && (
-                <div
-                  className="flex items-center gap-1 text-gray-600 dark:text-stone-400"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <IconLoader2 className="size-4 motion-safe:animate-spin motion-reduce:hidden" aria-hidden />
-                  <Text className="text-xs">Komprimerer bildet</Text>
-                </div>
-              )}
-              {errors.imageUrl && (
-                <Text className="text-red-600 dark:text-red-400 text-xs text-left transition-all fade-in fade-out">
-                  {errors.imageUrl?.message ?? "En feil oppstod"}
-                </Text>
-              )}
-              {value && (
-                <Image
-                  src={value}
-                  alt="Profilbilde"
-                  className="mt-2 min-w-24 w-72 max-w-[50%] aspect-square rounded-sm object-cover border border-gray-200 dark:border-stone-600"
-                  width={0}
-                  height={0}
-                />
-              )}
-            </div>
-          )}
-        />
 
         <div className="w-full flex flex-col gap-1">
           <Textarea label="Biografi" placeholder="Skriv noe om deg selv..." {...register("biography")} rows={10} />
@@ -343,7 +241,7 @@ export function ProfileForm({ user, onSubmit, isSaving, saveSuccess, saveError, 
             Oppdater
           </Button>
 
-          <Button type="button" disabled={!isDirty} onClick={() => reset(user)} variant="outline" className="w-fit">
+          <Button type="button" disabled={!isDirty} onClick={() => reset()} variant="outline" className="w-fit">
             Tilbakestill
           </Button>
         </div>
