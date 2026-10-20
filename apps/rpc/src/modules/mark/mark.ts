@@ -82,6 +82,8 @@ export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 export type Punishment = z.infer<typeof PunishmentSchema>
 
 export const DEFAULT_MARK_DURATION = 14 as const
+export const SUSPENSION_MARK_WEIGHT = 6
+export const INDEFINITE_SUSPENSION_DURATION = 100_000
 
 export function formatMarkCount(weight: number): string {
   if (weight === 1) {

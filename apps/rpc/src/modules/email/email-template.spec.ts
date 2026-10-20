@@ -43,6 +43,10 @@ const sampleData = {
   body: "En beskrivelse av problemet",
   details: "En forklaring",
   markCountLabel: "2 prikker",
+  totalMarkCountLabel: "2 prikker",
+  responsibleGroups: [],
+  isSuspension: false,
+  isSuspended: false,
   endsAt: "2026-11-25T12:00:00Z",
 }
 
@@ -135,6 +139,6 @@ describe("renderEmailTemplate", () => {
 
     expect(html.includes("En forklaring")).toBe(details !== null)
     expect(html).toContain("Du har fått 2 prikker for: Testmelding.")
-    expect(html).toContain("Se profilen din")
+    expect(html).toContain("Se prikkene dine")
   })
 })
