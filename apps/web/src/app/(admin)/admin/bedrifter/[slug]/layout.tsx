@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import {
   ResourceDetailLayout,
@@ -7,6 +8,7 @@ import {
 } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { env } from "@admin/lib/env"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { IconBuildingWarehouse, IconCalendarEvent } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -17,6 +19,8 @@ export default function CompanyDetailsLayout({ children }: PropsWithChildren) {
   const { slug: rawSlug } = useParams<{ slug: string }>()
   const slug = decodeURIComponent(rawSlug)
   const { data, isLoading, isError, error } = useCompanyBySlugQuery(slug)
+  const authorization = useAuthorization()
+  const canEdit = canManageCompanies(authorization)
 
   useBreadcrumbLabel(breadcrumbPath("bedrifter", slug), data?.name ?? null)
   useBreadcrumbLabel(breadcrumbPath("bedrifter", slug, "arrangementer"), "Arrangementer")
@@ -60,6 +64,14 @@ export default function CompanyDetailsLayout({ children }: PropsWithChildren) {
         label: "Se bedriften",
         href: `${env.NEXT_PUBLIC_WEB_URL}/bedrifter/${encodeURIComponent(data.slug)}`,
       }}
+      readOnlyNotice={
+        canEdit
+          ? undefined
+          : {
+              title: "Du kan ikke redigere bedriften.",
+              message: "Kontakt dotkom dersom du mener dette er en feil.",
+            }
+      }
     >
       <CompanyDetailsContext.Provider value={{ company: data }}>{children}</CompanyDetailsContext.Provider>
     </ResourceDetailLayout>
