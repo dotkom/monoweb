@@ -3,7 +3,8 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./text": "./src/text.ts"
+    "./text": "./src/text.ts",
+    "./compress-image": "./src/compress-image.ts"
   },
   "types": "./src/index.ts",
   "type": "module",
@@ -25,6 +26,7 @@
   "dependencies": {
     "@aws-sdk/s3-presigned-post": "^3.908.0",
     "@date-fns/tz": "^1.2.0",
+    "browser-image-compression": "^2.0.2",
     "date-fns": "^4.1.0",
     "html-to-text": "^9.0.5",
     "jose": "^6.0.11",
