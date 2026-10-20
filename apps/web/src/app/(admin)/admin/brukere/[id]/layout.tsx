@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query"
 import { usePathname } from "next/navigation"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { UserDetailsContext } from "./provider"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 
 export default function UserDetailsLayout({
   children,
@@ -74,7 +75,8 @@ export default function UserDetailsLayout({
       },
     ]
 
-    if (authorization.canAccessAuditLog()) {
+    // TODO: This and similar should use `navigation.ts`
+    if (canAccessAuditLog(authorization)) {
       items.push({
         href: `${basePath}/hendelseslogg`,
         label: "Hendelseslogg",

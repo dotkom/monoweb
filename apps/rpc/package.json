@@ -87,6 +87,10 @@
     "./article-permissions": {
       "import": "./src/permissions/article-permissions.ts",
       "types": "./src/permissions/article-permissions.ts"
+    },
+    "./audit-log-permissions": {
+      "import": "./src/permissions/audit-log-permissions.ts",
+      "types": "./src/permissions/audit-log-permissions.ts"
     }
   },
   "scripts": {

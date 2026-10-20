@@ -1,9 +1,9 @@
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { describe, expect, it } from "vitest"
 import {
-  canAccessAuditLog,
   canEditFadderuke,
   canEditOffline,
   canEditUserProfile,
@@ -158,8 +158,8 @@ describe("canManageNotification", () => {
 
 describe("canAccessAuditLog", () => {
   it("is limited to administrators", () => {
-    expect(canAccessAuditLog(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
-    expect(canAccessAuditLog(createState({}, { isAdministrator: true }))).toBe(true)
+    expect(canAccessAuditLog(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canAccessAuditLog(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
   })
 })
 
