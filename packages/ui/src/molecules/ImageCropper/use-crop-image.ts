@@ -10,12 +10,12 @@ export type { CropOutputSize } from "./crop-image-to-file"
 
 export type CropImageError = CompressImageError | "EXPORT_FAILED" | "NOT_READY"
 
-export type CropImageOpenResult =
+export type CropImagePrepareResult =
   | { success: true; needsCrop: true }
   | { success: true; needsCrop: false; file: File }
   | { success: false; error: CropImageError }
 
-export type CropImageConfirmResult = { success: true; file: File } | { success: false; error: CropImageError }
+export type CropImageExportCropResult = { success: true; file: File } | { success: false; error: CropImageError }
 
 export type UseCropImageOptions = {
   outputSize: CropOutputSize
@@ -112,7 +112,7 @@ export function useCropImage({ outputSize, maxExportKiB, mimeType }: UseCropImag
     setPercentCrop(croppedArea)
   }
 
-  const prepare = async (file: File): Promise<CropImageOpenResult> => {
+  const prepare = async (file: File): Promise<CropImagePrepareResult> => {
     reset()
 
     // We don't crop or compress GIFs as they would lose their animation
@@ -143,7 +143,7 @@ export function useCropImage({ outputSize, maxExportKiB, mimeType }: UseCropImag
     return { success: true, needsCrop: true }
   }
 
-  const exportCrop = async (): Promise<CropImageConfirmResult> => {
+  const exportCrop = async (): Promise<CropImageExportCropResult> => {
     if (source === null || !isCropReady) {
       return { success: false, error: "NOT_READY" }
     }

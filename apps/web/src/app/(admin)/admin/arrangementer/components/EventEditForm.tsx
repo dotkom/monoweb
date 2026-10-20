@@ -114,6 +114,8 @@ export function EventEditForm({
         description="Bildet bør passe sideforholdene 24:9 (arrangementsiden) og 16:9 (alle andre sider)."
         onFileUpload={uploadFile}
         aspectRatio={{ width: 24, height: 9 }}
+        overlayAspectRatio={{ width: 16, height: 9 }}
+        cropLegend="Hold hovedmotivet innenfor hvit ramme (16:9). Hele utsnittet vises på arrangementsiden (24:9)."
       />
       <DateTimePickerField control={control} name="start" label="Starttidspunkt" required syncOffsetTo="end" />
       <DateTimePickerField
