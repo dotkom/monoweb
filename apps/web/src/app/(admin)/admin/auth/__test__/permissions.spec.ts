@@ -4,6 +4,7 @@ import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
 import {
@@ -265,5 +266,19 @@ describe("canManageCompanies", () => {
 
   it("denies unrelated committee members", () => {
     expect(canManageCompanies(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
+  })
+})
+
+describe("canManageJobListings", () => {
+  it("allows bedkom", () => {
+    expect(canManageJobListings(createState({ bedkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("allows administrators", () => {
+    expect(canManageJobListings(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("denies unrelated committee members", () => {
+    expect(canManageJobListings(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
   })
 })
