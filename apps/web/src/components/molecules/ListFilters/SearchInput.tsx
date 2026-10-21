@@ -10,6 +10,7 @@ interface SearchInputProps {
   onDebouncedChange: (value: string) => void
   placeholder?: string
   className?: string
+  containerClassName?: string
 }
 
 export const SearchInput = ({
@@ -17,6 +18,7 @@ export const SearchInput = ({
   onDebouncedChange,
   placeholder = "Søk etter arrangementer...",
   className,
+  containerClassName,
 }: SearchInputProps) => {
   const [localValue, setLocalValue] = useState(initialValue)
   const [debouncedValue] = useDebounce(localValue, 300)
@@ -42,7 +44,7 @@ export const SearchInput = ({
     <div className={cn("relative", className)}>
       <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
       <TextInput
-        containerClassName="h-12 sm:h-full"
+        containerClassName={cn("h-12 sm:h-full", containerClassName)}
         className="pl-10 py-2 h-full"
         placeholder={placeholder}
         value={localValue}

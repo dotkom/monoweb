@@ -17,7 +17,7 @@ export const ArticleTagFilter = ({ availableTags, selectedTags, onChange }: Arti
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2 h-5.5">
         <Label className="cursor-pointer text-foreground">Tags</Label>
         {selectedTags.length > 0 && (
@@ -29,7 +29,8 @@ export const ArticleTagFilter = ({ availableTags, selectedTags, onChange }: Arti
           </Text>
         )}
       </div>
-      <div className="flex flex-col pt-2 max-h-96 overflow-scroll">
+
+      <div className="flex flex-col max-h-96 overflow-scroll">
         {availableTags.map((tag) => {
           const isSelected = selectedTags.includes(tag)
 
