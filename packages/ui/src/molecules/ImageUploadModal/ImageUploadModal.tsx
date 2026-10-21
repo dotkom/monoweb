@@ -1,7 +1,7 @@
 "use client"
 
-import { IconX } from "@tabler/icons-react"
-import { useState } from "react"
+import { IconLoader2, IconX } from "@tabler/icons-react"
+import { useRef, useState, type ReactNode } from "react"
 import { Button } from "../../atoms/Button/Button"
 import { TextInput } from "../../atoms/Input/TextInput"
 import { Text } from "../../atoms/Typography/Text"
@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
 } from "../AlertDialog/AlertDialog"
-import { type AspectRatio, ImageInput } from "../ImageInput/ImageInput"
+import { type AspectRatio, ImageInput, type ImageInputHandle } from "../ImageInput/ImageInput"
 
 export type ImageUploadModalProps = {
   open: boolean
@@ -21,6 +21,8 @@ export type ImageUploadModalProps = {
   onFileUpload: (file: File) => Promise<string>
   maxSizeKiB?: number
   aspectRatio?: AspectRatio
+  overlayAspectRatio?: AspectRatio
+  cropLegend?: ReactNode
   acceptGif?: boolean
   withMetadata?: boolean
 }
@@ -32,14 +34,18 @@ export function ImageUploadModal({
   onFileUpload,
   maxSizeKiB,
   aspectRatio,
+  overlayAspectRatio,
+  cropLegend,
   acceptGif,
   withMetadata = true,
 }: ImageUploadModalProps) {
+  const imageInputRef = useRef<ImageInputHandle>(null)
   const [imageUrl, setImageUrl] = useState("")
   const [alt, setAlt] = useState("")
   const [title, setTitle] = useState("")
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [canCommit, setCanCommit] = useState(false)
 
   const resetForm = () => {
     setImageUrl("")
@@ -58,11 +64,13 @@ export function ImageUploadModal({
 
   const handleSubmit = async () => {
     setFormError(null)
+    setIsSubmitting(true)
 
-    const trimmedUrl = imageUrl.trim()
+    const uploadedUrl = await imageInputRef.current?.commit()
+    const trimmedUrl = uploadedUrl?.trim() ?? ""
 
-    if (!trimmedUrl) {
-      setFormError("Last opp et bilde eller lim inn en URL.")
+    if (trimmedUrl === "") {
+      setIsSubmitting(false)
       return
     }
 
@@ -70,23 +78,27 @@ export function ImageUploadModal({
       const parsed = new URL(trimmedUrl)
       if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
         setFormError("URL må starte med http eller https.")
+        setIsSubmitting(false)
         return
       }
     } catch {
       setFormError("Ugyldig bilde-URL.")
+      setIsSubmitting(false)
       return
     }
 
     if (withMetadata) {
       const trimmedAlt = alt.trim()
 
-      if (!trimmedAlt) {
+      if (trimmedAlt === "") {
         setFormError("Alt-tekst er påkrevd.")
+        setIsSubmitting(false)
         return
       }
 
       if (trimmedAlt.length > 255) {
         setFormError("Alt-tekst kan ikke være lengre enn 255 tegn.")
+        setIsSubmitting(false)
         return
       }
 
@@ -94,33 +106,41 @@ export function ImageUploadModal({
 
       if (trimmedTitle.length > 255) {
         setFormError("Bildetittel kan ikke være lengre enn 255 tegn.")
+        setIsSubmitting(false)
         return
       }
 
-      setIsSubmitting(true)
-
       try {
-        await onSubmit(trimmedUrl, trimmedAlt, trimmedTitle || undefined)
-        handleOpenChange(false)
-      } finally {
+        await onSubmit(trimmedUrl, trimmedAlt, trimmedTitle === "" ? undefined : trimmedTitle)
+      } catch {
         setIsSubmitting(false)
+        return
       }
 
+      handleOpenChange(false)
       return
     }
 
-    setIsSubmitting(true)
-
     try {
       await onSubmit(trimmedUrl, "", undefined)
-      handleOpenChange(false)
-    } finally {
+    } catch {
       setIsSubmitting(false)
+      return
     }
+
+    handleOpenChange(false)
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+    <AlertDialog
+      open={open}
+      onOpenChange={handleOpenChange}
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) {
+          setIsSubmitting(false)
+        }
+      }}
+    >
       <AlertDialogContent
         size="lg"
         onOutsideClick={() => handleOpenChange(false)}
@@ -141,19 +161,25 @@ export function ImageUploadModal({
 
         <div className="flex flex-col gap-4">
           <ImageInput
+            ref={imageInputRef}
             label="Bilde"
             value={imageUrl}
             onChange={setImageUrl}
             onFileUpload={onFileUpload}
             maxSizeKiB={maxSizeKiB}
             aspectRatio={aspectRatio}
+            overlayAspectRatio={overlayAspectRatio}
+            cropLegend={cropLegend}
             acceptGif={acceptGif}
+            hideSubmitButton
+            disabled={isSubmitting}
+            onCanCommitChange={setCanCommit}
           />
 
           {formError && <Text className="text-sm text-destructive">{formError}</Text>}
 
           {withMetadata && (
-            <>
+            <div className="flex flex-col gap-4">
               <TextInput
                 label="Alt-tekst"
                 description="Vises dersom bildet ikke kan lastes inn, og brukes av skjermlesere."
@@ -169,14 +195,23 @@ export function ImageUploadModal({
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
-            </>
+            </div>
           )}
 
           <AlertDialogFooter>
             <AlertDialogCancel type="button" disabled={isSubmitting}>
               Avbryt
             </AlertDialogCancel>
-            <Button onClick={handleSubmit} variant="default" disabled={isSubmitting}>
+            <Button
+              onClick={handleSubmit}
+              variant="default"
+              disabled={isSubmitting || !canCommit}
+              icon={
+                isSubmitting ? (
+                  <IconLoader2 className="motion-safe:animate-spin motion-reduce:hidden" aria-hidden />
+                ) : undefined
+              }
+            >
               {withMetadata ? "Last opp bilde" : "Lagre"}
             </Button>
           </AlertDialogFooter>
