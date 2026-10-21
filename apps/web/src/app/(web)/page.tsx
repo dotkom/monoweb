@@ -7,12 +7,18 @@ import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/l
 import { cookies } from "next/headers"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
+import { getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
-import { startOfDay } from "date-fns"
+import { format, startOfDay } from "date-fns"
+import { nb } from "date-fns/locale"
 import { Link } from "@/components/link"
+import { TicketCarousel } from "@/components/TicketCarousel"
+import type { TicketQRProps } from "@/components/TicketQR"
+
+const TICKET_VISIBILITY_WINDOW_MS = 3 * 60 * 60 * 1000
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -37,8 +43,10 @@ export default async function App() {
   }
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
+  const now = getCurrentUTC()
 
   let eventsUserIsAttending: Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"] = []
+  let eventsStartingSoon: Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"] = []
   if (user) {
     try {
       eventsUserIsAttending = (
@@ -57,7 +65,63 @@ export default async function App() {
     } catch (e) {
       console.error("Failed to fetch user attending events", e)
     }
+
+    try {
+      eventsStartingSoon = (
+        await server.event.allSummariesByAttendingUserId.query({
+          id: user.id,
+          take: 100,
+          filter: {
+            orderBy: "asc",
+            byStartDate: {
+              min: null,
+              max: new Date(now.getTime() + TICKET_VISIBILITY_WINDOW_MS),
+            },
+            byEndDate: {
+              min: now,
+              max: null,
+            },
+          },
+        })
+      ).items
+    } catch (e) {
+      console.error("Failed to fetch soon-starting attended events", e)
+    }
   }
+
+  const tickets: TicketQRProps[] = eventsStartingSoon.flatMap(({ event, attendance }) => {
+    const attendee = getAttendee(attendance, user)
+    const millisecondsUntilStart = event.start.getTime() - now.getTime()
+    if (
+      !attendee?.registered ||
+      millisecondsUntilStart > TICKET_VISIBILITY_WINDOW_MS ||
+      event.end.getTime() < now.getTime()
+    ) {
+      return []
+    }
+
+    const start = new TZDate(event.start, "Europe/Oslo")
+    const end = new TZDate(event.end, "Europe/Oslo")
+    const eventHref = createEventPageUrl(event.id, event.title)
+
+    return [
+      {
+        title: event.title,
+        dateLabel: format(start, "d. MMMM yyyy", { locale: nb }),
+        dateTime: event.start.toISOString(),
+        schedule: format(start, "EEEE d. MMMM", { locale: nb }),
+        time: `kl. ${format(start, "HH:mm")} - ${format(end, "HH:mm")}`,
+        month: format(start, "MMM", { locale: nb }).toLocaleUpperCase("nb-NO"),
+        day: format(start, "dd"),
+        location: event.locationTitle ?? "Sted ikke oppgitt",
+        eventType: event.type,
+        imageUrl: event.imageUrl ?? undefined,
+        eventHref,
+        locationHref: event.locationLink ?? eventHref,
+        ticketValue: attendee.id,
+      },
+    ]
+  })
 
   return (
     <section className="flex flex-col gap-16 w-full">
@@ -66,6 +130,8 @@ export default async function App() {
         <IdentityLinkSuccessNotice initialVisible={showIdentityLinkSuccess} />
         <OnlineHero />
       </div>
+
+      {tickets.length > 0 && <TicketCarousel tickets={tickets} />}
 
       <div className="flex flex-col gap-4">
         <Title className="text-3xl font-semibold">Arrangementer</Title>

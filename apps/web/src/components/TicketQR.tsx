@@ -111,7 +111,7 @@ export function TicketQR({
 
   return (
     <article
-      className="relative grid grid-cols-1 w-full overflow-hidden rounded-lg bg-transparent text-[#080808] dark:text-stone-100 font-body [--ticket-blue:var(--color-brand)] [--ticket-surface:#fff] dark:[--ticket-surface:#1c1917] drop-shadow-[0_12px_14px_rgb(0_0_0_/_18%)] md:grid-cols-[58.5%_41.5%] [container-type:inline-size] md:aspect-[1420/578] [&_a:focus-visible]:outline-3 [&_a:focus-visible]:outline-[#5575cb] [&_a:focus-visible]:outline-offset-4 [&_button:focus-visible]:outline-3 [&_button:focus-visible]:outline-[#5575cb] [&_button:focus-visible]:outline-offset-4"
+      className="relative grid grid-cols-1 w-full overflow-hidden rounded-lg bg-transparent text-[#080808] dark:text-stone-100 font-body [--ticket-blue:var(--color-brand)] [--ticket-surface:#fff] dark:[--ticket-surface:#1c1917] md:grid-cols-[58.5%_41.5%] [container-type:inline-size] md:aspect-[1420/578] [&_a:focus-visible]:outline-3 [&_a:focus-visible]:outline-[#5575cb] [&_a:focus-visible]:outline-offset-4 [&_button:focus-visible]:outline-3 [&_button:focus-visible]:outline-[#5575cb] [&_button:focus-visible]:outline-offset-4"
       ref={ticketRef}
       aria-label={`Billett til ${title}`}
     >
@@ -186,6 +186,19 @@ export function TicketQR({
               strokeWidth={frame}
             />
           </g>
+          {dashPositions.map((position) => (
+            <rect
+              key={position}
+              x={mobile ? position + 1 : seam - 2.5}
+              y={mobile ? seam - 2 : position + 1}
+              width={mobile ? 14 : 5}
+              height={mobile ? 4 : 16}
+              rx={mobile ? 2 : 2.5}
+              fill="none"
+              stroke="var(--ticket-blue)"
+              strokeWidth={mobile ? 1 : 2}
+            />
+          ))}
         </svg>
       )}
       <div
