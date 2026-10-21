@@ -103,17 +103,6 @@ export function hasGroupRole(state: AuthorizationState, groupId: GroupId, role: 
   return state.isAdministrator || (state.affiliations.get(groupId)?.has(role) ?? false)
 }
 
-/**
- * `notification` edit/delete and recipient management procedures
- */
-export function canManageNotification(state: AuthorizationState, actorGroupId: GroupId | null): boolean {
-  if (actorGroupId === null) {
-    return state.isAdministrator
-  }
-
-  return isGroupMember(state, actorGroupId)
-}
-
 export function createAuthorizationState(
   authorization: Omit<AuthorizationState, "affiliations"> & {
     affiliations: Record<GroupId, GroupRoleType[]> | Map<GroupId, Set<GroupRoleType>>

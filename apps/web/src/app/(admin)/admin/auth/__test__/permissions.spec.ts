@@ -18,6 +18,15 @@ import {
 } from "@dotkomonline/rpc/group-permissions"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canCreateMark, canCreateMarks, canManageMark } from "@dotkomonline/rpc/mark-permissions"
+import { NotificationTypeSchema } from "@dotkomonline/rpc/notification"
+import {
+  canActAsNotificationGroup,
+  canCreateNotification,
+  canCreateNotifications,
+  canManageNotification,
+  canTargetEventAttendees,
+  canTargetSpecificUsers,
+} from "@dotkomonline/rpc/notification-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import {
   canEditUserNameAndEmail,
@@ -25,7 +34,7 @@ import {
   canManageUserMemberships,
 } from "@dotkomonline/rpc/user-permissions"
 import { describe, expect, it } from "vitest"
-import { canManageNotification, createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
+import { createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
 function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
   return createAuthorizationState({
@@ -184,23 +193,23 @@ describe("canManageNotification", () => {
   it("allows members of the sending group to manage the notification", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canManageNotification(state, "arrkom")).toBe(true)
+    expect(canManageNotification(state, { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(true)
   })
 
   it("denies management for unrelated committee members", () => {
     const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canManageNotification(state, "arrkom")).toBe(false)
+    expect(canManageNotification(state, { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(false)
   })
 
   it("allows administrators to manage notifications from any group", () => {
-    const state = createState({}, { isAdministrator: true })
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canManageNotification(state, "arrkom")).toBe(true)
+    expect(canManageNotification(state, { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(true)
   })
 
   it("allows administrators to manage system notifications", () => {
-    const state = createState({}, { isAdministrator: true })
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
 
     expect(canManageNotification(state, null)).toBe(true)
   })
@@ -209,6 +218,92 @@ describe("canManageNotification", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
 
     expect(canManageNotification(state, null)).toBe(false)
+  })
+
+  it("allows backlog to manage notifications sent as an interest group", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canManageNotification(state, { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP })
+    ).toBe(true)
+  })
+})
+
+describe("canCreateNotifications", () => {
+  it("is temporarily limited to administrators", () => {
+    expect(canCreateNotifications(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canCreateNotifications(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
+  })
+})
+
+describe("canCreateNotification", () => {
+  it("requires create access and affiliation with the actor group", () => {
+    const admin = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+    const arrkom = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+    const actorGroup = { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }
+
+    expect(canCreateNotification(admin, actorGroup)).toBe(true)
+    expect(canCreateNotification(admin, actorGroup, NotificationTypeSchema.enum.BROADCAST_IMPORTANT)).toBe(true)
+    expect(canCreateNotification(arrkom, actorGroup)).toBe(false)
+  })
+})
+
+describe("canActAsNotificationGroup", () => {
+  it("allows committee members to act as their own committee", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canActAsNotificationGroup(state, { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(true)
+    expect(canActAsNotificationGroup(state, { slug: "bedkom", type: GroupTypeSchema.enum.COMMITTEE })).toBe(false)
+  })
+
+  it("allows backlog to act as interest groups", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canActAsNotificationGroup(state, { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP })
+    ).toBe(true)
+  })
+
+  it("denies non-backlog committees from acting as interest groups", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canActAsNotificationGroup(state, { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP })
+    ).toBe(false)
+  })
+})
+
+describe("canTargetSpecificUsers", () => {
+  it("is limited to administrators", () => {
+    expect(canTargetSpecificUsers(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canTargetSpecificUsers(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
+  })
+})
+
+describe("canTargetEventAttendees", () => {
+  it("allows hosts of the event", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canTargetEventAttendees(state, [
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "bedkom", type: GroupTypeSchema.enum.COMMITTEE },
+      ])
+    ).toBe(true)
+  })
+
+  it("allows backlog when an interest group hosts the event", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canTargetEventAttendees(state, [{ slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP }])
+    ).toBe(true)
+  })
+
+  it("denies unrelated committees", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canTargetEventAttendees(state, [{ slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }])).toBe(false)
   })
 })
 

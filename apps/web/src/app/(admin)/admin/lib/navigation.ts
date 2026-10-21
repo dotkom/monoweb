@@ -31,6 +31,7 @@ import {
 } from "@tabler/icons-react"
 import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
 import { canListUsers } from "@dotkomonline/rpc/user-permissions"
+import { canCreateNotifications, canListNotifications } from "@dotkomonline/rpc/notification-permissions"
 
 export type Navigation = {
   label: string
@@ -234,11 +235,13 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBell,
         href: "/admin/varslinger",
         keywords: ["varsling", "varslinger"],
+        canAccess: (authorization) => canListNotifications(authorization),
         createActions: [
           {
             label: "Ny varsling",
             href: "/admin/varslinger?create=varsling",
             resourceName: "varsling",
+            canAccess: (authorization) => canCreateNotifications(authorization),
           },
         ],
       },

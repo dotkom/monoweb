@@ -3,7 +3,8 @@
 import { useNotifyAttendeesMutation } from "@admin/arrangementer/mutations"
 import { useGroupAllQuery } from "@admin/grupper/queries"
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { COMMITTEE_AFFILIATIONS, intersectGroupAffiliations, isCommitteeAffiliation } from "@admin/auth/permissions"
+import { canActAsNotificationGroup, canSendImportantNotification } from "@dotkomonline/rpc/notification-permissions"
+import { COMMITTEE_AFFILIATIONS } from "@dotkomonline/rpc/permissions"
 import { CheckboxField } from "@admin/components/forms/CheckboxField"
 import { FieldShell } from "@admin/components/forms/FieldShell"
 import { RichTextField } from "@admin/components/forms/RichTextField"
@@ -83,8 +84,8 @@ function formatRecipientCountLabel(count: number): string {
   return `Sendes til ${count} personer`
 }
 
-function getNotificationType(isImportant: boolean, isAdministrator: boolean): "BROADCAST" | "BROADCAST_IMPORTANT" {
-  if (isImportant && isAdministrator) {
+function getNotificationType(isImportant: boolean, canSendImportant: boolean): "BROADCAST" | "BROADCAST_IMPORTANT" {
+  if (isImportant && canSendImportant) {
     return "BROADCAST_IMPORTANT"
   }
 
@@ -154,25 +155,19 @@ export function SendNotificationModal({
 }
 
 function SendNotificationForm({ source, onClose }: { source: SendNotificationSource; onClose: () => void }) {
-  const { isAdministrator, isCommitteeMember, affiliations } = useAuthorization()
+  const authorization = useAuthorization()
+  const canSendImportant = canSendImportantNotification(authorization)
   const { groups } = useGroupAllQuery()
   const createNotification = useCreateNotificationMutation()
   const notifyAttendees = useNotifyAttendeesMutation()
 
   const eligibleGroups = useMemo(() => {
-    const authorizationState = { isAdministrator, isCommitteeMember, affiliations }
-    let eligibleSlugs: string[]
+    const candidateSlugs = source.kind === "EVENT" ? source.hostingGroupSlugs : COMMITTEE_AFFILIATIONS
 
-    if (source.kind === "EVENT") {
-      eligibleSlugs = [...intersectGroupAffiliations(authorizationState, source.hostingGroupSlugs)]
-    } else if (isAdministrator) {
-      eligibleSlugs = [...COMMITTEE_AFFILIATIONS]
-    } else {
-      eligibleSlugs = [...affiliations.keys()].filter(isCommitteeAffiliation)
-    }
-
-    return groups.filter((group) => eligibleSlugs.includes(group.slug))
-  }, [affiliations, groups, isAdministrator, isCommitteeMember, source])
+    return groups.filter(
+      (group) => candidateSlugs.includes(group.slug) && canActAsNotificationGroup(authorization, group)
+    )
+  }, [authorization, groups, source])
 
   const [recipientSelection, setRecipientSelection] = useState<NotificationRecipientSelection | null>(() => {
     if (source.kind !== "EVENT") {
@@ -204,7 +199,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
   const linkType = useWatch({ control, name: "linkType" })
   const actorGroupId = useWatch({ control, name: "actorGroupId" })
 
-  const notificationType = getNotificationType(Boolean(isImportant), isAdministrator)
+  const notificationType = getNotificationType(Boolean(isImportant), canSendImportant)
   const {
     preview,
     isPending: isPreviewPending,
@@ -265,7 +260,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         title: values.title,
         shortDescription: values.shortDescription,
         content: contentToSend,
-        type: getNotificationType(values.isImportant, isAdministrator),
+        type: getNotificationType(values.isImportant, canSendImportant),
         link,
         actorGroupId: values.actorGroupId,
         recipientSelection,
@@ -406,7 +401,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         </>
       )}
 
-      {isAdministrator && (
+      {canSendImportant && (
         <>
           <Separator />
           <CheckboxField

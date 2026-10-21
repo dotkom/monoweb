@@ -120,6 +120,10 @@
       "import": "./src/permissions/mark-permissions.ts",
       "types": "./src/permissions/mark-permissions.ts"
     },
+    "./notification-permissions": {
+      "import": "./src/permissions/notification-permissions.ts",
+      "types": "./src/permissions/notification-permissions.ts"
+    },
     "./user-permissions": {
       "import": "./src/permissions/user-permissions.ts",
       "types": "./src/permissions/user-permissions.ts"

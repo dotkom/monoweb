@@ -6,6 +6,7 @@ import { useGroupAllQuery } from "@admin/grupper/queries"
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { EventSelectInput } from "@admin/components/forms/EventSelectInput"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { canActAsNotificationGroup, canTargetAllUsers } from "@dotkomonline/rpc/notification-permissions"
 import type {
   NotificationRecipientAttendanceSelectionOption,
   NotificationRecipientMembershipStatus,
@@ -349,7 +350,8 @@ export function RecipientSelectionBuilder({
   type: NotificationType
   countMode?: "total" | "new"
 }) {
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
+  const canTargetEveryone = canTargetAllUsers(authorization)
   const [drafts, setDrafts] = useState<RuleDraft[]>(() => draftsFromRecipientSelection(value))
   const [excludedRecipients, setExcludedRecipients] = useState<ExcludedRecipient[]>(() =>
     (value?.excludedUserIds ?? []).map((userId) => ({
@@ -429,7 +431,7 @@ export function RecipientSelectionBuilder({
       <div className="flex flex-col gap-2">
         <Text className="font-medium">Mottakere</Text>
         <div className="flex flex-wrap gap-2">
-          {isAdministrator && (
+          {canTargetEveryone && (
             <Button size="xs" variant="secondary" disabled={hasAllUsersRule} onClick={() => addRule("ALL_USERS")}>
               {getRuleLabel("ALL_USERS")}
             </Button>
@@ -711,18 +713,14 @@ function GroupMembersFields({
   draft: Extract<RuleDraft, { type: "GROUP_MEMBERS" }>
   onChange: (draft: RuleDraft) => void
 }) {
-  const { isAdministrator, affiliations } = useAuthorization()
+  const authorization = useAuthorization()
   const { groups } = useGroupAllQuery()
 
   const targetableGroups = useMemo(() => {
-    const memberGroups = groups.filter((group) => TARGETABLE_GROUP_TYPES.has(group.type))
-
-    if (isAdministrator) {
-      return memberGroups
-    }
-
-    return memberGroups.filter((group) => affiliations.has(group.slug))
-  }, [affiliations, groups, isAdministrator])
+    return groups.filter(
+      (group) => TARGETABLE_GROUP_TYPES.has(group.type) && canActAsNotificationGroup(authorization, group)
+    )
+  }, [authorization, groups])
 
   const options = targetableGroups.map((group) => ({
     value: group.slug,
