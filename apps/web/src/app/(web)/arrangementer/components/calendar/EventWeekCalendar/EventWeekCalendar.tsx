@@ -3,22 +3,22 @@
 import { useEventAllSummariesQuery } from "@/app/arrangementer/components/queries"
 import { TZDate } from "@date-fns/tz"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import { cn } from "@dotkomonline/ui"
+import { Text, cn } from "@dotkomonline/ui"
 import { IconLoader2 } from "@tabler/icons-react"
 import { endOfISOWeek, setISOWeek, setISOWeekYear, startOfISOWeek, subDays } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "../EventCalendarItem"
-import { eventCategories } from "../eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 import { getWeekCalendarArray } from "./getWeekCalendarArray"
 
 function getEventTypeGuide(events: EventWithAttendanceSummary[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
-    .filter((type) => eventCategories[type])
+    .filter((type) => EVENT_TYPE_STYLES[type])
     .map((type) => ({
       type,
-      ...eventCategories[type],
+      ...EVENT_TYPE_STYLES[type],
     }))
 }
 
@@ -137,10 +137,10 @@ export const EventWeekCalendar: FC<WeekCalendarProps> = ({ year, weekNumber }) =
 
       {eventTypeGuideItems.length > 0 && (
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 flex-wrap">
-          {eventTypeGuideItems.map(({ type, classes, displayName }) => (
+          {eventTypeGuideItems.map(({ type, classes, shortLabel }) => (
             <span key={type} className="flex items-center">
               <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
-              {displayName}
+              <Text element="span">{shortLabel}</Text>
             </span>
           ))}
         </div>

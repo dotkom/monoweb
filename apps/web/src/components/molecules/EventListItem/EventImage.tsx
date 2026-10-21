@@ -4,7 +4,7 @@ import { Badge, Tilt, cn } from "@dotkomonline/ui"
 import { isPast } from "date-fns"
 import type { FC } from "react"
 import { PlaceHolderImage } from "../../atoms/PlaceHolderImage"
-import { EVENT_TYPE_CONFIG } from "./eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 
 interface EventImageProps {
   imageUrl?: string | null
@@ -29,7 +29,7 @@ export const EventImage: FC<EventImageProps> = ({
   showBadge = true,
   showCalendarBox = false,
 }) => {
-  const { label, backgroundColor } = EVENT_TYPE_CONFIG[eventType]
+  const { shortLabel, badgeColor } = EVENT_TYPE_STYLES[eventType]
 
   const eventHasEnded = isPast(end)
 
@@ -68,24 +68,29 @@ export const EventImage: FC<EventImageProps> = ({
             )}
           >
             <Badge
-              color={backgroundColor}
+              color={badgeColor}
               className={cn(
                 "px-1 py-0.5 text-xs rounded-sm flex",
                 eventHasEnded && "grayscale group-hover:grayscale-50 transition-all"
               )}
             >
-              {label}
+              {shortLabel}
             </Badge>
           </div>
         )}
 
         {showCalendarBox && (
-          <div className="absolute bottom-1.5 left-1.5">
+          <div
+            className={cn(
+              "absolute bottom-1.5 left-1.5",
+              eventHasEnded && "grayscale group-hover:grayscale-50 transition-all"
+            )}
+          >
             <CalendarBox
               start={start}
               end={end}
+              eventType={eventType}
               className="bg-background border-gray-300 dark:border-stone-700 rounded-sm"
-              titleClassName="rounded-t-sm"
               dayTextClassName="text-sm"
               weekdayTextClassName="sm:hidden"
               includeWeekday
