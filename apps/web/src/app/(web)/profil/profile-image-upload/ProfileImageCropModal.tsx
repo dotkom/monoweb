@@ -65,6 +65,7 @@ export function ProfileImageCropModal({
             shape="round"
             onChange={onCropChange}
             disabled={isSubmitting}
+            showGrid={false}
           />
         </div>
         {error !== null && <Text className="text-red-600 dark:text-red-400 text-xs">{error}</Text>}

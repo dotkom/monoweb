@@ -5,7 +5,7 @@ export type AspectRatio = {
 
 const ASPECT_RATIO_TOLERANCE = 0.05
 
-function getImageDimensions(source: string): Promise<{ width: number; height: number } | null> {
+export function getImageDimensions(source: string): Promise<{ width: number; height: number } | null> {
   return new Promise((resolve) => {
     const image = new window.Image()
 
@@ -19,6 +19,10 @@ function getImageDimensions(source: string): Promise<{ width: number; height: nu
 
     image.src = source
   })
+}
+
+export async function preloadImage(source: string): Promise<void> {
+  await getImageDimensions(source)
 }
 
 async function doesImageMatchAspectRatio(source: string, aspectRatio: AspectRatio): Promise<boolean> {

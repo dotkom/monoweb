@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "../AlertDialog/AlertDialog"
 import { type AspectRatio, ImageInput, type ImageInputHandle } from "../ImageInput/ImageInput"
+import type { ImageCropperShape } from "../ImageCropper/ImageCropper"
 
 export type ImageUploadModalProps = {
   open: boolean
@@ -23,6 +24,8 @@ export type ImageUploadModalProps = {
   aspectRatio?: AspectRatio
   overlayAspectRatio?: AspectRatio
   cropLegend?: ReactNode
+  shape?: ImageCropperShape
+  showGrid?: boolean
   acceptGif?: boolean
   withMetadata?: boolean
 }
@@ -38,6 +41,8 @@ export function ImageUploadModal({
   cropLegend,
   acceptGif,
   withMetadata = true,
+  shape,
+  showGrid,
 }: ImageUploadModalProps) {
   const imageInputRef = useRef<ImageInputHandle>(null)
   const [imageUrl, setImageUrl] = useState("")
@@ -170,7 +175,9 @@ export function ImageUploadModal({
             aspectRatio={aspectRatio}
             overlayAspectRatio={overlayAspectRatio}
             cropLegend={cropLegend}
+            shape={shape}
             acceptGif={acceptGif}
+            showGrid={showGrid}
             hideSubmitButton
             disabled={isSubmitting}
             onCanCommitChange={setCanCommit}
