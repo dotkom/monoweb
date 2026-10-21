@@ -6,6 +6,7 @@ import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalF
 import { SelectField } from "@admin/components/forms/SelectField"
 import { TextField } from "@admin/components/forms/TextField"
 import { TextareaField } from "@admin/components/forms/TextareaField"
+import { canEditUserNameAndEmail } from "@dotkomonline/rpc/user-permissions"
 import {
   GenderSchema,
   USER_IMAGE_MAX_SIZE_KIB,
@@ -40,7 +41,8 @@ export function UserEditForm({
   defaultValues,
   disabled,
 }: UserEditFormProps) {
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
+  const canEditNameAndEmail = canEditUserNameAndEmail(authorization)
   const fileUpload = useUserFileUploadMutation()
 
   const form = useForm<FormInput, unknown, FormResult>({
@@ -61,7 +63,7 @@ export function UserEditForm({
         label="Navn"
         placeholder="Ola Nordmann"
         required
-        disabled={disabled || !isAdministrator}
+        disabled={disabled || !canEditNameAndEmail}
       />
       <TextField
         control={control}
@@ -70,7 +72,7 @@ export function UserEditForm({
         type="email"
         placeholder="ola.nordmann@gmail.com"
         required
-        disabled={disabled || !isAdministrator}
+        disabled={disabled || !canEditNameAndEmail}
       />
       <TextField control={control} name="phone" label="Telefon" placeholder="+47 123 45 678" />
       <SelectField control={control} name="gender" label="Kjønn" options={genderOptions} required />

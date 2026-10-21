@@ -1,9 +1,10 @@
-import { useUserDetailsContext } from "@admin/brukere/[id]/provider"
 import { useAuthorization } from "@admin/auth/authorization-context"
+import { useUserDetailsContext } from "@admin/brukere/[id]/provider"
+import { canEditUserProfile } from "@dotkomonline/rpc/user-permissions"
 
 export function useUserEditPermission() {
   const { user } = useUserDetailsContext()
-  const { canEditUserProfile } = useAuthorization()
+  const authorization = useAuthorization()
 
-  return { canEdit: canEditUserProfile(user.id) }
+  return { canEdit: canEditUserProfile(authorization, user.id) }
 }
