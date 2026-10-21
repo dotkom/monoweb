@@ -41,11 +41,6 @@ const timelineGridClassNames: Record<TimelineOrientation, string> = {
     "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
 }
 
-const timelineColorClassNames: Record<TimelineColor, string> = {
-  brand: "[--timeline-color:var(--color-brand)]",
-  gray: "[--timeline-color:theme(colors.gray.300)] dark:[--timeline-color:theme(colors.stone.600)]",
-}
-
 const timelineBleedClassNames: Record<TimelineOrientation, Record<TimelineBleed, string>> = {
   horizontal: {
     start: "-ml-4 w-[calc(100%+1rem)]",
@@ -57,6 +52,11 @@ const timelineBleedClassNames: Record<TimelineOrientation, Record<TimelineBleed,
     end: "-mb-0.5",
     both: "-my-0.5 has-[>[data-slot=timeline-item]:first-child_[data-slot=timeline-side-label]]:-mt-1.5",
   },
+}
+
+const timelineColorClassNames: Record<TimelineColor, string> = {
+  brand: "[--timeline-color:var(--color-brand)]",
+  gray: "[--timeline-color:theme(colors.gray.300)] dark:[--timeline-color:theme(colors.stone.600)]",
 }
 
 const timelineRowClassName = cn(
