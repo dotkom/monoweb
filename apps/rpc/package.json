@@ -131,6 +131,10 @@
     "./group-permissions": {
       "import": "./src/permissions/group-permissions.ts",
       "types": "./src/permissions/group-permissions.ts"
+    },
+    "./workspace-permissions": {
+      "import": "./src/permissions/workspace-permissions.ts",
+      "types": "./src/permissions/workspace-permissions.ts"
     }
   },
   "scripts": {
