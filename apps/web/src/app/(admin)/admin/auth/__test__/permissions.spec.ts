@@ -13,17 +13,13 @@ import {
   canSetEventOrganizers,
 } from "@dotkomonline/rpc/event-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
-import type { GroupRoleType } from "@dotkomonline/rpc/group"
-import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
-import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
-import { canCreateMark, canCreateMarks, canManageMark, canSetMarkGroups } from "@dotkomonline/rpc/mark-permissions"
-import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import {
-  canEditUserProfile,
-  canManageUserMemberships,
-  canEditUserNameAndEmail,
-} from "@dotkomonline/rpc/user-permissions"
-import { describe, expect, it } from "vitest"
+  canManageFeedbackForm,
+  canSubmitFeedbackAnswer,
+  canViewOwnFeedbackAnswer,
+} from "@dotkomonline/rpc/feedback-form-permissions"
+import type { GroupRoleType } from "@dotkomonline/rpc/group"
+import { GroupRoleTypeEnum, GroupTypeSchema } from "@dotkomonline/rpc/group"
 import {
   canCreateGroup,
   canCreateGroups,
@@ -31,7 +27,15 @@ import {
   canSetGroupType,
   canUpdateGroup,
 } from "@dotkomonline/rpc/group-permissions"
-import { GroupTypeSchema } from "@dotkomonline/rpc/group"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
+import { canCreateMark, canCreateMarks, canManageMark, canSetMarkGroups } from "@dotkomonline/rpc/mark-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
+import {
+  canEditUserNameAndEmail,
+  canEditUserProfile,
+  canManageUserMemberships,
+} from "@dotkomonline/rpc/user-permissions"
+import { describe, expect, it } from "vitest"
 import { canManageNotification, createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
 function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
@@ -123,6 +127,48 @@ describe("canSetEventOrganizers", () => {
     const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
 
     expect(canSetEventOrganizers(state, ["backlog", "arrkom", "bedkom"], ["backlog", "arrkom"])).toBe(false)
+  })
+})
+
+describe("canManageFeedbackForm", () => {
+  it("allows managing when user hosts the event", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageFeedbackForm(state, ["arrkom"])).toBe(true)
+  })
+
+  it("denies managing for unrelated committee members", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageFeedbackForm(state, ["arrkom"])).toBe(false)
+  })
+})
+
+describe("canSubmitFeedbackAnswer", () => {
+  it("allows submitting for the same subject", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canSubmitFeedbackAnswer({ ...state, subject: "user-1" }, "user-1")).toBe(true)
+  })
+
+  it("denies submitting for a different subject", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canSubmitFeedbackAnswer({ ...state, subject: "user-2" }, "user-1")).toBe(false)
+  })
+})
+
+describe("canViewOwnFeedbackAnswer", () => {
+  it("allows viewing own answer for the same subject", () => {
+    const state = createState({})
+
+    expect(canViewOwnFeedbackAnswer({ ...state, subject: "user-1" }, "user-1")).toBe(true)
+  })
+
+  it("denies viewing another attendee's answer", () => {
+    const state = createState({})
+
+    expect(canViewOwnFeedbackAnswer({ ...state, subject: "user-2" }, "user-1")).toBe(false)
   })
 })
 

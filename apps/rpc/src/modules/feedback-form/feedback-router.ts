@@ -1,8 +1,13 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isCommitteeMember, isSameSubject } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
+import {
+  canManageFeedbackForm,
+  canSubmitFeedbackAnswer,
+  canViewOwnFeedbackAnswer,
+} from "../../permissions/feedback-form-permissions"
 import { procedure, t } from "../../trpc"
 import { AttendeeSchema } from "../event/attendance"
 import { EventSchema } from "../event/event"
@@ -31,11 +36,17 @@ export type GetFeedbackFormStaffPreviewOutput = inferProcedureOutput<typeof getF
 const getFeedbackFormStaffPreviewProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
     const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
     return {
       event,
       feedbackForm,
@@ -52,12 +63,18 @@ const createFormProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(ctx.handle, input.feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
     const createdFeedbackForm = await ctx.feedbackFormService.create(ctx.handle, input.feedbackForm, input.questions)
-    const event = await ctx.eventService.getEventById(ctx.handle, createdFeedbackForm.eventId)
 
     ctx.setAuditTransactionName(
       `Create FeedbackForm(ID=${createdFeedbackForm.id}) for Event(ID=${event.id},Title=${event.title})`
@@ -76,16 +93,22 @@ const createFormCopyProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
     const createdFeedbackForm = await ctx.feedbackFormService.createCopyFromEvent(
       ctx.handle,
       input.eventId,
       input.eventIdToCopyFrom
     )
-    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
     const eventToCopyFrom = await ctx.eventService.getEventById(ctx.handle, input.eventIdToCopyFrom)
 
     ctx.setAuditTransactionName(
@@ -106,20 +129,36 @@ const updateFormProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const existingFeedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input.id)
+    const event = await ctx.eventService.getEventById(ctx.handle, existingFeedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    const hasChangedEventId = input.feedbackForm.eventId !== existingFeedbackForm.eventId
+    const targetEvent = hasChangedEventId
+      ? await ctx.eventService.getEventById(ctx.handle, input.feedbackForm.eventId)
+      : event
+    const targetHostingGroupIds = targetEvent.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf(
+        (principal) =>
+          canManageFeedbackForm(principal, hostingGroupIds) && canManageFeedbackForm(principal, targetHostingGroupIds)
+      ),
+      input
+    )
+
     const updatedFeedbackForm = await ctx.feedbackFormService.update(
       ctx.handle,
       input.id,
       input.feedbackForm,
       input.questions
     )
-    const event = await ctx.eventService.getEventById(ctx.handle, updatedFeedbackForm.eventId)
 
     ctx.setAuditTransactionName(
-      `Update FeedbackForm(ID=${updatedFeedbackForm.id}) for Event(ID=${event.id},Title=${event.title})`
+      `Update FeedbackForm(ID=${updatedFeedbackForm.id}) for Event(ID=${targetEvent.id},Title=${targetEvent.title})`
     )
 
     return updatedFeedbackForm
@@ -130,12 +169,18 @@ export type DeleteFormOutput = inferProcedureOutput<typeof deleteFormProcedure>
 const deleteFormProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
     const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
     await ctx.feedbackFormService.delete(ctx.handle, input)
 
     ctx.setAuditTransactionName(
@@ -176,9 +221,19 @@ export type GetPublicResultsTokenOutput = inferProcedureOutput<typeof getPublicR
 const getPublicResultsTokenProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormService.getPublicResultsToken(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
+    return ctx.feedbackFormService.getPublicResultsToken(ctx.handle, input)
+  })
 
 export type CreateAnswerInput = inferProcedureInput<typeof createAnswerProcedure>
 export type CreateAnswerOutput = inferProcedureOutput<typeof createAnswerProcedure>
@@ -194,9 +249,9 @@ const createAnswerProcedure = procedure
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.formAnswer.attendeeId)
-    // Allow users to create answers if they are the attendee.
+
     await ctx.addAuthorizationGuard(
-      isSameSubject(() => attendee.userId),
+      permitIf((principal) => canSubmitFeedbackAnswer(principal, attendee.userId)),
       input
     )
 
@@ -234,11 +289,19 @@ const findAnswerByAttendeeProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) =>
-    ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
-  )
+  .query(async ({ input, ctx }) => {
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input.formId)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
+    return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
+  })
 
 export type FindOwnAnswerByAttendeeInput = inferProcedureInput<typeof findOwnAnswerByAttendeeProcedure>
 export type FindOwnAnswerByAttendeeOutput = inferProcedureOutput<typeof findOwnAnswerByAttendeeProcedure>
@@ -253,9 +316,9 @@ const findOwnAnswerByAttendeeProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    // Allow users to view answers if they are the attendee.
+
     await ctx.addAuthorizationGuard(
-      isSameSubject(() => attendee.userId),
+      permitIf((principal) => canViewOwnFeedbackAnswer(principal, attendee.userId)),
       input
     )
 
@@ -267,9 +330,19 @@ export type GetAllAnswersOutput = inferProcedureOutput<typeof getAllAnswersProce
 const getAllAnswersProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
+    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
+    return ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.handle, input)
+  })
 
 export type GetPublicAnswersInput = inferProcedureInput<typeof getPublicAnswersProcedure>
 export type GetPublicAnswersOutput = inferProcedureOutput<typeof getPublicAnswersProcedure>
@@ -283,16 +356,21 @@ export type DeleteQuestionAnswerOutput = inferProcedureOutput<typeof deleteQuest
 const deleteQuestionAnswerProcedure = procedure
   .input(FeedbackQuestionAnswerSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const questionAnswer = await ctx.feedbackFormAnswerService.getQuestionAnswerById(ctx.handle, input)
     const formAnswer = await ctx.feedbackFormAnswerService.getById(ctx.handle, questionAnswer.formAnswerId)
-
-    await ctx.feedbackFormAnswerService.deleteQuestionAnswer(ctx.handle, input)
     const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, formAnswer.feedbackFormId)
     const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageFeedbackForm(principal, hostingGroupIds)),
+      input
+    )
+
+    await ctx.feedbackFormAnswerService.deleteQuestionAnswer(ctx.handle, input)
 
     ctx.setAuditTransactionName(
       `Delete FeedbackQuestionAnswer(ID=${questionAnswer.id}) for Event(ID=${event.id},Title=${event.title})`
