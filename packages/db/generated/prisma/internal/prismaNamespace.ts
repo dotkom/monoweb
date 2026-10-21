@@ -391,6 +391,7 @@ export const ModelName = {
   GroupMembership: 'GroupMembership',
   GroupMembershipRole: 'GroupMembershipRole',
   GroupRole: 'GroupRole',
+  InterestGroupComment: 'InterestGroupComment',
   Attendance: 'Attendance',
   AttendancePool: 'AttendancePool',
   Attendee: 'Attendee',
@@ -445,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "sidequest" | "sidequestRegistration" | "sidequestRequest"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "interestGroupComment" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "sidequest" | "sidequestRegistration" | "sidequestRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -964,6 +965,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.GroupRoleCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.GroupRoleCountAggregateOutputType> | number
+        }
+      }
+    }
+    InterestGroupComment: {
+      payload: Prisma.$InterestGroupCommentPayload<ExtArgs>
+      fields: Prisma.InterestGroupCommentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterestGroupCommentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterestGroupCommentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        findFirst: {
+          args: Prisma.InterestGroupCommentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterestGroupCommentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        findMany: {
+          args: Prisma.InterestGroupCommentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>[]
+        }
+        create: {
+          args: Prisma.InterestGroupCommentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        createMany: {
+          args: Prisma.InterestGroupCommentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterestGroupCommentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>[]
+        }
+        delete: {
+          args: Prisma.InterestGroupCommentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        update: {
+          args: Prisma.InterestGroupCommentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterestGroupCommentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterestGroupCommentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterestGroupCommentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterestGroupCommentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestGroupCommentPayload>
+        }
+        aggregate: {
+          args: Prisma.InterestGroupCommentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterestGroupComment>
+        }
+        groupBy: {
+          args: Prisma.InterestGroupCommentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupCommentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterestGroupCommentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupCommentCountAggregateOutputType> | number
         }
       }
     }
@@ -4010,6 +4085,18 @@ export const GroupRoleScalarFieldEnum = {
 export type GroupRoleScalarFieldEnum = (typeof GroupRoleScalarFieldEnum)[keyof typeof GroupRoleScalarFieldEnum]
 
 
+export const InterestGroupCommentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  body: 'body',
+  authorId: 'authorId',
+  interestGroupId: 'interestGroupId',
+  parentId: 'parentId'
+} as const
+
+export type InterestGroupCommentScalarFieldEnum = (typeof InterestGroupCommentScalarFieldEnum)[keyof typeof InterestGroupCommentScalarFieldEnum]
+
+
 export const AttendanceScalarFieldEnum = {
   id: 'id',
   registerStart: 'registerStart',
@@ -5102,6 +5189,7 @@ export type GlobalOmitConfig = {
   groupMembership?: Prisma.GroupMembershipOmit
   groupMembershipRole?: Prisma.GroupMembershipRoleOmit
   groupRole?: Prisma.GroupRoleOmit
+  interestGroupComment?: Prisma.InterestGroupCommentOmit
   attendance?: Prisma.AttendanceOmit
   attendancePool?: Prisma.AttendancePoolOmit
   attendee?: Prisma.AttendeeOmit

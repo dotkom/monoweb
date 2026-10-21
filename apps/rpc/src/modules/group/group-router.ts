@@ -15,6 +15,8 @@ import {
   GroupRoleWriteSchema,
   GroupSchema,
   GroupWriteSchema,
+  InterestGroupCommentSchema,
+  InterestGroupCommentWriteSchema,
   getActiveMembershipsForGroup,
 } from "./group"
 
@@ -589,6 +591,50 @@ const endInterestGroupMembershipProcedure = procedure
     return endedMemberships
   })
 
+export type CreateInterestGroupCommentInput = inferProcedureInput<typeof createInterestGroupCommentProcedure>
+export type CreateInterestGroupCommentOutput = inferProcedureOutput<typeof createInterestGroupCommentProcedure>
+const createInterestGroupCommentProcedure = procedure
+  .input(z.object({ interestGroupId: GroupSchema.shape.slug, data: InterestGroupCommentWriteSchema }))
+  .output(InterestGroupCommentSchema)
+  .use(withAuthentication())
+  .use(
+    withAuthorization(
+      or(
+        isAdministrator(),
+        isGroupMember(CommitteeGroupSlug.BACKLOG),
+        isGroupMember((input) => input.interestGroupId)
+      )
+    )
+  )
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const group = await ctx.groupService.getBySlug(ctx.handle, input.interestGroupId)
+    const user = await ctx.userService.getById(ctx.handle, ctx.principal.subject)
+    const comment = await ctx.groupService.createInterestGroupComment(
+      ctx.handle,
+      input.interestGroupId,
+      input.data,
+      ctx.principal.subject
+    )
+
+    ctx.setAuditTransactionName(
+      `Create InterestGroupComment for Group(Slug=${input.interestGroupId},Name=${group.name}) by User(ID=${user.id},Name=${user.name})`
+    )
+
+    return comment
+  })
+
+export type FindManyInterestGroupCommentsInput = inferProcedureInput<typeof findManyInterestGroupCommentsProcedure>
+export type FindManyInterestGroupCommentsOutput = inferProcedureOutput<typeof findManyInterestGroupCommentsProcedure>
+const findManyInterestGroupCommentsProcedure = procedure
+  .input(GroupSchema.shape.slug)
+  .output(InterestGroupCommentSchema.array())
+  .use(withAuthentication())
+  .query(async ({ input, ctx }) => {
+    return ctx.groupService.findManyInterestGroupComments(ctx.prisma, input)
+  })
+
 export const groupRouter = t.router({
   create: createGroupProcedure,
   all: allGroupsProcedure,
@@ -612,4 +658,6 @@ export const groupRouter = t.router({
   createFileUpload: createFileUploadProcedure,
   startInterestGroupMembership: startInterestGroupMembershipProcedure,
   endInterestGroupMembership: endInterestGroupMembershipProcedure,
+  createInterestGroupComment: createInterestGroupCommentProcedure,
+  findManyInterestGroupComments: findManyInterestGroupCommentsProcedure,
 })
