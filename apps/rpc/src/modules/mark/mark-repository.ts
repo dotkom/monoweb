@@ -100,6 +100,16 @@ export function getMarkRepository(): MarkRepository {
             {
               title: query.bySearchTerm ? { contains: query.bySearchTerm, mode: "insensitive" } : undefined,
             },
+            {
+              groups:
+                query.byGroupId !== undefined
+                  ? {
+                      some: {
+                        groupId: { in: query.byGroupId },
+                      },
+                    }
+                  : undefined,
+            },
           ],
         },
         include: QUERY_WITH_GROUPS,
