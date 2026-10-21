@@ -1,6 +1,5 @@
 import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
-import type { UserId } from "@dotkomonline/rpc/user"
 
 /**
  * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#ADMIN_AFFILIATIONS}
@@ -103,28 +102,6 @@ export function isGroupMember(state: AuthorizationState, groupId: GroupId): bool
 // In these UI helpers we treat admins as group members, which *may* not always be the case in RPC.
 export function hasGroupRole(state: AuthorizationState, groupId: GroupId, role: GroupRoleType): boolean {
   return state.isAdministrator || (state.affiliations.get(groupId)?.has(role) ?? false)
-}
-
-/**
- * `user.createMembership`, `user.updateMembership`, `user.deleteMembership`
- */
-export function canManageUserMemberships(state: AuthorizationState): boolean {
-  return state.isAdministrator
-}
-
-/**
- * `user.update` procedure
- */
-export function canEditUserProfile(state: AuthorizationState, userId: UserId, currentUserId: UserId | null): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (currentUserId === null) {
-    return false
-  }
-
-  return userId === currentUserId
 }
 
 /**

@@ -8,9 +8,13 @@ import { GroupRoleTypeEnum, GroupTypeSchema } from "@dotkomonline/rpc/group"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canCreateMark, canCreateMarks, canManageMark } from "@dotkomonline/rpc/mark-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
-import { describe, expect, it } from "vitest"
 import {
   canEditUserProfile,
+  canManageUserMemberships,
+  canEditUserNameAndEmail,
+} from "@dotkomonline/rpc/user-permissions"
+import { describe, expect, it } from "vitest"
+import {
   canManageGroupMembership,
   canManageNotification,
   createAuthorizationState,
@@ -169,22 +173,51 @@ describe("canAccessAuditLog", () => {
 
 describe("canEditUserProfile", () => {
   it("allows administrators to edit any user", () => {
-    const state = createState({}, { isAdministrator: true })
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canEditUserProfile(state, "user-1", "user-2")).toBe(true)
+    expect(canEditUserProfile({ ...state, subject: "admin-1" }, "user-2")).toBe(true)
   })
 
   it("allows users to edit their own profile", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(canEditUserProfile(state, "user-1", "user-1")).toBe(true)
+    expect(canEditUserProfile({ ...state, subject: "user-1" }, "user-1")).toBe(true)
   })
 
   it("denies editing other users for non-administrators", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(canEditUserProfile(state, "user-1", "user-2")).toBe(false)
-    expect(canEditUserProfile(state, "user-1", null)).toBe(false)
+    expect(canEditUserProfile({ ...state, subject: "user-2" }, "user-1")).toBe(false)
+  })
+})
+
+describe("canManageUserMemberships", () => {
+  it("is limited to administrators", () => {
+    expect(canManageUserMemberships(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canManageUserMemberships(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
+  })
+})
+
+describe("canEditUserNameAndEmail", () => {
+  it("is permitted for administrators", () => {
+    expect(
+      canEditUserNameAndEmail({ ...createState({ dotkom: [GroupRoleTypeEnum.LEADER] }), subject: "admin-1" }, "user-1")
+    ).toBe(true)
+    expect(
+      canEditUserNameAndEmail({ ...createState({ arrkom: [GroupRoleTypeEnum.LEADER] }), subject: "admin-1" }, "user-2")
+    ).toBe(false)
+  })
+
+  it("is permitted for the same subject", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canEditUserNameAndEmail({ ...state, subject: "user-1" }, "user-1")).toBe(true)
+  })
+
+  it("is denied for other users", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canEditUserNameAndEmail({ ...state, subject: "user-2" }, "user-1")).toBe(false)
   })
 })
 

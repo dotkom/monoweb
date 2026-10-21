@@ -2,9 +2,16 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isSameSubject, or } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { InvalidArgumentError, UnauthorizedError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import {
+  canAdminMergeUsers,
+  canEditUserNameAndEmail,
+  canEditUserProfile,
+  canListUsers,
+  canManageUserMemberships,
+} from "../../permissions/user-permissions"
 import { procedure, t } from "../../trpc"
 import { GroupRoleTypeSchema } from "../group/group"
 import {
@@ -21,10 +28,11 @@ export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
 const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canListUsers(principal))))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const items = await ctx.userService.findUsers(ctx.handle, { ...input.filter }, input)
+
     return {
       items,
       nextCursor: items.at(-1)?.id,
@@ -78,10 +86,7 @@ const createUserFileUploadProcedure = procedure
     const userId = input?.userId ?? ctx.principal.subject
 
     await ctx.addAuthorizationGuard(
-      or(
-        isAdministrator(),
-        isSameSubject(() => userId)
-      ),
+      permitIf((principal) => canEditUserProfile(principal, userId)),
       input
     )
 
@@ -114,7 +119,7 @@ const createUserMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(permitIf(canManageUserMemberships)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -135,7 +140,7 @@ const updateUserMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(permitIf(canManageUserMemberships)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -155,7 +160,7 @@ const deleteUserMembershipProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(permitIf(canManageUserMemberships)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -195,21 +200,13 @@ const updateUserProcedure = procedure
   )
   .output(UserSchema)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        isSameSubject((i) => i.id)
-      )
-    )
-  )
+  .use(withAuthorization(permitIf((principal, input) => canEditUserProfile(principal, input.id))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     let { name, email, ...data } = input.input
 
-    // Only admins can change the name and email fields
-    if (!ctx.authorizationService.isAdministrator(ctx.principal.affiliations)) {
+    if (!canEditUserNameAndEmail(ctx.principal, input.id)) {
       name = undefined
       email = undefined
     }
@@ -366,7 +363,7 @@ const mergeUsersProcedure = procedure
       })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
+  .use(withAuthorization(permitIf(canAdminMergeUsers)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -424,10 +421,7 @@ const getAuth0ConnectionsProcedure = procedure
     const userId = input?.userId ?? ctx.principal.subject
 
     await ctx.addAuthorizationGuard(
-      or(
-        isAdministrator(),
-        isSameSubject(() => userId)
-      ),
+      permitIf((principal) => canEditUserProfile(principal, userId)),
       input
     )
 

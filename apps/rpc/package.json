@@ -115,6 +115,10 @@
     "./mark-permissions": {
       "import": "./src/permissions/mark-permissions.ts",
       "types": "./src/permissions/mark-permissions.ts"
+    },
+    "./user-permissions": {
+      "import": "./src/permissions/user-permissions.ts",
+      "types": "./src/permissions/user-permissions.ts"
     }
   },
   "scripts": {

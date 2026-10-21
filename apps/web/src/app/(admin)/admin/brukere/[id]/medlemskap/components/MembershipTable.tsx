@@ -5,13 +5,14 @@ import { DateTooltip } from "@admin/components/DateTooltip"
 import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { type Membership, getMembershipTypeName, getSpecializationName } from "@dotkomonline/rpc/user"
+import { canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
 import { Button } from "@dotkomonline/ui"
 import { getStudyGrade, isSpringSemester } from "@dotkomonline/utils"
 import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
-import { EditMembershipModal } from "./EditMembershipModal"
 import { useDeleteMembershipMutation } from "../../../mutations"
+import { EditMembershipModal } from "./EditMembershipModal"
 
 interface Props {
   data: Membership[]
@@ -19,8 +20,8 @@ interface Props {
 }
 
 export function MembershipTable({ data, actions }: Props) {
-  const { canManageUserMemberships } = useAuthorization()
-  const canManage = canManageUserMemberships()
+  const authorization = useAuthorization()
+  const canManage = canManageUserMemberships(authorization)
   const deleteMembership = useDeleteMembershipMutation()
 
   const [editMembership, setEditMembership] = useState<Membership | null>(null)

@@ -9,7 +9,9 @@ import {
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { env } from "@admin/lib/env"
 import { useTRPC } from "@admin/lib/trpc-client"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
+import { canEditUserProfile, canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
 import { getStudyGrade } from "@dotkomonline/utils"
 import {
   IconBuildingWarehouse,
@@ -23,7 +25,6 @@ import { useQuery } from "@tanstack/react-query"
 import { usePathname } from "next/navigation"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { UserDetailsContext } from "./provider"
-import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 
 export default function UserDetailsLayout({
   children,
@@ -33,7 +34,7 @@ export default function UserDetailsLayout({
   const id = decodeURIComponent(use(params).id)
   const pathname = usePathname()
   const authorization = useAuthorization()
-  const canManageMemberships = authorization.canManageUserMemberships()
+  const canManageMemberships = canManageUserMemberships(authorization)
 
   const { data: user, isLoading, isError, error } = useQuery(trpc.user.get.queryOptions(id))
 
@@ -92,7 +93,7 @@ export default function UserDetailsLayout({
       return undefined
     }
 
-    const canEdit = authorization.canEditUserProfile(user.id)
+    const canEdit = canEditUserProfile(authorization, user.id)
     const decodedPath = decodeURIComponent(pathname)
     const isMedlemskapRoute =
       decodedPath === `${basePath}/medlemskap` || decodedPath.startsWith(`${basePath}/medlemskap/`)

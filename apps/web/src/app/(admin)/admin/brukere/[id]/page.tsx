@@ -23,7 +23,8 @@ export default function UserInfoPage() {
 
       <UserEditForm
         disabled={!canEdit}
-        defaultValues={{ ...user }}
+        defaultValues={user}
+        userId={user.id}
         onSubmit={(data) => {
           const result = UserWriteSchema.parse(data)
 

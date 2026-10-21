@@ -30,6 +30,7 @@ import {
   type TablerIcon,
 } from "@tabler/icons-react"
 import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canListUsers } from "@dotkomonline/rpc/user-permissions"
 
 export type Navigation = {
   label: string
@@ -124,6 +125,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconUsers,
         href: "/admin/brukere",
         keywords: ["bruker", "brukere", "user", "users"],
+        canAccess: (authorization) => canListUsers(authorization),
       },
       {
         label: "Grupper",
