@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           bodyFont.variable,
           monospaceFont.variable,
           marcellusFont.variable,
-          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900 halloween:bg-(--halloween-night)"
+          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900 halloween:bg-[url(/halloween-background.svg)] halloween:bg-fixed halloween:bg-bottom halloween:bg-no-repeat halloween:bg-cover"
         )}
       >
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
