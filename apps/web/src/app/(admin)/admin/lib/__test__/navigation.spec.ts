@@ -14,16 +14,7 @@ function principal(affiliations: Record<string, GroupRoleType[]>): ReturnType<ty
     affiliations: affiliationMap,
     isAdministrator: false,
     isCommitteeMember: false,
-    canCreateGroup: () => true,
   } as unknown as ReturnType<typeof useAuthorization>
-}
-
-function auth(overrides: Partial<ReturnType<typeof useAuthorization>> = {}) {
-  return {
-    affiliations: new Map<GroupId, Set<GroupRoleType>>(),
-    canCreateGroup: () => true,
-    ...overrides,
-  } as ReturnType<typeof useAuthorization>
 }
 
 function actionHrefs(authorization: ReturnType<typeof useAuthorization>) {
@@ -46,8 +37,12 @@ describe("filterNavigationsUserHasAccessTo", () => {
     expect(actionHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/arrangementer/ny")
   })
 
-  it("hides create group when canCreateGroup is false", () => {
-    expect(actionHrefs(auth({ canCreateGroup: () => false }))).not.toContain("/admin/grupper/ny")
+  it("hides create group when the caller cannot create any group type", () => {
+    expect(actionHrefs(principal({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).not.toContain("/admin/grupper/ny")
+  })
+
+  it("keeps create group when the caller is backlog", () => {
+    expect(actionHrefs(principal({ backlog: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/grupper/ny")
   })
 
   it("hides offline when the caller is not affiliated with Redaksjonen", () => {
