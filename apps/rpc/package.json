@@ -24,6 +24,10 @@
       "import": "./src/modules/company/company.ts",
       "types": "./src/modules/company/company.ts"
     },
+    "./committee-application": {
+      "import": "./src/modules/committee-application/committee-application.ts",
+      "types": "./src/modules/committee-application/committee-application.ts"
+    },
     "./offline": {
       "import": "./src/modules/offline/offline.ts",
       "types": "./src/modules/offline/offline.ts"
@@ -47,6 +51,10 @@
     "./mark": {
       "import": "./src/modules/mark/mark.ts",
       "types": "./src/modules/mark/mark.ts"
+    },
+    "./mazemap": {
+      "import": "./src/modules/mazemap/mazemap.ts",
+      "types": "./src/modules/mazemap/mazemap.ts"
     },
     "./notification": {
       "import": "./src/modules/notification/notification.ts",
