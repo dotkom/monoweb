@@ -16,6 +16,7 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
+import { THEMES } from "@/utils/themes"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import type { PropsWithChildren } from "react"
@@ -83,7 +84,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <PlausibleProvider domain="online.ntnu.no">
           <Auth0Provider user={auth0User}>
             <QueryProvider>
-              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme" themes={THEMES}>
                 <AuthorizationProvider
                   isAdministrator={isAdministrator}
                   isCommitteeMember={isCommitteeMember}

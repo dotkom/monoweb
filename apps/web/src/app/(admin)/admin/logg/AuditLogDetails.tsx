@@ -3,6 +3,7 @@
 import type { AuditLog } from "@dotkomonline/rpc/audit-log"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@dotkomonline/ui"
 import { useTheme } from "next-themes"
+import { isDarkTheme } from "@/utils/themes"
 import { DiffMethod, StringDiff } from "react-string-diff"
 import "./audit-log-diff.css"
 
@@ -13,7 +14,7 @@ interface Props {
 
 export const AuditLogDetails = ({ auditLog, view = "json" }: Props) => {
   const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
+  const isDark = isDarkTheme(resolvedTheme)
 
   const diffStyles = {
     added: {
