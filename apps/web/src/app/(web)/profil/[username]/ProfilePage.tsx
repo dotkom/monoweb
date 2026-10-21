@@ -196,7 +196,14 @@ export function ProfilePage() {
       ],
     })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
+  const {
+    eventDetails: pastEventWithAttendances,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPlaceholderData,
+    isLoading: isPastEventsLoading,
+  } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",
     filter: {
       byEndDate: {
@@ -507,7 +514,13 @@ export function ProfilePage() {
             <EventList
               futureEventWithAttendances={futureEventWithAttendances.items}
               pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
+              pastLoadMore={{
+                fetchNextPage,
+                hasNextPage,
+                isFetchingNextPage,
+                isPlaceholderData,
+                isLoading: isPastEventsLoading,
+              }}
               viewMode="CHRONOLOGICAL"
             />
           ) : (

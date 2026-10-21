@@ -42,7 +42,14 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
     },
   })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesInfiniteQuery({
+  const {
+    eventDetails: pastEventWithAttendances,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPlaceholderData,
+    isLoading: isPastEventsLoading,
+  } = useEventAllSummariesInfiniteQuery({
     filter: {
       byOrganizingCompany: [company.id],
       byEndDate: {
@@ -101,7 +108,13 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
           <EventList
             futureEventWithAttendances={futureEventWithAttendances}
             pastEventWithAttendances={pastEventWithAttendances}
-            onLoadMore={fetchNextPage}
+            pastLoadMore={{
+              fetchNextPage,
+              hasNextPage,
+              isFetchingNextPage,
+              isPlaceholderData,
+              isLoading: isPastEventsLoading,
+            }}
           />
         )}
       </div>

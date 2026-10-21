@@ -146,6 +146,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     fetchNextPage: fetchNextFeaturedPage,
     hasNextPage: hasNextFeaturedPage,
     isFetchingNextPage: isFetchingNextFeaturedPage,
+    isPlaceholderData: isFeaturedPlaceholderData,
   } = useFeaturedEventsInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -164,6 +165,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     hasNextPage: hasNextFutureSummaryPage,
     isFetchingNextPage: isFetchingNextFutureSummaryPage,
     isLoading: isFutureSummariesLoading,
+    isPlaceholderData: isFutureSummariesPlaceholderData,
   } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -235,6 +237,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     hasNextPage: hasNextPastPage,
     isFetchingNextPage: isFetchingNextPastPage,
     isLoading: isPastLoading,
+    isPlaceholderData: isPastPlaceholderData,
   } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -250,25 +253,45 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     enabled: shouldLoadPastEvents,
   })
 
-  const fetchNextPage = useCallback(() => {
-    if (hasNextFuturePage && !isFetchingNextFuturePage) {
-      void (isAttendanceSort ? fetchNextFeaturedPage() : fetchNextFutureSummaryPage())
-      return
+  const fetchNextFuturePage = useCallback(() => {
+    if (isAttendanceSort) {
+      void fetchNextFeaturedPage()
+    } else {
+      void fetchNextFutureSummaryPage()
     }
+  }, [fetchNextFeaturedPage, fetchNextFutureSummaryPage, isAttendanceSort])
 
-    if (hasNextPastPage && !isFetchingNextPastPage) {
-      void fetchNextPastPage()
-    }
-  }, [
-    fetchNextFeaturedPage,
-    fetchNextFutureSummaryPage,
-    fetchNextPastPage,
-    hasNextFuturePage,
-    hasNextPastPage,
-    isAttendanceSort,
-    isFetchingNextFuturePage,
-    isFetchingNextPastPage,
-  ])
+  const futureLoadMore = useMemo(
+    () => ({
+      fetchNextPage: fetchNextFuturePage,
+      hasNextPage: hasNextFuturePage,
+      isFetchingNextPage: isFetchingNextFuturePage,
+      isPlaceholderData: isAttendanceSort ? isFeaturedPlaceholderData : isFutureSummariesPlaceholderData,
+      isLoading: isFutureListLoading,
+    }),
+    [
+      fetchNextFuturePage,
+      hasNextFuturePage,
+      isAttendanceSort,
+      isFeaturedPlaceholderData,
+      isFetchingNextFuturePage,
+      isFutureListLoading,
+      isFutureSummariesPlaceholderData,
+    ]
+  )
+
+  const pastLoadMore = useMemo(
+    () => ({
+      fetchNextPage: () => {
+        void fetchNextPastPage()
+      },
+      hasNextPage: hasNextPastPage,
+      isFetchingNextPage: isFetchingNextPastPage,
+      isPlaceholderData: isPastPlaceholderData,
+      isLoading: isPastLoading,
+    }),
+    [fetchNextPastPage, hasNextPastPage, isFetchingNextPastPage, isPastLoading, isPastPlaceholderData]
+  )
 
   const isLoading = isFutureListLoading || (orderedFutureEvents.length === 0 && isPastLoading)
 
@@ -595,7 +618,8 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
                   futureEventWithAttendances={orderedFutureEvents}
                   registeredEventCount={filters.viewModeSort === "CHRONOLOGICAL" ? registeredEventCount : 0}
                   pastEventWithAttendances={pastEventWithAttendances}
-                  onLoadMore={fetchNextPage}
+                  futureLoadMore={futureLoadMore}
+                  pastLoadMore={shouldLoadPastEvents ? pastLoadMore : undefined}
                   viewMode="CHRONOLOGICAL"
                   displayMode={isCards ? "cards" : "list"}
                 />
