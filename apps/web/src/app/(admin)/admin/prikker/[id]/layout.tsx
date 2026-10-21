@@ -1,22 +1,28 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import {
   ResourceDetailLayout,
   type ResourceDetailNavItem,
 } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { canManageMark } from "@dotkomonline/rpc/mark-permissions"
 import { IconBuildingWarehouse } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
-import type { PropsWithChildren } from "react"
+import { useMemo, type PropsWithChildren } from "react"
 import { useMarkGetQuery } from "../queries"
 import { MarkDetailsContext } from "./provider"
 
 export default function MarkDetailsLayout({ children }: PropsWithChildren) {
   const { id } = useParams<{ id: string }>()
   const { mark, isLoading, isError, error } = useMarkGetQuery(id)
+  const authorization = useAuthorization()
 
   useBreadcrumbLabel(breadcrumbPath("prikker", id), mark?.title ?? null)
+
+  const groupIds = useMemo(() => mark?.groups.map((group) => group.slug) ?? [], [mark?.groups])
+  const canEdit = mark !== null ? canManageMark(authorization, groupIds) : false
 
   if (isLoading) {
     return null
@@ -48,6 +54,15 @@ export default function MarkDetailsLayout({ children }: PropsWithChildren) {
       copyIds={[{ value: mark.id }]}
       backHref="/admin/prikker"
       navItems={navItems}
+      readOnlyNotice={
+        canEdit
+          ? undefined
+          : {
+              title: "Du kan ikke redigere prikken.",
+              message:
+                "Dette er fordi du ikke er tilknyttet ansvarlig gruppe. Kontakt dotkom dersom du mener dette er en feil.",
+            }
+      }
     >
       <MarkDetailsContext.Provider value={{ mark }}>{children}</MarkDetailsContext.Provider>
     </ResourceDetailLayout>

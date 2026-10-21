@@ -1,7 +1,16 @@
 "use client"
 
 import type { useAuthorization } from "@admin/auth/authorization-context"
+import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
+import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
+import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { GroupTypeSchema } from "@dotkomonline/rpc/group"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
+import { canCreateMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import {
   IconArticle,
   IconAward,
@@ -20,14 +29,7 @@ import {
   IconWheelchair,
   type TablerIcon,
 } from "@tabler/icons-react"
-import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
-import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
-import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
-import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
-import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
-import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
-import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
-import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
+import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
 
 export type Navigation = {
   label: string
@@ -75,16 +77,19 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBan,
         href: "/admin/prikker",
         keywords: ["prikk", "prikker", "suspensjon", "suspensjoner", "mark", "marks"],
+        canAccess: (authorization) => canListMarks(authorization),
         createActions: [
           {
             label: "Ny prikk",
             href: "/admin/prikker?create=prikk",
             resourceName: "prikk",
+            canAccess: (authorization) => canCreateMarks(authorization),
           },
           {
             label: "Ny suspensjon",
             href: "/admin/prikker?create=suspensjon",
             resourceName: "suspensjon",
+            canAccess: (authorization) => canCreateMarks(authorization),
           },
         ],
       },

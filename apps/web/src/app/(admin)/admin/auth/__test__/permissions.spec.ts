@@ -16,6 +16,7 @@ import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
+import { canCreateMark, canCreateMarks, canManageMark, canSetMarkGroups } from "@dotkomonline/rpc/mark-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
 import {
@@ -319,5 +320,59 @@ describe("canSetContestOrganizers", () => {
     const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
 
     expect(canSetContestOrganizers(state, ["backlog", "arrkom", "bedkom"], ["backlog", "arrkom"])).toBe(false)
+  })
+})
+
+describe("canCreateMarks", () => {
+  it("requires at least one affiliation for non-admins", () => {
+    expect(canCreateMarks(createState({}))).toBe(false)
+    expect(canCreateMarks(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+    expect(canCreateMarks(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+})
+
+describe("canManageMark", () => {
+  it("allows managing when user is affiliated with the mark", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageMark(state, ["arrkom"])).toBe(true)
+  })
+
+  it("denies managing for unrelated committee members", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageMark(state, ["arrkom"])).toBe(false)
+  })
+})
+
+describe("canSetMarkGroups", () => {
+  it("allows creating with committees the user belongs to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateMark(state, ["backlog", "some-interest-group"])).toBe(true)
+  })
+
+  it("denies creating with a committee the user does not belong to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateMark(state, ["backlog", "arrkom"])).toBe(false)
+  })
+
+  it("allows a co-host to keep existing groups unchanged", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetMarkGroups(state, ["backlog", "arrkom"], ["backlog", "arrkom"])).toBe(true)
+  })
+
+  it("allows a co-host to add an interest group without belonging to every committee group", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetMarkGroups(state, ["backlog", "arrkom", "some-interest-group"], ["backlog", "arrkom"])).toBe(true)
+  })
+
+  it("denies adding a committee the user does not belong to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetMarkGroups(state, ["backlog", "arrkom", "bedkom"], ["backlog", "arrkom"])).toBe(false)
   })
 })
