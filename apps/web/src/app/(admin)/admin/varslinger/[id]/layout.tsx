@@ -4,6 +4,7 @@ import { useAuthorization } from "@admin/auth/authorization-context"
 import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
 import { ResourceDetailLayout } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import { getNotificationLinkTypeLabel } from "@dotkomonline/rpc/notification"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { type PropsWithChildren, use } from "react"
@@ -23,9 +24,9 @@ export default function NotificationDetailsLayout({
   params,
 }: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = use(params)
-  const { canManageNotification, isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
   const { data: notification, isLoading, isError, error } = useNotificationGetQuery(id)
-  const canManage = notification ? canManageNotification(notification.actorGroupId) : false
+  const canManage = notification !== undefined ? canManageNotification(authorization, notification.actorGroupId) : false
 
   useBreadcrumbLabel(breadcrumbPath("varslinger", id), notification?.title ?? null)
 
@@ -92,14 +93,14 @@ export default function NotificationDetailsLayout({
         </div>
       }
       readOnlyNotice={
-        isAdministrator
+        canManage
           ? undefined
           : {
               title: "Du kan ikke redigere varslingen.",
               message: "Dette er fordi du ikke er avsender. Kontakt dotkom dersom du mener dette er en feil.",
             }
       }
-      missingDeletePermission={isAdministrator ? undefined : true}
+      missingDeletePermission={canManage ? undefined : true}
     >
       <NotificationDetailsContext.Provider value={{ notification }}>{children}</NotificationDetailsContext.Provider>
     </ResourceDetailLayout>

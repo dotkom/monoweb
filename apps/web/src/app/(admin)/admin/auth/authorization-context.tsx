@@ -7,10 +7,11 @@ import {
 } from "@dotkomonline/rpc/permissions"
 import type { UserId } from "@dotkomonline/rpc/user"
 import type { GroupId, GroupRoleType } from "@dotkomonline/rpc/group"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import type { PropsWithChildren } from "react"
 import { createContext, useContext, useMemo } from "react"
 import type { AuthorizationState } from "./permissions"
-import { canManageNotification, hasAnyGroupAffiliation, hasGroupRole, isGroupMember } from "./permissions"
+import { hasAnyGroupAffiliation, hasGroupRole, isGroupMember } from "./permissions"
 
 export interface AuthorizationProviderProps {
   subject: UserId

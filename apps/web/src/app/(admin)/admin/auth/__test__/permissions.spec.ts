@@ -29,6 +29,7 @@ import {
 } from "@dotkomonline/rpc/group-permissions"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canCreateMark, canCreateMarks, canManageMark, canSetMarkGroups } from "@dotkomonline/rpc/mark-permissions"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import {
   canEditUserNameAndEmail,
@@ -36,7 +37,7 @@ import {
   canManageUserMemberships,
 } from "@dotkomonline/rpc/user-permissions"
 import { describe, expect, it } from "vitest"
-import { canManageNotification, createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
+import { createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
 function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
   return createAuthorizationState({
@@ -186,13 +187,13 @@ describe("canManageNotification", () => {
   })
 
   it("allows administrators to manage notifications from any group", () => {
-    const state = createState({}, { isAdministrator: true })
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
 
     expect(canManageNotification(state, "arrkom")).toBe(true)
   })
 
   it("allows administrators to manage system notifications", () => {
-    const state = createState({}, { isAdministrator: true })
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
 
     expect(canManageNotification(state, null)).toBe(true)
   })
