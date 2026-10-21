@@ -64,6 +64,7 @@ export const ArticleWriteForm = ({
         maxSizeKiB={ARTICLE_IMAGE_MAX_SIZE_KIB}
         required
         onFileUpload={fileUpload}
+        aspectRatio={{ width: 16, height: 9 }}
       />
       <TextField
         control={form.control}
