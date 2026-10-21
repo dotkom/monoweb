@@ -107,10 +107,24 @@ const getSidequestByIdWithRequestProcedure = procedure
   .input(SidequestSchema.shape.id)
   .output(SidequestSummaryWithRequestSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.BACKLOG))))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.sidequestService.getByIdWithRequest(ctx.handle, input, ctx.principal !== null)
+    const sidequest = await ctx.sidequestService.getByIdWithRequest(ctx.handle, input, ctx.principal !== null)
+
+    await ctx.addAuthorizationGuard(
+      or(
+        isAdministrator(),
+        isGroupMember(CommitteeGroupSlug.BACKLOG),
+        hasGroupRole(sidequest.interestGroup.slug, GroupRoleTypeEnum.LEADER)
+      ),
+      input
+    )
+
+    const canSeeIdentity =
+      ctx.authorizationService.isAdministrator(ctx.principal.affiliations) ||
+      ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [CommitteeGroupSlug.BACKLOG])
+
+    return canSeeIdentity ? sidequest : stripReviewerIdentity(sidequest)
   })
 
 export type CreateSidequestRegistrationInput = inferProcedureInput<typeof createSidequestRegistrationProcedure>

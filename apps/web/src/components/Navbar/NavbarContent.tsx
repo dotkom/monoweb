@@ -62,6 +62,12 @@ const links: MenuLink[] = [
     highlighted: true,
   },
   {
+    title: "Sidequests",
+    href: "/sidequests",
+    icon: IconUsers,
+    highlighted: true,
+  },
+  {
     title: "Jobbannonser",
     href: "/karriere",
     icon: IconBriefcase,
@@ -86,7 +92,7 @@ const links: MenuLink[] = [
         title: "Interessegrupper",
         href: "/interessegrupper",
         icon: IconUsers,
-        description: "Er du medlem av en interessegruppe? Sjekk de ut her!",
+        description: "Finn interessegrupper i Online og bli med.",
       },
       {
         title: "Hovedstyret",
@@ -208,7 +214,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
             "flex flex-row items-center justify-between",
             "backdrop-blur-xl shadow-sm",
             "p-3 rounded-[calc(var(--navbar-height)/2)]",
-            showLoginButton && "lg:rounded-r-md"
+            showLoginButton && "min-[1100px]:rounded-r-md"
           )}
         >
           <Link href={env.NEXT_PUBLIC_HOME_URL} className="shrink-0">
@@ -240,7 +246,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
                 "h-full w-(--navbar-height) xs:w-auto shrink-0",
                 "p-0 xs:pl-6 xs:pr-8",
                 "font-medium",
-                "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md"
+                "rounded-[calc(var(--navbar-height)/2)] min-[1100px]:rounded-l-md"
               )}
               href={createAuthorizeUrl({ returnTo: fullPathname })}
               aria-label="Logg inn"
