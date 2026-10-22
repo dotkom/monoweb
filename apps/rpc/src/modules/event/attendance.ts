@@ -308,7 +308,7 @@ export const RegisterChangeEventSchema = z.object({
   /**
    * - `registered`: The attendee has registered for the event.
    * - `deregistered`: The attendee has deregistered from the event.
-   * - `updated`: The attendee's data (for example queue status) has been updated.
+   * - `updated`: The attendee's data (for example queue or payment status) has been updated.
    */
   status: z.enum(["registered", "deregistered", "updated"]),
   poolOccupancies: z.array(PoolOccupancySchema),
