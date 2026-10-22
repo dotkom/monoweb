@@ -1,7 +1,6 @@
 "use client"
 
 import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
-import { canManageNotification, type NotificationGroup } from "@dotkomonline/rpc/notification-permissions"
 import {
   isAdministrator as isAdministratorAffiliation,
   isCommitteeMember as isCommitteeMemberAffiliation,
@@ -10,8 +9,6 @@ import {
 import type { UserId } from "@dotkomonline/rpc/user"
 import type { PropsWithChildren } from "react"
 import { createContext, useContext, useMemo } from "react"
-import type { AuthorizationState } from "./permissions"
-import { hasAnyGroupAffiliation, hasGroupRole, isGroupMember } from "./permissions"
 
 export interface AuthorizationProviderProps {
   subject: UserId
@@ -62,30 +59,12 @@ export function AuthorizationProvider({
   return <AuthorizationContext.Provider value={value}>{children}</AuthorizationContext.Provider>
 }
 
-export function useAuthorization() {
+export function useAuthorization(): Authorization {
   const context = useContext(AuthorizationContext)
 
   if (context === null) {
     throw new Error("useAuthorization must be used within AuthorizationProvider")
   }
 
-  return useMemo(() => {
-    const state: AuthorizationState = {
-      isAdministrator: context.isAdministrator,
-      isCommitteeMember: context.isCommitteeMember,
-      affiliations: context.affiliations,
-    }
-
-    return {
-      subject: context.subject,
-      isAdministrator: context.isAdministrator,
-      isCommitteeMember: context.isCommitteeMember,
-      affiliations: context.affiliations,
-      groups: context.groups,
-      isGroupMember: (groupId: GroupId) => isGroupMember(state, groupId),
-      hasGroupRole: (groupId: GroupId, role: GroupRoleType) => hasGroupRole(state, groupId, role),
-      hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
-      canManageNotification: (actorGroup: NotificationGroup | null) => canManageNotification(state, actorGroup),
-    }
-  }, [context])
+  return context
 }
