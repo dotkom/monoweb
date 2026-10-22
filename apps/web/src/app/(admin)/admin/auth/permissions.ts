@@ -23,7 +23,7 @@ const CommitteeGroupSlug = {
   EKSKOM: "ekskom",
   FAGKOM: "fagkom",
   FEMINIT: "feminit",
-  FOND: "fond",
+  FONDET: "fondet",
   JUBKOM: "jubkom",
   ONLINE_IL: "online-il",
   PROKOM: "prokom",
