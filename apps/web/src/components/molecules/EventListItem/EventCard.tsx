@@ -78,7 +78,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
             <>
               <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={eventHasEnded} />
 
-              <EventPrice price={attendance.attendancePrice} />
+              {!attendee?.registered && <EventPrice price={attendance.attendancePrice} />}
             </>
           )}
         </div>

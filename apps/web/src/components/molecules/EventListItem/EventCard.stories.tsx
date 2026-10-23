@@ -1,5 +1,7 @@
+import type { AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import { Text } from "@dotkomonline/ui"
-import { addDays } from "date-fns"
+import { addDays, addMinutes, subMinutes } from "date-fns"
+import { Fragment } from "react"
 import {
   createMockAttendanceSummary,
   createMockAttendee,
@@ -47,9 +49,9 @@ export const Default = () => {
   )
 }
 
-export const AllStates = () => {
+export const Examples = () => {
   const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registered: true })
+  const registeredAttendee = createMockAttendee({ user, registered: true, paymentReservedAt: new Date() })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
@@ -203,6 +205,99 @@ export const AllStates = () => {
             attendees: createRegisteredAttendees(80),
           })}
         />
+      </div>
+    </div>
+  )
+}
+
+export const AllStates = () => {
+  const now = new Date()
+  const columns = ["Unregistered", "In queue", "Reserved", "Registered"] as const
+  const rows: { label: string; attendance: AttendanceSummary; reservedOnly?: boolean }[] = [
+    {
+      label: "Open with price",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Free event",
+      attendance: createMockAttendanceSummary({ capacity: 20 }),
+    },
+    {
+      label: "Full event",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Deregister deadline passed",
+      attendance: createMockAttendanceSummary({ status: "CLOSED", attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Completion deadline passed",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+      reservedOnly: true,
+    },
+    {
+      label: "Payment link unavailable",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+      reservedOnly: true,
+    },
+    {
+      label: "Not opened",
+      attendance: createMockAttendanceSummary({ status: "NOT_OPENED", attendancePrice: 100, capacity: 20 }),
+    },
+  ]
+
+  return (
+    <div className="overflow-x-auto">
+      <div className="grid min-w-[1120px] max-w-[1600px] grid-cols-4 items-start gap-x-6 gap-y-8">
+        {columns.map((column) => (
+          <Text key={column} className="font-medium">
+            {column}
+          </Text>
+        ))}
+        {rows.map((row) => (
+          <Fragment key={row.label}>
+            {columns.map((column) => {
+              const isReserved = column === "Reserved"
+              const isPaidEvent = (row.attendance.attendancePrice ?? 0) > 0
+              const isApplicable =
+                (!isReserved || isPaidEvent) &&
+                (!row.reservedOnly || isReserved) &&
+                (row.label !== "Not opened" || column === "Unregistered")
+              const attendee =
+                column === "Unregistered"
+                  ? null
+                  : createMockAttendee({
+                      registered: column !== "In queue",
+                      createdAt: subMinutes(now, 5),
+                      paymentReservedAt: column === "Registered" && isPaidEvent ? now : null,
+                      completionDeadline: isReserved
+                        ? addMinutes(now, row.label === "Completion deadline passed" ? -1 : 10)
+                        : null,
+                      paymentLink:
+                        isReserved && row.label !== "Payment link unavailable" ? "https://example.com/payment" : null,
+                    })
+
+              return (
+                <div key={column} className="flex min-w-0 flex-col gap-2">
+                  {isApplicable && (
+                    <>
+                      <Text className="text-sm text-muted-foreground">{row.label}</Text>
+                      <EventCard
+                        event={baseEvent}
+                        attendance={{
+                          ...row.attendance,
+                          registeredAttendeeCount: row.label === "Full event" ? 20 : 4,
+                          currentUserAttendee: attendee,
+                        }}
+                        userId={MOCK_USER_ID}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
+          </Fragment>
+        ))}
       </div>
     </div>
   )
