@@ -31,6 +31,33 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
+describe("attendance deregistration lock", () => {
+  it.each([false, true])("keeps queued attendees unlocked (deadline passed: %s)", (deadlinePassed) => {
+    const attendee = createMockAttendee({ registered: false })
+    const attendance = createMockAttendance({ status: deadlinePassed ? "CLOSED" : "OPEN", attendees: [attendee] })
+
+    const markup = renderToStaticMarkup(
+      <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
+    )
+
+    expect(markup).not.toContain("icon-lock-filled")
+    expect(markup).not.toContain("Avmeldingsfristen er utgått")
+    expect(markup).toContain("icon-circle-dashed-check")
+  })
+
+  it("still locks attendees with a seat after the deregistration deadline", () => {
+    const attendee = createMockAttendee({ registered: true })
+    const attendance = createMockAttendance({ status: "CLOSED", attendees: [attendee] })
+
+    const markup = renderToStaticMarkup(
+      <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
+    )
+
+    expect(markup).toContain("icon-lock-filled")
+    expect(markup).toContain("Avmeldingsfristen er utgått")
+  })
+})
+
 describe("event payment countdown", () => {
   it.each([false, true])("hides deadline warnings for queued attendees (expired: %s)", (expired) => {
     const attendee = createMockAttendee({
