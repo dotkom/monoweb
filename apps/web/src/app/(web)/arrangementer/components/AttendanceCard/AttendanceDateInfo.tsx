@@ -1,7 +1,7 @@
 import { type AttendanceView, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
 import { Text, Timeline, TimelineContent, TimelineDot, TimelineItem, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
-import { IconLockFilled, IconPennantFilled, IconSquareRotatedFilled } from "@tabler/icons-react"
+import { IconBan, IconLockFilled, IconPennantFilled } from "@tabler/icons-react"
 import { compareAsc, format as formatDate, isAfter, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
 import { AttendanceSection } from "./AttendanceSection"
@@ -82,8 +82,11 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
       key: "registerEnd",
       date: registerEnd,
       icon: (
-        <IconSquareRotatedFilled
-          className={cn("size-4", nextDateBlock === "registerEnd" ? "text-foreground" : "text-muted-foreground")}
+        <IconBan
+          className={cn(
+            "size-4 stroke-[2.5]",
+            nextDateBlock === "registerEnd" ? "text-foreground" : "text-muted-foreground"
+          )}
         />
       ),
       element: dateComponent(
