@@ -10,6 +10,7 @@ import {
   type AttendanceSummary,
   type Attendee,
   attendeeHasPendingCompletionDeadline,
+  buildRegistrationAvailabilityCompletionView,
   getAttendanceCapacity,
   getRegisteredAttendeeCount,
 } from "@dotkomonline/rpc/attendance"
@@ -17,8 +18,8 @@ import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline
 import {
   IconBan,
   IconCheck,
+  IconCircleDashed,
   IconCircleDashedCheck,
-  IconCoins,
   IconLockFilled,
   IconPennantFilled,
   IconUsers,
@@ -31,7 +32,7 @@ interface AttendanceStatusClassNames {
   root?: string
   count?: string
   lock?: string
-  payment?: string
+  deadline?: string
   notOpened?: string
 }
 
@@ -52,8 +53,11 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 }) => {
   const currentTime = useCurrentTime()
   const attendanceStatus = getAttendanceStatus(attendance, currentTime)
-  const isRegistered = attendee?.registered === true
-  const isQueued = attendee?.registered === false
+  const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
+  const isRegistered = completion?.attendeeState === "REGISTERED"
+  const isReserved = completion?.attendeeState === "RESERVED"
+  const isQueued = completion?.attendeeState === "QUEUED"
+  const hasSeat = isRegistered || isReserved
   const showRegistrationOpensSoon = attendanceStatus === "NOT_OPENED" && isAfter(attendance.registerStart, currentTime)
   const numberOfAttendees =
     "registeredAttendeeCount" in attendance
@@ -64,26 +68,26 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const showLock =
     !eventEndInPast &&
     !isQueued &&
-    (isRegistered ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
+    (hasSeat ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
 
-  const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
-  const paymentCountdownInterval =
-    attendee?.createdAt && attendee.completionDeadline
-      ? interval(attendee.createdAt, attendee.completionDeadline)
+  const completionCountdownText = useCountdown(completion?.completionDeadline ?? null, formatRollingCountdown)
+  const completionCountdownInterval =
+    attendee?.createdAt && completion?.completionDeadline
+      ? interval(attendee.createdAt, completion.completionDeadline)
       : null
   const hasPendingCompletionDeadline = attendeeHasPendingCompletionDeadline(attendance, attendee)
-  const isWithinPaymentCountdown =
-    paymentCountdownInterval && hasPendingCompletionDeadline
-      ? isWithinInterval(currentTime, paymentCountdownInterval)
+  const isWithinCompletionCountdown =
+    completionCountdownInterval && hasPendingCompletionDeadline
+      ? isWithinInterval(currentTime, completionCountdownInterval)
       : false
 
-  const paymentDeadlineHasPassed =
-    attendee?.completionDeadline != null && isAfter(currentTime, attendee.completionDeadline)
+  const completionDeadlineHasPassed =
+    completion?.completionDeadline != null && isAfter(currentTime, completion.completionDeadline)
 
-  const showPaymentCountdown =
-    attendee?.paymentLink != null &&
+  const showCompletionCountdown =
+    completion?.paymentLink != null &&
     hasPendingCompletionDeadline &&
-    (isWithinPaymentCountdown || paymentDeadlineHasPassed)
+    (isWithinCompletionCountdown || completionDeadlineHasPassed)
 
   const hasCapacity = capacity > 0
 
@@ -121,7 +125,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     <div
       className={cn(
         "flex flex-row items-center gap-2",
-        (eventEndInPast || (showLock && !isRegistered && !isQueued)) &&
+        (eventEndInPast || (showLock && !hasSeat && !isQueued)) &&
           "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400",
         classNames?.root
       )}
@@ -129,7 +133,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
       <IconUsers
         className={cn(
           iconSizeClassName,
-          !(eventEndInPast || (showLock && !isRegistered && !isQueued)) && "text-gray-800 dark:text-stone-400"
+          !(eventEndInPast || (showLock && !hasSeat && !isQueued)) && "text-gray-800 dark:text-stone-400"
         )}
       />
 
@@ -138,8 +142,9 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           className={cn(
             "flex flex-row gap-1 items-center py-0.5",
             "tracking-wider",
-            (isRegistered || isQueued) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
+            (hasSeat || isQueued) && "px-1 rounded-sm bg-gray-100 dark:bg-stone-700",
             isRegistered && "text-green-800 bg-green-100 dark:text-green-100 dark:bg-green-950",
+            isReserved && "text-yellow-900 bg-yellow-100 dark:text-yellow-100 dark:bg-[#614020]",
             isQueued && "text-indigo-800 bg-indigo-100 dark:text-indigo-100 dark:bg-indigo-600/25",
             classNames?.count
           )}
@@ -154,7 +159,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             )}
           </Text>
 
-          {showLock && isRegistered ? (
+          {showLock && hasSeat ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <span className={cn("flex items-center", classNames?.lock)}>
@@ -165,6 +170,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
                 <Text>Avmeldingsfristen er utgått</Text>
               </TooltipContent>
             </Tooltip>
+          ) : isReserved ? (
+            <IconCircleDashed className={iconSizeClassName} />
           ) : isRegistered ? (
             <IconCheck className={iconSizeClassName} />
           ) : isQueued ? (
@@ -172,7 +179,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           ) : null}
         </div>
 
-        {showLock && !isRegistered && !isQueued && (
+        {showLock && !hasSeat && !isQueued && (
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <div className={cn("flex flex-row gap-1 items-center text-muted-foreground", classNames?.lock)}>
@@ -185,23 +192,22 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
           </Tooltip>
         )}
 
-        {showPaymentCountdown && (
+        {showCompletionCountdown && (
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <div
                 className={cn(
-                  "ml-1 flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm text-red-800 bg-red-100 dark:text-red-100 dark:bg-red-950",
-                  classNames?.payment
+                  "flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm text-red-900 bg-red-200 dark:text-red-100 dark:bg-red-600/50",
+                  classNames?.deadline
                 )}
               >
-                <IconCoins className={iconSizeClassName} />
-                <span className={cn("tracking-wider", textSizeClassName)} suppressHydrationWarning>
-                  {paymentCountdownText}
-                </span>
+                <Text element="span" className={cn("tracking-wider", textSizeClassName)} suppressHydrationWarning>
+                  {completionCountdownText}
+                </Text>
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <Text>Du har ikke betalt for arrangementet.</Text>
+              <Text>Fullfør påmeldingen innen fristen for å beholde plassen din.</Text>
             </TooltipContent>
           </Tooltip>
         )}

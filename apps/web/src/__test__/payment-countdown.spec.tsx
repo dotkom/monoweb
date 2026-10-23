@@ -11,7 +11,7 @@ vi.mock("@dotkomonline/ui", () => ({
   Tooltip: ({ children }: PropsWithChildren) => children,
   TooltipContent: ({ children }: PropsWithChildren) => children,
   TooltipTrigger: ({ children }: PropsWithChildren) => children,
-  cn: () => "",
+  cn: (...classes: unknown[]) => classes.filter(Boolean).join(" "),
 }))
 
 vi.mock("@/components/RollingNumber", () => ({
@@ -45,9 +45,12 @@ describe("attendance deregistration lock", () => {
     expect(markup).toContain("icon-circle-dashed-check")
   })
 
-  it("still locks attendees with a seat after the deregistration deadline", () => {
-    const attendee = createMockAttendee({ registered: true })
-    const attendance = createMockAttendance({ status: "CLOSED", attendees: [attendee] })
+  it.each([
+    null,
+    new Date(),
+  ])("still locks attendees with a seat after the deregistration deadline (payment reserved: %s)", (paymentReservedAt) => {
+    const attendee = createMockAttendee({ registered: true, paymentReservedAt })
+    const attendance = createMockAttendance({ status: "CLOSED", attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
       <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
@@ -84,7 +87,8 @@ describe("event payment countdown", () => {
       <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
     )
 
-    expect(listMarkup).not.toContain("Du har ikke betalt for arrangementet.")
+    expect(listMarkup).not.toContain("Fullfør påmeldingen innen")
+    expect(listMarkup).toContain("bg-indigo-100")
   })
 
   it("clears payment warnings immediately after deregistration", () => {
@@ -130,7 +134,9 @@ describe("event payment countdown", () => {
       <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
     )
 
-    expect(listMarkup).not.toContain("Du har ikke betalt for arrangementet.")
+    expect(listMarkup).not.toContain("Fullfør påmeldingen innen")
+    expect(listMarkup).toContain("bg-yellow-100")
+    expect(listMarkup).not.toContain("bg-green-100")
   })
 
   it("shows the countdown when an unpaid attendee can open payment", () => {
@@ -149,6 +155,15 @@ describe("event payment countdown", () => {
     expect(markup).toContain("100 kr ubetalt")
     expect(markup).toContain("completion-warning")
     expect(markup).not.toContain("Betalingslenken er ikke tilgjengelig")
+
+    const listMarkup = renderToStaticMarkup(
+      <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
+    )
+
+    expect(listMarkup).toContain("Fullfør påmeldingen innen fristen for å beholde plassen din.")
+    expect(listMarkup).toContain("bg-yellow-100")
+    expect(listMarkup).toContain("dark:bg-[#614020]")
+    expect(listMarkup).not.toContain("bg-green-100")
   })
 
   it.each([
@@ -176,7 +191,9 @@ describe("event payment countdown", () => {
       <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={false} />
     )
 
-    expect(listMarkup).not.toContain("Du har ikke betalt for arrangementet.")
+    expect(listMarkup).not.toContain("Fullfør påmeldingen innen")
+    expect(listMarkup).toContain("bg-green-100")
+    expect(listMarkup).not.toContain("bg-yellow-100")
     expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)?.missingRequirements).toEqual([])
   })
 
