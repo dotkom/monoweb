@@ -287,6 +287,7 @@ export const AttendanceCard = ({
               user={user}
               attendeeListOpen={attendeeListOpen}
               setAttendeeListOpen={setAttendeeListOpen}
+              hasTicketButton={Boolean(attendee?.registered)}
             />
           </div>
 

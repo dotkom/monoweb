@@ -1,5 +1,9 @@
+import type { ComponentProps } from "react"
+import { Fragment } from "react"
+import { Text } from "@dotkomonline/ui"
 import {
   createAttendanceWithRegisteredUser,
+  createAttendanceWithQueuedUser,
   createMockAttendance,
   createMockDeregistrationAvailability,
   createMockPunishment,
@@ -7,10 +11,8 @@ import {
   createMockUser,
 } from "../../../../../../.ladle/fixtures/attendance"
 import { RegistrationButton } from "./RegistrationButton"
-import { Text } from "@dotkomonline/ui"
 
 const noop = () => {}
-
 const baseProps = {
   registerForAttendance: noop,
   unregisterForAttendance: noop,
@@ -18,7 +20,11 @@ const baseProps = {
   turnstileStatus: "verified" as const,
   setDeregisterModalOpen: noop,
 }
-
+type ButtonProps = ComponentProps<typeof RegistrationButton>
+type StoryRow = {
+  label: string
+  cells: [Partial<ButtonProps> | null, Partial<ButtonProps> | null, Partial<ButtonProps> | null]
+}
 export default {
   title: "Attendance Card/Registration Button",
   component: RegistrationButton,
@@ -26,248 +32,201 @@ export default {
 
 export const AllStates = () => {
   const user = createMockUser()
-  const registeredAttendance = createAttendanceWithRegisteredUser()
-
-  return (
-    <div className="flex flex-col gap-8 max-w-md">
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Can register</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability()}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Can deregister</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={registeredAttendance}
-          registrationAvailability={createMockDeregistrationAvailability()}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Pool full</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability({
-            pool: {
-              id: "00000000-0000-4000-8000-000000000020",
-              mergeDelayHours: null,
-              isPoolFull: true,
-            },
-            registration: {
-              canRegister: true,
-              eventRejectionCause: null,
-              userRejectionCause: null,
-              reservationActiveAt: null,
-              willBeQueued: true,
-              hasMergeDelay: false,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Punishment delay</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability({
+  const availability = createMockRegistrationAvailability()
+  const columns = [
+    { label: "Not attending", attendance: createMockAttendance(), availability },
+    {
+      label: "Registered",
+      attendance: createAttendanceWithRegisteredUser(),
+      availability: createMockDeregistrationAvailability(),
+    },
+    {
+      label: "In queue",
+      attendance: createAttendanceWithQueuedUser(),
+      availability: createMockDeregistrationAvailability(),
+    },
+  ]
+  const registration = availability.registration
+  const pool = availability.pool
+  if (!registration || !pool) {
+    return null
+  }
+  const deadlinePassed = {
+    registrationAvailability: createMockDeregistrationAvailability({
+      canDeregister: false,
+      rejectionCause: "DEREGISTER_DEADLINE_PASSED",
+      isWithinGracePeriod: false,
+      isPastDeregisterDeadline: true,
+    }),
+  }
+  const rows: StoryRow[] = [
+    { label: "Can register / deregister", cells: [{}, {}, {}] },
+    {
+      label: "Pool full",
+      cells: [
+        {
+          registrationAvailability: createMockRegistrationAvailability({
+            pool: { ...pool, isPoolFull: true },
+            registration: { ...registration, willBeQueued: true },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "Punishment delay",
+      cells: [
+        {
+          registrationAvailability: createMockRegistrationAvailability({
             punishment: createMockPunishment({ delay: 4 }),
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Merge delay</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability({
-            pool: {
-              id: "00000000-0000-4000-8000-000000000020",
-              mergeDelayHours: 4,
-              isPoolFull: false,
-            },
-            registration: {
-              canRegister: true,
-              eventRejectionCause: null,
-              userRejectionCause: null,
-              reservationActiveAt: null,
-              willBeQueued: false,
-              hasMergeDelay: true,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Missing turnstile</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability()}
-          user={user}
-          turnstileStatus="ready"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Turnstile loading</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability()}
-          user={user}
-          turnstileStatus="loading"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Turnstile failed</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability()}
-          user={user}
-          turnstileStatus="failed"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Loading</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability()}
-          user={user}
-          isLoading={true}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Not logged in</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={undefined}
-          user={null}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Too early</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance({ status: "NOT_OPENED" })}
-          registrationAvailability={createMockRegistrationAvailability({
-            registration: {
-              canRegister: false,
-              eventRejectionCause: "TOO_EARLY",
-              userRejectionCause: null,
-              reservationActiveAt: null,
-              willBeQueued: false,
-              hasMergeDelay: false,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Too late</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance({ status: "CLOSED" })}
-          registrationAvailability={createMockRegistrationAvailability({
-            registration: {
-              canRegister: false,
-              eventRejectionCause: "TOO_LATE",
-              userRejectionCause: null,
-              reservationActiveAt: null,
-              willBeQueued: false,
-              hasMergeDelay: false,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Suspended</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability({
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "Merge delay",
+      cells: [
+        {
+          registrationAvailability: createMockRegistrationAvailability({
+            pool: { ...pool, mergeDelayHours: 4 },
+            registration: { ...registration, hasMergeDelay: true },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    { label: "Missing turnstile", cells: [{ turnstileStatus: "ready" }, null, null] },
+    { label: "Turnstile loading", cells: [{ turnstileStatus: "loading" }, null, null] },
+    { label: "Turnstile failed", cells: [{ turnstileStatus: "failed" }, null, null] },
+    { label: "Loading", cells: [{ isLoading: true }, { isLoading: true }, { isLoading: true }] },
+    {
+      label: "Availability loading",
+      cells: [
+        { registrationAvailability: undefined },
+        { registrationAvailability: undefined },
+        { registrationAvailability: undefined },
+      ],
+    },
+    { label: "Not logged in", cells: [{ user: null, registrationAvailability: undefined }, null, null] },
+    {
+      label: "Too early",
+      cells: [
+        {
+          attendance: createMockAttendance({ status: "NOT_OPENED" }),
+          registrationAvailability: createMockRegistrationAvailability({
+            registration: { ...registration, canRegister: false, eventRejectionCause: "TOO_EARLY" },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "Too late",
+      cells: [
+        {
+          attendance: createMockAttendance({ status: "CLOSED" }),
+          registrationAvailability: createMockRegistrationAvailability({
+            registration: { ...registration, canRegister: false, eventRejectionCause: "TOO_LATE" },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "Suspended",
+      cells: [
+        {
+          registrationAvailability: createMockRegistrationAvailability({
             punishment: createMockPunishment({ suspended: true, delay: 0 }),
-            registration: {
-              canRegister: false,
-              eventRejectionCause: null,
-              userRejectionCause: "SUSPENDED",
-              reservationActiveAt: null,
-              willBeQueued: false,
-              hasMergeDelay: false,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">No matching pool</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={createMockAttendance()}
-          registrationAvailability={createMockRegistrationAvailability({
+            registration: { ...registration, canRegister: false, userRejectionCause: "SUSPENDED" },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "No matching pool",
+      cells: [
+        {
+          registrationAvailability: createMockRegistrationAvailability({
             pool: null,
-            registration: {
-              canRegister: false,
-              eventRejectionCause: null,
-              userRejectionCause: "NO_MATCHING_POOL",
-              reservationActiveAt: null,
-              willBeQueued: false,
-              hasMergeDelay: false,
-            },
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Deregister deadline passed</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={registeredAttendance}
-          registrationAvailability={createMockDeregistrationAvailability({
-            canDeregister: false,
-            rejectionCause: "DEREGISTER_DEADLINE_PASSED",
+            registration: { ...registration, canRegister: false, userRejectionCause: "NO_MATCHING_POOL" },
+          }),
+        },
+        null,
+        null,
+      ],
+    },
+    {
+      label: "Deregister deadline passed",
+      cells: [
+        null,
+        deadlinePassed,
+        {
+          registrationAvailability: createMockDeregistrationAvailability({
+            canDeregister: true,
+            rejectionCause: null,
+            isWithinGracePeriod: false,
+            requiresDeregisterReason: true,
             isPastDeregisterDeadline: true,
-          })}
-          user={user}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Payment completed</Text>
-        <RegistrationButton
-          {...baseProps}
-          attendance={registeredAttendance}
-          registrationAvailability={createMockDeregistrationAvailability({
+          }),
+        },
+      ],
+    },
+    {
+      label: "Payment completed",
+      cells: [
+        null,
+        {
+          registrationAvailability: createMockDeregistrationAvailability({
             canDeregister: false,
             rejectionCause: "PAYMENT_COMPLETED",
+            isWithinGracePeriod: false,
             hasBeenCharged: true,
-          })}
-          user={user}
-        />
+          }),
+        },
+        null,
+      ],
+    },
+  ]
+  return (
+    <div className="overflow-x-auto">
+      <div className="grid min-w-[780px] max-w-6xl grid-cols-3 items-start gap-x-6 gap-y-8">
+        {columns.map((column) => (
+          <Text key={column.label} className="font-medium">
+            {column.label}
+          </Text>
+        ))}
+        {rows.map((row) => (
+          <Fragment key={row.label}>
+            {row.cells.map((props, index) => {
+              const column = columns[index]
+              return (
+                <div key={column.label} className="flex min-w-0 flex-col gap-2">
+                  {props !== null && (
+                    <>
+                      <Text className="text-sm text-muted-foreground">{row.label}</Text>
+                      <RegistrationButton
+                        {...baseProps}
+                        attendance={column.attendance}
+                        registrationAvailability={column.availability}
+                        user={user}
+                        {...props}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
+          </Fragment>
+        ))}
       </div>
     </div>
   )

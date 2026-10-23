@@ -226,26 +226,29 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   }
 
   const buttonContent = isLoading ? (
-    <IconLoader2 className="shrink-0 size-6 animate-spin" />
+    <IconLoader2 className="shrink-0 size-(--status-icon-size) animate-spin" />
   ) : (
-    <>
-      {!showDeregisterConfirm &&
-        (isButtonDisabled ? (
-          <DisabledIcon aria-hidden className="shrink-0 size-[1.25em]" />
-        ) : attendee ? (
-          <IconUserMinus className="shrink-0 size-[1.25em]" />
-        ) : (
-          <IconUserPlus className="shrink-0 size-[1.25em]" />
-        ))}
-
-      <Text element="span" className="font-medium">
-        {showDeregisterConfirm ? "Er du sikker?" : buttonText}
-      </Text>
-    </>
+    <div className="grid min-w-0 grid-cols-[var(--status-icon-size)_minmax(0,1fr)_var(--status-icon-size)] gap-x-2">
+      <span aria-hidden className="flex h-lh items-center justify-center">
+        {!showDeregisterConfirm &&
+          (isButtonDisabled ? (
+            <DisabledIcon className="size-(--status-icon-size)" />
+          ) : attendee ? (
+            <IconUserMinus className="size-(--status-icon-size)" />
+          ) : (
+            <IconUserPlus className="size-(--status-icon-size)" />
+          ))}
+      </span>
+      <div className="flex min-w-0 flex-col text-center">
+        <Text element="span" className="font-medium">
+          {showDeregisterConfirm ? "Er du sikker?" : buttonText}
+        </Text>
+      </div>
+    </div>
   )
 
   const actionButton = (
-    <div className="flex flex-row gap-2 items-stretch w-full">
+    <div className="flex flex-row gap-2 items-stretch w-full [--status-icon-size:--spacing(4.5)]">
       <Button
         onClick={showDeregisterConfirm ? handleDeregisterConfirm : handleClick}
         disabled={isButtonDisabled}
@@ -255,12 +258,12 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
           getButtonColor(isButtonDisabled, Boolean(attendee), isPoolFull, hasPunishment, hasMergeDelay)
         )}
       >
-        <span
+        <div
           key={`${buttonText}-${isLoading}-${isButtonDisabled}`}
-          className={cn("inline-flex items-center justify-center gap-2", transitionStyles.state)}
+          className={cn("mx-auto w-fit max-w-full", transitionStyles.state)}
         >
           {buttonContent}
-        </span>
+        </div>
       </Button>
       {showDeregisterConfirm && (
         <Button
@@ -270,7 +273,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
           disabled={isLoading}
           className="rounded-lg aspect-square h-full min-w-16 px-0 bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
         >
-          <IconX className="size-[1.25em]" />
+          <IconX className="size-(--status-icon-size)" />
         </Button>
       )}
     </div>
