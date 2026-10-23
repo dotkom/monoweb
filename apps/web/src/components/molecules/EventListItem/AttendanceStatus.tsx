@@ -18,9 +18,9 @@ import {
   IconCheck,
   IconCircleDashedCheck,
   IconCoins,
-  IconLock,
-  IconPennant,
-  IconSquareRotated,
+  IconLockFilled,
+  IconPennantFilled,
+  IconSquareRotatedFilled,
   IconUsers,
 } from "@tabler/icons-react"
 import { formatDistance, interval, isAfter, isWithinInterval } from "date-fns"
@@ -64,7 +64,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const showLock =
     !eventEndInPast &&
     (isRegistered || isQueued ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
-  const DeadlineIcon = isRegistered || isQueued ? IconLock : IconSquareRotated
+  const DeadlineIcon = isRegistered || isQueued ? IconLockFilled : IconSquareRotatedFilled
 
   const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -97,7 +97,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <div className={cn("flex flex-row items-center gap-2", classNames?.root, classNames?.notOpened)}>
-            <IconPennant aria-hidden className={cn(iconSizeClassName, "text-gray-800 dark:text-stone-400")} />
+            <IconPennantFilled aria-hidden className={cn(iconSizeClassName, "text-gray-800 dark:text-stone-400")} />
             <Text className={cn(textSizeClassName, "tracking-wider")} suppressHydrationWarning>
               Om {formatCompactTimeUntil(attendance.registerStart, currentTime)}
             </Text>
