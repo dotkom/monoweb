@@ -146,17 +146,6 @@ export function canEditContest(state: AuthorizationState, groupIds: readonly Gro
 }
 
 /**
- * `offline` create/edit procedures
- */
-export function canEditOffline(state: AuthorizationState): boolean {
-  return (
-    state.isAdministrator ||
-    hasGroupRole(state, CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
-  )
-}
-
-/**
  * `fadderuke` create/update/delete procedures
  */
 export function canEditFadderuke(state: AuthorizationState): boolean {

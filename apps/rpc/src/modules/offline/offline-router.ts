@@ -1,27 +1,18 @@
-import { GroupRoleTypeEnum } from "../group/group"
-import { OfflineSchema, OfflineWriteSchema } from "./offline"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { canManageOfflines } from "../../permissions/offline-permissions"
+import { z } from "zod"
+import { permitIf } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { CommitteeGroupSlug } from "../authorization-service"
+import { OfflineSchema, OfflineWriteSchema } from "./offline"
 
 export type CreateOfflineInput = inferProcedureInput<typeof createOfflineProcedure>
 export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProcedure>
 const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
-      )
-    )
-  )
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -42,15 +33,7 @@ const editOfflineProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
-      )
-    )
-  )
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: changes, ctx }) => {
@@ -98,7 +81,7 @@ const createOfflineFileUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
     return ctx.offlineService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
@@ -114,7 +97,7 @@ const createOfflineImageUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
     return ctx.offlineService.createImageUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)

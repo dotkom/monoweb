@@ -7,11 +7,12 @@ import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
 import { OfflineTable } from "./OfflineTable"
 import { useOfflineAllQuery } from "./queries"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 
 export default function OfflinePage() {
   const { offlines, isLoading } = useOfflineAllQuery()
-  const { canEditOffline } = useAuthorization()
-  const canEdit = canEditOffline()
+  const authorization = useAuthorization()
+  const canEdit = canManageOfflines(authorization)
 
   return (
     <div className="flex flex-col gap-4">
