@@ -92,6 +92,9 @@ export interface AttendanceRepository {
     toPoolId: AttendancePoolId
   ): Promise<void>
 
+  /** Claim attendees that are still queued and return only the IDs that were updated. */
+  registerAttendees(handle: DBHandle, attendeeIds: AttendeeId[], registeredAt: Date): Promise<AttendeeId[]>
+
   createAttendancePool(
     handle: DBHandle,
     attendanceId: AttendanceId,
@@ -557,6 +560,25 @@ export function getAttendanceRepository(): AttendanceRepository {
       })
 
       return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
+    },
+
+    async registerAttendees(handle, attendeeIds, registeredAt) {
+      const attendees = await handle.attendee.updateManyAndReturn({
+        where: {
+          id: {
+            in: attendeeIds,
+          },
+          registeredAt: null,
+        },
+        data: {
+          registeredAt,
+        },
+        select: {
+          id: true,
+        },
+      })
+
+      return attendees.map((attendee) => attendee.id)
     },
 
     async createAttendancePool(handle, attendanceId, mergeAttendancePoolsTaskId, data) {

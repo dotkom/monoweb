@@ -6,7 +6,8 @@ import { FieldShell, getFieldErrorMessage } from "@admin/components/forms/FieldS
 import { notifyFail } from "@admin/lib/notifications"
 import { MAX_MERGE_DELAY_HOURS } from "@dotkomonline/rpc/attendance"
 import { createPoolName } from "@dotkomonline/utils"
-import { Button, TextInput } from "@dotkomonline/ui"
+import { Button, Field, FieldContent, FieldDescription, FieldLabel, Text, TextInput } from "@dotkomonline/ui"
+import { Switch } from "@dotkomonline/ui/components/switch"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo, useState } from "react"
@@ -29,6 +30,7 @@ export const PoolFormSchema = z
   .object({
     yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
     capacity: z.int().min(0),
+    fillAddedSeats: z.boolean().optional(),
     title: z.string().min(1),
     mergeDelayHours: z.preprocess((val) => {
       if (typeof val === "number") {
@@ -90,11 +92,17 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
     mode: "onBlur",
     defaultValues: {
       ...props.defaultValues,
+      fillAddedSeats: false,
       title: props.defaultValues.title || createPoolName(props.defaultValues.yearCriteria),
     },
   })
 
   const yearCriteria = form.watch("yearCriteria")
+  const capacity = form.watch("capacity")
+  const hasCapacityIncrease =
+    props.mode === "update" &&
+    props.defaultValues.capacity > 0 &&
+    (capacity === 0 || capacity > props.defaultValues.capacity)
   const generatedTitle = createPoolName(yearCriteria ?? [])
   const defaultTitle = form.formState.defaultValues?.title
   const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
@@ -122,7 +130,7 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
   const onSubmit = form.handleSubmit((values) => {
     form.resetField("yearCriteria")
     try {
-      props.onSubmit(values)
+      props.onSubmit({ ...values, fillAddedSeats: hasCapacityIncrease && values.fillAddedSeats === true })
     } catch (e) {
       notifyFail({
         title: "Oops!",
@@ -160,19 +168,43 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
 
       <CapacityField control={form.control} setValue={form.setValue} min={props.minCapacity ?? 0} />
 
+      {hasCapacityIncrease && (
+        <Controller
+          control={form.control}
+          name="fillAddedSeats"
+          render={({ field }) => (
+            <Field orientation="horizontal">
+              <Switch
+                id="fillAddedSeats"
+                checked={field.value === true}
+                onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
+                aria-describedby="fillAddedSeats-description"
+              />
+              <FieldContent>
+                <FieldLabel htmlFor="fillAddedSeats">Fyll nye plasser fra køen</FieldLabel>
+                <FieldDescription id="fillAddedSeats-description" className="text-xs">
+                  De nye plassene fylles i kø-rekkefølge. De som får plass, får en e-post om at de er påmeldt.
+                </FieldDescription>
+              </FieldContent>
+            </Field>
+          )}
+        />
+      )}
+
       <TextField
         control={form.control}
         name="mergeDelayHours"
         label="Utsettelse i timer"
         description={
-          <>
+          <Text element="span" className="text-xs">
             Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.
             <br />
             Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut. Dette
             gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
             <br />
             Kapasiteten må være ubegrenset dersom gruppen har utsettelse.
-          </>
+          </Text>
         }
         placeholder="Ingen utsettelse"
         type="number"
@@ -227,12 +259,12 @@ function CapacityField({
             required
             error={error}
             description={
-              <>
+              <Text element="span" className="text-xs">
                 Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet dersom
                 du admin-påmelder dem.
                 <br />
                 Kapasitet må være ubegrenset når gruppen har utsettelse.
-              </>
+              </Text>
             }
           >
             <TextInput
