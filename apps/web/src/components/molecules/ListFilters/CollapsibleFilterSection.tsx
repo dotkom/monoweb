@@ -1,8 +1,9 @@
 "use client"
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger, Label, Text, cn } from "@dotkomonline/ui"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger, Label, cn } from "@dotkomonline/ui"
 import { IconChevronDown } from "@tabler/icons-react"
 import type { ReactNode } from "react"
+import { CountBadge } from "./CountBadge"
 
 interface CollapsibleFilterSectionProps {
   title: string
@@ -22,14 +23,7 @@ export const CollapsibleFilterSection = ({ title, count, children, className }: 
       >
         <div className="flex items-center gap-2 h-5.5 mb-2">
           <Label className="cursor-pointer text-foreground">{title}</Label>
-          {count > 0 && (
-            <Text
-              element="span"
-              className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full"
-            >
-              {count}
-            </Text>
-          )}
+          <CountBadge count={count} />
         </div>
         <IconChevronDown className="size-[1.25em] transition-transform" />
       </CollapsibleTrigger>

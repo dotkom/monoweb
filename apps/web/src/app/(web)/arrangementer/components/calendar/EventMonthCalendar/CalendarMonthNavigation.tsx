@@ -44,18 +44,28 @@ export const CalendarMonthNavigation: FC<CalendarNavigationProps> = ({ year, mon
   }
 
   return (
-    <div className={cn("flex items-center gap-4", className)}>
-      <Title className="text-lg font-medium">
+    <div className={cn("flex items-center gap-1", className)}>
+      <Title className="text-lg font-medium max-sm:order-2 max-md:grow max-sm:text-center sm:mr-3">
         {months[month]} {year}
       </Title>
-      <div className="flex gap-1">
-        <Button size="icon-xl" variant="outline" onClick={handlePreviousMonth} aria-label="Forrige måned">
-          <IconChevronLeft />
-        </Button>
-        <Button size="icon-xl" variant="outline" onClick={handleNextMonth} aria-label="Neste måned">
-          <IconChevronRight />
-        </Button>
-      </div>
+      <Button
+        size="icon-xl"
+        variant="outline"
+        onClick={handlePreviousMonth}
+        aria-label="Forrige måned"
+        className="max-sm:order-1"
+      >
+        <IconChevronLeft />
+      </Button>
+      <Button
+        size="icon-xl"
+        variant="outline"
+        onClick={handleNextMonth}
+        aria-label="Neste måned"
+        className="max-sm:order-3"
+      >
+        <IconChevronRight />
+      </Button>
     </div>
   )
 }
