@@ -64,6 +64,7 @@ const updatePoolProcedure = procedure
     z.object({
       id: AttendancePoolSchema.shape.id,
       input: AttendancePoolWriteSchema.partial(),
+      fillAddedSeats: z.boolean().default(false),
     })
   )
   .use(withAuthentication())
@@ -77,10 +78,15 @@ const updatePoolProcedure = procedure
       throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
     }
 
-    const updatedPool = await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, {
-      ...pool,
-      ...input.input,
-    })
+    const updatedPool = await ctx.attendanceService.updateAttendancePool(
+      ctx.handle,
+      input.id,
+      {
+        ...pool,
+        ...input.input,
+      },
+      input.fillAddedSeats
+    )
 
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
     ctx.setAuditTransactionName(

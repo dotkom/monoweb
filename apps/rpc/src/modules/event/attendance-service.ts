@@ -232,7 +232,8 @@ export interface AttendanceService {
   updateAttendancePool(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
-    data: AttendancePoolWrite
+    data: AttendancePoolWrite,
+    fillAddedSeats?: boolean
   ): Promise<AttendancePool>
   getRegistrationAvailability(
     handle: DBHandle,
@@ -531,7 +532,7 @@ export function getAttendanceService(
       return await attendanceRepository.createAttendancePool(handle, attendanceId, taskId, data)
     },
 
-    async updateAttendancePool(handle, attendancePoolId, data) {
+    async updateAttendancePool(handle, attendancePoolId, data, fillAddedSeats = false) {
       validateAttendancePoolWrite(data)
 
       const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
@@ -552,7 +553,35 @@ export function getAttendanceService(
       // Update any existing tasks related to the pool
       const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendance.id, pool.taskId, mergeTime)
 
-      return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
+      const updatedPool = await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
+
+      const hasCapacityIncrease = pool.capacity > 0 && (data.capacity === 0 || data.capacity > pool.capacity)
+
+      if (!fillAddedSeats || !hasCapacityIncrease) {
+        return updatedPool
+      }
+
+      const eligibleQueue = getEligibleQueuedAttendees(attendance, pool.id)
+      const availableSeatCount =
+        data.capacity === 0
+          ? eligibleQueue.length
+          : Math.max(0, data.capacity - getRegisteredAttendeeCount(attendance, pool.id))
+      const addedSeatCount =
+        data.capacity === 0
+          ? eligibleQueue.length
+          : Math.min(eligibleQueue.length, data.capacity - pool.capacity, availableSeatCount)
+      const scheduledAt = getCurrentUTC()
+
+      for (let addedSeatIndex = 0; addedSeatIndex < addedSeatCount; addedSeatIndex += 1) {
+        await taskSchedulingService.scheduleAt(
+          handle,
+          tasks.RESERVE_ATTENDEE,
+          { attendanceId: attendance.id, attendancePoolId: pool.id },
+          scheduledAt
+        )
+      }
+
+      return updatedPool
     },
 
     async deleteAttendancePool(handle, attendancePoolId) {
@@ -867,7 +896,8 @@ export function getAttendanceService(
       return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
     },
 
-    async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
+    async executeReserveAttendeeTask(handle, task) {
+      const { attendanceId } = task
       const attendance = await this.findAttendanceById(handle, attendanceId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
@@ -875,9 +905,26 @@ export function getAttendanceService(
 
       const event = await eventService.getByAttendanceId(handle, attendance.id)
 
-      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
-      if (attendee === undefined) {
-        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendanceId})`)
+      let attendee: Attendee | undefined
+
+      if ("attendeeId" in task) {
+        attendee = attendance.attendees.find((existingAttendee) => existingAttendee.id === task.attendeeId)
+
+        if (attendee === undefined) {
+          throw new TaskSkippedError(
+            `Attendee(ID=${task.attendeeId}) no longer exists in Attendance(ID=${attendanceId})`
+          )
+        }
+      } else {
+        attendee = getEligibleQueuedAttendees(attendance, task.attendancePoolId)
+          .toSorted((firstAttendee, secondAttendee) =>
+            compareAsc(firstAttendee.earliestReservationAt, secondAttendee.earliestReservationAt)
+          )
+          .at(0)
+
+        if (attendee === undefined) {
+          return
+        }
       }
 
       if (attendee.registered) {
@@ -890,7 +937,7 @@ export function getAttendanceService(
       const registeredAdjacentAttendees = attendance.attendees.filter(
         (adjacentAttendee) => adjacentAttendee.attendancePoolId === pool.id && adjacentAttendee.registered
       )
-      const isPoolAtMaxCapacity = registeredAdjacentAttendees.length >= pool.capacity
+      const isPoolAtMaxCapacity = pool.capacity !== 0 && registeredAdjacentAttendees.length >= pool.capacity
       const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
 
       if (isPoolAtMaxCapacity) {
@@ -908,7 +955,7 @@ export function getAttendanceService(
       const data = AttendeeWriteSchema.parse(attendee)
       data.registered = true
 
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
+      await attendanceRepository.updateAttendeeById(handle, attendee.id, data)
       attendee.registered = true
 
       const hasExistingPayment =
@@ -1814,6 +1861,15 @@ export function getAttendanceService(
       }
     },
   }
+}
+
+function getEligibleQueuedAttendees(attendance: Attendance, attendancePoolId: AttendancePoolId): Attendee[] {
+  return attendance.attendees.filter(
+    (attendee) =>
+      attendee.attendancePoolId === attendancePoolId &&
+      !attendee.registered &&
+      !isFuture(attendee.earliestReservationAt)
+  )
 }
 
 function isSelectionEqual(left: AttendanceSelection, right: AttendanceSelection): boolean {
