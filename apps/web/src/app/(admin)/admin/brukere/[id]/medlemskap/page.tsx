@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { compareDesc } from "date-fns"
 import { useMemo, useState } from "react"
@@ -11,8 +12,8 @@ import { MembershipTable } from "./components/MembershipTable"
 
 export default function UserMembershipPage() {
   const { user } = useUserDetailsContext()
-  const { canManageUserMemberships } = useAuthorization()
-  const canManage = canManageUserMemberships()
+  const authorization = useAuthorization()
+  const canManage = canManageUserMemberships(authorization)
   const [createOpen, setCreateOpen] = useState(false)
 
   const memberships = useMemo(
