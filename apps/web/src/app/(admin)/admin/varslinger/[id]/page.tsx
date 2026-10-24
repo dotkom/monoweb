@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import { getNotificationTypeLabel, type NotificationRecipientFilterQuery } from "@dotkomonline/rpc/notification"
 import { Button, Separator, Text, Title } from "@dotkomonline/ui"
 import { IconBell, IconMail, IconMailOpened, IconUsers } from "@tabler/icons-react"
@@ -16,8 +17,8 @@ import { formatPercent } from "./utils"
 
 export default function NotificationDetailsPage() {
   const { notification } = useNotificationDetailsContext()
-  const { canManageNotification, isAdministrator } = useAuthorization()
-  const canManage = canManageNotification(notification.actorGroupId)
+  const authorization = useAuthorization()
+  const canManage = canManageNotification(authorization, notification.actorGroupId)
   const statsQuery = useNotificationRecipientStatsQuery(notification.id, canManage)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isAddRecipientsOpen, setIsAddRecipientsOpen] = useState(false)
@@ -75,13 +76,13 @@ export default function NotificationDetailsPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <PermissionTooltip allowed={isAdministrator}>
-          <Button variant="secondary" onClick={() => setIsEditOpen(true)} disabled={!isAdministrator}>
+        <PermissionTooltip allowed={canManage}>
+          <Button variant="secondary" onClick={() => setIsEditOpen(true)} disabled={!canManage}>
             Rediger
           </Button>
         </PermissionTooltip>
-        <PermissionTooltip allowed={isAdministrator}>
-          <Button variant="secondary" onClick={() => setIsAddRecipientsOpen(true)} disabled={!isAdministrator}>
+        <PermissionTooltip allowed={canManage}>
+          <Button variant="secondary" onClick={() => setIsAddRecipientsOpen(true)} disabled={!canManage}>
             Send til flere
           </Button>
         </PermissionTooltip>
@@ -113,7 +114,7 @@ export default function NotificationDetailsPage() {
             recipients={recipients}
             recipientFilters={recipientFilters}
             setRecipientFilters={setRecipientFilters}
-            canManage={isAdministrator}
+            canManage={canManage}
             isLoading={isRecipientsLoading}
             isPlaceholderData={isRecipientsPlaceholderData}
             isFetchingNextPage={isRecipientsFetchingNextPage}

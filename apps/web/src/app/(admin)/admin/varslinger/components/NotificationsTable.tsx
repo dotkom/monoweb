@@ -5,6 +5,7 @@ import { DateTooltip } from "@admin/components/DateTooltip"
 import { EditableRowIndicator } from "@admin/components/EditableRowIndicator"
 import { useTRPC } from "@admin/lib/trpc-client"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import {
   getNotificationLinkTypeLabel,
   getNotificationTypeLabel,
@@ -85,17 +86,18 @@ export function NotificationsTable({
 }: Props) {
   const trpc = useTRPC()
   const authorization = useAuthorization()
-  const { isAdministrator, canManageNotification } = authorization
   const columnHelper = createColumnHelper<NotificationTableRow>()
 
   const rows = useMemo(
     (): NotificationTableRow[] =>
       notifications.map((notification) => ({
         ...notification,
-        canManage: canManageNotification(notification.actorGroupId),
+        canManage: canManageNotification(authorization, notification.actorGroupId),
       })),
-    [canManageNotification, notifications]
+    [authorization, notifications]
   )
+
+  const hasAnyReadOnlyRow = rows.some((row) => !row.canManage)
 
   const statsQueries = useQueries({
     queries: rows.map((notification) => ({
@@ -110,23 +112,22 @@ export function NotificationsTable({
   }, [rows, statsQueries])
 
   const columns = useMemo(() => {
-    const editableIndicatorColumn =
-      isAdministrator === false
-        ? columnHelper.accessor("canManage", {
-            header: () => null,
-            meta: {
-              fit: true,
-              noPadding: true,
-            },
-            cell: () => (
-              <EditableRowIndicator
-                canEdit={isAdministrator}
-                readOnlyLabel="Du kan se denne varslingen, men ikke redigere den"
-                editableLabel="Du kan redigere denne varslingen"
-              />
-            ),
-          })
-        : null
+    const editableIndicatorColumn = hasAnyReadOnlyRow
+      ? columnHelper.accessor("canManage", {
+          header: () => null,
+          meta: {
+            fit: true,
+            noPadding: true,
+          },
+          cell: (info) => (
+            <EditableRowIndicator
+              canEdit={info.getValue()}
+              readOnlyLabel="Du kan se denne varslingen, men ikke redigere den"
+              editableLabel="Du kan redigere denne varslingen"
+            />
+          ),
+        })
+      : null
 
     const titleColumn = columnHelper.accessor("title", {
       header: () => "Tittel",
@@ -204,7 +205,7 @@ export function NotificationsTable({
       recipientsColumn,
       ...(showReadPercentage ? [readPercentageColumn] : []),
     ].filter((column): column is NonNullable<typeof column> => Boolean(column))
-  }, [columnHelper, isAdministrator, showLinkType, showReadPercentage, statsByNotificationId])
+  }, [columnHelper, hasAnyReadOnlyRow, showLinkType, showReadPercentage, statsByNotificationId])
 
   const table = useReactTable({
     data: rows,
