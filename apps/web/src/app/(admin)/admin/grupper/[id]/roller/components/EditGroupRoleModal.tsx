@@ -10,10 +10,11 @@ type EditGroupRoleModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   role: GroupRole | null
+  defaultRoleId: string
   disabled?: boolean
 }
 
-export function EditGroupRoleModal({ open, onOpenChange, role, disabled }: EditGroupRoleModalProps) {
+export function EditGroupRoleModal({ open, onOpenChange, role, defaultRoleId, disabled }: EditGroupRoleModalProps) {
   const update = useUpdateGroupRoleMutation()
 
   return (
@@ -28,7 +29,10 @@ export function EditGroupRoleModal({ open, onOpenChange, role, disabled }: EditG
 
         {open && role && (
           <GroupRoleWriteForm
-            defaultValues={role}
+            defaultValues={{
+              ...role,
+              isDefault: role.id === defaultRoleId,
+            }}
             onSubmit={(data) => {
               update.mutate({
                 id: role.id,
