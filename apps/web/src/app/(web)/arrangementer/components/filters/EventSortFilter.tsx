@@ -19,9 +19,10 @@ export const EventSortFilter = ({ value, onChange, className }: EventSortFilterP
   return (
     <ToggleGroup
       aria-label="Sorter arrangementer"
-      className={cn("shrink-0 h-10 min-w-48", className)}
+      className={cn("shrink-0 h-10 bg-background", className)}
       multiple={false}
       spacing={0}
+      color="blue"
       value={[value]}
       onValueChange={(values) => {
         const selected = sortOptions.find((option) => option.value === values.at(0))

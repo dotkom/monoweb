@@ -98,6 +98,25 @@ export function PopoverAnchor({ asChild, children, className }: AnchorProps) {
 
 export const PopoverPortal = PopoverPrimitive.Portal
 
+export type PopoverOpenChangeDetails = PopoverPrimitive.Root.ChangeEventDetails
+
+type InlineContentProps = PopoverPrimitive.Popup.Props & {
+  /** The element the popup is rendered into */
+  container: PopoverPrimitive.Portal.Props["container"]
+}
+
+/** Popover rendered inline in `container` instead of floating. Keeps dismissal and focus handling */
+export function PopoverInlineContent({ container, ...props }: InlineContentProps) {
+  return (
+    <PopoverPrimitive.Portal container={container} keepMounted>
+      {/* Override the positioner's inline styles to keep it in the flow */}
+      <PopoverPrimitive.Positioner className="static! transform-none! opacity-100!">
+        <PopoverPrimitive.Popup data-slot="popover-inline-content" {...props} />
+      </PopoverPrimitive.Positioner>
+    </PopoverPrimitive.Portal>
+  )
+}
+
 type ContentProps = ComponentProps<typeof ShadcnPopoverContent> & {
   initialFocus?: boolean
 }

@@ -1,8 +1,13 @@
 "use client"
 
+import { FilterSection } from "@/components/molecules/ListFilters/FilterSection"
 import { type EventType, EventTypeSchema, mapEventTypeToLabel } from "@dotkomonline/rpc/event"
-import { Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Label, Text, cn } from "@dotkomonline/ui"
-import { IconChevronDown } from "@tabler/icons-react"
+import { ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
+
+const EVENT_TYPE_OPTIONS = EventTypeSchema.options.map((type) => ({
+  value: type,
+  label: mapEventTypeToLabel(type),
+}))
 
 interface EventTypeFilterProps {
   value: EventType[]
@@ -10,64 +15,23 @@ interface EventTypeFilterProps {
 }
 
 export const EventTypeFilter = ({ value, onChange }: EventTypeFilterProps) => {
-  const EVENT_TYPE_OPTIONS = EventTypeSchema.options.map((type) => ({
-    value: type,
-    label: mapEventTypeToLabel(type),
-  }))
-
-  const handleToggle = (type: EventType) => {
-    const newTypes = value.includes(type) ? value.filter((t) => t !== type) : [...value, type]
-    onChange(newTypes)
-  }
-
   return (
-    <Collapsible defaultOpen={true}>
-      <CollapsibleTrigger
-        className={cn(
-          "cursor-pointer w-full flex items-center justify-between gap-2 font-medium text-gray-500",
-          "hover:text-gray-900 dark:text-stone-400 dark:hover:text-stone-100 transition-colors"
-        )}
+    <FilterSection title="Kategori" count={value.length}>
+      <ToggleGroup
+        multiple
+        variant="outline"
+        color="blue"
+        size="lg"
+        className="w-full flex-wrap"
+        value={value}
+        onValueChange={(types) => onChange(types as EventType[])}
       >
-        <div className="flex items-center gap-2 h-5.5">
-          <Label className="cursor-pointer text-foreground">Kategori</Label>
-          {value.length > 0 && (
-            <Text
-              element="span"
-              className="size-5.5 flex items-center justify-center text-xs bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100 rounded-full"
-            >
-              {value.length}
-            </Text>
-          )}
-        </div>
-        <IconChevronDown className="size-[1.25em] transition-transform" />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="flex flex-col pt-2">
-          {EVENT_TYPE_OPTIONS.map((type) => {
-            const isSelected = value.includes(type.value)
-
-            return (
-              <div key={type.value} className="flex items-center gap-3">
-                <Checkbox
-                  id={`type-${type.value}`}
-                  checked={isSelected}
-                  onCheckedChange={() => handleToggle(type.value)}
-                  className="size-5"
-                />
-                <Label
-                  htmlFor={`type-${type.value}`}
-                  className={cn(
-                    "cursor-pointer font-normal text-base md:text-sm text-muted-foreground hover:text-foreground w-full py-1",
-                    isSelected && "text-foreground"
-                  )}
-                >
-                  {type.label}
-                </Label>
-              </div>
-            )
-          })}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+        {EVENT_TYPE_OPTIONS.map((type) => (
+          <ToggleGroupItem key={type.value} value={type.value} indicator="check" className="bg-background">
+            {type.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </FilterSection>
   )
 }

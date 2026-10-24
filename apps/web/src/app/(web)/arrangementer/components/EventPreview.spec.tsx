@@ -8,7 +8,7 @@ import { EventPreview } from "./EventPreview"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
 import { TicketButton } from "./AttendanceCard/TicketButton"
-import { EventRules } from "./AttendanceCard/EventRules"
+import { EventRulesButton } from "./EventRulesDialog"
 import { PaymentExplanationDialogContent } from "./AttendanceCard/PaymentExplanationDialog"
 import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
@@ -120,7 +120,7 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
           </DialogContent>
         </Dialog>
         <TicketButton attendee={createMockAttendee()} />
-        <EventRules />
+        <EventRulesButton />
         <Dialog>
           <DialogTrigger>Hvordan virker betaling?</DialogTrigger>
           <PaymentExplanationDialogContent />
@@ -441,7 +441,7 @@ describe("desktop event preview", () => {
 
   it.each([
     "Vis billett",
-    "Arrangementregler",
+    "Prikkeregler",
     "Hvordan virker betaling?",
   ])("dismisses nested information on an outside click without closing the preview (%s)", async (triggerLabel) => {
     const link = await renderPreview()

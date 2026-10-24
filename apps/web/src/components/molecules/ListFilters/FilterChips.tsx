@@ -1,7 +1,7 @@
 "use client"
 
 import { Button, Text, cn } from "@dotkomonline/ui"
-import { IconX } from "@tabler/icons-react"
+import { IconTrash, IconX } from "@tabler/icons-react"
 
 export interface FilterChip {
   key: string
@@ -24,23 +24,22 @@ export const FilterChips = ({ chips, onResetAll, className }: FilterChipsProps) 
     <div className={cn("flex flex-wrap items-center gap-2 transition duration-500", className)}>
       {chips.map((chip) => (
         <Button
-          variant="unstyled"
+          variant="ghost"
           key={chip.key}
           onClick={chip.onRemove}
+          iconRight={<IconX />}
           className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm",
+            "rounded-full",
             "bg-blue-100 dark:bg-sky-950",
-            "text-blue-900 dark:text-sky-200",
-            "hover:bg-blue-200 dark:hover:bg-sky-900",
-            "transition"
+            "text-blue-900 hover:text-blue-900 dark:text-sky-200 dark:hover:text-sky-200",
+            "hover:bg-blue-200 dark:hover:bg-sky-900"
           )}
         >
           <Text element="span">{chip.label}</Text>
-          <IconX className="size-4" />
         </Button>
       ))}
 
-      <Button onClick={onResetAll} variant="secondary" className="text-sm rounded-full px-3 py-1.5 shadow-none">
+      <Button onClick={onResetAll} variant="secondary" iconRight={<IconTrash />} className="rounded-full">
         Fjern alle
       </Button>
     </div>
