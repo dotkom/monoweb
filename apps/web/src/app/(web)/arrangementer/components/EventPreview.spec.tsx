@@ -145,6 +145,11 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
+  vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
+  })
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -430,6 +435,7 @@ describe("desktop event preview", () => {
   })
 
   it("unlocks the page during closing and can open another event before the animation ends", async () => {
+    vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", false)
     let finishClosing: () => void = () => {}
     const closingAnimation = new Promise<void>((resolve) => {
       finishClosing = resolve
