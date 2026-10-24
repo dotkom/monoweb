@@ -7,9 +7,9 @@ import { Button, Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotk
 import {
   IconBan,
   IconLoader2,
-  IconLock,
-  IconPennant,
-  IconSquareRotated,
+  IconLockFilled,
+  IconPennantFilled,
+  IconSquareRotatedFilled,
   IconUserMinus,
   IconUserPlus,
   IconX,
@@ -211,18 +211,18 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     (deregistration.rejectionCause === "DEREGISTER_DEADLINE_PASSED" ||
       deregistration.rejectionCause === "PAYMENT_COMPLETED")
   ) {
-    DisabledIcon = IconLock
+    DisabledIcon = IconLockFilled
   }
 
   if (attendee === null) {
     const attendanceStatus = getAttendanceStatus(attendance)
 
     if (attendanceStatus === "NOT_OPENED") {
-      DisabledIcon = IconPennant
+      DisabledIcon = IconPennantFilled
     }
 
     if (attendanceStatus === "CLOSED") {
-      DisabledIcon = IconSquareRotated
+      DisabledIcon = IconSquareRotatedFilled
     }
   }
 
