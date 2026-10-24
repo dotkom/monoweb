@@ -3,7 +3,7 @@
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, cn } from "@dotkomonline/ui"
 import { IconBook2, IconCalendarPlus, IconDots } from "@tabler/icons-react"
 import { useState } from "react"
-import { EventRules, EventRulesDialog } from "./AttendanceCard/EventRules"
+import { EventRulesButton, EventRulesDialog } from "./EventRulesDialog"
 import { CalendarSubscriptionDialog } from "./CalendarSubscriptionDialog"
 
 export const EventListOptionsMenu = ({ className }: { className?: string }) => {
@@ -54,7 +54,7 @@ export const EventListOptionButtons = ({ className }: { className?: string }) =>
         <IconCalendarPlus className="size-4" />
         Abonner
       </Button>
-      <EventRules className="text-muted-foreground px-1.5" />
+      <EventRulesButton className="text-muted-foreground px-1.5" />
 
       <CalendarSubscriptionDialog open={subscriptionOpen} onOpenChange={setSubscriptionOpen} />
     </div>

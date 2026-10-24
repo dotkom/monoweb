@@ -24,7 +24,7 @@ vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceDateInfo", () =
 vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceTurnstile", () => ({
   AttendanceTurnstile: () => null,
 }))
-vi.mock("@/app/arrangementer/components/AttendanceCard/EventRules", () => ({ EventRules: () => null }))
+vi.mock("@/app/arrangementer/components/EventRulesDialog", () => ({ EventRulesButton: () => null }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/MainPoolCard", () => ({
   MainPoolCard: () => <div data-testid="main-pool-card" />,
 }))
