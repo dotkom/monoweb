@@ -66,8 +66,8 @@ const timelineRowClassName = cn(
 )
 
 const timelineRailClassName = cn(
-  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem] [--timeline-dot-offset:0.5rem]",
-  "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:0.75rem]",
+  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem] [--timeline-dot-offset:calc(0.5rem+var(--timeline-dot-shift,0px))]",
+  "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:calc(0.75rem+var(--timeline-dot-shift,0px))]",
   "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:row-start-2"
 )
 
@@ -139,10 +139,11 @@ const TimelineRailLine = ({ hasMarker = false }: { hasMarker?: boolean }) => (
         "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
         "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
         // Start at the first dot's center, including its lower offset when a side label is present.
-        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
-        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-(--timeline-dot-offset)",
         "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
-        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2)]",
+        // IMPORTANT: Per october 2026, Tailwind VS Code extension suggests removing "px" from the calc function. This
+        // will break the rail, so do not remove it.
+        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2+var(--timeline-dot-shift,0px))]",
         "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
         // Keep the fade length fixed as the marker grows (45% of the original 2rem segment).
         "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_calc(100%-0.9rem),transparent)]",
@@ -162,10 +163,8 @@ const TimelineRailLine = ({ hasMarker = false }: { hasMarker?: boolean }) => (
         // Without stubs, hide headers outside the dot range and stop each end at the dot's center.
         "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
         "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-2",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-(--timeline-dot-offset)",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-(--timeline-dot-offset)",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-(--timeline-dot-position)",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-var(--timeline-dot-position))]",
@@ -297,8 +296,12 @@ export const TimelineSideLabel: FC<ComponentPropsWithoutRef<"div">> = ({ classNa
   />
 )
 
-export type TimelineDotProps = ComponentPropsWithoutRef<"div"> &
-  (
+export type TimelineDotProps = ComponentPropsWithoutRef<"div"> & {
+  /**
+   * Moves the vertical dot and adjoining rail by this many pixels from their default position.
+   */
+  offset?: number
+} & (
     | {
         render?: undefined
         size?: number
@@ -315,7 +318,10 @@ export type TimelineDotProps = ComponentPropsWithoutRef<"div"> &
       }
   )
 
-type TimeDotMarkerStyle = CSSProperties & { "--timeline-marker-size"?: string }
+type TimeDotMarkerStyle = CSSProperties & {
+  "--timeline-marker-size"?: string
+  "--timeline-dot-shift"?: string
+}
 
 /**
  * The dot on the rail. Renders the rail line segment for its row as well.
@@ -323,14 +329,18 @@ type TimeDotMarkerStyle = CSSProperties & { "--timeline-marker-size"?: string }
  * NOTE: The dot's center aligns with the first text line of the content (`top-2` matches a `text-xs` first line). When
  * the row has a `TimelineSideLabel`, it shifts down to `top-3` to align with the side label and a base-size first line
  * instead. In horizontal timelines, the dot follows the item's `align` setting along with its labels and content.
- * Override with `className` if your content needs a different offset.
+ * Use `offset` to adjust the vertical dot and rail together.
  */
-export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render, size, style, ...props }) => {
+export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render, size, offset, style, ...props }) => {
   let markerClassName = "block border-[3px] border-(--timeline-color) bg-white"
   const markerStyle: TimeDotMarkerStyle = { ...style }
 
   if (size !== undefined) {
     markerStyle["--timeline-marker-size"] = `${size}px`
+  }
+
+  if (offset !== undefined) {
+    markerStyle["--timeline-dot-shift"] = `${offset}px`
   }
 
   if (render !== undefined) {
@@ -355,7 +365,7 @@ export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render,
         aria-hidden="true"
         className={cn(
           "absolute left-1/2 z-10 size-(--timeline-marker-size) -translate-x-1/2 -translate-y-1/2 rounded-full",
-          "top-2 group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+          "top-(--timeline-dot-offset)",
           "group-data-[orientation=horizontal]/timeline:left-(--timeline-dot-position)",
           "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
           "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",
