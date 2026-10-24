@@ -1,35 +1,122 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="nb">
   <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta name="x-apple-disable-message-reformatting"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Du er påmeldt {{ eventName }}</title>
+    <style>
+      @font-face {
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.2.8/files/inter-latin-wght-normal.woff2") format("woff2");
+        mso-font-alt: Arial;
+        mso-generic-font-family: swiss;
+      }
+      :root { color-scheme: light dark; supported-color-schemes: light dark; }
+      @media (prefers-color-scheme: dark) {
+        .email-bg { background-color: #1c1917 !important; }
+        .text-primary { color: #fafaf9 !important; }
+        .text-secondary { color: #a8a29e !important; }
+        .text-muted { color: #a8a29e !important; }
+        .footer { border-color: #44403c !important; }
+        .logo-light { display: none !important; }
+        .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
+      }
+      [data-ogsc] .email-bg { background-color: #1c1917 !important; }
+      [data-ogsc] .text-primary { color: #fafaf9 !important; }
+      [data-ogsc] .text-secondary { color: #a8a29e !important; }
+      [data-ogsc] .text-muted { color: #a8a29e !important; }
+      [data-ogsc] .footer { border-color: #44403c !important; }
+      [data-ogsc] .logo-light { display: none !important; }
+      [data-ogsc] .logo-dark { display: block !important; width: 116px !important; height: 30px !important; max-height: none !important; }
+    </style>
+    <!--[if mso]>
+      <style>
+        body, table, td, p, a { font-family: Arial, sans-serif !important; }
+      </style>
+    <![endif]-->
   </head>
-  <body style="background-color: rgb(255, 255, 255);">
-    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+  <body class="email-bg text-primary" style="margin: 0; padding: 0; background-color: #ffffff; color: #000000; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; -webkit-text-size-adjust: 100%;">
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;" aria-hidden="true">
+      Påmeldingen din til {{ eventName }} er bekreftet. Vi gleder oss til å se deg!
+    </div>
+    <table class="email-bg" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
       <tbody>
-        <tr style="width: 100%">
-          <td>
-            <h2>Du er påmeldt {{ eventName }}</h2>
-            <p>Du har meldt deg på arrangementet {{ eventName }} hos Linjeforeningen Online.</p>
-            <br />
-            <a href="{{ eventLink }}">Les mer om arrangementet her</a>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3>Avmelding</h3>
-            <p>Du har frem til {{ deregistrationDeadline }} å melde deg av arrangementet hvis du ombestemmer deg.</p>
-            <p>Mangel på oppmøte uten avmelding av arrangementet resulterer i prikk og/eller suspensjon. Du kan lese mer om prikkereglene på <a href="https://wiki.online.ntnu.no/online-info/prikkeregler/">Online sine nettsider</a></p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du har meldt deg på arrangementet {{ eventName }}</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
-            <p style="font-size: 0.75em; color: gray">Alle datoer er i norsk tid.</p>
+        <tr>
+          <td align="center" style="padding: 0 20px;">
+            <!--[if mso]>
+              <table width="570" border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td>
+            <![endif]-->
+            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 570px; table-layout: fixed;">
+              <tbody>
+                <tr>
+                  <td style="padding: 32px 0;">
+                    <a href="https://online.ntnu.no" aria-label="Linjeforeningen Online" style="display: inline-block; text-decoration: none;">
+                      <img class="logo-light" src="https://cdn.online.ntnu.no/branding/online-logo.png" alt="Online" width="116" height="30" style="display: block; width: 116px; height: 30px; border: 0; color: #0b5374; font-size: 24px;" />
+                      <!--[if !mso]><!-->
+                      <img class="logo-dark" src="https://cdn.online.ntnu.no/branding/online-logo--white.png" alt="Online" width="116" height="30" style="display: none; width: 0; height: 0; max-height: 0; overflow: hidden; border: 0; color: #ffffff; font-size: 24px; mso-hide: all;" />
+                      <!--<![endif]-->
+                    </a>
+                  </td>
+                </tr>
+                {{# eventImageUrl }}
+                <tr>
+                  <td style="padding: 0 0 28px;">
+                    <img src="{{ eventImageUrl }}" alt="{{ eventName }}" width="570" style="display: block; width: 100%; max-width: 570px; height: auto; border: 0; border-radius: 8px;" />
+                  </td>
+                </tr>
+                {{/ eventImageUrl }}
+                <tr>
+                  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    <p style="margin: 0 0 16px;">Hei!</p>
+                    <p style="margin: 0;">Du er påmeldt {{ eventName }}. Vi gleder oss til å se deg!</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 24px 0 0;">
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td bgcolor="#0b5374" style="background-color: #0b5374; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06); mso-padding-alt: 6px 12px;">
+                            <a href="{{ eventLink }}" style="display: inline-block; padding: 6px 12px; border-radius: 8px; background-color: #0b5374; color: #ffffff; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none; mso-padding-alt: 0;">Se arrangementet<span aria-hidden="true" style="padding-left: 6px; font-family: Arial, sans-serif; font-size: 18px; line-height: 20px; vertical-align: -3px;">&#8599;</span></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">
+                    <p style="margin: 0 0 12px;">Du kan melde deg av frem til {{ deregistrationDeadline }} på arrangementssiden.</p>
+                    <p class="text-secondary" style="margin: 0; color: #4b5563; font-size: 14px; line-height: 22px;">Mangel på oppmøte uten avmelding resulterer i prikk og/eller suspensjon. Les mer om <a class="text-secondary" href="https://wiki.online.ntnu.no/online-info/prikkeregler/" style="color: #4b5563; text-decoration: underline;">prikkereglene</a>.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 44px 0 0;">
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td class="footer text-muted" style="padding: 28px 0 40px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px; line-height: 19px; overflow-wrap: anywhere; word-wrap: break-word;">
+                            <p style="margin: 0 0 12px; font-size: 14px; line-height: 21px;">Linjeforeningen Online</p>
+                            <p style="margin: 0 0 12px;">Du mottar denne e-posten fordi du har meldt deg på {{ eventName }}.</p>
+                            <p style="margin: 0;">Org. nr. 992 548 045 &middot; Høgskoleringen 5, 7034 Trondheim</p>
+                            <p style="margin: 0;">Alle datoer er i norsk tid.</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <!--[if mso]>
+              </td></tr></table>
+            <![endif]-->
           </td>
         </tr>
       </tbody>
