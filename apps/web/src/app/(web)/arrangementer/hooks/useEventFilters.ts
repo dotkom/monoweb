@@ -1,68 +1,83 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useMemo } from "react"
 import { EventTypeSchema } from "@dotkomonline/rpc/event"
 import { GroupSchema } from "@dotkomonline/rpc/group"
-import { EventListViewModeSchema } from "../components/EventList"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useCallback, useMemo } from "react"
 import { z } from "zod"
+import { EventListViewModeSchema } from "../components/EventList"
 
 const EventFiltersSchema = z.object({
   search: z.string(),
   types: z.array(EventTypeSchema),
   groups: z.array(GroupSchema.shape.slug),
-  viewModeSort: EventListViewModeSchema,
+  sort: EventListViewModeSchema,
   date: z.iso.date().nullable().catch(null),
 })
 
-type EventFilters = z.infer<typeof EventFiltersSchema>
+export type EventFilters = z.infer<typeof EventFiltersSchema>
+
+export const DEFAULT_EVENT_SORT = "ATTENDANCE" satisfies EventFilters["sort"]
+
+const FILTER_PARAMS = ["q", "type", "group", "sort", "date"] as const
+
+export const clearEventFilterParams = (params: URLSearchParams) => {
+  for (const key of FILTER_PARAMS) {
+    params.delete(key)
+  }
+}
+
+const writeEventFilterParams = (params: URLSearchParams, filters: EventFilters) => {
+  clearEventFilterParams(params)
+
+  if (filters.search) {
+    params.set("q", filters.search)
+  }
+
+  for (const type of filters.types) {
+    params.append("type", type)
+  }
+
+  for (const group of filters.groups) {
+    params.append("group", group)
+  }
+
+  if (filters.sort !== DEFAULT_EVENT_SORT) {
+    params.set("sort", filters.sort)
+  }
+
+  if (filters.date) {
+    params.set("date", filters.date)
+  }
+}
+
+export const countActiveEventFilters = (filters: EventFilters) =>
+  (filters.search ? 1 : 0) +
+  filters.types.length +
+  filters.groups.length +
+  (filters.date ? 1 : 0) +
+  (filters.sort !== DEFAULT_EVENT_SORT ? 1 : 0)
 
 export const useEventFilters = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const filters: EventFilters = useMemo(() => {
-    return EventFiltersSchema.parse({
-      search: searchParams.get("q") ?? "",
-      types: searchParams.getAll("type"),
-      groups: searchParams.getAll("group"),
-      viewModeSort: searchParams.get("sort") ?? "ATTENDANCE",
-      date: searchParams.get("date"),
-    })
-  }, [searchParams])
+  const filters = useMemo(
+    () =>
+      EventFiltersSchema.parse({
+        search: searchParams.get("q") ?? "",
+        types: searchParams.getAll("type"),
+        groups: searchParams.getAll("group"),
+        sort: searchParams.get("sort") ?? DEFAULT_EVENT_SORT,
+        date: searchParams.get("date"),
+      }),
+    [searchParams]
+  )
 
   const updateFilters = useCallback(
     (partial: Partial<EventFilters>) => {
       const params = new URLSearchParams(searchParams.toString())
-
-      const next = { ...filters, ...partial }
-
-      params.delete("q")
-      params.delete("type")
-      params.delete("group")
-      params.delete("sort")
-      params.delete("date")
-
-      if (next.search) {
-        params.set("q", next.search)
-      }
-
-      for (const t of next.types) {
-        params.append("type", t)
-      }
-
-      for (const g of next.groups) {
-        params.append("group", g)
-      }
-
-      if (next.viewModeSort !== "ATTENDANCE") {
-        params.set("sort", next.viewModeSort)
-      }
-
-      if (next.date) {
-        params.set("date", next.date)
-      }
-
+      writeEventFilterParams(params, { ...filters, ...partial })
       router.replace(`?${params.toString()}`, { scroll: false })
     },
     [router, searchParams, filters]
@@ -70,17 +85,9 @@ export const useEventFilters = () => {
 
   const resetFilters = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())
-    params.delete("q")
-    params.delete("type")
-    params.delete("group")
-    params.delete("sort")
-    params.delete("date")
+    clearEventFilterParams(params)
     router.replace(`?${params.toString()}`, { scroll: false })
   }, [router, searchParams])
 
-  return {
-    filters,
-    updateFilters,
-    resetFilters,
-  }
+  return { filters, updateFilters, resetFilters }
 }

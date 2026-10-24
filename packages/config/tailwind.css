@@ -16,7 +16,7 @@
   @media (min-width: 64rem) {
     :root {
       --page-padding-x: 3rem;
-      --navbar-overhang: calc(var(--navbar-height) / 2);
+      --navbar-overhang: 1rem;
     }
   }
 

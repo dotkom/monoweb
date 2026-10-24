@@ -1,72 +1,53 @@
-import { FilterChips, type FilterChip } from "@/components/molecules/ListFilters/FilterChips"
-import type { EventType } from "@dotkomonline/rpc/event"
-import { getGroupDisplayName, type Group } from "@dotkomonline/rpc/group"
+import { type FilterChip, FilterChips } from "@/components/molecules/ListFilters/FilterChips"
 import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
-import type { EventListViewMode } from "../EventList"
+import { type Group, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { format } from "date-fns"
 import { nb } from "date-fns/locale"
+import { DEFAULT_EVENT_SORT, type EventFilters } from "../../hooks/useEventFilters"
 import { getEventDateRange } from "../../utils/event-date"
 
-type FilterType = "search" | "type" | "group" | "sort" | "date"
-
-interface EventListFilterChipsProps {
-  searchTerm: string
-  typeFilter: string[]
-  groupFilters: string[]
-  viewMode: EventListViewMode
+interface EventFilterChipsProps {
+  filters: EventFilters
   groups: Group[]
-  date: string | null
-  onRemoveFilter: (filterType: FilterType, value?: string) => void
+  onChange: (partial: Partial<EventFilters>) => void
   onResetAll: () => void
 }
 
-export const EventListFilterChips = ({
-  searchTerm,
-  typeFilter,
-  groupFilters,
-  viewMode,
-  groups,
-  date,
-  onRemoveFilter,
-  onResetAll,
-}: EventListFilterChipsProps) => {
+export const EventFilterChips = ({ filters, groups, onChange, onResetAll }: EventFilterChipsProps) => {
   const chips: FilterChip[] = []
 
-  if (date) {
+  if (filters.date) {
     chips.push({
-      key: `date-${date}`,
-      label: format(getEventDateRange(date).min, "d. MMMM yyyy", { locale: nb }),
-      onRemove: () => onRemoveFilter("date"),
+      key: `date-${filters.date}`,
+      label: format(getEventDateRange(filters.date).min, "d. MMMM yyyy", { locale: nb }),
+      onRemove: () => onChange({ date: null }),
     })
   }
 
-  if (searchTerm) {
-    chips.push({ key: `search-${searchTerm}`, label: `'${searchTerm}'`, onRemove: () => onRemoveFilter("search") })
+  if (filters.search) {
+    chips.push({ key: "search", label: `'${filters.search}'`, onRemove: () => onChange({ search: "" }) })
   }
 
-  for (const type of typeFilter) {
+  for (const type of filters.types) {
     chips.push({
       key: `type-${type}`,
-      label: mapEventTypeToLabel(type as EventType),
-      onRemove: () => onRemoveFilter("type", type),
+      label: mapEventTypeToLabel(type),
+      onRemove: () => onChange({ types: filters.types.filter((other) => other !== type) }),
     })
   }
 
-  for (const groupSlug of groupFilters) {
-    const group = groups.find((g) => g.slug === groupSlug)
+  for (const slug of filters.groups) {
+    const group = groups.find((candidate) => candidate.slug === slug)
+
     chips.push({
-      key: `group-${groupSlug}`,
-      label: group ? getGroupDisplayName(group) : groupSlug,
-      onRemove: () => onRemoveFilter("group", groupSlug),
+      key: `group-${slug}`,
+      label: group ? getGroupDisplayName(group) : slug,
+      onRemove: () => onChange({ groups: filters.groups.filter((other) => other !== slug) }),
     })
   }
 
-  if (viewMode === "CHRONOLOGICAL") {
-    chips.push({
-      key: `sort-${viewMode}`,
-      label: "Sorter kronologisk",
-      onRemove: () => onRemoveFilter("sort"),
-    })
+  if (filters.sort !== DEFAULT_EVENT_SORT) {
+    chips.push({ key: "sort", label: "Sorter kronologisk", onRemove: () => onChange({ sort: DEFAULT_EVENT_SORT }) })
   }
 
   return <FilterChips chips={chips} onResetAll={onResetAll} />

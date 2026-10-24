@@ -1,32 +1,29 @@
 import { PenaltyRules } from "@/components/PenaltyRules/PenaltyRules"
 import {
+  Button,
+  type ButtonProps,
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-  Button,
-  type ButtonProps,
   Text,
   Title,
 } from "@dotkomonline/ui"
 import { IconBook2, IconX } from "@tabler/icons-react"
+import type { ReactElement } from "react"
 
-type EventRulesProps = ButtonProps & {
-  withIcon?: boolean
+interface EventRulesDialogProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  trigger?: ReactElement
 }
 
-export const EventRules = ({ className, variant = "ghost", withIcon = true, ...props }: EventRulesProps) => {
+export const EventRulesDialog = ({ open, onOpenChange, trigger }: EventRulesDialogProps) => {
   return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          <Button variant={variant} {...props} className={className}>
-            {withIcon && <IconBook2 className="size-4" />}
-            Prikkeregler
-          </Button>
-        }
-      />
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {trigger && <DialogTrigger render={trigger} />}
+
       <DialogContent size="lg">
         <div className="flex flex-row gap-4 justify-between">
           <DialogTitle asChild>
@@ -47,5 +44,22 @@ export const EventRules = ({ className, variant = "ghost", withIcon = true, ...p
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+type EventRulesButtonProps = ButtonProps & {
+  withIcon?: boolean
+}
+
+export const EventRulesButton = ({ variant = "ghost", withIcon = true, ...props }: EventRulesButtonProps) => {
+  return (
+    <EventRulesDialog
+      trigger={
+        <Button variant={variant} {...props}>
+          {withIcon && <IconBook2 className="size-4" />}
+          Prikkeregler
+        </Button>
+      }
+    />
   )
 }

@@ -23,7 +23,7 @@ import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { AttendanceTurnstile } from "./AttendanceTurnstile"
-import { EventRules } from "./EventRules"
+import { EventRulesButton } from "../EventRulesDialog"
 import { MainPoolCard } from "./MainPoolCard"
 import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
@@ -328,7 +328,7 @@ export const AttendanceCard = ({
           )}
 
           <div className="flex flex-row flex-wrap gap-x-0.5 gap-y-0.5 px-1.5">
-            <EventRules className="text-muted-foreground px-1.5" />
+            <EventRulesButton className="text-muted-foreground px-1.5" />
 
             <Button
               element={Link}

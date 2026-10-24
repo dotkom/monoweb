@@ -8,7 +8,7 @@ import { EventPreview } from "./EventPreview"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
 import { TicketButton } from "./AttendanceCard/TicketButton"
-import { EventRules } from "./AttendanceCard/EventRules"
+import { EventRulesButton } from "./EventRulesDialog"
 import { PaymentExplanationDialog } from "./AttendanceCard/PaymentExplanationDialog"
 import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
@@ -116,7 +116,7 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
           </DialogContent>
         </Dialog>
         <TicketButton attendee={createMockAttendee()} />
-        <EventRules />
+        <EventRulesButton />
         <PaymentExplanationDialog />
       </div>
     )
