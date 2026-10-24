@@ -63,7 +63,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
 
   const showLock =
     !eventEndInPast &&
-    (isRegistered || isQueued ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
+    !isQueued &&
+    (isRegistered ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
 
   const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -153,7 +154,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             )}
           </Text>
 
-          {showLock && (isRegistered || isQueued) ? (
+          {showLock && isRegistered ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <span className={cn("flex items-center", classNames?.lock)}>
