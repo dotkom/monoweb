@@ -75,6 +75,10 @@
     "./permissions": {
       "import": "./src/permissions/principal.ts",
       "types": "./src/permissions/principal.ts"
+    },
+    "./event-permissions": {
+      "import": "./src/permissions/event-permissions.ts",
+      "types": "./src/permissions/event-permissions.ts"
     }
   },
   "scripts": {

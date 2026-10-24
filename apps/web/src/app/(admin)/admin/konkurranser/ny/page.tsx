@@ -4,11 +4,12 @@ import { useAuthorization } from "@admin/auth/authorization-context"
 import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { ContestWriteForm } from "../ContestWriteForm"
 import { useCreateContestMutation } from "../mutations"
+import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
 
 export default function CreateContestPage() {
   const create = useCreateContestMutation()
-  const { canCreateEvents } = useAuthorization()
-  const canCreate = canCreateEvents()
+  const authorization = useAuthorization()
+  const canCreate = canCreateEvents(authorization)
 
   return (
     <div className="flex flex-col gap-4">

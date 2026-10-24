@@ -8,6 +8,7 @@ import {
 } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { env } from "@admin/lib/env"
+import { canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconAlertTriangleFilled,
@@ -59,7 +60,7 @@ export default function EventWithAttendancesLayout({
     () => data?.event.hostingGroups.map((group) => group.slug) ?? [],
     [data?.event.hostingGroups]
   )
-  const canEdit = data ? authorization.canEditEvent(hostingGroupIds) : false
+  const canEdit = data ? canEditEvent(authorization, hostingGroupIds) : false
 
   if (isLoading) {
     return null

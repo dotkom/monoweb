@@ -109,8 +109,23 @@ export function hasEveryGroupAffiliation(
 }
 
 /**
- * Find if the user has EVERY committee affiliation of the given set of affiliations. Prefer to use this over manually checking
- * affiliations, since this will account for administrator permissions.
+ * Find if the user has AT LEAST one committee affiliation among the given group IDs. Interest groups and other
+ * non-committee slugs are ignored. Prefer this over manually filtering, since this will account for administrator
+ * permissions.
+ */
+export function hasAnyCommitteeAffiliation(
+  userAffiliations: AffiliationSetSource,
+  groupIds: readonly GroupId[]
+): boolean {
+  const committeeGroupIds = groupIds.filter(isCommitteeAffiliation)
+
+  return hasAnyGroupAffiliation(userAffiliations, committeeGroupIds)
+}
+
+/**
+ * Find if the user has EVERY committee affiliation of the given set of affiliations. Interest groups and other
+ * non-committee slugs are ignored. Prefer this over manually filtering, since this will account for administrator
+ * permissions.
  */
 export function hasEveryCommitteeAffiliation(
   userAffiliations: AffiliationSetSource,
