@@ -201,7 +201,7 @@ export const AttendanceCard = ({
   return (
     <div className="flex flex-col gap-6 sm:gap-2">
       <section className="flex flex-col gap-4 min-h-24 text-base sm:p-2 sm:rounded-2xl sm:border-2 sm:border-gray-100 sm:dark:border-stone-800 sm:dark:bg-stone-800">
-        <div className="flex flex-row items-center justify-between gap-2 pl-3 pr-2 pt-2">
+        <div className="flex flex-row items-center justify-between gap-2 pt-2 sm:pl-3 sm:pr-2">
           <Title element="h2" size="md">
             Påmelding
           </Title>
@@ -220,7 +220,7 @@ export const AttendanceCard = ({
             />
           )}
 
-          <div className="px-3">
+          <div className="sm:px-3">
             <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
           </div>
 
@@ -259,7 +259,7 @@ export const AttendanceCard = ({
             </AttendanceSection>
           </div>
 
-          <AttendanceSection contentClassName="pt-8 px-3">
+          <AttendanceSection contentClassName="pt-8 sm:px-3">
             {attendee?.registered && attendance.selections.length > 0 && (
               <div className="flex flex-col gap-2">
                 <Title element="p" size="sm" className="text-base">
@@ -333,7 +333,7 @@ export const AttendanceCard = ({
         </div>
       </section>
 
-      <div className="flex flex-row flex-wrap items-center gap-0.5 px-4">
+      <div className="flex flex-row flex-wrap items-center gap-x-3 gap-y-0.5 sm:gap-0.5 sm:px-4">
         <EventRulesButton />
         <DietaryPreferencesButton />
         {Boolean(attendance.attendancePrice) && <PaymentExplanationButton />}
@@ -350,7 +350,7 @@ const PaymentExplanationButton = () => (
           variant="ghost"
           size="sm"
           aria-label="Hvordan virker betaling?"
-          className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+          className="px-0 sm:px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
         >
           <IconQuestionMark aria-hidden className="size-4" />
           Om betaling
@@ -368,7 +368,7 @@ const DietaryPreferencesButton = () => (
     size="sm"
     href="/innstillinger/profil"
     aria-label="Oppdater matpreferanser"
-    className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+    className="px-0 sm:px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
   >
     <IconUserEdit aria-hidden className="size-4" />
     Matpreferanser
@@ -383,7 +383,7 @@ const EventRulesButton = () => (
           variant="ghost"
           size="sm"
           aria-label="Arrangementregler"
-          className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+          className="px-0 sm:px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
         >
           <IconScript aria-hidden className="size-4" />
           Regler
@@ -412,9 +412,9 @@ export const AttendanceCardSkeleton = () => {
 
   return (
     <section className="flex flex-col gap-4 min-h-24 rounded-lg sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800 sm:p-2 sm:rounded-xl">
-      <div className="pl-3 pt-3">{title}</div>
+      <div className="pt-3 sm:pl-3">{title}</div>
 
-      <div className="flex flex-row gap-2 items-center px-3">
+      <div className="flex flex-row gap-2 items-center sm:px-3">
         {dateInfo()}
         <span className="grow h-0.5 rounded-full bg-gray-300 dark:bg-stone-600 animate-pulse invisible sm:visible" />
         {dateInfo()}
