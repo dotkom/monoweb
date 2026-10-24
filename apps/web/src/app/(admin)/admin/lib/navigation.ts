@@ -25,6 +25,7 @@ import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 
 export type Navigation = {
@@ -142,6 +143,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconHeartHandshake,
         href: "/admin/karriere",
         keywords: ["jobb", "jobbannonser", "karriere", "jobs"],
+        canAccess: (authorization) => canManageJobListings(authorization),
         createActions: [
           {
             label: "Ny jobbannonse",

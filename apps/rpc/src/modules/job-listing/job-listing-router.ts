@@ -1,3 +1,10 @@
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { permitIf } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { canManageJobListings } from "../../permissions/job-listing-permissions"
+import { procedure, t } from "../../trpc"
 import { CompanySchema } from "../company/company"
 import {
   JobListingFilterQuerySchema,
@@ -5,12 +12,6 @@ import {
   JobListingSchema,
   JobListingWriteSchema,
 } from "./job-listing"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import { procedure, t } from "../../trpc"
 
 export type CreateJobListingInput = inferProcedureInput<typeof createJobListingProcedure>
 export type CreateJobListingOutput = inferProcedureOutput<typeof createJobListingProcedure>
@@ -23,7 +24,7 @@ const createJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageJobListings)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -51,7 +52,7 @@ const editJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageJobListings)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
