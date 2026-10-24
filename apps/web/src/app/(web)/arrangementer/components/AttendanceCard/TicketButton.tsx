@@ -14,8 +14,14 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
     <Dialog>
       <DialogTrigger asChild>
         <Button className="w-full rounded-lg h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600">
-          <IconTicket className="size-[1.25em]" />
-          Vis billett
+          <div className="mx-auto grid w-fit max-w-full min-w-0 grid-cols-[--spacing(4.5)_minmax(0,1fr)_--spacing(4.5)] items-center gap-2 sm:flex">
+            <span aria-hidden className="flex h-lh items-center justify-center">
+              <IconTicket className="size-4.5" />
+            </span>
+            <Text element="span" className="min-w-0 text-center font-medium">
+              Vis billett
+            </Text>
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent
