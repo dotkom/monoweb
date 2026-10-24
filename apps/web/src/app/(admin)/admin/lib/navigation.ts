@@ -7,7 +7,7 @@ import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
-import { GroupTypeSchema } from "@dotkomonline/rpc/group"
+import { canCreateGroups } from "@dotkomonline/rpc/group-permissions"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canCreateMarks } from "@dotkomonline/rpc/mark-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
@@ -137,8 +137,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny gruppe",
             href: "/admin/grupper/ny",
             resourceName: "gruppe",
-            canAccess: (authorization: ReturnType<typeof useAuthorization>) =>
-              Object.values(GroupTypeSchema.enum).some((type) => authorization.canCreateGroup(type)),
+            canAccess: (authorization) => canCreateGroups(authorization),
           },
         ],
       },
