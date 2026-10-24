@@ -43,11 +43,13 @@ vi.mock("@tanstack/react-query", () => ({ useQuery: mocks.query }))
 
 vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
+  const scrollArea = await import("../../../../../../../packages/ui/src/atoms/ScrollArea/ScrollArea")
   const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
+    ...scrollArea,
     ...dialog,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
@@ -145,6 +147,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
+  vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -154,6 +157,7 @@ beforeEach(() => {
     }
   )
   vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+  Object.defineProperty(Element.prototype, "getAnimations", { configurable: true, value: () => [] })
   desktop = {
     matches: true,
     addEventListener: vi.fn((_type, listener) => {
@@ -430,6 +434,7 @@ describe("desktop event preview", () => {
   })
 
   it("unlocks the page during closing and can open another event before the animation ends", async () => {
+    vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", false)
     let finishClosing: () => void = () => {}
     const closingAnimation = new Promise<void>((resolve) => {
       finishClosing = resolve
