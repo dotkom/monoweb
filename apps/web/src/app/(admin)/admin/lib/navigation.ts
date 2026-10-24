@@ -22,6 +22,7 @@ import {
 } from "@tabler/icons-react"
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 
 export type Navigation = {
   label: string
@@ -246,7 +247,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconClipboardList,
         href: "/admin/logg",
         keywords: ["hendelseslogg", "logg", "audit"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
+        canAccess: (authorization) => canAccessAuditLog(authorization),
       },
     ],
   },
