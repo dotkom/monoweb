@@ -50,6 +50,7 @@ export const CompanyWriteForm = ({
         label="Bilde"
         maxSizeKiB={COMPANY_IMAGE_MAX_SIZE_KIB}
         onFileUpload={fileUpload}
+        aspectRatio={{ width: 16, height: 9 }}
       />
 
       <Button type="submit" variant="default" className="w-fit" disabled={form.formState.disabled}>

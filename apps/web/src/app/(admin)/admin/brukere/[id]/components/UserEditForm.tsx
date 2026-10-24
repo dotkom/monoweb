@@ -89,6 +89,9 @@ export function UserEditForm({
         maxSizeKiB={USER_IMAGE_MAX_SIZE_KIB}
         onFileUpload={fileUpload}
         acceptGif
+        aspectRatio={{ width: 1, height: 1 }}
+        shape="round"
+        showGrid={false}
       />
       <Button type="submit" variant="default" className="w-fit" disabled={disabled}>
         {submitLabel}
