@@ -21,6 +21,7 @@ import {
   type TablerIcon,
 } from "@tabler/icons-react"
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
+import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 
 export type Navigation = {
   label: string
@@ -168,6 +169,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconArticle,
         href: "/admin/artikler",
         keywords: ["artikkel", "artikler"],
+        canAccess: (authorization) => canManageArticles(authorization),
         createActions: [
           {
             label: "Ny artikkel",
