@@ -1,5 +1,8 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canCreateMarks } from "@dotkomonline/rpc/mark-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -14,12 +17,18 @@ export default function MarkPage() {
   const { marks, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useMarkFindManyInfiniteQuery()
   const [modal, setModal] = useState<PageModalState | null>(null)
+  const authorization = useAuthorization()
+  const canCreate = canCreateMarks(authorization)
 
   const router = useRouter()
   const searchParams = useSearchParams()
   const createSearchParam = searchParams.get("create")
 
   useEffect(() => {
+    if (!canCreate) {
+      return
+    }
+
     if (createSearchParam === "prikk") {
       setModal("mark")
     } else if (createSearchParam === "suspensjon") {
@@ -33,7 +42,7 @@ export default function MarkPage() {
     const queryString = params.toString()
 
     router.replace(queryString ? `/admin/prikker?${queryString}` : "/admin/prikker")
-  }, [createSearchParam, router, searchParams])
+  }, [canCreate, createSearchParam, router, searchParams])
 
   return (
     <div className="flex flex-col gap-4">
@@ -42,12 +51,16 @@ export default function MarkPage() {
       </Title>
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-2">
-          <Button variant="default" size="lg" onClick={() => setModal("mark")}>
-            Gi ny prikk
-          </Button>
-          <Button variant="default" size="lg" onClick={() => setModal("suspension")}>
-            Gi ny suspensjon
-          </Button>
+          <PermissionTooltip allowed={canCreate}>
+            <Button variant="default" size="lg" onClick={() => setModal("mark")} disabled={!canCreate}>
+              Gi ny prikk
+            </Button>
+          </PermissionTooltip>
+          <PermissionTooltip allowed={canCreate}>
+            <Button variant="default" size="lg" onClick={() => setModal("suspension")} disabled={!canCreate}>
+              Gi ny suspensjon
+            </Button>
+          </PermissionTooltip>
         </div>
 
         <MarkTable

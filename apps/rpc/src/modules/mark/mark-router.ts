@@ -1,13 +1,21 @@
-import { GroupSchema } from "../group/group"
-import { MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "./mark"
+import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
-import { isCommitteeMember } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema } from "@dotkomonline/utils"
-import { procedure, t } from "../../trpc"
-import { personalMarkRouter } from "./personal-mark-router"
+import { permitIf } from "../../authorization"
 import { InvalidArgumentError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import {
+  canCreateMark,
+  canListAllMarks,
+  canListMarks,
+  canManageMark,
+  canSetMarkGroups,
+} from "../../permissions/mark-permissions"
+import { toAffiliationSet } from "../../permissions/principal"
+import { procedure, t } from "../../trpc"
+import { GroupSchema } from "../group/group"
+import { MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "./mark"
+import { personalMarkRouter } from "./personal-mark-router"
 
 export type CreateMarkInput = inferProcedureInput<typeof createMarkProcedure>
 export type CreateMarkOutput = inferProcedureOutput<typeof createMarkProcedure>
@@ -19,7 +27,7 @@ const createMarkProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal, input) => canCreateMark(principal, input.groupIds))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -46,10 +54,20 @@ const editMarkProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const mark = await ctx.markService.getById(ctx.handle, input.changes.id)
+    const currentGroupIds = mark.groups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf(
+        (principal) =>
+          canManageMark(principal, currentGroupIds) && canSetMarkGroups(principal, input.groupIds, currentGroupIds)
+      ),
+      input
+    )
+
     const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.groupIds)
 
     if (groups.some((group) => group.type === "EMAIL_ONLY")) {
@@ -68,21 +86,38 @@ export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
 const getMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.markService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => {
+    const mark = await ctx.markService.getById(ctx.handle, input)
+    const groupIds = mark.groups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageMark(principal, groupIds)),
+      input
+    )
+
+    return mark
+  })
 
 export type FindMarksInput = inferProcedureInput<typeof findManyProcedure>
 export type FindMarksOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canListMarks(principal)),
+      input
+    )
+
     const { filter, ...page } = input
 
-    const marks = await ctx.markService.findMany(ctx.handle, { ...filter }, page)
+    const byGroupId = canListAllMarks(ctx.principal)
+      ? filter?.byGroupId
+      : [...toAffiliationSet(ctx.principal.affiliations)]
+
+    const marks = await ctx.markService.findMany(ctx.handle, { ...filter, byGroupId }, page)
 
     return {
       items: marks,
@@ -95,10 +130,17 @@ export type DeleteMarkOutput = inferProcedureOutput<typeof deleteMarkProcedure>
 const deleteMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const mark = await ctx.markService.getById(ctx.handle, input)
+    const groupIds = mark.groups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageMark(principal, groupIds)),
+      input
+    )
+
     const deletedMark = await ctx.markService.delete(ctx.handle, input)
 
     ctx.setAuditTransactionName(`Delete Mark(ID=${deletedMark.id},Title=${deletedMark.title})`)
