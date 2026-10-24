@@ -80,6 +80,10 @@
       "import": "./src/permissions/event-permissions.ts",
       "types": "./src/permissions/event-permissions.ts"
     },
+    "./feedback-form-permissions": {
+      "import": "./src/permissions/feedback-form-permissions.ts",
+      "types": "./src/permissions/feedback-form-permissions.ts"
+    },
     "./attendance-permissions": {
       "import": "./src/permissions/attendance-permissions.ts",
       "types": "./src/permissions/attendance-permissions.ts"
