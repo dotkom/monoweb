@@ -3,6 +3,7 @@
 import {
   Button,
   Dialog,
+  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -58,17 +59,19 @@ export function ProfileImageCropModal({
         <DialogHeader>
           <DialogTitle>Rediger profilbilde</DialogTitle>
         </DialogHeader>
-        <div className="relative h-96 w-full">
-          <ImageCropper
-            objectUrl={previewUrl}
-            aspectRatio={{ width: 1, height: 1 }}
-            shape="round"
-            onChange={onCropChange}
-            disabled={isSubmitting}
-            showGrid={false}
-          />
-        </div>
-        {error !== null && <Text className="text-red-600 dark:text-red-400 text-xs">{error}</Text>}
+        <DialogBody>
+          <div className="relative h-96 w-full">
+            <ImageCropper
+              objectUrl={previewUrl}
+              aspectRatio={{ width: 1, height: 1 }}
+              shape="round"
+              onChange={onCropChange}
+              disabled={isSubmitting}
+              showGrid={false}
+            />
+          </div>
+          {error !== null && <Text className="mt-4 text-red-600 dark:text-red-400 text-xs">{error}</Text>}
+        </DialogBody>
         <DialogFooter className="border-none bg-transparent">
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
             Avbryt

@@ -153,6 +153,10 @@ beforeEach(() => {
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
   vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
+  })
   vi.stubGlobal(
     "ResizeObserver",
     class {
