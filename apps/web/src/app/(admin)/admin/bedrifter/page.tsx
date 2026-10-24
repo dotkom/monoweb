@@ -1,6 +1,9 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import type { CompanyFilterQuery } from "@dotkomonline/rpc/company"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
@@ -14,6 +17,8 @@ export default function CompanyPage() {
     orderBy: "asc",
     sortBy: "name",
   })
+  const authorization = useAuthorization()
+  const canEdit = canManageCompanies(authorization)
 
   const { companies, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useCompanyAllInfiniteQuery({
@@ -28,9 +33,18 @@ export default function CompanyPage() {
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CompanyFilters onChange={setFilter} defaultValues={filter} />
-          <Button variant="default" size="lg" element={Link} href="/admin/bedrifter/ny" icon={<IconPencil />}>
-            Ny bedrift
-          </Button>
+          <PermissionTooltip allowed={canEdit}>
+            <Button
+              variant="default"
+              size="lg"
+              element={Link}
+              href="/admin/bedrifter/ny"
+              icon={<IconPencil />}
+              disabled={!canEdit}
+            >
+              Ny bedrift
+            </Button>
+          </PermissionTooltip>
         </div>
 
         <CompanyTable

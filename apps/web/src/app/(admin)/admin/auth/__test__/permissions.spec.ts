@@ -1,4 +1,5 @@
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import {
   canCreateEvent,
   canCreateEvents,
@@ -235,5 +236,15 @@ describe("canCreateEvents", () => {
     expect(canCreateEvents(createState({}))).toBe(false)
     expect(canCreateEvents(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
     expect(canCreateEvents(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+})
+
+describe("canManageCompanies", () => {
+  it("allows committee members", () => {
+    expect(canManageCompanies(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("denies callers with no committee affiliations", () => {
+    expect(canManageCompanies(createState({}))).toBe(false)
   })
 })
