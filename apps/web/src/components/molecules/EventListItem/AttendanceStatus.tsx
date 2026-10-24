@@ -15,12 +15,12 @@ import {
 } from "@dotkomonline/rpc/attendance"
 import { Text, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
+  IconBan,
   IconCheck,
   IconCircleDashedCheck,
   IconCoins,
   IconLockFilled,
   IconPennantFilled,
-  IconSquareRotatedFilled,
   IconUsers,
 } from "@tabler/icons-react"
 import { formatDistance, interval, isAfter, isWithinInterval } from "date-fns"
@@ -64,7 +64,6 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const showLock =
     !eventEndInPast &&
     (isRegistered || isQueued ? !isAfter(attendance.deregisterDeadline, currentTime) : attendanceStatus === "CLOSED")
-  const DeadlineIcon = isRegistered || isQueued ? IconLockFilled : IconSquareRotatedFilled
 
   const paymentCountdownText = useCountdown(attendee?.completionDeadline ?? null, formatRollingCountdown)
   const paymentCountdownInterval =
@@ -121,11 +120,17 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     <div
       className={cn(
         "flex flex-row items-center gap-2",
-        eventEndInPast && "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400",
+        (eventEndInPast || (showLock && !isRegistered && !isQueued)) &&
+          "text-muted-foreground group-hover:text-gray-800 dark:group-hover:text-stone-400",
         classNames?.root
       )}
     >
-      <IconUsers className={cn(iconSizeClassName, !eventEndInPast && "text-gray-800 dark:text-stone-400")} />
+      <IconUsers
+        className={cn(
+          iconSizeClassName,
+          !(eventEndInPast || (showLock && !isRegistered && !isQueued)) && "text-gray-800 dark:text-stone-400"
+        )}
+      />
 
       <div className="flex flex-row gap-1">
         <div
@@ -148,29 +153,33 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             )}
           </Text>
 
-          {isRegistered ? (
+          {showLock && (isRegistered || isQueued) ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <span className={cn("flex items-center", classNames?.lock)}>
+                  <IconLockFilled aria-hidden className={iconSizeClassName} />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <Text>Avmeldingsfristen er utgått</Text>
+              </TooltipContent>
+            </Tooltip>
+          ) : isRegistered ? (
             <IconCheck className={iconSizeClassName} />
           ) : isQueued ? (
             <IconCircleDashedCheck className={iconSizeClassName} />
           ) : null}
         </div>
 
-        {showLock && (
+        {showLock && !isRegistered && !isQueued && (
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
-              <div
-                className={cn(
-                  "flex flex-row gap-1 items-center px-0.75 py-0.5",
-                  "rounded-sm bg-muted text-gray-700 dark:text-stone-200",
-                  !isRegistered && !isQueued && "ml-0.5",
-                  classNames?.lock
-                )}
-              >
-                <DeadlineIcon aria-hidden className={iconSizeClassName} />
+              <div className={cn("flex flex-row gap-1 items-center text-muted-foreground", classNames?.lock)}>
+                <IconBan aria-hidden className={iconSizeClassName} />
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <Text>{isRegistered || isQueued ? "Avmeldingsfristen er utgått" : "Påmeldingen er avsluttet"}</Text>
+              <Text>Påmeldingen er avsluttet</Text>
             </TooltipContent>
           </Tooltip>
         )}
@@ -180,7 +189,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
             <TooltipTrigger asChild>
               <div
                 className={cn(
-                  "flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm text-red-800 bg-red-100 dark:text-red-100 dark:bg-red-950",
+                  "ml-1 flex flex-row gap-1 items-center px-1 py-0.5 rounded-sm text-red-800 bg-red-100 dark:text-red-100 dark:bg-red-950",
                   classNames?.payment
                 )}
               >

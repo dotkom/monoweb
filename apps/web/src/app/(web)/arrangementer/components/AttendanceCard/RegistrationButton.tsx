@@ -9,7 +9,6 @@ import {
   IconLoader2,
   IconLockFilled,
   IconPennantFilled,
-  IconSquareRotatedFilled,
   IconUserMinus,
   IconUserPlus,
   IconX,
@@ -204,7 +203,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
   const showDeregisterConfirm =
     attendee !== null && isWithinDeregisterGracePeriod && confirmGracePeriodDeregister && !isButtonDisabled
 
-  let DisabledIcon = IconBan
+  let DisabledIcon = attendee ? IconUserMinus : IconUserPlus
 
   if (
     deregistration?.canDeregister === false &&
@@ -222,7 +221,7 @@ export const RegistrationButton: FC<RegistrationButtonProps> = ({
     }
 
     if (attendanceStatus === "CLOSED") {
-      DisabledIcon = IconSquareRotatedFilled
+      DisabledIcon = IconBan
     }
   }
 
