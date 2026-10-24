@@ -1,9 +1,10 @@
 import { PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember, or } from "../../authorization"
-import { ForbiddenError, InvalidArgumentError } from "../../error"
+import { permitIf } from "../../authorization"
+import { InvalidArgumentError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { canCreateContest, canManageContest, canSetContestOrganizers } from "../../permissions/contest-permissions"
 import { procedure, t } from "../../trpc"
 import { ContestSchema, ContestUpdateSchema, ContestWriteSchema, ContestantSchema } from "./contest"
 import { sanitizeContestantDetailsForPublic } from "./contest-service"
@@ -13,31 +14,17 @@ export type CreateContestOutput = inferProcedureOutput<typeof createContestProce
 const createContestProcedure = procedure
   .input(z.object({ contest: ContestWriteSchema }))
   .use(withAuthentication())
-  .use(withAuthorization(or(isCommitteeMember(), isAdministrator())))
+  .use(withAuthorization(permitIf((principal, input) => canCreateContest(principal, input.contest.groups))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const allowedGroupSlugs = ctx.authorizationService.intersectGroupAffiliations(
-      ctx.principal.affiliations,
-      input.contest.groups
-    )
-
-    if (allowedGroupSlugs.size === 0) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to create a contest with input groups (${input.contest.groups.join(", ")})`
-      )
-    }
-
     const groups = await ctx.groupService.findManyByGroupSlugs(ctx.handle, input.contest.groups)
 
     if (groups.some((group) => group.type === "EMAIL_ONLY")) {
       throw new InvalidArgumentError("Email-only groups cannot be used as organizers for contests")
     }
 
-    const createdContest = await ctx.contestService.create(ctx.handle, {
-      ...input.contest,
-      groups: [...allowedGroupSlugs],
-    })
+    const createdContest = await ctx.contestService.create(ctx.handle, input.contest)
 
     ctx.setAuditTransactionName(`Create Contest(ID=${createdContest.id},Name=${createdContest.name})`)
 
@@ -54,7 +41,6 @@ const updateContestProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -65,39 +51,27 @@ const updateContestProcedure = procedure
         : Promise.resolve(undefined),
     ])
 
-    let sanitizedInput = input.contest
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => {
+        if (!canManageContest(principal, contest.groups)) {
+          return false
+        }
 
-    if (input.contest.groups !== undefined) {
-      const allowedGroupSlugs = ctx.authorizationService.intersectGroupAffiliations(
-        ctx.principal.affiliations,
-        input.contest.groups
-      )
+        if (input.contest.groups === undefined) {
+          return true
+        }
 
-      if (allowedGroupSlugs.size === 0) {
-        throw new ForbiddenError(
-          `User(ID=${ctx.principal.subject}) is not authorized to update Contest(ID=${input.contestId}) with input groups (${input.contest.groups.join(", ")})`
-        )
-      }
+        return canSetContestOrganizers(principal, input.contest.groups, contest.groups)
+      }),
+      input
+    )
 
-      if (fetchedGroups?.some((group) => group.type === "EMAIL_ONLY")) {
-        throw new InvalidArgumentError("Email-only groups cannot be used as organizers for contests")
-      }
-
-      sanitizedInput = {
-        ...input.contest,
-        groups: [...allowedGroupSlugs],
-      }
+    // TODO: Business rule inside router
+    if (fetchedGroups?.some((group) => group.type === "EMAIL_ONLY")) {
+      throw new InvalidArgumentError("Email-only groups cannot be used as organizers for contests")
     }
 
-    const effectiveGroupSlugs = sanitizedInput.groups ?? contest.groups
-
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, effectiveGroupSlugs)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to update Contest(ID=${input.contestId})`
-      )
-    }
-
-    const updatedContest = await ctx.contestService.update(ctx.handle, input.contestId, sanitizedInput)
+    const updatedContest = await ctx.contestService.update(ctx.handle, input.contestId, input.contest)
 
     ctx.setAuditTransactionName(`Update Contest(ID=${updatedContest.id},Name=${updatedContest.name})`)
 
@@ -113,17 +87,15 @@ const deleteContestProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to delete Contest(ID=${input.contestId})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     await ctx.contestService.delete(ctx.handle, input.contestId)
 
@@ -162,17 +134,15 @@ const setWinnerProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to set winner for Contest(ID=${input.contestId})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     const updatedContest = await ctx.contestService.setWinner(ctx.handle, input.contestId, input.data.contestantId)
 
@@ -205,17 +175,15 @@ const addContestantProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contest = await ctx.contestService.getById(ctx.handle, input.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to add contestants to Contest(ID=${input.contestId})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     if ("teamName" in input.data) {
       const addedTeamContestant = await ctx.contestService.addTeamContestant(
@@ -255,18 +223,16 @@ const removeContestantProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contestant = await ctx.contestService.getContestantById(ctx.handle, input.contestantId)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to remove contestants from Contest(ID=${contest.id})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     await ctx.contestService.removeContestant(ctx.handle, input.contestantId)
 
@@ -289,18 +255,16 @@ const updateContestantResultProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contestant = await ctx.contestService.getContestantById(ctx.handle, input.contestantId)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to update results for Contest(ID=${contest.id})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     const updatedContestantResult = await ctx.contestService.updateContestantResult(
       ctx.handle,
@@ -332,18 +296,16 @@ const updateTeamContestantProcedure = procedure
       })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const contestant = await ctx.contestService.getContestantById(ctx.handle, input.contestantId)
     const contest = await ctx.contestService.getById(ctx.handle, contestant.contestId)
 
-    if (!ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, contest.groups)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to update team contestants for Contest(ID=${contest.id})`
-      )
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageContest(principal, contest.groups)),
+      input
+    )
 
     const updatedTeamContestant = await ctx.contestService.updateTeamContestant(ctx.handle, input.contestantId, {
       teamName: input.data.teamName,

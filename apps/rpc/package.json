@@ -107,6 +107,10 @@
     "./job-listing-permissions": {
       "import": "./src/permissions/job-listing-permissions.ts",
       "types": "./src/permissions/job-listing-permissions.ts"
+    },
+    "./contest-permissions": {
+      "import": "./src/permissions/contest-permissions.ts",
+      "types": "./src/permissions/contest-permissions.ts"
     }
   },
   "scripts": {

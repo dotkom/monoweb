@@ -1,6 +1,12 @@
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import {
+  canCreateContest,
+  canCreateContests,
+  canManageContest,
+  canSetContestOrganizers,
+} from "@dotkomonline/rpc/contest-permissions"
+import {
   canCreateEvent,
   canCreateEvents,
   canEditEvent,
@@ -257,5 +263,61 @@ describe("canManageJobListings", () => {
 
   it("denies callers with no committee affiliations", () => {
     expect(canManageJobListings(createState({}))).toBe(false)
+  })
+})
+
+describe("canCreateContests", () => {
+  it("requires at least one affiliation for non-admins", () => {
+    expect(canCreateContests(createState({}))).toBe(false)
+    expect(canCreateContests(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+    expect(canCreateContests(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+})
+
+describe("canManageContest", () => {
+  it("allows editing when user hosts the contest", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, ["arrkom"])).toBe(true)
+  })
+
+  it("denies editing for unrelated committee members", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, ["arrkom"])).toBe(false)
+  })
+})
+
+describe("canSetContestOrganizers", () => {
+  it("allows creating with committees the user belongs to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, ["backlog", "some-interest-group"])).toBe(true)
+  })
+
+  it("denies creating with a committee the user does not belong to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, ["backlog", "arrkom"])).toBe(false)
+  })
+
+  it("allows a co-host to keep existing organizers unchanged", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetContestOrganizers(state, ["backlog", "arrkom"], ["backlog", "arrkom"])).toBe(true)
+  })
+
+  it("allows a co-host to add an interest group without belonging to every committee host", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetContestOrganizers(state, ["backlog", "arrkom", "some-interest-group"], ["backlog", "arrkom"])).toBe(
+      true
+    )
+  })
+
+  it("denies adding a committee the user does not belong to", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canSetContestOrganizers(state, ["backlog", "arrkom", "bedkom"], ["backlog", "arrkom"])).toBe(false)
   })
 })
