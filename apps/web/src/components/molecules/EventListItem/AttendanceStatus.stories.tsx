@@ -63,6 +63,10 @@ export const AllStates = () => {
     { label: "Not attending", attendee: null },
     { label: "Registered", attendee: createMockAttendee({ registered: true }) },
     { label: "Queued", attendee: createMockAttendee({ registered: false }) },
+    {
+      label: "Delayed",
+      attendee: createMockAttendee({ registered: false, earliestReservationAt: addHours(now, 4) }),
+    },
   ]
   const phases = [
     { label: "Open", registrationClosed: false, deregistrationClosed: false, eventEndInPast: false },
