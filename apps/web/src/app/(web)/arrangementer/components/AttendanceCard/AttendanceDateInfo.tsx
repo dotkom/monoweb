@@ -116,7 +116,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
   const sortedElements = dateBlocks.toSorted((firstBlock, secondBlock) => compareAsc(firstBlock.date, secondBlock.date))
 
   const element = (
-    <Timeline orientation="horizontal" rail="segmented" bleed="both" color="gray" className="sm:grid-cols-3">
+    <Timeline orientation="horizontal" rail="segmented" bleedHorizontal="both" color="gray" className="sm:grid-cols-3">
       {sortedElements.map(({ element, key, date, icon }) => (
         <TimelineItem key={key}>
           <TimelineDot render={icon} size={16} />

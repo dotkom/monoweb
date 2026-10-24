@@ -9,6 +9,8 @@ import {
 } from "react"
 import { cn } from "../../utils"
 
+const DEFAULT_TIMELINE_DOT_SIZE = 12
+
 /**
  * The vertical timeline is a three column grid; side labels, "rail" (line and dots), and content.
  *
@@ -30,15 +32,20 @@ export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
    */
   rail?: TimelineRail
   /**
-   * Removes the inset at the chosen ends. This is left/right horizontally and top/bottom vertically.
+   * Removes the left inset, right inset, or both, regardless of the timeline's orientation.
    */
-  bleed?: TimelineBleed
+  bleedHorizontal?: TimelineBleed
+  /**
+   * Removes the top inset, bottom inset, or both, regardless of the timeline's orientation.
+   */
+  bleedVertical?: TimelineBleed
 }
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
-  vertical: "grid-cols-[auto_1.5rem_minmax(0,1fr)]",
+  vertical:
+    "grid-cols-[auto_1.5rem_minmax(0,1fr)] [--timeline-horizontal-bleed:max(0px,calc(0.75rem-var(--timeline-largest-marker-size,var(--timeline-default-marker-size))/2))]",
   horizontal:
-    "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
+    "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto [--timeline-horizontal-bleed:1rem]",
 }
 
 const timelineColorClassNames: Record<TimelineColor, string> = {
@@ -48,9 +55,9 @@ const timelineColorClassNames: Record<TimelineColor, string> = {
 
 const timelineBleedClassNames: Record<TimelineOrientation, Record<TimelineBleed, string>> = {
   horizontal: {
-    start: "-ml-4 w-[calc(100%+1rem)]",
-    end: "-mr-4 w-[calc(100%+1rem)]",
-    both: "-mx-4 w-[calc(100%+2rem)]",
+    start: "-ml-(--timeline-horizontal-bleed) w-[calc(100%+var(--timeline-horizontal-bleed))]",
+    end: "-mr-(--timeline-horizontal-bleed) w-[calc(100%+var(--timeline-horizontal-bleed))]",
+    both: "-mx-(--timeline-horizontal-bleed) w-[calc(100%+2*var(--timeline-horizontal-bleed))]",
   },
   vertical: {
     start: "-mt-0.5 has-[>[data-slot=timeline-item]:first-child_[data-slot=timeline-side-label]]:-mt-1.5",
@@ -66,7 +73,7 @@ const timelineRowClassName = cn(
 )
 
 const timelineRailClassName = cn(
-  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem] [--timeline-dot-offset:calc(0.5rem+var(--timeline-dot-shift,0px))]",
+  "relative col-start-2 row-start-1 [--timeline-marker-size:var(--timeline-default-marker-size)] [--timeline-dot-offset:calc(0.5rem+var(--timeline-dot-shift,0px))]",
   "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:calc(0.75rem+var(--timeline-dot-shift,0px))]",
   "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:row-start-2"
 )
@@ -190,6 +197,19 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
     return ["minmax(12rem,1fr)"]
   })
 
+const getLargestTimelineMarkerSize = (children: ReactNode): number =>
+  Children.toArray(children).reduce<number>((largestSize, child) => {
+    if (!isValidElement<{ children?: ReactNode; size?: number }>(child)) {
+      return largestSize
+    }
+
+    if (child.type === TimelineDot) {
+      return Math.max(largestSize, child.props.size ?? DEFAULT_TIMELINE_DOT_SIZE)
+    }
+
+    return Math.max(largestSize, getLargestTimelineMarkerSize(child.props.children))
+  }, 0)
+
 /**
  * A vertical or horizontal timeline. It consists of a rail, dots, labels, and content.
  *
@@ -198,24 +218,39 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
  * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
  * Set `rail="segmented"` for rounded segments with a gap around every dot and no outer stubs.
  *
- * Use `bleed="start" | "end" | "both"` to remove the inset at the selected container edges along its orientation.
- * Horizontal bleed cancels 1rem of content padding; vertical bleed removes the dot's inset while keeping it inside.
+ * Use `bleedHorizontal` and `bleedVertical` to remove the inset at selected container edges on each axis.
+ * Each accepts `"start" | "end" | "both"`, independently of the timeline's orientation.
+ * Horizontal bleed removes 1rem in horizontal timelines and the space beside the largest marker in vertical timelines.
+ * Vertical bleed removes the dot's inset while keeping it inside.
  */
 export const Timeline: FC<TimelineProps> = ({
   orientation = "vertical",
   color = "brand",
   showRailStubs = true,
   rail = "continuous",
-  bleed,
+  bleedHorizontal,
+  bleedVertical,
   className,
   children,
   style,
   ...props
 }) => {
-  const timelineStyle: CSSProperties & { "--timeline-columns"?: string } = { ...style }
+  const timelineStyle: CSSProperties & {
+    "--timeline-columns"?: string
+    "--timeline-default-marker-size"?: string
+    "--timeline-largest-marker-size"?: string
+  } = {
+    "--timeline-default-marker-size": `${DEFAULT_TIMELINE_DOT_SIZE}px`,
+    ...style,
+  }
 
   if (orientation === "horizontal") {
     timelineStyle["--timeline-columns"] = getHorizontalTimelineColumns(children).join(" ")
+  }
+
+  if (orientation === "vertical" && bleedHorizontal !== undefined) {
+    timelineStyle["--timeline-largest-marker-size"] =
+      `${getLargestTimelineMarkerSize(children) || DEFAULT_TIMELINE_DOT_SIZE}px`
   }
 
   return (
@@ -224,12 +259,14 @@ export const Timeline: FC<TimelineProps> = ({
       data-orientation={orientation}
       data-rail-stubs={rail === "continuous" && showRailStubs}
       data-rail={rail}
-      data-bleed={bleed}
+      data-bleed-horizontal={bleedHorizontal}
+      data-bleed-vertical={bleedVertical}
       className={cn(
         "group/timeline grid w-full",
         timelineGridClassNames[orientation],
         timelineColorClassNames[color],
-        bleed !== undefined && timelineBleedClassNames[orientation][bleed],
+        bleedHorizontal !== undefined && timelineBleedClassNames.horizontal[bleedHorizontal],
+        bleedVertical !== undefined && timelineBleedClassNames.vertical[bleedVertical],
         className
       )}
       style={timelineStyle}
