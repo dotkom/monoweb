@@ -1,6 +1,12 @@
 "use client"
 
-import { Button, ImageAspectGuideOverlay, ImageUploadModal, type AspectRatio } from "@dotkomonline/ui"
+import {
+  Button,
+  ImageAspectGuideOverlay,
+  ImageUploadModal,
+  type AspectRatio,
+  type ImageCropperShape,
+} from "@dotkomonline/ui"
 import { IconPhoto, IconX } from "@tabler/icons-react"
 import { useState, type ReactNode } from "react"
 import type { Control, FieldValues, Path } from "react-hook-form"
@@ -18,6 +24,8 @@ type ImageUploadModalFieldProps<TFieldValues extends FieldValues> = {
   aspectRatio?: AspectRatio
   overlayAspectRatio?: AspectRatio
   cropLegend?: ReactNode
+  shape?: ImageCropperShape
+  showGrid?: boolean
   acceptGif?: boolean
   withMetadata?: boolean
   disabled?: boolean
@@ -34,6 +42,8 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
   aspectRatio,
   overlayAspectRatio,
   cropLegend,
+  shape,
+  showGrid,
   acceptGif,
   withMetadata = false,
   disabled,
@@ -50,7 +60,7 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
   return (
     <FieldShell id={id} label={label} description={description} required={required} error={error}>
       <div className="flex w-full flex-col gap-3">
-        {imageUrl !== "" && aspectRatio !== undefined && overlayAspectRatio !== undefined && (
+        {imageUrl !== "" && hasAspectGuide && aspectRatio !== undefined && overlayAspectRatio !== undefined && (
           <div
             className="relative w-full max-w-2xl overflow-hidden rounded-md border border-field-border bg-muted"
             style={{ aspectRatio: `${aspectRatio.width} / ${aspectRatio.height}` }}
@@ -61,12 +71,14 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
           </div>
         )}
         {imageUrl !== "" && !hasAspectGuide && (
-          // biome-ignore lint/performance/noImgElement: This should be img
-          <img
-            src={imageUrl}
-            alt=""
-            className="block max-h-64 w-auto rounded-md border border-field-border object-contain dark:bg-white"
-          />
+          <div className="w-fit max-w-full">
+            {/* biome-ignore lint/performance/noImgElement: This should be img */}
+            <img
+              src={imageUrl}
+              alt=""
+              className="block max-h-64 w-auto rounded-md border border-field-border object-contain dark:bg-white"
+            />
+          </div>
         )}
         <div className="flex w-fit flex-wrap gap-2">
           <Button type="button" disabled={isDisabled} onClick={() => setOpen(true)}>
@@ -92,6 +104,8 @@ export function ImageUploadModalField<TFieldValues extends FieldValues>({
         cropLegend={cropLegend}
         acceptGif={acceptGif}
         withMetadata={withMetadata}
+        shape={shape}
+        showGrid={showGrid}
         onSubmit={async (url) => {
           field.onChange(url)
         }}

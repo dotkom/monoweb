@@ -131,6 +131,7 @@ export function EventWriteForm({ onSubmit, disabled, submitLabel = "Opprett arra
         aspectRatio={{ width: 24, height: 9 }}
         overlayAspectRatio={{ width: 16, height: 9 }}
         cropLegend="Hold hovedmotivet innenfor hvit ramme (16:9). Hele utsnittet vises på arrangementsiden (24:9)."
+        showGrid={false}
       />
       <DateTimePickerField control={control} name="start" label="Starttidspunkt" required syncOffsetTo="end" />
       <DateTimePickerField

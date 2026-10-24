@@ -2,7 +2,7 @@
 
 import { Input } from "#components/input"
 import { compressImage } from "@dotkomonline/utils/compress-image"
-import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react"
+import { IconLoader2, IconPhoto, IconUpload, IconX } from "@tabler/icons-react"
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, type ReactNode } from "react"
 import { z } from "zod"
 import { Button } from "../../atoms/Button/Button"
@@ -10,10 +10,10 @@ import { Text } from "../../atoms/Typography/Text"
 import { cn } from "../../utils"
 import { Alert } from "../Alert/Alert"
 import { ImageAspectGuideOverlay } from "../ImageCropper/ImageAspectGuideOverlay"
-import { ImageCropper, type ImageCropperArea } from "../ImageCropper/ImageCropper"
+import { ImageCropper, type ImageCropperArea, type ImageCropperShape } from "../ImageCropper/ImageCropper"
 import { useCropImage, type CropImageError } from "../ImageCropper/use-crop-image"
 import { IMAGE_PICK_MAX_SIZE_KIB, ImageDropZone } from "../ImageDropZone/ImageDropZone"
-import { getAspectRatioWarning, type AspectRatio } from "./image-aspect"
+import { getAspectRatioWarning, getImageDimensions, preloadImage, type AspectRatio } from "./image-aspect"
 
 export type { AspectRatio } from "./image-aspect"
 
@@ -37,6 +37,8 @@ export type ImageInputProps = {
   aspectRatio?: AspectRatio
   overlayAspectRatio?: AspectRatio
   cropLegend?: ReactNode
+  shape?: ImageCropperShape
+  showGrid?: boolean
   className?: string
   /** When true, cropping is confirmed via {@link ImageInputHandle.commit} instead of an inline button. */
   hideSubmitButton?: boolean
@@ -112,6 +114,8 @@ export const ImageInput = forwardRef<ImageInputHandle, ImageInputProps>(function
     aspectRatio,
     overlayAspectRatio,
     cropLegend,
+    shape = "rect",
+    showGrid = true,
     className,
     hideSubmitButton = false,
     onCanCommitChange,
@@ -124,6 +128,7 @@ export const ImageInput = forwardRef<ImageInputHandle, ImageInputProps>(function
 
   const [urlDraft, setUrlDraft] = useState(value ?? "")
   const [isUploading, setIsUploading] = useState(false)
+  const [isPreparingPreview, setIsPreparingPreview] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [aspectRatioWarning, setAspectRatioWarning] = useState<string | null>(null)
 
@@ -206,12 +211,22 @@ export const ImageInput = forwardRef<ImageInputHandle, ImageInputProps>(function
 
     // If an aspect ratio is not provided, we compress the image
     if (aspectRatio === undefined) {
+      setIsPreparingPreview(true)
       const previewUrl = URL.createObjectURL(file)
-      setStage({ status: STAGE.LOCAL_DRAFT, file, previewUrl })
-      setUrlDraft("")
 
-      const aspectRatioWarning = await getAspectRatioWarning(previewUrl, aspectRatio)
-      setAspectRatioWarning(aspectRatioWarning)
+      try {
+        await preloadImage(previewUrl)
+        const aspectRatioWarning = await getAspectRatioWarning(previewUrl, aspectRatio)
+        setAspectRatioWarning(aspectRatioWarning)
+
+        setUrlDraft("")
+        setStage({ status: STAGE.LOCAL_DRAFT, file, previewUrl })
+      } catch {
+        URL.revokeObjectURL(previewUrl)
+        setUploadError("Kunne ikke behandle bildet. Prøv et annet bildeformat.")
+      } finally {
+        setIsPreparingPreview(false)
+      }
 
       return
     }
@@ -304,9 +319,12 @@ export const ImageInput = forwardRef<ImageInputHandle, ImageInputProps>(function
       body = (
         <CroppingView
           previewUrl={cropImage.previewUrl}
+          file={stage.file}
           aspectRatio={stage.aspectRatio}
           overlayAspectRatio={overlayAspectRatio}
           cropLegend={cropLegend}
+          shape={shape}
+          showGrid={showGrid}
           disabled={disabled}
           isUploading={isUploading}
           isPreparing={cropImage.isPreparing}
@@ -345,11 +363,11 @@ export const ImageInput = forwardRef<ImageInputHandle, ImageInputProps>(function
     case STAGE.EMPTY:
       body = (
         <PickerView
-          aspectRatio={panelAspect}
           accept={accept}
           acceptGif={acceptGif}
           disabled={disabled}
           isUploading={isUploading}
+          isPreparingPreview={isPreparingPreview}
           urlDraft={urlDraft}
           onFile={(file) => {
             void handleFile(file)
@@ -433,9 +451,12 @@ function ChangeImageButton({ disabled, onClick }: { disabled?: boolean; onClick:
 
 interface CroppingViewProps {
   previewUrl: string | null
+  file: File
   aspectRatio: AspectRatio
   overlayAspectRatio?: AspectRatio
   cropLegend?: ReactNode
+  shape: ImageCropperShape
+  showGrid: boolean
   disabled?: boolean
   isUploading: boolean
   isPreparing: boolean
@@ -448,9 +469,12 @@ interface CroppingViewProps {
 
 function CroppingView({
   previewUrl,
+  file,
   aspectRatio,
   overlayAspectRatio,
   cropLegend,
+  shape,
+  showGrid,
   disabled,
   isUploading,
   isPreparing,
@@ -460,18 +484,43 @@ function CroppingView({
   onChangeImage,
   onUseImage,
 }: CroppingViewProps) {
+  const [imageAspect, setImageAspect] = useState<number | null>(null)
+
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file)
+    let isCancelled = false
+
+    void getImageDimensions(objectUrl).then((dimensions) => {
+      if (isCancelled || dimensions === null || dimensions.height === 0) {
+        return
+      }
+
+      setImageAspect(dimensions.width / dimensions.height)
+    })
+
+    return () => {
+      isCancelled = true
+      URL.revokeObjectURL(objectUrl)
+    }
+  }, [file])
+
+  const frameAspect = imageAspect ?? 16 / 9
+
   return (
     <>
       <div
-        className="relative w-full overflow-hidden rounded-md"
-        style={{ aspectRatio: `${aspectRatio.width} / ${aspectRatio.height}` }}
+        className="relative max-w-full overflow-hidden rounded-md"
+        style={{
+          aspectRatio: `${frameAspect}`,
+          width: `min(100%, calc(min(24rem, 70dvh) * ${frameAspect}))`,
+        }}
       >
         <ImageCropper
           objectUrl={previewUrl}
           onChange={onCropChange}
           aspectRatio={aspectRatio}
-          shape="rect"
-          showGrid={false}
+          shape={shape}
+          showGrid={showGrid}
           overlayAspectRatio={overlayAspectRatio}
         />
       </div>
@@ -525,16 +574,25 @@ function PreviewView({
 }: PreviewViewProps) {
   return (
     <>
-      <div
-        className="relative w-full overflow-hidden rounded-md bg-muted"
-        style={{ aspectRatio: `${panelAspect.width} / ${panelAspect.height}` }}
-      >
-        {/* biome-ignore lint/performance/noImgElement: preview */}
-        <img src={previewSrc} alt="Forhåndsvisning av bilde" className="absolute inset-0 size-full object-contain" />
-        {overlayAspectRatio !== undefined && (
+      {overlayAspectRatio !== undefined ? (
+        <div
+          className="relative w-full overflow-hidden rounded-md bg-muted"
+          style={{ aspectRatio: `${panelAspect.width} / ${panelAspect.height}` }}
+        >
+          {/* biome-ignore lint/performance/noImgElement: preview */}
+          <img src={previewSrc} alt="Forhåndsvisning av bilde" className="absolute inset-0 size-full object-contain" />
           <ImageAspectGuideOverlay outerAspectRatio={panelAspect} innerAspectRatio={overlayAspectRatio} />
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="w-fit max-w-full">
+          {/* biome-ignore lint/performance/noImgElement: preview */}
+          <img
+            src={previewSrc}
+            alt="Forhåndsvisning av bilde"
+            className="block max-h-64 w-auto rounded-md border border-border object-contain"
+          />
+        </div>
+      )}
       <div className="mt-2.5 flex min-h-8 items-center justify-end gap-2">
         <ChangeImageButton disabled={disabled} onClick={onChangeImage} />
         {!hideSubmitButton && pendingFile !== null && (
@@ -548,11 +606,11 @@ function PreviewView({
 }
 
 interface PickerViewProps {
-  aspectRatio: AspectRatio
   accept: Record<string, string[]>
   acceptGif?: boolean
   disabled?: boolean
   isUploading: boolean
+  isPreparingPreview: boolean
   urlDraft: string
   onFile: (file: File) => void
   onReject: (message: string) => void
@@ -561,59 +619,56 @@ interface PickerViewProps {
 }
 
 function PickerView({
-  aspectRatio,
   accept,
   acceptGif,
   disabled,
   isUploading,
+  isPreparingPreview,
   urlDraft,
   onFile,
   onReject,
   onUrlDraftChange,
   onApplyUrl,
 }: PickerViewProps) {
+  const isBusy = isUploading || isPreparingPreview
+
   return (
     <>
-      <div
-        className="relative w-full overflow-hidden rounded-md"
-        style={{ aspectRatio: `${aspectRatio.width} / ${aspectRatio.height}` }}
-      >
-        <ImageDropZone
-          accept={accept}
-          maxSizeKiB={IMAGE_PICK_MAX_SIZE_KIB}
-          disabled={disabled === true || isUploading}
-          onFile={onFile}
-          onReject={(fileError) => {
-            if (fileError.code === "file-too-large") {
-              onReject(fileTooLargeMessage(IMAGE_PICK_MAX_SIZE_KIB))
-              return
-            }
+      <ImageDropZone
+        accept={accept}
+        maxSizeKiB={IMAGE_PICK_MAX_SIZE_KIB}
+        disabled={disabled === true || isBusy}
+        onFile={onFile}
+        onReject={(fileError) => {
+          if (fileError.code === "file-too-large") {
+            onReject(fileTooLargeMessage(IMAGE_PICK_MAX_SIZE_KIB))
+            return
+          }
 
-            onReject(fileError.message ?? "Kunne ikke laste opp filen.")
-          }}
-          className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-md border border-border bg-muted/40 p-3"
-        >
-          {({ isDragAccept, isDragReject }) => (
-            <div className="pointer-events-none flex flex-wrap items-center justify-center gap-4">
-              {isDragAccept ? (
-                <IconUpload size={40} className="text-primary" stroke={1.75} />
-              ) : isDragReject ? (
-                <IconX size={40} className="text-destructive" stroke={1.75} />
-              ) : (
-                <IconPhoto size={40} className="text-muted-foreground" stroke={1.75} />
-              )}
-              <div className="text-center sm:text-left">
-                <Text className="text-sm">
-                  {isUploading ? "Laster opp…" : "Dra bildet hit, eller klikk for å velge fil"}
-                </Text>
-                <Text className="mt-1 text-xs text-muted-foreground">
-                  PNG, JPG{acceptGif === true ? ", WEBP eller GIF" : " eller WEBP"}
-                </Text>
-              </div>
+          onReject(fileError.message ?? "Kunne ikke laste opp filen.")
+        }}
+        className="flex min-h-36 cursor-pointer items-center justify-center rounded-md border border-border bg-muted/40 px-4 py-6"
+      >
+        {({ isDragAccept, isDragReject }) => (
+          <div className="pointer-events-none flex flex-wrap items-center justify-center gap-4">
+            {isBusy ? (
+              <IconLoader2 size={40} className="text-muted-foreground motion-safe:animate-spin motion-reduce:hidden" />
+            ) : isDragAccept ? (
+              <IconUpload size={40} className="text-primary" stroke={1.75} />
+            ) : isDragReject ? (
+              <IconX size={40} className="text-destructive" stroke={1.75} />
+            ) : (
+              <IconPhoto size={40} className="text-muted-foreground" stroke={1.75} />
+            )}
+            <div className="text-center sm:text-left">
+              <Text className="text-sm">{isBusy ? "Laster inn…" : "Dra bildet hit, eller klikk for å velge fil"}</Text>
+              <Text className="mt-1 text-xs text-muted-foreground">
+                PNG, JPG{acceptGif === true ? ", WEBP eller GIF" : " eller WEBP"}
+              </Text>
             </div>
-          )}
-        </ImageDropZone>
-      </div>
+          </div>
+        )}
+      </ImageDropZone>
 
       <div className="relative my-1">
         <div className="absolute inset-0 flex items-center">
