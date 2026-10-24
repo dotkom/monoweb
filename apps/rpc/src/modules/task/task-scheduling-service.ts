@@ -21,6 +21,16 @@ export interface TaskSchedulingService {
     recurringTaskId?: RecurringTaskId
   ): Promise<TaskId>
   /**
+   * Persist a batch of tasks in one database write in the caller's transaction.
+   */
+  // biome-ignore lint/suspicious/noExplicitAny: Any is used for type inference here
+  scheduleManyAt<TTaskDefinition extends TaskDefinition<any, any>>(
+    handle: DBHandle,
+    kind: TTaskDefinition,
+    data: InferTaskData<TTaskDefinition>[],
+    executeAt: TZDate
+  ): Promise<void>
+  /**
    * Cancel a pending task.
    */
   cancel(handle: DBHandle, id: TaskId): Promise<void>
@@ -52,6 +62,20 @@ export function getLocalTaskSchedulingService(
       })
 
       return scheduledTask.id
+    },
+
+    async scheduleManyAt(handle, task, data, executeAt) {
+      const scheduledTasks = data.map((payload) => {
+        return {
+          payload: taskService.parse(task, payload) as Prisma.JsonValue,
+          processedAt: null,
+          scheduledAt: executeAt,
+          status: "PENDING" as const,
+          recurringTaskId: null,
+        }
+      })
+
+      await taskRepository.createMany(handle, task.type, scheduledTasks)
     },
 
     async cancel(handle, id) {

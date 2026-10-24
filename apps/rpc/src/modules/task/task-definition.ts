@@ -1,4 +1,4 @@
-import { AttendanceSchema, AttendeeSchema } from "../event/attendance"
+import { AttendancePoolSchema, AttendanceSchema, AttendeeSchema } from "../event/attendance"
 import { FeedbackFormSchema } from "../feedback-form/feedback-form"
 import type { TaskType } from "./task"
 import { z } from "zod"
@@ -25,6 +25,7 @@ export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
 export type VerifyAttendeeAttendedTaskDefinition = typeof tasks.VERIFY_ATTENDEE_ATTENDED
+export type FinalizeAttendeeRegistrationTaskDefinition = typeof tasks.FINALIZE_ATTENDEE_REGISTRATION
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
@@ -33,15 +34,22 @@ export type AnyTaskDefinition =
   | VerifyFeedbackAnsweredTaskDefinition
   | SendFeedbackFormEmailsTaskDefinition
   | VerifyAttendeeAttendedTaskDefinition
+  | FinalizeAttendeeRegistrationTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
     type: "RESERVE_ATTENDEE",
     getSchema: () =>
-      z.object({
-        attendeeId: AttendeeSchema.shape.id,
-        attendanceId: AttendanceSchema.shape.id,
-      }),
+      z.union([
+        z.object({
+          attendeeId: AttendeeSchema.shape.id,
+          attendanceId: AttendanceSchema.shape.id,
+        }),
+        z.object({
+          attendancePoolId: AttendancePoolSchema.shape.id,
+          attendanceId: AttendanceSchema.shape.id,
+        }),
+      ]),
   }),
   MERGE_ATTENDANCE_POOLS: createTaskDefinition({
     type: "MERGE_ATTENDANCE_POOLS",
@@ -78,6 +86,16 @@ export const tasks = {
   VERIFY_ATTENDEE_ATTENDED: createTaskDefinition({
     type: "VERIFY_ATTENDEE_ATTENDED",
     getSchema: () => z.object({}),
+  }),
+  FINALIZE_ATTENDEE_REGISTRATION: createTaskDefinition({
+    type: "FINALIZE_ATTENDEE_REGISTRATION",
+    getSchema: () => {
+      return z.object({
+        attendanceId: AttendanceSchema.shape.id,
+        attendeeId: AttendeeSchema.shape.id,
+        registeredAt: z.iso.datetime(),
+      })
+    },
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<TaskType, TaskDefinition<any, any>>

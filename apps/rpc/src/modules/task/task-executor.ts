@@ -12,6 +12,7 @@ import type { RecurringTaskService } from "./recurring-task-service"
 import type { Task } from "./task"
 import {
   type ChargeAttendeeTaskDefinition,
+  type FinalizeAttendeeRegistrationTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -98,6 +99,12 @@ export function getLocalTaskExecutor(
 
             case tasks.VERIFY_ATTENDEE_ATTENDED.type:
               return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(handle)
+
+            case tasks.FINALIZE_ATTENDEE_REGISTRATION.type:
+              return await attendanceService.executeFinalizeAttendeeRegistrationTask(
+                handle,
+                payload as InferTaskData<FinalizeAttendeeRegistrationTaskDefinition>
+              )
           }
 
           // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
