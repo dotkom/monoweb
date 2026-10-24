@@ -26,7 +26,7 @@ export function AddToCalendarButton({
         target="_blank"
         rel="noopener noreferrer"
         variant="outline"
-        size="icon-lg"
+        size="icon"
         aria-label={googleCalendarAriaLabel}
         className="rounded-r-none"
       >
@@ -34,7 +34,7 @@ export function AddToCalendarButton({
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" aria-label="Flere kalendervalg" className="h-9 w-5 rounded-l-none border-l-0 px-0">
+          <Button variant="outline" aria-label="Flere kalendervalg" className="h-8 w-5 rounded-l-none border-l-0 px-0">
             <IconChevronDown className="size-4" />
           </Button>
         </DropdownMenuTrigger>

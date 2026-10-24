@@ -9,7 +9,7 @@ import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
 import { TicketButton } from "./AttendanceCard/TicketButton"
 import { EventRules } from "./AttendanceCard/EventRules"
-import { PaymentExplanationDialog } from "./AttendanceCard/PaymentExplanationDialog"
+import { PaymentExplanationDialogContent } from "./AttendanceCard/PaymentExplanationDialog"
 import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
 const mocks = vi.hoisted(() => ({
@@ -117,7 +117,10 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
         </Dialog>
         <TicketButton attendee={createMockAttendee()} />
         <EventRules />
-        <PaymentExplanationDialog />
+        <Dialog>
+          <DialogTrigger>Hvordan virker betaling?</DialogTrigger>
+          <PaymentExplanationDialogContent />
+        </Dialog>
       </div>
     )
   },
@@ -389,7 +392,7 @@ describe("desktop event preview", () => {
 
   it.each([
     "Vis billett",
-    "Prikkeregler",
+    "Arrangementregler",
     "Hvordan virker betaling?",
   ])("dismisses nested information on an outside click without closing the preview (%s)", async (triggerLabel) => {
     const link = await renderPreview()

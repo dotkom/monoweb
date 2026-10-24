@@ -11,9 +11,9 @@ import {
 } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
-import { Button, Text, Title, cn } from "@dotkomonline/ui"
+import { Button, Dialog, DialogTrigger, Text, Title, cn } from "@dotkomonline/ui"
 import { createAuthorizeUrl } from "@dotkomonline/utils"
-import { IconArrowUpRight, IconCoins, IconEdit } from "@tabler/icons-react"
+import { IconArrowUpRight, IconCoins, IconQuestionMark, IconScript, IconUserEdit } from "@tabler/icons-react"
 import { isPast, secondsToMilliseconds } from "date-fns"
 import Link from "next/link"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
@@ -23,12 +23,12 @@ import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { AttendanceTurnstile } from "./AttendanceTurnstile"
-import { EventRules } from "./EventRules"
+import { EventRulesDialogContent } from "./EventRules"
 import { MainPoolCard } from "./MainPoolCard"
 import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
 import { NonAttendablePoolsBox } from "./NonAttendablePoolsBox"
-import { PaymentExplanationDialog } from "./PaymentExplanationDialog"
+import { PaymentExplanationDialogContent } from "./PaymentExplanationDialog"
 import { PunishmentBox } from "./PunishmentBox"
 import { RegistrationButton, getTurnstileStatus } from "./RegistrationButton"
 import { SelectionsForm } from "./SelectionsForm"
@@ -199,155 +199,200 @@ export const AttendanceCard = ({
   const showOtherPools = attendance.pools.length === 0 || getNonAttendablePools(attendance, user).length > 0
 
   return (
-    <section className="flex flex-col gap-4 min-h-24 text-base sm:p-2 sm:rounded-xl sm:border sm:border-gray-200 sm:dark:border-stone-800 sm:dark:bg-stone-800">
-      <div className="flex flex-row items-center justify-between gap-3 pl-3 pt-3">
-        <Title element="h2" size="lg">
-          Påmelding
-        </Title>
-        <AttendanceCalendarButton event={event} attendance={attendance} />
-      </div>
+    <div className="flex flex-col gap-6 sm:gap-2">
+      <section className="flex flex-col gap-4 min-h-24 text-base sm:p-2 sm:rounded-2xl sm:border-2 sm:border-gray-100 sm:dark:border-stone-800 sm:dark:bg-stone-800">
+        <div className="flex flex-row items-center justify-between gap-2 pl-3 pr-2 pt-2">
+          <Title element="h2" size="md">
+            Påmelding
+          </Title>
 
-      <div className="flex flex-col w-full">
-        {attendee && deregistration?.requiresDeregisterReason && (
-          <DeregisterModal
-            open={deregisterModalOpen}
-            setOpen={setDeregisterModalOpen}
-            event={event}
-            unregisterForAttendance={deregisterForAttendance}
-            attendee={attendee}
-          />
-        )}
-
-        <div className="px-3">
-          <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+          <AttendanceCalendarButton event={event} attendance={attendance} />
         </div>
 
-        <AttendanceSection contentClassName="pt-8">
-          {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
-        </AttendanceSection>
-
-        <div className="flex flex-col w-full pt-8">
-          <MainPoolCard
-            attendance={attendance}
-            user={user}
-            authorizeUrl={authorizeUrl}
-            chargeScheduleDate={chargeScheduleDate}
-            hasAttachedActionBelow={showPaymentLink || isRegistrationDelayed}
-          />
-
-          <AttendanceSection contentClassName="pt-1.5">
-            {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
-          </AttendanceSection>
-
-          <AttendanceSection contentClassName="pt-1.5">
-            {showPaymentLink && (
-              <Link
-                href={paymentLink}
-                className={cn(
-                  "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 min-h-16",
-                  "text-base font-medium",
-                  "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
-                )}
-              >
-                <IconCoins className="size-[1.25em]" />
-                <Text>Gå til betaling</Text>
-                <IconArrowUpRight className="size-[1.25em]" />
-              </Link>
-            )}
-          </AttendanceSection>
-        </div>
-
-        <AttendanceSection contentClassName="pt-8 px-3">
-          {attendee?.registered && attendance.selections.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <Title element="p" size="sm" className="text-base">
-                Valg
-              </Title>
-
-              <SelectionsForm
-                attendance={attendance}
-                attendee={attendee}
-                onSubmit={handleSelectionChange}
-                disabled={attendanceStatus === "CLOSED"}
-              />
-            </div>
+        <div className="flex flex-col w-full">
+          {attendee && deregistration?.requiresDeregisterReason && (
+            <DeregisterModal
+              open={deregisterModalOpen}
+              setOpen={setDeregisterModalOpen}
+              event={event}
+              unregisterForAttendance={deregisterForAttendance}
+              attendee={attendee}
+            />
           )}
-        </AttendanceSection>
 
-        <AttendanceSection contentClassName="pt-8">
-          {showOtherPools && <NonAttendablePoolsBox attendance={attendance} user={user} />}
-        </AttendanceSection>
+          <div className="px-3">
+            <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+          </div>
 
-        <div className="flex flex-col gap-4 w-full pt-8">
-          <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
-            {attendee?.registered && <TicketButton attendee={attendee} />}
+          <AttendanceSection contentClassName="pt-8">
+            {punishment && hasPunishment && !attendee && <PunishmentBox punishment={punishment} />}
+          </AttendanceSection>
 
-            <ViewAttendeesButton
+          <div className="flex flex-col w-full pt-8">
+            <MainPoolCard
               attendance={attendance}
               user={user}
-              attendeeListOpen={attendeeListOpen}
-              setAttendeeListOpen={setAttendeeListOpen}
-              hasTicketButton={Boolean(attendee?.registered)}
+              authorizeUrl={authorizeUrl}
+              chargeScheduleDate={chargeScheduleDate}
+              hasAttachedActionBelow={showPaymentLink || isRegistrationDelayed}
             />
+
+            <AttendanceSection contentClassName="pt-1.5">
+              {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
+            </AttendanceSection>
+
+            <AttendanceSection contentClassName="pt-1.5">
+              {showPaymentLink && (
+                <Link
+                  href={paymentLink}
+                  className={cn(
+                    "flex flex-row items-center justify-center w-full gap-2 rounded-t-md rounded-b-xl p-2 min-h-16",
+                    "text-base font-medium",
+                    "transition-colors bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
+                  )}
+                >
+                  <IconCoins className="size-[1.25em]" />
+                  <Text>Gå til betaling</Text>
+                  <IconArrowUpRight className="size-[1.25em]" />
+                </Link>
+              )}
+            </AttendanceSection>
           </div>
 
-          <RegistrationButton
-            registerForAttendance={registerForAttendance}
-            unregisterForAttendance={deregisterForAttendance}
-            attendance={attendance}
-            registrationAvailability={registrationAvailability}
-            user={user}
-            isLoading={isRegisterActionPending}
-            turnstileStatus={turnstileStatus}
-            setDeregisterModalOpen={setDeregisterModalOpen}
-          />
+          <AttendanceSection contentClassName="pt-8 px-3">
+            {attendee?.registered && attendance.selections.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Title element="p" size="sm" className="text-base">
+                  Valg
+                </Title>
 
-          {requiresLocalTurnstile && isRegisterActionPending === false && (
-            <div
-              className={cn(
-                { hidden: hideTurnstile },
-                "relative rounded-md bg-gray-200 dark:bg-stone-700",
-                transitionStyles.state
-              )}
-            >
-              <AttendanceTurnstile
-                key={turnstileGeneration}
-                enabled={enableTurnstile}
-                defer={deferTurnstile}
-                onStart={() => setTurnstileHasStarted(true)}
-                sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                retry="auto"
-                refreshExpired="auto"
-                onError={handleTurnstileError}
-                onVerify={handleTurnstileVerify}
-                onExpire={() => setTurnstileToken(null)}
-                onLoad={handleTurnstileLoad}
-                size="flexible"
-                className="h-[4.05rem]" // Without this a padding occurs below the widget
+                <SelectionsForm
+                  attendance={attendance}
+                  attendee={attendee}
+                  onSubmit={handleSelectionChange}
+                  disabled={attendanceStatus === "CLOSED"}
+                />
+              </div>
+            )}
+          </AttendanceSection>
+
+          <AttendanceSection contentClassName="pt-8">
+            {showOtherPools && <NonAttendablePoolsBox attendance={attendance} user={user} />}
+          </AttendanceSection>
+
+          <div className="flex flex-col gap-4 w-full pt-8">
+            <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
+              {attendee?.registered && <TicketButton attendee={attendee} />}
+
+              <ViewAttendeesButton
+                attendance={attendance}
+                user={user}
+                attendeeListOpen={attendeeListOpen}
+                setAttendeeListOpen={setAttendeeListOpen}
+                hasTicketButton={Boolean(attendee?.registered)}
               />
             </div>
-          )}
 
-          <div className="flex flex-row flex-wrap gap-x-0.5 gap-y-0.5 px-1.5">
-            <EventRules className="text-muted-foreground px-1.5" />
+            <RegistrationButton
+              registerForAttendance={registerForAttendance}
+              unregisterForAttendance={deregisterForAttendance}
+              attendance={attendance}
+              registrationAvailability={registrationAvailability}
+              user={user}
+              isLoading={isRegisterActionPending}
+              turnstileStatus={turnstileStatus}
+              setDeregisterModalOpen={setDeregisterModalOpen}
+            />
 
-            <Button
-              element={Link}
-              variant="ghost"
-              href="/innstillinger/profil"
-              className="text-muted-foreground px-1.5"
-            >
-              <IconEdit className="size-4" />
-              Oppdater matpreferanser
-            </Button>
-
-            {attendance.attendancePrice && <PaymentExplanationDialog />}
+            {requiresLocalTurnstile && isRegisterActionPending === false && (
+              <div
+                className={cn(
+                  { hidden: hideTurnstile },
+                  "relative rounded-md bg-gray-200 dark:bg-stone-700",
+                  transitionStyles.state
+                )}
+              >
+                <AttendanceTurnstile
+                  key={turnstileGeneration}
+                  enabled={enableTurnstile}
+                  defer={deferTurnstile}
+                  onStart={() => setTurnstileHasStarted(true)}
+                  sitekey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  retry="auto"
+                  refreshExpired="auto"
+                  onError={handleTurnstileError}
+                  onVerify={handleTurnstileVerify}
+                  onExpire={() => setTurnstileToken(null)}
+                  onLoad={handleTurnstileLoad}
+                  size="flexible"
+                  className="h-[4.05rem]" // Without this a padding occurs below the widget
+                />
+              </div>
+            )}
           </div>
         </div>
+      </section>
+
+      <div className="flex flex-row flex-wrap items-center gap-0.5 px-4">
+        <EventRulesButton />
+        <DietaryPreferencesButton />
+        {Boolean(attendance.attendancePrice) && <PaymentExplanationButton />}
       </div>
-    </section>
+    </div>
   )
 }
+
+const PaymentExplanationButton = () => (
+  <Dialog>
+    <DialogTrigger
+      render={
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label="Hvordan virker betaling?"
+          className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+        >
+          <IconQuestionMark aria-hidden className="size-4" />
+          Om betaling
+        </Button>
+      }
+    />
+    <PaymentExplanationDialogContent />
+  </Dialog>
+)
+
+const DietaryPreferencesButton = () => (
+  <Button
+    element={Link}
+    variant="ghost"
+    size="sm"
+    href="/innstillinger/profil"
+    aria-label="Oppdater matpreferanser"
+    className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+  >
+    <IconUserEdit aria-hidden className="size-4" />
+    Matpreferanser
+  </Button>
+)
+
+const EventRulesButton = () => (
+  <Dialog>
+    <DialogTrigger
+      render={
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label="Arrangementregler"
+          className="px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+        >
+          <IconScript aria-hidden className="size-4" />
+          Regler
+        </Button>
+      }
+    />
+    <EventRulesDialogContent />
+  </Dialog>
+)
 
 export const AttendanceCardSkeleton = () => {
   const skeletonText = (heightAndWidth: string) => (
