@@ -14,16 +14,39 @@ import {
   subWeeks,
 } from "date-fns"
 import type { Prisma } from "../"
+import { attendanceId } from "./attendance"
+
+export const fixtureEventId = {
+  fixturesCourse: "e1000001-0000-4000-8000-000000000001",
+  are2025: "e1000002-0000-4000-8000-000000000002",
+  sommerfest2025: "e1000003-0000-4000-8000-000000000003",
+  vinkurs: "e1000004-0000-4000-8000-000000000004",
+  areExcursionInfoMeeting: "e1000005-0000-4000-8000-000000000005",
+  itex: "8afc7d51-37cd-4d2f-8ded-b7f7479ff8e6",
+  itexTwodayEvening: "e1000007-0000-4000-8000-000000000007",
+  firstYearExamParty: "e1000008-0000-4000-8000-000000000008",
+  fifthYearGraduation: "e1000009-0000-4000-8000-000000000009",
+  footballShirtFriday: "e1000010-0000-4000-8000-000000000010",
+  discreteMathExamCourse: "e1000011-0000-4000-8000-000000000011",
+  volleyball: "e1f2a3b4-c5d6-4789-a012-3456789abcde",
+  firstYearExamReading: "e1000013-0000-4000-8000-000000000013",
+  may17Breakfast: "e1000014-0000-4000-8000-000000000014",
+  fadderuke: "bd67bc32-debd-46cb-bb06-1213e36be05d",
+  fadderukeOrientation: "e1000016-0000-4000-8000-000000000016",
+  fadderukeSpeeddating: "e1000017-0000-4000-8000-000000000017",
+  fadderukeSilentDisco: "e1000018-0000-4000-8000-000000000018",
+  fadderukeBeerOlympics: "e1000019-0000-4000-8000-000000000019",
+} as const
+
+export type FixtureEventKey = keyof typeof fixtureEventId
+
+export const eventId = (key: FixtureEventKey): string => fixtureEventId[key]
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
 
 const lastMonth = subMonths(now, 1)
 const tomorrow = addDays(now, 1)
 const nextMonth = addMonths(now, 1)
-
-export const FADDERUKE_EVENT_ID = "bd67bc32-debd-46cb-bb06-1213e36be05d"
-export const ITEX_EVENT_ID = "8afc7d51-37cd-4d2f-8ded-b7f7479ff8e6"
-export const VOLLEYBALL_EVENT_ID = "e1f2a3b4-c5d6-4789-a012-3456789abcde"
 
 export const getVolleyballEventEnd = () => setHours(subDays(now, 20), 21)
 
@@ -39,10 +62,11 @@ export function getFadderukeInterval() {
 
 const fadderukeInterval = getFadderukeInterval()
 
-export const getEventFixtures = (attendanceIds: string[]) =>
+export const getEventFixtures = () =>
   [
     {
-      attendanceId: attendanceIds[0],
+      id: eventId("fixturesCourse"),
+      attendanceId: attendanceId("fixturesCourse"),
       createdAt: now,
       updatedAt: now,
       title: "Kurs i å lage fixtures",
@@ -76,7 +100,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: "https://maps.app.goo.gl/hSEicfQFamY7r9oX8",
     },
     {
-      attendanceId: attendanceIds[1],
+      id: eventId("are2025"),
+      attendanceId: attendanceId("are2025"),
       createdAt: new Date("2025-01-17 11:03:49.289+00"),
       updatedAt: new Date("2025-02-22 09:04:21.942+00"),
       title: "Åre 2025",
@@ -102,7 +127,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: "https://maps.app.goo.gl/8dA2NN9YWDp7XyuV6",
     },
     {
-      attendanceId: attendanceIds[2],
+      id: eventId("sommerfest2025"),
+      attendanceId: attendanceId("sommerfest2025"),
       createdAt: subDays(now, 30),
       updatedAt: subDays(now, 25),
       title: "Sommerfest 2025",
@@ -157,7 +183,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "A4, Realfagbygget",
     },
     {
-      attendanceId: attendanceIds[3],
+      id: eventId("vinkurs"),
+      attendanceId: attendanceId("vinkurs"),
       createdAt: subMonths(now, 3),
       updatedAt: subMonths(now, 3),
       title: "Vinkurs 🍷",
@@ -206,6 +233,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: "https://maps.app.goo.gl/2fhoN4riGaY7s4yA7",
     },
     {
+      id: eventId("areExcursionInfoMeeting"),
       attendanceId: null,
       createdAt: subMonths(now, 4),
       updatedAt: subMonths(now, 4),
@@ -243,8 +271,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
-      id: ITEX_EVENT_ID,
-      attendanceId: attendanceIds[4],
+      id: eventId("itex"),
+      attendanceId: attendanceId("itex"),
       createdAt: subWeeks(now, 1),
       updatedAt: subDays(now, 4),
       title: "ITEX",
@@ -292,7 +320,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationLink: null,
     },
     {
-      attendanceId: attendanceIds[5],
+      id: eventId("itexTwodayEvening"),
+      attendanceId: attendanceId("itexTwodayEvening"),
       createdAt: subDays(now, 5),
       updatedAt: subDays(now, 1),
       title: "(ITEX) Kveldsarrangement med Twoday",
@@ -339,10 +368,11 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationTitle: "Twodays kontorer",
       locationAddress: "Karenslyst allé 57, Oslo",
       locationLink: null,
-      parentId: ITEX_EVENT_ID,
+      parentId: eventId("itex"),
     },
     {
-      attendanceId: attendanceIds[6],
+      id: eventId("firstYearExamParty"),
+      attendanceId: attendanceId("firstYearExamParty"),
       createdAt: subDays(now, 7),
       updatedAt: now,
       title: "1.klasse eksamensfest",
@@ -356,7 +386,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Herman Krags veg 12, Trondheim",
     },
     {
-      attendanceId: attendanceIds[7],
+      id: eventId("fifthYearGraduation"),
+      attendanceId: attendanceId("fifthYearGraduation"),
       createdAt: subDays(now, 40),
       updatedAt: subDays(now, 14),
       title: "Utmatrikulering 5. klasse",
@@ -370,7 +401,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Høgskoleringen 1, Trondheim",
     },
     {
-      attendanceId: attendanceIds[8],
+      id: eventId("footballShirtFriday"),
+      attendanceId: attendanceId("footballShirtFriday"),
       createdAt: subDays(now, 3),
       updatedAt: now,
       title: "FotballtrøyeFredag!",
@@ -384,7 +416,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "A4-137, Realfagbygget",
     },
     {
-      attendanceId: attendanceIds[9],
+      id: eventId("discreteMathExamCourse"),
+      attendanceId: attendanceId("discreteMathExamCourse"),
       createdAt: subDays(now, 25),
       updatedAt: subDays(now, 18),
       title: "Eksamenskurs i Diskret matematikk",
@@ -398,8 +431,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Høgskoleringen 1, Trondheim",
     },
     {
-      id: VOLLEYBALL_EVENT_ID,
-      attendanceId: attendanceIds[10],
+      id: eventId("volleyball"),
+      attendanceId: attendanceId("volleyball"),
       createdAt: subDays(now, 28),
       updatedAt: subDays(now, 21),
       title: "Volleyballturnering med NTNUI: PÅMELDING",
@@ -413,7 +446,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Dragvoll, Trondheim",
     },
     {
-      attendanceId: attendanceIds[11],
+      id: eventId("firstYearExamReading"),
+      attendanceId: attendanceId("firstYearExamReading"),
       createdAt: subDays(now, 5),
       updatedAt: now,
       title: "Eksamenslesing for 1.klasse",
@@ -427,7 +461,8 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "A4-137, Realfagbygget",
     },
     {
-      attendanceId: attendanceIds[12],
+      id: eventId("may17Breakfast"),
+      attendanceId: attendanceId("may17Breakfast"),
       createdAt: subDays(now, 45),
       updatedAt: subDays(now, 28),
       title: "17. mai-frokost",
@@ -441,7 +476,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationAddress: "Høgskoleringen 1, Trondheim",
     },
     {
-      id: FADDERUKE_EVENT_ID,
+      id: eventId("fadderuke"),
       attendanceId: null,
       createdAt: subMonths(fadderukeInterval.start, 3),
       updatedAt: subMonths(fadderukeInterval.start, 3),
@@ -455,6 +490,7 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationTitle: "Trondheim",
     },
     {
+      id: eventId("fadderukeOrientation"),
       attendanceId: null,
       createdAt: subMonths(fadderukeInterval.start, 3),
       updatedAt: subMonths(fadderukeInterval.start, 3),
@@ -467,9 +503,10 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       shortDescription: "Oppstart og immatrikulering.",
       locationTitle: "Tapirbygget",
       locationAddress: "Gløshaugen, Trondheim",
-      parentId: FADDERUKE_EVENT_ID,
+      parentId: eventId("fadderuke"),
     },
     {
+      id: eventId("fadderukeSpeeddating"),
       attendanceId: null,
       createdAt: subMonths(fadderukeInterval.start, 3),
       updatedAt: subMonths(fadderukeInterval.start, 3),
@@ -482,9 +519,10 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       shortDescription: "Speeddating med medstudenter.",
       locationTitle: "A4, Realfagbygget",
       locationAddress: "Høgskoleringen 1, Trondheim",
-      parentId: FADDERUKE_EVENT_ID,
+      parentId: eventId("fadderuke"),
     },
     {
+      id: eventId("fadderukeSilentDisco"),
       attendanceId: null,
       createdAt: subMonths(fadderukeInterval.start, 3),
       updatedAt: subMonths(fadderukeInterval.start, 3),
@@ -498,9 +536,10 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       locationTitle: "Havet",
       locationAddress: "Strandveien 104, 7067 Trondheim",
       locationLink: "https://maps.app.goo.gl/8dA2NN9YWDp7XyuV6",
-      parentId: FADDERUKE_EVENT_ID,
+      parentId: eventId("fadderuke"),
     },
     {
+      id: eventId("fadderukeBeerOlympics"),
       attendanceId: null,
       createdAt: subMonths(fadderukeInterval.start, 3),
       updatedAt: subMonths(fadderukeInterval.start, 3),
@@ -513,6 +552,6 @@ export const getEventFixtures = (attendanceIds: string[]) =>
       shortDescription: "Lagkonkurranse med leker.",
       locationTitle: "Festningsparken",
       locationAddress: "Festningsparken, Rosenborg, Trondheim",
-      parentId: FADDERUKE_EVENT_ID,
+      parentId: eventId("fadderuke"),
     },
   ] as const satisfies Prisma.EventCreateManyInput[]

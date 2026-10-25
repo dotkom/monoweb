@@ -1,10 +1,11 @@
 import { addHours, roundToNearestHours, subDays } from "date-fns"
 import type { Prisma } from "../"
+import { attendanceId, type FixtureAttendanceKey } from "./attendance"
+import { attendancePoolId, type FixtureAttendancePoolKey } from "./attendance-pool"
 import { getVolleyballEventEnd } from "./event"
+import { type FixtureUserKey, userId } from "./user"
 
-const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
-
-export const VOLLEYBALL_ATTENDEE_FIXTURE_IDS = [
+export const fixtureVolleyballAttendeeId = [
   "c1000001-0000-4000-8000-000000000001",
   "c1000002-0000-4000-8000-000000000002",
   "c1000003-0000-4000-8000-000000000003",
@@ -17,131 +18,106 @@ export const VOLLEYBALL_ATTENDEE_FIXTURE_IDS = [
   "c1000010-0000-4000-8000-000000000010",
 ] as const
 
-export type AttendancePoolKey = `${string}:${string}`
+const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
 
-export const buildAttendancePoolMap = (pools: { id: string; attendanceId: string; title: string }[]) =>
-  new Map(pools.map((pool) => [`${pool.attendanceId}:${pool.title}`, pool.id] as const))
-
-const userGrades: (number | null)[] = [2, null, 4, 1, 3, 5, null, 4, 1, 2, 5]
+const userGrades: Record<FixtureUserKey, number | null> = {
+  anders: 2,
+  berta: null,
+  carl: 4,
+  dina: 1,
+  eirik: 3,
+  frida: 5,
+  gunnar: null,
+  helle: 4,
+  ivar: 1,
+  jenny: 2,
+  kasper: 5,
+}
 
 type AttendeeAssignment = {
-  attendanceIndex: number
-  poolTitle: string
-  userIndex: number
+  attendance: FixtureAttendanceKey
+  pool: FixtureAttendancePoolKey
+  user: FixtureUserKey
   registeredDaysAgo: number
   registered?: boolean
 }
 
 const attendeeAssignments: AttendeeAssignment[] = [
-  // Kurs i å lage fixtures
-  { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 0, registeredDaysAgo: 12 },
-  { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 9, registeredDaysAgo: 11 },
-  { attendanceIndex: 0, poolTitle: "2. og 3. klasse", userIndex: 1, registeredDaysAgo: 10 },
-  { attendanceIndex: 2, poolTitle: "Alle", userIndex: 1, registeredDaysAgo: 18 },
-  { attendanceIndex: 2, poolTitle: "Alle", userIndex: 2, registeredDaysAgo: 17 },
-  { attendanceIndex: 2, poolTitle: "Alle", userIndex: 5, registeredDaysAgo: 16 },
-  { attendanceIndex: 2, poolTitle: "Alle", userIndex: 7, registeredDaysAgo: 15 },
-  { attendanceIndex: 3, poolTitle: "3. og 5. klasse", userIndex: 4, registeredDaysAgo: 8 },
-  { attendanceIndex: 3, poolTitle: "3. og 5. klasse", userIndex: 10, registeredDaysAgo: 7 },
-  { attendanceIndex: 4, poolTitle: "Alle", userIndex: 2, registeredDaysAgo: 5 },
-  { attendanceIndex: 4, poolTitle: "Alle", userIndex: 7, registeredDaysAgo: 4 },
-
-  // 1.klasse eksamensfest
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 3, registeredDaysAgo: 5 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 8, registeredDaysAgo: 5 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 0, registeredDaysAgo: 4 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 1, registeredDaysAgo: 4 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 9, registeredDaysAgo: 3 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 4, registeredDaysAgo: 3 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 6, registeredDaysAgo: 2 },
-  { attendanceIndex: 6, poolTitle: "1. klasse", userIndex: 10, registeredDaysAgo: 2 },
-
-  // Utmatrikulering 5. klasse
-  { attendanceIndex: 7, poolTitle: "5. klasse", userIndex: 4, registeredDaysAgo: 22 },
-  { attendanceIndex: 7, poolTitle: "5. klasse", userIndex: 5, registeredDaysAgo: 21 },
-  { attendanceIndex: 7, poolTitle: "5. klasse", userIndex: 10, registeredDaysAgo: 20 },
-  { attendanceIndex: 7, poolTitle: "5. klasse", userIndex: 2, registeredDaysAgo: 19 },
-  { attendanceIndex: 7, poolTitle: "5. klasse", userIndex: 7, registeredDaysAgo: 18 },
-
-  // FotballtrøyeFredag!
-  { attendanceIndex: 8, poolTitle: "Alle", userIndex: 0, registeredDaysAgo: 2 },
-  { attendanceIndex: 8, poolTitle: "Alle", userIndex: 1, registeredDaysAgo: 2 },
-  { attendanceIndex: 8, poolTitle: "Alle", userIndex: 6, registeredDaysAgo: 1 },
-  { attendanceIndex: 8, poolTitle: "Alle", userIndex: 9, registeredDaysAgo: 1 },
-
-  // Eksamenskurs i Diskret matematikk
-  { attendanceIndex: 9, poolTitle: "Alle", userIndex: 3, registeredDaysAgo: 19 },
-  { attendanceIndex: 9, poolTitle: "Alle", userIndex: 8, registeredDaysAgo: 18 },
-  { attendanceIndex: 9, poolTitle: "Alle", userIndex: 0, registeredDaysAgo: 17 },
-  { attendanceIndex: 9, poolTitle: "Alle", userIndex: 9, registeredDaysAgo: 16 },
-
-  // Volleyballturnering med NTNUI
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 0, registeredDaysAgo: 24 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 1, registeredDaysAgo: 23 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 2, registeredDaysAgo: 22 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 3, registeredDaysAgo: 21 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 4, registeredDaysAgo: 20 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 5, registeredDaysAgo: 19 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 7, registeredDaysAgo: 18 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 8, registeredDaysAgo: 17 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 9, registeredDaysAgo: 16 },
-  { attendanceIndex: 10, poolTitle: "Alle", userIndex: 10, registeredDaysAgo: 15 },
-
-  // Eksamenslesing for 1.klasse
-  { attendanceIndex: 11, poolTitle: "1. klasse", userIndex: 3, registeredDaysAgo: 4 },
-  { attendanceIndex: 11, poolTitle: "1. klasse", userIndex: 8, registeredDaysAgo: 3 },
-  { attendanceIndex: 11, poolTitle: "1. klasse", userIndex: 0, registeredDaysAgo: 2 },
-
-  // 17. mai-frokost
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 0, registeredDaysAgo: 30 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 1, registeredDaysAgo: 29 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 2, registeredDaysAgo: 28 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 3, registeredDaysAgo: 27 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 4, registeredDaysAgo: 26 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 5, registeredDaysAgo: 25 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 6, registeredDaysAgo: 24 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 7, registeredDaysAgo: 23 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 8, registeredDaysAgo: 22 },
-  { attendanceIndex: 12, poolTitle: "Alle", userIndex: 9, registeredDaysAgo: 21 },
+  { attendance: "fixturesCourse", pool: "fixturesCourse_grade2And3", user: "anders", registeredDaysAgo: 12 },
+  { attendance: "fixturesCourse", pool: "fixturesCourse_grade2And3", user: "kasper", registeredDaysAgo: 11 },
+  { attendance: "fixturesCourse", pool: "fixturesCourse_grade2And3", user: "berta", registeredDaysAgo: 10 },
+  { attendance: "sommerfest2025", pool: "sommerfest2025_all", user: "berta", registeredDaysAgo: 18 },
+  { attendance: "sommerfest2025", pool: "sommerfest2025_all", user: "carl", registeredDaysAgo: 17 },
+  { attendance: "sommerfest2025", pool: "sommerfest2025_all", user: "frida", registeredDaysAgo: 16 },
+  { attendance: "sommerfest2025", pool: "sommerfest2025_all", user: "helle", registeredDaysAgo: 15 },
+  { attendance: "vinkurs", pool: "vinkurs_grade3And5", user: "eirik", registeredDaysAgo: 8 },
+  { attendance: "vinkurs", pool: "vinkurs_grade3And5", user: "kasper", registeredDaysAgo: 7 },
+  { attendance: "itex", pool: "itex_all", user: "carl", registeredDaysAgo: 5 },
+  { attendance: "itex", pool: "itex_all", user: "helle", registeredDaysAgo: 4 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "dina", registeredDaysAgo: 5 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "ivar", registeredDaysAgo: 5 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "anders", registeredDaysAgo: 4 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "berta", registeredDaysAgo: 4 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "jenny", registeredDaysAgo: 3 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "eirik", registeredDaysAgo: 3 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "gunnar", registeredDaysAgo: 2 },
+  { attendance: "firstYearExamParty", pool: "firstYearExamParty_grade1", user: "kasper", registeredDaysAgo: 2 },
+  { attendance: "fifthYearGraduation", pool: "fifthYearGraduation_grade5", user: "eirik", registeredDaysAgo: 22 },
+  { attendance: "fifthYearGraduation", pool: "fifthYearGraduation_grade5", user: "frida", registeredDaysAgo: 21 },
+  { attendance: "fifthYearGraduation", pool: "fifthYearGraduation_grade5", user: "kasper", registeredDaysAgo: 20 },
+  { attendance: "fifthYearGraduation", pool: "fifthYearGraduation_grade5", user: "carl", registeredDaysAgo: 19 },
+  { attendance: "fifthYearGraduation", pool: "fifthYearGraduation_grade5", user: "helle", registeredDaysAgo: 18 },
+  { attendance: "footballShirtFriday", pool: "footballShirtFriday_all", user: "anders", registeredDaysAgo: 2 },
+  { attendance: "footballShirtFriday", pool: "footballShirtFriday_all", user: "berta", registeredDaysAgo: 2 },
+  { attendance: "footballShirtFriday", pool: "footballShirtFriday_all", user: "gunnar", registeredDaysAgo: 1 },
+  { attendance: "footballShirtFriday", pool: "footballShirtFriday_all", user: "kasper", registeredDaysAgo: 1 },
+  { attendance: "discreteMathExamCourse", pool: "discreteMathExamCourse_all", user: "dina", registeredDaysAgo: 19 },
+  { attendance: "discreteMathExamCourse", pool: "discreteMathExamCourse_all", user: "ivar", registeredDaysAgo: 18 },
+  { attendance: "discreteMathExamCourse", pool: "discreteMathExamCourse_all", user: "anders", registeredDaysAgo: 17 },
+  { attendance: "discreteMathExamCourse", pool: "discreteMathExamCourse_all", user: "kasper", registeredDaysAgo: 16 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "anders", registeredDaysAgo: 24 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "berta", registeredDaysAgo: 23 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "carl", registeredDaysAgo: 22 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "dina", registeredDaysAgo: 21 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "eirik", registeredDaysAgo: 20 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "frida", registeredDaysAgo: 19 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "helle", registeredDaysAgo: 18 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "ivar", registeredDaysAgo: 17 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "jenny", registeredDaysAgo: 16 },
+  { attendance: "volleyball", pool: "volleyball_all", user: "kasper", registeredDaysAgo: 15 },
+  { attendance: "firstYearExamReading", pool: "firstYearExamReading_grade1", user: "dina", registeredDaysAgo: 4 },
+  { attendance: "firstYearExamReading", pool: "firstYearExamReading_grade1", user: "ivar", registeredDaysAgo: 3 },
+  { attendance: "firstYearExamReading", pool: "firstYearExamReading_grade1", user: "anders", registeredDaysAgo: 2 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "anders", registeredDaysAgo: 30 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "berta", registeredDaysAgo: 29 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "carl", registeredDaysAgo: 28 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "dina", registeredDaysAgo: 27 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "eirik", registeredDaysAgo: 26 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "frida", registeredDaysAgo: 25 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "gunnar", registeredDaysAgo: 24 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "helle", registeredDaysAgo: 23 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "ivar", registeredDaysAgo: 22 },
+  { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "kasper", registeredDaysAgo: 21 },
 ]
 
-const resolvePoolId = (
-  poolMap: ReadonlyMap<AttendancePoolKey, string>,
-  attendanceIds: string[],
-  attendanceIndex: number,
-  poolTitle: string
-): string => {
-  const poolId = poolMap.get(`${attendanceIds[attendanceIndex]}:${poolTitle}`)
-
-  if (poolId === undefined) {
-    throw new Error(`Missing attendance pool for attendance index ${attendanceIndex} (${poolTitle})`)
-  }
-
-  return poolId
-}
-
-export const getAttendeeFixtures = (
-  poolMap: ReadonlyMap<AttendancePoolKey, string>,
-  attendanceIds: string[],
-  userIds: string[]
-) => {
+export const getAttendeeFixtures = () => {
   let volleyballAttendeeIndex = 0
 
-  return attendeeAssignments.map(({ attendanceIndex, poolTitle, userIndex, registeredDaysAgo, registered = true }) => {
+  return attendeeAssignments.map(({ attendance, pool, user, registeredDaysAgo, registered = true }) => {
     const registeredAt = subDays(now, registeredDaysAgo)
-    const isVolleyballAttendee = attendanceIndex === 10
+    const isVolleyballAttendee = attendance === "volleyball"
 
     return {
       ...(isVolleyballAttendee
         ? {
-            id: VOLLEYBALL_ATTENDEE_FIXTURE_IDS[volleyballAttendeeIndex++],
+            id: fixtureVolleyballAttendeeId[volleyballAttendeeIndex++],
             attendedAt: addHours(getVolleyballEventEnd(), 1),
           }
         : {}),
-      attendanceId: attendanceIds[attendanceIndex],
-      attendancePoolId: resolvePoolId(poolMap, attendanceIds, attendanceIndex, poolTitle),
-      userId: userIds[userIndex],
-      userGrade: userGrades[userIndex],
+      attendanceId: attendanceId(attendance),
+      attendancePoolId: attendancePoolId(pool),
+      userId: userId(user),
+      userGrade: userGrades[user],
       registeredAt: registered ? registeredAt : null,
       createdAt: registeredAt,
       updatedAt: registeredAt,
