@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canCreateGroups } from "@dotkomonline/rpc/group-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
@@ -10,8 +11,8 @@ import { useGroupAllQuery } from "./queries"
 
 const GroupPage = () => {
   const { groups, isLoading } = useGroupAllQuery()
-  const { canCreateGroup } = useAuthorization()
-  const canCreate = canCreateGroup("COMMITTEE") || canCreateGroup("INTEREST_GROUP")
+  const authorization = useAuthorization()
+  const canCreate = canCreateGroups(authorization)
 
   return (
     <div className="flex flex-col gap-4">

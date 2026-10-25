@@ -119,6 +119,10 @@
     "./user-permissions": {
       "import": "./src/permissions/user-permissions.ts",
       "types": "./src/permissions/user-permissions.ts"
+    },
+    "./group-permissions": {
+      "import": "./src/permissions/group-permissions.ts",
+      "types": "./src/permissions/group-permissions.ts"
     }
   },
   "scripts": {

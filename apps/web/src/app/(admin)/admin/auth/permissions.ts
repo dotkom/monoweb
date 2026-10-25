@@ -1,5 +1,4 @@
-import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
-import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import type { GroupId, GroupRoleType } from "@dotkomonline/rpc/group"
 
 /**
  * Mirrors {@link apps/rpc/src/modules/authorization-service.ts#ADMIN_AFFILIATIONS}
@@ -113,103 +112,6 @@ export function canManageNotification(state: AuthorizationState, actorGroupId: G
   }
 
   return isGroupMember(state, actorGroupId)
-}
-
-/**
- * `group.create` procedure
- */
-export function canCreateGroup(state: AuthorizationState, groupType: GroupType): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (groupType === "INTEREST_GROUP") {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
-}
-
-/**
- * `group.update` procedure
- */
-export function canUpdateGroup(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, groupId) || isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return isGroupMember(state, groupId)
-}
-
-/**
- * `group.delete` procedure
- */
-export function canDeleteGroup(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER)) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
-}
-
-/**
- * `group.startMembership`, `group.endMembership`, `group.updateMembership` procedures
- */
-export function canManageGroupMembership(
-  state: AuthorizationState,
-  groupId: GroupId,
-  isInterestGroup: boolean
-): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
-  ) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
-}
-
-/**
- * `group.createRole`, `group.updateRole`, `group.deleteRole` procedures
- */
-export function canManageGroupRoles(state: AuthorizationState, groupId: GroupId, isInterestGroup: boolean): boolean {
-  if (state.isAdministrator) {
-    return true
-  }
-
-  if (
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.LEADER) ||
-    hasGroupRole(state, groupId, GroupRoleTypeEnum.DEPUTY_LEADER)
-  ) {
-    return true
-  }
-
-  if (isInterestGroup) {
-    return isGroupMember(state, CommitteeGroupSlug.BACKLOG)
-  }
-
-  return false
 }
 
 export function createAuthorizationState(

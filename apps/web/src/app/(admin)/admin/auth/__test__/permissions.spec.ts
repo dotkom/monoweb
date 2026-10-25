@@ -15,11 +15,12 @@ import {
 } from "@dotkomonline/rpc/user-permissions"
 import { describe, expect, it } from "vitest"
 import {
+  canCreateGroup,
+  canCreateGroups,
   canManageGroupMembership,
-  canManageNotification,
-  createAuthorizationState,
-  hasAnyGroupAffiliation,
-} from "../permissions"
+  canUpdateGroup,
+} from "@dotkomonline/rpc/group-permissions"
+import { canManageNotification, createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
 function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
   return createAuthorizationState({
@@ -271,13 +272,101 @@ describe("canManageGroupMembership", () => {
   it("allows leaders to manage committee groups", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
 
-    expect(canManageGroupMembership(state, "arrkom", false)).toBe(true)
+    expect(canManageGroupMembership(state, "arrkom", GroupTypeSchema.enum.COMMITTEE)).toBe(true)
+  })
+
+  it("denies interest-group leaders from managing their own group", () => {
+    const state = createState({ "some-interest-group": [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageGroupMembership(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP)).toBe(false)
   })
 
   it("allows backlog to manage interest groups", () => {
     const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(canManageGroupMembership(state, "some-interest-group", true)).toBe(true)
+    expect(canManageGroupMembership(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP)).toBe(true)
+  })
+})
+
+describe("canCreateGroups", () => {
+  it("allows backlog and administrators", () => {
+    expect(canCreateGroups(createState({ backlog: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+    expect(canCreateGroups(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canCreateGroups(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
+  })
+})
+
+describe("canCreateGroup", () => {
+  it("allows backlog to create interest groups only", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canCreateGroup(state, GroupTypeSchema.enum.INTEREST_GROUP)).toBe(true)
+    expect(canCreateGroup(state, GroupTypeSchema.enum.COMMITTEE)).toBe(false)
+  })
+
+  it("allows administrators to create any group type", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateGroup(state, GroupTypeSchema.enum.COMMITTEE)).toBe(true)
+    expect(canCreateGroup(state, GroupTypeSchema.enum.INTEREST_GROUP)).toBe(true)
+  })
+})
+
+describe("canUpdateGroup", () => {
+  it("denies interest-group members from updating their own group", () => {
+    const state = createState({ "some-interest-group": [GroupRoleTypeEnum.LEADER] })
+
+    expect(canUpdateGroup(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP)).toBe(false)
+  })
+
+  it("allows backlog to update interest groups", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canUpdateGroup(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP)).toBe(true)
+  })
+
+  it("allows committee members to update their own committee", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canUpdateGroup(state, "arrkom", GroupTypeSchema.enum.COMMITTEE)).toBe(true)
+  })
+
+  it("allows keeping the current type when the caller can update the group", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canUpdateGroup(state, "arrkom", GroupTypeSchema.enum.COMMITTEE, GroupTypeSchema.enum.COMMITTEE)).toBe(true)
+  })
+
+  it("denies backlog from changing an interest group into a committee", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(
+      canUpdateGroup(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP, GroupTypeSchema.enum.COMMITTEE)
+    ).toBe(false)
+  })
+
+  it("denies committee members from changing a committee into an interest group", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canUpdateGroup(state, "arrkom", GroupTypeSchema.enum.COMMITTEE, GroupTypeSchema.enum.INTEREST_GROUP)).toBe(
+      false
+    )
+  })
+
+  it("allows backlog to change a committee into an interest group", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.COSMETIC], arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canUpdateGroup(state, "arrkom", GroupTypeSchema.enum.COMMITTEE, GroupTypeSchema.enum.INTEREST_GROUP)).toBe(
+      true
+    )
+  })
+
+  it("allows administrators to change group type", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canUpdateGroup(state, "some-interest-group", GroupTypeSchema.enum.INTEREST_GROUP, GroupTypeSchema.enum.COMMITTEE)
+    ).toBe(true)
   })
 })
 
