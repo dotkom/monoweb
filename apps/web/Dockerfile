@@ -1,23 +1,21 @@
+# syntax=docker/dockerfile:1
+
 FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
 
 # Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
 # runtime variables to be available at build-time.
 #
-# These build arguments loosely mirror the src/env.ts file
+# Only non-secret configuration uses build arguments. Credentials are mounted for the build command below.
 ARG AUTH0_CLIENT_ID
-ARG AUTH0_CLIENT_SECRET
 ARG AUTH0_ISSUER
 ARG AUTH0_AUDIENCES
-ARG AUTH_SECRET
 ARG NEXT_PUBLIC_ORIGIN
 ARG NEXT_PUBLIC_RPC_HOST
 ARG NEXT_PUBLIC_HOME_URL
 ARG RPC_HOST
-ARG SIGNING_KEY
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
 ARG SENTRY_DSN
-ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_RELEASE
 
 ARG DOPPLER_ENVIRONMENT
@@ -33,18 +31,12 @@ RUN npm install -g pnpm@10.15.1 --ignore-scripts
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 ENV AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-ENV AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}
 ENV AUTH0_ISSUER=${AUTH0_ISSUER}
 ENV AUTH0_AUDIENCES=${AUTH0_AUDIENCES}
-ENV AUTH_SECRET=${AUTH_SECRET}
 ENV NEXT_PUBLIC_ORIGIN=${NEXT_PUBLIC_ORIGIN}
 ENV NEXT_PUBLIC_RPC_HOST=${NEXT_PUBLIC_RPC_HOST}
 ENV NEXT_PUBLIC_HOME_URL=${NEXT_PUBLIC_HOME_URL}
 ENV RPC_HOST=${RPC_HOST}
-ENV SIGNING_KEY=${SIGNING_KEY}
-
-# Allow Sentry to upload source maps and build artifacts during build.
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 
 # The following are public build-time variables that instrument and configure Sentry
 ENV SENTRY_DSN=${SENTRY_DSN}
@@ -54,7 +46,12 @@ ENV NEXT_PUBLIC_SENTRY_RELEASE=${SENTRY_RELEASE}
 ENV DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
 ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
 
-RUN pnpm run --filter @dotkomonline/web build
+# Credentials are only available to this command and are not stored in image metadata or layers.
+RUN --mount=type=secret,id=AUTH0_CLIENT_SECRET,env=AUTH0_CLIENT_SECRET,required=true \
+    --mount=type=secret,id=AUTH_SECRET,env=AUTH_SECRET,required=true \
+    --mount=type=secret,id=SIGNING_KEY,env=SIGNING_KEY,required=true \
+    --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+    pnpm run --filter @dotkomonline/web build
 
 # Step 2: Only install the necessary dependencies for the production build of this application.
 FROM base AS installer

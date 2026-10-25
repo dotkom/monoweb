@@ -34,8 +34,15 @@ runs:
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/grades-frontend/Dockerfile
         build-arguments: |
-          ${{ steps.acquire-secrets.outputs.secrets }}
+          NEXT_PUBLIC_ORIGIN=${{ env.NEXT_PUBLIC_ORIGIN }}
+          NEXT_PUBLIC_BACKEND_HOST=${{ env.NEXT_PUBLIC_BACKEND_HOST }}
+          NEXT_PUBLIC_HOME_URL=${{ env.NEXT_PUBLIC_HOME_URL }}
+          BACKEND_HOST=${{ env.BACKEND_HOST }}
+          SENTRY_DSN=${{ env.SENTRY_DSN }}
           SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
+          DOPPLER_ENVIRONMENT=${{ env.DOPPLER_ENVIRONMENT }}
+        build-secret-envs: |
+          SENTRY_AUTH_TOKEN=SENTRY_AUTH_TOKEN
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}

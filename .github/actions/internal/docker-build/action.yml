@@ -5,7 +5,10 @@ inputs:
     description: 'Git sha256 hash to build'
     required: true
   build-arguments:
-    description: 'Docker build arguments'
+    description: 'Non-secret Docker build arguments'
+    required: false
+  build-secret-envs:
+    description: 'BuildKit secrets mapped to runner environment variables (SECRET_ID=ENV_VAR)'
     required: false
   dockerfile:
     description: 'Dockerfile to use for build'
@@ -55,4 +58,5 @@ runs:
         file: ${{ inputs.dockerfile }}
         tags: ${{ inputs.aws-ecr-repository }}:latest, ${{ inputs.aws-ecr-repository }}:git-${{ inputs.git-hash }}
         build-args: ${{ inputs.build-arguments }}
+        secret-envs: ${{ inputs.build-secret-envs }}
         push: ${{ inputs.push }}
