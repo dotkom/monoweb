@@ -30,7 +30,7 @@ export function VanityVerifiedPlate(props: PlateProps) {
 
 interface VanityVerifiedSmallIconOptions {
   withWhiteBackground?: boolean
-  flag: UserFlag
+  flag: Pick<UserFlag, "description">
 }
 
 export function getVanityVerifiedSmallIcon({ withWhiteBackground = false, flag }: VanityVerifiedSmallIconOptions) {

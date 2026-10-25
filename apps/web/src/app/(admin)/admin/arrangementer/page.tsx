@@ -1,8 +1,9 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
+import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
-import type { EventFilterQuery, EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventFilterQuery, EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconPencil } from "@tabler/icons-react"
@@ -42,8 +43,8 @@ export default function EventPage() {
   const scopeFilterFromQuery = parseScopeFilter(searchParams.get("scope"))
 
   const authorization = useAuthorization()
-  const { canCreateEvents, isAdministrator, affiliations } = authorization
-  const canCreate = canCreateEvents()
+  const { isAdministrator, affiliations } = authorization
+  const canCreate = canCreateEvents(authorization)
 
   const affiliationSlugs = useMemo(() => [...affiliations.keys()], [affiliations])
   const canUseMineFilter = !isAdministrator && affiliationSlugs.length > 0
@@ -175,7 +176,7 @@ export default function EventPage() {
   )
 }
 
-function sortUpcomingEvents(events: EventWithAttendance[]): EventWithAttendance[] {
+function sortUpcomingEvents(events: EventWithAttendanceView[]): EventWithAttendanceView[] {
   const now = getCurrentUTC()
 
   return events.toSorted((left, right) => {

@@ -63,7 +63,12 @@ import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/emai
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import { getGroupDisplayName } from "../group/group"
-import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
+import {
+  DEFAULT_MARK_DURATION,
+  INDEFINITE_SUSPENSION_DURATION,
+  type Punishment,
+  SUSPENSION_MARK_WEIGHT,
+} from "../mark/mark"
 import type { MarkService } from "../mark/mark-service"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import type { PaymentProductsService } from "../payment/payment-products-service"
@@ -145,9 +150,11 @@ export type RegistrationAvailabilityResult = RegistrationAvailabilitySuccess | R
 export type RegistrationAvailabilitySuccess = {
   /**
    * The point in time where a reservation could be made for the user. Users of this result should use this point
-   * in time for determining when to set `registered = true` for the user.
+   * in time for determining when the user can be given a seat.
    */
   reservationActiveAt: TZDate
+  registrationPoolDelayHours: number | null
+  registrationMarkDelayHours: number | null
   event: Event
   attendance: Attendance
   user: User
@@ -247,7 +254,11 @@ export interface AttendanceService {
    * NOTE: This function only does potential scheduling of associated tasks and other direct writes. The business
    * logic for checking attendance requirements are given by `getRegistrationAvailability`
    */
-  registerAttendee(handle: DBHandle, availability: RegistrationAvailabilitySuccess): Promise<Attendee>
+  registerAttendee(
+    handle: DBHandle,
+    availability: RegistrationAvailabilitySuccess,
+    adminRegisteredByUserId?: UserId | null
+  ): Promise<Attendee>
   getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
@@ -341,7 +352,7 @@ export function getAttendanceService(
     await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
   }
 
-  function sendWaitlistNotificationEmail(event: Event, position: number, attendee: Attendee) {
+  function sendQueueNotificationEmail(event: Event, position: number, attendee: Attendee) {
     if (attendee.user.email === null) {
       return
     }
@@ -352,11 +363,12 @@ export function getAttendanceService(
       [attendee.user.email],
       [],
       [],
-      `Du har flyttet opp på ventelisten for ${event.title}`,
-      emails.WAITLIST_NOTIFICATION,
+      `Du har rykket frem i køen til ${event.title}`,
+      emails.QUEUE_NOTIFICATION,
       {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
         position,
       }
     )
@@ -389,6 +401,7 @@ export function getAttendanceService(
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
       }
     )
   }
@@ -661,7 +674,7 @@ export function getAttendanceService(
               return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_REGISTRATION")
             }
 
-            if (!attendee.registered) {
+            if (attendee.registeredAt === null) {
               return registrationAvailabilityFailure(eventCause, "MISSING_PARENT_RESERVATION")
             }
           }
@@ -738,6 +751,8 @@ export function getAttendanceService(
 
       return {
         reservationActiveAt,
+        registrationPoolDelayHours: applicablePool.mergeDelayHours,
+        registrationMarkDelayHours: punishment?.delay ?? null,
         event,
         attendance,
         user,
@@ -751,7 +766,20 @@ export function getAttendanceService(
 
     async registerAttendee(
       handle,
-      { user, event, attendance, pool, reservationActiveAt, bypassedChecks, membership, options, success }
+      {
+        user,
+        event,
+        attendance,
+        pool,
+        reservationActiveAt,
+        bypassedChecks,
+        membership,
+        options,
+        success,
+        registrationPoolDelayHours,
+        registrationMarkDelayHours,
+      },
+      adminRegisteredByUserId = null
     ) {
       // Since the user is permitted to attend the event (as the input result is a success), we output some debug
       // diagnostics based on any potential checks passed. This is done in this function as to not pollute logs when a
@@ -766,10 +794,12 @@ export function getAttendanceService(
         membership,
         options,
         success,
+        registrationPoolDelayHours,
+        registrationMarkDelayHours,
       })
 
       const registeredPoolAttendees = attendance.attendees.filter(
-        (attendee) => attendee.attendancePoolId === pool.id && attendee.registered
+        (attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt !== null
       )
       const isImmediateReservation =
         (!isFuture(reservationActiveAt) && (pool.capacity === 0 || registeredPoolAttendees.length < pool.capacity)) ||
@@ -783,9 +813,11 @@ export function getAttendanceService(
         pool.id,
         user.id,
         AttendeeWriteSchema.parse({
+          adminRegisteredByUserId,
           attendedAt: null,
-          earliestReservationAt: reservationActiveAt,
-          registered: isImmediateReservation,
+          registrationPoolDelayHours,
+          registrationMarkDelayHours,
+          registeredAt: isImmediateReservation ? getCurrentUTC() : null,
           selections: [],
           userGrade,
         } satisfies AttendeeWrite)
@@ -824,7 +856,7 @@ export function getAttendanceService(
             attendeeId: attendee.id,
             attendanceId: attendance.id,
           },
-          reservationActiveAt
+          new TZDate(attendee.registrationEligibleAt)
         )
       }
 
@@ -880,7 +912,7 @@ export function getAttendanceService(
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendanceId})`)
       }
 
-      if (attendee.registered) {
+      if (attendee.registeredAt !== null) {
         return
       }
 
@@ -888,10 +920,10 @@ export function getAttendanceService(
       invariant(pool !== undefined)
 
       const registeredAdjacentAttendees = attendance.attendees.filter(
-        (adjacentAttendee) => adjacentAttendee.attendancePoolId === pool.id && adjacentAttendee.registered
+        (adjacentAttendee) => adjacentAttendee.attendancePoolId === pool.id && adjacentAttendee.registeredAt !== null
       )
-      const isPoolAtMaxCapacity = registeredAdjacentAttendees.length >= pool.capacity
-      const isFutureReservationTime = isFuture(attendee.earliestReservationAt)
+      const isPoolAtMaxCapacity = pool.capacity !== 0 && registeredAdjacentAttendees.length >= pool.capacity
+      const isFutureReservationTime = isFuture(attendee.registrationEligibleAt)
 
       if (isPoolAtMaxCapacity) {
         return
@@ -899,17 +931,17 @@ export function getAttendanceService(
 
       if (isFutureReservationTime) {
         logger.warn(
-          "ReserveAttendee task for Attendee(ID=%s) ran before earliestReservationAt %s.",
+          "ReserveAttendee task for Attendee(ID=%s) ran before registrationEligibleAt %s.",
           attendee.id,
-          attendee.earliestReservationAt.toUTCString()
+          attendee.registrationEligibleAt.toUTCString()
         )
       }
 
       const data = AttendeeWriteSchema.parse(attendee)
-      data.registered = true
+      data.registeredAt = getCurrentUTC()
 
       await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
-      attendee.registered = true
+      attendee.registeredAt = data.registeredAt
 
       const hasExistingPayment =
         attendee.paymentLink !== null ||
@@ -937,7 +969,8 @@ export function getAttendanceService(
       }
 
       sendEventRegistrationEmail(event, attendance, attendee)
-      emitRegisterChange(eventEmitter, attendance, attendee, "reserved")
+
+      emitRegisterChange(eventEmitter, attendance, attendee, "updated")
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -954,8 +987,12 @@ export function getAttendanceService(
         )
       }
 
-      // We must allow people to deregister if they are on the waitlist, hence the check for `attendee.registered`
-      if (attendee.registered && isPast(attendance.deregisterDeadline) && !options.ignoreDeregistrationWindow) {
+      // Queued attendees can deregister after the deadline because they do not hold a seat.
+      if (
+        attendee.registeredAt !== null &&
+        isPast(attendance.deregisterDeadline) &&
+        !options.ignoreDeregistrationWindow
+      ) {
         throw new FailedPreconditionError(
           `Cannot deregister Attendee(ID=${attendeeId}) from Attendance(ID=${attendance.id}) after registration end`
         )
@@ -982,14 +1019,14 @@ export function getAttendanceService(
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
-      // If the deregistered attendee wasn't registered, no spot was freed up, so no waitlist promotion is needed.
-      if (!attendee.registered) {
+      // If the deregistered attendee wasn't registered, no spot was freed up, so no queue promotion is needed.
+      if (attendee.registeredAt === null) {
         return
       }
 
       const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
       const registeredAttendeeCount = remainingAttendees.filter(
-        (remainingAttendee) => remainingAttendee.registered && remainingAttendee.attendancePoolId === pool.id
+        (remainingAttendee) => remainingAttendee.registeredAt !== null && remainingAttendee.attendancePoolId === pool.id
       ).length
 
       // If the pool is at capacity, we cannot reserve anyone new
@@ -1003,13 +1040,15 @@ export function getAttendanceService(
       // 1. The attendee must be in the same pool as the deregistered attendee
       // 2. The attendee must not already be registered
       // 3. The attendee must have a reservation time not in the future
-      const sortedWaitlist = remainingAttendees
+      const sortedQueue = remainingAttendees
         .filter((a) => a.attendancePoolId === pool.id)
-        .filter((waitlistAttendee) => !waitlistAttendee.registered)
-        .filter((a) => !isFuture(a.earliestReservationAt))
-        .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
+        .filter((queuedAttendee) => queuedAttendee.registeredAt === null)
+        .filter((queuedAttendee) => !isFuture(queuedAttendee.registrationEligibleAt))
+        .toSorted((firstAttendee, secondAttendee) =>
+          compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+        )
 
-      const firstQueuedAdjacentAttendee = sortedWaitlist.at(0)
+      const firstQueuedAdjacentAttendee = sortedQueue.at(0)
 
       if (firstQueuedAdjacentAttendee === undefined) {
         return
@@ -1036,12 +1075,13 @@ export function getAttendanceService(
         )
       }
 
+      const registeredAt = getCurrentUTC()
       await attendanceRepository.updateAttendeeById(
         handle,
         firstQueuedAdjacentAttendee.id,
         AttendeeWriteSchema.parse({
           ...firstQueuedAdjacentAttendee,
-          registered: true,
+          registeredAt,
         })
       )
 
@@ -1059,13 +1099,13 @@ export function getAttendanceService(
 
       const promotedAttendee = {
         ...firstQueuedAdjacentAttendee,
-        registered: true,
+        registeredAt,
       }
 
-      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "reserved")
+      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "updated")
 
-      for (const [index, waitlistAttendee] of sortedWaitlist.slice(1, 4).entries()) {
-        sendWaitlistNotificationEmail(event, index + 1, waitlistAttendee)
+      for (const [index, queueAttendee] of sortedQueue.slice(1, 4).entries()) {
+        sendQueueNotificationEmail(event, index + 1, queueAttendee)
       }
     },
 
@@ -1260,7 +1300,7 @@ export function getAttendanceService(
         paymentId: payment.id,
         paymentLink: payment.url,
         paymentRefundedAt: null,
-        paymentRefundedById: null,
+        paymentRefundedByUserId: null,
         paymentChargedAt: null,
         paymentReservedAt: null,
         paymentChargeDeadline: isImmediatePayment ? null : maximalChargeTime,
@@ -1337,7 +1377,7 @@ export function getAttendanceService(
         paymentLink: null,
         paymentReservedAt: null,
         paymentRefundedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-        paymentRefundedById: refundedByUserId,
+        paymentRefundedByUserId: refundedByUserId,
       })
 
       await clearAttendeeCompletionDeadline(handle, attendeeId)
@@ -1383,7 +1423,7 @@ export function getAttendanceService(
           paymentRefundedAt: now,
           // This is set to null for now when the payment is refunded manually from the Stripe dashboard,
           // Optional TODO: Create a user for the Stripe dashboard
-          paymentRefundedById: attendee.paymentRefundedById ?? null,
+          paymentRefundedByUserId: attendee.paymentRefundedByUserId ?? null,
         }
       } else if (payment.status === "CANCELLED" || payment.status === "UNPAID") {
         updatedPayment = {
@@ -1442,16 +1482,31 @@ export function getAttendanceService(
           {
             details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
             // We do not have a method for indefinite duration yet.
-            duration: 100_000,
+            duration: INDEFINITE_SUSPENSION_DURATION,
             title: "Suspensjon for manglende betaling",
             type: "MISSING_PAYMENT",
             // Immediate suspension
-            weight: 6,
+            weight: SUSPENSION_MARK_WEIGHT,
           },
-          event.hostingGroups.map((g) => g.slug)
+          event.hostingGroups.map((group) => group.slug)
         )
 
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)
+
+        const missingPaymentMark = await markService.create(
+          handle,
+          {
+            details: `Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
+            duration: DEFAULT_MARK_DURATION,
+            title: `Manglende betaling for ${event.title}`,
+            type: "MISSING_PAYMENT",
+            weight: 1,
+          },
+          event.hostingGroups.map((group) => group.slug)
+        )
+
+        await personalMarkService.addToUser(handle, attendee.userId, missingPaymentMark.id)
+
         logger.info(
           "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,
@@ -1586,6 +1641,7 @@ export function getAttendanceService(
           {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
             feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
@@ -1615,7 +1671,7 @@ export function getAttendanceService(
         try {
           const attendance = await this.getAttendanceById(handle, event.attendanceId)
           const attendeesNotAttended = attendance.attendees.filter(
-            (attendee) => attendee.registered && !attendee.attendedAt
+            (attendee) => attendee.registeredAt !== null && !attendee.attendedAt
           )
 
           if (attendeesNotAttended.length === 0) {
@@ -1790,6 +1846,7 @@ export function getAttendanceService(
           {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
             message,
           }
         )
@@ -2028,7 +2085,7 @@ export function buildDeregistrationAvailabilityView(
 
   if (hasBeenCharged) {
     rejectionCause = "PAYMENT_COMPLETED"
-  } else if (attendee.registered && isPastDeregisterDeadline) {
+  } else if (attendee.registeredAt !== null && isPastDeregisterDeadline) {
     rejectionCause = "DEREGISTER_DEADLINE_PASSED"
   }
 

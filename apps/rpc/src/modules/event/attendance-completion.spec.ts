@@ -1,6 +1,11 @@
+import { EventEmitter } from "node:events"
+import type { DBHandle } from "@dotkomonline/db"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addHours, addMinutes, subMinutes } from "date-fns"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
+import { mock } from "vitest-mock-extended"
+import { DEFAULT_MARK_DURATION, type Mark } from "../mark/mark"
+import type { Payment } from "../payment/payment-service"
 import {
   type Attendance,
   type Attendee,
@@ -8,6 +13,8 @@ import {
   getAttendeeState,
   getMissingAttendanceCompletionRequirements,
 } from "./attendance"
+import { getAttendanceService } from "./attendance-service"
+import type { Event } from "./event"
 
 const userId = "00000000-0000-4000-8000-000000000001"
 
@@ -34,9 +41,11 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: getCurrentUTC(),
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -44,7 +53,8 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     paymentLink: null,
     paymentChargeDeadline: null,
     paymentReservedAt: null,
-    paymentRefundedById: null,
+    paymentRefundedByUserId: null,
+    adminRegisteredByUserId: null,
     paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
@@ -66,9 +76,9 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
   }) as Attendee
 
 describe("attendance completion helpers", () => {
-  it("returns QUEUED for waitlisted attendees", () => {
+  it("returns QUEUED for queued attendees", () => {
     const attendance = createAttendance()
-    const attendee = createAttendee({ registered: false })
+    const attendee = createAttendee({ registeredAt: null })
 
     expect(getAttendeeState(attendee, attendance)).toBe("QUEUED")
   })
@@ -110,20 +120,43 @@ describe("attendance completion helpers", () => {
     })
   })
 
-  it("builds completion view for queued attendee with pending payment", () => {
+  it("ignores leftover payment details while the attendee is queued", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({
-      registered: false,
+      registeredAt: null,
       completionDeadline: addHours(getCurrentUTC(), 24),
       paymentLink: "https://example.com/pay",
     })
 
     expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
       attendeeState: "QUEUED",
-      completionDeadline: attendee.completionDeadline,
+      completionDeadline: null,
+      requirements: [],
+      missingRequirements: [],
+      paymentLink: null,
+    })
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+  })
+
+  it("requires payment after a queued attendee receives a place", () => {
+    const attendance = createAttendance()
+    const attendee = createAttendee({ registeredAt: null })
+
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+
+    const promotedAttendee = {
+      ...attendee,
+      registeredAt: new Date(),
+      completionDeadline: addHours(getCurrentUTC(), 24),
+      paymentLink: "https://example.com/pay",
+    }
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, promotedAttendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline: promotedAttendee.completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
-      paymentLink: "https://example.com/pay",
+      paymentLink: promotedAttendee.paymentLink,
     })
   })
 
@@ -131,5 +164,98 @@ describe("attendance completion helpers", () => {
     const attendance = createAttendance()
 
     expect(buildRegistrationAvailabilityCompletionView(attendance, null)).toBeNull()
+  })
+})
+
+function createPaymentVerificationContext(deregisterDeadline: Date, paymentStatus: "UNPAID" | "PAID") {
+  const handle = mock<DBHandle>()
+  const attendanceRepository = mock<Parameters<typeof getAttendanceService>[1]>()
+  const taskSchedulingService = mock<Parameters<typeof getAttendanceService>[2]>()
+  const markService = mock<Parameters<typeof getAttendanceService>[4]>()
+  const personalMarkService = mock<Parameters<typeof getAttendanceService>[5]>()
+  const paymentService = mock<Parameters<typeof getAttendanceService>[6]>()
+  const eventService = mock<Parameters<typeof getAttendanceService>[8]>()
+  const attendee = createAttendee({ paymentId: "payment", completionDeadline: subMinutes(getCurrentUTC(), 1) })
+  const attendance = createAttendance({ attendees: [attendee], deregisterDeadline })
+  const event = mock<Event>({ id: "test-event", title: "Test event", hostingGroups: [] })
+
+  attendanceRepository.findAttendanceByAttendeeId.mockResolvedValue(attendance)
+  taskSchedulingService.findVerifyAttendanceCompletionTask.mockResolvedValue(null)
+  eventService.getByAttendanceId.mockResolvedValue(event)
+  paymentService.getById.mockResolvedValue(mock<Payment>({ status: paymentStatus }))
+  markService.create
+    .mockResolvedValueOnce(mock<Mark>({ id: "suspension" }))
+    .mockResolvedValueOnce(mock<Mark>({ id: "missing-payment-mark" }))
+
+  const attendanceService = getAttendanceService(
+    new EventEmitter(),
+    attendanceRepository,
+    taskSchedulingService,
+    mock(),
+    markService,
+    personalMarkService,
+    paymentService,
+    mock(),
+    eventService,
+    mock(),
+    mock(),
+    mock(),
+    mock()
+  )
+
+  return { handle, attendee, attendanceService, markService, personalMarkService }
+}
+
+describe("missing payment penalties", () => {
+  it("assigns a suspension and a separate one-point mark after the deregistration deadline", async () => {
+    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentVerificationContext(
+      subMinutes(getCurrentUTC(), 60),
+      "UNPAID"
+    )
+
+    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+
+    expect(markService.create).toHaveBeenCalledTimes(2)
+    expect(markService.create).toHaveBeenNthCalledWith(
+      1,
+      handle,
+      expect.objectContaining({ type: "MISSING_PAYMENT", weight: 6, duration: 100_000 }),
+      []
+    )
+    expect(markService.create).toHaveBeenNthCalledWith(
+      2,
+      handle,
+      expect.objectContaining({ type: "MISSING_PAYMENT", weight: 1, duration: DEFAULT_MARK_DURATION }),
+      []
+    )
+    expect(personalMarkService.addToUser).toHaveBeenCalledTimes(2)
+    expect(personalMarkService.addToUser).toHaveBeenCalledWith(handle, attendee.userId, "suspension")
+    expect(personalMarkService.addToUser).toHaveBeenCalledWith(handle, attendee.userId, "missing-payment-mark")
+  })
+
+  it("deregisters an unpaid attendee before the deregistration deadline without assigning penalties", async () => {
+    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentVerificationContext(
+      addHours(getCurrentUTC(), 1),
+      "UNPAID"
+    )
+    const deregisterAttendee = vi.spyOn(attendanceService, "deregisterAttendee").mockResolvedValue()
+
+    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+
+    expect(deregisterAttendee).toHaveBeenCalledWith(handle, attendee.id, { ignoreDeregistrationWindow: true })
+    expect(markService.create).not.toHaveBeenCalled()
+    expect(personalMarkService.addToUser).not.toHaveBeenCalled()
+  })
+
+  it("does not assign penalties when payment has succeeded", async () => {
+    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentVerificationContext(
+      subMinutes(getCurrentUTC(), 60),
+      "PAID"
+    )
+
+    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+
+    expect(markService.create).not.toHaveBeenCalled()
+    expect(personalMarkService.addToUser).not.toHaveBeenCalled()
   })
 })

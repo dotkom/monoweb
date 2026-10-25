@@ -9,7 +9,9 @@ import {
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { env } from "@admin/lib/env"
 import { useTRPC } from "@admin/lib/trpc-client"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
+import { canEditUserProfile, canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
 import { getStudyGrade } from "@dotkomonline/utils"
 import {
   IconBuildingWarehouse,
@@ -20,7 +22,6 @@ import {
   IconWheelchair,
 } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { usePathname } from "next/navigation"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { UserDetailsContext } from "./provider"
@@ -33,8 +34,7 @@ export default function UserDetailsLayout({
   const id = decodeURIComponent(use(params).id)
   const pathname = usePathname()
   const authorization = useAuthorization()
-  const { user: sessionUser } = useUser()
-  const canManageMemberships = authorization.canManageUserMemberships()
+  const canManageMemberships = canManageUserMemberships(authorization)
 
   const { data: user, isLoading, isError, error } = useQuery(trpc.user.get.queryOptions(id))
 
@@ -76,7 +76,8 @@ export default function UserDetailsLayout({
       },
     ]
 
-    if (authorization.canAccessAuditLog()) {
+    // TODO: This and similar should use `navigation.ts`
+    if (canAccessAuditLog(authorization)) {
       items.push({
         href: `${basePath}/hendelseslogg`,
         label: "Hendelseslogg",
@@ -92,7 +93,7 @@ export default function UserDetailsLayout({
       return undefined
     }
 
-    const canEdit = authorization.canEditUserProfile(user.id, sessionUser?.sub ?? null)
+    const canEdit = canEditUserProfile(authorization, user.id)
     const decodedPath = decodeURIComponent(pathname)
     const isMedlemskapRoute =
       decodedPath === `${basePath}/medlemskap` || decodedPath.startsWith(`${basePath}/medlemskap/`)
@@ -116,7 +117,7 @@ export default function UserDetailsLayout({
     }
 
     return undefined
-  }, [authorization, basePath, canManageMemberships, pathname, sessionUser?.sub, user])
+  }, [authorization, basePath, canManageMemberships, pathname, user])
 
   if (isLoading) {
     return null
@@ -149,6 +150,7 @@ export default function UserDetailsLayout({
       viewInWebProps={{
         label: "Se brukerprofil",
         href: new URL(`profil/${user.username}`, env.NEXT_PUBLIC_WEB_URL).toString(),
+        prefetch: false,
       }}
     >
       <UserDetailsContext.Provider value={{ user }}>{children}</UserDetailsContext.Provider>

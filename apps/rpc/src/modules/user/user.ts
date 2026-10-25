@@ -200,15 +200,15 @@ export function getFlagLabel(name: FlagName) {
   }
 }
 
-export function isKnight(user: Pick<User, "memberships">) {
+export function isKnight(user: { memberships: Pick<Membership, "type">[] }) {
   return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
 }
 
-export function isVanityVerified(user: Pick<User, "flags">) {
+export function isVanityVerified(user: { flags: Pick<UserFlag, "name">[] }) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
 }
 
-export function isExceptionallyDistinguished(user: Pick<User, "flags">) {
+export function isExceptionallyDistinguished(user: { flags: Pick<UserFlag, "name">[] }) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED)
 }
 

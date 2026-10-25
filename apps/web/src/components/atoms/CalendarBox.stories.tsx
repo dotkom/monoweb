@@ -28,7 +28,7 @@ export const AllStates = () => (
       <Text className="text-sm text-muted-foreground">Spans month change</Text>
 
       <div className="w-fit">
-        <CalendarBox start={new Date(2026, 7, 28, 12, 0)} end={new Date(2026, 8, 2, 23, 59)} />
+        <CalendarBox start={new Date(2026, 5, 28, 12, 0)} end={new Date(2026, 6, 2, 23, 59)} />
       </div>
     </div>
 

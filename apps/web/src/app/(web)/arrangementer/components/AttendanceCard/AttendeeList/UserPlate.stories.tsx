@@ -1,6 +1,7 @@
 import { Text } from "@dotkomonline/ui"
-import type { Attendee } from "@dotkomonline/rpc/attendance"
+import { type Attendee, type AttendeeSummary, AttendeeSummarySchema } from "@dotkomonline/rpc/attendance"
 import { type FlagName, FlagNameSchema, type User, type UserFlag } from "@dotkomonline/rpc/user"
+import { addHours, subHours, subMinutes } from "date-fns"
 import { createMockAttendee, createMockUser } from "../../../../../../../.ladle/fixtures/attendance"
 import { AttendeeList } from "./AttendeeList"
 import { getUserIcons, getUserPlate } from "./UserPlate"
@@ -67,6 +68,74 @@ function createPlateAttendee(user: User, overrides: Partial<Attendee> = {}): Att
     ...overrides,
   })
 }
+
+const now = new Date()
+
+const brage = createMockUser({
+  id: "00000000-0000-4000-8000-000000000069",
+  username: "dotkom",
+  name: "Brage Andreas Hoven",
+  createdAt: subMinutes(now, 30),
+})
+
+const andre = createMockUser({
+  id: "00000000-0000-4000-8000-000000000067",
+  username: "andre",
+  name: "André Ferdinand Klarpås",
+  createdAt: subMinutes(now, 30),
+})
+
+const cena = createMockUser({
+  id: "00000000-0000-4000-8000-000000000113",
+  username: "ucantseeme",
+  name: "John Cena",
+  createdAt: subMinutes(now, 15),
+})
+
+const ordinaryUserDetails = [
+  { name: "Ella Vik", username: "ellavik" },
+  { name: "Lucas Andersen", username: "lucasandersen" },
+  { name: "Filip Haugen", username: "filiphaugen" },
+  { name: "Oliver Berg", username: "oliverberg" },
+  { name: "Jakob Nilsen", username: "jakobnilsen" },
+  { name: "Sofie Larsen", username: "sofielarsen" },
+  { name: "Ingrid Solberg", username: "ingridsolberg" },
+  { name: "Maja Strand", username: "majastrand" },
+  { name: "Aksel Moen", username: "akselmoen" },
+  { name: "Nora Johansen", username: "norajohansen" },
+  { name: "Thea Lund", username: "thealund" },
+  { name: "Emma Hansen", username: "emmahansen" },
+  { name: "Emil Bakke", username: "emilbakke" },
+  { name: "Frida Holm", username: "fridaholm" },
+  { name: "Henrik Dahl", username: "henrikdahl" },
+  { name: "Magnus Lie", username: "magnuslie" },
+  { name: "Amalie Haug", username: "amaliehaug" },
+  { name: "Oskar Eide", username: "oskareide" },
+  { name: "Sara Aas", username: "saraaas" },
+  { name: "William Foss", username: "williamfoss" },
+  { name: "Tuva Lien", username: "tuvalien" },
+  { name: "Mathias Sand", username: "mathiassand" },
+  { name: "Selma Rønning", username: "selmaronning" },
+  { name: "Elias Myhre", username: "eliasmyhre" },
+  { name: "Hedda Brekke", username: "heddabrekke" },
+  { name: "Sander Nygaard", username: "sandernygaard" },
+  { name: "Live Aas", username: "liveaas" },
+  { name: "Iver Sørensen", username: "iversorensen" },
+]
+
+const ordinaryUsers = [
+  brage,
+  andre,
+  cena,
+  ...ordinaryUserDetails.map((userDetails, index) =>
+    createMockUser({
+      id: `00000000-0000-4000-8000-${(index + 200).toString().padStart(12, "0")}`,
+      ...userDetails,
+    })
+  ),
+]
+
+const ordinaryAttendees = ordinaryUsers.map((user, index) => createPlateAttendee(user, { userGrade: (index % 5) + 1 }))
 
 function PlatePreview({ attendee, viewer }: { attendee: Attendee; viewer: User }) {
   const Plate = getUserPlate(attendee.user)
@@ -193,6 +262,32 @@ const noGradeAttendee = createPlateAttendee(
   { userGrade: null }
 )
 
+function createDelayedAttendees(): AttendeeSummary[] {
+  const now = new Date()
+  const users = [
+    createMockUser({
+      id: "00000000-0000-4000-8000-000000000110",
+      username: "dinadahl",
+      name: "Dina Dahl",
+    }),
+    createMockUser({
+      id: "00000000-0000-4000-8000-000000000113",
+      username: "asgeir",
+      name: "Asgeir Asgeirsson",
+    }),
+  ]
+
+  return users.map((user, index) =>
+    AttendeeSummarySchema.parse(
+      createPlateAttendee(user, {
+        registeredAt: null,
+        createdAt: now,
+        registrationEligibleAt: addHours(now, index + 1),
+      })
+    )
+  )
+}
+
 export const AllStates = () => (
   <div className="flex max-w-lg flex-col gap-8">
     <LabeledPlate label="Generic" attendee={genericAttendee} />
@@ -208,23 +303,54 @@ export const AllStates = () => (
   </div>
 )
 
-export const InList = () => (
-  <div className="max-w-lg">
-    <AttendeeList
-      user={viewer}
-      maxNumberOfAttendees={10}
-      attendees={[
-        genericAttendee,
-        currentUserAttendee,
-        vanityVerifiedAttendee,
-        distinguishedAttendee,
-        knightAttendee,
-        knightAndVanityAttendee,
-        knightAndDistinguishedAttendee,
-        distinguishedAndVanityAttendee,
-        allBadgesAttendee,
-        noGradeAttendee,
-      ]}
-    />
-  </div>
-)
+export const InList = () => {
+  const plateAttendees = [
+    genericAttendee,
+    currentUserAttendee,
+    vanityVerifiedAttendee,
+    distinguishedAttendee,
+    knightAttendee,
+    knightAndVanityAttendee,
+    knightAndDistinguishedAttendee,
+    distinguishedAndVanityAttendee,
+    allBadgesAttendee,
+    noGradeAttendee,
+  ]
+  const attendees = [
+    ...plateAttendees.flatMap((attendee, index) => [...ordinaryAttendees.slice(index * 3, (index + 1) * 3), attendee]),
+    ...createDelayedAttendees(),
+  ]
+
+  return (
+    <div className="max-w-lg">
+      <AttendeeList user={viewer} maxNumberOfAttendees={attendees.length} attendees={attendees} />
+    </div>
+  )
+}
+
+export const WithDelays = () => {
+  const now = new Date()
+  const queuedAttendees = ordinaryAttendees.slice(0, 8).map((attendee, index) => ({
+    ...attendee,
+    registeredAt: null,
+    createdAt: subHours(now, 1),
+    registrationEligibleAt: subMinutes(now, 20 - index),
+  }))
+  const attendees = [
+    createPlateAttendee(viewer, {
+      registeredAt: null,
+      createdAt: subMinutes(now, 12),
+      registrationEligibleAt: subMinutes(now, 12),
+    }),
+
+    ...queuedAttendees,
+    ...createDelayedAttendees(),
+  ]
+
+  return (
+    <div className="flex max-w-lg flex-col gap-2">
+      <Text className="text-sm text-muted-foreground">Venteliste med aktiv og utløpt utsettelse</Text>
+      <AttendeeList user={viewer} maxNumberOfAttendees={attendees.length} attendees={attendees} />
+    </div>
+  )
+}

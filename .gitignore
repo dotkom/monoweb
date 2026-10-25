@@ -20,6 +20,7 @@ node_modules/
 # Package managers
 .pnp.*
 package-lock.json
+.pnpm-store/
 
 # AI / coding agents / local assistant state
 .cursor/

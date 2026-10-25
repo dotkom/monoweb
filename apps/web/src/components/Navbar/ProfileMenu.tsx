@@ -11,20 +11,14 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Button,
   cn,
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Text,
-  Title,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@dotkomonline/ui"
 import { createLogoutUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import {
@@ -35,143 +29,22 @@ import {
   IconLock,
   IconLogout2,
   IconMailForward,
-  IconMessageReport,
-  IconMoon,
   IconPalette,
   IconSettings,
-  IconSun,
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type ComponentType, type FC, Fragment, useState } from "react"
+import { ContactDebugDropdown } from "./ContactDebugDropdown"
+import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationDropdown } from "./NotificationDropdown"
-import { ThemeToggle } from "./ThemeToggle"
+import { ThemeDropdown, ThemeToggle } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
 import { BugReportModal } from "../molecules/BugReport/BugReportModal"
-import { GroupLogo } from "../atoms/GroupLogo"
-
-const DEBUG_CONTACT_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
-
-const ThemeDropdown: FC = () => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700">
-        <IconSun width={22} height={22} className="dark:hidden" />
-        <IconMoon width={22} height={22} className="hidden dark:block" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        sideOffset={24}
-        positionMethod="fixed"
-        className="w-fit -mr-3 rounded-xl border border-gray-300/70 bg-gray-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
-      >
-        <ThemeToggle />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-
-const ContactDebugDropdown: FC = () => (
-  <DropdownMenu>
-    <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="unstyled"
-              aria-label="Kontakt debug, les mer om debug"
-              className={cn(
-                "transition-colors",
-                "flex items-center justify-center size-10 rounded-full",
-                "hover:bg-gray-200 dark:hover:bg-stone-700/50"
-              )}
-            >
-              <IconMessageReport className="size-6" strokeWidth={1.6} />
-            </Button>
-          }
-        />
-      </TooltipTrigger>
-      <TooltipContent>Opplevd noe ugreit?</TooltipContent>
-    </Tooltip>
-
-    <DropdownMenuContent
-      align="end"
-      className="w-[calc(100vw-2rem)] mx-2.75 xs:mx-0 xs:w-90 p-3 bg-background border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
-      sideOffset={24}
-      positionMethod="fixed"
-    >
-      <div className="flex flex-col gap-3">
-        <Title size="md" element="h3" className="px-3 pt-1.5 max-sm:hidden">
-          Har du opplevd noe ugreit?
-        </Title>
-        <Title size="md" element="h3" className="px-3 pt-1.5 sm:hidden">
-          Opplevd noe ugreit?
-        </Title>
-
-        <Link
-          href="/grupper/debug"
-          className={cn(
-            "flex flex-row items-center gap-3 p-3 pl-1 rounded-xl transition-colors",
-            "hover:bg-gray-50 dark:hover:bg-stone-700/25",
-            "border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
-          )}
-        >
-          <GroupLogo
-            src="/debug-logo.png"
-            alt="Debug"
-            width={42}
-            height={42}
-            containerClassName="rounded-full p-1.25"
-          />
-
-          <div className="flex flex-col gap-0">
-            <Title element="p" size="md">
-              Debug
-            </Title>
-
-            <Text className="text-sm text-muted-foreground">Onlines uavhengige varslingsorgan</Text>
-          </div>
-        </Link>
-
-        <Text className="px-3 text-sm">
-          Alle Debug-medlemmer har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten innsyn fra
-          ledelsen i Online.
-        </Text>
-
-        <div className="flex flex-col gap-2 mt-3">
-          <Button
-            element={Link}
-            variant="default"
-            size="xl"
-            href={DEBUG_CONTACT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Text element="span">Ta kontakt med Debug</Text>
-            <IconArrowUpRight className="size-5" />
-          </Button>
-
-          <Button
-            element={Link}
-            variant="ghost"
-            href="/grupper/debug"
-            rel="noopener noreferrer"
-            className="w-fit hover:bg-gray-200 dark:hover:bg-stone-700"
-          >
-            Les mer om Debug
-            <IconArrowUpRight className="size-4" />
-          </Button>
-        </div>
-      </div>
-    </DropdownMenuContent>
-  </DropdownMenu>
-)
 
 const UnauthenticatedActions: FC = () => {
   return (
     <div className="flex items-center">
-      <NotificationDropdown isAuthenticated={false} />
       <ContactDebugDropdown />
       <ThemeDropdown />
     </div>
@@ -332,12 +205,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             )}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
-          sideOffset={24}
-          positionMethod="fixed"
-        >
+        <NavbarDropdownContent className="w-[calc(100vw-2rem)] xs:w-72 rounded-3xl p-3 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md">
           <DropdownMenuLabel className="font-normal p-3 mb-2">
             <div className="flex flex-col min-w-0 flex-1">
               <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -461,7 +329,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
               <Text className="text-sm font-medium">Logg ut</Text>
             </a>
           </DropdownMenuItem>
-        </DropdownMenuContent>
+        </NavbarDropdownContent>
       </DropdownMenu>
       <BugReportModal open={isBugReportModalOpen} setOpen={setBugReportModalOpen} />
     </>

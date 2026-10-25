@@ -34,13 +34,13 @@ export function ExceptionallyDistinguishedPlate(props: PlateProps) {
   )
 }
 
-function getExceptionallyDistinguishedTooltipText(flags: UserFlag[]) {
+function getExceptionallyDistinguishedTooltipText(flags: Pick<UserFlag, "awardedAt">[]) {
   const years = flags.map(formatExceptionallyDistinguishedCreatedAtYear)
 
   return `Særskilt utmerkelse ${ogJoin(years)}`
 }
 
-export function getExceptionallyDistinguishedLargeIcon(flags: UserFlag[]) {
+export function getExceptionallyDistinguishedLargeIcon(flags: Pick<UserFlag, "awardedAt" | "imageUrl">[]) {
   const triggerClassName =
     "relative flex size-10 items-center justify-center overflow-hidden rounded-full bg-white p-px leading-none"
 
@@ -72,7 +72,7 @@ export function getExceptionallyDistinguishedLargeIcon(flags: UserFlag[]) {
   )
 }
 
-export function getExceptionallyDistinguishedSmallIcon(flags: UserFlag[]) {
+export function getExceptionallyDistinguishedSmallIcon(flags: Pick<UserFlag, "awardedAt" | "imageUrl">[]) {
   const triggerClassName = "relative -my-1 size-5 overflow-hidden rounded-full bg-white p-px"
   const imageUrl = flags[0]?.imageUrl
 

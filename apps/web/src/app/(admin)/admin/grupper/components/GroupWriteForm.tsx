@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { CheckboxField } from "@admin/components/forms/CheckboxField"
 import { Form } from "@admin/components/forms/Form"
 import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
@@ -21,6 +22,7 @@ import {
   type GroupWrite,
   GroupWriteSchema,
 } from "@dotkomonline/rpc/group"
+import { canCreateGroup, canUpdateGroup } from "@dotkomonline/rpc/group-permissions"
 import { Button, Text } from "@dotkomonline/ui"
 import { getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -108,8 +110,26 @@ export const GroupWriteForm = ({
   disabled,
 }: GroupWriteFormProps) => {
   const { groups } = useGroupAllQuery()
+  const authorization = useAuthorization()
   const existingGroupSlugs = groups.map((group) => group.slug)
   const fileUpload = useGroupFileUploadMutation()
+  const groupId = defaultValues.slug
+  const currentType = defaultValues.type ?? null
+
+  const typeOptions = useMemo(
+    () =>
+      GroupTypeSchema.options
+        .filter((groupType) =>
+          currentType !== null && groupId !== undefined
+            ? canUpdateGroup(authorization, groupId, currentType, groupType)
+            : canCreateGroup(authorization, groupType)
+        )
+        .map((groupType) => ({
+          value: groupType,
+          label: getGroupTypeName(groupType),
+        })),
+    [authorization, currentType, groupId]
+  )
 
   const validationSchema = useMemo(
     () =>
@@ -205,6 +225,7 @@ export const GroupWriteForm = ({
         label="Bilde"
         maxSizeKiB={GROUP_IMAGE_MAX_SIZE_KIB}
         onFileUpload={fileUpload}
+        aspectRatio={{ width: 16, height: 9 }}
       />
       <SelectField
         control={form.control}
@@ -212,10 +233,7 @@ export const GroupWriteForm = ({
         label="Type"
         placeholder="Velg en"
         required
-        options={GroupTypeSchema.options.map((groupType) => ({
-          value: groupType,
-          label: getGroupTypeName(groupType),
-        }))}
+        options={typeOptions}
       />
       <SelectField
         control={form.control}

@@ -51,6 +51,7 @@
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.1",
     "react-dropzone": "^20.1.2",
+    "react-easy-crop": "^6.2.4",
     "react-hook-form": "^7.88.0",
     "react-parallax-tilt": "^1.7.299",
     "shadcn": "^4.8.0",
@@ -67,10 +68,10 @@
     "@ladle/react": "5.1.1",
     "@tailwindcss/postcss": "4.1.18",
     "@types/react": "19.2.18",
-    "postcss": "8.5.29",
+    "postcss": "8.5.30",
     "tailwindcss": "4.3.0",
-    "typescript": "5.9.3",
-    "vite": "6.4.3",
+    "typescript": "7.0.2",
+    "vite": "6.4.4",
     "vitest": "3.2.7"
   }
 }

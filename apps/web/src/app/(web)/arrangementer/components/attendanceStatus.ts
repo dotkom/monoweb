@@ -1,4 +1,5 @@
 import type { Attendance, AttendanceStatus } from "@dotkomonline/rpc/attendance"
+import { isAfter, isBefore } from "date-fns"
 type AttendanceRegisterStartAndEnd = Pick<Attendance, "registerStart" | "registerEnd">
 
 export const getAttendanceStatus = (
@@ -7,11 +8,11 @@ export const getAttendanceStatus = (
 ): AttendanceStatus => {
   const { registerStart, registerEnd } = registerStartAndEnd
 
-  if (now < registerStart) {
+  if (isBefore(now, registerStart)) {
     return "NOT_OPENED"
   }
 
-  if (now > registerEnd) {
+  if (isAfter(now, registerEnd)) {
     return "CLOSED"
   }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import type { MenuLink } from "@/components/Navbar/Navbar"
+import type { MenuLink } from "@/components/Navbar/NavbarContent"
 import { Text, cn } from "@dotkomonline/ui"
 import {
   NavigationMenu,

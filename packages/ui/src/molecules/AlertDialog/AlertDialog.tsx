@@ -44,7 +44,7 @@ type AlertDialogContentProps = Omit<ComponentProps<typeof ShadcnAlertDialogConte
 export function AlertDialogContent({ size = "md", onOutsideClick, className, ...props }: AlertDialogContentProps) {
   return (
     <AlertDialogPortal>
-      <AlertDialogOverlay onClick={onOutsideClick} />
+      <AlertDialogOverlay forceRender={onOutsideClick !== undefined} onClick={onOutsideClick} />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
         data-size={size}

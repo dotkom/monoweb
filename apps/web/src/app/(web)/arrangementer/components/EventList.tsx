@@ -2,14 +2,15 @@
 
 import { EventCard, EventCardSkeleton } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem, EventListItemSkeleton } from "@/components/molecules/EventListItem/EventListItem"
+import { LoadMoreSentinel } from "@/components/molecules/LoadMoreSentinel/LoadMoreSentinel"
+import { useCurrentTime } from "@/utils/use-current-time"
 import { getAttendee } from "@dotkomonline/rpc/attendance"
-import type { EventWithAttendance, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, cn } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
-import { Fragment, useEffect, useRef, type FC } from "react"
+import type { FC } from "react"
 import z from "zod"
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
@@ -18,16 +19,26 @@ export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
 export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 export type EventListDisplayMode = "cards" | "list"
 
-export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendance
+export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendanceView
+
+export interface EventListLoadMoreProps {
+  fetchNextPage: () => void
+  hasNextPage: boolean
+  isFetchingNextPage: boolean
+  isPlaceholderData: boolean
+  isLoading: boolean
+}
 
 interface EventListProps {
-  futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
-  pastEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendance[]
+  futureEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendanceView[]
+  pastEventWithAttendances: EventWithAttendanceSummary[] | EventWithAttendanceView[]
   userId?: UserId
-  onLoadMore?(): void
+  futureLoadMore?: EventListLoadMoreProps
+  pastLoadMore?: EventListLoadMoreProps
   alwaysShowChildEvents?: boolean
   viewMode?: EventListViewMode
   displayMode?: EventListDisplayMode
+  registeredEventCount?: number
 }
 
 interface EventItemsProps {
@@ -36,8 +47,7 @@ interface EventItemsProps {
   userId?: UserId
 }
 
-interface EventSection {
-  key: string
+interface EventListSectionData {
   title?: string
   eventsWithAttendance: EventWithAttendanceDetails[]
 }
@@ -71,13 +81,15 @@ const EventListDivider = ({ text }: { text: string }) => (
 export const EventList: FC<EventListProps> = ({
   futureEventWithAttendances,
   pastEventWithAttendances,
-  onLoadMore,
+  futureLoadMore,
+  pastLoadMore,
   alwaysShowChildEvents,
   viewMode = "ATTENDANCE",
   displayMode = "list",
   userId,
+  registeredEventCount = 0,
 }: EventListProps) => {
-  const currentDate = getCurrentUTC()
+  const currentDate = useCurrentTime()
   const isCardView = displayMode === "cards"
 
   const filteredFutureEventWithAttendances = alwaysShowChildEvents
@@ -96,7 +108,7 @@ export const EventList: FC<EventListProps> = ({
           return true
         }
 
-        return getAttendee(parentEventWithAttendance.attendance, userId ?? null)?.registered
+        return getAttendee(parentEventWithAttendance.attendance, userId ?? null)?.registeredAt != null
       })
 
   const groupedEvents = Object.groupBy(filteredFutureEventWithAttendances, (eventWithAttendance) => {
@@ -154,62 +166,51 @@ export const EventList: FC<EventListProps> = ({
     )
   })
 
-  const eventSections: EventSection[] =
+  const eventSections =
     viewMode === "CHRONOLOGICAL"
-      ? [
-          {
-            key: "future-events",
-            eventsWithAttendance: futureEventWithAttendances,
-          },
-          {
-            key: "past-events",
-            title: "Tidligere arrangementer",
-            eventsWithAttendance: pastEventWithAttendances,
-          },
-        ]
-      : [
-          {
-            key: "your-events",
-            title: "Dine arrangementer",
-            eventsWithAttendance: yourEvents,
-          },
-          {
-            key: "open-events",
-            title: "Åpne arrangementer",
-            eventsWithAttendance: openEvents,
-          },
-          {
-            key: "opening-soon-events",
-            title: "Åpner snart",
-            eventsWithAttendance: openingSoonEvents,
-          },
-          {
-            key: "other-future-events",
-            title: "Kommende arrangementer",
-            eventsWithAttendance: otherFutureEvents,
-          },
-          {
-            key: "past-events",
-            title: "Tidligere arrangementer",
-            eventsWithAttendance: pastEventWithAttendances,
-          },
-        ]
-
-  const loaderElementReference = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        onLoadMore?.()
-      }
-    })
-
-    if (loaderElementReference.current) {
-      intersectionObserver.observe(loaderElementReference.current)
-    }
-
-    return () => intersectionObserver.disconnect()
-  }, [onLoadMore])
+      ? {
+          futureEventSections: [
+            {
+              eventsWithAttendance: futureEventWithAttendances.slice(0, registeredEventCount),
+            },
+            {
+              title: registeredEventCount > 0 ? "Kommende arrangementer" : undefined,
+              eventsWithAttendance: futureEventWithAttendances.slice(registeredEventCount),
+            },
+          ],
+          pastEventSections: [
+            {
+              title: "Tidligere arrangementer",
+              eventsWithAttendance: pastEventWithAttendances,
+            },
+          ],
+        }
+      : {
+          futureEventSections: [
+            {
+              title: "Dine arrangementer",
+              eventsWithAttendance: yourEvents,
+            },
+            {
+              title: "Åpne arrangementer",
+              eventsWithAttendance: openEvents,
+            },
+            {
+              title: "Åpner snart",
+              eventsWithAttendance: openingSoonEvents,
+            },
+            {
+              title: "Kommende arrangementer",
+              eventsWithAttendance: otherFutureEvents,
+            },
+          ],
+          pastEventSections: [
+            {
+              title: "Tidligere arrangementer",
+              eventsWithAttendance: pastEventWithAttendances,
+            },
+          ],
+        }
 
   if (futureEventWithAttendances.length === 0 && pastEventWithAttendances.length === 0) {
     return (
@@ -222,24 +223,63 @@ export const EventList: FC<EventListProps> = ({
 
   return (
     <section className={cn("flex w-full min-w-0 flex-col gap-2", isCardView && "gap-6")}>
-      {eventSections.map((eventSection) => {
-        if (eventSection.eventsWithAttendance.length === 0) {
-          return null
-        }
+      {eventSections.futureEventSections.map((eventSection, index) => (
+        <EventListSection
+          key={eventSection.title ?? index}
+          eventSection={eventSection}
+          displayMode={displayMode}
+          userId={userId}
+        />
+      ))}
 
-        return (
-          <Fragment key={eventSection.key}>
-            {eventSection.title && <EventListDivider text={eventSection.title} />}
-            <EventItems
-              eventsWithAttendance={eventSection.eventsWithAttendance}
-              displayMode={displayMode}
-              userId={userId}
-            />
-          </Fragment>
-        )
-      })}
-      <div ref={loaderElementReference} />
+      {futureLoadMore !== undefined && (
+        <LoadMoreSentinel
+          fetchNextPage={futureLoadMore.fetchNextPage}
+          hasNextPage={futureLoadMore.hasNextPage}
+          isFetchingNextPage={futureLoadMore.isFetchingNextPage}
+          isPlaceholderData={futureLoadMore.isPlaceholderData}
+          isLoading={futureLoadMore.isLoading}
+        />
+      )}
+
+      {eventSections.pastEventSections.map((eventSection, index) => (
+        <EventListSection
+          key={eventSection.title ?? index}
+          eventSection={eventSection}
+          displayMode={displayMode}
+          userId={userId}
+        />
+      ))}
+
+      {pastLoadMore !== undefined && (
+        <LoadMoreSentinel
+          fetchNextPage={pastLoadMore.fetchNextPage}
+          hasNextPage={pastLoadMore.hasNextPage}
+          isFetchingNextPage={pastLoadMore.isFetchingNextPage}
+          isPlaceholderData={pastLoadMore.isPlaceholderData}
+          isLoading={pastLoadMore.isLoading}
+        />
+      )}
     </section>
+  )
+}
+
+interface EventListSectionProps {
+  eventSection: EventListSectionData
+  displayMode: EventListDisplayMode
+  userId?: UserId
+}
+
+const EventListSection: FC<EventListSectionProps> = ({ eventSection, displayMode, userId }) => {
+  if (eventSection.eventsWithAttendance.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      {eventSection.title && <EventListDivider text={eventSection.title} />}
+      <EventItems eventsWithAttendance={eventSection.eventsWithAttendance} displayMode={displayMode} userId={userId} />
+    </>
   )
 }
 

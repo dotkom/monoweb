@@ -129,14 +129,20 @@ const CUSTOM_SCALAR_MERGERS = {
 /**
  * Has-many relations to reassign from consumed to survivor.
  *
- * If a User relation maps to multiple FK columns (e.g. attendee has userId and paymentRefundedById),
+ * If a User relation maps to multiple FK columns (e.g. attendee has userId and paymentRefundedByUserId),
  * add one entry per FK column, using the corresponding User relation name as the key.
  */
 const REASSIGN_RELATION_HANDLERS = {
+  adminRegistered: async (handle: DBHandle, consumedUserId: string, survivorUserId: string) => {
+    await handle.attendee.updateMany({
+      where: { adminRegisteredByUserId: consumedUserId },
+      data: { adminRegisteredByUserId: survivorUserId },
+    })
+  },
   attendeesRefunded: async (handle: DBHandle, fromId: string, toId: string) => {
     await handle.attendee.updateMany({
-      where: { paymentRefundedById: fromId },
-      data: { paymentRefundedById: toId },
+      where: { paymentRefundedByUserId: fromId },
+      data: { paymentRefundedByUserId: toId },
     })
   },
   givenMarks: async (handle: DBHandle, fromId: string, toId: string) => {
@@ -260,7 +266,7 @@ const CUSTOM_RELATION_MERGERS = {
     await Promise.all(createGroupMembershipOperations)
   },
 
-  // Handling FK constraint errors, payment cancellations, waitlist promotions, and notifications correctly.
+  // Handling FK constraint errors, payment cancellations, queue promotions, and notifications correctly.
   attendee: async (handle: DBHandle, dependencies: MergeUsersDependencies, survivor: User, consumed: User) => {
     const survivorAttendees = await handle.attendee.findMany({
       where: { userId: survivor.id },

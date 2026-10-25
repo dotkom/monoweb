@@ -1,57 +1,29 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="nb">
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta name="x-apple-disable-message-reformatting"/>
-  </head>
-  <body style="background-color: rgb(255, 255, 255);">
-    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei Bedkom!</p>
+    <p style="margin: 0;">{{ companyName }} har sendt inn fakturainformasjon. Her er en kopi av skjemaet de sendte inn.</p>
+  </td>
+</tr>
+<tr>
+  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;"><span class="text-muted" style="color: #6b7280;">Bedrift:</span> {{ companyName }}<br /><span class="text-muted" style="color: #6b7280;">Kontaktperson:</span> {{ contactName }}<br /><span class="text-muted" style="color: #6b7280;">E-postadresse:</span> <a href="mailto:{{ contactEmail }}" style="color: inherit; text-decoration: underline;">{{ contactEmail }}</a><br /><span class="text-muted" style="color: #6b7280;">Telefonnummer:</span> {{ contactTel }}<br /><span class="text-muted" style="color: #6b7280;">Organisasjonsnummer:</span> {{ organizationNumber }}</p>
+    <p style="margin: 0 0 16px;">Fakturaen gjelder: {{ invoiceRelation }}</p>
+    <p style="margin: 0;">Foretrukket ordrenummer: {{ preferredPurchaseOrderNumber }}<br />Foretrukket antall dager til forfallsdato: {{ preferredDueDateLength }}<br />Foretrukket leveringsmetode: {{ preferredDeliveryMethod }}</p>
+  </td>
+</tr>
+{{# comment }}
+<tr>
+  <td style="padding: 24px 0 0;">
+    <p class="text-muted" style="margin: 0 0 8px; color: #6b7280; font-size: 16px; line-height: 25px;">Merknad:</p>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="table-layout: fixed;">
       <tbody>
-        <tr style="width: 100%">
-          <h1>Hei Bedkom</h1>
-          <p>{{ companyName }} har sendt inn fakturainformasjon. Nedenfor finner du en kopi av skjemaet de sendte inn.</p>
-        </tr>
-
-        <tr style="width: 100%">
-          <h2>Bedriftsinformasjon</h2>
-          <ul>
-            <li><strong>Bedriften sitt navn</strong>: {{ companyName }} (Org. Nr. {{ organizationNumber }})</li>
-            <li><strong>Kontaktperson hos bedriften</strong>: {{ contactName }}</li>
-            <li><strong>Kontaktperson sin e-post adresse</strong>: {{ contactEmail }}</li>
-            <li><strong>Kontaktperson sitt telefonnummer</strong>: {{ contactTel }}</li>
-          </ul>
-        </tr>
-
-        <tr style="width: 100%">
-          <h2>Anledning</h2>
-          <ul>
-            <li><strong>Fakturaen gjelder</strong>: {{ invoiceRelation }}</li>
-          </ul>
-        </tr>
-
-        <tr style="width: 100%">
-          <h2>Regnskapsdetaljer</h2>
-          <ul>
-            <li><strong>Foretrukket ordrenummer</strong>: {{ preferredPurchaseOrderNumber }}</li>
-            <li><strong>Foretrukket antall dager til forfallsdato</strong>: {{ preferredDueDateLength }}</li>
-            <li><strong>Foretrukket leveringsmetode</strong>: {{ preferredDeliveryMethod }}</li>
-          </ul>
-        </tr>
-
-        <tr style="width: 100%">
-          <h2>Annen merknad</h2>
-          <p>{{ comment }}</p>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du er registrert som medlem i Bedriftskomiteen i Online</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
-            <p style="font-size: 0.75em; color: gray">Alle datoer er i norsk tid.</p>
+        <tr>
+          <td class="card-message" bgcolor="#f3f4f6" style="padding: 16px; background-color: #f3f4f6; border-radius: 8px;">
+    <p class="text-primary" style="margin: 0; color: #000000; font-size: 16px; line-height: 25px; white-space: pre-wrap; overflow-wrap: anywhere; word-wrap: break-word;">{{ comment }}</p>
           </td>
         </tr>
       </tbody>
     </table>
-  </body>
-</html>
+  </td>
+</tr>
+{{/ comment }}

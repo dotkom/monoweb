@@ -1,10 +1,10 @@
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isGroupMember, or } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { canManageFadderuker } from "../../permissions/fadderuke-permissions"
 import { procedure, t } from "../../trpc"
 import { FadderukeSchema, FadderukeWriteSchema } from "./fadderuke"
-import { CommitteeGroupSlug } from "../authorization-service"
 
 export type FindFadderukeByYearInput = inferProcedureInput<typeof findByYearProcedure>
 export type FindFadderukeByYearOutput = inferProcedureOutput<typeof findByYearProcedure>
@@ -40,7 +40,7 @@ const createProcedure = procedure
   .input(z.object({ fadderuke: FadderukeWriteSchema }))
   .output(FadderukeSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.VELKOM))))
+  .use(withAuthorization(permitIf(canManageFadderuker)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -57,7 +57,7 @@ const updateProcedure = procedure
   .input(z.object({ fadderukeId: FadderukeSchema.shape.id, fadderuke: FadderukeWriteSchema.partial() }))
   .output(FadderukeSchema)
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.VELKOM))))
+  .use(withAuthorization(permitIf(canManageFadderuker)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -73,7 +73,7 @@ export type DeleteFadderukeOutput = inferProcedureOutput<typeof deleteProcedure>
 const deleteProcedure = procedure
   .input(z.object({ fadderukeId: FadderukeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(or(isAdministrator(), isGroupMember(CommitteeGroupSlug.VELKOM))))
+  .use(withAuthorization(permitIf(canManageFadderuker)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {

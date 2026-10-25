@@ -4,6 +4,7 @@ import { auth0 } from "@admin/lib/auth"
 import { getServerAccessToken } from "@admin/lib/server-access-token"
 import { UNAUTHORIZED_PATH } from "@admin/lib/require-permission"
 import { getServerAuthorization } from "@admin/lib/server-authorization"
+import { server } from "@admin/lib/trpc-server"
 import {
   NAVIGATION_GROUPS_COLLAPSED_COOKIE_NAME,
   parseNavigationGroupsCollapsedCookie,
@@ -54,11 +55,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = accessToken !== null && session?.user !== undefined ? session.user : undefined
 
-  const { isAdministrator, isCommitteeMember, affiliations } = await getServerAuthorization()
+  const [{ isCommitteeMember, affiliations }, allGroups] = await Promise.all([
+    getServerAuthorization(),
+    server.group.all.query({ filter: { includeEmailGroups: true } }),
+  ])
 
   if (!isCommitteeMember) {
     redirect(UNAUTHORIZED_PATH)
   }
+
+  const groups = Object.fromEntries(allGroups.map((group) => [group.slug, group.type]))
 
   const requestHeaders = await headers()
   const userAgent = requestHeaders.get("user-agent") ?? ""
@@ -84,20 +90,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <AuthorizationProvider
-                  isAdministrator={isAdministrator}
-                  isCommitteeMember={isCommitteeMember}
-                  affiliations={affiliations}
-                >
+                <AuthorizationProvider subject={session.user.sub} affiliations={affiliations} groups={groups}>
                   <ApplicationShell isMac={isMac} collapsedNavigationGroups={collapsedNavigationGroups}>
                     {children}
                   </ApplicationShell>
                 </AuthorizationProvider>
               </ThemeProvider>
+              <Toaster />
             </QueryProvider>
           </Auth0Provider>
         </PlausibleProvider>
-        <Toaster />
       </body>
     </html>
   )

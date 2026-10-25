@@ -1,10 +1,9 @@
 import type { Prisma } from "../"
+import { fixtureUserId, fixtureUserKeys } from "./user"
 
-export const getNotificationPermissionsFixtures = (
-  userIds: string[]
-): Prisma.NotificationPermissionsCreateManyInput[] =>
-  userIds.map((userId, index) => ({
-    userId,
+export const getNotificationPermissionsFixtures = (): Prisma.NotificationPermissionsCreateManyInput[] =>
+  fixtureUserKeys().map((userKey, index) => ({
+    userId: fixtureUserId[userKey],
     applications: true,
     newArticles: index % 2 === 0,
     standardNotifications: true,

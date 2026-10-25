@@ -4,11 +4,19 @@ import { useUser } from "@auth0/nextjs-auth0/client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-export const useDeregisterMutation = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+interface UseAttendanceMutationOptions {
+  onSuccess?: () => void
+  isSSEConnected?: boolean
+}
+
+export const useDeregisterMutation = ({ onSuccess, isSSEConnected }: UseAttendanceMutationOptions = {}) => {
   const trpc = useTRPC()
   const { trpcSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
   const queryClient = useQueryClient()
   const { user } = useUser()
+
+  const isSSEPending = trpcSSERegisterChangeConnectionState === "pending"
+  const isSSEConnectedOrPending = isSSEConnected ?? isSSEPending
 
   return useMutation(
     trpc.event.attendance.deregisterForEvent.mutationOptions({
@@ -17,7 +25,7 @@ export const useDeregisterMutation = ({ onSuccess }: { onSuccess?: () => void } 
           return
         }
 
-        if (trpcSSERegisterChangeConnectionState !== "pending") {
+        if (!isSSEConnectedOrPending) {
           await queryClient.invalidateQueries(
             trpc.event.attendance.getAttendance.queryOptions({ id: input.attendanceId })
           )
@@ -29,20 +37,19 @@ export const useDeregisterMutation = ({ onSuccess }: { onSuccess?: () => void } 
   )
 }
 
-interface UseRegisterMutationInput {
-  onSuccess?: () => void
-}
-
-export const useRegisterMutation = ({ onSuccess }: UseRegisterMutationInput = {}) => {
+export const useRegisterMutation = ({ onSuccess, isSSEConnected }: UseAttendanceMutationOptions = {}) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { trpcSSERegisterChangeConnectionState } = useTRPCSSERegisterChangeConnectionState()
+
+  const isSSEPending = trpcSSERegisterChangeConnectionState === "pending"
+  const isSSEConnectedOrPending = isSSEConnected ?? isSSEPending
 
   return useMutation(
     trpc.event.attendance.registerForEvent.mutationOptions({
       onSuccess: async (data) => {
         // Check if the connection is not open (connecting or idle)
-        if (trpcSSERegisterChangeConnectionState !== "pending") {
+        if (!isSSEConnectedOrPending) {
           await Promise.all([
             queryClient.invalidateQueries(trpc.event.attendance.getAttendance.queryOptions({ id: data.attendanceId })),
           ])

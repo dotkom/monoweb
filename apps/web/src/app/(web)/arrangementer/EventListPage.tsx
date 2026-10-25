@@ -53,12 +53,13 @@ import {
   useEventAllSummariesInfiniteQuery,
   useFeaturedEventsInfiniteQuery,
 } from "./components/queries"
-import { RegisteredEventsCard } from "./components/RegisteredEventsCard"
 import type { EventsListViewMode } from "./hooks/eventViewCookie"
 import { useCalendarNavigation } from "./hooks/useCalendarNavigation"
 import { useEventFilters } from "./hooks/useEventFilters"
 import { useEventsView } from "./hooks/useEventsView"
 import { useEventsViewNavigation } from "./hooks/useEventsViewNavigation"
+import { useEventListSubscription } from "./hooks/useEventListSubscription"
+import { useEventListOrder } from "./hooks/useEventListOrder"
 import { usePlausible } from "next-plausible"
 
 interface Props {
@@ -80,13 +81,12 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const calendarNavigation = useCalendarNavigation()
   const { filters, updateFilters, resetFilters } = useEventFilters()
 
-  const now = roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" })
+  const [now] = useState(() => roundToNearestMinutes(getCurrentUTC(), { roundingMethod: "floor" }))
 
   const { dbUser } = useAuthenticatedUser()
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchBarOpen, setSearchBarOpen] = useState(filters.search.length > 0)
-  const [registeredEventsOpen, setRegisteredEventsOpen] = useState(false)
   const filterRowRef = useRef<HTMLDivElement>(null)
   const [isFilterRowSticky, setIsFilterRowSticky] = useState(false)
 
@@ -146,7 +146,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     fetchNextPage: fetchNextFeaturedPage,
     hasNextPage: hasNextFeaturedPage,
     isFetchingNextPage: isFetchingNextFeaturedPage,
-    isLoading: isFeaturedLoading,
+    isPlaceholderData: isFeaturedPlaceholderData,
   } = useFeaturedEventsInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -157,7 +157,6 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     },
     limit: 20,
     enabled: isAttendanceSort && isEventListView,
-    excludeAttendedByUser: true,
   })
 
   const {
@@ -166,6 +165,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     hasNextPage: hasNextFutureSummaryPage,
     isFetchingNextPage: isFetchingNextFutureSummaryPage,
     isLoading: isFutureSummariesLoading,
+    isPlaceholderData: isFutureSummariesPlaceholderData,
   } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -184,13 +184,14 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const futureEventWithAttendances = isAttendanceSort ? featuredEventWithAttendances : futureEventSummaries
   const hasNextFuturePage = isAttendanceSort ? hasNextFeaturedPage : hasNextFutureSummaryPage
   const isFetchingNextFuturePage = isAttendanceSort ? isFetchingNextFeaturedPage : isFetchingNextFutureSummaryPage
-  const isFutureLoading = isAttendanceSort ? isFeaturedLoading : isFutureSummariesLoading
+  const isFutureLoading = isFutureSummariesLoading
 
   const {
     eventDetails: registeredEvents,
     fetchNextPage: fetchNextRegisteredPage,
     hasNextPage: hasNextRegisteredPage,
     isFetchingNextPage: isFetchingNextRegisteredPage,
+    isLoading: isRegisteredEventsLoading,
   } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
     id: dbUser?.id ?? "",
     filter: {
@@ -209,12 +210,25 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   })
 
   useEffect(() => {
-    if (!registeredEventsOpen || !hasNextRegisteredPage || isFetchingNextRegisteredPage) {
+    if (!isEventListView || !dbUser || !hasNextRegisteredPage || isFetchingNextRegisteredPage) {
       return
     }
 
     void fetchNextRegisteredPage()
-  }, [fetchNextRegisteredPage, hasNextRegisteredPage, isFetchingNextRegisteredPage, registeredEventsOpen])
+  }, [fetchNextRegisteredPage, hasNextRegisteredPage, isFetchingNextRegisteredPage, isEventListView, dbUser])
+
+  const {
+    eventDetails: orderedFutureEvents,
+    registeredEventCount,
+    isLoading: isFutureListLoading,
+  } = useEventListOrder({
+    futureEvents: futureEventWithAttendances,
+    registeredEvents,
+    orderingKey: JSON.stringify({ filters, userId: dbUser?.id ?? null }),
+    enabled: isEventListView,
+    isInitialLoading:
+      isFutureLoading || (Boolean(dbUser) && (isRegisteredEventsLoading || hasNextRegisteredPage === true)),
+  })
 
   const shouldLoadPastEvents = isEventListView && !isFutureLoading && hasNextFuturePage === false
   const {
@@ -223,6 +237,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     hasNextPage: hasNextPastPage,
     isFetchingNextPage: isFetchingNextPastPage,
     isLoading: isPastLoading,
+    isPlaceholderData: isPastPlaceholderData,
   } = useEventAllSummariesInfiniteQuery({
     filter: {
       ...queryFilter,
@@ -238,27 +253,52 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
     enabled: shouldLoadPastEvents,
   })
 
-  const fetchNextPage = useCallback(() => {
-    if (hasNextFuturePage && !isFetchingNextFuturePage) {
-      void (isAttendanceSort ? fetchNextFeaturedPage() : fetchNextFutureSummaryPage())
-      return
+  const fetchNextFuturePage = useCallback(() => {
+    if (isAttendanceSort) {
+      void fetchNextFeaturedPage()
+    } else {
+      void fetchNextFutureSummaryPage()
     }
+  }, [fetchNextFeaturedPage, fetchNextFutureSummaryPage, isAttendanceSort])
 
-    if (hasNextPastPage && !isFetchingNextPastPage) {
-      void fetchNextPastPage()
-    }
-  }, [
-    fetchNextFeaturedPage,
-    fetchNextFutureSummaryPage,
-    fetchNextPastPage,
-    hasNextFuturePage,
-    hasNextPastPage,
-    isAttendanceSort,
-    isFetchingNextFuturePage,
-    isFetchingNextPastPage,
-  ])
+  const futureLoadMore = useMemo(
+    () => ({
+      fetchNextPage: fetchNextFuturePage,
+      hasNextPage: hasNextFuturePage,
+      isFetchingNextPage: isFetchingNextFuturePage,
+      isPlaceholderData: isAttendanceSort ? isFeaturedPlaceholderData : isFutureSummariesPlaceholderData,
+      isLoading: isFutureListLoading,
+    }),
+    [
+      fetchNextFuturePage,
+      hasNextFuturePage,
+      isAttendanceSort,
+      isFeaturedPlaceholderData,
+      isFetchingNextFuturePage,
+      isFutureListLoading,
+      isFutureSummariesPlaceholderData,
+    ]
+  )
 
-  const isLoading = isFutureLoading || (futureEventWithAttendances.length === 0 && isPastLoading)
+  const pastLoadMore = useMemo(
+    () => ({
+      fetchNextPage: () => {
+        void fetchNextPastPage()
+      },
+      hasNextPage: hasNextPastPage,
+      isFetchingNextPage: isFetchingNextPastPage,
+      isPlaceholderData: isPastPlaceholderData,
+      isLoading: isPastLoading,
+    }),
+    [fetchNextPastPage, hasNextPastPage, isFetchingNextPastPage, isPastLoading, isPastPlaceholderData]
+  )
+
+  const isLoading = isFutureListLoading || (orderedFutureEvents.length === 0 && isPastLoading)
+
+  const eventListSubscription = useEventListSubscription({
+    events: [...futureEventWithAttendances, ...pastEventWithAttendances, ...registeredEvents],
+    enabled: isEventListView,
+  })
 
   const hasActiveFilters =
     filters.search ||
@@ -273,10 +313,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
   const tabValue = isCalendar ? "calendar" : view
 
   return (
-    <EventPreview
-      className="flex flex-col gap-4"
-      backgroundVerificationEnabled={isEventListView && isLoading === false}
-    >
+    <EventPreview listSubscription={eventListSubscription} className="flex flex-col gap-4">
       <div className="flex flex-row flex-wrap items-center justify-between gap-3">
         <Title element="h1" size="xl">
           Arrangementer
@@ -538,7 +575,7 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
 
       {isEventListView && (
         <div className="min-w-0 md:grid md:grid-cols-[minmax(0,1fr)_18rem] md:gap-6 lg:gap-8">
-          <div className="mt-2 min-w-0">
+          <div className="mt-2 min-w-0 flex flex-col gap-2">
             {hasActiveFilters && (
               <EventListFilterChips
                 searchTerm={filters.search}
@@ -576,22 +613,13 @@ export const EventListPage = ({ initialListViewMode, groups }: Props) => {
             )}
 
             <div className="flex flex-col gap-4">
-              {dbUser && (
-                <RegisteredEventsCard
-                  eventsWithAttendance={registeredEvents}
-                  displayMode={isCards ? "cards" : "list"}
-                  userId={dbUser.id}
-                  hasMoreEvents={hasNextRegisteredPage ?? false}
-                  open={registeredEventsOpen}
-                  onOpenChange={setRegisteredEventsOpen}
-                />
-              )}
-
               {!isLoading && (
                 <EventList
-                  futureEventWithAttendances={futureEventWithAttendances}
+                  futureEventWithAttendances={orderedFutureEvents}
+                  registeredEventCount={filters.viewModeSort === "CHRONOLOGICAL" ? registeredEventCount : 0}
                   pastEventWithAttendances={pastEventWithAttendances}
-                  onLoadMore={fetchNextPage}
+                  futureLoadMore={futureLoadMore}
+                  pastLoadMore={shouldLoadPastEvents ? pastLoadMore : undefined}
                   viewMode="CHRONOLOGICAL"
                   displayMode={isCards ? "cards" : "list"}
                 />

@@ -1,3 +1,4 @@
+import { SpanStatusCode } from "@opentelemetry/api"
 import { TRPCError } from "@trpc/server"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ForbiddenError, InternalServerError, UnauthorizedError } from "./error"
@@ -9,6 +10,13 @@ const telemetry = vi.hoisted(() => ({
   warn: vi.fn(),
   error: vi.fn(),
   captureException: vi.fn(),
+  span: {
+    setAttribute: vi.fn(),
+    setStatus: vi.fn(),
+    recordException: vi.fn(),
+    end: vi.fn(),
+    spanContext: () => ({ traceId: "trace-id" }),
+  },
 }))
 
 vi.mock("@dotkomonline/logger", () => ({
@@ -17,6 +25,20 @@ vi.mock("@dotkomonline/logger", () => ({
 }))
 
 vi.mock("@sentry/node", () => ({ captureException: telemetry.captureException }))
+
+vi.mock("@opentelemetry/api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@opentelemetry/api")>()
+  return {
+    ...actual,
+    trace: {
+      ...actual.trace,
+      getTracer: () => ({
+        startActiveSpan: (_name: string, _options: unknown, fn: (span: typeof telemetry.span) => unknown) =>
+          fn(telemetry.span),
+      }),
+    },
+  }
+})
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -45,6 +67,8 @@ describe("tRPC error reporting", () => {
     )
     expect(telemetry.error).not.toHaveBeenCalled()
     expect(telemetry.captureException).not.toHaveBeenCalled()
+    expect(telemetry.span.recordException).not.toHaveBeenCalled()
+    expect(telemetry.span.setStatus).not.toHaveBeenCalled()
   })
 
   it.each([
@@ -71,6 +95,8 @@ describe("tRPC error reporting", () => {
     )
     expect(telemetry.error).not.toHaveBeenCalled()
     expect(telemetry.captureException).not.toHaveBeenCalled()
+    expect(telemetry.span.recordException).not.toHaveBeenCalled()
+    expect(telemetry.span.setStatus).not.toHaveBeenCalled()
   })
 
   it.each([
@@ -97,5 +123,9 @@ describe("tRPC error reporting", () => {
     expect(telemetry.captureException).toHaveBeenCalledWith(
       expect.objectContaining({ code: "INTERNAL_SERVER_ERROR", cause: error })
     )
+    expect(telemetry.span.recordException).toHaveBeenCalledWith(
+      expect.objectContaining({ code: "INTERNAL_SERVER_ERROR", cause: error })
+    )
+    expect(telemetry.span.setStatus).toHaveBeenCalledWith({ code: SpanStatusCode.ERROR })
   })
 })

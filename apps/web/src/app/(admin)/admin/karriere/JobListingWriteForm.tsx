@@ -36,6 +36,7 @@ interface UseJobListingWriteFormProps {
   onSubmit(data: FormValidationSchema): void
   defaultValues?: Partial<FormValidationSchema>
   submitLabel?: string
+  disabled?: boolean
 }
 
 export const FormValidationSchema = JobListingWriteSchema.extend({
@@ -48,12 +49,14 @@ export const JobListingWriteForm = ({
   onSubmit,
   submitLabel = "Registrer ny stillingsannonse",
   defaultValues = JOBLISTING_FORM_DEFAULT_VALUES,
+  disabled,
 }: UseJobListingWriteFormProps) => {
   const { locations } = useJobListingAllLocationsQuery()
 
   const form = useForm<FormValidationSchema>({
     resolver: zodResolver(FormValidationSchema),
     defaultValues,
+    disabled,
   })
 
   return (

@@ -9,6 +9,12 @@ import {
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { env } from "@admin/lib/env"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import {
+  canDeleteGroup,
+  canManageGroupMembership,
+  canManageGroupRoles,
+  canUpdateGroup,
+} from "@dotkomonline/rpc/group-permissions"
 import { IconCircles, IconListDetails, IconUsers, IconWheelchair } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
 import type { PropsWithChildren } from "react"
@@ -27,13 +33,12 @@ export default function GroupDetailsLayout({ children }: PropsWithChildren) {
   useBreadcrumbLabel(breadcrumbPath("grupper", id, "arrangementer"), "Arrangementer")
   const remove = useDeleteGroupMutation()
   const authorization = useAuthorization()
-  const isInterestGroup = data?.type === "INTEREST_GROUP"
-  const canDelete = data ? authorization.canDeleteGroup(data.slug, isInterestGroup) : false
-  const canEdit = data
-    ? authorization.canUpdateGroup(data.slug, isInterestGroup) ||
-      authorization.canManageGroupMembership(data.slug, isInterestGroup) ||
-      authorization.canManageGroupRoles(data.slug, isInterestGroup)
-    : false
+  const canDelete = data !== undefined && canDeleteGroup(authorization, data.type)
+  const canEdit =
+    data !== undefined &&
+    (canUpdateGroup(authorization, data.slug, data.type) ||
+      canManageGroupMembership(authorization, data.slug, data.type) ||
+      canManageGroupRoles(authorization, data.slug, data.type))
 
   if (isLoading) {
     return null

@@ -1,8 +1,8 @@
 import { Text } from "@dotkomonline/ui"
-import { addDays, isPast } from "date-fns"
+import { addDays } from "date-fns"
 import { useEffect, useState, type ReactNode } from "react"
-import { getAttendee } from "@dotkomonline/rpc/attendance"
-import type { Attendance } from "@dotkomonline/rpc/attendance"
+import { type Attendance, getAttendee } from "@dotkomonline/rpc/attendance"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { User } from "@dotkomonline/rpc/user"
 import {
   createAttendanceOpeningSoon,
@@ -19,11 +19,11 @@ import {
   createIneligiblePoolAttendance,
   createMockAttendance,
   createMockAttendee,
-  createMockRegistrationAvailabilityForAttendee,
-  createMockRegistrationAvailabilityPastDeregisterDeadline,
   createMockUser,
 } from "../../../../../../.ladle/fixtures/attendance"
 import { MainPoolCard } from "./MainPoolCard"
+import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
+import { hasRegistrationDelay } from "./hasRegistrationDelay"
 
 const AUTHORIZE_URL = "/api/auth/login"
 const SIMULATION_CAPACITY = 120
@@ -38,22 +38,20 @@ const MainPoolCardPreview = ({
   chargeScheduleDate?: Date | null
 }) => {
   const attendee = getAttendee(attendance, user)
-
-  const registrationAvailability =
-    user === null || attendee === null
-      ? null
-      : isPast(attendance.deregisterDeadline)
-        ? createMockRegistrationAvailabilityPastDeregisterDeadline(attendance, attendee)
-        : createMockRegistrationAvailabilityForAttendee(attendance, attendee)
+  useDeadlineTick(attendee?.registrationEligibleAt)
+  const isRegistrationDelayed = hasRegistrationDelay(attendee)
 
   return (
-    <MainPoolCard
-      attendance={attendance}
-      user={user}
-      authorizeUrl={AUTHORIZE_URL}
-      chargeScheduleDate={chargeScheduleDate}
-      registrationAvailability={registrationAvailability}
-    />
+    <div className="flex flex-col gap-1.5 w-full">
+      <MainPoolCard
+        attendance={attendance}
+        user={user}
+        authorizeUrl={AUTHORIZE_URL}
+        chargeScheduleDate={chargeScheduleDate}
+        hasAttachedActionBelow={isRegistrationDelayed}
+      />
+      {isRegistrationDelayed && attendee && <RegistrationDelayStatus attendee={attendee} />}
+    </div>
   )
 }
 
@@ -85,11 +83,11 @@ export const ActiveRegistration = () => {
     return () => clearTimeout(timeout)
   }, [registeredCount])
 
-  // After 20 "registrations", 1 of 3 new registrations have an accompanying waitlist/queue entry
+  // After 20 "registrations", 1 of 3 new registrations have an accompanying queue entry
   const queuedCount = registeredCount < 20 ? 0 : Math.floor((registeredCount - 20) / 3)
   const attendees = [
-    ...Array.from({ length: registeredCount }, () => createMockAttendee({ registered: true })),
-    ...Array.from({ length: queuedCount }, () => createMockAttendee({ registered: false })),
+    ...Array.from({ length: registeredCount }, () => createMockAttendee({ registeredAt: new Date() })),
+    ...Array.from({ length: queuedCount }, () => createMockAttendee({ registeredAt: null })),
   ]
 
   const attendance = createMockAttendance({ capacity: SIMULATION_CAPACITY, attendees })

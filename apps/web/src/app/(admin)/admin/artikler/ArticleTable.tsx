@@ -1,6 +1,5 @@
 "use client"
 
-import { arrayOrEqualsFilter } from "@admin/components/FilterableDataTable"
 import type { Article } from "@dotkomonline/rpc/article"
 import { DataTable, TextLink } from "@dotkomonline/ui"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
@@ -56,11 +55,6 @@ export const ArticleTable = ({
           </TextLink>
         )
       },
-    }),
-    columnHelper.accessor("isFeatured", {
-      header: () => "Fremhevet",
-      cell: (info) => (info.getValue() ? "Ja" : "Nei"),
-      filterFn: arrayOrEqualsFilter<Article>(),
     }),
     columnHelper.accessor((article) => article.tags.join(" "), {
       id: "Tags",

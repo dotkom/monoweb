@@ -14,13 +14,13 @@ import {
   DrawerHeader,
   DrawerTitle,
   ReadMore,
+  ScrollArea,
   Text,
   Title,
   cn,
 } from "@dotkomonline/ui"
 import { createAbsoluteEventPageUrl, createEventPageUrl } from "@dotkomonline/utils"
-import * as ScrollArea from "@radix-ui/react-scroll-area"
-import { IconArrowUpRight, IconCheck, IconChevronsRight, IconCopy } from "@tabler/icons-react"
+import { IconCheck, IconChevronsRight, IconCopy, IconMaximize } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from "react"
@@ -31,12 +31,16 @@ import { OrganizerPill } from "./OrganizerPill"
 import { LocationBox } from "./TimeLocationBox/LocationBox"
 import { TimeBox } from "./TimeLocationBox/TimeBox"
 import { EventTurnstileProvider } from "./EventTurnstileProvider"
+import type { EventListSubscription } from "../hooks/useEventListSubscription"
 
 export function EventPreview({
   children,
   className,
-  backgroundVerificationEnabled = true,
-}: PropsWithChildren<{ className?: string; backgroundVerificationEnabled?: boolean }>) {
+  listSubscription = null,
+}: PropsWithChildren<{
+  className?: string
+  listSubscription?: EventListSubscription | null
+}>) {
   const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
   const [open, setOpen] = useState(false)
 
@@ -76,7 +80,7 @@ export function EventPreview({
   }, [open])
 
   return (
-    <EventTurnstileProvider backgroundEnabled={backgroundVerificationEnabled && open === false}>
+    <EventTurnstileProvider backgroundEnabled={open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
         <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
@@ -86,7 +90,7 @@ export function EventPreview({
             style={open ? undefined : { pointerEvents: "none" }}
             overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
             className={cn(
-              "overflow-hidden border border-field-border shadow-xl [--drawer-inset:1rem]",
+              "overflow-hidden border border-field-border shadow-xl text-base [--drawer-inset:1rem]",
               "data-[swipe-direction=right]:inset-y-4",
               "data-[swipe-direction=right]:right-4",
               "data-[swipe-direction=right]:rounded-xl",
@@ -123,8 +127,8 @@ export function EventPreview({
 
                   {selectedEvent !== null && (
                     <Button element={Link} href={createEventPageUrl(selectedEvent.id, selectedEvent.title)}>
+                      <IconMaximize className="size-4" />
                       Åpne arrangementsiden
-                      <IconArrowUpRight className="size-4" />
                     </Button>
                   )}
                 </div>
@@ -134,19 +138,23 @@ export function EventPreview({
             <ScrollArea.Root
               key={selectedEvent?.id}
               data-base-ui-swipe-ignore
-              type="auto"
-              className="min-h-0 flex-1 overflow-hidden"
+              className="relative min-h-0 flex-1 overflow-hidden"
             >
-              <ScrollArea.Viewport className="h-full w-full overscroll-contain">
-                <div className="p-4">
+              <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
+                <ScrollArea.Content className="p-4">
                   {selectedEvent !== null && (
-                    <EventPreviewDetails key={selectedEvent.id} eventId={selectedEvent.id} enableTurnstile={open} />
+                    <EventPreviewDetails
+                      key={selectedEvent.id}
+                      eventId={selectedEvent.id}
+                      enableTurnstile={open}
+                      listSubscription={listSubscription}
+                    />
                   )}
-                </div>
+                </ScrollArea.Content>
               </ScrollArea.Viewport>
 
-              <ScrollArea.Scrollbar orientation="vertical" className="flex w-2.5 touch-none select-none p-0.5">
-                <ScrollArea.Thumb className="flex-1 rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
+              <ScrollArea.Scrollbar orientation="vertical" className="w-2.5 p-0.5">
+                <ScrollArea.Thumb className="w-full rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
               </ScrollArea.Scrollbar>
             </ScrollArea.Root>
           </DrawerContent>
@@ -156,7 +164,15 @@ export function EventPreview({
   )
 }
 
-function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; enableTurnstile: boolean }) {
+function EventPreviewDetails({
+  eventId,
+  enableTurnstile,
+  listSubscription,
+}: {
+  eventId: string
+  enableTurnstile: boolean
+  listSubscription: EventListSubscription | null
+}) {
   const trpc = useTRPC()
   const { dbUser } = useAuthenticatedUser()
 
@@ -196,6 +212,9 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
   }
 
   const { event, attendance } = eventDetail
+
+  const bulkSubscription =
+    attendance !== null && listSubscription?.attendanceIds.includes(attendance.id) ? listSubscription : undefined
 
   const showAttendanceCard = attendance !== null
   const showDescription = event.description !== ""
@@ -242,15 +261,18 @@ function EventPreviewDetails({ eventId, enableTurnstile }: { eventId: string; en
         ))}
 
       {showAttendanceCard && (
-        <AttendanceCard
-          initialAttendance={attendance}
-          initialRegistrationAvailability={null}
-          parentEvent={parent?.event ?? null}
-          user={dbUser}
-          event={event}
-          enableTurnstile={enableTurnstile}
-          deferTurnstile
-        />
+        <div className="w-112 max-w-full self-center">
+          <AttendanceCard
+            initialAttendance={attendance}
+            initialRegistrationAvailability={null}
+            parentEvent={parent?.event ?? null}
+            user={dbUser}
+            event={event}
+            enableTurnstile={enableTurnstile}
+            deferTurnstile
+            bulkSubscription={bulkSubscription}
+          />
+        </div>
       )}
     </div>
   )

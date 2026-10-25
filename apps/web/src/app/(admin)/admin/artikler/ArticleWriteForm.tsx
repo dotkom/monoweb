@@ -1,4 +1,3 @@
-import { CheckboxField } from "@admin/components/forms/CheckboxField"
 import { Form } from "@admin/components/forms/Form"
 import { ImageUploadModalField } from "@admin/components/forms/ImageUploadModalField"
 import { RichTextField } from "@admin/components/forms/RichTextField"
@@ -14,7 +13,6 @@ import { useTagsAllQuery } from "./queries"
 
 const ARTICLE_FORM_DEFAULT_VALUES: Partial<ArticleWriteFormSchema> = {
   tags: [],
-  isFeatured: false,
   imageUrl: "",
   vimeoId: null,
   photographer: null,
@@ -66,6 +64,7 @@ export const ArticleWriteForm = ({
         maxSizeKiB={ARTICLE_IMAGE_MAX_SIZE_KIB}
         required
         onFileUpload={fileUpload}
+        aspectRatio={{ width: 16, height: 9 }}
       />
       <TextField
         control={form.control}
@@ -81,7 +80,6 @@ export const ArticleWriteForm = ({
         label="Tags"
         placeholder="Velg eller skriv inn en tag"
       />
-      <CheckboxField control={form.control} name="isFeatured" label="Fremhevet" />
       <RichTextField control={form.control} name="excerpt" label="Ingress" required onFileUpload={fileUpload} />
       <RichTextField control={form.control} name="content" label="Innhold" required onFileUpload={fileUpload} />
 

@@ -33,9 +33,14 @@
  * @packageDocumentation
  */
 
+import { COMMITTEE_AFFILIATIONS } from "./modules/authorization-service"
 import type { GroupId, GroupRoleType } from "./modules/group/group"
 import type { UserId } from "./modules/user/user"
-import { ADMIN_AFFILIATIONS, COMMITTEE_AFFILIATIONS } from "./modules/authorization-service"
+import {
+  isAdministrator as principalIsAdministrator,
+  isCommitteeMember as principalIsCommitteeMember,
+  isSameSubject as principalIsSameSubject,
+} from "./permissions/principal"
 import type { Principal, TRPCContext } from "./trpc"
 
 export interface RuleContext<TInput> {
@@ -61,6 +66,7 @@ export function or<TInput>(rule: Rule<TInput>, ...rules: Rule<TInput>[]): Rule<T
     async evaluate(context) {
       const children = [rule, ...rules]
       const decisions = await Promise.all(children.map((rule) => context.evaluate(rule, context)))
+
       return decisions.some((v) => v)
     },
   }
@@ -72,6 +78,7 @@ export function and<TInput>(rule: Rule<TInput>, ...rules: Rule<TInput>[]): Rule<
     async evaluate(context) {
       const children = [rule, ...rules]
       const decisions = await Promise.all(children.map((rule) => context.evaluate(rule, context)))
+
       return decisions.every((v) => v)
     },
   }
@@ -82,6 +89,7 @@ export function not<TInput>(rule: Rule<TInput>): Rule<TInput> {
   return {
     async evaluate(context) {
       const decision = await context.evaluate(rule, context)
+
       return !decision
     },
   }
@@ -122,9 +130,7 @@ export function isAdministrator<TInput>(): Rule<TInput> {
         return false
       }
 
-      const affiliations = context.principal.affiliations // this is needed for typing for some reason
-
-      return ADMIN_AFFILIATIONS.some((affiliation) => affiliations.has(affiliation))
+      return principalIsAdministrator(context.principal.affiliations)
     },
   }
 }
@@ -144,9 +150,7 @@ export function isCommitteeMember<TInput>(): Rule<TInput> {
         return false
       }
 
-      const affiliations = context.principal.affiliations
-
-      return COMMITTEE_AFFILIATIONS.some((affiliation) => affiliations.has(affiliation))
+      return principalIsCommitteeMember(context.principal.affiliations)
     },
   }
 }
@@ -173,10 +177,12 @@ export function isGroupMember<TInput>(selectorOrGroupId: GroupId | IsGroupMember
       if (context.principal === null) {
         return false
       }
+
       const groupId = selectorOrGroupId instanceof Function ? selectorOrGroupId(context.input) : selectorOrGroupId
       if (groupId === null) {
         return false
       }
+
       return context.principal.affiliations.has(groupId)
     },
   }
@@ -187,6 +193,7 @@ export function isGroupMember<TInput>(selectorOrGroupId: GroupId | IsGroupMember
  */
 export function isGroupMemberOfAny<TInput>(groupAffiliations: [GroupId, ...GroupId[]]): Rule<TInput> {
   const [groupId, ...groupIds] = groupAffiliations
+
   return or(isGroupMember(groupId), ...groupIds.map(isGroupMember))
 }
 
@@ -277,8 +284,31 @@ export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): 
       if (context.principal === null) {
         return false
       }
+
       const selectedPrincipal = selector(context.input)
-      return selectedPrincipal === context.principal.subject
+
+      return principalIsSameSubject(context.principal, selectedPrincipal)
+    },
+  }
+}
+
+/**
+ * Business rule that permits when `check` returns true for the current principal.
+ *
+ * @example
+ * ```
+ * withAuthorization(permitIf(canManageFadderuker))
+ * permitIf((principal) => canUpdateGroup(principal, group.slug, isInterestGroup(group.type)))
+ * ```
+ */
+export function permitIf<TInput>(check: (principal: Principal, input: TInput) => boolean): Rule<TInput> {
+  return {
+    evaluate(context) {
+      if (context.principal === null) {
+        return false
+      }
+
+      return check(context.principal, context.input)
     },
   }
 }

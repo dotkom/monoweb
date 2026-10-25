@@ -6,6 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { EventPreviewLink } from "@/components/molecules/EventListItem/EventPreviewLink"
 import { EventPreview } from "./EventPreview"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
+import type { EventListSubscription } from "../hooks/useEventListSubscription"
+import { TicketButton } from "./AttendanceCard/TicketButton"
+import { EventRules } from "./AttendanceCard/EventRules"
+import { PaymentExplanationDialogContent } from "./AttendanceCard/PaymentExplanationDialog"
+import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
@@ -38,11 +43,13 @@ vi.mock("@tanstack/react-query", () => ({ useQuery: mocks.query }))
 
 vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
+  const scrollArea = await import("../../../../../../../packages/ui/src/atoms/ScrollArea/ScrollArea")
   const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
+    ...scrollArea,
     ...dialog,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
@@ -88,6 +95,7 @@ vi.mock("./TimeLocationBox/LocationBox", () => ({ LocationBox: () => <div data-s
 vi.mock("./OrganizerPill", () => ({ OrganizerPill: () => <div data-section="organizer">Organizer</div> }))
 
 vi.mock("./EventDescription", () => ({ EventDescription: () => <div data-section="description">Description</div> }))
+vi.mock("@/components/PenaltyRules/PenaltyRules", () => ({ PenaltyRules: () => <div>Prikkeregler detaljer</div> }))
 
 vi.mock("./AttendanceCard/AttendanceCard", () => ({
   AttendanceCard: (props: unknown) => {
@@ -99,7 +107,7 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
         Attendance
         <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
           <DialogTrigger>Vis påmeldte</DialogTrigger>
-          <DialogContent onOutsideClick={() => setAttendeeListOpen(false)}>
+          <DialogContent>
             <DialogTitle>Påmeldingsliste</DialogTitle>
             <section aria-label="Påmeldte" style={{ maxHeight: 200, overflowY: "auto" }}>
               {Array.from({ length: 80 }, (_, index) => `Attendee ${index + 1}`).map((name) => (
@@ -108,6 +116,12 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
             </section>
             <DialogClose>Lukk påmeldingsliste</DialogClose>
           </DialogContent>
+        </Dialog>
+        <TicketButton attendee={createMockAttendee()} />
+        <EventRules />
+        <Dialog>
+          <DialogTrigger>Hvordan virker betaling?</DialogTrigger>
+          <PaymentExplanationDialogContent />
         </Dialog>
       </div>
     )
@@ -136,6 +150,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
+  vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -145,6 +160,7 @@ beforeEach(() => {
     }
   )
   vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+  Object.defineProperty(Element.prototype, "getAnimations", { configurable: true, value: () => [] })
   desktop = {
     matches: true,
     addEventListener: vi.fn((_type, listener) => {
@@ -167,17 +183,19 @@ beforeEach(() => {
 })
 
 afterEach(async () => {
+  vi.useRealTimers()
   await act(async () => root.unmount())
   container.remove()
+  document.body.replaceChildren()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
   Reflect.deleteProperty(Element.prototype, "getAnimations")
 })
 
-async function renderPreview(nextEvent?: typeof event) {
+async function renderPreview(nextEvent?: typeof event, listSubscription?: EventListSubscription) {
   await act(async () => {
     root.render(
-      <EventPreview>
+      <EventPreview listSubscription={listSubscription}>
         <EventPreviewLink event={event} href="/arrangementer/testevent/event-one">
           Testevent
         </EventPreviewLink>
@@ -194,6 +212,14 @@ async function renderPreview(nextEvent?: typeof event) {
 }
 
 describe("desktop event preview", () => {
+  it("passes the list subscription to its attendance card", async () => {
+    const subscription = { attendanceIds: ["attendance-one"], isConnected: true }
+    const link = await renderPreview(undefined, subscription)
+    await act(async () => link.click())
+
+    expect(mocks.attendance).toHaveBeenLastCalledWith(expect.objectContaining({ bulkSubscription: subscription }))
+  })
+
   it("opens a side drawer with ordered details and a dimmed backdrop without blur", async () => {
     const link = await renderPreview()
     expect(mocks.query).not.toHaveBeenCalled()
@@ -232,19 +258,56 @@ describe("desktop event preview", () => {
 
   it("starts the entrance transition each time the preview opens", async () => {
     const link = await renderPreview()
-    vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame", "setTimeout", "clearTimeout"] })
-    try {
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        await act(async () => link.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(true)
-        await act(async () => vi.advanceTimersByTimeAsync(50))
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
-        const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
-        await act(async () => close?.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
-      }
-    } finally {
-      vi.useRealTimers()
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      let didSeeStartingStyle = false
+      const observer = new MutationObserver((records) => {
+        for (const record of records) {
+          if (record.type === "attributes" && record.attributeName === "data-starting-style") {
+            if ((record.target as Element).hasAttribute("data-starting-style")) {
+              didSeeStartingStyle = true
+            }
+          }
+
+          for (const node of record.addedNodes) {
+            if (node instanceof Element && node.matches('[data-slot="drawer-content"][data-starting-style]')) {
+              didSeeStartingStyle = true
+            }
+
+            if (
+              node instanceof Element &&
+              node.querySelector('[data-slot="drawer-content"][data-starting-style]') !== null
+            ) {
+              didSeeStartingStyle = true
+            }
+          }
+        }
+      })
+
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ["data-starting-style"],
+      })
+
+      await act(async () => link.click())
+      observer.disconnect()
+
+      expect(didSeeStartingStyle).toBe(true)
+
+      await act(async () => {
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve())
+          })
+        })
+      })
+      expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
+
+      const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+      await act(async () => close?.click())
+      expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
     }
   })
 
@@ -351,7 +414,11 @@ describe("desktop event preview", () => {
 
     const attendeeOverlay = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]')
     expect(attendeeOverlay).not.toBeNull()
-    await act(async () => attendeeOverlay?.click())
+    await act(async () => {
+      attendeeOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      attendeeOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      attendeeOverlay?.click()
+    })
     expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
     expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
 
@@ -366,7 +433,50 @@ describe("desktop event preview", () => {
     expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
   })
 
+  it.each([
+    "Vis billett",
+    "Arrangementregler",
+    "Hvordan virker betaling?",
+  ])("dismisses nested information on an outside click without closing the preview (%s)", async (triggerLabel) => {
+    const link = await renderPreview()
+    await act(async () => link.click())
+    const trigger = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent === triggerLabel
+    )
+    expect(trigger).toBeDefined()
+    trigger?.focus()
+    await act(async () => trigger?.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+
+    const dialog = document.querySelector<HTMLElement>('[data-slot="dialog-content"]')
+    expect(dialog).not.toBeNull()
+    expect(dialog?.getAttribute("role")).toBe("dialog")
+    await act(async () => dialog?.click())
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBe(dialog)
+
+    const overlay = document.querySelector<HTMLElement>('[data-slot="dialog-overlay"]')
+    expect(overlay).not.toBeNull()
+    await act(async () => {
+      overlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      overlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      overlay?.click()
+    })
+    expect(document.querySelector('[data-slot="dialog-content"]')).toBeNull()
+    expect(document.querySelector('[data-slot="drawer-content"]')).not.toBeNull()
+    expect(document.activeElement).toBe(trigger)
+
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+    const previewOverlay = document.querySelector<HTMLElement>('[data-slot="drawer-overlay"]')
+    await act(async () => {
+      previewOverlay?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }))
+      previewOverlay?.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, button: 0 }))
+      previewOverlay?.click()
+    })
+    expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+  })
+
   it("unlocks the page during closing and can open another event before the animation ends", async () => {
+    vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", false)
     let finishClosing: () => void = () => {}
     const closingAnimation = new Promise<void>((resolve) => {
       finishClosing = resolve

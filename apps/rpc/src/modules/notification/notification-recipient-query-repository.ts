@@ -94,11 +94,11 @@ export function buildAttendeeSelectionFilter(options: FindAttendeeUserIdsOptions
   const attendeeFilter: Prisma.AttendeeWhereInput = {}
 
   if (options.reservationStatus === "RESERVED") {
-    attendeeFilter.registered = true
+    attendeeFilter.registeredAt = { not: null }
   }
 
   if (options.reservationStatus === "UNRESERVED") {
-    attendeeFilter.registered = false
+    attendeeFilter.registeredAt = null
   }
 
   const extraFilters: Prisma.AttendeeWhereInput[] = []

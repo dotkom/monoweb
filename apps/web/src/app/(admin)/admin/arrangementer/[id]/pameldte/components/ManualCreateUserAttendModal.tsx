@@ -7,8 +7,9 @@ import { useIsMobile } from "@admin/hooks/use-is-mobile"
 import { notifyFail } from "@admin/lib/notifications"
 import {
   type Attendance,
+  type AttendanceView,
   type AttendancePool,
-  type Attendee,
+  type AttendeeSummary,
   getAttendablePool,
   getQueuedAttendeeCount,
   getRegisteredAttendeeCount,
@@ -243,11 +244,11 @@ function ParentEventRegistrationStatus({
   userId,
 }: {
   parentEvent: Event
-  parentAttendance: Attendance | null
+  parentAttendance: AttendanceView | null
   userId: UserId
 }) {
   const parentAttendee = parentAttendance?.attendees.find((attendee) => attendee.userId === userId) ?? null
-  const isMissingRegisteredSpot = parentAttendee === null || !parentAttendee.registered
+  const isMissingRegisteredSpot = parentAttendee === null || parentAttendee.registeredAt === null
 
   return (
     <div className="mb-2 flex items-center gap-1.5">
@@ -257,13 +258,13 @@ function ParentEventRegistrationStatus({
   )
 }
 
-function getParentRegistrationStatusText(parentEventTitle: string, parentAttendee: Attendee | null): string {
+function getParentRegistrationStatusText(parentEventTitle: string, parentAttendee: AttendeeSummary | null): string {
   if (parentAttendee === null) {
     return `Ikke påmeldt forelderarrangementet ${parentEventTitle}`
   }
 
-  if (!parentAttendee.registered) {
-    return `På venteliste på forelderarrangementet ${parentEventTitle}`
+  if (parentAttendee.registeredAt === null) {
+    return `I køen til forelderarrangementet ${parentEventTitle}`
   }
 
   return `Påmeldt forelderarrangementet ${parentEventTitle}`
@@ -322,12 +323,12 @@ function PoolOccupancyStatus({ pool, attendance }: { pool: AttendancePool; atten
         {poolIsFull && <IconAlertTriangle className="size-5 text-red-600" />}
         <Text className="text-sm">{getPoolOccupancyText(pool, registeredAttendeeCount)}</Text>
       </div>
-      <WaitlistCount count={queuedAttendeeCount} poolTitle={pool.title} />
+      <QueueCount count={queuedAttendeeCount} poolTitle={pool.title} />
     </div>
   )
 }
 
-function WaitlistCount({ count, poolTitle }: { count: number; poolTitle: string }) {
+function QueueCount({ count, poolTitle }: { count: number; poolTitle: string }) {
   if (count === 0) {
     return null
   }

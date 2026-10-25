@@ -1,6 +1,5 @@
 import { Form } from "@admin/components/forms/Form"
 import { SearchField } from "@admin/components/forms/SearchField"
-import { SelectField } from "@admin/components/forms/SelectField"
 import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
@@ -25,16 +24,6 @@ export const ArticleFilters = ({ onChange, defaultValues }: Props) => {
   return (
     <Form form={form} onSubmit={onChange} className="flex flex-row flex-wrap gap-2">
       <SearchField fixedWidth control={form.control} name="bySearchTerm" placeholder="Søk etter artikler..." />
-      <SelectField
-        fixedWidth
-        control={form.control}
-        name="byIsFeatured"
-        placeholder="Velg filter"
-        options={[
-          { label: "Fremhevet", value: true },
-          { label: "Ikke fremhevet", value: false },
-        ]}
-      />
     </Form>
   )
 }

@@ -1,6 +1,7 @@
 "use client"
 
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, Text, Title } from "@dotkomonline/ui"
+import { NavbarDropdownContent } from "@/components/Navbar/NavbarDropdownContent"
+import { Button, DropdownMenu, DropdownMenuTrigger, Text, Title } from "@dotkomonline/ui"
 import { createAuthorizeUrl, createLogoutUrl, toAbsoluteUrl } from "@dotkomonline/utils"
 import { IconAlertTriangleFilled, IconLogin2, IconLogout2 } from "@tabler/icons-react"
 import type { FC } from "react"
@@ -27,12 +28,7 @@ export const SessionRecoveryDropdown: FC<SessionRecoveryDropdownProps> = ({ titl
           <IconAlertTriangleFilled className="size-5 text-red-600 dark:text-red-400" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="p-4 rounded-2xl w-76 bg-red-50 border border-red-100 dark:bg-stone-800 dark:border-stone-700/30 shadow-sm"
-        sideOffset={24}
-        positionMethod="fixed"
-      >
+      <NavbarDropdownContent className="p-4 rounded-2xl w-76 bg-red-50 border border-red-100 dark:bg-stone-800 dark:border-stone-700/30 shadow-sm">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <Title className="text-base font-semibold">{title}</Title>
@@ -49,7 +45,7 @@ export const SessionRecoveryDropdown: FC<SessionRecoveryDropdownProps> = ({ titl
             </Button>
           </div>
         </div>
-      </DropdownMenuContent>
+      </NavbarDropdownContent>
     </DropdownMenu>
   )
 }

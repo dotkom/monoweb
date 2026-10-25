@@ -21,6 +21,7 @@ export type ResourceDetailNavItem = {
 export type ViewInWebLinkProps = {
   label: string
   href: string
+  prefetch?: boolean
   disabled?: boolean
 }
 
@@ -75,6 +76,7 @@ export function ResourceDetailLayout({
   const router = useRouter()
   const rawPathname = usePathname()
   const { isAdministrator } = useAuthorization()
+  const canCopyIds = isAdministrator
   const pathname = decodeURIComponent(rawPathname)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
@@ -97,6 +99,7 @@ export function ResourceDetailLayout({
               variant="outline"
               element={Link}
               href={viewInWebProps.href}
+              prefetch={viewInWebProps.prefetch}
               target="_blank"
               rel="noopener noreferrer"
               iconRight={<IconArrowUpRight className="size-3.5" />}
@@ -106,7 +109,7 @@ export function ResourceDetailLayout({
             </Button>
           )}
           {copyIds.length > 0 &&
-            isAdministrator &&
+            canCopyIds &&
             copyIds.map((copyId) => <CopyIdButton key={copyId.value} id={copyId.value} label={copyId.label} />)}
           {onDelete && (
             <>

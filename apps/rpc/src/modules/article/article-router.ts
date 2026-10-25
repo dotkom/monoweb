@@ -1,8 +1,9 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { canManageArticles } from "../../permissions/article-permissions"
 import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "./article"
@@ -17,7 +18,7 @@ const createArticleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -43,7 +44,7 @@ const editArticleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -111,12 +112,6 @@ const findRelatedArticlesProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
 
-export type FindFeaturedArticlesInput = inferProcedureInput<typeof findFeaturedArticlesProcedure>
-export type FindFeaturedArticlesOutput = inferProcedureOutput<typeof findFeaturedArticlesProcedure>
-const findFeaturedArticlesProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findFeatured(ctx.handle))
-
 export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
 export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
 const getArticleTagsProcedure = procedure
@@ -143,7 +138,7 @@ const addArticleTagProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -163,7 +158,7 @@ const removeArticleTagProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -186,7 +181,7 @@ const createArticleFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .mutation(async ({ input, ctx }) => {
     return await ctx.articleService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
@@ -201,7 +196,6 @@ export const articleRouter = t.router({
   get: getArticleProcedure,
   getBySlug: getArticleBySlugProcedure,
   related: findRelatedArticlesProcedure,
-  featured: findFeaturedArticlesProcedure,
   getTags: getArticleTagsProcedure,
   findTagsOrderedByPopularity: findArticleTagsOrderedByPopularityProcedure,
   addTag: addArticleTagProcedure,

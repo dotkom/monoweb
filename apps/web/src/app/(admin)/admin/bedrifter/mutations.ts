@@ -30,6 +30,7 @@ export const useCreateCompanyMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelse av bedriften: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -65,6 +66,7 @@ export const useEditCompanyMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av bedriften: ${err.toString()}.`,
+          error: err,
         })
       },
     })

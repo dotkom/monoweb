@@ -13,7 +13,7 @@ import {
 } from "./article"
 import type { UserId } from "../user/user"
 import { createS3PresignedPost, removeEphemeralTag, getS3KeyFromUrl, slugify } from "@dotkomonline/utils"
-import { compareAsc, compareDesc } from "date-fns"
+import { compareAsc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { ArticleRepository } from "./article-repository"
@@ -38,7 +38,6 @@ export interface ArticleService {
    * Gets the top 10 related articles based on tags
    */
   findRelated(handle: DBHandle, article: Article): Promise<Article[]>
-  findFeatured(handle: DBHandle): Promise<Article[]>
   getTags(handle: DBHandle): Promise<ArticleTag[]>
   /**
    * Add a tag to an article
@@ -165,11 +164,6 @@ export function getArticleService(
         .slice(0, 10)
     },
 
-    async findFeatured(handle) {
-      const articles = await articleRepository.findFeatured(handle)
-      return articles.toSorted((a, b) => compareDesc(a.updatedAt, b.updatedAt))
-    },
-
     async getTags(handle) {
       const tags = await articleTagRepository.findMany(handle)
       return tags.toSorted((a, b) => compareAsc(a.name, b.name))
@@ -217,8 +211,7 @@ export function getArticleService(
     },
 
     async findTagsOrderedByPopularity(handle) {
-      // magic number
-      return articleRepository.findTagsOrderedByPopularity(handle, 30)
+      return articleRepository.findTagsOrderedByPopularity(handle)
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {

@@ -46,11 +46,11 @@ function getEventAttendeesRuleLabel(
   let label = `Påmeldte på ${eventTitle}`
 
   if (rule.reservationStatus === "ALL") {
-    label = `Påmeldte og ventelistede på ${eventTitle}`
+    label = `Påmeldte og personer i kø til ${eventTitle}`
   }
 
   if (rule.reservationStatus === "UNRESERVED") {
-    label = `I kø på ${eventTitle}`
+    label = `I kø til ${eventTitle}`
   }
 
   if (rule.paymentStatus === "PAID") {

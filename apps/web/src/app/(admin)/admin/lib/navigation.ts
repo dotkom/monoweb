@@ -1,7 +1,16 @@
 "use client"
 
-import type { useAuthorization } from "@admin/auth/authorization-context"
-import { GroupTypeSchema } from "@dotkomonline/rpc/group"
+import type { Authorization } from "@admin/auth/authorization-context"
+import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
+import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
+import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
+import { canCreateGroups } from "@dotkomonline/rpc/group-permissions"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
+import { canCreateMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import {
   IconArticle,
   IconAward,
@@ -20,6 +29,9 @@ import {
   IconWheelchair,
   type TablerIcon,
 } from "@tabler/icons-react"
+import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canListUsers } from "@dotkomonline/rpc/user-permissions"
+import { canCreateNotifications, canListNotifications } from "@dotkomonline/rpc/notification-permissions"
 
 export type Navigation = {
   label: string
@@ -31,9 +43,9 @@ export type Navigation = {
     label: string
     href: string
     resourceName: string
-    canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
+    canAccess?: (authorization: Authorization) => boolean
   }[]
-  canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
+  canAccess?: (authorization: Authorization) => boolean
 }
 
 export type NavigationGroup = {
@@ -58,7 +70,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Nytt arrangement",
             href: "/admin/arrangementer/ny",
             resourceName: "arrangement",
-            canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canCreateEvents(),
+            canAccess: (authorization) => canCreateEvents(authorization),
           },
         ],
       },
@@ -67,16 +79,19 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBan,
         href: "/admin/prikker",
         keywords: ["prikk", "prikker", "suspensjon", "suspensjoner", "mark", "marks"],
+        canAccess: (authorization) => canListMarks(authorization),
         createActions: [
           {
             label: "Ny prikk",
             href: "/admin/prikker?create=prikk",
             resourceName: "prikk",
+            canAccess: (authorization) => canCreateMarks(authorization),
           },
           {
             label: "Ny suspensjon",
             href: "/admin/prikker?create=suspensjon",
             resourceName: "suspensjon",
+            canAccess: (authorization) => canCreateMarks(authorization),
           },
         ],
       },
@@ -90,6 +105,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny konkurranse",
             href: "/admin/konkurranser/ny",
             resourceName: "konkurranse",
+            canAccess: (authorization) => canCreateContests(authorization),
           },
         ],
       },
@@ -98,6 +114,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconUserMinus,
         href: "/admin/avmeldingsgrunner",
         keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
+        canAccess: (authorization) => canListDeregisterReasons(authorization),
       },
     ],
   },
@@ -109,6 +126,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconUsers,
         href: "/admin/brukere",
         keywords: ["bruker", "brukere", "user", "users"],
+        canAccess: (authorization) => canListUsers(authorization),
       },
       {
         label: "Grupper",
@@ -120,8 +138,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Ny gruppe",
             href: "/admin/grupper/ny",
             resourceName: "gruppe",
-            canAccess: (authorization: ReturnType<typeof useAuthorization>) =>
-              Object.values(GroupTypeSchema.enum).some((type) => authorization.canCreateGroup(type)),
+            canAccess: (authorization) => canCreateGroups(authorization),
           },
         ],
       },
@@ -135,6 +152,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconHeartHandshake,
         href: "/admin/karriere",
         keywords: ["jobb", "jobbannonser", "karriere", "jobs"],
+        canAccess: (authorization) => canManageJobListings(authorization),
         createActions: [
           {
             label: "Ny jobbannonse",
@@ -148,6 +166,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBriefcase,
         href: "/admin/bedrifter",
         keywords: ["bedrift", "bedrifter", "company", "companies"],
+        canAccess: (authorization) => canManageCompanies(authorization),
         createActions: [
           {
             label: "Ny bedrift",
@@ -166,6 +185,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconArticle,
         href: "/admin/artikler",
         keywords: ["artikkel", "artikler"],
+        canAccess: (authorization) => canManageArticles(authorization),
         createActions: [
           {
             label: "Ny artikkel",
@@ -179,7 +199,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconSkull, // This is sacred and shall not be changed
         href: "/admin/offline",
         keywords: ["offline"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditOffline(),
+        canAccess: (authorization) => canManageOfflines(authorization),
         createActions: [
           {
             label: "Ny offline",
@@ -215,11 +235,13 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBell,
         href: "/admin/varslinger",
         keywords: ["varsling", "varslinger"],
+        canAccess: (authorization) => canListNotifications(authorization),
         createActions: [
           {
             label: "Ny varsling",
             href: "/admin/varslinger?create=varsling",
             resourceName: "varsling",
+            canAccess: (authorization) => canCreateNotifications(authorization),
           },
         ],
       },
@@ -228,7 +250,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconConfetti,
         href: "/admin/fadderukene",
         keywords: ["fadderuke", "fadderuker", "fadderukene"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditFadderuke(),
+        canAccess: (authorization) => canManageFadderuker(authorization),
         createActions: [
           {
             label: "Ny fadderuke",
@@ -242,7 +264,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconClipboardList,
         href: "/admin/logg",
         keywords: ["hendelseslogg", "logg", "audit"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canAccessAuditLog(),
+        canAccess: (authorization) => canAccessAuditLog(authorization),
       },
     ],
   },
@@ -262,10 +284,7 @@ for (const navigation of navigations) {
 
 export { navigationBreadcrumbLabels }
 
-export function filterNavigationsUserHasAccessTo(
-  navigations: Navigation[],
-  authorization: ReturnType<typeof useAuthorization>
-) {
+export function filterNavigationsUserHasAccessTo(navigations: Navigation[], authorization: Authorization) {
   return navigations
     .filter((navigation) => navigation.canAccess === undefined || navigation.canAccess(authorization))
     .map((page) => {
@@ -281,10 +300,7 @@ export function filterNavigationsUserHasAccessTo(
     })
 }
 
-export function filterNavigationGroupsUserHasAccessTo(
-  groups: NavigationGroup[],
-  authorization: ReturnType<typeof useAuthorization>
-) {
+export function filterNavigationGroupsUserHasAccessTo(groups: NavigationGroup[], authorization: Authorization) {
   return groups
     .map((group) => ({
       ...group,

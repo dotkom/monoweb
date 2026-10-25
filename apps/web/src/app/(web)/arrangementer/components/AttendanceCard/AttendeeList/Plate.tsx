@@ -2,8 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage, cn, Text } from "@dotkomonline/ui"
 import { IconUser } from "@tabler/icons-react"
-import type { Attendee } from "@dotkomonline/rpc/attendance"
-import { isKnight, type User } from "@dotkomonline/rpc/user"
+import type { AttendeeSummary } from "@dotkomonline/rpc/attendance"
+import { isKnight } from "@dotkomonline/rpc/user"
 import Link from "next/link.js"
 import { createContext, useContext, type JSX, type ReactNode } from "react"
 import {
@@ -12,8 +12,8 @@ import {
 } from "./exceptionallyDistinguished"
 
 export interface PlateProps {
-  attendee: Pick<Attendee, "userGrade" | "userId">
-  user: Pick<User, "id" | "name" | "username" | "imageUrl" | "flags" | "memberships">
+  attendee: Pick<AttendeeSummary, "userGrade" | "userId">
+  user: AttendeeSummary["user"]
   smallIcons: JSX.Element[]
   largeIcon: JSX.Element | null
   isCurrentUser: boolean
@@ -44,7 +44,7 @@ function PlateRoot({ attendee, user, smallIcons, largeIcon, isCurrentUser, class
   return (
     <PlateContext.Provider value={contextValue}>
       <div className={cn("relative flex min-w-0 w-full flex-1 items-center", className)}>
-        <Link href={profileHref} className="absolute inset-0 z-0" aria-label={profileLabel} />
+        <Link href={profileHref} className="absolute inset-0 z-0" aria-label={profileLabel} prefetch={false} />
         {children}
       </div>
     </PlateContext.Provider>

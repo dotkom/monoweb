@@ -1,4 +1,4 @@
-import { getAttendee, type Attendance, type AttendanceSummary } from "@dotkomonline/rpc/attendance"
+import { getAttendee, type AttendanceView, type AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, Title, cn } from "@dotkomonline/ui"
@@ -13,7 +13,7 @@ import { EventPreviewLink } from "./EventPreviewLink"
 
 export interface EventCardProps {
   event: Event | EventSummary
-  attendance: Attendance | AttendanceSummary | null
+  attendance: AttendanceView | AttendanceSummary | null
   userId?: UserId | null
   className?: string
 }
@@ -78,7 +78,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
             <>
               <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={eventHasEnded} />
 
-              <EventPrice price={attendance.attendancePrice} />
+              {attendee?.registeredAt == null && <EventPrice price={attendance.attendancePrice} />}
             </>
           )}
         </div>

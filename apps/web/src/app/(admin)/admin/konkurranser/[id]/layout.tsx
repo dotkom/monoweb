@@ -7,6 +7,7 @@ import {
   type ResourceDetailNavItem,
 } from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { canManageContest, toContestOrganizerGroups } from "@dotkomonline/rpc/contest-permissions"
 import { Text, TextLink } from "@dotkomonline/ui"
 import { IconListDetails, IconUsers } from "@tabler/icons-react"
 import { useParams } from "next/navigation"
@@ -24,8 +25,11 @@ export default function ContestDetailsLayout({ children }: PropsWithChildren) {
   useBreadcrumbLabel(breadcrumbPath("konkurranser", id), data?.contest.name ?? null)
   useBreadcrumbLabel(breadcrumbPath("konkurranser", id, "deltagere"), "Deltagere")
 
-  const { canEditContest } = useAuthorization()
-  const canEdit = canEditContest(data?.contest.groups ?? [])
+  const authorization = useAuthorization()
+  const canEdit = canManageContest(
+    authorization,
+    toContestOrganizerGroups(data?.contest.groups ?? [], authorization.groups)
+  )
 
   const { abbreviationBySlug } = useGroupAbbreviationMap()
   const organizers = data?.contest.groups ?? []

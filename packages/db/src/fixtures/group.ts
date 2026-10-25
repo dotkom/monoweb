@@ -1,9 +1,41 @@
 import { GroupRoleType, type Prisma } from "../"
 
+export const fixtureGroupSlug = {
+  appkom: "appkom",
+  arrkom: "arrkom",
+  backlog: "backlog",
+  bankom: "bankom",
+  bedkom: "bedkom",
+  debug: "debug",
+  dotdagene: "dotdagene",
+  dotkom: "dotkom",
+  ekskom: "ekskom",
+  fagkom: "fagkom",
+  feminit: "feminit",
+  hs: "hs",
+  jubkom: "jubkom",
+  oil: "oil",
+  output: "output",
+  prokom: "prokom",
+  rfk: "rfk",
+  trikom: "trikom",
+  velkom: "velkom",
+  xSport: "x-sport",
+  racingline: "racingline",
+  folkSomErGladIJul: "folk-som-er-glad-i-jul",
+  vodkaISkogen: "vodka-i-skogen",
+  faxeOrdenen: "faxe-ordenen",
+  mineline: "mineline",
+} as const
+
+export type FixtureGroupKey = keyof typeof fixtureGroupSlug
+
+export const groupSlug = (key: FixtureGroupKey): string => fixtureGroupSlug[key]
+
 export const getGroupFixtures = () =>
   [
     {
-      slug: "appkom",
+      slug: groupSlug("appkom"),
       abbreviation: "Appkom",
       name: "Applikasjonskomiteen",
       createdAt: new Date("2023-02-25 11:03:49.289+00"),
@@ -18,7 +50,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "arrkom",
+      slug: groupSlug("arrkom"),
       abbreviation: "Arrkom",
       name: "Arrangementskomiteen",
       createdAt: new Date("2023-02-25 11:03:49.289+00"),
@@ -31,7 +63,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "backlog",
+      slug: groupSlug("backlog"),
       abbreviation: "Backlog",
       name: "Backlog",
       description:
@@ -46,7 +78,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "bankom",
+      slug: groupSlug("bankom"),
       abbreviation: "Bankom",
       name: "Bank- og økonomikomiteen",
       description:
@@ -61,7 +93,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "OTHER",
     },
     {
-      slug: "bedkom",
+      slug: groupSlug("bedkom"),
       abbreviation: "Bedkom",
       name: "Bedriftskomiteen",
       createdAt: new Date("2023-02-23 11:03:49.289+00"),
@@ -74,7 +106,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "debug",
+      slug: groupSlug("debug"),
       abbreviation: "Debug",
       name: "Debug",
       description: "Debug er en ko",
@@ -84,7 +116,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "NOMINATION",
     },
     {
-      slug: "dotdagene",
+      slug: groupSlug("dotdagene"),
       abbreviation: "dotDAGENE",
       name: "dotDAGENE",
       description:
@@ -94,7 +126,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "dotkom",
+      slug: groupSlug("dotkom"),
       createdAt: new Date("2023-02-22 13:30:04.713+00"),
       abbreviation: "Dotkom",
       name: "Drifts- og utviklingskomiteen",
@@ -107,7 +139,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "ekskom",
+      slug: groupSlug("ekskom"),
       createdAt: new Date("2019-07-27T10:03:35+02:00"),
       abbreviation: "Ekskom",
       name: "Ekskursjonskomiteen",
@@ -121,7 +153,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "fagkom",
+      slug: groupSlug("fagkom"),
       abbreviation: "Fagkom",
       name: "Fag- og kurskomiteen",
       description:
@@ -136,7 +168,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "feminit",
+      slug: groupSlug("feminit"),
       abbreviation: "FeminIT",
       name: "Females in IT",
       description:
@@ -151,7 +183,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "hs",
+      slug: groupSlug("hs"),
       createdAt: new Date("2023-02-15 11:03:49.289+00"),
       abbreviation: "Hovedstyret",
       email: "hovedstyret@online.ntnu.no",
@@ -161,7 +193,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "GENERAL_ASSEMBLY",
     },
     {
-      slug: "jubkom",
+      slug: groupSlug("jubkom"),
       abbreviation: "Jubkom",
       name: "Jubileumskomiteen",
       description:
@@ -175,7 +207,7 @@ export const getGroupFixtures = () =>
       type: "NODE_COMMITTEE",
     },
     {
-      slug: "oil",
+      slug: groupSlug("oil"),
       abbreviation: "Online-IL",
       name: "Online Idrettslag",
       description:
@@ -188,7 +220,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "output",
+      slug: groupSlug("output"),
       abbreviation: "Output",
       name: "Output",
       description: "Output er et band",
@@ -197,7 +229,7 @@ export const getGroupFixtures = () =>
       type: "ASSOCIATED",
     },
     {
-      slug: "prokom",
+      slug: groupSlug("prokom"),
       abbreviation: "Prokom",
       name: "Profil- og aviskomiteen",
       description:
@@ -212,7 +244,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "rfk",
+      slug: groupSlug("rfk"),
       abbreviation: "Kjelleren",
       name: "Realfagskjelleren",
       description:
@@ -227,7 +259,7 @@ export const getGroupFixtures = () =>
       type: "ASSOCIATED",
     },
     {
-      slug: "trikom",
+      slug: groupSlug("trikom"),
       abbreviation: "Trikom",
       name: "Trivselskomiteen",
       description:
@@ -241,7 +273,7 @@ export const getGroupFixtures = () =>
       recruitmentMethod: "AUTUMN_APPLICATION",
     },
     {
-      slug: "velkom",
+      slug: groupSlug("velkom"),
       abbreviation: "Velkom",
       name: "Velkomstkomiteen",
       description:
@@ -258,7 +290,7 @@ export const getGroupFixtures = () =>
 
     // Interest groups
     {
-      slug: "x-sport",
+      slug: groupSlug("xSport"),
       abbreviation: "X-Sport",
       name: "X-Sport",
       description:
@@ -270,7 +302,7 @@ export const getGroupFixtures = () =>
       type: "INTEREST_GROUP",
     },
     {
-      slug: "racingline",
+      slug: groupSlug("racingline"),
       abbreviation: "RacingLine",
       name: "RacingLine",
       description:
@@ -281,7 +313,7 @@ export const getGroupFixtures = () =>
       type: "INTEREST_GROUP",
     },
     {
-      slug: "folk-som-er-glad-i-jul",
+      slug: groupSlug("folkSomErGladIJul"),
       abbreviation: "Folk som er glad i jul",
       name: "Folk som er glad i jul",
       description:
@@ -293,7 +325,7 @@ export const getGroupFixtures = () =>
       type: "INTEREST_GROUP",
     },
     {
-      slug: "vodka-i-skogen",
+      slug: groupSlug("vodkaISkogen"),
       abbreviation: "Vodka i Skogen",
       name: "Vodka i Skogen",
       description:
@@ -304,7 +336,7 @@ export const getGroupFixtures = () =>
       type: "INTEREST_GROUP",
     },
     {
-      slug: "faxe-ordenen",
+      slug: groupSlug("faxeOrdenen"),
       abbreviation: "Faxe-ordenen",
       name: "Faxe-ordenen",
       description:
@@ -315,7 +347,7 @@ export const getGroupFixtures = () =>
       type: "INTEREST_GROUP",
     },
     {
-      slug: "mineline",
+      slug: groupSlug("mineline"),
       abbreviation: "Mineline",
       name: "Mineline",
       description:

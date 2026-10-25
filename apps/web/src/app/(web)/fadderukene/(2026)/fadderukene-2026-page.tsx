@@ -1,6 +1,6 @@
 import type { FadderukePageProps } from "../lib"
 import type { ContestId } from "@dotkomonline/rpc/contest"
-import type { EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { getServerSession } from "@/auth"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { IconCalendarEvent, IconHandClick, IconTrophy } from "@tabler/icons-react"
@@ -324,7 +324,7 @@ function LeaderboardSection({ contestId }: { contestId: ContestId | null }) {
   )
 }
 
-function ProgramSection({ eventsWithAttendance }: { eventsWithAttendance: EventWithAttendance[] }) {
+function ProgramSection({ eventsWithAttendance }: { eventsWithAttendance: EventWithAttendanceView[] }) {
   return (
     <section id="program" className="max-w-3xl mx-auto flex w-full flex-col gap-4 scroll-mt-28">
       <Title element="h3">Program</Title>

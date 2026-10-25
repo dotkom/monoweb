@@ -18,7 +18,7 @@ interface SelectionsFormValues {
 }
 
 interface SelectionsFormProps {
-  attendance: Attendance
+  attendance: Pick<Attendance, "selections">
   attendee: Attendee
   onSubmit: (selections: AttendanceSelectionResponse[]) => void
   disabled?: boolean

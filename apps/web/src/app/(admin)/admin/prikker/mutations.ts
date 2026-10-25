@@ -54,6 +54,7 @@ export const useEditMarkMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under oppdatering av prikk: ${err.toString()}.`,
+          error: err,
         })
       },
     })
@@ -85,6 +86,7 @@ export const useCreatePersonalMarkMutation = () => {
         notification.fail({
           title: "Feil oppsto",
           message: `En feil oppsto under opprettelsen: ${err.toString()}.`,
+          error: err,
         })
       },
     })

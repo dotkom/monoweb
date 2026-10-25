@@ -11,7 +11,7 @@ import { createIcsBody } from "../ics"
 
 interface AttendanceCalendarButtonProps {
   event: Event
-  attendance: Attendance
+  attendance: Pick<Attendance, "registerStart">
 }
 
 export function AttendanceCalendarButton({ event, attendance }: AttendanceCalendarButtonProps) {

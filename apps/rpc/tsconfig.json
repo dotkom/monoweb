@@ -9,7 +9,6 @@
   ],
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
-    "baseUrl": ".",
     "jsx": "preserve",
     "incremental": true,
     "strictNullChecks": true,

@@ -1,8 +1,9 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { isCommitteeAffiliation } from "@admin/auth/permissions"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canCreateNotifications } from "@dotkomonline/rpc/notification-permissions"
+import { isCommitteeAffiliation } from "@dotkomonline/rpc/permissions"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
@@ -23,9 +24,11 @@ function parseScopeFilter(value: string | null): ScopeFilter {
 export default function NotificationsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isAdministrator, affiliations } = useAuthorization()
+  const authorization = useAuthorization()
+  const { affiliations } = authorization
+  const canCreate = canCreateNotifications(authorization)
   const committeeSlugs = useMemo(() => [...affiliations.keys()].filter(isCommitteeAffiliation), [affiliations])
-  const canUseMineFilter = !isAdministrator && committeeSlugs.length > 0
+  const canUseMineFilter = !canCreate && committeeSlugs.length > 0
   const scopeFilterFromQuery = parseScopeFilter(searchParams.get("scope"))
   const scopeFilter = canUseMineFilter ? scopeFilterFromQuery : "alle"
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -39,7 +42,7 @@ export default function NotificationsPage() {
   const hasOpenCreateSearchParam = searchParams.get("create") !== null
 
   useEffect(() => {
-    if (hasOpenCreateSearchParam && isAdministrator) {
+    if (hasOpenCreateSearchParam && canCreate) {
       setIsCreateOpen(true)
 
       const params = new URLSearchParams(searchParams.toString())
@@ -48,15 +51,15 @@ export default function NotificationsPage() {
 
       router.replace(queryString ? `/admin/varslinger?${queryString}` : "/admin/varslinger")
     }
-  }, [hasOpenCreateSearchParam, isAdministrator, router, searchParams])
+  }, [hasOpenCreateSearchParam, canCreate, router, searchParams])
 
   const filters = useMemo(() => {
-    if (scopeFilter === "mine" && !isAdministrator && committeeSlugs.length > 0) {
+    if (scopeFilter === "mine" && !canCreate && committeeSlugs.length > 0) {
       return { byActorGroupId: committeeSlugs }
     }
 
     return {}
-  }, [committeeSlugs, isAdministrator, scopeFilter])
+  }, [committeeSlugs, canCreate, scopeFilter])
 
   const { notifications, isLoading, isPlaceholderData, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useNotificationsInfiniteQuery(filters)
@@ -83,8 +86,8 @@ export default function NotificationsPage() {
             </ToggleGroup>
           )}
         </div>
-        <PermissionTooltip allowed={isAdministrator} label="Kun administratorer kan opprette varslinger">
-          <Button onClick={() => setIsCreateOpen(true)} disabled={!isAdministrator}>
+        <PermissionTooltip allowed={canCreate} label="Kun administratorer kan opprette varslinger">
+          <Button onClick={() => setIsCreateOpen(true)} disabled={!canCreate}>
             Ny varsling
           </Button>
         </PermissionTooltip>
@@ -102,7 +105,7 @@ export default function NotificationsPage() {
         fetchNextPage={fetchNextPage}
       />
 
-      {isAdministrator && (
+      {canCreate && (
         <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />
       )}
     </div>

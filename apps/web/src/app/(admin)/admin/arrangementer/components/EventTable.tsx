@@ -1,28 +1,29 @@
 "use client"
 
-import { useAuthorization } from "@admin/auth/authorization-context"
 import {
   EventStatusSchema,
-  type EventWithAttendance,
+  type EventWithAttendanceView,
   mapEventStatusToLabel,
   mapEventTypeToLabel,
 } from "@dotkomonline/rpc/event"
-import { DataTable, Badge, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { Badge, DataTable, TextLink, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconEye, IconEyeDotted } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { DateTooltip } from "@admin/components/DateTooltip"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
-import { useCanEditByGroups } from "@admin/hooks/use-can-edit-by-groups"
+import { isAdministrator } from "@dotkomonline/rpc/permissions"
+import { canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import { EventHostingGroupList } from "./EventHostingGroupList"
 
-export type EventTableRow = EventWithAttendance & {
+export type EventTableRow = EventWithAttendanceView & {
   canEdit: boolean
 }
 
 interface Props {
-  events: EventWithAttendance[]
+  events: EventWithAttendanceView[]
   isLoading: boolean
   isPlaceholderData: boolean
   isFetchingNextPage: boolean
@@ -41,23 +42,26 @@ export const EventTable = ({
   dimReadOnlyRows = false,
 }: Props) => {
   const authorization = useAuthorization()
-  const { isAdministrator } = authorization
-  const canEditByGroups = useCanEditByGroups()
+  const isAdmin = isAdministrator(authorization.affiliations)
 
   const rows = useMemo(
     (): EventTableRow[] =>
-      events.map((eventWithAttendance) => ({
-        ...eventWithAttendance,
-        canEdit: canEditByGroups(eventWithAttendance.event.hostingGroups.map((group) => group.slug)),
-      })),
-    [canEditByGroups, events]
+      events.map((eventWithAttendance) => {
+        const hostingGroupIds = eventWithAttendance.event.hostingGroups.map((group) => group.slug)
+
+        return {
+          ...eventWithAttendance,
+          canEdit: canEditEvent(authorization, hostingGroupIds, hostingGroupIds),
+        }
+      }),
+    [authorization, events]
   )
 
   const columnHelper = createColumnHelper<EventTableRow>()
   const columns = useMemo(
     () =>
       [
-        isAdministrator === false
+        isAdmin === false
           ? columnHelper.accessor("canEdit", {
               header: () => null,
               meta: {
@@ -125,7 +129,7 @@ export const EventTable = ({
           cell: (info) => mapEventTypeToLabel(info.getValue()),
         }),
       ].filter((column): column is NonNullable<typeof column> => Boolean(column)),
-    [columnHelper, isAdministrator]
+    [columnHelper, isAdmin]
   )
 
   const table = useReactTable({

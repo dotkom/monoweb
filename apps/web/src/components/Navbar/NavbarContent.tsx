@@ -29,9 +29,10 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 import Link from "next/link"
-import type { ComponentType, FC } from "react"
+import { type ComponentType, type FC, useRef } from "react"
 import { MainNavigation } from "./MainNavigation"
 import { MobileNavigation } from "./MobileNavigation"
+import { NavbarDropdownAnchorContext } from "./NavbarDropdownContent"
 import { ProfileMenu } from "./ProfileMenu"
 
 export type MenuIcon = Icon | ComponentType<{ className?: string; width?: number; height?: number }>
@@ -185,6 +186,7 @@ interface Props {
 
 export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
   const fullPathname = useFullPathname()
+  const navbarPillRef = useRef<HTMLDivElement>(null)
 
   // Use initial auth state from the server, but respond to client-side changes
   const authState = useAuthenticatedUser(initialAuthState)
@@ -197,8 +199,9 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
 
   return (
     <header className="sticky top-4 z-50 mt-4 flex flex-col gap-0.75">
-      <div className={cn("navbar-shell flex items-stretch", showLoginButton && "gap-1.5")}>
+      <div className={cn("navbar-shell flex items-stretch gap-2", showLoginButton && "lg:gap-1.5")}>
         <div
+          ref={navbarPillRef}
           className={cn(
             "min-w-0 w-full grow h-(--navbar-height)",
             "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-200 dark:border-stone-700/30",
@@ -215,7 +218,9 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
           <MainNavigation links={links} />
 
           <div className="ml-auto flex items-center">
-            <ProfileMenu authState={authState} />
+            <NavbarDropdownAnchorContext value={navbarPillRef}>
+              <ProfileMenu authState={authState} />
+            </NavbarDropdownAnchorContext>
           </div>
         </div>
 
@@ -223,33 +228,32 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
           <div
             className={cn(
               "flex h-(--navbar-height) shrink-0",
-              "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md",
-              "shadow-sm backdrop-blur-xl",
-              "bg-gray-100/80 dark:bg-stone-800/90"
+              "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md shadow-sm"
             )}
           >
             <Button
               element="a"
               variant="default"
-              color="gray"
+              color="brand"
               size="lg"
               className={cn(
-                "h-full min-w-19 shrink-0",
-                "py-0 pl-3 pr-4 xs:pl-6 xs:pr-8",
+                "h-full w-(--navbar-height) xs:w-auto shrink-0",
+                "p-0 xs:pl-6 xs:pr-8",
                 "font-medium",
                 "rounded-[calc(var(--navbar-height)/2)] lg:rounded-l-md"
               )}
               href={createAuthorizeUrl({ returnTo: fullPathname })}
-              icon={<IconLogin2 className="mr-1.5 size-6" />}
+              aria-label="Logg inn"
+              icon={<IconLogin2 className="size-6 -ml-px xs:mr-1.5" />}
             >
-              <span className="hidden min-[400px]:inline">Logg inn</span>
+              <span className="hidden xs:inline">Logg inn</span>
             </Button>
           </div>
         )}
 
         <div
           className={cn(
-            "ml-2 lg:hidden size-(--navbar-height) shrink-0",
+            "lg:hidden size-(--navbar-height) shrink-0",
             "flex items-center justify-center rounded-full",
             "shadow-xs backdrop-blur-xl",
             "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-300/70 dark:border-stone-700/30"

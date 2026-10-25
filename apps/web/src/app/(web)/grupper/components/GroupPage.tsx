@@ -6,6 +6,7 @@ import {
   type GroupMember,
   GroupRoleTypeEnum,
   findActiveGroupMembership,
+  findLatestGroupMembership,
   getGroupDisplayName,
   getGroupSecondaryName,
   getGroupTypeName,
@@ -39,7 +40,7 @@ import {
   IconUser,
   IconWorld,
 } from "@tabler/icons-react"
-import { compareDesc } from "date-fns"
+import { compareAsc } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getGroupEasterEgg } from "./easter-eggs"
@@ -110,7 +111,23 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
         return byRole
       }
 
-      return compareDesc(left.start, right.start)
+      const leftOldestGroupmembership = leftMember.groupMemberships
+        .toSorted((leftGroupMembership, rightGroupMembership) => {
+          return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+        })
+        .at(0)
+      const rightOldestGroupmembership = rightMember.groupMemberships
+        .toSorted((leftGroupMembership, rightGroupMembership) => {
+          return compareAsc(leftGroupMembership.start, rightGroupMembership.start)
+        })
+        .at(0)
+
+      if (leftOldestGroupmembership === undefined || rightOldestGroupmembership === undefined) {
+        // Sanity check
+        return 0
+      }
+
+      return compareAsc(leftOldestGroupmembership.start, rightOldestGroupmembership.start)
     })
 
   const inactiveMembers = membersToShow.filter((member) => !isGroupMemberActive(member))
@@ -255,8 +272,11 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const isUser = userId === member.id
 
   const firstActiveMembership = findActiveGroupMembership(member)
+  const latestActiveMembership = findLatestGroupMembership(member)
 
-  const roles = sortGroupRolesByPriority(firstActiveMembership?.roles ?? [])
+  const roles = firstActiveMembership
+    ? sortGroupRolesByPriority(firstActiveMembership.roles)
+    : sortGroupRolesByPriority(latestActiveMembership?.roles ?? [])
 
   const roleNames = roles.length > 0 ? roles.map(({ name }) => name).join(", ") : "Ingen roller"
 

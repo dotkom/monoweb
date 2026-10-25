@@ -1,76 +1,62 @@
 import type { Prisma } from "../"
+import { groupSlug } from "./group"
+import { eventId } from "./event"
 
-export const getEventHostingGroupFixtures: (eventIds: string[]) => Prisma.EventHostingGroupCreateManyInput[] = (
-  eventIds
-) => [
+export const getEventHostingGroupFixtures = (): Prisma.EventHostingGroupCreateManyInput[] => [
   {
-    // Kurs i å lage fixtures
-    eventId: eventIds[0],
-    groupId: "fagkom",
+    eventId: eventId("fixturesCourse"),
+    groupId: groupSlug("fagkom"),
   },
   {
-    // Kurs i å lage fixtures
-    eventId: eventIds[0],
-    groupId: "dotkom",
+    eventId: eventId("fixturesCourse"),
+    groupId: groupSlug("dotkom"),
   },
   {
-    // Åre 2025
-    eventId: eventIds[1],
-    groupId: "arrkom",
+    eventId: eventId("are2025"),
+    groupId: groupSlug("arrkom"),
   },
   {
-    // Sommerfest 2025
-    eventId: eventIds[2],
-    groupId: "backlog",
+    eventId: eventId("sommerfest2025"),
+    groupId: groupSlug("backlog"),
   },
   {
-    // Sommerfest 2025
-    eventId: eventIds[2],
-    groupId: "hs",
+    eventId: eventId("sommerfest2025"),
+    groupId: groupSlug("hs"),
   },
   {
-    // Vinkurs 🍷
-    eventId: eventIds[3],
-    groupId: "fagkom",
+    eventId: eventId("vinkurs"),
+    groupId: groupSlug("fagkom"),
   },
   {
-    // Infomøte om ekskursjonen
-    eventId: eventIds[4],
-    groupId: "ekskom",
+    eventId: eventId("areExcursionInfoMeeting"),
+    groupId: groupSlug("ekskom"),
   },
   {
-    // 1.klasse eksamensfest
-    eventId: eventIds[7],
-    groupId: "arrkom",
+    eventId: eventId("firstYearExamParty"),
+    groupId: groupSlug("arrkom"),
   },
   {
-    // Utmatrikulering 5. klasse
-    eventId: eventIds[8],
-    groupId: "hs",
+    eventId: eventId("fifthYearGraduation"),
+    groupId: groupSlug("hs"),
   },
   {
-    // FotballtrøyeFredag!
-    eventId: eventIds[9],
-    groupId: "trikom",
+    eventId: eventId("footballShirtFriday"),
+    groupId: groupSlug("trikom"),
   },
   {
-    // Eksamenskurs i Diskret matematikk
-    eventId: eventIds[10],
-    groupId: "fagkom",
+    eventId: eventId("discreteMathExamCourse"),
+    groupId: groupSlug("fagkom"),
   },
   {
-    // Volleyballturnering med NTNUI
-    eventId: eventIds[11],
-    groupId: "oil",
+    eventId: eventId("volleyball"),
+    groupId: groupSlug("oil"),
   },
   {
-    // Eksamenslesing for 1.klasse
-    eventId: eventIds[12],
-    groupId: "trikom",
+    eventId: eventId("firstYearExamReading"),
+    groupId: groupSlug("trikom"),
   },
   {
-    // 17. mai-frokost
-    eventId: eventIds[13],
-    groupId: "arrkom",
+    eventId: eventId("may17Breakfast"),
+    groupId: groupSlug("arrkom"),
   },
 ]

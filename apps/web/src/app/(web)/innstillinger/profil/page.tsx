@@ -1,22 +1,20 @@
 "use client"
 
+import { ProfileImageUploadInput } from "@/app/profil/profile-image-upload/ProfileImageUploadInput"
+import { useUploadProfileImage } from "@/app/profil/profile-image-upload/use-upload-profile-image"
 import { SessionRecoveryNotice } from "@/components/auth/SessionRecoveryNotice"
-import { getSessionRecoveryMessages } from "@dotkomonline/utils"
-import { useTRPC } from "@/utils/trpc/client"
+import { Link } from "@/components/link"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, Title } from "@dotkomonline/ui"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Link } from "@/components/link"
 import { redirect } from "next/navigation"
+import { useUserUpdateMutation } from "../mutations"
 import { type FormUserWrite, ProfileForm } from "./form"
 import SkeletonProfileForm from "./loading"
 
 const EditProfilePage = () => {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
   const fullPathname = useFullPathname()
   const {
     sessionUser,
@@ -28,18 +26,8 @@ const EditProfilePage = () => {
     dbUser,
   } = useAuthenticatedUser()
 
-  const userEdit = useMutation(
-    trpc.user.update.mutationOptions({
-      onSuccess: async (data) => {
-        await Promise.allSettled([
-          queryClient.invalidateQueries(trpc.user.getByUsername.queryOptions(data.username)),
-          queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
-          queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
-          queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
-        ])
-      },
-    })
-  )
+  const userUpdate = useUserUpdateMutation()
+  const uploadProfileImage = useUploadProfileImage(dbUser?.id ?? null)
 
   if (!authLoading && sessionUser === null) {
     redirect(createAuthorizeUrl({ returnTo: fullPathname }))
@@ -75,7 +63,7 @@ const EditProfilePage = () => {
   }
 
   const onSubmit = (data: FormUserWrite) => {
-    userEdit.mutate({ id: dbUser.id, input: data })
+    userUpdate.mutate({ id: dbUser.id, input: data })
   }
 
   return (
@@ -88,6 +76,7 @@ const EditProfilePage = () => {
         <Button
           element={Link}
           href={`/profil/${dbUser.username}`}
+          prefetch={false}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"
         >
@@ -95,13 +84,20 @@ const EditProfilePage = () => {
         </Button>
       </div>
 
+      <ProfileImageUploadInput
+        imageUrl={dbUser.imageUrl}
+        onSubmit={uploadProfileImage}
+        alwaysShowInteractableOverlay
+        className="size-32"
+      />
+
       <ProfileForm
         user={dbUser}
         onSubmit={onSubmit}
-        isSaving={userEdit.isPending}
-        saveError={userEdit.error?.message}
-        saveSuccess={userEdit.isSuccess}
-        resetSaveState={userEdit.reset}
+        isSaving={userUpdate.isPending}
+        saveError={userUpdate.error?.message}
+        saveSuccess={userUpdate.isSuccess}
+        resetSaveState={userUpdate.reset}
       />
     </div>
   )

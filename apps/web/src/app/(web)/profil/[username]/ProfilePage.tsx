@@ -19,6 +19,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -31,7 +32,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  cn,
 } from "@dotkomonline/ui"
 import {
   capitalizeFirstLetter,
@@ -59,6 +59,8 @@ import { nb } from "date-fns/locale"
 import { notFound, redirect, useParams } from "next/navigation"
 import { type ElementType, useMemo } from "react"
 import { PenaltyDialog } from "./components/PenaltyDialog"
+import { ProfileImageUploadInput } from "../profile-image-upload/ProfileImageUploadInput"
+import { useUploadProfileImage } from "../profile-image-upload/use-upload-profile-image"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
 
@@ -152,7 +154,6 @@ function MarkDisplay({ markInformation: { mark, personalMark } }: { markInformat
 
 export function ProfilePage() {
   const now = useMemo(() => getCurrentUTC(), [])
-
   const { username: rawUsername } = useParams<{ username: string }>()
   const username = decodeURIComponent(rawUsername)
 
@@ -165,6 +166,8 @@ export function ProfilePage() {
   })
 
   const { data: user, isLoading: userLoading } = userResult
+
+  const uploadProfileImage = useUploadProfileImage(user?.id ?? null)
 
   // "Compilation" is an inaugural tradition in Online where you "officially" become a member
   const isCompiled = false // TODO: Reimplement compilation with flags
@@ -193,7 +196,14 @@ export function ProfilePage() {
       ],
     })
 
-  const { eventDetails: pastEventWithAttendances, fetchNextPage } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
+  const {
+    eventDetails: pastEventWithAttendances,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPlaceholderData,
+    isLoading: isPastEventsLoading,
+  } = useEventAllSummariesByAttendingUserIdInfiniteQuery({
     id: user?.id ?? "",
     filter: {
       byEndDate: {
@@ -290,12 +300,16 @@ export function ProfilePage() {
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-row items-start gap-4">
-        <Avatar className="w-16 h-16 md:w-32 md:h-32 shrink-0">
-          <AvatarImage src={user.imageUrl ?? undefined} className="object-cover" />
-          <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
-            <IconUser width={64} height={64} />
-          </AvatarFallback>
-        </Avatar>
+        {isUser ? (
+          <ProfileImageUploadInput imageUrl={user.imageUrl} onSubmit={uploadProfileImage} />
+        ) : (
+          <Avatar className="size-16 shrink-0 md:size-32">
+            <AvatarImage src={user.imageUrl ?? undefined} className="object-cover" />
+            <AvatarFallback className="bg-gray-200 dark:bg-stone-600">
+              <IconUser width={64} height={64} />
+            </AvatarFallback>
+          </Avatar>
+        )}
 
         <div className="flex flex-col gap-1 min-w-0 grow">
           <div className="flex flex-row gap-2">
@@ -500,7 +514,13 @@ export function ProfilePage() {
             <EventList
               futureEventWithAttendances={futureEventWithAttendances.items}
               pastEventWithAttendances={pastEventWithAttendances}
-              onLoadMore={fetchNextPage}
+              pastLoadMore={{
+                fetchNextPage,
+                hasNextPage,
+                isFetchingNextPage,
+                isPlaceholderData,
+                isLoading: isPastEventsLoading,
+              }}
               viewMode="CHRONOLOGICAL"
             />
           ) : (
