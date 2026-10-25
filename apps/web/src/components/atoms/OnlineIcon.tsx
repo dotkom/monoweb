@@ -15,6 +15,13 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
   inline = false,
   ...props
 }) => {
+  const lightClassName = cn("object-contain", variant !== "light" && "dark:hidden", inline && "inline-block", className)
+  const darkClassName = cn(
+    "object-contain",
+    variant !== "dark" && (inline ? "hidden dark:inline-block" : "hidden dark:block"),
+    className
+  )
+
   const light = (
     <Image
       src="/online-logo-o.svg"
@@ -22,7 +29,7 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
       width={size}
       height={size}
       priority
-      className={cn("object-contain", variant !== "light" && "dark:hidden", inline && "inline-block", className)}
+      className={lightClassName}
       {...props}
     />
   )
@@ -34,23 +41,7 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
       width={size}
       height={size}
       priority
-      className={cn(
-        "object-contain",
-        variant !== "dark" && (inline ? "hidden dark:inline-block" : "hidden dark:block"),
-        className
-      )}
-      {...props}
-    />
-  )
-
-  // halloween online logo (orange lightning)
-  const halloween = (
-    <Image
-      src="/online-logo-o-halloween.svg"
-      alt="Logo Online Linjeforening NTNU Trondheim Halloween"
-      width={size}
-      height={size}
-      className={cn("object-contain", inline ? "hidden halloween:inline-block" : "hidden halloween:block", className)}
+      className={darkClassName}
       {...props}
     />
   )
@@ -62,11 +53,33 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
     return light
   }
 
+  // The halloween palette swaps the lightning bolt for an orange one, in both color modes
   return (
     <>
-      {light}
-      <span className="contents halloween:hidden">{dark}</span>
-      {halloween}
+      <span className="contents halloween:hidden">
+        {light}
+        {dark}
+      </span>
+      <span className="hidden halloween:contents">
+        <Image
+          src="/online-logo-o-halloween-light.svg"
+          alt="Logo Online Linjeforening NTNU Trondheim Halloween"
+          width={size}
+          height={size}
+          priority
+          className={lightClassName}
+          {...props}
+        />
+        <Image
+          src="/online-logo-o-halloween.svg"
+          alt="Logo Online Linjeforening NTNU Trondheim Halloween Darkmode"
+          width={size}
+          height={size}
+          priority
+          className={darkClassName}
+          {...props}
+        />
+      </span>
     </>
   )
 }
