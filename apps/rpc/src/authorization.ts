@@ -297,7 +297,7 @@ export function isSameSubject<TInput>(selector: IsSameSubjectSelector<TInput>): 
  *
  * @example
  * ```
- * withAuthorization(permitIf(canEditFadderuke))
+ * withAuthorization(permitIf(canManageFadderuker))
  * permitIf((principal) => canUpdateGroup(principal, group.slug, isInterestGroup(group.type)))
  * ```
  */

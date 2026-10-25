@@ -95,6 +95,10 @@
     "./offline-permissions": {
       "import": "./src/permissions/offline-permissions.ts",
       "types": "./src/permissions/offline-permissions.ts"
+    },
+    "./fadderuke-permissions": {
+      "import": "./src/permissions/fadderuke-permissions.ts",
+      "types": "./src/permissions/fadderuke-permissions.ts"
     }
   },
   "scripts": {

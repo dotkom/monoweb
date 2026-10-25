@@ -146,13 +146,6 @@ export function canEditContest(state: AuthorizationState, groupIds: readonly Gro
 }
 
 /**
- * `fadderuke` create/update/delete procedures
- */
-export function canEditFadderuke(state: AuthorizationState): boolean {
-  return state.isAdministrator || isGroupMember(state, CommitteeGroupSlug.VELKOM)
-}
-
-/**
  * `group.create` procedure
  */
 export function canCreateGroup(state: AuthorizationState, groupType: GroupType): boolean {
