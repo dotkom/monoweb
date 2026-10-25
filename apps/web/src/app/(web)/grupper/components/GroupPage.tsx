@@ -275,7 +275,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
   const latestActiveMembership = findLatestGroupMembership(member)
 
   const roles = firstActiveMembership
-    ? sortGroupRolesByPriority(firstActiveMembership?.roles ?? [])
+    ? sortGroupRolesByPriority(firstActiveMembership.roles)
     : sortGroupRolesByPriority(latestActiveMembership?.roles ?? [])
 
   const roleNames = roles.length > 0 ? roles.map(({ name }) => name).join(", ") : "Ingen roller"
