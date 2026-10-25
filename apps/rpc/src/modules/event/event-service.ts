@@ -107,7 +107,11 @@ export function getEventService(
     },
 
     async updateEvent(handle, eventId, data) {
-      return await eventRepository.update(handle, eventId, data)
+      const event = await eventRepository.update(handle, eventId, data)
+      if (data.imageUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+      return event
     },
 
     async findEvents(handle, query, page) {

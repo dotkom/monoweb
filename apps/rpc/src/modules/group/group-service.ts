@@ -394,6 +394,7 @@ export function getGroupService(
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        ephemeral: false,
         maxSizeKiB: GROUP_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
