@@ -20,9 +20,9 @@ const FALLBACK_PALETTE = "classic" satisfies Palette
 
 /** Palettes that are only available part of the year. While one is available, it is also the default */
 const SEASONAL_PALETTES: Partial<Record<Palette, (date: TZDate) => boolean>> = {
-  // October 26th through November 1st
-  halloween: (date) =>
-    (date.getMonth() === 9 && date.getDate() >= 26) || (date.getMonth() === 10 && date.getDate() === 1),
+  // TODO: All of October while debugging, should be October 26th through November 1st:
+  // (date.getMonth() === 9 && date.getDate() >= 26) || (date.getMonth() === 10 && date.getDate() === 1)
+  halloween: (date) => date.getMonth() === 9,
 }
 
 export const PALETTE_COOKIE_NAME = "palette"
