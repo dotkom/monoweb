@@ -1,18 +1,25 @@
 <tr>
   <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-    <p style="margin: 0 0 16px;">Hei Dotkom!</p>
-    <p style="margin: 0;">Et problem er rapportert via OnlineWeb: {{ title }}.</p>
+    <p style="margin: 0 0 16px;">Hei{{# firstName }}, {{ firstName }}{{/ firstName }}!</p>
+    <p style="margin: 0;">Dette er en bekreftelse på at du har sendt følgende melding til Dotkom.</p>
   </td>
 </tr>
-{{# email }}
 <tr>
-  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-    <p style="margin: 0;">Sendt av {{ email }}.</p>
+  <td style="padding: 24px 0 0;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="table-layout: fixed;">
+      <tbody>
+        <tr>
+          <td class="card-message" bgcolor="#f3f4f6" style="padding: 16px; background-color: #f3f4f6; border-radius: 8px;">
+            <p class="text-primary" style="margin: 0 0 8px; color: #000000; font-size: 16px; line-height: 25px; font-weight: 600; overflow-wrap: anywhere; word-wrap: break-word;">{{ title }}</p>
+            <p class="text-primary" style="margin: 0; color: #000000; font-size: 16px; line-height: 25px; white-space: pre-wrap; overflow-wrap: anywhere; word-wrap: break-word;">{{ body }}</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </td>
 </tr>
-{{/ email }}
 <tr>
-  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-    <p style="margin: 0;"><span style="white-space: pre-wrap;">{{ body }}</span></p>
+  <td class="text-muted" style="padding: 8px 0 0; color: #6b7280; font-size: 12px; line-height: 18px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0;">Sendt av <a href="{{ profileUrl }}" style="color: inherit; text-decoration: underline;">{{# name }}{{ name }}{{/ name }}{{^ name }}brukeren{{/ name }}</a>.</p>
   </td>
 </tr>

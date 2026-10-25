@@ -342,13 +342,15 @@ export const emails = {
   BUG_REPORT: createEmailTemplate({
     type: "BUG_REPORT",
     layout: {
-      title: "Problem rapportert: {{ title }}",
-      preheader: "Et problem er rapportert via OnlineWeb.",
-      footerReason: "Du mottar denne e-posten fordi et problem er rapportert via OnlineWeb.",
+      title: "Vi har mottatt feilrapporten din: {{ title }}",
+      preheader: "Takk for at du meldte fra om en feil på OnlineWeb.",
+      footerReason: "Du mottar denne e-posten som bekreftelse på meldingen din til Dotkom.",
     },
     getSchema: () =>
       z.object({
-        email: z.string().optional(),
+        firstName: z.string().nullable(),
+        name: z.string().nullable(),
+        profileUrl: z.url(),
         title: z.string(),
         body: z.string(),
       }),

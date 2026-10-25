@@ -435,9 +435,10 @@ export type SendBugReportEmailInput = inferProcedureInput<typeof sendBugReportEm
 export type SendBugReportEmailOutput = inferProcedureOutput<typeof sendBugReportEmailProcedure>
 const sendBugReportEmailProcedure = procedure
   .input(BugReportFormSchema)
+  .use(withAuthentication())
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
-    ctx.userService.sendBugReportEmail(input)
+    await ctx.userService.sendBugReportEmail(ctx.handle, ctx.principal.subject, input)
   })
 
 export const userRouter = t.router({

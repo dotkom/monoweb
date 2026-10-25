@@ -34,6 +34,8 @@ const sampleData = {
   preferredPurchaseOrderNumber: 123,
   preferredDueDateLength: 30,
   firstName: "Ola",
+  name: "Ola Nordmann",
+  profileUrl: "https://online.ntnu.no/profil/ola-nordmann",
   email: "ola@online.ntnu.no",
   password: "temporary-password",
   dotkomLeaderName: "Kari",
@@ -62,7 +64,7 @@ describe("renderEmailTemplate", () => {
     ["QUEUE_NOTIFICATION", "Du har rykket frem i køen til Testarrangement", "Du er nå på 2. plass i køen"],
     ["COMMITTEE_EMAIL_CREATED", "Opprettelse av komité-e-postadresse", "Åpne Gmail"],
     ["COMMITTEE_EMAIL_CREATED_2FA_ENFORCED", "Opprettelse av komité-e-postadresse", "recovery-code"],
-    ["BUG_REPORT", "Problem rapportert: Testmelding", "En beskrivelse av problemet"],
+    ["BUG_REPORT", "Vi har mottatt feilrapporten din: Testmelding", "En beskrivelse av problemet"],
   ] as const)("renders %s with its title, content, and shared layout", async (type, title, content) => {
     const definition = emails[type]
     const data = definition.getSchema().parse(sampleData)
@@ -94,6 +96,25 @@ describe("renderEmailTemplate", () => {
     )
     expect(html).not.toContain("&amp;amp;")
     expect(html).not.toContain("<script>")
+  })
+
+  it.each(["Ola Nordmann", null])("addresses the reporter with profile name %s", async (name) => {
+    const html = await renderEmailTemplate(emails.BUG_REPORT, {
+      ...sampleData,
+      firstName: name?.split(" ")[0] ?? null,
+      name,
+    })
+
+    if (name) {
+      expect(html).toContain("Hei, Ola!")
+      expect(html).toMatch(/href="[^"]*profil[^"]*ola-nordmann"[^>]*>Ola Nordmann<\/a>/)
+    } else {
+      expect(html).toContain("Hei!")
+    }
+
+    expect(html).toContain("Dette er en bekreftelse på at du har sendt følgende melding til Dotkom.")
+    expect(html).not.toContain(sampleData.email)
+    expect(html).toContain(sampleData.body)
   })
 
   describe.each([

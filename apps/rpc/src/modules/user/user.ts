@@ -182,7 +182,6 @@ export const UserFilterQuerySchema = z
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
 export const BugReportFormSchema = z.object({
-  email: z.string().optional(),
   title: z.string(),
   body: z.string(),
 })
