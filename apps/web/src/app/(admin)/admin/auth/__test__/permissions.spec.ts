@@ -1,4 +1,5 @@
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
@@ -249,5 +250,20 @@ describe("canCreateEvents", () => {
     expect(canCreateEvents(createState({}))).toBe(false)
     expect(canCreateEvents(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
     expect(canCreateEvents(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+})
+
+describe("canManageCompanies", () => {
+  it("allows bedkom and fagkom members", () => {
+    expect(canManageCompanies(createState({ bedkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+    expect(canManageCompanies(createState({ fagkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("allows administrators", () => {
+    expect(canManageCompanies(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+
+  it("denies unrelated committee members", () => {
+    expect(canManageCompanies(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
   })
 })

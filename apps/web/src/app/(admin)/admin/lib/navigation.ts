@@ -23,6 +23,7 @@ import {
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 
@@ -154,6 +155,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconBriefcase,
         href: "/admin/bedrifter",
         keywords: ["bedrift", "bedrifter", "company", "companies"],
+        canAccess: (authorization) => canManageCompanies(authorization),
         createActions: [
           {
             label: "Ny bedrift",
