@@ -37,7 +37,7 @@ export const buttonVariantOverrides: Partial<Record<ShadcnButtonVariant, string>
 
 const solid: Record<ButtonColor, string> = {
   brand:
-    "border-0 bg-brand text-white halloween:text-stone-950 shadow-surface hover:bg-brand/85 [a]:hover:bg-brand/85 aria-expanded:bg-brand aria-expanded:text-white halloween:aria-expanded:text-stone-950",
+    "border-0 bg-brand text-brand-foreground shadow-surface hover:bg-brand/85 [a]:hover:bg-brand/85 aria-expanded:bg-brand aria-expanded:text-brand-foreground",
   "brand-accent":
     "border-0 bg-brand-accent text-black shadow-surface hover:bg-brand-accent/85 [a]:hover:bg-brand-accent/85 aria-expanded:bg-brand-accent aria-expanded:text-black",
   blue: "border-0 bg-blue-600 text-white shadow-surface hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600",

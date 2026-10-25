@@ -9,6 +9,7 @@
 
 [data-palette="halloween"] {
   --halloween-night: #140b10;
+  --logo-accent: var(--color-brand);
 
   /* Light mode neutrals */
   --color-gray-50: oklch(0.982 0.012 75);
@@ -43,6 +44,8 @@
   --color-brand-accent: oklch(0.8 0.14 70);
 
   --background: var(--color-gray-50);
+  --brand-foreground: var(--color-gray-950);
+  --logo-foreground: #2a1418;
   --primary-foreground: var(--color-gray-950);
   --secondary: var(--color-gray-100);
   --secondary-foreground: var(--color-gray-900);
@@ -67,6 +70,8 @@
   --color-brand-accent: #ffb347;
 
   --background: var(--halloween-night);
+  --brand-foreground: oklch(0.18 0.02 30);
+  --logo-foreground: #f5ece6;
   --card: var(--color-stone-900);
   --popover: var(--color-stone-900);
   --primary-foreground: oklch(0.18 0.02 30);

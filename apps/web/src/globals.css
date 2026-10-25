@@ -2,6 +2,16 @@
 @import url("@dotkomonline/ui/globals.css");
 @import url("./palettes/halloween.css");
 
+/* Colors of the Online logo in the hero, overridden by palettes */
+:root {
+  --logo-foreground: rgb(11 83 116);
+  --logo-accent: rgb(250 183 89);
+}
+
+[data-theme="dark"] {
+  --logo-foreground: #fff;
+}
+
 @layer base {
   body {
     text-rendering: optimizeLegibility;

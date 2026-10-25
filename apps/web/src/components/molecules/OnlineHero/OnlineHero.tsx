@@ -8,7 +8,8 @@ import { useTheme } from "next-themes"
 import Image from "next/image"
 import { Link } from "@/components/link"
 import { usePalette } from "@/components/PaletteProvider"
-import type { FC } from "react"
+import { PALETTE_CONFIG } from "@/lib/palette-config"
+import type { CSSProperties, FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
 import { secondsToMilliseconds } from "date-fns"
@@ -34,7 +35,7 @@ interface PointerInteraction {
 export const OnlineHero: FC = () => {
   const { resolvedTheme, setTheme } = useTheme()
   const { palette } = usePalette()
-  const isHalloween = palette === "halloween"
+  const heroArtwork = PALETTE_CONFIG[palette].heroArtwork
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState<boolean>(false)
@@ -174,10 +175,15 @@ export const OnlineHero: FC = () => {
     <div
       className={cn(
         "flex flex-col lg:justify-stretch pt-4 md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row",
-        // The text sits in the sky of the landscape, above the treeline
-        isHalloween &&
-          "relative isolate lg:pt-10 [--scene-height:max(10rem,calc(100vw*540/2400))] pb-[calc(var(--scene-height)*0.8)]"
+        // The text sits in the sky of the artwork, above the treeline
+        heroArtwork && "relative isolate lg:pt-10 pb-[calc(var(--scene-height)*0.8)]"
       )}
+      style={
+        heroArtwork &&
+        ({
+          "--scene-height": `max(10rem, calc(100vw * ${heroArtwork.height} / ${heroArtwork.width}))`,
+        } as CSSProperties)
+      }
     >
       <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0 lg:order-2">
         <span aria-hidden="true" className="w-full max-w-[300px]">
@@ -208,8 +214,8 @@ export const OnlineHero: FC = () => {
         </div>
       </div>
 
-      {/* The halloween palette shows a full-width landscape in the hero instead of the 3D scene */}
-      {!isHalloween && (
+      {/* Palettes with hero artwork show it full-width instead of the 3D scene */}
+      {!heroArtwork && (
         <div className="lg:-ml-8 relative w-full">
           <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
             {(!mounted || isLoading) && (
@@ -247,12 +253,12 @@ export const OnlineHero: FC = () => {
         </div>
       )}
 
-      {isHalloween && (
+      {heroArtwork && (
         <Image
-          src="/halloween-background.svg"
+          src={heroArtwork.src}
           alt=""
-          width={2400}
-          height={540}
+          width={heroArtwork.width}
+          height={heroArtwork.height}
           priority
           className={cn(
             "pointer-events-none absolute bottom-0 left-1/2 -z-10 -translate-x-1/2",

@@ -1,9 +1,10 @@
 import { cn, DropdownMenu, DropdownMenuTrigger, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
-import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconPumpkinScary, IconSun } from "@tabler/icons-react"
+import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { usePalette } from "@/components/PaletteProvider"
-import { DEFAULT_PALETTE_PREFERENCE, type Palette, type PalettePreference } from "@/lib/palette"
+import { DEFAULT_PALETTE_PREFERENCE, type PalettePreference } from "@/lib/palette"
+import { PALETTE_CONFIG } from "@/lib/palette-config"
 import { useTheme } from "next-themes"
 import type { FC } from "react"
 import { NavbarDropdownContent } from "./NavbarDropdownContent"
@@ -55,11 +56,6 @@ const TOGGLE_ITEM_CLASS_NAME = cn(
   "aria-pressed:dark:bg-stone-700 data-[state=on]:dark:bg-stone-700"
 )
 
-const PALETTE_DETAILS = {
-  classic: { label: "Klassisk", swatchClassName: "bg-[#0b5374]" },
-  halloween: { label: "Halloween", swatchClassName: "bg-[#f7931e]" },
-} satisfies Record<Palette, { label: string; swatchClassName: string }>
-
 export const ThemeToggle = () => {
   const { setTheme, theme } = useTheme()
 
@@ -99,8 +95,12 @@ export const PaletteToggle = () => {
   const { preference, defaultPalette, availablePalettes, setPreference } = usePalette()
 
   const options = [
-    { preference: "default", label: "Standard", swatchClassName: PALETTE_DETAILS[defaultPalette].swatchClassName },
-    ...availablePalettes.map((palette) => ({ preference: palette, ...PALETTE_DETAILS[palette] })),
+    { preference: "default", label: "Standard", swatchClassName: PALETTE_CONFIG[defaultPalette].swatchClassName },
+    ...availablePalettes.map((palette) => ({
+      preference: palette,
+      label: PALETTE_CONFIG[palette].label,
+      swatchClassName: PALETTE_CONFIG[palette].swatchClassName,
+    })),
   ] satisfies Array<{ preference: PalettePreference; label: string; swatchClassName: string }>
 
   return (
@@ -139,6 +139,7 @@ export const PaletteToggle = () => {
 
 export const ThemeDropdown: FC = () => {
   const hasPaletteChoice = useHasPaletteChoice()
+  const PaletteIcon = PALETTE_CONFIG[usePalette().palette].icon
 
   return (
     <DropdownMenu>
@@ -146,11 +147,14 @@ export const ThemeDropdown: FC = () => {
         aria-label="Velg modus og tema"
         className="flex items-center justify-center size-10 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
       >
-        <span className="contents halloween:hidden">
-          <IconSun width={22} height={22} className="dark:hidden" />
-          <IconMoon width={22} height={22} className="hidden dark:block" />
-        </span>
-        <IconPumpkinScary width={22} height={22} className="hidden halloween:block text-brand" />
+        {PaletteIcon ? (
+          <PaletteIcon width={22} height={22} className="text-brand" />
+        ) : (
+          <>
+            <IconSun width={22} height={22} className="dark:hidden" />
+            <IconMoon width={22} height={22} className="hidden dark:block" />
+          </>
+        )}
       </DropdownMenuTrigger>
       <NavbarDropdownContent className="w-fit rounded-xl border border-gray-300/70 bg-gray-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5">
         <div className="flex flex-col items-center gap-1.5">
