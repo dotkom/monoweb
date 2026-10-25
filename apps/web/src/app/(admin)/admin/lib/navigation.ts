@@ -1,6 +1,6 @@
 "use client"
 
-import type { useAuthorization } from "@admin/auth/authorization-context"
+import type { Authorization } from "@admin/auth/authorization-context"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
@@ -43,9 +43,9 @@ export type Navigation = {
     label: string
     href: string
     resourceName: string
-    canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
+    canAccess?: (authorization: Authorization) => boolean
   }[]
-  canAccess?: (authorization: ReturnType<typeof useAuthorization>) => boolean
+  canAccess?: (authorization: Authorization) => boolean
 }
 
 export type NavigationGroup = {
@@ -284,10 +284,7 @@ for (const navigation of navigations) {
 
 export { navigationBreadcrumbLabels }
 
-export function filterNavigationsUserHasAccessTo(
-  navigations: Navigation[],
-  authorization: ReturnType<typeof useAuthorization>
-) {
+export function filterNavigationsUserHasAccessTo(navigations: Navigation[], authorization: Authorization) {
   return navigations
     .filter((navigation) => navigation.canAccess === undefined || navigation.canAccess(authorization))
     .map((page) => {
@@ -303,10 +300,7 @@ export function filterNavigationsUserHasAccessTo(
     })
 }
 
-export function filterNavigationGroupsUserHasAccessTo(
-  groups: NavigationGroup[],
-  authorization: ReturnType<typeof useAuthorization>
-) {
+export function filterNavigationGroupsUserHasAccessTo(groups: NavigationGroup[], authorization: Authorization) {
   return groups
     .map((group) => ({
       ...group,

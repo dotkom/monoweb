@@ -8,7 +8,7 @@ import {
   canSubmitFeedbackAnswer,
   canViewOwnFeedbackAnswer,
 } from "@dotkomonline/rpc/feedback-form-permissions"
-import type { GroupRoleType } from "@dotkomonline/rpc/group"
+import type { GroupId, GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum, GroupTypeSchema } from "@dotkomonline/rpc/group"
 import {
   canCreateGroup,
@@ -17,7 +17,7 @@ import {
   canUpdateGroup,
 } from "@dotkomonline/rpc/group-permissions"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
-import { canCreateMark, canCreateMarks, canManageMark } from "@dotkomonline/rpc/mark-permissions"
+import { canCreateMark, canCreateMarks, canListAllMarks, canManageMark } from "@dotkomonline/rpc/mark-permissions"
 import { NotificationTypeSchema } from "@dotkomonline/rpc/notification"
 import {
   canActAsNotificationGroup,
@@ -28,6 +28,7 @@ import {
   canTargetSpecificUsers,
 } from "@dotkomonline/rpc/notification-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
+import { hasAnyGroupAffiliation, type AffiliatedPrincipal } from "@dotkomonline/rpc/permissions"
 import {
   canEditUserNameAndEmail,
   canEditUserProfile,
@@ -39,39 +40,34 @@ import {
   canSynchronizeWorkspaceGroup,
 } from "@dotkomonline/rpc/workspace-permissions"
 import { describe, expect, it } from "vitest"
-import { createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
-function createState(affiliations: Record<string, GroupRoleType[]>, options: { isAdministrator?: boolean } = {}) {
-  return createAuthorizationState({
-    isAdministrator: options.isAdministrator ?? false,
-    isCommitteeMember: true,
-    affiliations,
-  })
+function createState(affiliations: Record<string, GroupRoleType[]>): AffiliatedPrincipal {
+  const affiliationsMap = new Map<GroupId, Set<GroupRoleType>>()
+
+  for (const [groupId, roles] of Object.entries(affiliations)) {
+    affiliationsMap.set(groupId, new Set(roles))
+  }
+
+  return { affiliations: affiliationsMap }
 }
 
 describe("hasAnyGroupAffiliation", () => {
   it("returns true when user shares a hosting group", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(hasAnyGroupAffiliation(state, ["arrkom"])).toBe(true)
+    expect(hasAnyGroupAffiliation(state.affiliations, ["arrkom"])).toBe(true)
   })
 
   it("returns false when user has no overlapping groups", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(hasAnyGroupAffiliation(state, ["dotkom"])).toBe(false)
+    expect(hasAnyGroupAffiliation(state.affiliations, ["dotkom"])).toBe(false)
   })
 
-  it("returns true for administrators regardless of affiliations", () => {
-    const state = createState({}, { isAdministrator: true })
-
-    expect(hasAnyGroupAffiliation(state, ["dotkom"])).toBe(true)
-  })
-
-  it("returns true for dotkom members acting on any group", () => {
+  it("returns true for administrators regardless of target group", () => {
     const state = createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] })
 
-    expect(hasAnyGroupAffiliation(state, ["arrkom"])).toBe(true)
+    expect(hasAnyGroupAffiliation(state.affiliations, ["arrkom"])).toBe(true)
   })
 })
 
@@ -403,6 +399,13 @@ describe("canEditUserNameAndEmail", () => {
     const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
 
     expect(canEditUserNameAndEmail({ ...state, subject: "user-2" }, "user-1")).toBe(false)
+  })
+})
+
+describe("canListAllMarks", () => {
+  it("is limited to administrators", () => {
+    expect(canListAllMarks(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
+    expect(canListAllMarks(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
   })
 })
 

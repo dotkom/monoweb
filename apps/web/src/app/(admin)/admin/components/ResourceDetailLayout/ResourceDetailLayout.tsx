@@ -76,6 +76,7 @@ export function ResourceDetailLayout({
   const router = useRouter()
   const rawPathname = usePathname()
   const { isAdministrator } = useAuthorization()
+  const canCopyIds = isAdministrator
   const pathname = decodeURIComponent(rawPathname)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
@@ -108,7 +109,7 @@ export function ResourceDetailLayout({
             </Button>
           )}
           {copyIds.length > 0 &&
-            isAdministrator &&
+            canCopyIds &&
             copyIds.map((copyId) => <CopyIdButton key={copyId.value} id={copyId.value} label={copyId.label} />)}
           {onDelete && (
             <>

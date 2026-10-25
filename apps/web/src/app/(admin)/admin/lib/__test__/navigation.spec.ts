@@ -1,29 +1,35 @@
-import type { useAuthorization } from "@admin/auth/authorization-context"
+import type { Authorization } from "@admin/auth/authorization-context"
 import { filterNavigationsUserHasAccessTo, navigations } from "@admin/lib/navigation"
 import type { GroupId, GroupRoleType } from "@dotkomonline/rpc/group"
 import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import {
+  isAdministrator as isAdministratorAffiliation,
+  isCommitteeMember as isCommitteeMemberAffiliation,
+} from "@dotkomonline/rpc/permissions"
 import { describe, expect, it } from "vitest"
 
-function principal(affiliations: Record<string, GroupRoleType[]>): ReturnType<typeof useAuthorization> {
+function principal(affiliations: Record<string, GroupRoleType[]>): Authorization {
   const affiliationMap = new Map<GroupId, Set<GroupRoleType>>()
   for (const [groupId, roles] of Object.entries(affiliations)) {
     affiliationMap.set(groupId, new Set(roles))
   }
 
   return {
+    subject: "user-1",
     affiliations: affiliationMap,
-    isAdministrator: false,
-    isCommitteeMember: false,
-  } as unknown as ReturnType<typeof useAuthorization>
+    isAdministrator: isAdministratorAffiliation(affiliationMap),
+    isCommitteeMember: isCommitteeMemberAffiliation(affiliationMap),
+    groups: new Map(),
+  }
 }
 
-function actionHrefs(authorization: ReturnType<typeof useAuthorization>) {
+function actionHrefs(authorization: Authorization) {
   return filterNavigationsUserHasAccessTo(navigations, authorization).flatMap(
     (page) => page.createActions?.map((action) => action.href) ?? []
   )
 }
 
-function pageHrefs(authorization: ReturnType<typeof useAuthorization>) {
+function pageHrefs(authorization: Authorization) {
   return filterNavigationsUserHasAccessTo(navigations, authorization).map((page) => page.href)
 }
 
