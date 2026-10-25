@@ -13,16 +13,17 @@ interface Props {
   markId: MarkId
   personalMarks: PersonalMarkDetails[]
   isLoading?: boolean
+  canEdit?: boolean
   actions?: React.ReactNode
 }
 
 const columnHelper = createColumnHelper<PersonalMarkDetails>()
 
-export const PersonalMarkTable = ({ markId, personalMarks, isLoading, actions }: Props) => {
+export const PersonalMarkTable = ({ markId, personalMarks, isLoading, canEdit = true, actions }: Props) => {
   const removeMark = useRemovePersonalMarkFromUserMutation(markId)
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const baseColumns = [
       columnHelper.accessor((personalMark) => personalMark.user.name, {
         id: "userName",
         header: () => "Bruker",
@@ -39,6 +40,14 @@ export const PersonalMarkTable = ({ markId, personalMarks, isLoading, actions }:
         enableGlobalFilter: false,
         cell: (info) => <DateTooltip date={info.getValue()} />,
       }),
+    ]
+
+    if (!canEdit) {
+      return baseColumns
+    }
+
+    return [
+      ...baseColumns,
       columnHelper.accessor((personalMark) => personalMark, {
         id: "remove",
         header: () => "Fjern prikk",
@@ -62,9 +71,8 @@ export const PersonalMarkTable = ({ markId, personalMarks, isLoading, actions }:
           </Button>
         ),
       }),
-    ],
-    [removeMark]
-  )
+    ]
+  }, [canEdit, removeMark])
 
   const tableOptions = useMemo(
     () => ({

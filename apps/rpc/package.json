@@ -111,6 +111,10 @@
     "./contest-permissions": {
       "import": "./src/permissions/contest-permissions.ts",
       "types": "./src/permissions/contest-permissions.ts"
+    },
+    "./mark-permissions": {
+      "import": "./src/permissions/mark-permissions.ts",
+      "types": "./src/permissions/mark-permissions.ts"
     }
   },
   "scripts": {
