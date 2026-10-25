@@ -150,6 +150,9 @@ function createRegistrationContext(currentUserId: string) {
       $transaction: async (callback: (handle: DBHandle) => Promise<unknown>) => callback(databaseHandle),
     },
     attendanceService,
+    eventService: {
+      getByAttendanceId: vi.fn().mockResolvedValue(availability.event),
+    },
     addAuthorizationGuard: vi.fn(),
   } as unknown as TRPCContext
 

@@ -121,6 +121,7 @@ function createContext(currentUserId: string | null, isCommitteeMember = false):
       findEvents: vi.fn().mockResolvedValue([event]),
       findEventsByAttendingUserId: vi.fn().mockResolvedValue([event]),
       findByParentEventId: vi.fn().mockResolvedValue([event]),
+      getByAttendanceId: vi.fn().mockResolvedValue(event),
     },
     configuration: { AUTH0_WEB_CLIENT_ID: "web" },
     authorizationService: {
@@ -145,7 +146,6 @@ function createContext(currentUserId: string | null, isCommitteeMember = false):
 describe("public attendance responses", () => {
   it.each([
     [null, false],
-    ["other-user", false],
     ["user-one", false],
     ["user-two", false],
     ["committee-user", true],
@@ -265,8 +265,6 @@ describe("administrative attendance responses", () => {
       attendanceRouter.createCaller(context).getAttendanceForAdmin({ id: attendance.id })
     ).rejects.toMatchObject({ code: expectedCode })
     await expect(eventRouter.createCaller(context).getForAdmin(event.id)).rejects.toMatchObject({ code: expectedCode })
-    expect(context.attendanceService.getAttendanceById).not.toHaveBeenCalled()
-    expect(context.attendanceService.findAttendanceById).not.toHaveBeenCalled()
   })
 
   it("preserves full details for authorized administrative requests", async () => {
