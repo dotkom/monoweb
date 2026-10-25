@@ -20,10 +20,11 @@ import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getS3KeyFromUrl, removeEphemeralTag, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
+const EPHEMERAL_TAG = "<Tagging><TagSet><Tag><Key>status</Key><Value>ephemeral</Value></Tag></TagSet></Tagging>"
 
 const COMMITTEE_AFFILIATION_SET = new Set<string>(COMMITTEE_AFFILIATIONS)
 
@@ -95,7 +96,11 @@ export function getEventService(
 
   return {
     async createEvent(handle, data) {
-      return await eventRepository.create(handle, data)
+      const event = await eventRepository.create(handle, data)
+      if (data.imageUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+      return event
     },
 
     async deleteEvent(handle, eventId) {
@@ -251,10 +256,12 @@ export function getEventService(
     async createFileUpload(filename, contentType, createdByUserId) {
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
+      console.log("image upload test", key)
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        fields: { EPHEMERAL_TAG },
         maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
