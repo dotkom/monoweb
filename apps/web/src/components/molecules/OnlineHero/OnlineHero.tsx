@@ -5,7 +5,9 @@ import { Title } from "@dotkomonline/ui"
 import Spline from "@splinetool/react-spline"
 import { IconArrowUpRight, IconBriefcase, IconRotate3d } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
+import Image from "next/image"
 import { Link } from "@/components/link"
+import { usePalette } from "@/components/PaletteProvider"
 import type { FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -31,6 +33,8 @@ interface PointerInteraction {
 
 export const OnlineHero: FC = () => {
   const { resolvedTheme, setTheme } = useTheme()
+  const { palette } = usePalette()
+  const isHalloween = palette === "halloween"
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState<boolean>(false)
@@ -167,7 +171,14 @@ export const OnlineHero: FC = () => {
   }
 
   return (
-    <div className="flex flex-col lg:justify-stretch pt-4 md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row">
+    <div
+      className={cn(
+        "flex flex-col lg:justify-stretch pt-4 md:pt-10 lg:pt-0 gap-4 lg:gap-8 items-center lg:flex-row",
+        // The text sits in the sky of the landscape, above the treeline
+        isHalloween &&
+          "relative isolate lg:pt-10 [--scene-height:max(10rem,calc(100vw*540/2400))] pb-[calc(var(--scene-height)*0.8)]"
+      )}
+    >
       <div className="flex flex-col gap-8 w-full max-w-[600px] mx-auto lg:mx-0 lg:order-2">
         <span aria-hidden="true" className="w-full max-w-[300px]">
           <Logo />
@@ -197,41 +208,59 @@ export const OnlineHero: FC = () => {
         </div>
       </div>
 
-      <div className="lg:-ml-8 relative w-full">
-        <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
-          {(!mounted || isLoading) && (
-            <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
-          )}
-          {mounted && (
-            <div ref={containerRef} className="absolute inset-0 overflow-hidden rounded-[40%]">
-              <Spline scene={SPLINE_SCENE_URL} onLoad={onSplineLoad} onSplineMouseDown={lightSwitch} />
-              <div
-                className={cn(
-                  "pointer-events-none absolute inset-0 rounded-[39%]",
-                  "shadow-[inset_0_0_20px_22px_var(--background)] transition-opacity duration-700",
-                  isLoading ? "opacity-0" : "opacity-100"
-                )}
-              />
+      {/* The halloween palette shows a full-width landscape in the hero instead of the 3D scene */}
+      {!isHalloween && (
+        <div className="lg:-ml-8 relative w-full">
+          <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
+            {(!mounted || isLoading) && (
+              <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
+            )}
+            {mounted && (
+              <div ref={containerRef} className="absolute inset-0 overflow-hidden rounded-[40%]">
+                <Spline scene={SPLINE_SCENE_URL} onLoad={onSplineLoad} onSplineMouseDown={lightSwitch} />
+                <div
+                  className={cn(
+                    "pointer-events-none absolute inset-0 rounded-[39%]",
+                    "shadow-[inset_0_0_20px_22px_var(--background)] transition-opacity duration-700",
+                    isLoading ? "opacity-0" : "opacity-100"
+                  )}
+                />
 
-              <div
-                className={cn(
-                  "pointer-events-none absolute inset-0 flex top-[75%] items-center justify-center",
-                  "transition-opacity duration-300",
-                  showDragHint && !isLoading ? "opacity-100" : "opacity-0"
-                )}
-              >
-                <div className="transform-gpu flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-gray-100 backdrop-blur-sm dark:bg-black/20 dark:text-stone-300">
-                  <IconRotate3d className="size-5 shrink-0" />
+                <div
+                  className={cn(
+                    "pointer-events-none absolute inset-0 flex top-[75%] items-center justify-center",
+                    "transition-opacity duration-300",
+                    showDragHint && !isLoading ? "opacity-100" : "opacity-0"
+                  )}
+                >
+                  <div className="transform-gpu flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-gray-100 backdrop-blur-sm dark:bg-black/20 dark:text-stone-300">
+                    <IconRotate3d className="size-5 shrink-0" />
 
-                  <Text className="text-sm whitespace-nowrap text-inherit">
-                    {isTouchInteraction ? "Bruk to fingre for å rotere" : "Klikk og dra for å rotere"}
-                  </Text>
+                    <Text className="text-sm whitespace-nowrap text-inherit">
+                      {isTouchInteraction ? "Bruk to fingre for å rotere" : "Klikk og dra for å rotere"}
+                    </Text>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {isHalloween && (
+        <Image
+          src="/halloween-background.svg"
+          alt=""
+          width={2400}
+          height={540}
+          priority
+          className={cn(
+            "pointer-events-none absolute bottom-0 left-1/2 -z-10 -translate-x-1/2",
+            "h-(--scene-height) w-screen max-w-none object-cover object-[70%_100%]",
+            "opacity-[0.88] dark:opacity-100"
+          )}
+        />
+      )}
     </div>
   )
 }
