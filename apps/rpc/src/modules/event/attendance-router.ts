@@ -726,6 +726,11 @@ const notifyAttendeesProcedure = procedure
     z.object({
       eventId: EventSchema.shape.id,
       message: z.string(),
+      title: z
+        .string()
+        .trim()
+        .min(1)
+        .regex(/^[^\r\n]+$/),
     })
   )
   .use(withAuthentication())
@@ -743,7 +748,7 @@ const notifyAttendeesProcedure = procedure
       throw new FailedPreconditionError("Event does not have attendance")
     }
 
-    await ctx.attendanceService.notifyAttendees(ctx.handle, event.attendanceId, input.message)
+    await ctx.attendanceService.notifyAttendees(ctx.handle, event.attendanceId, input.message, input.title)
   })
 
 export const attendanceRouter = t.router({

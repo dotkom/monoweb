@@ -98,10 +98,10 @@ export function NotificationDraftSend() {
 
     if (sendEmail && hasEmailOption) {
       const plainContent = richTextToPlainText(notification.content, null).trim()
-      const emailMessage = plainContent || notification.shortDescription
+      const emailMessage = plainContent.length > 0 ? notification.content : notification.shortDescription
 
       try {
-        await notifyAttendees.mutateAsync({ eventId, message: emailMessage })
+        await notifyAttendees.mutateAsync({ eventId, message: emailMessage, title: notification.title })
       } catch {
         // The email mutation reports its own error; the in-app notification remains sent.
         return

@@ -176,7 +176,7 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
         Opprett et utkast. Du kan forhåndsvise innholdet og velge mottakere før du sender.
       </Text>
       <TextField control={control} name="title" label="Tittel" required />
-      <RichTextField control={control} name="content" label="Melding" />
+      <RichTextField control={control} name="content" label="Melding" isEmail />
       <FieldShell
         id="shortDescription"
         label="Kort beskrivelse"
