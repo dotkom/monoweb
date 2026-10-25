@@ -33,6 +33,11 @@ import {
   canEditUserProfile,
   canManageUserMemberships,
 } from "@dotkomonline/rpc/user-permissions"
+import {
+  canCreateWorkspaceUser,
+  canFindWorkspaceUser,
+  canSynchronizeWorkspaceGroup,
+} from "@dotkomonline/rpc/workspace-permissions"
 import { describe, expect, it } from "vitest"
 import { createAuthorizationState, hasAnyGroupAffiliation } from "../permissions"
 
@@ -311,6 +316,43 @@ describe("canAccessAuditLog", () => {
   it("is limited to administrators", () => {
     expect(canAccessAuditLog(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }))).toBe(true)
     expect(canAccessAuditLog(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }))).toBe(false)
+  })
+})
+
+describe("canCreateWorkspaceUser", () => {
+  it("denies non-administrators", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canCreateWorkspaceUser(state)).toBe(false)
+  })
+
+  it("allows administrators for any user", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateWorkspaceUser(state)).toBe(true)
+  })
+})
+
+describe("canFindWorkspaceUser", () => {
+  it("requires administrator when a custom key is provided", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] })
+
+    expect(canFindWorkspaceUser({ ...state, subject: "user-1" }, "user-1", true)).toBe(false)
+    expect(
+      canFindWorkspaceUser(
+        { ...createState({ dotkom: [GroupRoleTypeEnum.LEADER] }), subject: "admin-1" },
+        "user-1",
+        true
+      )
+    ).toBe(true)
+  })
+})
+
+describe("canSynchronizeWorkspaceGroup", () => {
+  it("allows group leaders and administrators", () => {
+    expect(canSynchronizeWorkspaceGroup(createState({ arrkom: [GroupRoleTypeEnum.LEADER] }), "arrkom")).toBe(true)
+    expect(canSynchronizeWorkspaceGroup(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }), "arrkom")).toBe(false)
+    expect(canSynchronizeWorkspaceGroup(createState({ dotkom: [GroupRoleTypeEnum.LEADER] }), "arrkom")).toBe(true)
   })
 })
 
