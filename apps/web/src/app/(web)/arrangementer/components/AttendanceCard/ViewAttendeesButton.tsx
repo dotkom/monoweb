@@ -33,11 +33,11 @@ export const ViewAttendeesButton = ({
   user,
   hasTicketButton,
 }: ViewAttendeesButtonProps) => {
-  const allAttendees = attendance.attendees.toSorted((a, b) =>
-    compareAsc(a.earliestReservationAt, b.earliestReservationAt)
+  const allAttendees = attendance.attendees.toSorted((firstAttendee, secondAttendee) =>
+    compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
   )
-  const registeredAttendees = allAttendees.filter((attendee) => attendee.registered)
-  const queuedAttendees = allAttendees.filter((attendee) => !attendee.registered)
+  const registeredAttendees = allAttendees.filter((attendee) => attendee.registeredAt !== null)
+  const queuedAttendees = allAttendees.filter((attendee) => attendee.registeredAt === null)
 
   const maxAttendees = Math.max(registeredAttendees.length, queuedAttendees.length)
 

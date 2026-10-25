@@ -108,7 +108,7 @@ export const AttendanceCard = ({
   }, [turnstileToken])
 
   const attendee = getAttendee(attendance, user)
-  useDeadlineTick(attendance.registerStart, attendance.registerEnd, attendee?.earliestReservationAt)
+  useDeadlineTick(attendance.registerStart, attendance.registerEnd, attendee?.registrationEligibleAt)
   const isRegistrationDelayed = hasRegistrationDelay(attendee)
   const deregistration = registrationAvailability?.deregistration ?? null
   const requiresTurnstile = user !== null && attendee === null && !isPast(attendance.registerEnd)
@@ -260,7 +260,7 @@ export const AttendanceCard = ({
           </div>
 
           <AttendanceSection contentClassName="pt-8 sm:px-3">
-            {attendee?.registered && attendance.selections.length > 0 && (
+            {attendee?.registeredAt != null && attendance.selections.length > 0 && (
               <div className="flex flex-col gap-2">
                 <Title element="p" size="sm" className="text-base">
                   Valg
@@ -281,15 +281,15 @@ export const AttendanceCard = ({
           </AttendanceSection>
 
           <div className="flex flex-col gap-4 w-full pt-8">
-            <div className={cn("grid grid-cols-1 gap-4", attendee?.registered && "sm:grid-cols-2")}>
-              {attendee?.registered && <TicketButton attendee={attendee} />}
+            <div className={cn("grid grid-cols-1 gap-4", attendee?.registeredAt != null && "sm:grid-cols-2")}>
+              {attendee?.registeredAt != null && <TicketButton attendee={attendee} />}
 
               <ViewAttendeesButton
                 attendance={attendance}
                 user={user}
                 attendeeListOpen={attendeeListOpen}
                 setAttendeeListOpen={setAttendeeListOpen}
-                hasTicketButton={Boolean(attendee?.registered)}
+                hasTicketButton={attendee?.registeredAt != null}
               />
             </div>
 

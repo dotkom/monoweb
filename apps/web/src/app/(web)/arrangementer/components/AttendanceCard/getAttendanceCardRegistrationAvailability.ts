@@ -60,7 +60,7 @@ export function getAttendanceCardRegistrationAvailability(
 
   if (hasBeenCharged) {
     rejectionCause = "PAYMENT_COMPLETED"
-  } else if (attendee.registered && isPastDeregisterDeadline) {
+  } else if (attendee.registeredAt !== null && isPastDeregisterDeadline) {
     rejectionCause = "DEREGISTER_DEADLINE_PASSED"
   }
 

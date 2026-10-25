@@ -55,7 +55,7 @@ describe("attendance card availability", () => {
   })
 
   it.each([true, false])("updates the deadline while preserving queue eligibility (registered: %s)", (registered) => {
-    const attendee = createMockAttendee({ createdAt: now, registered })
+    const attendee = createMockAttendee({ createdAt: now, registeredAt: registered ? now : null })
     const attendance = {
       ...createMockAttendance({ attendees: [attendee] }),
       deregisterDeadline: addSeconds(now, 1),

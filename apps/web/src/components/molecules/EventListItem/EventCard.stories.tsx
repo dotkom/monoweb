@@ -20,7 +20,7 @@ const createRegisteredAttendees = (count: number) =>
         id: `00000000-0000-4000-8000-0000000000${index + 1}`,
         username: `bruker${index + 1}`,
       }),
-      registered: true,
+      registeredAt: new Date(),
     })
   )
 
@@ -51,7 +51,7 @@ export const Default = () => {
 
 export const Examples = () => {
   const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registered: true, paymentReservedAt: new Date() })
+  const registeredAttendee = createMockAttendee({ user, registeredAt: new Date(), paymentReservedAt: new Date() })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
@@ -267,7 +267,7 @@ export const AllStates = () => {
                 column === "Unregistered"
                   ? null
                   : createMockAttendee({
-                      registered: column !== "In queue",
+                      registeredAt: column === "In queue" ? null : now,
                       createdAt: subMinutes(now, 5),
                       paymentReservedAt: column === "Registered" && isPaidEvent ? now : null,
                       completionDeadline: isReserved

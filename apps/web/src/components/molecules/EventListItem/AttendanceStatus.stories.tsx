@@ -61,11 +61,11 @@ export const AllStates = () => {
   const now = new Date()
   const viewerStates = [
     { label: "Not attending", attendee: null },
-    { label: "Registered", attendee: createMockAttendee({ registered: true }) },
-    { label: "Queued", attendee: createMockAttendee({ registered: false }) },
+    { label: "Registered", attendee: createMockAttendee({ registeredAt: new Date() }) },
+    { label: "Queued", attendee: createMockAttendee({ registeredAt: null }) },
     {
       label: "Delayed",
-      attendee: createMockAttendee({ registered: false, earliestReservationAt: addHours(now, 4) }),
+      attendee: createMockAttendee({ registeredAt: null, registrationEligibleAt: addHours(now, 4) }),
     },
   ]
   const phases = [
