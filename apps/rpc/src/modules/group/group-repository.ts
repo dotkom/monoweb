@@ -32,7 +32,12 @@ const GROUP_TYPE_SORT_ORDER = {
 } as const satisfies Record<GroupType, number>
 
 export interface GroupRepository {
-  create(handle: DBHandle, groupSlug: GroupId, data: GroupWrite): Promise<Group>
+  create(
+    handle: DBHandle,
+    groupSlug: GroupId,
+    data: GroupWrite,
+    defaultRole: GroupRoleWrite & { id: string }
+  ): Promise<Group>
   update(handle: DBHandle, groupSlug: GroupId, data: Partial<GroupWrite>): Promise<Group>
   delete(handle: DBHandle, groupSlug: GroupId): Promise<Group>
   findBySlug(handle: DBHandle, groupSlug: GroupId): Promise<Group | null>
@@ -75,9 +80,20 @@ export interface GroupRepository {
 
 export function getGroupRepository(): GroupRepository {
   return {
-    async create(handle, groupSlug, data) {
+    async create(handle, groupSlug, data, defaultRole) {
       const group = await handle.group.create({
-        data: { ...data, slug: groupSlug },
+        data: {
+          ...data,
+          slug: groupSlug,
+          defaultGroupRoleId: defaultRole.id,
+          roles: {
+            create: {
+              id: defaultRole.id,
+              name: defaultRole.name,
+              type: defaultRole.type,
+            },
+          },
+        },
         include: QUERY_WITH_ROLES,
       })
 
