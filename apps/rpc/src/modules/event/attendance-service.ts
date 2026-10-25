@@ -363,6 +363,7 @@ export function getAttendanceService(
       {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
         position,
       }
     )
@@ -395,6 +396,7 @@ export function getAttendanceService(
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
       }
     )
   }
@@ -1634,6 +1636,7 @@ export function getAttendanceService(
           {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
             feedbackLink: `${configuration.WEB_PUBLIC_ORIGIN}/tilbakemelding/${event.id}`,
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
@@ -1838,6 +1841,7 @@ export function getAttendanceService(
           {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
             message,
           }
         )

@@ -1,38 +1,26 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="nb">
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta name="x-apple-disable-message-reformatting"/>
-  </head>
-  <body style="background-color: rgb(255, 255, 255);">
-    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+{{> event-image }}
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei!</p>
+    <p style="margin: 0;">Du er påmeldt {{ eventName }}. Vi gleder oss til å se deg!</p>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0;">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tbody>
-        <tr style="width: 100%">
-          <td>
-            <h2>Du er påmeldt {{ eventName }}</h2>
-            <p>Du har meldt deg på arrangementet {{ eventName }} hos Linjeforeningen Online.</p>
-            <br />
-            <a href="{{ eventLink }}">Les mer om arrangementet her</a>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3>Avmelding</h3>
-            <p>Du har frem til {{ deregistrationDeadline }} å melde deg av arrangementet hvis du ombestemmer deg.</p>
-            <p>Mangel på oppmøte uten avmelding av arrangementet resulterer i prikk og/eller suspensjon. Du kan lese mer om prikkereglene på <a href="https://wiki.online.ntnu.no/online-info/prikkeregler/">Online sine nettsider</a></p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du har meldt deg på arrangementet {{ eventName }}</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
-            <p style="font-size: 0.75em; color: gray">Alle datoer er i norsk tid.</p>
-          </td>
+        <tr>
+          {{# buttons.event }}
+          {{> primary-button }}
+          {{/ buttons.event }}
         </tr>
       </tbody>
     </table>
-  </body>
-</html>
+  </td>
+</tr>
+<tr>
+  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">
+    <p style="margin: 0 0 12px;">Du kan melde deg av frem til {{ deregistrationDeadline }} på arrangementssiden.</p>
+    <p class="text-secondary" style="margin: 0; color: #4b5563; font-size: 14px; line-height: 22px;">Mangel på oppmøte uten avmelding resulterer i prikk og/eller suspensjon. Les mer om <a class="text-secondary" href="https://wiki.online.ntnu.no/online-info/prikkeregler/" style="color: #4b5563; text-decoration: underline;">arrangementreglene</a>.</p>
+  </td>
+</tr>

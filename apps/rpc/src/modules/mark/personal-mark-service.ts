@@ -1,6 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Mark, MarkId, PersonalMark, PersonalMarkDetails, Punishment, VisiblePersonalMarkDetails } from "./mark"
+import { formatMarkCount } from "./mark"
 import type { UserId } from "../user/user"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
@@ -146,6 +147,7 @@ export function getPersonalMarkService(
       const mark = await markService.getById(handle, personalMark.markId)
 
       const organizerEmails = mark.groups.map((g) => g.email).filter((email) => email !== null)
+      const markCountLabel = formatMarkCount(mark.weight)
 
       await emailService.send(
         DEFAULT_EMAIL_SOURCE,
@@ -153,12 +155,12 @@ export function getPersonalMarkService(
         [user.email],
         [],
         [],
-        "Du har fått en prikk",
+        `Du har fått ${markCountLabel}`,
         emails.RECEIVED_MARK,
         {
           title: mark.title,
           details: mark.details,
-          weight: mark.weight,
+          markCountLabel,
           endsAt: getPunishmentExpiryDate(personalMark.createdAt, mark.duration).toISOString(),
         }
       )

@@ -1,37 +1,43 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="nb">
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta name="x-apple-disable-message-reformatting"/>
-  </head>
-  <body style="background-color: rgb(255, 255, 255);">
-    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei!</p>
+    <p style="margin: 0;">Du har fått {{ markCountLabel }} for: {{ title }}.</p>
+  </td>
+</tr>
+{{# details }}
+<tr>
+  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0;"><span style="white-space: pre-wrap;">{{ details }}</span></p>
+  </td>
+</tr>
+{{/ details }}
+<tr>
+  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0;">Du har fått {{ markCountLabel }} som varer frem til {{ endsAt }}.</p>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0; font-size: 0;">
+    <!--[if mso]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding-right: 8px;"><![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="display: inline-table; vertical-align: top; margin: 0 8px 8px 0;">
       <tbody>
-        <tr style="width: 100%">
-          <td>
-            <h2>Du har fått en prikk for: {{ title }}</h2>
-            {{#details}}
-            <p>{{ details }}</p>
-            {{/details}}
-            <p>Du har fått {{ weight }} prikk(er) som varer frem til {{ endsAt }}</p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <p>Du kan lese mer om prikkereglene på <a href="https://wiki.online.ntnu.no/online-info/prikkeregler/">Online sine nettsider</a></p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du er medlem i Linjeforeningen Online</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
-            <p style="font-size: 0.75em; color: gray">Alle datoer er i norsk tid.</p>
-          </td>
+        <tr>
+          {{# buttons.rules }}
+          {{> primary-button }}
+          {{/ buttons.rules }}
         </tr>
       </tbody>
     </table>
-  </body>
-</html>
+    <!--[if mso]></td><td><![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="display: inline-table; vertical-align: top; margin: 0 8px 8px 0;">
+      <tbody>
+        <tr>
+          {{# buttons.profile }}
+          {{> secondary-button }}
+          {{/ buttons.profile }}
+        </tr>
+      </tbody>
+    </table>
+    <!--[if mso]></td></tr></table><![endif]-->
+  </td>
+</tr>
