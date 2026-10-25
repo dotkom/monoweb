@@ -20,6 +20,7 @@ import {
   IconWheelchair,
   type TablerIcon,
 } from "@tabler/icons-react"
+import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 
 export type Navigation = {
   label: string
@@ -58,7 +59,7 @@ export const navigationGroups: NavigationGroup[] = [
             label: "Nytt arrangement",
             href: "/admin/arrangementer/ny",
             resourceName: "arrangement",
-            canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canCreateEvents(),
+            canAccess: (authorization) => canCreateEvents(authorization),
           },
         ],
       },
@@ -98,6 +99,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconUserMinus,
         href: "/admin/avmeldingsgrunner",
         keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
+        canAccess: (authorization) => canListDeregisterReasons(authorization),
       },
     ],
   },

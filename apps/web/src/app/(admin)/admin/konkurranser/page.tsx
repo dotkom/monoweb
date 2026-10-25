@@ -7,12 +7,13 @@ import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
 import { ContestsTable } from "./ContestTable"
 import { useContestFindManyQuery } from "./queries"
+import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
 
 export default function ContestPage() {
   const { contests, isLoading } = useContestFindManyQuery()
 
-  const { canCreateEvents } = useAuthorization()
-  const canCreate = canCreateEvents()
+  const authorization = useAuthorization()
+  const canCreate = canCreateEvents(authorization)
 
   return (
     <div className="flex flex-col gap-4">
