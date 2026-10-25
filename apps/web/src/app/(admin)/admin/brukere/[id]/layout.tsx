@@ -20,7 +20,6 @@ import {
   IconWheelchair,
 } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import { usePathname } from "next/navigation"
 import { type PropsWithChildren, use, useMemo } from "react"
 import { UserDetailsContext } from "./provider"
@@ -33,7 +32,6 @@ export default function UserDetailsLayout({
   const id = decodeURIComponent(use(params).id)
   const pathname = usePathname()
   const authorization = useAuthorization()
-  const { user: sessionUser } = useUser()
   const canManageMemberships = authorization.canManageUserMemberships()
 
   const { data: user, isLoading, isError, error } = useQuery(trpc.user.get.queryOptions(id))
@@ -92,7 +90,7 @@ export default function UserDetailsLayout({
       return undefined
     }
 
-    const canEdit = authorization.canEditUserProfile(user.id, sessionUser?.sub ?? null)
+    const canEdit = authorization.canEditUserProfile(user.id)
     const decodedPath = decodeURIComponent(pathname)
     const isMedlemskapRoute =
       decodedPath === `${basePath}/medlemskap` || decodedPath.startsWith(`${basePath}/medlemskap/`)
@@ -116,7 +114,7 @@ export default function UserDetailsLayout({
     }
 
     return undefined
-  }, [authorization, basePath, canManageMemberships, pathname, sessionUser?.sub, user])
+  }, [authorization, basePath, canManageMemberships, pathname, user])
 
   if (isLoading) {
     return null

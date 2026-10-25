@@ -1,6 +1,11 @@
 "use client"
 
 import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
+import {
+  isAdministrator as isAdministratorAffiliation,
+  isCommitteeMember as isCommitteeMemberAffiliation,
+  type AffiliatedPrincipalWithSubject,
+} from "@dotkomonline/rpc/permissions"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { createContext, useContext, useMemo } from "react"
 import type { PropsWithChildren } from "react"
@@ -26,16 +31,20 @@ import {
 } from "./permissions"
 
 export interface AuthorizationProviderProps {
-  isAdministrator: boolean
-  isCommitteeMember: boolean
+  subject: UserId
   affiliations: Record<GroupId, GroupRoleType[]>
+  groups: Record<GroupId, GroupType>
 }
 
-interface AuthorizationContextValue extends AuthorizationState {}
+export type Authorization = AffiliatedPrincipalWithSubject & {
+  isAdministrator: boolean
+  isCommitteeMember: boolean
+  groups: Map<GroupId, GroupType>
+}
 
-const AuthorizationContext = createContext<AuthorizationContextValue | null>(null)
+const AuthorizationContext = createContext<Authorization | null>(null)
 
-function toAffiliationsMap(affiliations: Record<GroupId, GroupRoleType[]>) {
+function toAffiliationsMap(affiliations: Record<GroupId, GroupRoleType[]>): Map<GroupId, Set<GroupRoleType>> {
   const affiliationsMap = new Map<GroupId, Set<GroupRoleType>>()
 
   for (const [groupId, roles] of Object.entries(affiliations)) {
@@ -45,20 +54,27 @@ function toAffiliationsMap(affiliations: Record<GroupId, GroupRoleType[]>) {
   return affiliationsMap
 }
 
+function toGroupTypeMap(groups: Record<GroupId, GroupType>): Map<GroupId, GroupType> {
+  return new Map(Object.entries(groups))
+}
+
 export function AuthorizationProvider({
   children,
-  isAdministrator,
-  isCommitteeMember,
+  subject,
   affiliations,
+  groups,
 }: PropsWithChildren<AuthorizationProviderProps>) {
-  const value = useMemo(
-    () => ({
-      isAdministrator,
-      isCommitteeMember,
-      affiliations: toAffiliationsMap(affiliations),
-    }),
-    [affiliations, isAdministrator, isCommitteeMember]
-  )
+  const value = useMemo(() => {
+    const affiliationsMap = toAffiliationsMap(affiliations)
+
+    return {
+      subject,
+      affiliations: affiliationsMap,
+      groups: toGroupTypeMap(groups),
+      isAdministrator: isAdministratorAffiliation(affiliationsMap),
+      isCommitteeMember: isCommitteeMemberAffiliation(affiliationsMap),
+    } satisfies Authorization
+  }, [affiliations, groups, subject])
 
   return <AuthorizationContext.Provider value={value}>{children}</AuthorizationContext.Provider>
 }
@@ -71,19 +87,24 @@ export function useAuthorization() {
   }
 
   return useMemo(() => {
-    const state: AuthorizationState = context
-
-    return {
+    const state: AuthorizationState = {
       isAdministrator: context.isAdministrator,
       isCommitteeMember: context.isCommitteeMember,
       affiliations: context.affiliations,
+    }
+
+    return {
+      subject: context.subject,
+      isAdministrator: context.isAdministrator,
+      isCommitteeMember: context.isCommitteeMember,
+      affiliations: context.affiliations,
+      groups: context.groups,
       isGroupMember: (groupId: GroupId) => isGroupMember(state, groupId),
       hasGroupRole: (groupId: GroupId, role: GroupRoleType) => hasGroupRole(state, groupId, role),
       hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
       canAccessAuditLog: () => canAccessAuditLog(state),
       canManageUserMemberships: () => canManageUserMemberships(state),
-      canEditUserProfile: (userId: UserId, currentUserId: UserId | null) =>
-        canEditUserProfile(state, userId, currentUserId),
+      canEditUserProfile: (userId: UserId) => canEditUserProfile(state, userId, context.subject),
       canEditEvent: (hostingGroupIds: readonly GroupId[]) => canEditEvent(state, hostingGroupIds),
       canEditContest: (groupIds: readonly GroupId[]) => canEditContest(state, groupIds),
       canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
