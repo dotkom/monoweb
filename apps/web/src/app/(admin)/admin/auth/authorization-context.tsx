@@ -11,7 +11,6 @@ import type { PropsWithChildren } from "react"
 import { createContext, useContext, useMemo } from "react"
 import type { AuthorizationState } from "./permissions"
 import {
-  canAccessAuditLog,
   canCreateGroup,
   canDeleteGroup,
   canEditContest,
@@ -100,7 +99,6 @@ export function useAuthorization() {
       isGroupMember: (groupId: GroupId) => isGroupMember(state, groupId),
       hasGroupRole: (groupId: GroupId, role: GroupRoleType) => hasGroupRole(state, groupId, role),
       hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
-      canAccessAuditLog: () => canAccessAuditLog(state),
       canManageUserMemberships: () => canManageUserMemberships(state),
       canEditUserProfile: (userId: UserId) => canEditUserProfile(state, userId, context.subject),
       canEditContest: (groupIds: readonly GroupId[]) => canEditContest(state, groupIds),

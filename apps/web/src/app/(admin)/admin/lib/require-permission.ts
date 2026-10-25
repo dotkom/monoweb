@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
-import { canAccessAuditLog, canEditFadderuke, canEditOffline } from "@admin/auth/permissions"
+import { canEditFadderuke, canEditOffline } from "@admin/auth/permissions"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { getServerAuthorizationState } from "@admin/lib/server-authorization"
 
 export const UNAUTHORIZED_PATH = "/admin/ikke-tilgang"
