@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
 import { IconDeviceDesktop, IconDeviceMobile, IconMoon, IconPumpkinScary, IconSun } from "@tabler/icons-react"
 import type { Icon } from "@tabler/icons-react"
 import { usePalette } from "@/components/PaletteProvider"
-import { DEFAULT_PALETTE, type Palette } from "@/lib/palette"
+import { DEFAULT_PALETTE_PREFERENCE, type Palette, type PalettePreference } from "@/lib/palette"
 import { useTheme } from "next-themes"
 import type { FC } from "react"
 import { NavbarDropdownContent } from "./NavbarDropdownContent"
@@ -55,22 +55,10 @@ const TOGGLE_ITEM_CLASS_NAME = cn(
   "aria-pressed:dark:bg-stone-700 data-[state=on]:dark:bg-stone-700"
 )
 
-const PALETTE_OPTIONS = [
-  {
-    palette: "classic",
-    label: "Klassisk",
-    swatchClassName: "bg-[#0b5374]",
-  },
-  {
-    palette: "halloween",
-    label: "Halloween",
-    swatchClassName: "bg-[#f7931e]",
-  },
-] satisfies Array<{
-  palette: Palette
-  label: string
-  swatchClassName: string
-}>
+const PALETTE_DETAILS = {
+  classic: { label: "Klassisk", swatchClassName: "bg-[#0b5374]" },
+  halloween: { label: "Halloween", swatchClassName: "bg-[#f7931e]" },
+} satisfies Record<Palette, { label: string; swatchClassName: string }>
 
 export const ThemeToggle = () => {
   const { setTheme, theme } = useTheme()
@@ -104,21 +92,31 @@ export const ThemeToggle = () => {
   )
 }
 
+/** Whether there is more than one palette to pick between right now */
+export const useHasPaletteChoice = () => usePalette().availablePalettes.length > 1
+
 export const PaletteToggle = () => {
-  const { palette, setPalette } = usePalette()
+  const { preference, defaultPalette, availablePalettes, setPreference } = usePalette()
+
+  const options = [
+    { preference: "default", label: "Standard", swatchClassName: PALETTE_DETAILS[defaultPalette].swatchClassName },
+    ...availablePalettes.map((palette) => ({ preference: palette, ...PALETTE_DETAILS[palette] })),
+  ] satisfies Array<{ preference: PalettePreference; label: string; swatchClassName: string }>
 
   return (
     <ToggleGroup
       multiple={false}
       spacing={0.5}
-      value={[palette]}
-      onValueChange={(value) => setPalette((value.at(0) as Palette | undefined) ?? DEFAULT_PALETTE)}
+      value={[preference]}
+      onValueChange={(value) =>
+        setPreference((value.at(0) as PalettePreference | undefined) ?? DEFAULT_PALETTE_PREFERENCE)
+      }
     >
-      {PALETTE_OPTIONS.map((item) => (
-        <Tooltip key={item.palette}>
+      {options.map((item) => (
+        <Tooltip key={item.preference}>
           <TooltipTrigger asChild>
             <ToggleGroupItem
-              value={item.palette}
+              value={item.preference}
               size="lg"
               variant="default"
               aria-label={item.label}
@@ -140,6 +138,8 @@ export const PaletteToggle = () => {
 }
 
 export const ThemeDropdown: FC = () => {
+  const hasPaletteChoice = useHasPaletteChoice()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -155,7 +155,7 @@ export const ThemeDropdown: FC = () => {
       <NavbarDropdownContent className="w-fit rounded-xl border border-gray-300/70 bg-gray-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5">
         <div className="flex flex-col items-center gap-1.5">
           <ThemeToggle />
-          <PaletteToggle />
+          {hasPaletteChoice && <PaletteToggle />}
         </div>
       </NavbarDropdownContent>
     </DropdownMenu>

@@ -39,7 +39,7 @@ import { type ComponentType, type FC, Fragment, useState } from "react"
 import { ContactDebugDropdown } from "./ContactDebugDropdown"
 import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationDropdown } from "./NotificationDropdown"
-import { PaletteToggle, ThemeDropdown, ThemeToggle } from "./ThemeToggle"
+import { PaletteToggle, ThemeDropdown, ThemeToggle, useHasPaletteChoice } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
 import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
@@ -161,6 +161,7 @@ type AvatarDropdownProps = {
 }
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
+  const hasPaletteChoice = useHasPaletteChoice()
   const [open, setOpen] = useState(false)
   const [isBugReportModalOpen, setBugReportModalOpen] = useState(false)
   const trpc = useTRPC()
@@ -317,15 +318,17 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between px-3 mt-1.5">
-            <div className="flex gap-3 items-center">
-              <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Tema</Text>
+          {hasPaletteChoice && (
+            <div className="flex items-center justify-between px-3 mt-1.5">
+              <div className="flex gap-3 items-center">
+                <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+                <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Tema</Text>
+              </div>
+              <div>
+                <PaletteToggle />
+              </div>
             </div>
-            <div>
-              <PaletteToggle />
-            </div>
-          </div>
+          )}
 
           <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 

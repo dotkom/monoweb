@@ -2,7 +2,13 @@ import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
 import { PaletteProvider } from "@/components/PaletteProvider"
 import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
-import { PALETTE_COOKIE_NAME, parsePaletteCookie } from "@/lib/palette"
+import {
+  getAvailablePalettes,
+  getDefaultPalette,
+  PALETTE_COOKIE_NAME,
+  parsePaletteCookie,
+  resolvePalette,
+} from "@/lib/palette"
 import { getAuthenticatedUser } from "@/utils/get-authenticated-user"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
@@ -37,7 +43,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const authState = await getAuthenticatedUser()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = authState.sessionUser ?? undefined
-  const palette = parsePaletteCookie((await cookies()).get(PALETTE_COOKIE_NAME)?.value)
+  const palettePreference = parsePaletteCookie((await cookies()).get(PALETTE_COOKIE_NAME)?.value)
+  const palette = resolvePalette(palettePreference)
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
@@ -61,7 +68,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Auth0Provider user={auth0User}>
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <PaletteProvider initialPalette={palette}>
+                <PaletteProvider
+                  initialPreference={palettePreference}
+                  initialPalette={palette}
+                  defaultPalette={getDefaultPalette()}
+                  availablePalettes={getAvailablePalettes()}
+                >
                   <Toaster>
                     <div className="page-shell">
                       <Navbar />
