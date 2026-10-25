@@ -33,8 +33,22 @@ runs:
         git-hash: ${{ inputs.git-hash }}
         dockerfile: apps/web/Dockerfile
         build-arguments: |
-          ${{ steps.acquire-secrets.outputs.secrets }}
+          AUTH0_CLIENT_ID=${{ env.AUTH0_CLIENT_ID }}
+          AUTH0_ISSUER=${{ env.AUTH0_ISSUER }}
+          AUTH0_AUDIENCES=${{ env.AUTH0_AUDIENCES }}
+          NEXT_PUBLIC_ORIGIN=${{ env.NEXT_PUBLIC_ORIGIN }}
+          NEXT_PUBLIC_RPC_HOST=${{ env.NEXT_PUBLIC_RPC_HOST }}
+          NEXT_PUBLIC_HOME_URL=${{ env.NEXT_PUBLIC_HOME_URL }}
+          RPC_HOST=${{ env.RPC_HOST }}
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ env.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+          SENTRY_DSN=${{ env.SENTRY_DSN }}
           SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
+          DOPPLER_ENVIRONMENT=${{ env.DOPPLER_ENVIRONMENT }}
+        build-secret-envs: |
+          AUTH0_CLIENT_SECRET=AUTH0_CLIENT_SECRET
+          AUTH_SECRET=AUTH_SECRET
+          SIGNING_KEY=SIGNING_KEY
+          SENTRY_AUTH_TOKEN=SENTRY_AUTH_TOKEN
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}
