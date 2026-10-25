@@ -26,12 +26,12 @@ import {
   IconArrowUpRight,
   IconBell,
   IconBug,
-  IconColorSwatch,
   IconLock,
   IconLogout2,
   IconMailForward,
   IconPalette,
   IconSettings,
+  IconSunMoon,
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
@@ -309,8 +309,8 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
 
           <div className="flex items-center justify-between px-3">
             <div className="flex gap-3 items-center">
-              <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
+              <IconSunMoon className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Mørk modus</Text>
             </div>
             <div>
               <ThemeToggle />
@@ -319,8 +319,8 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
 
           <div className="flex items-center justify-between px-3 mt-1.5">
             <div className="flex gap-3 items-center">
-              <IconColorSwatch className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Palett</Text>
+              <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Tema</Text>
             </div>
             <div>
               <PaletteToggle />

@@ -143,7 +143,7 @@ export const ThemeDropdown: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="Velg fargetema"
+        aria-label="Velg modus og tema"
         className="flex items-center justify-center size-10 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
       >
         <span className="contents halloween:hidden">
