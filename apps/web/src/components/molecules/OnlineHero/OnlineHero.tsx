@@ -208,8 +208,7 @@ export const OnlineHero: FC = () => {
               <div
                 className={cn(
                   "pointer-events-none absolute inset-0 rounded-[39%]",
-                  "shadow-[inset_0_0_20px_22px_#fff] transition-opacity duration-700",
-                  "dark:shadow-[inset_0_0_20px_22px_#1c1917]",
+                  "shadow-[inset_0_0_20px_22px_var(--background)] transition-opacity duration-700",
                   isLoading ? "opacity-0" : "opacity-100"
                 )}
               />
