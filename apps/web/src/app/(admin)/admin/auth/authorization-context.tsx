@@ -1,16 +1,17 @@
 "use client"
 
+import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
+import { canManageNotification, type NotificationGroup } from "@dotkomonline/rpc/notification-permissions"
 import {
   isAdministrator as isAdministratorAffiliation,
   isCommitteeMember as isCommitteeMemberAffiliation,
   type AffiliatedPrincipalWithSubject,
 } from "@dotkomonline/rpc/permissions"
 import type { UserId } from "@dotkomonline/rpc/user"
-import type { GroupId, GroupRoleType, GroupType } from "@dotkomonline/rpc/group"
 import type { PropsWithChildren } from "react"
 import { createContext, useContext, useMemo } from "react"
 import type { AuthorizationState } from "./permissions"
-import { canManageNotification, hasAnyGroupAffiliation, hasGroupRole, isGroupMember } from "./permissions"
+import { hasAnyGroupAffiliation, hasGroupRole, isGroupMember } from "./permissions"
 
 export interface AuthorizationProviderProps {
   subject: UserId
@@ -84,7 +85,7 @@ export function useAuthorization() {
       isGroupMember: (groupId: GroupId) => isGroupMember(state, groupId),
       hasGroupRole: (groupId: GroupId, role: GroupRoleType) => hasGroupRole(state, groupId, role),
       hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
-      canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
+      canManageNotification: (actorGroup: NotificationGroup | null) => canManageNotification(state, actorGroup),
     }
   }, [context])
 }
