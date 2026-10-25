@@ -13,7 +13,6 @@ import type { AuthorizationState } from "./permissions"
 import {
   canCreateGroup,
   canDeleteGroup,
-  canEditContest,
   canEditUserProfile,
   canManageGroupMembership,
   canManageGroupRoles,
@@ -99,7 +98,6 @@ export function useAuthorization() {
       hasAnyGroupAffiliation: (groupIds: readonly GroupId[]) => hasAnyGroupAffiliation(state, groupIds),
       canManageUserMemberships: () => canManageUserMemberships(state),
       canEditUserProfile: (userId: UserId) => canEditUserProfile(state, userId, context.subject),
-      canEditContest: (groupIds: readonly GroupId[]) => canEditContest(state, groupIds),
       canManageNotification: (actorGroupId: GroupId | null) => canManageNotification(state, actorGroupId),
       canCreateGroup: (groupType: GroupType) => canCreateGroup(state, groupType),
       canUpdateGroup: (groupId: GroupId, isInterestGroup: boolean) => canUpdateGroup(state, groupId, isInterestGroup),

@@ -1,9 +1,10 @@
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
+import { canCreateContest, canCreateContests, canManageContest } from "@dotkomonline/rpc/contest-permissions"
 import { canCreateEvent, canCreateEvents, canEditEvent } from "@dotkomonline/rpc/event-permissions"
 import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import type { GroupRoleType } from "@dotkomonline/rpc/group"
-import { GroupRoleTypeEnum } from "@dotkomonline/rpc/group"
+import { GroupRoleTypeEnum, GroupTypeSchema } from "@dotkomonline/rpc/group"
 import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
 import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 import { describe, expect, it } from "vitest"
@@ -280,5 +281,160 @@ describe("canManageJobListings", () => {
 
   it("denies unrelated committee members", () => {
     expect(canManageJobListings(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(false)
+  })
+})
+
+describe("canCreateContests", () => {
+  it("requires at least one affiliation for non-admins", () => {
+    expect(canCreateContests(createState({}))).toBe(false)
+    expect(canCreateContests(createState({ arrkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+    expect(canCreateContests(createState({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toBe(true)
+  })
+})
+
+describe("canManageContest", () => {
+  it("allows editing when user hosts the contest", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [{ slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }])).toBe(true)
+  })
+
+  it("denies editing for unrelated committee members", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [{ slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }])).toBe(false)
+  })
+
+  it("allows a co-host to add another committee they are not in", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canManageContest(
+        state,
+        [
+          { slug: "backlog", type: GroupTypeSchema.enum.COMMITTEE },
+          { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        ],
+        [
+          { slug: "backlog", type: GroupTypeSchema.enum.COMMITTEE },
+          { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+          { slug: "bedkom", type: GroupTypeSchema.enum.COMMITTEE },
+        ]
+      )
+    ).toBe(true)
+  })
+
+  it("denies a non-host from editing even if they appear in the next organizers", () => {
+    const state = createState({ bedkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canManageContest(
+        state,
+        [{ slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }],
+        [
+          { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+          { slug: "bedkom", type: GroupTypeSchema.enum.COMMITTEE },
+        ]
+      )
+    ).toBe(false)
+  })
+
+  it("allows backlog to manage contests with interest-group organizers", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [{ slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP }])).toBe(
+      true
+    )
+    expect(
+      canManageContest(state, [
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP },
+      ])
+    ).toBe(true)
+  })
+
+  it("denies non-backlog committees from managing contests with interest-group organizers", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [{ slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP }])).toBe(
+      false
+    )
+    expect(
+      canManageContest(state, [
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP },
+      ])
+    ).toBe(false)
+  })
+
+  it("denies non-admins when organizers are empty", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [])).toBe(false)
+  })
+
+  it("allows administrators when organizers are empty", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canManageContest(state, [])).toBe(true)
+  })
+})
+
+describe("canCreateContest", () => {
+  it("allows creating when the user belongs to at least one committee organizer", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(
+      canCreateContest(state, [
+        { slug: "backlog", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+      ])
+    ).toBe(true)
+  })
+
+  it("denies creating when the user belongs to none of the committee organizers", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, [{ slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE }])).toBe(false)
+  })
+
+  it("allows backlog to create contests with interest-group organizers", () => {
+    const state = createState({ backlog: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, [{ slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP }])).toBe(
+      true
+    )
+    expect(
+      canCreateContest(state, [
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP },
+      ])
+    ).toBe(true)
+  })
+
+  it("denies non-backlog committees from creating contests with interest-group organizers", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, [{ slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP }])).toBe(
+      false
+    )
+    expect(
+      canCreateContest(state, [
+        { slug: "arrkom", type: GroupTypeSchema.enum.COMMITTEE },
+        { slug: "some-interest-group", type: GroupTypeSchema.enum.INTEREST_GROUP },
+      ])
+    ).toBe(false)
+  })
+
+  it("denies non-admins when organizers are empty", () => {
+    const state = createState({ arrkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, [])).toBe(false)
+  })
+
+  it("allows administrators when organizers are empty", () => {
+    const state = createState({ dotkom: [GroupRoleTypeEnum.LEADER] })
+
+    expect(canCreateContest(state, [])).toBe(true)
   })
 })

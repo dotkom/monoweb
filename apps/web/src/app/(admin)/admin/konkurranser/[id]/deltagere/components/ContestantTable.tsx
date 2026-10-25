@@ -1,6 +1,6 @@
 "use client"
 
-import { useContestEditPermission } from "@admin/hooks/use-contest-edit-permission"
+import { useContestManagePermission } from "@admin/hooks/use-contest-manage-permission"
 import type { ContestantDetail, ContestUserSummary } from "@dotkomonline/rpc/contest"
 import {
   DataTable,
@@ -32,7 +32,7 @@ export type ContestantTableProps = {
 }
 
 export function ContestantTable({ contestants, resultSuffix, excludeUserIds }: ContestantTableProps) {
-  const canEdit = useContestEditPermission()
+  const canEdit = useContestManagePermission()
   const removeContestant = useRemoveContestantMutation()
   const updateTeamContestant = useUpdateTeamContestantMutation()
   const [modal, setModal] = useState<TableModalState | null>(null)

@@ -1,9 +1,0 @@
-import { useAuthorization } from "@admin/auth/authorization-context"
-import { useContestContext } from "@admin/konkurranser/[id]/provider"
-
-export function useContestEditPermission() {
-  const { contest } = useContestContext()
-  const { canEditContest } = useAuthorization()
-
-  return canEditContest(contest.groups)
-}
