@@ -1,7 +1,10 @@
 import { TZDate } from "@date-fns/tz"
 import { secondsInDay } from "date-fns/constants"
 
-/** Color palettes, applied as `data-palette` on <html>. Each one except "classic" has a stylesheet in src/palettes */
+/**
+ * Color palettes, applied as `data-palette` on <html>. Each one except "classic" has a stylesheet in src/palettes.
+ * src/palettes/pink.css is disabled for now, add "pink" here and import it in globals.css to bring it back.
+ */
 export const PALETTES = ["classic", "halloween"] as const
 
 export type Palette = (typeof PALETTES)[number]
