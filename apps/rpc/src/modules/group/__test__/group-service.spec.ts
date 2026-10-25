@@ -7,6 +7,7 @@ import { getFeideGroupsRepository } from "../../feide/feide-groups-repository"
 import { getMembershipService } from "../../user/membership-service"
 import { getUserRepository } from "../../user/user-repository"
 import { getUserService } from "../../user/user-service"
+import type { EmailService } from "../../email/email-service"
 import { mockDeep } from "vitest-mock-extended"
 import { CommitteeGroupSlug } from "../../authorization-service"
 import { getGroupRepository } from "../group-repository"
@@ -29,7 +30,9 @@ describe("GroupService", () => {
     auth0Client,
     membershipService,
     s3Client,
-    "fake-aws-bucket"
+    "fake-aws-bucket",
+    mockDeep<EmailService>(),
+    "http://localhost:3000"
   )
 
   const groupService = getGroupService(groupRepository, userService, s3Client, "fake-aws-bucket")

@@ -181,10 +181,24 @@ export const UserFilterQuerySchema = z
   .partial()
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
+export const BUG_REPORT_TITLE_MAX_LENGTH = 200
+export const BUG_REPORT_BODY_MAX_LENGTH = 10000
+
 export const BugReportFormSchema = z.object({
-  email: z.string().optional(),
-  title: z.string(),
-  body: z.string(),
+  userAgent: z.string().max(2048).optional(),
+  title: z.string().max(BUG_REPORT_TITLE_MAX_LENGTH).trim().min(1, "Rapporten trenger tittel"),
+  body: z
+    .string()
+    .max(BUG_REPORT_BODY_MAX_LENGTH)
+    .trim()
+    .min(1, "Rapporten trenger innhold")
+    .transform((body) => {
+      // Normalize line endings to \n
+      const normalizedBody = body.replace(/\r\n|\r/g, "\n")
+
+      // Squash multiple consecutive empty lines to two empty lines
+      return normalizedBody.replace(/\n(?:[\t\s]*\n){2,}/g, "\n\n")
+    }),
 })
 export type BugReportFormResult = z.infer<typeof BugReportFormSchema>
 

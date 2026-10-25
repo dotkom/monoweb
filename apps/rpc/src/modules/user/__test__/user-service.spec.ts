@@ -7,6 +7,7 @@ import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
 import type { MembershipService } from "../membership-service"
 import type { UserRepository } from "../user-repository"
 import { getUserService } from "../user-service"
+import type { EmailService } from "../../email/email-service"
 import { vi, expect, describe, afterEach, it } from "vitest"
 
 function makeUser(overrides: Partial<User> = {}): User {
@@ -65,7 +66,9 @@ describe("UserService", () => {
       managementClient,
       membershipService,
       s3Client,
-      "fake-aws-bucket"
+      "fake-aws-bucket",
+      mockDeep<EmailService>(),
+      "http://localhost:3000"
     )
 
     return {
