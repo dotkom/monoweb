@@ -91,6 +91,10 @@
     "./audit-log-permissions": {
       "import": "./src/permissions/audit-log-permissions.ts",
       "types": "./src/permissions/audit-log-permissions.ts"
+    },
+    "./offline-permissions": {
+      "import": "./src/permissions/offline-permissions.ts",
+      "types": "./src/permissions/offline-permissions.ts"
     }
   },
   "scripts": {

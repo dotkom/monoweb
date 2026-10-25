@@ -23,6 +23,7 @@ import {
 import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
 import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
 
 export type Navigation = {
   label: string
@@ -184,7 +185,7 @@ export const navigationGroups: NavigationGroup[] = [
         icon: IconSkull, // This is sacred and shall not be changed
         href: "/admin/offline",
         keywords: ["offline"],
-        canAccess: (authorization: ReturnType<typeof useAuthorization>) => authorization.canEditOffline(),
+        canAccess: (authorization) => canManageOfflines(authorization),
         createActions: [
           {
             label: "Ny offline",
