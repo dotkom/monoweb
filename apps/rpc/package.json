@@ -103,6 +103,10 @@
     "./company-permissions": {
       "import": "./src/permissions/company-permissions.ts",
       "types": "./src/permissions/company-permissions.ts"
+    },
+    "./job-listing-permissions": {
+      "import": "./src/permissions/job-listing-permissions.ts",
+      "types": "./src/permissions/job-listing-permissions.ts"
     }
   },
   "scripts": {
