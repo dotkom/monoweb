@@ -1,19 +1,49 @@
 <tr>
   <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
     <p style="margin: 0 0 16px;">Hei!</p>
-    <p style="margin: 0;">Du har fått {{ markCountLabel }} for: {{ title }}.</p>
+    <p style="margin: 0;">{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }} for:</p>
   </td>
 </tr>
-{{# details }}
 <tr>
-  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-    <p style="margin: 0;"><span style="white-space: pre-wrap;">{{ details }}</span></p>
+  <td style="padding: 16px 0 0;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tbody>
+        <tr>
+          <td class="mark-card text-primary" bgcolor="#fee2e2" style="padding: 16px; border-radius: 8px; background-color: #fee2e2; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+            <p style="margin: 0;">{{ title }}</p>
+            {{# details }}
+            <p style="margin: 16px 0 0; font-size: 14px; line-height: 22px;"><span style="white-space: pre-wrap;">{{ details }}</span></p>
+            {{/ details }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </td>
 </tr>
-{{/ details }}
+{{# responsibleGroups.length }}
 <tr>
   <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
-    <p style="margin: 0;">Du har fått {{ markCountLabel }} som varer frem til {{ endsAt }}.</p>
+    <p style="margin: 0 0 8px;">Du har fått prikker fra:</p>
+    <ul style="margin: 0; padding-left: 24px;">
+      {{# responsibleGroups }}
+      <li>{{ name }}{{# email }} <span class="text-secondary" style="color: #4b5563;">(<a href="mailto:{{ email }}" style="color: inherit; text-decoration: underline;">{{ email }}</a>)</span>{{/ email }}</li>
+      {{/ responsibleGroups }}
+    </ul>
+  </td>
+</tr>
+{{/ responsibleGroups.length }}
+<tr>
+  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    {{# endsAt }}
+    <p style="margin: 0 0 16px;">Utløpsdato: {{ endsAt }}.</p>
+    {{/ endsAt }}
+    {{^ endsAt }}
+    <p style="margin: 0 0 16px;">Suspensjonen gjelder inntil videre.</p>
+    {{/ endsAt }}
+    {{# isSuspended }}
+    <p class="text-secondary" style="margin: 16px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">Du er suspendert fra å melde deg på Onlines arrangementer.</p>
+    {{/ isSuspended }}
+    <p class="text-secondary" style="margin: 0; color: #4b5563; font-size: 14px; line-height: 22px;">Du har nå totalt {{ totalMarkCountLabel }}.</p>
   </td>
 </tr>
 <tr>
@@ -33,11 +63,16 @@
       <tbody>
         <tr>
           {{# buttons.profile }}
-          {{> secondary-button }}
+          {{> primary-button }}
           {{/ buttons.profile }}
         </tr>
       </tbody>
     </table>
     <!--[if mso]></td></tr></table><![endif]-->
+  </td>
+</tr>
+<tr>
+  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">
+    <p style="margin: 0;">Hvis du mener dette er en feil, {{# responsibleGroups.length }}ta kontakt med de ansvarlige gruppene som er oppført ovenfor. Hvis det ikke er mulig, kan du kontakte{{/ responsibleGroups.length }}{{^ responsibleGroups.length }}kan du kontakte{{/ responsibleGroups.length }} Hovedstyret på <a href="mailto:hs@online.ntnu.no" style="color: inherit; text-decoration: underline;">hs@online.ntnu.no</a>.</p>
   </td>
 </tr>

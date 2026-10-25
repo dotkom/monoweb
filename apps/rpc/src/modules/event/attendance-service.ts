@@ -63,7 +63,12 @@ import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/emai
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import { getGroupDisplayName } from "../group/group"
-import { DEFAULT_MARK_DURATION, type Punishment } from "../mark/mark"
+import {
+  DEFAULT_MARK_DURATION,
+  INDEFINITE_SUSPENSION_DURATION,
+  type Punishment,
+  SUSPENSION_MARK_WEIGHT,
+} from "../mark/mark"
 import type { MarkService } from "../mark/mark-service"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
 import type { PaymentProductsService } from "../payment/payment-products-service"
@@ -1477,13 +1482,13 @@ export function getAttendanceService(
           {
             details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
             // We do not have a method for indefinite duration yet.
-            duration: 100_000,
+            duration: INDEFINITE_SUSPENSION_DURATION,
             title: "Suspensjon for manglende betaling",
             type: "MISSING_PAYMENT",
             // Immediate suspension
-            weight: 6,
+            weight: SUSPENSION_MARK_WEIGHT,
           },
-          event.hostingGroups.map((g) => g.slug)
+          event.hostingGroups.map((group) => group.slug)
         )
 
         await personalMarkService.addToUser(handle, attendee.userId, mark.id)

@@ -250,23 +250,30 @@ export const emails = {
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",
     layout: {
-      title: "Du har fått {{ markCountLabel }}",
-      preheader: "Du har fått {{ markCountLabel }} for: {{ title }}.",
+      title:
+        "{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }}",
+      preheader:
+        "{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }} for: {{ title }}.",
       footerReason: "Du mottar denne e-posten fordi du er medlem i Linjeforeningen Online.",
       showTimezone: true,
     },
     getButtons: () => ({
       rules: { href: "https://wiki.online.ntnu.no/online-info/prikkeregler/", label: "Les arrangementreglene" },
-      profile: { href: "https://online.ntnu.no/profil", label: "Se profilen din" },
+      profile: { href: "https://online.ntnu.no/profil", label: "Se prikkene dine" },
     }),
     getSchema: () =>
       z.object({
         title: z.string(),
         details: z.string().nullable(),
         markCountLabel: z.string().min(1),
+        totalMarkCountLabel: z.string().min(1),
+        responsibleGroups: z.array(z.object({ name: z.string(), email: z.string().nullable() })),
+        isSuspension: z.boolean(),
+        isSuspended: z.boolean(),
         endsAt: z
           .string()
-          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb }))
+          .nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
   }),
