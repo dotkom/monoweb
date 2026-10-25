@@ -356,7 +356,6 @@ export function getGroupService(
       const membershipsByGroup = new Map<string, GroupMembership[]>()
 
       for (const membership of memberships) {
-        // @ts-expect-error: getOrInsert is a function
         const groupMemberships = membershipsByGroup.getOrInsert(membership.groupId, [])
         groupMemberships.push(membership)
       }
