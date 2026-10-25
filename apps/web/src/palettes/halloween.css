@@ -1,0 +1,84 @@
+/*
+ * Halloween palette. Retints the neutral scales (gray for light mode, stone for dark mode), brand colors and semantic
+ * tokens. Status colors (red, green, yellow) are left alone. Components can opt into palette-specific tweaks with the
+ * `halloween:` variant.
+ *
+ * These rules are unlayered, so they win over Tailwind's theme layer. Mode-specific tokens are scoped with
+ * [data-theme="dark"] / :not([data-theme="dark"]) so they don't tie with the dark tokens from @dotkomonline/ui.
+ */
+
+[data-palette="halloween"] {
+  --halloween-night: #140b10;
+
+  /* Light mode neutrals */
+  --color-gray-50: oklch(0.982 0.012 75);
+  --color-gray-100: oklch(0.962 0.022 70);
+  --color-gray-200: oklch(0.922 0.035 65);
+  --color-gray-300: oklch(0.868 0.05 60);
+  --color-gray-400: oklch(0.71 0.06 55);
+  --color-gray-500: oklch(0.555 0.06 45);
+  --color-gray-600: oklch(0.45 0.055 35);
+  --color-gray-700: oklch(0.375 0.05 30);
+  --color-gray-800: oklch(0.28 0.04 25);
+  --color-gray-900: oklch(0.21 0.03 20);
+  --color-gray-950: oklch(0.15 0.025 15);
+
+  /* Dark mode neutrals */
+  --color-stone-50: oklch(0.985 0.006 40);
+  --color-stone-100: oklch(0.97 0.01 40);
+  --color-stone-200: oklch(0.923 0.016 40);
+  --color-stone-300: oklch(0.869 0.024 40);
+  --color-stone-400: oklch(0.709 0.03 50);
+  --color-stone-500: oklch(0.553 0.035 40);
+  --color-stone-600: oklch(0.444 0.035 30);
+  --color-stone-700: oklch(0.374 0.035 25);
+  --color-stone-800: oklch(0.268 0.03 25);
+  --color-stone-900: oklch(0.2 0.025 20);
+  --color-stone-950: oklch(0.147 0.02 15);
+}
+
+[data-palette="halloween"]:not([data-theme="dark"]) {
+  /* A deeper orange than in dark mode, so brand text holds up on light backgrounds */
+  --color-brand: oklch(0.66 0.18 50);
+  --color-brand-accent: oklch(0.8 0.14 70);
+
+  --background: var(--color-gray-50);
+  --primary-foreground: var(--color-gray-950);
+  --secondary: var(--color-gray-100);
+  --secondary-foreground: var(--color-gray-900);
+  --muted: var(--color-gray-100);
+  --muted-foreground: var(--color-gray-500);
+  --accent: var(--color-gray-100);
+  --accent-foreground: var(--color-gray-900);
+  --border: var(--color-gray-300);
+  --input: var(--color-gray-200);
+  --field-border: var(--color-gray-200);
+  --sidebar: var(--color-gray-50);
+  --sidebar-foreground: var(--color-gray-950);
+  --sidebar-primary-foreground: var(--color-gray-950);
+  --sidebar-accent: var(--color-gray-100);
+  --sidebar-accent-foreground: var(--color-gray-900);
+  --sidebar-border: var(--color-gray-200);
+  --sidebar-ring: var(--color-gray-500);
+}
+
+[data-palette="halloween"][data-theme="dark"] {
+  --color-brand: #f7931e;
+  --color-brand-accent: #ffb347;
+
+  --background: var(--halloween-night);
+  --card: var(--color-stone-900);
+  --popover: var(--color-stone-900);
+  --primary-foreground: oklch(0.18 0.02 30);
+  --secondary: oklch(0.26 0.03 25);
+  --muted: oklch(0.26 0.03 25);
+  --muted-foreground: oklch(0.75 0.03 60);
+  --accent: oklch(0.28 0.04 35);
+  --border: oklch(0.8 0.1 60 / 18%);
+  --input: oklch(0.8 0.1 60 / 14%);
+  --field-border: oklch(0.8 0.1 60 / 12%);
+  --sidebar: var(--color-stone-900);
+  --sidebar-primary-foreground: oklch(0.18 0.02 30);
+  --sidebar-accent: oklch(0.26 0.03 25);
+  --sidebar-border: oklch(0.8 0.1 60 / 12%);
+}

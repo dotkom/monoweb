@@ -26,6 +26,7 @@ import {
   IconArrowUpRight,
   IconBell,
   IconBug,
+  IconColorSwatch,
   IconLock,
   IconLogout2,
   IconMailForward,
@@ -38,7 +39,7 @@ import { type ComponentType, type FC, Fragment, useState } from "react"
 import { ContactDebugDropdown } from "./ContactDebugDropdown"
 import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationDropdown } from "./NotificationDropdown"
-import { ThemeDropdown, ThemeToggle } from "./ThemeToggle"
+import { PaletteToggle, ThemeDropdown, ThemeToggle } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
 import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
@@ -313,6 +314,16 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             </div>
             <div>
               <ThemeToggle />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between px-3 mt-1.5">
+            <div className="flex gap-3 items-center">
+              <IconColorSwatch className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Palett</Text>
+            </div>
+            <div>
+              <PaletteToggle />
             </div>
           </div>
 

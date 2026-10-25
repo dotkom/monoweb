@@ -6,7 +6,6 @@ import Spline from "@splinetool/react-spline"
 import { IconArrowUpRight, IconBriefcase, IconRotate3d } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import { Link } from "@/components/link"
-import { isDarkTheme } from "@/utils/themes"
 import type { FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -60,7 +59,7 @@ export const OnlineHero: FC = () => {
     themeState.current = resolvedTheme
 
     if (splineRef.current?.setVariable && mounted) {
-      updateSplineDarkMode(isDarkTheme(resolvedTheme))
+      updateSplineDarkMode(resolvedTheme === "dark")
     }
   }, [resolvedTheme, mounted, updateSplineDarkMode])
 
@@ -68,7 +67,7 @@ export const OnlineHero: FC = () => {
     splineRef.current = spline
     // Initialize Spline with current theme
     if (mounted) {
-      updateSplineDarkMode(isDarkTheme(resolvedTheme))
+      updateSplineDarkMode(resolvedTheme === "dark")
     }
     setIsLoading(false)
   }
@@ -164,7 +163,7 @@ export const OnlineHero: FC = () => {
     if (!mounted) return
 
     const currentTheme = themeState.current
-    setTheme(isDarkTheme(currentTheme) ? "light" : "dark")
+    setTheme(currentTheme === "dark" ? "light" : "dark")
   }
 
   return (
