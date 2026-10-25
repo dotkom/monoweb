@@ -1,5 +1,6 @@
 @import url("@dotkomonline/config/tailwind.css");
 @import url("@dotkomonline/ui/globals.css");
+@import url("./palettes/halloween.css");
 
 @layer base {
   body {

@@ -2,8 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *, [data-theme="dark"] *, [data-theme="halloween"] *));
-@custom-variant halloween (&:is([data-theme="halloween"] *));
+@custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
+/* Palettes are set by apps/web. This has to live in the stylesheet that generates the utilities */
+@custom-variant halloween (&:is([data-palette="halloween"] *));
 @custom-variant data-active (&[data-active]);
 
 @theme inline {
@@ -112,8 +113,7 @@
 }
 
 .dark,
-[data-theme="dark"],
-[data-theme="halloween"] {
+[data-theme="dark"] {
   --background: var(--color-stone-900, oklch(21.6% 0.006 56.043));
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(0.216 0.006 56.043);
@@ -155,31 +155,6 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
-}
-
-[data-theme="halloween"] {
-  color-scheme: dark;
-  --color-brand: #f7931e;
-  --color-brand-accent: #ffb347;
-  --halloween-night: #140b10;
-  --background: var(--halloween-night);
-  --card: oklch(0.2 0.025 20);
-  --popover: oklch(0.2 0.025 20);
-  --primary: var(--color-brand);
-  --primary-foreground: oklch(0.18 0.02 30);
-  --secondary: oklch(0.26 0.03 25);
-  --muted: oklch(0.26 0.03 25);
-  --muted-foreground: oklch(0.75 0.03 60);
-  --accent: oklch(0.28 0.04 35);
-  --border: oklch(0.8 0.1 60 / 18%);
-  --input: oklch(0.8 0.1 60 / 14%);
-  --ring: var(--color-brand);
-  --field-border: oklch(0.8 0.1 60 / 12%);
-  --sidebar: oklch(0.2 0.025 20);
-  --sidebar-primary: var(--color-brand);
-  --sidebar-primary-foreground: oklch(0.18 0.02 30);
-  --sidebar-accent: oklch(0.26 0.03 25);
-  --sidebar-border: oklch(0.8 0.1 60 / 12%);
 }
 
 @layer base {
