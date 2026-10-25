@@ -4,8 +4,8 @@ import { addSeconds, isAfter } from "date-fns"
 export function hasRegistrationDelay(attendee: Attendee | null, now = new Date()): boolean {
   return (
     attendee !== null &&
-    !attendee.registered &&
-    isAfter(attendee.earliestReservationAt, now) &&
-    isAfter(attendee.earliestReservationAt, addSeconds(attendee.createdAt, 1))
+    attendee.registeredAt === null &&
+    isAfter(attendee.registrationEligibleAt, now) &&
+    isAfter(attendee.registrationEligibleAt, addSeconds(attendee.createdAt, 1))
   )
 }

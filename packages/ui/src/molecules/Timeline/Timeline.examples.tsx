@@ -63,7 +63,8 @@ export type TimelineExampleState = {
   sortOrder?: TimelineSortOrder
   alignments?: TimelineItemAlignment[]
   horizontalOnly?: boolean
-  bleed?: TimelineBleed
+  bleedHorizontal?: TimelineBleed
+  bleedVertical?: TimelineBleed
   showCustomMarkers?: boolean
 }
 
@@ -96,25 +97,39 @@ export const timelineExamples = {
     },
   ],
   bleed: [
-    { label: "Bleeding start", bleed: "start" },
-    { label: "Bleeding start without rail stubs", bleed: "start", showRailStubs: false },
-    { label: "Bleeding end", bleed: "end", alignments: ["start", "center", "end"] },
+    { label: "Bleeding horizontally", bleedHorizontal: "both" },
+    { label: "Bleeding vertically", bleedVertical: "both" },
+    { label: "Bleeding horizontally and at the bottom", bleedHorizontal: "both", bleedVertical: "end" },
+    { label: "Bleeding vertically and at the left", bleedVertical: "both", bleedHorizontal: "start" },
+    { label: "Bleeding on both axes", bleedHorizontal: "both", bleedVertical: "both" },
+    { label: "Bleeding at the top", bleedVertical: "start" },
+    { label: "Bleeding at the top without rail stubs", bleedVertical: "start", showRailStubs: false },
+    { label: "Bleeding at the bottom", bleedVertical: "end" },
+    { label: "Bleeding at the bottom without rail stubs", bleedVertical: "end", showRailStubs: false },
+    { label: "Bleeding at the left", bleedHorizontal: "start" },
+    { label: "Bleeding at the left without rail stubs", bleedHorizontal: "start", showRailStubs: false },
+    { label: "Bleeding at the right", bleedHorizontal: "end", alignments: ["start", "center", "end"] },
     {
-      label: "Bleeding end without rail stubs",
-      bleed: "end",
+      label: "Bleeding at the right without rail stubs",
+      bleedHorizontal: "end",
       showRailStubs: false,
       alignments: ["start", "center", "end"],
     },
-    { label: "Bleeding both ends", bleed: "both", alignments: ["start", "center", "end"] },
     {
-      label: "Bleeding both ends without rail stubs",
-      bleed: "both",
+      label: "Bleeding on both axes without rail stubs",
+      bleedHorizontal: "both",
+      bleedVertical: "both",
       showRailStubs: false,
       alignments: ["start", "center", "end"],
     },
-    { label: "Bleeding both ends with side labels", bleed: "both", showSideLabels: true },
-    { label: "Bleeding both ends with group labels", bleed: "both", showSideLabels: true, groupBy: "day" },
-    { label: "Bleeding both ends with custom markers", bleed: "both", showCustomMarkers: true, showSideLabels: true },
+    { label: "Bleeding vertically with side labels", bleedVertical: "both", showSideLabels: true },
+    { label: "Bleeding vertically with group labels", bleedVertical: "both", showSideLabels: true, groupBy: "day" },
+    {
+      label: "Bleeding horizontally with custom markers",
+      bleedHorizontal: "both",
+      showCustomMarkers: true,
+      showSideLabels: true,
+    },
   ],
   customMarkers: [
     { label: "Custom markers", showCustomMarkers: true, showSideLabels: true },
@@ -186,9 +201,10 @@ const overviewExamples: (TimelineExampleState & { color: TimelineColor })[] = [
     sortOrder: "desc",
   },
   {
-    label: "Bleeding both ends",
+    label: "Bleeding on both axes",
     color: "brand",
-    bleed: "both",
+    bleedHorizontal: "both",
+    bleedVertical: "both",
     alignments: ["start", "center", "end"],
     showSideLabels: true,
   },
@@ -239,10 +255,18 @@ const TimelineExample = ({
   richContent = false,
   sortOrder,
   alignments,
-  bleed,
+  bleedHorizontal,
+  bleedVertical,
   showCustomMarkers = false,
 }: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
-  <Timeline orientation={orientation} color={color} showRailStubs={showRailStubs} rail={rail} bleed={bleed}>
+  <Timeline
+    orientation={orientation}
+    color={color}
+    showRailStubs={showRailStubs}
+    rail={rail}
+    bleedHorizontal={bleedHorizontal}
+    bleedVertical={bleedVertical}
+  >
     {groupTimelineEntries(sampleEvents, { groupBy, sortOrder }).map((group) => (
       <Fragment key={group.key}>
         {groupBy !== undefined && (
@@ -291,15 +315,20 @@ const TimelineExample = ({
 )
 
 const TimelineExampleFrame = ({
-  bleed,
+  bleedHorizontal,
+  bleedVertical,
   ...exampleProperties
-}: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => (
-  <div className={cn("min-w-0", bleed && "p-4")}>
-    <div className={cn("flex min-w-0 flex-col", bleed && "outline outline-border outline-dashed")}>
-      <TimelineExample bleed={bleed} {...exampleProperties} />
+}: Omit<TimelineExampleState, "label"> & { orientation: TimelineOrientation; color: TimelineColor }) => {
+  const hasBleed = bleedHorizontal !== undefined || bleedVertical !== undefined
+
+  return (
+    <div className={cn("min-w-0", hasBleed && "p-4")}>
+      <div className={cn("flex min-w-0 flex-col", hasBleed && "outline outline-border outline-dashed")}>
+        <TimelineExample bleedHorizontal={bleedHorizontal} bleedVertical={bleedVertical} {...exampleProperties} />
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export const TimelineGallery = ({
   orientation,

@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz"
-import { type Attendance, type Attendee, buildPoolOccupancies } from "./attendance"
+import { type Attendance, type Attendee, buildPoolOccupancies, getAttendeeQueuePosition } from "./attendance"
 import type { Punishment } from "../mark/mark"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { addDays, addHours, subHours } from "date-fns"
@@ -48,9 +48,11 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: getCurrentUTC(),
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -58,7 +60,8 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     paymentLink: null,
     paymentChargeDeadline: null,
     paymentReservedAt: null,
-    paymentRefundedById: null,
+    paymentRefundedByUserId: null,
+    adminRegisteredByUserId: null,
     paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
@@ -85,6 +88,8 @@ const createSuccessResult = (
 ): RegistrationAvailabilitySuccess => ({
   success: true,
   reservationActiveAt: new TZDate(reservationActiveAt),
+  registrationPoolDelayHours: null,
+  registrationMarkDelayHours: null,
   event: {} as never,
   attendance,
   user: createAttendee().user,
@@ -99,6 +104,40 @@ const createSuccessResult = (
     overriddenAttendancePoolId: null,
     overrideTurnstileCheck: true,
   },
+})
+
+describe("getAttendeeQueuePosition", () => {
+  it("orders queued attendees by eligibility time instead of request time", () => {
+    const now = getCurrentUTC()
+    const attendee = createAttendee({
+      id: "queued-attendee",
+      registeredAt: null,
+      createdAt: subHours(now, 1),
+      registrationPoolDelayHours: 2,
+      registrationMarkDelayHours: 1,
+      registrationEligibleAt: addHours(now, 2),
+    })
+    const otherAttendee = createAttendee({
+      id: "other-queued-attendee",
+      userId: "other-user",
+      user: { ...attendee.user, id: "other-user" },
+      registeredAt: null,
+      createdAt: now,
+      registrationPoolDelayHours: 1,
+      registrationEligibleAt: addHours(now, 1),
+    })
+    const attendance = createAttendance({ attendees: [attendee, otherAttendee] })
+
+    expect(getAttendeeQueuePosition(attendance, attendee.user)).toBe(2)
+    expect(getAttendeeQueuePosition(attendance, otherAttendee.user)).toBe(1)
+  })
+
+  it("returns no queue position for an attendee with a seat", () => {
+    const attendee = createAttendee()
+    const attendance = createAttendance({ attendees: [attendee] })
+
+    expect(getAttendeeQueuePosition(attendance, attendee.user)).toBeNull()
+  })
 })
 
 describe("buildRegistrationAvailabilityView", () => {
@@ -207,8 +246,8 @@ describe("buildRegistrationAvailabilityView", () => {
   it("marks pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: new Date() }),
       ],
     })
     const result = createSuccessResult(attendance)
@@ -296,7 +335,7 @@ describe("buildDeregistrationAvailabilityView", () => {
     })
     const attendee = createAttendee({
       createdAt: subHours(getCurrentUTC(), 3),
-      registered: true,
+      registeredAt: new Date(),
     })
 
     const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
@@ -323,8 +362,8 @@ describe("buildPoolOccupancies", () => {
   it("marks a pool as full when registered count reaches capacity", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: true }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: new Date() }),
       ],
     })
 
@@ -343,8 +382,8 @@ describe("buildPoolOccupancies", () => {
   it("ignores queued attendees when computing pool fullness", () => {
     const attendance = createAttendance({
       attendees: [
-        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registered: true }),
-        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registered: false }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: new Date() }),
+        createAttendee({ id: "00000000-0000-4000-8000-000000000032", registeredAt: null }),
       ],
     })
 

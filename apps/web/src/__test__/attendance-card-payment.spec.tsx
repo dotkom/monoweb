@@ -14,7 +14,12 @@ const mocks = vi.hoisted(() => ({ attendanceApi: vi.fn() }))
 
 vi.mock("@/env", () => ({ env: {} }))
 vi.mock("@/utils/use-full-pathname", () => ({ useFullPathname: () => "/event" }))
-vi.mock("@dotkomonline/ui", () => ({ Button: "button", Text: "p", Title: "h2", cn: () => "" }))
+vi.mock("@dotkomonline/ui", async () => {
+  const dialog = await import("../../../../packages/ui/src/molecules/Dialog/Dialog")
+  const tooltip = await import("../../../../packages/ui/src/atoms/Tooltip/Tooltip")
+
+  return { ...dialog, ...tooltip, Button: "button", Text: "p", Title: "h2", cn: () => "" }
+})
 vi.mock("@/app/arrangementer/components/EventTurnstileProvider", () => ({ useEventTurnstile: () => null }))
 vi.mock("@/app/arrangementer/components/DeregisterModal", () => ({ DeregisterModal: () => null }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceCalendarButton", () => ({
@@ -24,7 +29,7 @@ vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceDateInfo", () =
 vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceTurnstile", () => ({
   AttendanceTurnstile: () => null,
 }))
-vi.mock("@/app/arrangementer/components/AttendanceCard/EventRules", () => ({ EventRules: () => null }))
+vi.mock("@/app/arrangementer/components/AttendanceCard/EventRules", () => ({ EventRulesDialogContent: () => null }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/MainPoolCard", () => ({
   MainPoolCard: () => <div data-testid="main-pool-card" />,
 }))
@@ -32,7 +37,7 @@ vi.mock("@/app/arrangementer/components/AttendanceCard/NonAttendablePoolsBox", (
   NonAttendablePoolsBox: () => null,
 }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/PaymentExplanationDialog", () => ({
-  PaymentExplanationDialog: () => null,
+  PaymentExplanationDialogContent: () => null,
 }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/PunishmentBox", () => ({ PunishmentBox: () => null }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/RegistrationButton", () => ({
@@ -78,8 +83,8 @@ describe("attendance card payment actions", () => {
     const updatedAttendee = {
       ...attendee,
       createdAt: subMinutes(new Date(), 2),
-      registered: !["queued", "delayed", "delay-expired"].includes(state),
-      earliestReservationAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
+      registeredAt: ["queued", "delayed", "delay-expired"].includes(state) ? null : new Date(),
+      registrationEligibleAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
       paymentReservedAt: state === "reserved" ? new Date() : null,
       paymentChargedAt: state === "charged" ? new Date() : null,
     }

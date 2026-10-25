@@ -1,11 +1,10 @@
 import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
 import { Text } from "@dotkomonline/ui"
+import { addHours, subHours } from "date-fns"
 import {
   createAttendanceWithPaymentCountdown,
-  createLockedDeregisterAttendance,
   createMockAttendance,
   createMockAttendee,
-  createMockUser,
 } from "../../../../.ladle/fixtures/attendance"
 import { AttendanceStatus } from "./AttendanceStatus"
 
@@ -59,24 +58,41 @@ const StateShowcase = ({ label, withCapacityAttendance, withCapacityAttendee, ev
 )
 
 export const AllStates = () => {
-  const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registered: true })
-  const queuedAttendee = createMockAttendee({ user, registered: false })
-
-  const { attendance: lockedAttendance, attendee: lockedAttendee } = createLockedDeregisterAttendance()
-
-  const paymentAttendance = createAttendanceWithPaymentCountdown()
-  const paymentAttendee = paymentAttendance.attendees[0] ?? null
+  const now = new Date()
+  const viewerStates = [
+    { label: "Not attending", attendee: null },
+    { label: "Registered", attendee: createMockAttendee({ registeredAt: new Date() }) },
+    { label: "Queued", attendee: createMockAttendee({ registeredAt: null }) },
+    {
+      label: "Delayed",
+      attendee: createMockAttendee({ registeredAt: null, registrationEligibleAt: addHours(now, 4) }),
+    },
+  ]
+  const phases = [
+    { label: "Open", registrationClosed: false, deregistrationClosed: false, eventEndInPast: false },
+    {
+      label: "Registration closed, before deregister deadline",
+      registrationClosed: true,
+      deregistrationClosed: false,
+      eventEndInPast: false,
+    },
+    {
+      label: "After deregister deadline, registration open",
+      registrationClosed: false,
+      deregistrationClosed: true,
+      eventEndInPast: false,
+    },
+    {
+      label: "Registration closed, after deregister deadline",
+      registrationClosed: true,
+      deregistrationClosed: true,
+      eventEndInPast: false,
+    },
+    { label: "Past event", registrationClosed: true, deregistrationClosed: true, eventEndInPast: true },
+  ]
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl">
-      <StateShowcase
-        label="Open"
-        withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
-        withCapacityAttendee={null}
-        eventEndInPast={false}
-      />
-
       <StateShowcase
         label="Not opened"
         withCapacityAttendance={createMockAttendance({ status: "NOT_OPENED" })}
@@ -84,47 +100,47 @@ export const AllStates = () => {
         eventEndInPast={false}
       />
 
-      <StateShowcase
-        label="Closed"
-        withCapacityAttendance={createMockAttendance({ status: "CLOSED" })}
-        withCapacityAttendee={null}
-        eventEndInPast={false}
-      />
+      {phases.flatMap((phase) =>
+        viewerStates.map((viewer) => (
+          <StateShowcase
+            key={`${phase.label}-${viewer.label}`}
+            label={`${phase.label} · ${viewer.label}`}
+            withCapacityAttendance={{
+              ...createMockAttendance({ attendees: viewer.attendee ? [viewer.attendee] : [] }),
+              registerStart: subHours(now, 48),
+              registerEnd: phase.registrationClosed ? subHours(now, 2) : addHours(now, 12),
+              deregisterDeadline: phase.deregistrationClosed ? subHours(now, 1) : addHours(now, 24),
+            }}
+            withCapacityAttendee={viewer.attendee}
+            eventEndInPast={phase.eventEndInPast}
+          />
+        ))
+      )}
 
-      <StateShowcase
-        label="Registered attendee"
-        withCapacityAttendance={createMockAttendance({ attendees: [registeredAttendee] })}
-        withCapacityAttendee={registeredAttendee}
-        eventEndInPast={false}
-      />
+      {[true, false].flatMap((registered) =>
+        ["Pending", "Overdue", "Paid"].map((paymentState) => {
+          const attendance = createAttendanceWithPaymentCountdown(registered)
+          const attendee = attendance.attendees[0]
+          if (!attendee) {
+            return null
+          }
+          const paymentAttendee = {
+            ...attendee,
+            completionDeadline: paymentState === "Overdue" ? subHours(now, 1) : addHours(now, 1),
+            paymentReservedAt: paymentState === "Paid" ? now : null,
+          }
 
-      <StateShowcase
-        label="Queued attendee"
-        withCapacityAttendance={createMockAttendance({ attendees: [queuedAttendee] })}
-        withCapacityAttendee={queuedAttendee}
-        eventEndInPast={false}
-      />
-
-      <StateShowcase
-        label="After deregister deadline"
-        withCapacityAttendance={lockedAttendance}
-        withCapacityAttendee={lockedAttendee}
-        eventEndInPast={false}
-      />
-
-      <StateShowcase
-        label="Payment countdown"
-        withCapacityAttendance={paymentAttendance}
-        withCapacityAttendee={paymentAttendee}
-        eventEndInPast={false}
-      />
-
-      <StateShowcase
-        label="Past event"
-        withCapacityAttendance={createMockAttendance({ status: "OPEN" })}
-        withCapacityAttendee={null}
-        eventEndInPast={true}
-      />
+          return (
+            <StateShowcase
+              key={`${registered}-${paymentState}`}
+              label={`Payment ${paymentState.toLowerCase()} · ${registered ? "Registered" : "Queued"}`}
+              withCapacityAttendance={{ ...attendance, attendees: [paymentAttendee] }}
+              withCapacityAttendee={paymentAttendee}
+              eventEndInPast={false}
+            />
+          )
+        })
+      )}
     </div>
   )
 }

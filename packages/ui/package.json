@@ -70,7 +70,7 @@
     "@types/react": "19.2.18",
     "postcss": "8.5.30",
     "tailwindcss": "4.3.0",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "vite": "6.4.4",
     "vitest": "3.2.7"
   }

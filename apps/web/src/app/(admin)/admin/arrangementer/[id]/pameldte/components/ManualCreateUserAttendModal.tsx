@@ -248,7 +248,7 @@ function ParentEventRegistrationStatus({
   userId: UserId
 }) {
   const parentAttendee = parentAttendance?.attendees.find((attendee) => attendee.userId === userId) ?? null
-  const isMissingRegisteredSpot = parentAttendee === null || !parentAttendee.registered
+  const isMissingRegisteredSpot = parentAttendee === null || parentAttendee.registeredAt === null
 
   return (
     <div className="mb-2 flex items-center gap-1.5">
@@ -263,7 +263,7 @@ function getParentRegistrationStatusText(parentEventTitle: string, parentAttende
     return `Ikke påmeldt forelderarrangementet ${parentEventTitle}`
   }
 
-  if (!parentAttendee.registered) {
+  if (parentAttendee.registeredAt === null) {
     return `I køen til forelderarrangementet ${parentEventTitle}`
   }
 

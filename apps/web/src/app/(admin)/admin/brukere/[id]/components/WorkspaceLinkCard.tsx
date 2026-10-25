@@ -1,8 +1,8 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { useUser } from "@auth0/nextjs-auth0/client"
 import type { WorkspaceUser } from "@dotkomonline/rpc/workspace"
+import { canFindWorkspaceUser, canLinkWorkspaceUser } from "@dotkomonline/rpc/workspace-permissions"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconCheck, IconLink, IconLoader2, IconUsersGroup, IconX } from "@tabler/icons-react"
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react"
@@ -12,18 +12,19 @@ import { useFindWorkspaceUserQuery, useGroupAllByMemberQuery } from "../../queri
 import { useUserDetailsContext } from "../provider"
 
 export function WorkspaceLinkCard() {
-  const { user: sessionUser } = useUser()
   const { user } = useUserDetailsContext()
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
   const { groups } = useGroupAllByMemberQuery(user.id)
   const linkUserMutation = useLinkOwUserToWorkspaceUserMutation()
 
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
+  const hasCustomKey = customKey != null && customKey !== ""
+  const canFind = canFindWorkspaceUser(authorization, user.id, hasCustomKey)
+  const canLink = canLinkWorkspaceUser(authorization)
 
-  const isUser = sessionUser?.sub === user.id
   const isWorkspaceLinked = Boolean(user.workspaceUserId)
   const showWorkspaceLink = isWorkspaceLinked || groups.length > 0
-  const isWorkspaceFetchEnabled = (isAdministrator || isUser) && showWorkspaceLink
+  const isWorkspaceFetchEnabled = canFind && showWorkspaceLink
 
   const { workspaceUser, isLoading: isLoadingWorkspaceUser } = useFindWorkspaceUserQuery(
     user.id,
@@ -61,18 +62,18 @@ export function WorkspaceLinkCard() {
         )}
       </div>
 
-      {!isWorkspaceLinked && !isAdministrator && (
+      {!isWorkspaceLinked && !canLink && (
         <Text className="text-sm text-muted-foreground">
           Kontakt HS for å tilknytte brukeren til en Google-bruker. Brukeren må tilknyttes for å kunne bli lagt til i
           e-postlister.
         </Text>
       )}
 
-      {!isWorkspaceLinked && isAdministrator && <CustomKeyInput setCustomKey={setCustomKey} />}
+      {!isWorkspaceLinked && canLink && <CustomKeyInput setCustomKey={setCustomKey} />}
 
       {isWorkspaceFetchEnabled && !isWorkspaceLinked && (
         <LinkWorkspaceActions
-          isAdministrator={isAdministrator}
+          canLink={canLink}
           isLoadingWorkspaceUser={isLoadingWorkspaceUser}
           workspaceUser={workspaceUser ?? null}
           customKey={customKey}
@@ -143,13 +144,13 @@ function CustomKeyInput({ setCustomKey }: { setCustomKey: Dispatch<SetStateActio
 }
 
 function LinkWorkspaceActions({
-  isAdministrator,
+  canLink,
   isLoadingWorkspaceUser,
   workspaceUser,
   customKey,
   onLink,
 }: {
-  isAdministrator: boolean
+  canLink: boolean
   isLoadingWorkspaceUser: boolean
   workspaceUser: WorkspaceUser | null
   customKey?: string
@@ -180,7 +181,7 @@ function LinkWorkspaceActions({
           type="button"
           variant="default"
           className="w-fit"
-          disabled={!isAdministrator}
+          disabled={!canLink}
           icon={<IconLink className="size-4" />}
           onClick={onLink}
         >

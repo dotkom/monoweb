@@ -41,9 +41,11 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     attendancePoolId: "00000000-0000-4000-8000-000000000020",
     createdAt: getCurrentUTC(),
     updatedAt: getCurrentUTC(),
-    registered: true,
+    registeredAt: new Date(),
     attendedAt: null,
-    earliestReservationAt: getCurrentUTC(),
+    registrationPoolDelayHours: null,
+    registrationMarkDelayHours: null,
+    registrationEligibleAt: getCurrentUTC(),
     paymentChargedAt: null,
     paymentRefundedAt: null,
     completionDeadline: null,
@@ -51,7 +53,8 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     paymentLink: null,
     paymentChargeDeadline: null,
     paymentReservedAt: null,
-    paymentRefundedById: null,
+    paymentRefundedByUserId: null,
+    adminRegisteredByUserId: null,
     paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
@@ -75,7 +78,7 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
 describe("attendance completion helpers", () => {
   it("returns QUEUED for queued attendees", () => {
     const attendance = createAttendance()
-    const attendee = createAttendee({ registered: false })
+    const attendee = createAttendee({ registeredAt: null })
 
     expect(getAttendeeState(attendee, attendance)).toBe("QUEUED")
   })
@@ -120,7 +123,7 @@ describe("attendance completion helpers", () => {
   it("ignores leftover payment details while the attendee is queued", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({
-      registered: false,
+      registeredAt: null,
       completionDeadline: addHours(getCurrentUTC(), 24),
       paymentLink: "https://example.com/pay",
     })
@@ -137,13 +140,13 @@ describe("attendance completion helpers", () => {
 
   it("requires payment after a queued attendee receives a place", () => {
     const attendance = createAttendance()
-    const attendee = createAttendee({ registered: false })
+    const attendee = createAttendee({ registeredAt: null })
 
     expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
 
     const promotedAttendee = {
       ...attendee,
-      registered: true,
+      registeredAt: new Date(),
       completionDeadline: addHours(getCurrentUTC(), 24),
       paymentLink: "https://example.com/pay",
     }

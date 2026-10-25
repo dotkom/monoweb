@@ -2,13 +2,19 @@ import type { DBHandle } from "@dotkomonline/db"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember } from "../../authorization"
-import { ForbiddenError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
-import type { GroupId } from "../group/group"
+import { permitIf } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
 import {
-  type Notification,
+  canCreateNotification,
+  canListNotifications,
+  canManageNotification,
+  canTargetAllUsers,
+  canTargetEventAttendees,
+  canTargetGroupMembers,
+  canTargetSpecificUsers,
+} from "../../permissions/notification-permissions"
+import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
+import {
   NotificationCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
@@ -29,79 +35,57 @@ type AuthenticatedContext = TRPCContext & {
   handle: DBHandle
 }
 
-function assertCanActAsGroup(ctx: AuthenticatedContext, groupSlug: GroupId): void {
-  const allowedGroups = ctx.authorizationService.intersectGroupAffiliations(ctx.principal.affiliations, [groupSlug])
-
-  if (allowedGroups.size === 0) {
-    throw new ForbiddenError(
-      `User(ID=${ctx.principal.subject}) is not authorized to act as Group(Slug=${groupSlug}) for notifications`
-    )
-  }
-}
-
-function assertCanManageNotification(ctx: AuthenticatedContext, notification: Notification): void {
-  if (notification.actorGroupId === null) {
-    if (!ctx.authorizationService.isAdministrator(ctx.principal.affiliations)) {
-      throw new ForbiddenError(
-        `User(ID=${ctx.principal.subject}) is not authorized to manage system Notification(ID=${notification.id})`
-      )
-    }
-
-    return
-  }
-
-  assertCanActAsGroup(ctx, notification.actorGroupId)
-}
-
 /**
  * Checks each recipient selection rule against the caller:
  * - `ALL_USERS` is administrator-only.
  * - `GROUP_MEMBERS` requires affiliation with that group.
  * - `EVENT_ATTENDEES` requires affiliation with one of the event's hosting groups.
- * - `USERS` is allowed for any committee member.
+ * - `USERS` is administrator-only.
  *
- * NOTE: This method expects a prior committee member check.
+ * NOTE: This method expects a prior committee member check for preview, or create authorization for send.
  */
-async function assertCanTargetRecipientSelection(
+async function authorizeRecipientSelection(
   ctx: AuthenticatedContext,
   recipientSelection: NotificationRecipientSelection
 ): Promise<void> {
-  const isAdministrator = ctx.authorizationService.isAdministrator(ctx.principal.affiliations)
-
   for (const rule of recipientSelection.rules) {
     switch (rule.type) {
       case "ALL_USERS": {
-        if (!isAdministrator) {
-          throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not authorized to notify all users`)
-        }
+        await ctx.addAuthorizationGuard(
+          permitIf((principal) => canTargetAllUsers(principal)),
+          rule
+        )
 
         break
       }
 
       case "USERS": {
+        await ctx.addAuthorizationGuard(
+          permitIf((principal) => canTargetSpecificUsers(principal)),
+          rule
+        )
+
         break
       }
 
       case "GROUP_MEMBERS": {
-        assertCanActAsGroup(ctx, rule.groupSlug)
+        const group = await ctx.groupService.getBySlug(ctx.handle, rule.groupSlug)
+
+        await ctx.addAuthorizationGuard(
+          permitIf((principal) => canTargetGroupMembers(principal, group)),
+          rule
+        )
 
         break
       }
 
       case "EVENT_ATTENDEES": {
         const event = await ctx.eventService.getByAttendanceId(ctx.handle, rule.attendanceId)
-        const hostingGroupSlugs = event.hostingGroups.map((group) => group.slug)
 
-        const canActAsHostingGroup = ctx.authorizationService.hasAnyGroupAffiliation(
-          ctx.principal.affiliations,
-          hostingGroupSlugs
+        await ctx.addAuthorizationGuard(
+          permitIf((principal) => canTargetEventAttendees(principal, event.hostingGroups)),
+          rule
         )
-
-        if (!canActAsHostingGroup) {
-          throw new ForbiddenError(
-            `User(ID=${ctx.principal.subject}) is not authorized to notify attendees of Event(ID=${event.id})`
-          )
-        }
 
         break
       }
@@ -180,9 +164,13 @@ const findNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema.nullable())
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canListNotifications(principal)),
+      input
+    )
+
     return await ctx.notificationService.findById(ctx.handle, input)
   })
 
@@ -192,9 +180,13 @@ const getNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canListNotifications(principal)),
+      input
+    )
+
     return await ctx.notificationService.getById(ctx.handle, input)
   })
 
@@ -208,9 +200,13 @@ const findNotificationsProcedure = procedure
   )
   .output(PaginatedNotificationsSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canListNotifications(principal)),
+      input
+    )
+
     const { filters, ...page } = input
     const items = await ctx.notificationService.findMany(ctx.handle, filters, page)
 
@@ -232,10 +228,13 @@ const previewRecipientSelectionProcedure = procedure
   )
   .output(NotificationRecipientSelectionPreviewSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    await assertCanTargetRecipientSelection(ctx, input.recipientSelection)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canListNotifications(principal)),
+      input
+    )
+    await authorizeRecipientSelection(ctx, input.recipientSelection)
 
     const { recipientSelection, type, search, ...page } = input
 
@@ -253,19 +252,16 @@ const createNotificationProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    assertCanActAsGroup(ctx, input.actorGroupId)
-    await assertCanTargetRecipientSelection(ctx, input.recipientSelection)
+    const actorGroup = await ctx.groupService.getBySlug(ctx.handle, input.actorGroupId)
 
-    const isImportantBroadcast = input.type === "BROADCAST_IMPORTANT"
-    const isAdministrator = ctx.authorizationService.isAdministrator(ctx.principal.affiliations)
-
-    if (isImportantBroadcast && !isAdministrator) {
-      throw new ForbiddenError(`User(ID=${ctx.principal.subject}) is not authorized to send important notifications`)
-    }
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canCreateNotification(principal, actorGroup, input.type)),
+      input
+    )
+    await authorizeRecipientSelection(ctx, input.recipientSelection)
 
     const sentNotification = await ctx.notificationService.send(ctx.handle, {
       type: input.type,
@@ -298,13 +294,15 @@ const editNotificationProcedure = procedure
   )
   .output(NotificationManagementSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const notification = await ctx.notificationService.getById(ctx.handle, input.id)
 
-    assertCanManageNotification(ctx, notification)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
 
     const updatedNotification = await ctx.notificationService.update(ctx.handle, input.id, {
       ...input.input,
@@ -321,13 +319,15 @@ export type DeleteNotificationOutput = inferProcedureOutput<typeof deleteNotific
 const deleteNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const notification = await ctx.notificationService.getById(ctx.handle, input)
 
-    assertCanManageNotification(ctx, notification)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
 
     await ctx.notificationService.delete(ctx.handle, input)
 
@@ -352,13 +352,15 @@ const findRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { notificationId, filters, ...page } = input
     const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
 
-    assertCanManageNotification(ctx, notification)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
 
     const items = await ctx.notificationService.findRecipients(ctx.handle, notificationId, filters, page)
 
@@ -374,12 +376,14 @@ const getRecipientStatsProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationRecipientStatsSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const notification = await ctx.notificationService.getById(ctx.handle, input)
 
-    assertCanManageNotification(ctx, notification)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
 
     return await ctx.notificationService.getRecipientStats(ctx.handle, input)
   })
@@ -399,14 +403,16 @@ const addRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const notification = await ctx.notificationService.getById(ctx.handle, input.notificationId)
 
-    assertCanManageNotification(ctx, notification)
-    await assertCanTargetRecipientSelection(ctx, input.recipientSelection)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
+    await authorizeRecipientSelection(ctx, input.recipientSelection)
 
     const addedCount = await ctx.notificationService.addRecipients(
       ctx.handle,
@@ -436,13 +442,15 @@ const removeRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isAdministrator()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const notification = await ctx.notificationService.getById(ctx.handle, input.notificationId)
 
-    assertCanManageNotification(ctx, notification)
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
+    )
 
     const removedCount = await ctx.notificationService.removeRecipients(ctx.handle, input.notificationId, input.userIds)
 

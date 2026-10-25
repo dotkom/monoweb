@@ -3,12 +3,13 @@
 import { useAuthorization } from "@admin/auth/authorization-context"
 import type { Group } from "@dotkomonline/rpc/group"
 import type { WorkspaceGroup } from "@dotkomonline/rpc/workspace"
+import { canFindWorkspaceGroup, canLinkWorkspaceGroup } from "@dotkomonline/rpc/workspace-permissions"
 import { Button, Text, Title } from "@dotkomonline/ui"
 import { IconCheck, IconLink, IconLoader2, IconUsersGroup, IconX } from "@tabler/icons-react"
 import { type FC, useEffect, useState } from "react"
+import { useDebounce } from "use-debounce"
 import { useLinkGroupMutation } from "../mutations"
 import { useFindWorkspaceGroupQuery } from "../queries"
-import { useDebounce } from "use-debounce"
 
 interface GroupWorkspaceLinkCardProps {
   group: Group
@@ -17,12 +18,15 @@ interface GroupWorkspaceLinkCardProps {
 export const GroupWorkspaceLinkCard: FC<GroupWorkspaceLinkCardProps> = ({ group }) => {
   const [customKey, setCustomKey] = useState<string | undefined>(undefined)
   const linkGroupMutation = useLinkGroupMutation()
-  const { isAdministrator } = useAuthorization()
+  const authorization = useAuthorization()
+  const hasCustomKey = customKey != null && customKey !== ""
+  const canFind = canFindWorkspaceGroup(authorization, group.slug, hasCustomKey)
+  const canLink = canLinkWorkspaceGroup(authorization)
 
   const isWorkspaceLinked = Boolean(group.workspaceGroupId)
   const showWorkspaceLink =
     isWorkspaceLinked || group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE" || group.type === "EMAIL_ONLY"
-  const isWorkspaceFetchEnabled = isAdministrator && showWorkspaceLink
+  const isWorkspaceFetchEnabled = canFind && showWorkspaceLink
   const { workspaceGroup, isLoading: isLoadingWorkspaceGroup } = useFindWorkspaceGroupQuery(
     group.slug,
     customKey || undefined,
@@ -35,7 +39,7 @@ export const GroupWorkspaceLinkCard: FC<GroupWorkspaceLinkCardProps> = ({ group 
 
   return (
     <LinkGroup
-      isAdministrator={isAdministrator}
+      canLink={canLink}
       isWorkspaceLinked={isWorkspaceLinked}
       isWorkspaceFetchEnabled={isWorkspaceFetchEnabled}
       isLoadingWorkspaceGroup={isLoadingWorkspaceGroup}
@@ -47,7 +51,7 @@ export const GroupWorkspaceLinkCard: FC<GroupWorkspaceLinkCardProps> = ({ group 
 }
 
 interface LinkGroupProps {
-  isAdministrator: boolean
+  canLink: boolean
   isWorkspaceLinked: boolean
   isWorkspaceFetchEnabled: boolean
   isLoadingWorkspaceGroup: boolean
@@ -57,7 +61,7 @@ interface LinkGroupProps {
 }
 
 const LinkGroup: FC<LinkGroupProps> = ({
-  isAdministrator,
+  canLink,
   isWorkspaceLinked,
   isWorkspaceFetchEnabled,
   isLoadingWorkspaceGroup,
@@ -107,14 +111,14 @@ const LinkGroup: FC<LinkGroupProps> = ({
         )}
       </div>
 
-      {!isWorkspaceLinked && !isAdministrator && (
+      {!isWorkspaceLinked && !canLink && (
         <Text className="text-xs">
           Kontakt HS for å tilknytte gruppen til en e-postliste. Gruppen må tilknyttes for å kunne legge medlemmer til i
           e-postlisten.
         </Text>
       )}
 
-      {!isWorkspaceLinked && isAdministrator && (
+      {!isWorkspaceLinked && canLink && (
         <div className="flex flex-col gap-1">
           <Text className="text-sm text-muted-foreground">
             Egendefinert nøkkel. Bruk denne om den ikke finner automatisk. Må være en komplett e-postadresse eller
@@ -166,7 +170,7 @@ const LinkGroup: FC<LinkGroupProps> = ({
             type="button"
             variant="default"
             className="w-fit"
-            disabled={!isAdministrator || !workspaceGroup}
+            disabled={!canLink || !workspaceGroup}
             icon={<IconLink className="size-4" />}
             onClick={onClick}
           >

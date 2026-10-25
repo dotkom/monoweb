@@ -1,12 +1,23 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Mark, MarkId, PersonalMark, PersonalMarkDetails, Punishment, VisiblePersonalMarkDetails } from "./mark"
+import {
+  INDEFINITE_SUSPENSION_DURATION,
+  type Mark,
+  type MarkId,
+  type PersonalMark,
+  type PersonalMarkDetails,
+  type Punishment,
+  SUSPENSION_MARK_WEIGHT,
+  type VisiblePersonalMarkDetails,
+  formatMarkCount,
+} from "./mark"
 import type { UserId } from "../user/user"
 import { getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
 import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
+import { getGroupDisplayName } from "../group/group"
 import type { UserService } from "../user/user-service"
 import type { MarkService } from "./mark-service"
 import type { PersonalMarkRepository } from "./personal-mark-repository"
@@ -39,6 +50,28 @@ export function getPersonalMarkService(
   emailService: EmailService
 ): PersonalMarkService {
   const logger = getLogger("personal-mark-service")
+
+  async function findActiveMarks(handle: DBHandle, userId: UserId): Promise<Mark[]> {
+    const personalMarks = await personalMarkRepository.findManyByUserId(handle, userId)
+    if (personalMarks.length === 0) {
+      return []
+    }
+
+    const marks = await markService.findMany(
+      handle,
+      { byId: personalMarks.map((personalMark) => personalMark.markId) },
+      { take: personalMarks.length }
+    )
+
+    return personalMarks.flatMap((personalMark) => {
+      const mark = marks.find((candidate) => candidate.id === personalMark.markId)
+      if (!mark || isPast(getPunishmentExpiryDate(personalMark.createdAt, mark.duration))) {
+        return []
+      }
+
+      return [mark]
+    })
+  }
 
   return {
     async findPersonalMarksByMarkId(handle, markId) {
@@ -99,21 +132,10 @@ export function getPersonalMarkService(
     },
 
     async findPunishmentByUserId(handle, userId) {
-      const personalMarks = await personalMarkRepository.findManyByUserId(handle, userId)
-      const marks = await markService.findMany(handle, {
-        byId: personalMarks.map((pm) => pm.markId),
-      })
+      const activeMarks = await findActiveMarks(handle, userId)
+      const currentMarkWeight = activeMarks.reduce((total, mark) => total + mark.weight, 0)
 
-      const currentMarkWeight = personalMarks.reduce((acc, pm) => {
-        const mark = marks.find((m) => m.id === pm.markId)
-
-        if (!mark) return acc
-        if (isPast(getPunishmentExpiryDate(pm.createdAt, mark.duration))) return acc
-
-        return acc + mark.weight
-      }, 0)
-
-      if (currentMarkWeight >= 6) {
+      if (currentMarkWeight >= SUSPENSION_MARK_WEIGHT) {
         return { delay: 0, suspended: true }
       }
 
@@ -146,6 +168,14 @@ export function getPersonalMarkService(
       const mark = await markService.getById(handle, personalMark.markId)
 
       const organizerEmails = mark.groups.map((g) => g.email).filter((email) => email !== null)
+      const markCountLabel = formatMarkCount(mark.weight)
+      const activeMarks = await findActiveMarks(handle, personalMark.userId)
+      const totalMarkWeight = activeMarks.reduce((total, activeMark) => total + activeMark.weight, 0)
+      const isSuspension = mark.weight >= SUSPENSION_MARK_WEIGHT
+      const endsAt =
+        isSuspension && mark.duration >= INDEFINITE_SUSPENSION_DURATION
+          ? null
+          : getPunishmentExpiryDate(personalMark.createdAt, mark.duration).toISOString()
 
       await emailService.send(
         DEFAULT_EMAIL_SOURCE,
@@ -153,13 +183,17 @@ export function getPersonalMarkService(
         [user.email],
         [],
         [],
-        "Du har fått en prikk",
+        isSuspension ? "Du har blitt suspendert" : `Du har fått ${markCountLabel}`,
         emails.RECEIVED_MARK,
         {
           title: mark.title,
           details: mark.details,
-          weight: mark.weight,
-          endsAt: getPunishmentExpiryDate(personalMark.createdAt, mark.duration).toISOString(),
+          markCountLabel,
+          totalMarkCountLabel: formatMarkCount(totalMarkWeight),
+          responsibleGroups: mark.groups.map((group) => ({ name: getGroupDisplayName(group), email: group.email })),
+          isSuspension,
+          isSuspended: totalMarkWeight >= SUSPENSION_MARK_WEIGHT,
+          endsAt,
         }
       )
     },

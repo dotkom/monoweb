@@ -82,12 +82,23 @@ export type PersonalMark = z.infer<typeof PersonalMarkSchema>
 export type Punishment = z.infer<typeof PunishmentSchema>
 
 export const DEFAULT_MARK_DURATION = 14 as const
+export const SUSPENSION_MARK_WEIGHT = 6
+export const INDEFINITE_SUSPENSION_DURATION = 100_000
+
+export function formatMarkCount(weight: number): string {
+  if (weight === 1) {
+    return `${weight} prikk`
+  }
+
+  return `${weight} prikker`
+}
 
 export type MarkFilterQuery = z.infer<typeof MarkFilterQuerySchema>
 export const MarkFilterQuerySchema = z
   .object({
     byId: buildAnyOfFilter(MarkSchema.shape.id),
     byGivenToUserId: buildAnyOfFilter(UserSchema.shape.id),
+    byGroupId: buildAnyOfFilter(GroupSchema.shape.slug),
     bySearchTerm: z.string().optional(),
   })
   .partial()

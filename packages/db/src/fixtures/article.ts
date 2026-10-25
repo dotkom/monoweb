@@ -1,18 +1,45 @@
 import type { Prisma } from "../"
 
-export const ARTICLE_FIXTURE_SLUG = "online-lanserer-ny-app"
+export const fixtureArticleSlug = {
+  onlineLansererNyApp: "online-lanserer-ny-app",
+  sommerensArrangementer: "sommerens-arrangementer",
+  nynorskdagen2026: "nynorskdagen-2026",
+} as const
+
+export const fixtureArticleId = {
+  onlineLansererNyApp: "a3c8b2e1-4f5d-6a7b-8c9d-0e1f2a3b4c5d",
+  sommerensArrangementer: "b4d9c3f2-5a6e-7b8c-9d0e-1f2a3b4c5d6e",
+  nynorskdagen2026: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
+} as const
+
+export type FixtureArticleKey = keyof typeof fixtureArticleId
+
+export const articleSlug = (key: FixtureArticleKey): string => fixtureArticleSlug[key]
+
+export const articleId = (key: FixtureArticleKey): string => fixtureArticleId[key]
+
+export const fixtureArticleTagName = {
+  app: "App",
+  nyheter: "Nyheter",
+  arrangement: "Arrangement",
+  nynorskdagen: "Nynorskdagen",
+} as const
+
+export type FixtureArticleTagKey = keyof typeof fixtureArticleTagName
+
+export const articleTagName = (key: FixtureArticleTagKey): string => fixtureArticleTagName[key]
 
 export const getArticleTagFixtures = (): Prisma.ArticleTagCreateManyInput[] => [
-  { name: "App" },
-  { name: "Nyheter" },
-  { name: "Arrangement" },
-  { name: "Nynorskdagen" },
+  { name: articleTagName("app") },
+  { name: articleTagName("nyheter") },
+  { name: articleTagName("arrangement") },
+  { name: articleTagName("nynorskdagen") },
 ]
 
 export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
   {
-    id: "a3c8b2e1-4f5d-6a7b-8c9d-0e1f2a3b4c5d",
-    slug: ARTICLE_FIXTURE_SLUG,
+    id: articleId("onlineLansererNyApp"),
+    slug: articleSlug("onlineLansererNyApp"),
     title: "Online lanserer ny app",
     author: "Redaksjonen",
     photographer: "Foto Online",
@@ -23,8 +50,8 @@ export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
       "<p>Online har lansert en ny mobilapp som samler arrangementer, grupper og varsler på ett sted.</p><p>Appen er tilgjengelig for alle medlemmer og oppdateres fortløpende med nye funksjoner.</p>",
   },
   {
-    id: "b4d9c3f2-5a6e-7b8c-9d0e-1f2a3b4c5d6e",
-    slug: "sommerens-arrangementer",
+    id: articleId("sommerensArrangementer"),
+    slug: articleSlug("sommerensArrangementer"),
     title: "Sommerens arrangementer",
     author: "Arrkom",
     photographer: "Arrkom",
@@ -34,8 +61,8 @@ export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
     content: "<p>Fra grillkvelder til fadderuke - her er høydepunktene fra sommeren.</p>",
   },
   {
-    id: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
-    slug: "nynorskdagen-2026",
+    id: articleId("nynorskdagen2026"),
+    slug: articleSlug("nynorskdagen2026"),
     title: "Nynorskdagen 2026",
     author: "Aasenkom",
     photographer: "Knud Knudsen",
@@ -50,23 +77,23 @@ export const getArticleFixtures = (): Prisma.ArticleCreateManyInput[] => [
 
 export const getArticleTagLinkFixtures = (): Prisma.ArticleTagLinkCreateManyInput[] => [
   {
-    articleId: "a3c8b2e1-4f5d-6a7b-8c9d-0e1f2a3b4c5d",
-    tagName: "App",
+    articleId: articleId("onlineLansererNyApp"),
+    tagName: articleTagName("app"),
   },
   {
-    articleId: "a3c8b2e1-4f5d-6a7b-8c9d-0e1f2a3b4c5d",
-    tagName: "Nyheter",
+    articleId: articleId("onlineLansererNyApp"),
+    tagName: articleTagName("nyheter"),
   },
   {
-    articleId: "b4d9c3f2-5a6e-7b8c-9d0e-1f2a3b4c5d6e",
-    tagName: "Arrangement",
+    articleId: articleId("sommerensArrangementer"),
+    tagName: articleTagName("arrangement"),
   },
   {
-    articleId: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
-    tagName: "Nyheter",
+    articleId: articleId("nynorskdagen2026"),
+    tagName: articleTagName("nyheter"),
   },
   {
-    articleId: "3f7af5cb-ab42-451c-a5e4-b7cc51476b98",
-    tagName: "Nynorskdagen",
+    articleId: articleId("nynorskdagen2026"),
+    tagName: articleTagName("nynorskdagen"),
   },
 ]

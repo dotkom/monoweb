@@ -18,10 +18,10 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
   const now = new Date()
 
   const delayedAttendees = attendees.filter(
-    (attendee) => attendee.registered === false && isAfter(attendee.earliestReservationAt, now)
+    (attendee) => attendee.registeredAt === null && isAfter(attendee.registrationEligibleAt, now)
   )
 
-  useDeadlineTick(...delayedAttendees.map((attendee) => attendee.earliestReservationAt))
+  useDeadlineTick(...delayedAttendees.map((attendee) => attendee.registrationEligibleAt))
 
   if (attendees.length === 0) {
     return <Text className="text-gray-500 dark:text-stone-500 text-sm mx-2">Ingen påmeldte</Text>
@@ -35,7 +35,7 @@ export const AttendeeList = ({ attendees, user, maxNumberOfAttendees }: Attendee
         const { smallIcons, largeIcon } = getUserIcons(attendee.user)
 
         const isCurrentUser = attendee.userId === user.id
-        const isDelayed = attendee.registered === false && isAfter(attendee.earliestReservationAt, now)
+        const isDelayed = attendee.registeredAt === null && isAfter(attendee.registrationEligibleAt, now)
 
         return (
           <div key={attendee.id} className="flex flex-row gap-1 items-center group">

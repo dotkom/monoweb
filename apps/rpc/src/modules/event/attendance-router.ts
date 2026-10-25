@@ -5,10 +5,16 @@ import { TRPCError } from "@trpc/server"
 import { addHours, addMilliseconds, isPast } from "date-fns"
 import { on } from "node:events"
 import { z } from "zod"
-import { isAdministrator, isCommitteeMember, isGroupMemberOfAny, isSameSubject, or } from "../../authorization"
-import { FailedPreconditionError, InvalidArgumentError, NotFoundError, UnauthorizedError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { procedure, procedureTraceErrorsOnly, t } from "../../trpc"
+import { permitIf } from "../../authorization"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
+import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
+import {
+  canManageEventAttendance,
+  canUpdateAttendeeSelections,
+  canViewAttendeeChargeSchedule,
+} from "../../permissions/attendance-permissions"
+import { excludedVisibilitiesFor } from "../../permissions/event-permissions"
+import { procedure, procedureTraceErrorsOnly, t, type TRPCContext } from "../../trpc"
 import type { GroupId } from "../group/group"
 import { UserSchema } from "../user/user"
 import {
@@ -17,21 +23,32 @@ import {
   AttendanceSchema,
   AttendanceViewSchema,
   AttendanceWriteSchema,
-  buildBulkRegisterChangeEvent,
-  buildAttendanceView,
   AttendeeSchema,
   AttendeeSelectionResponseSchema,
+  buildAttendanceView,
+  buildBulkRegisterChangeEvent,
   DEREGISTER_GRACE_PERIOD_MS,
   RegisterChangeEventSchema,
-  type RegisterChangeEvent,
   RegistrationAvailabilityViewSchema,
+  type RegisterChangeEvent,
 } from "./attendance"
 import {
   buildDeregistrationAvailabilityView,
   buildRegistrationAvailabilityView,
   getRegistrationAvailabilityFailureCause,
 } from "./attendance-service"
-import { DeregisterReasonTypeSchema, EventSchema, type EventVisibility } from "./event"
+import { DeregisterReasonTypeSchema, EventSchema } from "./event"
+
+async function authorizeManageEventAttendance<TRuleInput>(
+  ctx: { addAuthorizationGuard: TRPCContext["addAuthorizationGuard"] },
+  hostingGroupIds: readonly GroupId[],
+  input: TRuleInput
+): Promise<void> {
+  await ctx.addAuthorizationGuard(
+    permitIf((principal) => canManageEventAttendance(principal, hostingGroupIds)),
+    input
+  )
+}
 
 export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
 export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
@@ -43,12 +60,15 @@ const createPoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const createdPool = await ctx.attendanceService.createAttendancePool(ctx.handle, input.id, input.input)
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+    const createdPool = await ctx.attendanceService.createAttendancePool(ctx.handle, input.id, input.input)
 
     ctx.setAuditTransactionName(
       `Create AttendancePool(ID=${createdPool.id},Title=${createdPool.title}) for Event(ID=${event.id},Title=${event.title})`
@@ -67,7 +87,6 @@ const updatePoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -77,12 +96,16 @@ const updatePoolProcedure = procedure
       throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
     }
 
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     const updatedPool = await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, {
       ...pool,
       ...input.input,
     })
 
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
     ctx.setAuditTransactionName(
       `Update AttendancePool(ID=${updatedPool.id},Title=${updatedPool.title}) for Event(ID=${event.id},Title=${event.title})`
     )
@@ -99,17 +122,19 @@ const deletePoolProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceByPoolId(ctx.handle, input.id)
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     const pool = attendance.pools.find((pool) => pool.id === input.id)
     if (pool === undefined) {
       throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
     }
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
     await ctx.attendanceService.deleteAttendancePool(ctx.handle, input.id)
 
@@ -127,24 +152,13 @@ const deleteAttendanceProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    if (event.hostingGroups.length > 0) {
-      const organizerGroups = ctx.authorizationService.intersectGroupAffiliations(
-        ctx.principal.affiliations,
-        event.hostingGroups.map((group) => group.slug)
-      )
-
-      if (organizerGroups.size === 0) {
-        throw new UnauthorizedError(
-          `User(ID=${ctx.principal.subject}) is not authorized to delete Attendance(ID=${input.id}) for Event(ID=${event.id},Title=${event.title})`
-        )
-      }
-    }
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
     await ctx.attendanceService.deleteAttendance(ctx.handle, input.id)
 
@@ -177,10 +191,14 @@ const adminRegisterForEventProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     const result = await ctx.attendanceService.getRegistrationAvailability(
       ctx.handle,
       input.attendanceId,
@@ -200,7 +218,7 @@ const adminRegisterForEventProcedure = procedure
       throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
 
-    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result)
+    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result, ctx.principal.subject)
 
     ctx.setAuditTransactionName(
       `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
@@ -219,15 +237,17 @@ const updateAttendancePaymentProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
     await ctx.attendanceService.updateAttendancePaymentPrice(ctx.handle, input.id, input.price)
 
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
     ctx.setAuditTransactionName(
       `Update AttendancePayment(AttendanceID=${attendance.id}) for Event(ID=${event.id},Title=${event.title})`
     )
@@ -238,10 +258,14 @@ export type GetSelectionsResultsOutput = inferProcedureOutput<typeof getSelectio
 const getSelectionsResultsProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     const allSelectionResponses = attendance.attendees.flatMap((attendee) => attendee.selections)
 
     return attendance.selections.map((selection) => {
@@ -360,15 +384,7 @@ const onBulkRegisterChangeProcedure = procedureTraceErrorsOnly
   .input(z.object({ eventIds: EventSchema.shape.id.array().min(1) }))
   .subscription(async function* ({ input, ctx, signal }) {
     const eventIds = [...new Set(input.eventIds)]
-    const excludedVisibilities: EventVisibility[] = []
-
-    if (ctx.principal === null) {
-      excludedVisibilities.push("AUTHENTICATED")
-    }
-
-    if (ctx.principal === null || !ctx.authorizationService.isCommitteeMember(ctx.principal.affiliations)) {
-      excludedVisibilities.push("COMMITTEE_ONLY")
-    }
+    const excludingVisibility = excludedVisibilitiesFor(ctx.principal, [])
 
     // Start listening before checking visibility so changes during the lookup are buffered.
     const registerChanges = on(ctx.eventEmitter, "attendance:register-change", { signal })
@@ -378,7 +394,7 @@ const onBulkRegisterChangeProcedure = procedureTraceErrorsOnly
         ctx.prisma,
         {
           byId: eventIds,
-          excludingVisibility: excludedVisibilities,
+          excludingVisibility,
         },
         {
           take: eventIds.length,
@@ -408,14 +424,17 @@ export type CancelAttendeePaymentOutput = inferProcedureOutput<typeof cancelAtte
 const cancelAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input: { attendeeId }, ctx }) => {
-    await ctx.attendanceService.cancelAttendeePayment(ctx.handle, attendeeId, ctx.principal.subject)
-
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, attendeeId)
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
     const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+    await ctx.attendanceService.cancelAttendeePayment(ctx.handle, input.attendeeId, ctx.principal.subject)
+
     ctx.setAuditTransactionName(
       `Cancel Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
     )
@@ -426,16 +445,19 @@ export type StartAttendeePaymentOutput = inferProcedureOutput<typeof startAttend
 const startAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
-  .mutation(async ({ input: { attendeeId }, ctx }) => {
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     const deadline = addHours(getCurrentUTC(), 24)
 
-    const payment = await ctx.attendanceService.startAttendeePayment(ctx.handle, attendeeId, deadline)
+    const payment = await ctx.attendanceService.startAttendeePayment(ctx.handle, input.attendeeId, deadline)
 
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
     ctx.setAuditTransactionName(
       `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
     )
@@ -500,7 +522,6 @@ export type AdminDeregisterForEventOutput = inferProcedureOutput<typeof adminDer
 const adminDeregisterForEventProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
@@ -510,11 +531,15 @@ const adminDeregisterForEventProcedure = procedure
       throw new TRPCError({ code: "NOT_FOUND" })
     }
 
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     await ctx.attendanceService.deregisterAttendee(ctx.handle, attendee.id, {
       ignoreDeregistrationWindow: true,
     })
 
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
     ctx.setAuditTransactionName(
       `Admin deregister Attendee(ID=${attendee.id},Name=${attendee.user.name}) from Event(ID=${event.id},Title=${event.title})`
     )
@@ -526,19 +551,24 @@ const adminUpdateAttendeeRegisteredProcedure = procedure
   .input(
     z.object({
       attendeeId: AttendeeSchema.shape.id,
-      registered: AttendeeSchema.shape.registered,
+      registered: z.boolean(),
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
-      registered: input.registered,
-    })
+    const now = getCurrentUTC()
+    const currentAttendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const attendeeBeforeUpdate = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendeeBeforeUpdate.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+    const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
+      registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
+    })
 
     ctx.setAuditTransactionName(
       `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
@@ -557,14 +587,18 @@ const registerAttendanceProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const attendeeBeforeUpdate = await ctx.attendanceService.getAttendeeById(ctx.handle, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendeeBeforeUpdate.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     await ctx.attendanceService.registerAttendance(ctx.handle, input.id, input.at ? new TZDate(input.at) : null)
 
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.id)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
 
     const auditTransactionName =
       input.at !== null
@@ -594,13 +628,10 @@ const updateSelectionResponsesProcedure = procedure
       throw new FailedPreconditionError(`Event(ID=${event.id}) does not have hosting groups`)
     }
 
-    const hostingGroupIds = event.hostingGroups.map((g) => g.slug) as [GroupId, ...GroupId[]]
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
-      or(
-        isGroupMemberOfAny(hostingGroupIds),
-        isSameSubject(() => attendee.userId)
-      ),
+      permitIf((principal) => canUpdateAttendeeSelections(principal, hostingGroupIds, attendee.userId)),
       input
     )
 
@@ -628,9 +659,19 @@ const getAttendanceProcedure = procedure
 const getAttendanceForAdminProcedure = procedure
   .input(z.object({ id: AttendanceSchema.shape.id }))
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.attendanceService.getAttendanceById(ctx.handle, input.id))
+  .query(async ({ input, ctx }) => {
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await ctx.addAuthorizationGuard(
+      permitIf((principal) => canManageEventAttendance(principal, hostingGroupIds)),
+      input
+    )
+
+    return attendance
+  })
 
 export type UpdateAttendanceInput = inferProcedureInput<typeof updateAttendanceProcedure>
 export type UpdateAttendanceOutput = inferProcedureOutput<typeof updateAttendanceProcedure>
@@ -642,12 +683,15 @@ const updateAttendanceProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.id)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
     const updatedAttendance = await ctx.attendanceService.updateAttendanceById(ctx.handle, input.id, input.attendance)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, updatedAttendance.id)
     ctx.setAuditTransactionName(
       `Update Attendance(ID=${updatedAttendance.id}) for Event(ID=${event.id},Title=${event.title})`
     )
@@ -664,12 +708,11 @@ const findChargeAttendeeScheduleDateProcedure = procedure
   .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    // Allow users to find their own charge date
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
     await ctx.addAuthorizationGuard(
-      or(
-        isAdministrator(),
-        isSameSubject(() => attendee.userId)
-      ),
+      permitIf((principal) => canViewAttendeeChargeSchedule(principal, hostingGroupIds, attendee.userId)),
       input
     )
 
@@ -686,15 +729,13 @@ const notifyAttendeesProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
     const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
-    const [firstGroupId, ...restGroupIds] = event.hostingGroups.map((g) => g.slug)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
     await ctx.addAuthorizationGuard(
-      firstGroupId !== undefined
-        ? or(isAdministrator(), isGroupMemberOfAny([firstGroupId, ...restGroupIds]))
-        : isAdministrator(),
+      permitIf((principal) => canManageEventAttendance(principal, hostingGroupIds)),
       input
     )
 

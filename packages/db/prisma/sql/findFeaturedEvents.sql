@@ -180,7 +180,7 @@ WITH
               WHERE
                 attendee.attendance_id = parent_event.attendance_id
                 AND attendee.user_id = $17
-                AND attendee.registered = TRUE
+                AND attendee.registered_at IS NOT NULL
             )
           )
       )
@@ -211,14 +211,17 @@ WITH
       COUNT(*) FILTER (
         WHERE
           attendee.created_at <= attendance.register_start + INTERVAL '6 hours'
-          AND attendee.earliest_reservation_at <= attendance.register_start + INTERVAL '6 hours'
+          AND attendee.created_at + (
+            COALESCE(attendee.registration_pool_delay_hours, 0)
+            + COALESCE(attendee.registration_mark_delay_hours, 0)
+          ) * INTERVAL '1 hour' <= attendance.register_start + INTERVAL '6 hours'
       ) AS registered_within_six_hours_count
     FROM attendee
     INNER JOIN candidate_attendances
       ON candidate_attendances.attendance_id = attendee.attendance_id
     INNER JOIN attendance
       ON attendance.id = candidate_attendances.attendance_id
-    WHERE attendee.registered = TRUE
+    WHERE attendee.registered_at IS NOT NULL
     GROUP BY attendee.attendance_pool_id
   ),
 

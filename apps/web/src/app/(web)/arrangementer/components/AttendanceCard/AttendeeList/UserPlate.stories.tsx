@@ -280,9 +280,9 @@ function createDelayedAttendees(): AttendeeSummary[] {
   return users.map((user, index) =>
     AttendeeSummarySchema.parse(
       createPlateAttendee(user, {
-        registered: false,
+        registeredAt: null,
         createdAt: now,
-        earliestReservationAt: addHours(now, index + 1),
+        registrationEligibleAt: addHours(now, index + 1),
       })
     )
   )
@@ -332,15 +332,15 @@ export const WithDelays = () => {
   const now = new Date()
   const queuedAttendees = ordinaryAttendees.slice(0, 8).map((attendee, index) => ({
     ...attendee,
-    registered: false,
+    registeredAt: null,
     createdAt: subHours(now, 1),
-    earliestReservationAt: subMinutes(now, 20 - index),
+    registrationEligibleAt: subMinutes(now, 20 - index),
   }))
   const attendees = [
     createPlateAttendee(viewer, {
-      registered: false,
+      registeredAt: null,
       createdAt: subMinutes(now, 12),
-      earliestReservationAt: subMinutes(now, 12),
+      registrationEligibleAt: subMinutes(now, 12),
     }),
 
     ...queuedAttendees,

@@ -26,7 +26,7 @@ interface NonAttendablePoolsBoxProps {
 
 export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBoxProps) => {
   if (!attendance.pools.length) {
-    return <Text className="px-3 text-sm">Ingen påmeldingsgrupper</Text>
+    return <Text className="sm:px-3 text-sm">Ingen påmeldingsgrupper</Text>
   }
 
   const hasAttendablePool = getAttendablePool(attendance, user) !== null
@@ -38,9 +38,9 @@ export const NonAttendablePoolsBox = ({ attendance, user }: NonAttendablePoolsBo
 
   return (
     <Collapsible defaultOpen={!hasAttendablePool} className="w-full flex flex-col gap-1">
-      <CollapsibleTrigger className="w-full flex items-center gap-2 px-3 py-1 text-gray-600 hover:text-black dark:text-stone-400 dark:hover:text-stone-100">
+      <CollapsibleTrigger className="w-full flex items-center gap-2 sm:px-3 py-1 transition-colors text-muted-foreground hover:text-foreground">
         <Text className="text-sm">{hasAttendablePool ? "Andre påmeldingsgrupper" : "Påmeldingsgrupper"}</Text>
-        <IconChevronDown className="size-[1.25em] transition-transform" />
+        <IconChevronDown className="size-4" />
       </CollapsibleTrigger>
 
       <CollapsibleContent>
@@ -65,7 +65,7 @@ const AttendanceBoxPoolSmall = ({ pool, attendance }: AttendanceBoxPoolSmallProp
 
   return (
     <div
-      className="flex flex-row justify-between items-center p-2 bg-gray-50 border border-gray-50 dark:bg-transparent dark:border-stone-700 rounded-lg"
+      className="flex flex-row justify-between items-center py-2 sm:px-3 sm:bg-gray-50 sm:border sm:border-gray-200 sm:dark:bg-white/3 sm:dark:border-stone-700 sm:rounded-lg"
       key={pool.id}
     >
       <div className="flex flex-row gap-2 items-center">

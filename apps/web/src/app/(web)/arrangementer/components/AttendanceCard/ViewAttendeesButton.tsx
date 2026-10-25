@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   DialogClose,
+  cn,
 } from "@dotkomonline/ui"
 import { IconUsers, IconX } from "@tabler/icons-react"
 import { compareAsc } from "date-fns"
@@ -22,6 +23,7 @@ interface ViewAttendeesButtonProps {
   setAttendeeListOpen: (open: boolean) => void
   attendance: AttendanceView
   user: User | null
+  hasTicketButton: boolean
 }
 
 export const ViewAttendeesButton = ({
@@ -29,12 +31,13 @@ export const ViewAttendeesButton = ({
   setAttendeeListOpen,
   attendance,
   user,
+  hasTicketButton,
 }: ViewAttendeesButtonProps) => {
-  const allAttendees = attendance.attendees.toSorted((a, b) =>
-    compareAsc(a.earliestReservationAt, b.earliestReservationAt)
+  const allAttendees = attendance.attendees.toSorted((firstAttendee, secondAttendee) =>
+    compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
   )
-  const registeredAttendees = allAttendees.filter((attendee) => attendee.registered)
-  const queuedAttendees = allAttendees.filter((attendee) => !attendee.registered)
+  const registeredAttendees = allAttendees.filter((attendee) => attendee.registeredAt !== null)
+  const queuedAttendees = allAttendees.filter((attendee) => attendee.registeredAt === null)
 
   const maxAttendees = Math.max(registeredAttendees.length, queuedAttendees.length)
 
@@ -43,8 +46,19 @@ export const ViewAttendeesButton = ({
       className="rounded-lg w-full h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
       disabled={!user}
     >
-      <IconUsers className="size-[1.25em]" />
-      Vis påmeldte
+      <div
+        className={cn(
+          "mx-auto grid w-fit max-w-full min-w-0 grid-cols-[--spacing(4.5)_minmax(0,1fr)_--spacing(4.5)] items-center gap-x-2",
+          hasTicketButton && "sm:flex"
+        )}
+      >
+        <span aria-hidden className="flex h-lh items-center justify-center">
+          <IconUsers className="size-4.5" />
+        </span>
+        <Text element="span" className="min-w-0 text-center font-medium">
+          Vis påmeldte
+        </Text>
+      </div>
     </Button>
   )
 

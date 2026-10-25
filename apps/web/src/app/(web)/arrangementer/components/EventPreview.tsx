@@ -14,12 +14,12 @@ import {
   DrawerHeader,
   DrawerTitle,
   ReadMore,
+  ScrollArea,
   Text,
   Title,
   cn,
 } from "@dotkomonline/ui"
 import { createAbsoluteEventPageUrl, createEventPageUrl } from "@dotkomonline/utils"
-import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { IconCheck, IconChevronsRight, IconCopy, IconMaximize } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
@@ -138,11 +138,10 @@ export function EventPreview({
             <ScrollArea.Root
               key={selectedEvent?.id}
               data-base-ui-swipe-ignore
-              type="auto"
-              className="min-h-0 flex-1 overflow-hidden"
+              className="relative min-h-0 flex-1 overflow-hidden"
             >
-              <ScrollArea.Viewport className="h-full w-full overscroll-contain">
-                <div className="p-4">
+              <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
+                <ScrollArea.Content className="p-4">
                   {selectedEvent !== null && (
                     <EventPreviewDetails
                       key={selectedEvent.id}
@@ -151,11 +150,11 @@ export function EventPreview({
                       listSubscription={listSubscription}
                     />
                   )}
-                </div>
+                </ScrollArea.Content>
               </ScrollArea.Viewport>
 
-              <ScrollArea.Scrollbar orientation="vertical" className="flex w-2.5 touch-none select-none p-0.5">
-                <ScrollArea.Thumb className="flex-1 rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
+              <ScrollArea.Scrollbar orientation="vertical" className="w-2.5 p-0.5">
+                <ScrollArea.Thumb className="w-full rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
               </ScrollArea.Scrollbar>
             </ScrollArea.Root>
           </DrawerContent>

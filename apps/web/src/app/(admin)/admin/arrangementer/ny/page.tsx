@@ -1,6 +1,7 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
+import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
 import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import type { EventId } from "@dotkomonline/rpc/event"
 import { useState } from "react"
@@ -9,8 +10,8 @@ import { ParentEventCard } from "../components/ParentEventCard"
 import { useCreateEventMutation } from "../mutations"
 
 export default function Page() {
-  const { canCreateEvents } = useAuthorization()
-  const canCreate = canCreateEvents()
+  const authorization = useAuthorization()
+  const canCreate = canCreateEvents(authorization)
   const create = useCreateEventMutation()
   const [parentId, setParentId] = useState<EventId | null>(null)
 

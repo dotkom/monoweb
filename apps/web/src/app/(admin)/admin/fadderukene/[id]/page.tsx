@@ -1,6 +1,7 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
 import { FadderukeWriteForm } from "../FadderukeWriteForm"
 import { useUpdateFadderukeMutation } from "../mutations"
 import { useFadderukeDetailsContext } from "./provider"
@@ -8,8 +9,8 @@ import { useFadderukeDetailsContext } from "./provider"
 export default function FadderukeDetailsPage() {
   const { fadderuke } = useFadderukeDetailsContext()
   const update = useUpdateFadderukeMutation()
-  const { canEditFadderuke } = useAuthorization()
-  const canEdit = canEditFadderuke()
+  const authorization = useAuthorization()
+  const canEdit = canManageFadderuker(authorization)
 
   return (
     <FadderukeWriteForm

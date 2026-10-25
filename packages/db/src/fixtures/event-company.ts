@@ -1,19 +1,18 @@
 import type { Prisma } from "../"
+import { companyId } from "./company"
+import { eventId } from "./event"
 
-export const getEventCompany: (event_ids: string[], company_ids: string[]) => Prisma.EventCompanyCreateManyInput[] = (
-  event_ids,
-  company_ids
-) => [
+export const getEventCompanyFixtures = (): Prisma.EventCompanyCreateManyInput[] => [
   {
-    eventId: event_ids[4],
-    companyId: company_ids[0],
+    eventId: eventId("itex"),
+    companyId: companyId("bekk"),
   },
   {
-    eventId: event_ids[4],
-    companyId: company_ids[1],
+    eventId: eventId("itex"),
+    companyId: companyId("juniorConsulting"),
   },
   {
-    eventId: event_ids[3],
-    companyId: company_ids[1],
+    eventId: eventId("vinkurs"),
+    companyId: companyId("juniorConsulting"),
   },
 ]

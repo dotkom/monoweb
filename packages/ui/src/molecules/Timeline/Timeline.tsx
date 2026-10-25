@@ -9,6 +9,8 @@ import {
 } from "react"
 import { cn } from "../../utils"
 
+const DEFAULT_TIMELINE_DOT_SIZE = 12
+
 /**
  * The vertical timeline is a three column grid; side labels, "rail" (line and dots), and content.
  *
@@ -30,15 +32,20 @@ export type TimelineProps = ComponentPropsWithoutRef<"div"> & {
    */
   rail?: TimelineRail
   /**
-   * Removes the inset at the chosen ends. This is left/right horizontally and top/bottom vertically.
+   * Removes the left inset, right inset, or both, regardless of the timeline's orientation.
    */
-  bleed?: TimelineBleed
+  bleedHorizontal?: TimelineBleed
+  /**
+   * Removes the top inset, bottom inset, or both, regardless of the timeline's orientation.
+   */
+  bleedVertical?: TimelineBleed
 }
 
 const timelineGridClassNames: Record<TimelineOrientation, string> = {
-  vertical: "grid-cols-[auto_1.5rem_minmax(0,1fr)]",
+  vertical:
+    "grid-cols-[auto_1.5rem_minmax(0,1fr)] [--timeline-horizontal-bleed:max(0px,calc(0.75rem-var(--timeline-largest-marker-size,var(--timeline-default-marker-size))/2))]",
   horizontal:
-    "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto",
+    "grid-flow-col grid-cols-(--timeline-columns) auto-cols-[minmax(12rem,1fr)] grid-rows-[auto_1.5rem_minmax(0,1fr)] overflow-x-auto [--timeline-horizontal-bleed:1rem]",
 }
 
 const timelineColorClassNames: Record<TimelineColor, string> = {
@@ -48,9 +55,9 @@ const timelineColorClassNames: Record<TimelineColor, string> = {
 
 const timelineBleedClassNames: Record<TimelineOrientation, Record<TimelineBleed, string>> = {
   horizontal: {
-    start: "-ml-4 w-[calc(100%+1rem)]",
-    end: "-mr-4 w-[calc(100%+1rem)]",
-    both: "-mx-4 w-[calc(100%+2rem)]",
+    start: "-ml-(--timeline-horizontal-bleed) w-[calc(100%+var(--timeline-horizontal-bleed))]",
+    end: "-mr-(--timeline-horizontal-bleed) w-[calc(100%+var(--timeline-horizontal-bleed))]",
+    both: "-mx-(--timeline-horizontal-bleed) w-[calc(100%+2*var(--timeline-horizontal-bleed))]",
   },
   vertical: {
     start: "-mt-0.5 has-[>[data-slot=timeline-item]:first-child_[data-slot=timeline-side-label]]:-mt-1.5",
@@ -66,8 +73,8 @@ const timelineRowClassName = cn(
 )
 
 const timelineRailClassName = cn(
-  "relative col-start-2 row-start-1 [--timeline-marker-size:0.75rem] [--timeline-dot-offset:0.5rem]",
-  "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:0.75rem]",
+  "relative col-start-2 row-start-1 [--timeline-marker-size:var(--timeline-default-marker-size)] [--timeline-dot-offset:calc(0.5rem+var(--timeline-dot-shift,0px))]",
+  "group-has-data-[slot=timeline-side-label]/timeline-row:[--timeline-dot-offset:calc(0.75rem+var(--timeline-dot-shift,0px))]",
   "group-data-[orientation=horizontal]/timeline:col-start-1 group-data-[orientation=horizontal]/timeline:row-start-2"
 )
 
@@ -139,10 +146,11 @@ const TimelineRailLine = ({ hasMarker = false }: { hasMarker?: boolean }) => (
         "group-data-[orientation=vertical]/timeline:group-first/timeline-row:rounded-t-sm",
         "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-not-has-data-[slot=timeline-dot]/timeline-row:mask-[linear-gradient(to_bottom,transparent,black_1.25rem)]",
         // Start at the first dot's center, including its lower offset when a side label is present.
-        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-2",
-        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+        "group-data-[orientation=vertical]/timeline:group-first/timeline-row:group-has-data-[slot=timeline-dot]/timeline-row:top-(--timeline-dot-offset)",
         "group-data-[orientation=vertical]/timeline:group-last/timeline-row:bottom-auto",
-        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2)]",
+        // IMPORTANT: Per october 2026, Tailwind VS Code extension suggests removing "px" from the calc function. This
+        // will break the rail, so do not remove it.
+        "group-data-[orientation=vertical]/timeline:group-last/timeline-row:h-[calc(1.625rem+var(--timeline-marker-size)/2+var(--timeline-dot-shift,0px))]",
         "group-data-[orientation=vertical]/timeline:group-last/timeline-row:rounded-b-sm",
         // Keep the fade length fixed as the marker grows (45% of the original 2rem segment).
         "group-data-[rail-stubs=true]/timeline:group-data-[orientation=vertical]/timeline:group-last/timeline-row:mask-[linear-gradient(to_bottom,black_calc(100%-0.9rem),transparent)]",
@@ -162,10 +170,8 @@ const TimelineRailLine = ({ hasMarker = false }: { hasMarker?: boolean }) => (
         // Without stubs, hide headers outside the dot range and stop each end at the dot's center.
         "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not([data-slot=timeline-item]~*)]/timeline-row:hidden",
         "group-data-[rail-stubs=false]/timeline:group-data-[slot=timeline-group-header]/timeline-row:group-[:not(:has(~[data-slot=timeline-item]))]/timeline-row:hidden",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-2",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-2",
-        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:group-has-data-[slot=timeline-side-label]/timeline-row:h-3",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:top-(--timeline-dot-offset)",
+        "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-(--timeline-dot-offset)",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=vertical]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item]):nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:h-0",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-child(1_of_[data-slot=timeline-item])]/timeline-row:left-(--timeline-dot-position)",
         "group-data-[rail-stubs=false]/timeline:group-data-[orientation=horizontal]/timeline:group-[:nth-last-child(1_of_[data-slot=timeline-item])]/timeline-row:right-[calc(100%-var(--timeline-dot-position))]",
@@ -191,6 +197,19 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
     return ["minmax(12rem,1fr)"]
   })
 
+const getLargestTimelineMarkerSize = (children: ReactNode): number =>
+  Children.toArray(children).reduce<number>((largestSize, child) => {
+    if (!isValidElement<{ children?: ReactNode; size?: number }>(child)) {
+      return largestSize
+    }
+
+    if (child.type === TimelineDot) {
+      return Math.max(largestSize, child.props.size ?? DEFAULT_TIMELINE_DOT_SIZE)
+    }
+
+    return Math.max(largestSize, getLargestTimelineMarkerSize(child.props.children))
+  }, 0)
+
 /**
  * A vertical or horizontal timeline. It consists of a rail, dots, labels, and content.
  *
@@ -199,24 +218,39 @@ const getHorizontalTimelineColumns = (children: ReactNode): string[] =>
  * Set `showRailStubs={false}` to stop the rail at the first and last dots without fading extensions.
  * Set `rail="segmented"` for rounded segments with a gap around every dot and no outer stubs.
  *
- * Use `bleed="start" | "end" | "both"` to remove the inset at the selected container edges along its orientation.
- * Horizontal bleed cancels 1rem of content padding; vertical bleed removes the dot's inset while keeping it inside.
+ * Use `bleedHorizontal` and `bleedVertical` to remove the inset at selected container edges on each axis.
+ * Each accepts `"start" | "end" | "both"`, independently of the timeline's orientation.
+ * Horizontal bleed removes 1rem in horizontal timelines and the space beside the largest marker in vertical timelines.
+ * Vertical bleed removes the dot's inset while keeping it inside.
  */
 export const Timeline: FC<TimelineProps> = ({
   orientation = "vertical",
   color = "brand",
   showRailStubs = true,
   rail = "continuous",
-  bleed,
+  bleedHorizontal,
+  bleedVertical,
   className,
   children,
   style,
   ...props
 }) => {
-  const timelineStyle: CSSProperties & { "--timeline-columns"?: string } = { ...style }
+  const timelineStyle: CSSProperties & {
+    "--timeline-columns"?: string
+    "--timeline-default-marker-size"?: string
+    "--timeline-largest-marker-size"?: string
+  } = {
+    "--timeline-default-marker-size": `${DEFAULT_TIMELINE_DOT_SIZE}px`,
+    ...style,
+  }
 
   if (orientation === "horizontal") {
     timelineStyle["--timeline-columns"] = getHorizontalTimelineColumns(children).join(" ")
+  }
+
+  if (orientation === "vertical" && bleedHorizontal !== undefined) {
+    timelineStyle["--timeline-largest-marker-size"] =
+      `${getLargestTimelineMarkerSize(children) || DEFAULT_TIMELINE_DOT_SIZE}px`
   }
 
   return (
@@ -225,12 +259,14 @@ export const Timeline: FC<TimelineProps> = ({
       data-orientation={orientation}
       data-rail-stubs={rail === "continuous" && showRailStubs}
       data-rail={rail}
-      data-bleed={bleed}
+      data-bleed-horizontal={bleedHorizontal}
+      data-bleed-vertical={bleedVertical}
       className={cn(
         "group/timeline grid w-full",
         timelineGridClassNames[orientation],
         timelineColorClassNames[color],
-        bleed !== undefined && timelineBleedClassNames[orientation][bleed],
+        bleedHorizontal !== undefined && timelineBleedClassNames.horizontal[bleedHorizontal],
+        bleedVertical !== undefined && timelineBleedClassNames.vertical[bleedVertical],
         className
       )}
       style={timelineStyle}
@@ -297,8 +333,12 @@ export const TimelineSideLabel: FC<ComponentPropsWithoutRef<"div">> = ({ classNa
   />
 )
 
-export type TimelineDotProps = ComponentPropsWithoutRef<"div"> &
-  (
+export type TimelineDotProps = ComponentPropsWithoutRef<"div"> & {
+  /**
+   * Moves the vertical dot and adjoining rail by this many pixels from their default position.
+   */
+  offset?: number
+} & (
     | {
         render?: undefined
         size?: number
@@ -315,7 +355,10 @@ export type TimelineDotProps = ComponentPropsWithoutRef<"div"> &
       }
   )
 
-type TimeDotMarkerStyle = CSSProperties & { "--timeline-marker-size"?: string }
+type TimeDotMarkerStyle = CSSProperties & {
+  "--timeline-marker-size"?: string
+  "--timeline-dot-shift"?: string
+}
 
 /**
  * The dot on the rail. Renders the rail line segment for its row as well.
@@ -323,14 +366,18 @@ type TimeDotMarkerStyle = CSSProperties & { "--timeline-marker-size"?: string }
  * NOTE: The dot's center aligns with the first text line of the content (`top-2` matches a `text-xs` first line). When
  * the row has a `TimelineSideLabel`, it shifts down to `top-3` to align with the side label and a base-size first line
  * instead. In horizontal timelines, the dot follows the item's `align` setting along with its labels and content.
- * Override with `className` if your content needs a different offset.
+ * Use `offset` to adjust the vertical dot and rail together.
  */
-export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render, size, style, ...props }) => {
+export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render, size, offset, style, ...props }) => {
   let markerClassName = "block border-[3px] border-(--timeline-color) bg-white"
   const markerStyle: TimeDotMarkerStyle = { ...style }
 
   if (size !== undefined) {
     markerStyle["--timeline-marker-size"] = `${size}px`
+  }
+
+  if (offset !== undefined) {
+    markerStyle["--timeline-dot-shift"] = `${offset}px`
   }
 
   if (render !== undefined) {
@@ -355,7 +402,7 @@ export const TimelineDot: FC<TimelineDotProps> = ({ className, children, render,
         aria-hidden="true"
         className={cn(
           "absolute left-1/2 z-10 size-(--timeline-marker-size) -translate-x-1/2 -translate-y-1/2 rounded-full",
-          "top-2 group-has-data-[slot=timeline-side-label]/timeline-row:top-3",
+          "top-(--timeline-dot-offset)",
           "group-data-[orientation=horizontal]/timeline:left-(--timeline-dot-position)",
           "group-data-[orientation=horizontal]/timeline:top-1/2 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
           "group-data-[orientation=horizontal]/timeline:group-has-data-[slot=timeline-side-label]/timeline-row:top-1/2",

@@ -47,7 +47,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: true,
+      registeredAt: { not: null },
     })
   })
 
@@ -69,7 +69,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: false,
+      registeredAt: null,
     })
   })
 
@@ -81,7 +81,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: true,
+      registeredAt: { not: null },
       OR: paidAttendeePaymentConditions,
     })
   })
@@ -94,7 +94,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: true,
+      registeredAt: { not: null },
       NOT: {
         OR: paidAttendeePaymentConditions,
       },
@@ -112,7 +112,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: true,
+      registeredAt: { not: null },
       OR: [
         {
           selections: {
@@ -136,7 +136,7 @@ describe("buildAttendeeSelectionFilter", () => {
     })
 
     expect(filter).toEqual({
-      registered: true,
+      registeredAt: { not: null },
       AND: [
         {
           OR: paidAttendeePaymentConditions,

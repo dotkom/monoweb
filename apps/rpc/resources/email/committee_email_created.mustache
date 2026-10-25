@@ -1,71 +1,33 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="nb">
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-    <meta name="x-apple-disable-message-reformatting" />
-    <title>(Online) Opprettelse av komité-e-postadresse</title>
-  </head>
-
-  <body style="background-color: rgb(255, 255, 255);">
-    <table
-      align="center"
-      width="100%"
-      border="0"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      style="max-width: 37.5em"
-    >
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei {{ firstName }}!</p>
+    <p style="margin: 0 0 16px;">Velkommen til komité! Vi har opprettet en komité-e-postadresse for deg.</p>
+    <p style="margin: 0;">For å aktivere kontoen må du logge inn på Google (Gmail) med informasjonen nedenfor. Du blir bedt om å endre passordet når du logger inn.</p>
+  </td>
+</tr>
+<tr>
+  <td class="text-primary" style="padding: 24px 0 0; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <ul style="margin: 0; padding-left: 24px; list-style-type: disc;">
+      <li style="margin: 0 0 4px; padding-left: 4px;">E-postadresse: {{ email }}</li>
+      <li style="margin: 0; padding-left: 4px;">Passord: {{ password }}</li>
+    </ul>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0;">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
       <tbody>
-        <tr style="width: 100%">
-          <td>
-            <p>Hei {{ firstName }},</p>
-
-            <p>
-              Velkommen til komité! Vi har opprettet en
-              komité-e-postadresse for deg.
-            </p>
-
-            <p>
-              For å aktivere kontoen må du logge inn på Google (Gmail) med
-              informasjonen nedenfor. Du vil bli bedt om å endre passordet når
-              du logger inn.
-            </p>
-
-            <p>
-              <strong>E-postadresse:</strong>
-              {{ email }}
-            </p>
-
-            <p>
-              <strong>Passord:</strong>
-              {{ password }}
-            </p>
-
-            <p>
-              Om det oppstår feil, kan du kontakte dotkomleder {{ dotkomLeaderName }} (dotkom-leder@online.ntnu.no)
-              eller komitélederen din {{ committeeLeaderName }}.
-            </p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">
-              Linjeforeningen Online
-            </h3>
-
-            <p style="font-size: 0.75em; color: gray">
-              Du mottar denne e-posten fordi det er opprettet en
-              komité-e-postadresse for deg.
-            </p>
-
-            <p style="font-size: 0.75em; color: gray">
-              Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim
-            </p>
-          </td>
+        <tr>
+          {{# buttons.gmail }}
+          {{> primary-button }}
+          {{/ buttons.gmail }}
         </tr>
       </tbody>
     </table>
-  </body>
-</html>
+  </td>
+</tr>
+<tr>
+  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0;">Om det oppstår feil, kan du kontakte dotkomleder {{ dotkomLeaderName }} (<a href="mailto:dotkom-leder@online.ntnu.no" style="color: inherit; text-decoration: underline;">dotkom-leder@online.ntnu.no</a>) eller komitélederen din {{ committeeLeaderName }}.</p>
+  </td>
+</tr>

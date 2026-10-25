@@ -20,7 +20,7 @@
     "@dotkomonline/config": "workspace:*",
     "@types/html-to-text": "9.0.4",
     "@types/node": "22.20.5",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "vitest": "3.2.7"
   },
   "dependencies": {

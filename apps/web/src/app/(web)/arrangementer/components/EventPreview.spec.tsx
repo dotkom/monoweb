@@ -9,7 +9,7 @@ import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
 import { TicketButton } from "./AttendanceCard/TicketButton"
 import { EventRules } from "./AttendanceCard/EventRules"
-import { PaymentExplanationDialog } from "./AttendanceCard/PaymentExplanationDialog"
+import { PaymentExplanationDialogContent } from "./AttendanceCard/PaymentExplanationDialog"
 import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
 const mocks = vi.hoisted(() => ({
@@ -43,11 +43,13 @@ vi.mock("@tanstack/react-query", () => ({ useQuery: mocks.query }))
 
 vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
+  const scrollArea = await import("../../../../../../../packages/ui/src/atoms/ScrollArea/ScrollArea")
   const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
+    ...scrollArea,
     ...dialog,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
@@ -117,7 +119,10 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
         </Dialog>
         <TicketButton attendee={createMockAttendee()} />
         <EventRules />
-        <PaymentExplanationDialog />
+        <Dialog>
+          <DialogTrigger>Hvordan virker betaling?</DialogTrigger>
+          <PaymentExplanationDialogContent />
+        </Dialog>
       </div>
     )
   },
@@ -145,6 +150,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
+  vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -154,6 +160,7 @@ beforeEach(() => {
     }
   )
   vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+  Object.defineProperty(Element.prototype, "getAnimations", { configurable: true, value: () => [] })
   desktop = {
     matches: true,
     addEventListener: vi.fn((_type, listener) => {
@@ -176,8 +183,10 @@ beforeEach(() => {
 })
 
 afterEach(async () => {
+  vi.useRealTimers()
   await act(async () => root.unmount())
   container.remove()
+  document.body.replaceChildren()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
   Reflect.deleteProperty(Element.prototype, "getAnimations")
@@ -249,19 +258,56 @@ describe("desktop event preview", () => {
 
   it("starts the entrance transition each time the preview opens", async () => {
     const link = await renderPreview()
-    vi.useFakeTimers({ toFake: ["requestAnimationFrame", "cancelAnimationFrame", "setTimeout", "clearTimeout"] })
-    try {
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        await act(async () => link.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(true)
-        await act(async () => vi.advanceTimersByTimeAsync(50))
-        expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
-        const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
-        await act(async () => close?.click())
-        expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
-      }
-    } finally {
-      vi.useRealTimers()
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      let didSeeStartingStyle = false
+      const observer = new MutationObserver((records) => {
+        for (const record of records) {
+          if (record.type === "attributes" && record.attributeName === "data-starting-style") {
+            if ((record.target as Element).hasAttribute("data-starting-style")) {
+              didSeeStartingStyle = true
+            }
+          }
+
+          for (const node of record.addedNodes) {
+            if (node instanceof Element && node.matches('[data-slot="drawer-content"][data-starting-style]')) {
+              didSeeStartingStyle = true
+            }
+
+            if (
+              node instanceof Element &&
+              node.querySelector('[data-slot="drawer-content"][data-starting-style]') !== null
+            ) {
+              didSeeStartingStyle = true
+            }
+          }
+        }
+      })
+
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ["data-starting-style"],
+      })
+
+      await act(async () => link.click())
+      observer.disconnect()
+
+      expect(didSeeStartingStyle).toBe(true)
+
+      await act(async () => {
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve())
+          })
+        })
+      })
+      expect(document.querySelector('[data-slot="drawer-content"]')?.hasAttribute("data-starting-style")).toBe(false)
+
+      const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+      await act(async () => close?.click())
+      expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
     }
   })
 
@@ -389,7 +435,7 @@ describe("desktop event preview", () => {
 
   it.each([
     "Vis billett",
-    "Prikkeregler",
+    "Arrangementregler",
     "Hvordan virker betaling?",
   ])("dismisses nested information on an outside click without closing the preview (%s)", async (triggerLabel) => {
     const link = await renderPreview()
@@ -430,6 +476,7 @@ describe("desktop event preview", () => {
   })
 
   it("unlocks the page during closing and can open another event before the animation ends", async () => {
+    vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", false)
     let finishClosing: () => void = () => {}
     const closingAnimation = new Promise<void>((resolve) => {
       finishClosing = resolve

@@ -1,7 +1,7 @@
 import { type AttendanceView, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
 import { Text, Timeline, TimelineContent, TimelineDot, TimelineItem, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
-import { IconLockFilled, IconPennantFilled, IconSquareRotatedFilled } from "@tabler/icons-react"
+import { IconBan, IconLockFilled, IconPennantFilled } from "@tabler/icons-react"
 import { compareAsc, format as formatDate, isAfter, isEqual, isPast, isThisYear, min } from "date-fns"
 import { nb } from "date-fns/locale"
 import { AttendanceSection } from "./AttendanceSection"
@@ -68,7 +68,10 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
       date: registerStart,
       icon: (
         <IconPennantFilled
-          className={cn("size-4", nextDateBlock === "registerStart" ? "text-foreground" : "text-muted-foreground")}
+          className={cn(
+            "size-5 sm:size-4",
+            nextDateBlock === "registerStart" ? "text-foreground" : "text-muted-foreground"
+          )}
         />
       ),
       element: dateComponent(
@@ -82,8 +85,11 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
       key: "registerEnd",
       date: registerEnd,
       icon: (
-        <IconSquareRotatedFilled
-          className={cn("size-4", nextDateBlock === "registerEnd" ? "text-foreground" : "text-muted-foreground")}
+        <IconBan
+          className={cn(
+            "size-5 sm:size-4 stroke-[2.5]",
+            nextDateBlock === "registerEnd" ? "text-foreground" : "text-muted-foreground"
+          )}
         />
       ),
       element: dateComponent(
@@ -98,7 +104,10 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
       date: actualDeregisterDeadline,
       icon: (
         <IconLockFilled
-          className={cn("size-4", nextDateBlock === "deregisterDeadline" ? "text-foreground" : "text-muted-foreground")}
+          className={cn(
+            "size-5 sm:size-4",
+            nextDateBlock === "deregisterDeadline" ? "text-foreground" : "text-muted-foreground"
+          )}
         />
       ),
       element: dateComponent(
@@ -112,24 +121,32 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
 
   const sortedElements = dateBlocks.toSorted((firstBlock, secondBlock) => compareAsc(firstBlock.date, secondBlock.date))
 
-  const element = (
-    <Timeline orientation="horizontal" rail="segmented" bleed="both" color="gray" className="sm:grid-cols-3">
-      {sortedElements.map(({ element, key, date, icon }) => (
-        <TimelineItem key={key}>
-          <TimelineDot render={icon} size={16} />
-          <TimelineContent className="pt-0.5!">
-            <div key={date.getTime()} className={transitionStyles.state}>
-              {element}
-            </div>
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
-  )
+  const renderTimelineItems = (size: number, offset?: number) =>
+    sortedElements.map(({ element, key, date, icon }) => (
+      <TimelineItem key={key}>
+        <TimelineDot render={icon} size={size} offset={offset} />
+        <TimelineContent className="sm:pt-1!">
+          <div key={date.getTime()} className={transitionStyles.state}>
+            {element}
+          </div>
+        </TimelineContent>
+      </TimelineItem>
+    ))
 
   return (
     <div className="flex flex-col gap-0">
-      {element}
+      <Timeline orientation="vertical" rail="segmented" bleedHorizontal="both" color="gray" className="sm:hidden">
+        {renderTimelineItems(20, 4)}
+      </Timeline>
+      <Timeline
+        orientation="horizontal"
+        rail="segmented"
+        bleedHorizontal="both"
+        color="gray"
+        className="hidden sm:grid sm:grid-cols-3"
+      >
+        {renderTimelineItems(16)}
+      </Timeline>
       <AttendanceSection className="mt-2">
         {showDeregisterDeadlineNotice && (
           <Text className="text-xs text-gray-500 dark:text-stone-500">Avmeldingsfrist er endret grunnet betaling.</Text>

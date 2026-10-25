@@ -1,13 +1,10 @@
-import { useUserDetailsContext } from "@admin/brukere/[id]/provider"
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { useUser } from "@auth0/nextjs-auth0/client"
+import { useUserDetailsContext } from "@admin/brukere/[id]/provider"
+import { canEditUserProfile } from "@dotkomonline/rpc/user-permissions"
 
 export function useUserEditPermission() {
   const { user } = useUserDetailsContext()
-  const { user: sessionUser } = useUser()
-  const { canEditUserProfile } = useAuthorization()
+  const authorization = useAuthorization()
 
-  const canEdit = canEditUserProfile(user.id, sessionUser?.sub ?? null)
-
-  return { canEdit }
+  return { canEdit: canEditUserProfile(authorization, user.id) }
 }

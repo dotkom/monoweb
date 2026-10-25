@@ -9,10 +9,12 @@ const attendee: Attendee = {
   userId: "user-one",
   attendanceId: "attendance-one",
   attendancePoolId: "pool-one",
-  registered: true,
+  registeredAt: new Date(),
   userGrade: 1,
   selections: [],
-  earliestReservationAt: new Date(),
+  registrationPoolDelayHours: null,
+  registrationMarkDelayHours: null,
+  registrationEligibleAt: new Date(),
   attendedAt: null,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -24,7 +26,8 @@ const attendee: Attendee = {
   paymentChargedAt: null,
   paymentRefundedAt: null,
   paymentCheckoutUrl: null,
-  paymentRefundedById: null,
+  paymentRefundedByUserId: null,
+  adminRegisteredByUserId: "committee-user",
   user: {
     id: "user-one",
     username: "user-one",
@@ -65,6 +68,9 @@ function createContext(currentUserId: string | null = null, isCommitteeMember = 
 
   if (currentUserId !== null) {
     principal = { subject: currentUserId, affiliations: new Map(), scopes: new Set() }
+    if (isCommitteeMember) {
+      principal.affiliations.set("dotkom", new Set())
+    }
   }
 
   const context = {
@@ -118,9 +124,11 @@ describe("bulk registration subscription", () => {
         userId: attendee.userId,
         attendanceId: attendee.attendanceId,
         attendancePoolId: attendee.attendancePoolId,
-        registered: true,
+        registeredAt: attendee.registeredAt,
         userGrade: attendee.userGrade,
-        earliestReservationAt: attendee.earliestReservationAt,
+        registrationPoolDelayHours: attendee.registrationPoolDelayHours,
+        registrationMarkDelayHours: attendee.registrationMarkDelayHours,
+        registrationEligibleAt: attendee.registrationEligibleAt,
         user: {
           id: attendee.user.id,
           name: attendee.user.name,

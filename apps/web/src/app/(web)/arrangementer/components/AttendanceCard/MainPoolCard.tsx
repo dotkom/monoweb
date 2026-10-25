@@ -26,7 +26,7 @@ import {
   IconClockCheck,
   IconCoins,
   IconHourglassEmpty,
-  IconPennant,
+  IconPennantFilled,
   IconUserX,
   IconX,
 } from "@tabler/icons-react"
@@ -64,7 +64,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const now = new Date()
   const attendee = getAttendee(attendance, user)
 
-  useDeadlineTick(attendee?.completionDeadline, attendee?.earliestReservationAt)
+  useDeadlineTick(attendee?.completionDeadline, attendee?.registrationEligibleAt)
 
   const completion = buildRegistrationAvailabilityCompletionView(attendance, attendee)
 
@@ -186,7 +186,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
     >
       <div className="flex grow flex-col gap-6 items-center text-center justify-center w-full">
         {showRegisterCountdown ? (
-          <AttendanceStatusRow icon={<IconPennant className="text-muted-foreground" />} contentClassName="gap-1">
+          <AttendanceStatusRow icon={<IconPennantFilled className="text-muted-foreground" />} contentClassName="gap-1">
             <Text>{availableSeatCount > 0 ? `${availableSeatCount} plasser` : "Påmelding"} åpner om</Text>
             <Text className="text-4xl font-medium" suppressHydrationWarning>
               {registerCountdownDisplay}
@@ -244,7 +244,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
           <AttendanceSection contentClassName="pt-2">
             {showPaymentStatus && (
-              <div key={`${paymentState}-${Boolean(attendee?.registered)}`} className={transitionStyles.state}>
+              <div key={`${paymentState}-${attendee?.registeredAt != null}`} className={transitionStyles.state}>
                 <PaymentStatus
                   attendance={attendance}
                   attendee={attendee}
@@ -410,7 +410,7 @@ const AttendanceStatus = ({ attendance, attendee, isActionRequired }: Attendance
     return <NotRegisteredStatus />
   }
 
-  if (attendee.registered === true) {
+  if (attendee.registeredAt !== null) {
     if (isActionRequired) {
       return <ReservedStatus />
     }
@@ -518,8 +518,8 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
     return <PriceStatus price={price} />
   }
 
-  if ((!attendee.registered && !hasPaid) || price === 0) {
-    return <PriceStatus price={price} showPaymentTiming={!attendee.registered && price > 0} />
+  if ((attendee.registeredAt === null && !hasPaid) || price === 0) {
+    return <PriceStatus price={price} showPaymentTiming={attendee.registeredAt === null && price > 0} />
   }
 
   if (!hasPaid) {
@@ -537,7 +537,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
       )
     }
 
-    return <UnpaidStatus price={price} registered={attendee.registered === true} />
+    return <UnpaidStatus price={price} registered={attendee.registeredAt !== null} />
   }
 
   const paymentStatus = getAttendeePaymentStatus(attendee)
@@ -547,7 +547,7 @@ const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidSta
   }
 
   if (paymentStatus === "charged") {
-    return <PaidStatus price={price} registered={attendee.registered === true} />
+    return <PaidStatus price={price} registered={attendee.registeredAt !== null} />
   }
 
   if (paymentStatus === "reserved") {

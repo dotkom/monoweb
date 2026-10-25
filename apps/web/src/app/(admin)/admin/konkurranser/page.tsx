@@ -2,6 +2,7 @@
 
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
+import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
 import { Button, Title } from "@dotkomonline/ui"
 import { IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
@@ -11,8 +12,8 @@ import { useContestFindManyQuery } from "./queries"
 export default function ContestPage() {
   const { contests, isLoading } = useContestFindManyQuery()
 
-  const { canCreateEvents } = useAuthorization()
-  const canCreate = canCreateEvents()
+  const authorization = useAuthorization()
+  const canCreate = canCreateContests(authorization)
 
   return (
     <div className="flex flex-col gap-4">

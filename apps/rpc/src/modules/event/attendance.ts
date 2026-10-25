@@ -1,5 +1,5 @@
 import { getStudyGrade } from "@dotkomonline/utils"
-import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -44,10 +44,15 @@ export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 
 const AttendeeBaseSchema = z.object({
   id: z.string(),
-  userGrade: z.number().int().nullable(),
+  userGrade: z.int().nullable(),
   selections: z.array(AttendanceSelectionResponseSchema),
-  registered: z.boolean(),
-  earliestReservationAt: z.date(),
+  registeredAt: z.date().nullable(),
+  registrationPoolDelayHours: z.int().nullable(),
+  registrationMarkDelayHours: z.int().nullable(),
+  /**
+   * Computed from createdAt + registration delays
+   */
+  registrationEligibleAt: z.date(),
   attendedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -62,7 +67,8 @@ const AttendeeBaseSchema = z.object({
   attendanceId: z.string(),
   userId: z.string(),
   attendancePoolId: z.string(),
-  paymentRefundedById: z.string().nullable(),
+  adminRegisteredByUserId: z.string().nullable(),
+  paymentRefundedByUserId: z.string().nullable(),
 })
 
 export type AttendeeId = Attendee["id"]
@@ -81,9 +87,11 @@ export const AttendeeSummarySchema = AttendeeSchema.pick({
   userId: true,
   attendanceId: true,
   attendancePoolId: true,
-  registered: true,
+  registeredAt: true,
   userGrade: true,
-  earliestReservationAt: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
+  registrationEligibleAt: true,
 }).extend({
   user: UserSchema.pick({
     id: true,
@@ -108,13 +116,24 @@ export type AttendeeSummary = z.infer<typeof AttendeeSummarySchema>
 
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export const AttendeeWriteSchema = AttendeeSchema.pick({
+  adminRegisteredByUserId: true,
   attendedAt: true,
-  earliestReservationAt: true,
-  registered: true,
+  registeredAt: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
   selections: true,
   /** The attending user's grade at time of registration. */
   userGrade: true,
 })
+
+export function getAttendeeRegistrationEligibleAt(
+  attendee: Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours">
+): Date {
+  const poolDelayHours = attendee.registrationPoolDelayHours ?? 0
+  const markDelayHours = attendee.registrationMarkDelayHours ?? 0
+
+  return addHours(attendee.createdAt, poolDelayHours + markDelayHours)
+}
 
 export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
 export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
@@ -124,7 +143,7 @@ export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentLink: true,
   paymentReservedAt: true,
   paymentRefundedAt: true,
-  paymentRefundedById: true,
+  paymentRefundedByUserId: true,
   paymentCheckoutUrl: true,
 })
 
@@ -365,19 +384,22 @@ export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
 
 export function getRegisteredAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.registered).length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt !== null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 1 : 0), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt !== null ? 1 : 0), 0)
 }
 
 export function getQueuedAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && !attendee.registered)
-      .length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt === null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.registered ? 0 : 1), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt === null ? 1 : 0), 0)
 }
 
 export function getAttendanceCapacity(attendance: Pick<Attendance, "pools">): number {
@@ -459,29 +481,31 @@ export const getAttendeeQueuePosition = (attendance: AttendanceView, user: User 
   }
 
   const queuedAttendees = attendance.attendees
-    .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.registered)
-    .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
+    .filter((attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt === null)
+    .toSorted((firstAttendee, secondAttendee) =>
+      compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+    )
 
-  const index = queuedAttendees.indexOf(attendee)
+  const attendeeIndex = queuedAttendees.findIndex((queuedAttendee) => queuedAttendee.id === attendee.id)
 
-  if (index === -1) {
+  if (attendeeIndex === -1) {
     return null
   }
 
   // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
-  return index + 1
+  return attendeeIndex + 1
 }
 
 type AttendeePaymentProps = Pick<
   Attendee,
-  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedById"
+  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedByUserId"
 >
 
 export function getApplicableAttendanceCompletionRequirements(
   attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "registered"> | null
+  attendee: Pick<Attendee, "registeredAt"> | null
 ): AttendanceCompletionRequirement[] {
-  if (attendee?.registered !== true) {
+  if (attendee?.registeredAt == null) {
     return []
   }
 
@@ -525,7 +549,7 @@ export function getAttendeeState(
     return null
   }
 
-  if (!attendee.registered) {
+  if (attendee.registeredAt === null) {
     return "QUEUED"
   }
 
@@ -538,9 +562,9 @@ export function getAttendeeState(
 
 export function attendeeHasPendingCompletionDeadline(
   attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "completionDeadline" | "registered"> | null
+  attendee: Pick<Attendee, "completionDeadline" | "registeredAt"> | null
 ): boolean {
-  if (attendee === null || attendee.registered !== true || attendee.completionDeadline === null) {
+  if (attendee === null || attendee.registeredAt === null || attendee.completionDeadline === null) {
     return false
   }
 
@@ -565,18 +589,18 @@ export function buildRegistrationAvailabilityCompletionView(
 
   return {
     attendeeState,
-    completionDeadline: attendee.registered === true ? attendee.completionDeadline : null,
+    completionDeadline: attendee.registeredAt !== null ? attendee.completionDeadline : null,
     requirements: requirements.map((requirement) => ({
       requirement,
       completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
     })),
     missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
-    paymentLink: attendee.registered === true ? attendee.paymentLink : null,
+    paymentLink: attendee.registeredAt !== null ? attendee.paymentLink : null,
   }
 }
 
 export const hasAttendeePaid = (
-  attendee: Omit<AttendeePaymentProps, "paymentRefundedById"> | null,
+  attendee: Omit<AttendeePaymentProps, "paymentRefundedByUserId"> | null,
   attendancePrice: number | null,
   options?: { excludePaymentReservation?: boolean }
 ): boolean | null => {
@@ -615,7 +639,7 @@ export const getAttendeePaymentStatus = (attendee: AttendeePaymentProps): Attend
     return "reserved"
   }
 
-  if (attendee.paymentRefundedById !== null) {
+  if (attendee.paymentRefundedByUserId !== null) {
     return "cancelled"
   }
 

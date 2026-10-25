@@ -144,7 +144,10 @@ const Statistics = ({
             <TableBody>
               <StatisticsTableRow name="Påmeldte" value={attendees.length} />
               <StatisticsTableRow name="Oppmøtte" value={attendedAttendeeCount} />
-              <StatisticsTableRow name="Kø" value={attendees.filter((attendee) => !attendee.registered).length} />
+              <StatisticsTableRow
+                name="Kø"
+                value={attendees.filter((attendee) => attendee.registeredAt === null).length}
+              />
               <StatisticsTableRow name="Svar" value={answers.length} />
             </TableBody>
           </Table>
