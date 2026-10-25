@@ -777,7 +777,6 @@ const createFileUploadProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(isCommitteeMember()))
   .mutation(async ({ ctx, input }) => {
-    console.log("s3test aaaaaaaaaaa")
     return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 

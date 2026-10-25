@@ -9,7 +9,7 @@ import {
   type OfflineWrite,
 } from "./offline"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getS3KeyFromUrl, removeEphemeralTag, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { OfflineRepository } from "./offline-repository"
@@ -48,7 +48,14 @@ export function getOfflineService(
 ): OfflineService {
   return {
     async create(handle, data) {
-      return offlineRepository.create(handle, data)
+      const offline = offlineRepository.create(handle, data)
+      if (data.imageUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+      if (data.fileUrl) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.fileUrl))
+      }
+      return offline
     },
 
     async update(handle, id, data) {

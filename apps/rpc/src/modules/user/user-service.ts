@@ -1,8 +1,15 @@
-import type { S3Client } from "@aws-sdk/client-s3"
+import { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
+import {
+  createS3PresignedPost,
+  slugify,
+  getNextSemesterStart,
+  getCurrentSemesterStart,
+  removeEphemeralTag,
+  getS3KeyFromUrl,
+} from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import * as crypto from "node:crypto"
@@ -767,6 +774,11 @@ export function getUserService(
 
       await syncProfileToAuth0(userId, currentUser, updatedUser, data)
 
+      if (data.imageUrl) {
+        console.log(data.imageUrl)
+        console.log(getS3KeyFromUrl(data.imageUrl))
+        await removeEphemeralTag(client, bucket, getS3KeyFromUrl(data.imageUrl))
+      }
       return updatedUser
     },
 
