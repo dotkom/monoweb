@@ -146,6 +146,7 @@
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "emails:preview": "tsx src/bin/render-email-previews.ts",
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
