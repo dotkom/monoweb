@@ -111,6 +111,7 @@ export function getEventService(
       if (data.imageUrl) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
       }
+
       return event
     },
 
