@@ -112,7 +112,7 @@ export async function uploadFileToS3PresignedPost(
 // Removes only the ephemeral tag(s), keeping any other tags on the object
 export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key: string): Promise<void> {
   const response = await s3Client.send(new GetObjectTaggingCommand({ Bucket: bucket, Key: key }))
-  const TagSet = response?.TagSet ?? []
+  const tagSet = response?.TagSet ?? []
   const remaining = tagSet.filter(({ key, value }) => !(key && EPHEMERAL_TAGS[key] === value))
 
   // If the tag after removing the ephemeral tag is 0 aka. no more tags then delete all tags since it wont affect the object
