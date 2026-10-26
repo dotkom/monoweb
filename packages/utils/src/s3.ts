@@ -131,6 +131,12 @@ export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key
     })
   )
 }
+
+/**
+ * Extracts the S3 object key from a CloudFront (or S3) object URL.
+ * Example: https://d1.cloudfront.net/my-object.txt -> my-object.txt
+ * Example: https://my-bucket.s3.amazonaws.com/my-object.txt -> my-object.txt
+ */
 export function getS3KeyFromUrl(url: string): string {
   return decodeURIComponent(new URL(url).pathname.slice(1))
 }
