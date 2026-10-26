@@ -79,7 +79,7 @@ export function getCompanyService(
 
     async create(handle, payload) {
       const company = await companyRepository.create(handle, payload)
-      if (payload.imageUrl) {
+      if (payload.imageUrl !== null) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(payload.imageUrl))
       }
       return company
