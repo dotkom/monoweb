@@ -118,7 +118,9 @@ export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key
   const tagSet = response?.TagSet ?? []
   const remaining = tagSet.filter(({ key, value }) => !(key && EPHEMERAL_TAGS[key] === value))
 
-  // If the tag after removing the ephemeral tag is 0 aka. no more tags then delete all tags since it wont affect the object
+  // If there are no non-ephemeral tags, delete all tags.
+  // This is preferred over putting an empty tag set on the object to avoid additional billing
+  // https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-tagging.html#tagging-apis
   if (remaining.length === 0) {
     await s3Client.send(new DeleteObjectTaggingCommand({ Bucket: bucket, Key: key }))
     return
