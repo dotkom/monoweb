@@ -121,7 +121,8 @@ export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key
     return
   }
 
-  // Puts tags back on the object https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
+  // Remove the ephemeral tags by only putting the non-ephemeral tags back on the object
+  // https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html
   await s3Client.send(
     new PutObjectTaggingCommand({
       Bucket: bucket,
