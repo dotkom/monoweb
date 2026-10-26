@@ -774,7 +774,7 @@ export function getUserService(
 
       await syncProfileToAuth0(userId, currentUser, updatedUser, data)
 
-      if (data.imageUrl) {
+      if (data.imageUrl != null) {
         await removeEphemeralTag(client, bucket, getS3KeyFromUrl(data.imageUrl))
       }
       return updatedUser

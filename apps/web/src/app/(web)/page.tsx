@@ -90,7 +90,7 @@ export default async function App() {
                   href="/arrangementer"
                   className={cn(
                     "flex flex-row items-center gap-3 rounded-xl w-full h-full min-h-48 transition-colors",
-                    "bg-gray-200 hover:bg-gray-100",
+                    "bg-pink-700 hover:bg-gray-100",
                     "dark:bg-stone-700/60 dark:hover:bg-stone-700"
                   )}
                 >

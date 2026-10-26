@@ -71,7 +71,7 @@ export function getArticleService(
       }
       const article = await articleRepository.create(handle, data)
       await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
-      
+
       return article
     },
 
@@ -85,10 +85,13 @@ export function getArticleService(
           throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
         }
       }
+
       const updated = await articleRepository.update(handle, article.id, data)
-      if (data.imageUrl !== undefined && data.imageUrl !== article.imageUrl) {
+
+      if (data.imageUrl != null) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
       }
+
       return updated
     },
 

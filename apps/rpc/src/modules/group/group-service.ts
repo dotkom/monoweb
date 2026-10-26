@@ -1,7 +1,7 @@
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
-import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getCurrentUTC, getS3KeyFromUrl, removeEphemeralTag, slugify } from "@dotkomonline/utils"
 import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns"
 import { maxTime } from "date-fns/constants"
 import crypto from "node:crypto"
@@ -124,6 +124,9 @@ export function getGroupService(
       }
 
       await groupRepository.create(handle, slug, data)
+      if (data.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
       await groupRepository.createGroupRoles(handle, getDefaultGroupMemberRoles(slug))
 
       return await this.getBySlug(handle, slug)
@@ -132,6 +135,10 @@ export function getGroupService(
     async update(handle, groupSlug, data) {
       const inputSlug = data.slug?.trim()
       const slug = inputSlug && inputSlug.length > 1 ? slugify(inputSlug) : undefined
+
+      if (data.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
 
       return groupRepository.update(handle, groupSlug, { ...data, slug })
     },
@@ -394,7 +401,6 @@ export function getGroupService(
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
-        ephemeral: false,
         maxSizeKiB: GROUP_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,

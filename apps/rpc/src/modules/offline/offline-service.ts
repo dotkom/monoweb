@@ -49,23 +49,20 @@ export function getOfflineService(
   return {
     async create(handle, data) {
       const offline = offlineRepository.create(handle, data)
-      if (data.imageUrl) {
-        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
-      }
-      if (data.fileUrl) {
-        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.fileUrl))
-      }
+
+      await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.fileUrl))
+
       return offline
     },
 
     async update(handle, id, data) {
       const offline = offlineRepository.update(handle, id, data)
 
-      if (data.imageUrl) {
+      if (data.imageUrl != null) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
       }
-
-      if (data.fileUrl) {
+      if (data.fileUrl != null) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.fileUrl))
       }
 

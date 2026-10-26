@@ -110,13 +110,11 @@ export async function uploadFileToS3PresignedPost(
   }
 }
 
-/**
- * Clears the ephemeral tag from the object so it is no longer eligible for lifecycle deletion
- */
+// Clears the ephemeral tag from the object so it is no longer eligible for lifecycle deletion
 export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key: string): Promise<void> {
   const response = await s3Client.send(new GetObjectTaggingCommand({ Bucket: bucket, Key: key }))
   const tagSet = response?.TagSet ?? []
-  const remaining = tagSet.filter(({ key, value }) => !(key && EPHEMERAL_TAGS[key] === value))
+  const remaining = tagSet.filter(({ Key, Value }) => !(Key && EPHEMERAL_TAGS[Key] === Value))
 
   // If there are no non-ephemeral tags, delete all tags.
   // This is preferred over putting an empty tag set on the object to avoid additional billing
@@ -137,11 +135,9 @@ export async function removeEphemeralTag(s3Client: S3Client, bucket: string, key
   )
 }
 
-/**
- * Extracts the S3 object key from a CloudFront (or S3) object URL.
- * Example: https://d1.cloudfront.net/my-object.txt -> my-object.txt
- * Example: https://my-bucket.s3.amazonaws.com/my-object.txt -> my-object.txt
- */
+// Extracts the S3 object key from a CloudFront (or S3) object URL.
+// Example: https://d1.cloudfront.net/my-object.txt -> my-object.txt
+// Example: https://my-bucket.s3.amazonaws.com/my-object.txt -> my-object.txt
 export function getS3KeyFromUrl(url: string): string {
   return decodeURIComponent(new URL(url).pathname.slice(1))
 }

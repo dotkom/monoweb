@@ -87,7 +87,7 @@ export function getCompanyService(
 
     async update(handle, companyId, payload): Promise<Company> {
       const company = await companyRepository.update(handle, companyId, payload)
-      if (payload.imageUrl) {
+      if (payload.imageUrl != null) {
         await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(payload.imageUrl))
       }
       return company
