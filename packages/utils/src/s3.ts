@@ -55,9 +55,10 @@ export async function createS3PresignedPostWithoutCreatedBy(
   s3Client: S3Client,
   props: Omit<CreateS3PresignedPostProps, "createdByUserId">
 ) {
+  const { ephemeral = true, tags: extraTags } = props
   const tags = {
-    ...props.tags,
-    ...(props.ephemeral === false ? {} : EPHEMERAL_TAGS),
+    ...extraTags,
+    ...(ephemeral ? EPHEMERAL_TAGS : {}),
   }
   const fields = {
     ...props.fields,
