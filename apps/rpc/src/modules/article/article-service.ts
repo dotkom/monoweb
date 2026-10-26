@@ -70,9 +70,8 @@ export function getArticleService(
         throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
       const article = await articleRepository.create(handle, data)
-      if (data.imageUrl) {
-        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
-      }
+      await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      
       return article
     },
 
