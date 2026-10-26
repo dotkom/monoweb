@@ -45,12 +45,14 @@ vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
   const scrollArea = await import("../../../../../../../packages/ui/src/atoms/ScrollArea/ScrollArea")
   const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
+  const tooltip = await import("../../../../../../../packages/ui/src/atoms/Tooltip/Tooltip")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
     ...scrollArea,
     ...dialog,
+    ...tooltip,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
     Button: ({
@@ -444,7 +446,7 @@ describe("desktop event preview", () => {
       (button) => button.textContent === triggerLabel
     )
     expect(trigger).toBeDefined()
-    trigger?.focus()
+    await act(async () => trigger?.focus())
     await act(async () => trigger?.click())
     await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
 
