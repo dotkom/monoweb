@@ -15,10 +15,10 @@ import { canEditUserProfile, canManageUserMemberships } from "@dotkomonline/rpc/
 import { getStudyGrade } from "@dotkomonline/utils"
 import {
   IconBuildingWarehouse,
-  IconCampfire,
   IconCircles,
   IconClipboardList,
   IconExclamationMark,
+  IconSitemap,
   IconWheelchair,
 } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
@@ -62,7 +62,7 @@ export default function UserDetailsLayout({
       {
         href: `${basePath}/grupper`,
         label: "Grupper",
-        icon: IconCampfire,
+        icon: IconSitemap,
       },
       {
         href: `${basePath}/arrangementer`,
