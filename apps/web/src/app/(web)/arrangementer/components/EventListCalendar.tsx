@@ -8,7 +8,7 @@ import { IconX } from "@tabler/icons-react"
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns"
 import { nb } from "date-fns/locale"
 import { type ComponentProps, useEffect, useMemo, useState } from "react"
-import { eventCategories } from "./calendar/eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 import { EVENT_TIME_ZONE, getEventDateKey, getEventDateRange } from "../utils/event-date"
 import { useEventAllSummariesInfiniteQuery } from "./queries"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
@@ -73,11 +73,11 @@ export const EventListCalendar = ({ filter, selectedDate, onSelectDate }: Props)
       DayButton: ({ children, day, modifiers, className, ...props }: ComponentProps<typeof CalendarDayButton>) => {
         const types = eventTypesByDate.get(getEventDateKey(day.date))
 
-        const categories = Object.entries(eventCategories)
+        const categories = Object.entries(EVENT_TYPE_STYLES)
           .filter(([type]) => types?.has(type as EventType))
           .map(([, category]) => category)
 
-        const description = categories.map((category) => category.displayName).join(", ")
+        const description = categories.map((category) => category.shortLabel).join(", ")
 
         const colors = [...new Set(categories.map((category) => category.classes.guide))]
         const visibleColors = colors.length > 3 ? colors.slice(0, 2) : colors

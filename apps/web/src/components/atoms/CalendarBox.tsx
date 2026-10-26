@@ -1,3 +1,5 @@
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
+import type { EventType } from "@dotkomonline/rpc/event"
 import { Text, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconArrowRight } from "@tabler/icons-react"
@@ -7,6 +9,7 @@ import { nb } from "date-fns/locale"
 interface CalendarBoxProps {
   start: Date
   end: Date
+  eventType?: EventType
   className?: string
   containerClassName?: string
   titleClassName?: string
@@ -67,7 +70,7 @@ const CalendarPage = ({
 }: CalendarPageProps) => (
   <div
     className={cn(
-      "flex h-fit min-w-8 flex-col items-center rounded-md border border-gray-200 dark:border-stone-700",
+      "flex h-fit min-w-8 flex-col items-center overflow-hidden rounded-md border border-gray-300 bg-background dark:border-stone-700 dark:bg-stone-800",
       endDay && "grid w-16 grid-cols-[1fr_auto_1fr] grid-rows-[auto_1fr] items-stretch",
       endDay && showYear && "w-22.5",
       className
@@ -75,7 +78,7 @@ const CalendarPage = ({
   >
     <div
       className={cn(
-        "flex w-full flex-row justify-center rounded-t-sm bg-gray-200 py-px dark:bg-stone-700",
+        "flex h-4.25 w-full flex-row justify-center bg-gray-200 pt-0.5 dark:bg-stone-700",
         endDay && "col-span-3 px-1.5",
         endMonthLabel && "grid grid-cols-subgrid items-center",
         titleClassName
@@ -138,16 +141,21 @@ const CalendarPage = ({
 export const CalendarBox = ({
   start,
   end,
+  eventType,
   className,
   containerClassName,
-  titleClassName,
-  titleTextClassName,
+  titleClassName: titleClassNameProp,
+  titleTextClassName: titleTextClassNameProp,
   dayClassName,
   dayTextClassName,
   weekdayTextClassName,
   arrowClassName,
   includeWeekday = false,
 }: CalendarBoxProps) => {
+  const typeClasses = eventType ? EVENT_TYPE_STYLES[eventType].classes : undefined
+  const titleClassName = cn(typeClasses?.header, titleClassNameProp)
+  const titleTextClassName = cn(typeClasses?.headerText, titleTextClassNameProp)
+
   const thisYear = isThisYear(start) && isThisYear(end)
 
   const startDate = getCalendarDateParts(start)
@@ -179,7 +187,7 @@ export const CalendarBox = ({
         monthLabel={startMonthLabel}
         startDay={startDate.day}
         startDayWeekday={startDayWeekday}
-        className={cn("min-h-9 min-w-9 dark:border-stone-800", className)}
+        className={cn("min-h-9 min-w-9", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
     )
@@ -194,7 +202,7 @@ export const CalendarBox = ({
         startDayWeekday={startDayWeekday}
         endDay={endDate.day}
         endDayWeekday={endDayWeekday}
-        className={cn("min-h-11 min-w-11 dark:border-stone-800", className)}
+        className={cn("min-h-11 min-w-11", className)}
         titleClassName={cn("dark:bg-stone-800", titleClassName)}
       />
     )
@@ -209,7 +217,7 @@ export const CalendarBox = ({
       startDayWeekday={startDayWeekday}
       endDay={endDate.day}
       endDayWeekday={endDayWeekday}
-      className={cn("min-h-11 min-w-11 dark:border-stone-800", className, containerClassName)}
+      className={cn("min-h-11 min-w-11", className, containerClassName)}
       titleClassName={cn("dark:bg-stone-800", titleClassName)}
     />
   )

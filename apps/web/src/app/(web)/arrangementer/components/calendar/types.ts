@@ -1,5 +1,4 @@
-import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import type { EventCategoryKey } from "./eventTypeConfig"
+import type { EventType, EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 
 export interface EventDisplayProps {
   startCol: number
@@ -7,7 +6,7 @@ export interface EventDisplayProps {
   leftEdge: boolean
   rightEdge: boolean
   active: boolean
-  type?: EventCategoryKey
+  type?: EventType
 }
 
 export interface Week {

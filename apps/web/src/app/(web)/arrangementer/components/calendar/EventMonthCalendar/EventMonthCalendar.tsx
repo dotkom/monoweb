@@ -9,17 +9,17 @@ import { IconLoader2 } from "@tabler/icons-react"
 import { endOfMonth, endOfWeek, getISOWeek, isThisISOWeek } from "date-fns"
 import type { FC } from "react"
 import { EventCalendarItem } from "../EventCalendarItem"
-import { eventCategories } from "../eventTypeConfig"
+import { EVENT_TYPE_STYLES } from "@/lib/event-type"
 import { getMonthCalendarArray } from "./getMonthCalendarArray"
 
 function getEventTypeGuide(events: EventWithAttendanceSummary[]) {
   const presentTypes = new Set(events.map((event) => event.event.type))
 
   return Array.from(presentTypes)
-    .filter((type) => eventCategories[type])
+    .filter((type) => EVENT_TYPE_STYLES[type])
     .map((type) => ({
       type,
-      ...eventCategories[type],
+      ...EVENT_TYPE_STYLES[type],
     }))
 }
 
@@ -152,10 +152,10 @@ export const EventMonthCalendar: FC<CalendarProps> = ({ year, month }) => {
 
       {eventTypeGuideItems.length > 0 && (
         <div className="flex gap-y-2 gap-x-4 text-sm p-2 sm:pl-6 flex-wrap">
-          {eventTypeGuideItems.map(({ type, classes, displayName }) => (
+          {eventTypeGuideItems.map(({ type, classes, shortLabel }) => (
             <span key={type} className="flex items-center">
               <span className={cn("size-3 rounded-full mr-1", classes.guide)} />
-              {displayName}
+              {shortLabel}
             </span>
           ))}
         </div>
