@@ -256,6 +256,14 @@ export async function createServiceLayer(
   const notificationService = getNotificationService(
     notificationRepository,
     notificationRecipientResolver,
+    {
+      eventService,
+      articleService,
+      groupService,
+      userService,
+      offlineService,
+      jobListingService,
+    },
     eventEmitter
   )
   const contestService = getContestService(contestRepository)

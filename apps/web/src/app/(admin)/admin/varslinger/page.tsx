@@ -106,7 +106,7 @@ export default function NotificationsPage() {
       />
 
       {canCreate && (
-        <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />
+        <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ type: "GLOBAL" }} />
       )}
     </div>
   )

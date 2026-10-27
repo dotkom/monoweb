@@ -102,7 +102,7 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
         open={notifyOpen}
         onOpenChange={setNotifyOpen}
         source={{
-          kind: "EVENT",
+          type: "EVENT",
           eventId: event.id,
           attendanceId: attendance.id,
           eventTitle: event.title,

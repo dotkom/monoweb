@@ -4,6 +4,9 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
+import { canManageArticles } from "../../permissions/article-permissions"
+import { canManageJobListings } from "../../permissions/job-listing-permissions"
+import { canManageOfflines } from "../../permissions/offline-permissions"
 import {
   canCreateNotification,
   canListNotifications,
@@ -18,6 +21,7 @@ import {
   NotificationCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
+  type NotificationSource,
   NotificationRecipientFilterQuerySchema,
   NotificationRecipientListItemSchema,
   type NotificationRecipientSelection,
@@ -33,6 +37,72 @@ import {
 type AuthenticatedContext = TRPCContext & {
   principal: NonNullable<TRPCContext["principal"]>
   handle: DBHandle
+}
+
+async function authorizeNotificationSource(context: AuthenticatedContext, source: NotificationSource): Promise<void> {
+  switch (source.type) {
+    case "GLOBAL": {
+      return
+    }
+
+    case "EVENT": {
+      const event = await context.eventService.getEventById(context.handle, source.eventId)
+
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetEventAttendees(principal, event.hostingGroups)),
+        source
+      )
+
+      return
+    }
+
+    case "GROUP": {
+      const group = await context.groupService.getBySlug(context.handle, source.groupSlug)
+
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetGroupMembers(principal, group)),
+        source
+      )
+
+      return
+    }
+
+    case "ARTICLE": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageArticles(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "USER": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetSpecificUsers(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "OFFLINE": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageOfflines(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "JOB_LISTING": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageJobListings(principal)),
+        source
+      )
+
+      return
+    }
+  }
 }
 
 /**
@@ -263,11 +333,14 @@ const createNotificationProcedure = procedure
     )
     await authorizeRecipientSelection(ctx, input.recipientSelection)
 
+    await authorizeNotificationSource(ctx, input.source)
+
     const sentNotification = await ctx.notificationService.send(ctx.handle, {
       type: input.type,
       title: input.title,
       shortDescription: input.shortDescription,
       content: input.content,
+      source: input.source,
       link: input.link,
       recipientSelection: input.recipientSelection,
       actorGroupId: input.actorGroupId,

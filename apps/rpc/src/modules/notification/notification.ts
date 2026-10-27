@@ -76,9 +76,14 @@ export const NotificationPayloadTypeSchema = z.enum([
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
 
-export const NotificationLinkSchema = z.discriminatedUnion("type", [
+export const NotificationGlobalLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("NONE") }),
   z.object({ type: z.literal("URL"), url: z.url() }),
+])
+
+export type NotificationGlobalLink = z.infer<typeof NotificationGlobalLinkSchema>
+
+export const NotificationResourceLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("EVENT"), eventId: z.string() }),
   z.object({ type: z.literal("ARTICLE"), articleSlug: z.string() }),
   z.object({ type: z.literal("GROUP"), groupSlug: z.string() }),
@@ -87,7 +92,20 @@ export const NotificationLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("JOB_LISTING"), jobListingId: z.string() }),
 ])
 
+export const NotificationLinkSchema = z.discriminatedUnion("type", [
+  ...NotificationGlobalLinkSchema.options,
+  ...NotificationResourceLinkSchema.options,
+])
+
 export type NotificationLink = z.infer<typeof NotificationLinkSchema>
+
+/** Creation context only; it is not stored separately from the immutable payload. */
+export const NotificationSourceSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("GLOBAL") }),
+  ...NotificationResourceLinkSchema.options,
+])
+
+export type NotificationSource = z.infer<typeof NotificationSourceSchema>
 
 export interface NotificationLinkColumns {
   payloadType: NotificationPayloadType
@@ -294,12 +312,12 @@ export const NotificationUpdateSchema = NotificationSchema.pick({
   title: true,
   shortDescription: true,
   content: true,
-  link: true,
 })
   .partial()
   .extend({
     lastUpdatedById: z.string(),
   })
+  .strict()
 
 export type NotificationUpdate = z.infer<typeof NotificationUpdateSchema>
 
@@ -308,7 +326,8 @@ export const NotificationCreateSchema = z.object({
   shortDescription: z.string().min(1, "Kort beskrivelse er påkrevd").max(160),
   content: z.string().optional(),
   type: z.enum(["BROADCAST", "BROADCAST_IMPORTANT"]),
-  link: NotificationLinkSchema.default({ type: "NONE" }),
+  source: NotificationSourceSchema.default({ type: "GLOBAL" }),
+  link: NotificationGlobalLinkSchema.default({ type: "NONE" }),
   actorGroupId: z.string().min(1, "Avsender er påkrevd"),
   recipientSelection: NotificationRecipientSelectionSchema,
 })

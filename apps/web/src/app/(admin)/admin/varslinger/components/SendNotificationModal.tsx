@@ -12,13 +12,16 @@ import { SelectField } from "@admin/components/forms/SelectField"
 import { TextField } from "@admin/components/forms/TextField"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
-import type {
-  NotificationLink,
-  NotificationRecipientAttendanceSelectionOption,
-  NotificationRecipientPaymentStatus,
-  NotificationRecipientReservationStatus,
-  NotificationRecipientSelection,
-  NotificationRecipientSelectionRule,
+import {
+  getNotificationLinkTypeLabel,
+  NotificationSourceSchema,
+  type NotificationSource,
+  type NotificationCreate,
+  type NotificationRecipientAttendanceSelectionOption,
+  type NotificationRecipientPaymentStatus,
+  type NotificationRecipientReservationStatus,
+  type NotificationRecipientSelection,
+  type NotificationRecipientSelectionRule,
 } from "@dotkomonline/rpc/notification"
 import {
   AlertDialog,
@@ -51,25 +54,27 @@ const FormSchema = z.object({
   actorGroupId: z.string().min(1, "Avsender er påkrevd"),
   isImportant: z.boolean(),
   sendEmail: z.boolean(),
-  linkType: z.enum(["NONE", "URL"]),
-  linkUrl: z.string().optional(),
+  linkUrl: z
+    .string()
+    .trim()
+    .nullable()
+    .transform((value) => value || null)
+    .pipe(z.url("Ugyldig URL").nullable()),
 })
 
 type FormInput = z.input<typeof FormSchema>
 type FormValues = z.output<typeof FormSchema>
 
 export type SendNotificationSource =
+  | Exclude<NotificationSource, { type: "EVENT" }>
   | {
-      kind: "EVENT"
+      type: "EVENT"
       eventId: string
       attendanceId: string
       eventTitle: string
       hostingGroupSlugs: string[]
       hasPayment: boolean
       selections: Attendance["selections"]
-    }
-  | {
-      kind: "GLOBAL"
     }
 
 function toShortDescription(html: string): string {
@@ -92,12 +97,8 @@ function getNotificationType(isImportant: boolean, canSendImportant: boolean): "
   return "BROADCAST"
 }
 
-function buildNotificationLink(source: SendNotificationSource, values: FormValues): NotificationLink {
-  if (source.kind === "EVENT") {
-    return { type: "EVENT", eventId: source.eventId }
-  }
-
-  if (values.linkType === "URL" && values.linkUrl !== undefined && values.linkUrl.length > 0) {
+function buildNotificationLink(values: FormValues): NotificationCreate["link"] {
+  if (values.linkUrl !== null) {
     return { type: "URL", url: values.linkUrl }
   }
 
@@ -136,8 +137,8 @@ export function SendNotificationModal({
   onOpenChange: (open: boolean) => void
   source: SendNotificationSource
 }) {
-  const title = source.kind === "EVENT" ? "Send melding til påmeldte" : "Ny varsling"
-  const size = source.kind === "GLOBAL" ? "xl" : "lg"
+  const title = source.type === "EVENT" ? "Send melding til påmeldte" : "Ny varsling"
+  const size = source.type === "EVENT" ? "lg" : "xl"
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -162,7 +163,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
   const notifyAttendees = useNotifyAttendeesMutation()
 
   const eligibleGroups = useMemo(() => {
-    const candidateSlugs = source.kind === "EVENT" ? source.hostingGroupSlugs : COMMITTEE_AFFILIATIONS
+    const candidateSlugs = source.type === "EVENT" ? source.hostingGroupSlugs : COMMITTEE_AFFILIATIONS
 
     return groups.filter(
       (group) => candidateSlugs.includes(group.slug) && canActAsNotificationGroup(authorization, group)
@@ -170,7 +171,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
   }, [authorization, groups, source])
 
   const [recipientSelection, setRecipientSelection] = useState<NotificationRecipientSelection | null>(() => {
-    if (source.kind !== "EVENT") {
+    if (source.type !== "EVENT") {
       return null
     }
 
@@ -178,25 +179,23 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
   })
   const [hasEditedShortDescription, setHasEditedShortDescription] = useState(false)
 
-  const { handleSubmit, control, setValue, setError, formState } = useForm<FormInput, unknown, FormValues>({
+  const { handleSubmit, control, setValue, formState } = useForm<FormInput, unknown, FormValues>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
     defaultValues: {
-      title: source.kind === "EVENT" ? `Melding om ${source.eventTitle}` : "",
+      title: source.type === "EVENT" ? `Melding om ${source.eventTitle}` : "",
       content: "",
       shortDescription: "",
       actorGroupId: eligibleGroups[0]?.slug ?? "",
       isImportant: false,
       sendEmail: false,
-      linkType: "NONE",
-      linkUrl: "",
+      linkUrl: null,
     },
   })
   const shortDescriptionField = useController({ control, name: "shortDescription" })
 
   const content = useWatch({ control, name: "content" })
   const isImportant = useWatch({ control, name: "isImportant" })
-  const linkType = useWatch({ control, name: "linkType" })
   const actorGroupId = useWatch({ control, name: "actorGroupId" })
 
   const notificationType = getNotificationType(Boolean(isImportant), canSendImportant)
@@ -237,16 +236,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
       return
     }
 
-    const link = buildNotificationLink(source, values)
-
-    if (link.type === "URL") {
-      const isValidUrl = URL.canParse(link.url)
-
-      if (!isValidUrl) {
-        setError("linkUrl", { type: "manual", message: "Ugyldig URL" })
-        return
-      }
-    }
+    const link = buildNotificationLink(values)
 
     const plainContent = richTextToPlainText(values.content ?? "", null).trim()
     let contentToSend: string | undefined
@@ -261,7 +251,8 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         shortDescription: values.shortDescription,
         content: contentToSend,
         type: getNotificationType(values.isImportant, canSendImportant),
-        link,
+        source: NotificationSourceSchema.parse(source),
+        link: source.type === "GLOBAL" ? link : undefined,
         actorGroupId: values.actorGroupId,
         recipientSelection,
       })
@@ -269,7 +260,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
       return
     }
 
-    if (values.sendEmail && source.kind === "EVENT") {
+    if (values.sendEmail && source.type === "EVENT") {
       const emailMessage = plainContent.length > 0 ? plainContent : values.shortDescription
 
       try {
@@ -336,27 +327,24 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
 
       <Separator />
 
-      {source.kind === "EVENT" && <Text className="text-sm text-muted-foreground">Lenke: Arrangementet</Text>}
+      {source.type !== "GLOBAL" && (
+        <Text className="text-sm text-muted-foreground">Lenke: {getNotificationLinkTypeLabel(source.type)}</Text>
+      )}
 
-      {source.kind === "GLOBAL" && (
-        <div className="flex flex-col gap-3">
-          <SelectField
-            control={control}
-            name="linkType"
-            label="Lenke"
-            required
-            options={[
-              { value: "NONE", label: "Ingen" },
-              { value: "URL", label: "URL" },
-            ]}
-          />
-          {linkType === "URL" && <TextField control={control} name="linkUrl" label="URL" />}
-        </div>
+      {source.type === "GLOBAL" && (
+        <TextField
+          control={control}
+          name="linkUrl"
+          label="URL"
+          type="url"
+          placeholder="https://…"
+          description="La feltet stå tomt for ingen lenke."
+        />
       )}
 
       <Separator />
 
-      {source.kind === "EVENT" && eventAttendeesRule !== null && (
+      {source.type === "EVENT" && eventAttendeesRule !== null && (
         <div className="flex flex-col gap-3">
           <Text className="text-sm">Påmeldte på {source.eventTitle}</Text>
           <EventAttendeeRecipientFilters
@@ -380,7 +368,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         </div>
       )}
 
-      {source.kind === "GLOBAL" && (
+      {source.type !== "EVENT" && (
         <RecipientSelectionBuilder
           value={recipientSelection}
           onChange={setRecipientSelection}
@@ -388,7 +376,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         />
       )}
 
-      {source.kind === "EVENT" && (
+      {source.type === "EVENT" && (
         <>
           <Separator />
           <div className="flex flex-col gap-2">
@@ -415,14 +403,14 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
 
       <Separator />
 
-      <div className={source.kind === "GLOBAL" ? "flex justify-end" : "flex items-center justify-between gap-3"}>
-        {source.kind !== "GLOBAL" && recipientSelection === null && (
+      <div className={source.type === "EVENT" ? "flex items-center justify-between gap-3" : "flex justify-end"}>
+        {source.type === "EVENT" && recipientSelection === null && (
           <Text className="text-sm text-muted-foreground">Legg til minst én mottakergruppe</Text>
         )}
-        {source.kind !== "GLOBAL" && recipientSelection !== null && isPreviewPending && (
+        {source.type === "EVENT" && recipientSelection !== null && isPreviewPending && (
           <div className="h-4 w-40 animate-pulse rounded-sm bg-muted" />
         )}
-        {source.kind !== "GLOBAL" && recipientSelection !== null && !isPreviewPending && (
+        {source.type === "EVENT" && recipientSelection !== null && !isPreviewPending && (
           <Text className="text-sm text-muted-foreground">{formatRecipientCountLabel(recipientCount)}</Text>
         )}
         <Button type="submit" disabled={!canSubmit}>

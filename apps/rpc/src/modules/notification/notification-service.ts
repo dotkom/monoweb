@@ -2,13 +2,21 @@ import { type EventEmitter, on } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Pageable } from "@dotkomonline/utils"
-import { NotFoundError } from "../../error"
+import { InvalidArgumentError, NotFoundError } from "../../error"
+import type { ArticleService } from "../article/article-service"
+import type { EventService } from "../event/event-service"
 import type { GroupId } from "../group/group"
+import type { GroupService } from "../group/group-service"
+import type { JobListingService } from "../job-listing/job-listing-service"
+import type { OfflineService } from "../offline/offline-service"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
+import type { UserService } from "../user/user-service"
+import { NotificationGlobalLinkSchema, NotificationUpdateSchema } from "./notification"
 import type {
   Notification,
   NotificationFilterQuery,
+  NotificationGlobalLink,
   NotificationId,
   NotificationLink,
   NotificationManagement,
@@ -19,6 +27,7 @@ import type {
   NotificationRecipientSelectionPreview,
   NotificationRecipientStats,
   NotificationType,
+  NotificationSource,
   NotificationUpdate,
   UserNotification,
 } from "./notification"
@@ -26,11 +35,12 @@ import type { NotificationRecipientResolver } from "./notification-recipient-res
 import type { NotificationRepository } from "./notification-repository"
 
 export interface NotificationSendInput {
+  source: NotificationSource
   type: NotificationType
   title: string
   shortDescription: string
   content?: string
-  link?: NotificationLink
+  link?: NotificationGlobalLink
   recipientSelection: NotificationRecipientSelection
   actorGroupId?: GroupId | null
   createdById?: UserId | null
@@ -40,6 +50,15 @@ export interface NotificationSendInput {
 export interface NotificationSendResult {
   notification: NotificationManagement
   recipientCount: number
+}
+
+export interface NotificationSourceServices {
+  eventService: Pick<EventService, "getEventById">
+  articleService: Pick<ArticleService, "getBySlug">
+  groupService: Pick<GroupService, "getBySlug">
+  userService: Pick<UserService, "getById">
+  offlineService: Pick<OfflineService, "getById">
+  jobListingService: Pick<JobListingService, "getById">
 }
 
 export const NEW_NOTIFICATION_EVENT = "notification:new"
@@ -76,6 +95,7 @@ export interface NotificationService {
    *
    * This mutates the live notification row. Inbox reads join that row, so recipients will see the new title and
    * content on the next fetch. Already-pushed subscription payloads are not rewritten.
+   * The link payload is fixed when the notification is created and cannot be updated.
    *
    * @throws {NotFoundError} if the notification does not exist
    */
@@ -108,9 +128,79 @@ export interface NotificationService {
 export function getNotificationService(
   notificationRepository: NotificationRepository,
   recipientResolver: NotificationRecipientResolver,
+  sourceServices: NotificationSourceServices,
   eventEmitter: EventEmitter
 ): NotificationService {
   const logger = getLogger("notification-service")
+
+  async function resolveNotificationLink(handle: DBHandle, input: NotificationSendInput): Promise<NotificationLink> {
+    const source = input.source
+
+    if (source.type === "GLOBAL") {
+      const result = NotificationGlobalLinkSchema.safeParse(input.link ?? { type: "NONE" })
+
+      if (!result.success) {
+        throw new InvalidArgumentError("Global notifications can only have no link or a URL")
+      }
+
+      return result.data
+    }
+
+    if (input.link !== undefined && input.link.type !== "NONE") {
+      throw new InvalidArgumentError("Notifications from a specific context have a fixed link")
+    }
+
+    switch (source.type) {
+      case "EVENT": {
+        const event = await sourceServices.eventService.getEventById(handle, source.eventId)
+
+        return {
+          type: "EVENT",
+          eventId: event.id,
+        }
+      }
+      case "ARTICLE": {
+        const article = await sourceServices.articleService.getBySlug(handle, source.articleSlug)
+
+        return {
+          type: "ARTICLE",
+          articleSlug: article.slug,
+        }
+      }
+      case "GROUP": {
+        const group = await sourceServices.groupService.getBySlug(handle, source.groupSlug)
+
+        return {
+          type: "GROUP",
+          groupSlug: group.slug,
+        }
+      }
+      case "USER": {
+        const user = await sourceServices.userService.getById(handle, source.userId)
+
+        return {
+          type: "USER",
+          userId: user.id,
+        }
+      }
+      case "OFFLINE": {
+        const offline = await sourceServices.offlineService.getById(handle, source.offlineId)
+
+        return {
+          type: "OFFLINE",
+          offlineId: offline.id,
+        }
+      }
+      case "JOB_LISTING": {
+        const jobListing = await sourceServices.jobListingService.getById(handle, source.jobListingId)
+
+        return {
+          type: "JOB_LISTING",
+          jobListingId: jobListing.id,
+        }
+      }
+    }
+  }
 
   function toInboxNotification(notification: NotificationManagement): Notification {
     const { initialRecipientSelection: _initialRecipientSelection, ...inboxNotification } = notification
@@ -149,6 +239,8 @@ export function getNotificationService(
 
   return {
     async send(handle, input) {
+      const link = await resolveNotificationLink(handle, input)
+
       const recipientResolution = await recipientResolver.resolve(handle, input.recipientSelection, input.type)
 
       const notification = await notificationRepository.create(handle, {
@@ -156,7 +248,7 @@ export function getNotificationService(
         title: input.title,
         shortDescription: input.shortDescription,
         content: input.content ?? input.shortDescription,
-        link: input.link ?? { type: "NONE" },
+        link,
         initialRecipientSelection: input.recipientSelection,
         actorGroupId: input.actorGroupId ?? null,
         createdById: input.createdById ?? null,
@@ -206,9 +298,15 @@ export function getNotificationService(
     },
 
     async update(handle, notificationId, data) {
+      const update = NotificationUpdateSchema.safeParse(data)
+
+      if (!update.success) {
+        throw new InvalidArgumentError("Invalid notification update. The link target cannot be changed.")
+      }
+
       await this.getById(handle, notificationId)
 
-      return await notificationRepository.update(handle, notificationId, data)
+      return await notificationRepository.update(handle, notificationId, update.data)
     },
 
     async delete(handle, notificationId) {

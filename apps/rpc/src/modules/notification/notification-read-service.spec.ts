@@ -6,12 +6,14 @@ import { getNotificationTypeConfiguration, type NotificationManagement } from ".
 import type { NotificationRepository } from "./notification-repository"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import { getNotificationService, NEW_NOTIFICATION_EVENT } from "./notification-service"
+import type { NotificationSourceServices } from "./notification-service"
 
 const databaseHandle = mockDeep<DBHandle>()
 const repository = mockDeep<NotificationRepository>()
 const recipientResolver = mockDeep<NotificationRecipientResolver>()
 const eventEmitter = new EventEmitter()
-const service = getNotificationService(repository, recipientResolver, eventEmitter)
+const sourceServices = mockDeep<NotificationSourceServices>()
+const service = getNotificationService(repository, recipientResolver, sourceServices, eventEmitter)
 const timestamp = new Date("2026-10-30T12:00:00Z")
 const notification: NotificationManagement = {
   id: "feedback",
@@ -75,6 +77,7 @@ describe("default feedback notification behavior", () => {
     eventEmitter.on(NEW_NOTIFICATION_EVENT, receiveNotification)
 
     await service.send(databaseHandle, {
+      source: { type: "GLOBAL" },
       type: "NEW_FEEDBACK_FORM",
       title: notification.title,
       shortDescription: notification.shortDescription,

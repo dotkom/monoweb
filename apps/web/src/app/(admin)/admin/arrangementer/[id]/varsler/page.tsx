@@ -48,7 +48,7 @@ export default function EventNotificationsPage() {
         open={isSendOpen}
         onOpenChange={setIsSendOpen}
         source={{
-          kind: "EVENT",
+          type: "EVENT",
           eventId: event.id,
           attendanceId: attendance.id,
           eventTitle: event.title,
