@@ -80,7 +80,7 @@ describe("renderEmailTemplate", () => {
     expect(html).not.toContain("{{")
   })
 
-  it("escapes content and layout text once without interpreting user text as a template", async () => {
+  it("escapes layout text and sanitizes message content without interpreting user text as a template", async () => {
     const html = await renderEmailTemplate(emails.EVENT_MESSAGE, {
       ...eventData,
       eventName: "Kurs & <middag> {{ companyName }}",
@@ -90,12 +90,35 @@ describe("renderEmailTemplate", () => {
     expect(html).toContain("<title>Viktig informasjon om Kurs &amp; &lt;middag&gt; {{ companyName }}</title>")
     expect(html).toContain("Du har fått en melding fra arrangørene av Kurs &amp; &lt;middag&gt; {{ companyName }}.")
     expect(html).toContain("Du mottar denne e-posten fordi du er påmeldt Kurs &amp; &lt;middag&gt; {{ companyName }}.")
-    expect(html).toContain("&lt;script&gt;alert(&#39;test&#39;)&lt;&#x2F;script&gt;\nAndre linje &amp; mer tekst")
+    expect(html).toContain("Andre linje &amp; mer tekst")
+    expect(html).not.toContain("alert(")
     expect(html).toContain(
       'href="https:&#x2F;&#x2F;online.ntnu.no&#x2F;arrangementer&#x2F;test?source&#x3D;email&amp;action&#x3D;view"'
     )
     expect(html).not.toContain("&amp;amp;")
     expect(html).not.toContain("<script>")
+  })
+
+  it.each([
+    ["EVENT_MESSAGE", "message"],
+    ["BUG_REPORT", "body"],
+    ["COMPANY_COLLABORATION_RECEIPT", "comment"],
+    ["COMPANY_COLLABORATION_NOTIFICATION", "comment"],
+    ["COMPANY_INVOICE_NOTIFICATION", "comment"],
+    ["RECEIVED_MARK", "details"],
+  ] as const)("renders sanitized rich text in %s", async (type, field) => {
+    const definition = emails[type]
+    const data = definition.getSchema().parse({
+      ...sampleData,
+      [field]: "<p>Hei <strong>Online</strong> &amp; Dotkom!</p><p>{{ companyName }}</p><script>alert(1)</script>",
+    })
+    const html = await renderEmailTemplate(definition, data)
+
+    expect(html).toContain("Hei <strong>Online</strong> &amp; Dotkom!")
+    expect(html).toContain("{{ companyName }}")
+    expect(html).not.toContain("&lt;p&gt;")
+    expect(html).not.toContain("<script>")
+    expect(html).not.toContain("alert(1)")
   })
 
   it.each(["Ola Nordmann", null])("addresses the reporter with profile name %s", async (name) => {

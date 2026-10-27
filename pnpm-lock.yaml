@@ -337,6 +337,9 @@ importers:
       import-in-the-middle:
         specifier: ^3.0.1
         version: 3.5.2
+      isomorphic-dompurify:
+        specifier: ^3.0.0
+        version: 3.23.0
       jose:
         specifier: ^6.0.11
         version: 6.2.12

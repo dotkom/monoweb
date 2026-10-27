@@ -6,6 +6,7 @@ import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import mustache from "mustache"
 import { z } from "zod"
+import { renderEmailRichText } from "./email-rich-text"
 
 export type EmailType =
   | "COMPANY_COLLABORATION_RECEIPT"
@@ -39,6 +40,7 @@ export interface EmailTemplate<TData, TType extends EmailType> {
     showTimezone?: boolean
   }
   getButtons?(data: TData): TemplateButtons
+  getRichText?(data: TData): Record<string, string | null>
   type: TType
 }
 
@@ -79,6 +81,12 @@ export async function renderEmailTemplate<TData>(
       ...data,
       layout: definition.layout,
       buttons: definition.getButtons?.(data),
+      richText: Object.fromEntries(
+        Object.entries(definition.getRichText?.(data) ?? {}).map(([name, value]) => [
+          name,
+          renderEmailRichText(value ?? ""),
+        ])
+      ),
     },
     {
       ...partials,
@@ -130,6 +138,7 @@ export const emails = {
         comment: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_collaboration_receipt.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   COMPANY_COLLABORATION_NOTIFICATION: createEmailTemplate({
     type: "COMPANY_COLLABORATION_NOTIFICATION",
@@ -154,6 +163,7 @@ export const emails = {
         comment: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_collaboration_notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   COMPANY_INVOICE_NOTIFICATION: createEmailTemplate({
     type: "COMPANY_INVOICE_NOTIFICATION",
@@ -176,6 +186,7 @@ export const emails = {
         comment: z.string().nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_invoice_notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   FEEDBACK_FORM_LINK: createEmailTemplate({
     type: "FEEDBACK_FORM_LINK",
@@ -246,6 +257,7 @@ export const emails = {
         message: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
+    getRichText: (data) => ({ message: data.message }),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",
@@ -276,6 +288,7 @@ export const emails = {
           .nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
+    getRichText: (data) => ({ details: data.details }),
   }),
   QUEUE_NOTIFICATION: createEmailTemplate({
     type: "QUEUE_NOTIFICATION",
@@ -355,6 +368,7 @@ export const emails = {
         body: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "bug_report_form.mustache"), "utf-8"),
+    getRichText: (data) => ({ body: data.body }),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>
