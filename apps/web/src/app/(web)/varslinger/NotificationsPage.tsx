@@ -4,11 +4,12 @@ import { Link } from "@/components/link"
 import { NotificationPayload } from "@/components/Navbar/NotificationPayload"
 import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
 import { useMyNotifications } from "@/utils/use-my-notifications"
+import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { UserNotification } from "@dotkomonline/rpc/notification"
 import { Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
-import { IconAlertTriangle, IconArrowLeft, IconBellOff, IconChecks } from "@tabler/icons-react"
+import { IconAlertTriangle, IconArrowLeft, IconBellOff, IconCheck, IconChecks } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useParams } from "next/navigation"
@@ -30,10 +31,6 @@ export function NotificationsPage() {
   const selectedUserNotification = userNotifications.find((userNotification) => {
     return userNotification.notification.id === selectedNotificationId
   })
-  const selectedNotificationIdToMark =
-    selectedUserNotification !== undefined && selectedUserNotification.readAt === null
-      ? selectedUserNotification.notification.id
-      : null
   const hasSelection = selectedNotificationId !== undefined
 
   useEffect(() => {
@@ -65,14 +62,6 @@ export function NotificationsPage() {
     notificationsQuery.isFetchingNextPage,
     notificationsQuery.isLoading,
   ])
-
-  useEffect(() => {
-    if (selectedNotificationIdToMark === null) {
-      return
-    }
-
-    markAsReadMutation.mutate({ notificationId: selectedNotificationIdToMark })
-  }, [markAsReadMutation.mutate, selectedNotificationIdToMark])
 
   let markAllAsReadAriaLabel = "Alle varslinger er lest"
 
@@ -136,6 +125,7 @@ export function NotificationsPage() {
               key={userNotification.id}
               userNotification={userNotification}
               isSelected={userNotification.notification.id === selectedNotificationId}
+              onMarkAsRead={() => markAsReadMutation.mutate({ notificationId: userNotification.notification.id })}
             />
           ))}
 
@@ -153,6 +143,12 @@ export function NotificationsPage() {
             isPending={notificationsQuery.isPending}
             isError={notificationsQuery.isError}
             hasNoNotifications={hasNoNotifications}
+            onMarkAsRead={() => {
+              if (selectedNotificationId !== undefined) {
+                markAsReadMutation.mutate({ notificationId: selectedNotificationId })
+              }
+            }}
+            isMarkingAsRead={markAsReadMutation.isPending}
           />
         </div>
       </div>
@@ -163,15 +159,24 @@ export function NotificationsPage() {
 function InboxNotificationRow({
   userNotification,
   isSelected,
+  onMarkAsRead,
 }: {
   userNotification: UserNotification
   isSelected: boolean
+  onMarkAsRead: () => void
 }) {
   const isUnread = userNotification.readAt === null
   const relativeCreatedAt = useCompactRelativeTime(userNotification.notification.createdAt)
+  const elementReference = useMarkNotificationAsReadWhenVisible<HTMLAnchorElement>({
+    notificationId: userNotification.notification.id,
+    notificationType: userNotification.notification.type,
+    readAt: userNotification.readAt,
+    onMarkAsRead,
+  })
 
   return (
     <Link
+      ref={elementReference}
       href={`/varslinger/${userNotification.notification.id}`}
       aria-current={isSelected ? "page" : undefined}
       className={cn(
@@ -213,13 +218,24 @@ function InboxNotificationDetail({
   isPending,
   isError,
   hasNoNotifications,
+  onMarkAsRead,
+  isMarkingAsRead,
 }: {
   selectedNotificationId?: string
   selectedUserNotification?: UserNotification
   isPending: boolean
   isError: boolean
   hasNoNotifications: boolean
+  onMarkAsRead: () => void
+  isMarkingAsRead: boolean
 }) {
+  const elementReference = useMarkNotificationAsReadWhenVisible<HTMLDivElement>({
+    notificationId: selectedUserNotification?.notification.id,
+    notificationType: selectedUserNotification?.notification.type,
+    readAt: selectedUserNotification?.readAt,
+    onMarkAsRead,
+  })
+
   if (isPending && selectedNotificationId !== undefined) {
     return (
       <div className="flex flex-col gap-4 md:p-6">
@@ -280,7 +296,7 @@ function InboxNotificationDetail({
     <article className="flex flex-col gap-6 md:p-6">
       <MobileInboxBackLink />
 
-      <div className="flex flex-col gap-2">
+      <div ref={elementReference} className="flex flex-col gap-2">
         <Title element="h2" size="lg">
           {notification.title}
         </Title>
@@ -306,6 +322,18 @@ function InboxNotificationDetail({
       )}
 
       <NotificationPayload notification={notification} />
+
+      {selectedUserNotification.readAt === null && (
+        <Button
+          variant="outline"
+          onClick={onMarkAsRead}
+          disabled={isMarkingAsRead}
+          icon={<IconCheck className="size-5" />}
+          className="w-fit"
+        >
+          Merk som lest
+        </Button>
+      )}
     </article>
   )
 }

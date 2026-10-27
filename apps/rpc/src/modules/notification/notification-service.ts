@@ -118,11 +118,13 @@ export function getNotificationService(
     return inboxNotification
   }
 
-  function toUserNotification(recipient: NotificationRecipient, notification: Notification): UserNotification {
-    return {
-      id: recipient.id,
-      readAt: recipient.readAt,
-      notification,
+  function emitNewNotifications(recipients: NotificationRecipient[], notification: Notification): void {
+    for (const recipient of recipients) {
+      emitNewNotification(recipient.userId, {
+        id: recipient.id,
+        readAt: recipient.readAt,
+        notification,
+      })
     }
   }
 
@@ -173,9 +175,7 @@ export function getNotificationService(
 
       const inboxNotification = toInboxNotification(notification)
 
-      for (const recipient of recipients) {
-        emitNewNotification(recipient.userId, toUserNotification(recipient, inboxNotification))
-      }
+      emitNewNotifications(recipients, inboxNotification)
 
       return {
         notification,
@@ -236,9 +236,7 @@ export function getNotificationService(
 
       const inboxNotification = toInboxNotification(notification)
 
-      for (const recipient of addedRecipients) {
-        emitNewNotification(recipient.userId, toUserNotification(recipient, inboxNotification))
-      }
+      emitNewNotifications(addedRecipients, inboxNotification)
 
       return addedRecipients.length
     },

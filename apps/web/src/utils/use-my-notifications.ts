@@ -39,26 +39,11 @@ export function useMyNotifications({ enableLiveUpdates = false }: { enableLiveUp
 
   const markAllAsReadMutation = useMutation(
     trpcClient.notification.markAllAsRead.mutationOptions({
-      onSuccess: () => {
-        queryClient.setQueryData(unreadCountQueryOptions.queryKey, 0)
-        queryClient.setQueryData(notificationsQueryOptions.queryKey, (previousNotifications) => {
-          if (previousNotifications === undefined) {
-            return previousNotifications
-          }
-
-          const readAt = getCurrentUTC()
-
-          return {
-            ...previousNotifications,
-            pages: previousNotifications.pages.map((page) => ({
-              ...page,
-              items: page.items.map((userNotification) => ({
-                ...userNotification,
-                readAt,
-              })),
-            })),
-          }
-        })
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: unreadCountQueryOptions.queryKey }),
+          queryClient.invalidateQueries({ queryKey: notificationsQueryOptions.queryKey }),
+        ])
       },
     })
   )
