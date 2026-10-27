@@ -141,7 +141,7 @@ export function EventPreview({
               className="relative min-h-0 flex-1 overflow-hidden"
             >
               <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
-                <ScrollArea.Content className="p-4">
+                <ScrollArea.Content className="max-w-full p-4">
                   {selectedEvent !== null && (
                     <EventPreviewDetails
                       key={selectedEvent.id}
