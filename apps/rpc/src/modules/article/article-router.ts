@@ -177,13 +177,19 @@ const createArticleFileUploadProcedure = procedure
     z.object({
       filename: z.string(),
       contentType: z.string(),
+      ephemeral: z.boolean().optional(),
     })
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .mutation(async ({ input, ctx }) => {
-    return await ctx.articleService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+    return await ctx.articleService.createFileUpload(
+      input.filename,
+      input.contentType,
+      ctx.principal.subject,
+      ephemeral
+    )
   })
 
 export const articleRouter = t.router({

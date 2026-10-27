@@ -53,7 +53,12 @@ export interface ArticleService {
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
   findTagsOrderedByPopularity(handle: DBHandle): Promise<ArticleTag[]>
-  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+  createFileUpload(
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId,
+    ephemeral?: boolean
+  ): Promise<PresignedPost>
 }
 
 export function getArticleService(
@@ -216,13 +221,14 @@ export function getArticleService(
       return articleRepository.findTagsOrderedByPopularity(handle)
     },
 
-    async createFileUpload(filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId, ephemeral) {
       const uuid = crypto.randomUUID()
       const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        ephemeral,
         maxSizeKiB: ARTICLE_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,

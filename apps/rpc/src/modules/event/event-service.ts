@@ -83,7 +83,12 @@ export interface EventService {
   findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
-  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+  createFileUpload(
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId,
+    ephemeral?: boolean
+  ): Promise<PresignedPost>
 }
 
 export function getEventService(
@@ -259,13 +264,14 @@ export function getEventService(
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
 
-    async createFileUpload(filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId, ephemeral) {
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        ephemeral,
         maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,
