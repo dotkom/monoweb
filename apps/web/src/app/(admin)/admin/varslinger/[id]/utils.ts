@@ -75,6 +75,21 @@ export function getNotificationLinkHref(link: NotificationLink): string | null {
   return null
 }
 
+export function getNotificationLinkActionLabel(linkType: NotificationLink["type"]): string {
+  const labels = {
+    NONE: "Se lenke",
+    URL: "Åpne lenke",
+    EVENT: "Se arrangement",
+    ARTICLE: "Se artikkel",
+    GROUP: "Se gruppe",
+    USER: "Se bruker",
+    OFFLINE: "Se Offline",
+    JOB_LISTING: "Se stillingsannonse",
+  } satisfies Record<NotificationLink["type"], string>
+
+  return labels[linkType]
+}
+
 export function formatDeleteConfirmText(recipientCount: number | undefined): string {
   if (recipientCount === undefined) {
     return "Er du sikker på at du vil slette denne varslingen? Mottakerne vil ikke lenger se den."
