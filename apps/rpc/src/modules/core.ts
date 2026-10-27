@@ -199,7 +199,7 @@ export async function createServiceLayer(
 
   const membershipService = getMembershipService()
   const emailService = isAmazonSesEmailFeatureEnabled(configuration)
-    ? getEmailService(clients.sesClient, clients.sqsClient, configuration)
+    ? getEmailService(clients.sesClient, clients.sqsClient, clients.s3Client, configuration)
     : getEmptyEmailService()
   const userService = getUserService(
     userRepository,
