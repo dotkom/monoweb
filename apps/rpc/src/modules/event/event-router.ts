@@ -639,7 +639,7 @@ const createFileUploadProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canUploadEventFiles)))
   .mutation(async ({ ctx, input }) => {
-    return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, ephemeral)
+    return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, input.ephemeral)
   })
 
 export const eventRouter = t.router({

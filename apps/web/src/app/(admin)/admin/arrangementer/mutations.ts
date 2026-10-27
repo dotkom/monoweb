@@ -577,11 +577,11 @@ export const useEventFileUploadMutation = () => {
 
   const createFileUploadMutation = useMutation(trpc.event.createFileUpload.mutationOptions())
 
-  return async (file: File, ephemeral?: boolean) => {
+  return async (file: File, options?: { ephemeral?: boolean }) => {
     const presignedPost = await createFileUploadMutation.mutateAsync({
       filename: file.name,
       contentType: file.type,
-      ephemeral,
+      ephemeral: options?.ephemeral,
     })
 
     return await uploadFileToS3PresignedPost(env.AWS_CLOUDFRONT_URL, presignedPost, file)

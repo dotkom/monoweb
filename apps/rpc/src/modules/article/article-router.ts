@@ -188,7 +188,7 @@ const createArticleFileUploadProcedure = procedure
       input.filename,
       input.contentType,
       ctx.principal.subject,
-      ephemeral
+      input.ephemeral
     )
   })
 

@@ -383,7 +383,7 @@ const createFileUploadProcedure = procedure
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canUploadGroupFiles)))
   .mutation(async ({ input, ctx }) => {
-    return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, ephemeral)
+    return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, input.ephemeral)
   })
 
 export const groupRouter = t.router({
