@@ -34,6 +34,7 @@
     "grades:generate": "doppler run --config dev --project grades-backend --preserve-env -- pnpm -F @dotkomonline/grades-db generate",
     "migrate:dev": "doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db migrate",
     "migrate:dev-with-fixtures": "doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db prisma migrate dev && doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db apply-fixtures",
+    "migrate:dev-with-applicant-fixtures": "pnpm migrate:dev-with-fixtures && doppler run --config dev --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db apply-applicant-fixtures",
     "migrate:deploy": "doppler run --config prd --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db prisma migrate deploy",
     "migrate:deploy-with-fixtures": "doppler run --config prd --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db prisma migrate deploy && doppler run --config prd --project monoweb-rpc --preserve-env -- pnpm -F @dotkomonline/db apply-fixtures",
     "migrate:prod": "doppler run --config prd --project monoweb-rpc -- pnpm migrate:deploy",
