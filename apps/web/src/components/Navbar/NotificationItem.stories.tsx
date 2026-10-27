@@ -41,6 +41,7 @@ function createNotification(overrides: Partial<NotificationItemNotification> = {
     title: "Påminnelse om prikkeregler",
     shortDescription: "I Online har vi prikkeregler som bestemmer hvor mange prikker du får dersom du ikke møter opp.",
     type: "BROADCAST",
+    link: { type: "NONE" },
     createdAt: subHours(new Date(), 2),
     actorGroup,
     ...overrides,
@@ -135,6 +136,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-feedback",
+      link: { type: "URL", url: `https://online.ntnu.no/tilbakemelding/${event.id}` },
       type: "NEW_FEEDBACK_FORM",
       title: "Hva syntes du om Ping med Bekk?",
       shortDescription: "Gi oss en tilbakemelding på arrangementet før svarfristen går ut.",
@@ -150,6 +152,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-url",
+      link: { type: "URL", url: "https://wiki.online.ntnu.no/prikkeregler" },
       title: "Nye prikkeregler",
       shortDescription: "Online har oppdatert prikkereglene. Les hele regelverket på wiki.",
     }),
@@ -158,6 +161,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-event",
+      link: { type: "EVENT", eventId: event.id },
       type: "EVENT_UPDATE",
       title: "Oppdatert: Ping med Bekk",
       shortDescription: "Arrangementet har flyttet seg fra Trondheim Spektrum til Huset.",
@@ -168,6 +172,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-article",
+      link: { type: "ARTICLE", articleSlug: article.slug },
       type: "NEW_ARTICLE",
       title: "Ny artikkel: Online kjøper Scandic Lerkendal",
       shortDescription: "En ny artikkel har blitt publisert på nettsiden.",
@@ -177,6 +182,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-offline",
+      link: { type: "OFFLINE", offlineId: "offline-67" },
       type: "NEW_OFFLINE",
       title: "Ny Offline-utgave #67",
       shortDescription: "Den nyeste utgaven av Offline er publisert.",
@@ -191,6 +197,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-group",
+      link: { type: "GROUP", groupSlug: group.slug },
       type: "NEW_INTEREST_GROUP",
       title: "Ny interessegruppe",
       shortDescription: "Dotkom har fått en ny gruppeside.",
@@ -201,6 +208,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-user",
+      link: { type: "USER", userId: attendee.user.id },
       type: "NEW_MARK",
       title: "Du har fått en ny prikk",
       shortDescription: "En prikk ble registrert av Hans Hansen.",
@@ -210,6 +218,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-job-listing",
+      link: { type: "JOB_LISTING", jobListingId: jobListing.id },
       type: "NEW_JOB_LISTING",
       title: "Ny stillingsutlysning fra Bekk",
       shortDescription: "Bekk søker studenter til sommerjobb.",
@@ -220,6 +229,7 @@ const notificationExamples: NotificationExample[] = [
   {
     notification: createNotification({
       id: "notification-long-content",
+      link: { type: "EVENT", eventId: event.id },
       type: "ATTENDANCE_REGISTRATION_FROM_QUEUE",
       title: "Påmelding fra køen til et arrangement med en veldig lang tittel",
       shortDescription:

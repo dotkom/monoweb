@@ -24,7 +24,7 @@ const notificationAccentClasses = {
 
 export type NotificationItemNotification = Pick<
   Notification,
-  "id" | "createdAt" | "shortDescription" | "title" | "type"
+  "id" | "createdAt" | "link" | "shortDescription" | "title" | "type"
 > & {
   actorGroup: Pick<NonNullable<Notification["actorGroup"]>, "abbreviation" | "name" | "preferredDisplayName"> | null
 }
@@ -119,7 +119,15 @@ export function NotificationItem({
             </div>
           </div>
 
-          <Text className="line-clamp-2 wrap-anywhere text-sm text-muted-foreground">
+          <Text
+            className={cn(
+              "wrap-anywhere text-sm text-muted-foreground",
+              // If you're sending someone a link, the idea is that you need to provide more context for it than if
+              // you're sending something to do with an existing article, for example. Therefore we show another line of
+              // text if there is no payload or a URL-payload. There's also more space for the text.
+              notification.link.type === "NONE" || notification.link.type === "URL" ? "line-clamp-3" : "line-clamp-2"
+            )}
+          >
             {notification.shortDescription}
           </Text>
         </div>
