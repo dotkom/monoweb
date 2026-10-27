@@ -149,7 +149,7 @@ importers:
         version: 11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2)
       '@trpc/next':
         specifier: 11.8.1
-        version: 11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       '@trpc/tanstack-react-query':
         specifier: 11.8.1
         version: 11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
@@ -179,7 +179,7 @@ importers:
         version: 4.14.9(@swc/helpers@0.5.23)(@types/react@19.2.18)(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       next-plausible:
         specifier: ^3.12.4
-        version: 3.12.5(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.12.5(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -532,7 +532,7 @@ importers:
         version: 11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2)
       '@trpc/next':
         specifier: 11.8.1
-        version: 11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+        version: 11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
       '@trpc/server':
         specifier: 11.8.1
         version: 11.8.1(typescript@7.0.2)
@@ -574,7 +574,7 @@ importers:
         version: 16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-plausible:
         specifier: ^3.12.4
-        version: 3.12.5(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.12.5(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -12171,7 +12171,7 @@ snapshots:
       '@trpc/server': 11.8.1(typescript@7.0.2)
       typescript: 7.0.2
 
-  '@trpc/next@11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)':
+  '@trpc/next@11.8.1(@tanstack/react-query@5.104.5(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)':
     dependencies:
       '@trpc/client': 11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2)
       '@trpc/server': 11.8.1(typescript@7.0.2)
@@ -12513,7 +12513,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.17
       tinyrainbow: 2.0.0
-      vitest: 3.2.7(@types/debug@4.1.13)(@types/node@22.20.5)(@vitest/ui@3.2.7)(jiti@2.7.0)(jsdom@30.1.1)(lightningcss@1.30.2)(msw@2.15.0(@types/node@22.20.5)(typescript@7.0.2))(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+      vitest: 3.2.7(@types/debug@4.1.13)(@types/node@22.20.5)(@vitest/ui@3.2.7)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.30.2)(msw@2.15.0(@types/node@22.20.5)(typescript@7.0.2))(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
 
   '@vitest/utils@3.2.7':
     dependencies:
@@ -15434,7 +15434,7 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next-plausible@3.12.5(next@16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  next-plausible@3.12.5(next@16.4.1(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       next: 16.4.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
