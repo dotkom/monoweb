@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { useState } from "react"
 import { useTRPC } from "src/app/(admin)/admin/lib/trpc-client"
 import { useAuthenticatedUser } from "src/app/(admin)/admin/lib/use-authenticated-user"
+import { BugReportEmailRequired } from "./BugReportEmailRequired"
 
 export interface BugReportButtonProps {
   message: string
@@ -52,10 +53,9 @@ export const BugReportButton = ({ message, error }: BugReportButtonProps) => {
 
     body += message
 
-    mutate.mutateAsync({
+    mutate.mutate({
       title: "Admin bug report",
       body: body,
-      email: dbUser?.email ?? undefined,
     })
   }
 
@@ -72,10 +72,14 @@ export const BugReportButton = ({ message, error }: BugReportButtonProps) => {
     }
   }
 
+  if (dbUser && !dbUser.email) {
+    return <BugReportEmailRequired />
+  }
+
   return (
     <Button
       onClick={onClick}
-      disabled={sendingState === "sending" || sendingState === "sent"}
+      disabled={!dbUser || sendingState === "sending" || sendingState === "sent"}
       className="flex flex-row gap-2 items-center"
     >
       {sendingState === "sending" ? <IconLoader className="animate-spin" /> : sendingState === "sent" && <IconCheck />}

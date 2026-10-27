@@ -92,7 +92,9 @@ const sampleData = {
     recoveryCode: "1234-5678",
   },
   BUG_REPORT: {
-    email: "brage@online.ntnu.no",
+    profileUrl: "https://online.ntnu.no/profil/dotkom",
+    firstName: "Brage",
+    name: "Brage Andreas Hoven",
     title: "Påmeldingsknappen mangler",
     body: "<p>Påmeldingsknappen vises ikke på arrangementssiden.</p><p>Det er ingen påmeldingsknapp på arrangementssiden bro.</p><p>Fiks det greiene der så jeg kan melde meg på</p>",
   },

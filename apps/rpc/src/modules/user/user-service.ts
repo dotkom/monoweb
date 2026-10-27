@@ -163,7 +163,7 @@ export interface UserService {
     createdByUserId: UserId
   ): Promise<PresignedPost>
 
-  sendBugReportEmail(data: BugReportFormResult): Promise<void>
+  sendBugReportEmail(handle: DBHandle, userId: UserId, data: BugReportFormResult): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -1046,18 +1046,28 @@ export function getUserService(
       })
     },
 
-    async sendBugReportEmail(data) {
-      emailService.send(
+    async sendBugReportEmail(handle, userId, data) {
+      const user = await this.getById(handle, userId)
+
+      if (!user.email) {
+        throw new InvalidArgumentError(
+          "Du må ha en e-postadresse for å rapportere en feil. Gå til innstillinger/bruker eller kontakt Dotkom."
+        )
+      }
+
+      await emailService.send(
         DEFAULT_EMAIL_SOURCE,
-        data.email === undefined || data.email === "" ? [] : [data.email],
+        [user.email, "dotkom@online.ntnu.no"],
+        [user.email],
         ["dotkom@online.ntnu.no"],
         [],
-        [],
-        `(Online) Problem rapportert: ${data.title}`,
+        `(Online) Vi har mottatt feilrapporten din: ${data.title}`,
         emails.BUG_REPORT,
         {
           title: data.title,
-          email: data.email,
+          firstName: user.name?.trim().split(/\s+/)[0] ?? null,
+          name: user.name,
+          profileUrl: `https://online.ntnu.no/profil/${encodeURIComponent(user.username)}`,
           body: data.body,
         }
       )

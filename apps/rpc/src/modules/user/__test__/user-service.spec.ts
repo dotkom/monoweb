@@ -3,6 +3,8 @@ import type { DBHandle } from "@dotkomonline/db"
 import { GenderSchema, type Membership, type User } from "../user"
 import type { ManagementClient } from "auth0"
 import { mockDeep } from "vitest-mock-extended"
+import type { EmailService } from "../../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../../email/email-template"
 import type { FeideGroupsRepository } from "../../feide/feide-groups-repository"
 import type { MembershipService } from "../membership-service"
 import type { UserRepository } from "../user-repository"
@@ -58,6 +60,7 @@ describe("UserService", () => {
     const managementClient = mockDeep<ManagementClient>()
     const membershipService = mockDeep<MembershipService>()
     const s3Client = mockDeep<S3Client>()
+    const emailService = mockDeep<EmailService>()
 
     const userService = getUserService(
       userRepository,
@@ -65,13 +68,15 @@ describe("UserService", () => {
       managementClient,
       membershipService,
       s3Client,
-      "fake-aws-bucket"
+      "fake-aws-bucket",
+      emailService
     )
 
     return {
       userRepository,
       managementClient,
       userService,
+      emailService,
     }
   }
 
@@ -93,6 +98,55 @@ describe("UserService", () => {
   afterEach(() => {
     vi.clearAllMocks()
     vi.mocked(handle.user.findFirst).mockResolvedValue(null)
+  })
+
+  describe("sendBugReportEmail", () => {
+    const report = { title: "Påmelding feiler", body: "Jeg får ikke meldt meg på." }
+
+    it("uses the profile identity and sends a confirmation to the user with Dotkom copied", async () => {
+      const { userRepository, userService, emailService } = createService()
+      const user = makeUser()
+      userRepository.findById.mockResolvedValue(user)
+
+      await userService.sendBugReportEmail(handle, user.id, report)
+
+      expect(userRepository.findById).toHaveBeenCalledWith(handle, user.id)
+      expect(emailService.send).toHaveBeenCalledWith(
+        DEFAULT_EMAIL_SOURCE,
+        [user.email, "dotkom@online.ntnu.no"],
+        [user.email],
+        ["dotkom@online.ntnu.no"],
+        [],
+        `(Online) Vi har mottatt feilrapporten din: ${report.title}`,
+        emails.BUG_REPORT,
+        {
+          ...report,
+          firstName: "Correct",
+          name: user.name,
+          profileUrl: "https://online.ntnu.no/profil/test-user",
+        }
+      )
+    })
+
+    it.each([null, ""])("rejects reports when the profile email is %s", async (email) => {
+      const { userRepository, userService, emailService } = createService()
+      const user = makeUser({ email })
+      userRepository.findById.mockResolvedValue(user)
+
+      await expect(userService.sendBugReportEmail(handle, user.id, report)).rejects.toThrow(
+        "Gå til innstillinger/bruker eller kontakt Dotkom."
+      )
+      expect(emailService.send).not.toHaveBeenCalled()
+    })
+
+    it("propagates email queue failures", async () => {
+      const { userRepository, userService, emailService } = createService()
+      const user = makeUser()
+      userRepository.findById.mockResolvedValue(user)
+      emailService.send.mockRejectedValue(new Error("Queue unavailable"))
+
+      await expect(userService.sendBugReportEmail(handle, user.id, report)).rejects.toThrow("Queue unavailable")
+    })
   })
 
   it("syncs the submitted signup name back to Auth0 when Auth0 still uses the email as name", async () => {
