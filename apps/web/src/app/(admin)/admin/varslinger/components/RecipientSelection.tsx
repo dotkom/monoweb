@@ -6,7 +6,12 @@ import { useGroupAllQuery } from "@admin/grupper/queries"
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { EventSelectInput } from "@admin/components/forms/EventSelectInput"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
-import { canActAsNotificationGroup, canTargetAllUsers } from "@dotkomonline/rpc/notification-permissions"
+import {
+  canTargetAllUsers,
+  canTargetEventAttendees,
+  canTargetGroupMembers,
+  canTargetSpecificUsers,
+} from "@dotkomonline/rpc/notification-permissions"
 import type {
   NotificationRecipientAttendanceSelectionOption,
   NotificationRecipientMembershipStatus,
@@ -352,6 +357,7 @@ export function RecipientSelectionBuilder({
 }) {
   const authorization = useAuthorization()
   const canTargetEveryone = canTargetAllUsers(authorization)
+  const canTargetIndividuals = canTargetSpecificUsers(authorization)
   const [drafts, setDrafts] = useState<RuleDraft[]>(() => draftsFromRecipientSelection(value))
   const [excludedRecipients, setExcludedRecipients] = useState<ExcludedRecipient[]>(() =>
     (value?.excludedUserIds ?? []).map((userId) => ({
@@ -402,6 +408,14 @@ export function RecipientSelectionBuilder({
   }
 
   const addRule = (ruleType: RuleDraft["type"]) => {
+    if (ruleType === "ALL_USERS" && !canTargetEveryone) {
+      return
+    }
+
+    if (ruleType === "USERS" && !canTargetIndividuals) {
+      return
+    }
+
     if (ruleType === "ALL_USERS" && hasAllUsersRule) {
       return
     }
@@ -442,9 +456,11 @@ export function RecipientSelectionBuilder({
           <Button size="xs" variant="secondary" onClick={() => addRule("EVENT_ATTENDEES")}>
             {getRuleLabel("EVENT_ATTENDEES")}
           </Button>
-          <Button size="xs" variant="secondary" onClick={() => addRule("USERS")}>
-            {getRuleLabel("USERS")}
-          </Button>
+          {canTargetIndividuals && (
+            <Button size="xs" variant="secondary" onClick={() => addRule("USERS")}>
+              {getRuleLabel("USERS")}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -718,7 +734,7 @@ function GroupMembersFields({
 
   const targetableGroups = useMemo(() => {
     return groups.filter(
-      (group) => TARGETABLE_GROUP_TYPES.has(group.type) && canActAsNotificationGroup(authorization, group)
+      (group) => TARGETABLE_GROUP_TYPES.has(group.type) && canTargetGroupMembers(authorization, group)
     )
   }, [authorization, groups])
 
@@ -766,6 +782,18 @@ function EventAttendeesFields({
   draft: Extract<RuleDraft, { type: "EVENT_ATTENDEES" }>
   onChange: (draft: RuleDraft) => void
 }) {
+  const authorization = useAuthorization()
+  const targetableGroupSlugs = useMemo(
+    () =>
+      [...authorization.groups].flatMap(([slug, type]) => {
+        if (!canTargetEventAttendees(authorization, [{ slug, type }])) {
+          return []
+        }
+
+        return [slug]
+      }),
+    [authorization]
+  )
   const hasSelectedEvent = draft.eventId !== null
   const { data: eventWithAttendance } = useEventWithAttendancesGetQuery(draft.eventId ?? "", hasSelectedEvent)
   const attendance = eventWithAttendance?.attendance ?? null
@@ -795,6 +823,8 @@ function EventAttendeesFields({
     <div className="flex flex-col gap-3">
       <EventSelectInput
         placeholder="Velg arrangement"
+        filters={authorization.isAdministrator ? undefined : { byOrganizingGroup: targetableGroupSlugs }}
+        isEventSelectable={(event) => canTargetEventAttendees(authorization, event.hostingGroups)}
         value={draft.eventId ?? ""}
         onChange={(eventId) => {
           onChange({

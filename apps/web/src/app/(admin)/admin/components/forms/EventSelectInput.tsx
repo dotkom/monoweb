@@ -1,7 +1,7 @@
 "use client"
 
 import { useEventAllQuery, useEventWithAttendancesGetQuery } from "@admin/arrangementer/queries"
-import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
+import type { Event, EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@dotkomonline/ui"
 import { useEffect, useMemo, useState } from "react"
 
@@ -21,6 +21,7 @@ export type EventSelectInputProps = {
   excludeChildEvents?: boolean
   excludeEventIds?: EventId[]
   filters?: EventFilterQuery
+  isEventSelectable?: (event: Event) => boolean
 }
 
 export function EventSelectInput({
@@ -34,6 +35,7 @@ export function EventSelectInput({
   excludeChildEvents = false,
   excludeEventIds,
   filters,
+  isEventSelectable,
 }: EventSelectInputProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("")
@@ -67,12 +69,17 @@ export function EventSelectInput({
   const options = useMemo(() => {
     const fromSearch: EventSelectOption[] = events
       .filter(({ event }) => !excludeEventIds?.some((excludeId) => event.id === excludeId))
+      .filter(({ event }) => isEventSelectable?.(event) ?? true)
       .map(({ event }) => ({
         label: event.title,
         value: event.id,
       }))
 
-    if (selectedEvent?.event && !fromSearch.some((option) => option.value === selectedEvent.event.id)) {
+    if (
+      selectedEvent?.event &&
+      (isEventSelectable?.(selectedEvent.event) ?? true) &&
+      !fromSearch.some((option) => option.value === selectedEvent.event.id)
+    ) {
       fromSearch.push({
         value: selectedEvent.event.id,
         label: selectedEvent.event.title,
@@ -80,7 +87,7 @@ export function EventSelectInput({
     }
 
     return fromSearch
-  }, [events, excludeEventIds, selectedEvent])
+  }, [events, excludeEventIds, isEventSelectable, selectedEvent])
 
   const selectedOption = useMemo(() => {
     if (!selectedEventId) {
