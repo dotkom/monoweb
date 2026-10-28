@@ -3,7 +3,6 @@
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
 import {
-  getLngLatCenter,
   type LngLat,
   loadMazemap,
   type MazeMapGlobal,
@@ -11,31 +10,67 @@ import {
   type MazeMapInstance,
   type MazeMapPolygonGeometry,
   MAZEMAP_HIGHLIGHT_COLOR,
+  MAZEMAP_HOVER_HIGHLIGHT_COLOR,
 } from "./mazemap"
 
-interface MazeMapViewProps {
+export interface MazeMapRoom {
   poiIds: number[]
   highlightGeometry?: MazeMapPolygonGeometry
+  zLevel: number
+}
+
+interface MazeMapViewProps {
+  room: MazeMapRoom
+  hoveredRoom?: MazeMapRoom
   campusId: number
   center: LngLat
   zoom: number
-  zLevel: number
   className?: string
 }
 
-export const MazeMapView: FC<MazeMapViewProps> = ({
-  poiIds,
-  highlightGeometry,
-  campusId,
-  center,
-  zoom,
-  zLevel,
-  className,
-}) => {
+const applyHighlight = (
+  highlighter: MazeMapHighlighterInstance,
+  room: MazeMapRoom,
+  Mazemap: MazeMapGlobal,
+  isCancelled: () => boolean
+) => {
+  highlighter.clear()
+
+  if (room.highlightGeometry) {
+    highlighter.highlight({
+      type: "Feature",
+      geometry: room.highlightGeometry,
+      properties: { zLevel: room.zLevel },
+    })
+
+    return
+  }
+
+  if (room.poiIds.length === 0) {
+    return
+  }
+
+  Promise.all(room.poiIds.map((poiId) => Mazemap.Data.getPoi(poiId)))
+    .then((pois) => {
+      if (isCancelled()) {
+        return
+      }
+
+      const polygons = pois.filter((poi) => poi.geometry?.type === "Polygon")
+
+      if (polygons.length > 0) {
+        highlighter.highlight({ type: "FeatureCollection", features: polygons })
+      }
+    })
+    .catch(() => undefined)
+}
+
+export const MazeMapView: FC<MazeMapViewProps> = ({ room, hoveredRoom, campusId, center, zoom, className }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MazeMapInstance | null>(null)
   const mazemapRef = useRef<MazeMapGlobal | null>(null)
-  const highlighterRef = useRef<MazeMapHighlighterInstance | null>(null)
+  const selectedHighlighterRef = useRef<MazeMapHighlighterInstance | null>(null)
+  const hoverHighlighterRef = useRef<MazeMapHighlighterInstance | null>(null)
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
 
@@ -56,7 +91,7 @@ export const MazeMapView: FC<MazeMapViewProps> = ({
           campuses: campusId,
           center,
           zoom,
-          zLevel,
+          zLevel: room.zLevel,
         })
         mapRef.current = map
 
@@ -65,11 +100,18 @@ export const MazeMapView: FC<MazeMapViewProps> = ({
             return
           }
 
-          highlighterRef.current = new Mazemap.Highlighter(map, {
+          selectedHighlighterRef.current = new Mazemap.Highlighter(map, {
             showOutline: true,
             showFill: true,
             outlineColor: MAZEMAP_HIGHLIGHT_COLOR,
             fillColor: MAZEMAP_HIGHLIGHT_COLOR,
+          })
+          hoverHighlighterRef.current = new Mazemap.Highlighter(map, {
+            id: "mm-hover-highlight",
+            showOutline: true,
+            showFill: true,
+            outlineColor: MAZEMAP_HOVER_HIGHLIGHT_COLOR,
+            fillColor: MAZEMAP_HOVER_HIGHLIGHT_COLOR,
           })
           setReady(true)
         })
@@ -82,7 +124,8 @@ export const MazeMapView: FC<MazeMapViewProps> = ({
 
     return () => {
       cancelled = true
-      highlighterRef.current = null
+      selectedHighlighterRef.current = null
+      hoverHighlighterRef.current = null
       mazemapRef.current = null
       mapRef.current?.remove()
       mapRef.current = null
@@ -90,55 +133,50 @@ export const MazeMapView: FC<MazeMapViewProps> = ({
   }, [])
 
   useEffect(() => {
-    const map = mapRef.current
-    const Mazemap = mazemapRef.current
-    const highlighter = highlighterRef.current
+    if (!ready) {
+      return
+    }
 
-    if (!ready || !map || !Mazemap || !highlighter) {
+    mapRef.current?.flyTo({ center, zoom })
+  }, [ready, center, zoom])
+
+  useEffect(() => {
+    const highlighter = selectedHighlighterRef.current
+    const Mazemap = mazemapRef.current
+
+    if (!ready || !highlighter || !Mazemap) {
       return
     }
 
     let cancelled = false
-
-    highlighter.clear()
-
-    if (highlightGeometry) {
-      highlighter.highlight({ type: "Feature", geometry: highlightGeometry, properties: { zLevel } })
-      map.flyTo({ center, zoom })
-
-      return () => {
-        cancelled = true
-      }
-    }
-
-    if (poiIds.length === 0) {
-      return
-    }
-
-    Promise.all(poiIds.map((poiId) => Mazemap.Data.getPoi(poiId)))
-      .then((pois) => {
-        if (cancelled || !map || !Mazemap || !highlighter) {
-          return
-        }
-
-        const polygons = pois.filter((poi) => poi.geometry?.type === "Polygon")
-
-        if (polygons.length > 0) {
-          highlighter.highlight({ type: "FeatureCollection", features: polygons })
-        }
-
-        map.flyTo({ center: getLngLatCenter(pois.map((poi) => Mazemap.Util.getPoiLngLat(poi))), zoom })
-      })
-      .catch(() => {
-        if (!cancelled) {
-          map.flyTo({ center, zoom })
-        }
-      })
+    applyHighlight(highlighter, room, Mazemap, () => cancelled)
 
     return () => {
       cancelled = true
     }
-  }, [ready, center, highlightGeometry, poiIds, zLevel, zoom])
+  }, [ready, room])
+
+  useEffect(() => {
+    const highlighter = hoverHighlighterRef.current
+    const Mazemap = mazemapRef.current
+
+    if (!ready || !highlighter || !Mazemap) {
+      return
+    }
+
+    if (!hoveredRoom || hoveredRoom === room) {
+      highlighter.clear()
+
+      return
+    }
+
+    let cancelled = false
+    applyHighlight(highlighter, hoveredRoom, Mazemap, () => cancelled)
+
+    return () => {
+      cancelled = true
+    }
+  }, [ready, room, hoveredRoom])
 
   if (failed) {
     return (

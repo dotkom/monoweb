@@ -46,6 +46,7 @@ export type MazeMapGlobal = {
   Highlighter: new (
     map: MazeMapInstance,
     options: {
+      id?: string
       showOutline: boolean
       showFill: boolean
       outlineColor: string
@@ -70,6 +71,7 @@ const MAZEMAP_JS_URL = "https://api.mazemap.com/js/v3.0.9/mazemap.min.js"
 const MAZEMAP_CSS_URL = "https://api.mazemap.com/js/v3.0.9/mazemap.min.css"
 
 export const MAZEMAP_HIGHLIGHT_COLOR = "#0b5374"
+export const MAZEMAP_HOVER_HIGHLIGHT_COLOR = "#4d9bc1"
 
 let mazemapPromise: Promise<MazeMapGlobal> | undefined
 
