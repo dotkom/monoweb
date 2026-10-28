@@ -4,8 +4,8 @@ import { Structure } from "./components/Structure"
 import { WhoAreWeCard } from "./components/WhoAreWeCard"
 
 export default async function AboutOnlinePage() {
-  const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")
-  const committees = await server.group.allByType.query("COMMITTEE")
+  // const nodeCommittees = await server.group.allByType.query("NODE_COMMITTEE")
+  // const committees = await server.group.allByType.query("COMMITTEE")
   return (
     <div className="flex flex-col gap-24">
       <WhoAreWeCard />

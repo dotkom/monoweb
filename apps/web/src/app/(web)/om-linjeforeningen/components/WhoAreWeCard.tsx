@@ -2,7 +2,12 @@ import { Divider, ImageCard, Text, Title } from "@dotkomonline/ui"
 
 export const WhoAreWeCard = () => {
   return (
-    <ImageCard image="/online-logo-o.svg" alt="Online logo" imagePosition="left" className="bg-blue-100">
+    <ImageCard
+      image="/online-logo-o.svg"
+      alt="Online logo"
+      imagePosition="left"
+      className="bg-blue-100/80 dark:bg-brand"
+    >
       <div className="flex flex-col items-center justify-center my-8 sm:my-24">
         <Title size={"xxl"} className="pb-1 font-extrabold">
           Hvem er vi?

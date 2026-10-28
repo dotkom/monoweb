@@ -1,6 +1,6 @@
 import { Text, Title } from "@dotkomonline/ui"
-import Image from "next/image"
 import Link from "next/link"
+import { OnlineStructureFlow } from "./OnlineStructure"
 
 export const Structure = () => {
   return (
@@ -27,16 +27,16 @@ export const Structure = () => {
             Online Wiki
           </Link>
         </Text>
-        <>
-          <Image
+        <OnlineStructureFlow />
+
+        {/* <Image
             src="/OnlineStruktur.png"
             alt="Online Organizational Structure map"
             width={0}
             height={0}
             className="w-full sm:w-1/2 self-center"
           />
-          <Text className="text-center text-sm mt-2">Online Organisasjonskart</Text>
-        </>
+          <Text className="text-center text-sm mt-2">Online Organisasjonskart</Text> */}
       </div>
     </section>
   )

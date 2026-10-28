@@ -2,7 +2,12 @@ import { Divider, ImageCard, Text, Title } from "@dotkomonline/ui"
 
 export const OurGoalsCard = () => {
   return (
-    <ImageCard image="/Hovedbygget-01.jpg" alt="Hovedbygget på NTNU" imagePosition="right" className="bg-yellow-100">
+    <ImageCard
+      image="/Hovedbygget-01.jpg"
+      alt="Hovedbygget på NTNU"
+      imagePosition="right"
+      className="bg-brand-accent/25 dark:bg-brand"
+    >
       <div className="flex flex-col items-center justify-center my-8 sm:my-24">
         <Title size={"xxl"} className="pb-1 font-extrabold">
           Vårt Mål

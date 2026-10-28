@@ -2,7 +2,7 @@ import { Text } from "@dotkomonline/ui"
 
 export const Statistics = async () => {
   const memberCount = roundToLowestN(600, 50) // This could be fetched from the server, but stays relatively constant
-  const hobbyGroups = roundToLowestN(30, 5) // This could also be fetched from the server, but does not change as often
+  const hobbyGroups = roundToLowestN(10, 5) // This could also be fetched from the server, but does not change as often
   const eventCount = roundToLowestN(2500, 50) // Fetching the event count from the server
 
   const StatisticsNumber = ({ number, title }: { number: number; title: string }) => {
