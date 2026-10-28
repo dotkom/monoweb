@@ -1,12 +1,21 @@
+import { Text, Title } from "@dotkomonline/ui"
+import { KontoretMap } from "../components/KontoretMap"
+import { getKontoretRooms, CAMPUS_ID, MAP_ZOOM } from "./rooms"
+
 const OfficePage = async () => {
+  const rooms = await getKontoretRooms()
+
   return (
-    <div>
-      Yo, kommer snart
-      <iframe
-        src="https://use.mazemap.com/embed.html#v=1&campusid=1&zlevel=4&center=10.404590,63.415460&zoom=19.4&sharepoitype=identifier&sharepoi=360-A4-137"
-        title="Mazemap"
-        className="size-160"
-      ></iframe>
+    <div className="flex flex-col gap-2">
+      <Title element="h1" size="xl">
+        Om A4
+      </Title>
+
+      <Text className="text-gray-600 dark:text-stone-300">
+        Som Onliner er det flere nyttige rom på A4. Bruk knappene for å se hvor de er.
+      </Text>
+
+      {rooms.length > 0 && <KontoretMap rooms={rooms} campusId={CAMPUS_ID} zoom={MAP_ZOOM} className="mt-2" />}
     </div>
   )
 }
