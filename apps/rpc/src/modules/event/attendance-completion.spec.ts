@@ -1,17 +1,24 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { addHours, addMinutes, subMinutes } from "date-fns"
+import { addHours, addMinutes, subHours, subMinutes } from "date-fns"
 import { describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import { DEFAULT_MARK_DURATION, type Mark } from "../mark/mark"
 import type { Payment } from "../payment/payment-service"
 import {
   type Attendance,
+  type AttendanceSelection,
+  type AttendanceSelectionResponse,
   type Attendee,
   buildRegistrationAvailabilityCompletionView,
+  areAttendeeSelectionsEqual,
+  getActualDeregisterDeadline,
+  getApplicableAttendanceCompletionRequirements,
   getAttendeeState,
+  getMissedAttendanceCompletionRequirements,
   getMissingAttendanceCompletionRequirements,
+  hasAttendeeCompletedSelections,
 } from "./attendance"
 import { getAttendanceService } from "./attendance-service"
 import type { Event } from "./event"
@@ -32,6 +39,22 @@ const createAttendance = (overrides: Partial<Attendance> = {}): Attendance =>
     updatedAt: getCurrentUTC(),
     ...overrides,
   }) as Attendance
+
+const foodSelection: AttendanceSelection = {
+  id: "selection-food",
+  name: "Mat",
+  options: [
+    { id: "option-meat", name: "Kjøtt" },
+    { id: "option-vegetarian", name: "Vegetar" },
+  ],
+}
+
+const foodSelectionResponse = (optionId: string): AttendanceSelectionResponse => ({
+  selectionId: foodSelection.id,
+  selectionName: foodSelection.name,
+  optionId,
+  optionName: foodSelection.options.find((option) => option.id === optionId)?.name ?? "",
+})
 
 const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
   ({
@@ -116,12 +139,16 @@ describe("attendance completion helpers", () => {
       completionDeadline: attendee.completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
+      missedRequirements: [],
       paymentLink: "https://example.com/pay",
     })
   })
 
-  it("ignores leftover payment details while the attendee is queued", () => {
-    const attendance = createAttendance()
+  it("ignores completion requirements and leftover payment details while the attendee is queued", () => {
+    const attendance = createAttendance({
+      selections: [foodSelection],
+      deregisterDeadline: subHours(getCurrentUTC(), 1),
+    })
     const attendee = createAttendee({
       registeredAt: null,
       completionDeadline: addHours(getCurrentUTC(), 24),
@@ -133,6 +160,7 @@ describe("attendance completion helpers", () => {
       completionDeadline: null,
       requirements: [],
       missingRequirements: [],
+      missedRequirements: [],
       paymentLink: null,
     })
     expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
@@ -156,6 +184,7 @@ describe("attendance completion helpers", () => {
       completionDeadline: promotedAttendee.completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
+      missedRequirements: [],
       paymentLink: promotedAttendee.paymentLink,
     })
   })
@@ -164,6 +193,222 @@ describe("attendance completion helpers", () => {
     const attendance = createAttendance()
 
     expect(buildRegistrationAvailabilityCompletionView(attendance, null)).toBeNull()
+  })
+
+  it("compares attendee selections by selection and option id", () => {
+    const response = foodSelectionResponse("option-meat")
+
+    expect(areAttendeeSelectionsEqual([response], [response])).toBe(true)
+    expect(areAttendeeSelectionsEqual([response], [foodSelectionResponse("option-vegetarian")])).toBe(false)
+    expect(areAttendeeSelectionsEqual([], [response])).toBe(false)
+  })
+
+  it("uses charge schedule date when it is earlier than deregister deadline", () => {
+    const deregisterDeadline = addHours(getCurrentUTC(), 24)
+    const chargeScheduleDate = addHours(getCurrentUTC(), 6)
+    const attendance = createAttendance({ deregisterDeadline })
+
+    expect(getActualDeregisterDeadline(attendance, chargeScheduleDate)).toEqual(chargeScheduleDate)
+    expect(getActualDeregisterDeadline(attendance, null)).toEqual(deregisterDeadline)
+  })
+
+  it("detects incomplete selections", () => {
+    expect(hasAttendeeCompletedSelections([foodSelection], [])).toBe(false)
+    expect(hasAttendeeCompletedSelections([foodSelection], [foodSelectionResponse("")])).toBe(false)
+    expect(hasAttendeeCompletedSelections([foodSelection], [foodSelectionResponse("missing")])).toBe(false)
+    expect(hasAttendeeCompletedSelections([foodSelection], [foodSelectionResponse("option-meat")])).toBe(true)
+  })
+
+  it("includes selections in applicable requirements when attendance has selections", () => {
+    const attendance = createAttendance({
+      attendancePrice: null,
+      selections: [foodSelection],
+    })
+
+    expect(getApplicableAttendanceCompletionRequirements(attendance)).toEqual(["SELECTIONS"])
+  })
+
+  it("returns RESERVED when selections are still missing", () => {
+    const attendance = createAttendance({
+      attendancePrice: null,
+      selections: [foodSelection],
+    })
+    const attendee = createAttendee({
+      completionDeadline: addMinutes(getCurrentUTC(), 45),
+      selections: [],
+    })
+
+    expect(getAttendeeState(attendee, attendance)).toBe("RESERVED")
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual(["SELECTIONS"])
+  })
+
+  it("returns REGISTERED when selections are complete and no payment is required", () => {
+    const attendance = createAttendance({
+      attendancePrice: null,
+      selections: [foodSelection],
+    })
+    const attendee = createAttendee({
+      selections: [foodSelectionResponse("option-meat")],
+    })
+
+    expect(getAttendeeState(attendee, attendance)).toBe("REGISTERED")
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+  })
+
+  it("builds completion view with pending selections requirement", () => {
+    const attendance = createAttendance({
+      attendancePrice: null,
+      selections: [foodSelection],
+    })
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      selections: [],
+    })
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [{ requirement: "SELECTIONS", completed: false }],
+      missingRequirements: ["SELECTIONS"],
+      missedRequirements: [],
+      paymentLink: null,
+    })
+  })
+
+  it("builds completion view when both payment and selections are pending", () => {
+    const attendance = createAttendance({ selections: [foodSelection] })
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      paymentLink: "https://example.com/pay",
+      selections: [],
+    })
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [
+        { requirement: "PAYMENT", completed: false },
+        { requirement: "SELECTIONS", completed: false },
+      ],
+      missingRequirements: ["PAYMENT", "SELECTIONS"],
+      missedRequirements: [],
+      paymentLink: "https://example.com/pay",
+    })
+  })
+
+  it("builds completion view when payment is complete but selections are pending", () => {
+    const attendance = createAttendance({ selections: [foodSelection] })
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      paymentReservedAt: getCurrentUTC(),
+      selections: [],
+    })
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [
+        { requirement: "PAYMENT", completed: true },
+        { requirement: "SELECTIONS", completed: false },
+      ],
+      missingRequirements: ["SELECTIONS"],
+      missedRequirements: [],
+      paymentLink: null,
+    })
+  })
+
+  it("builds completion view when selections are complete but payment is pending", () => {
+    const attendance = createAttendance({ selections: [foodSelection] })
+    const completionDeadline = addHours(getCurrentUTC(), 1)
+    const attendee = createAttendee({
+      completionDeadline,
+      paymentLink: "https://example.com/pay",
+      selections: [foodSelectionResponse("option-meat")],
+    })
+
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline,
+      requirements: [
+        { requirement: "PAYMENT", completed: false },
+        { requirement: "SELECTIONS", completed: true },
+      ],
+      missingRequirements: ["PAYMENT"],
+      missedRequirements: [],
+      paymentLink: "https://example.com/pay",
+    })
+  })
+
+  it("treats incomplete selections as missed after deregister deadline", () => {
+    const deregisterDeadline = subHours(getCurrentUTC(), 1)
+    const attendance = createAttendance({
+      attendancePrice: null,
+      deregisterDeadline,
+      selections: [foodSelection],
+    })
+    const attendee = createAttendee({
+      completionDeadline: subMinutes(getCurrentUTC(), 30),
+      selections: [],
+    })
+
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual([])
+    expect(getMissedAttendanceCompletionRequirements(attendance, attendee)).toEqual(["SELECTIONS"])
+    expect(getAttendeeState(attendee, attendance)).toBe("REGISTERED")
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "REGISTERED",
+      completionDeadline: attendee.completionDeadline,
+      requirements: [{ requirement: "SELECTIONS", completed: false }],
+      missingRequirements: [],
+      missedRequirements: ["SELECTIONS"],
+      paymentLink: null,
+    })
+  })
+
+  it("keeps payment pending after deregister deadline while selections are missed", () => {
+    const deregisterDeadline = subHours(getCurrentUTC(), 1)
+    const attendance = createAttendance({
+      deregisterDeadline,
+      selections: [foodSelection],
+    })
+    const attendee = createAttendee({
+      completionDeadline: subMinutes(getCurrentUTC(), 30),
+      paymentLink: "https://example.com/pay",
+      selections: [],
+    })
+
+    expect(getMissingAttendanceCompletionRequirements(attendance, attendee)).toEqual(["PAYMENT"])
+    expect(getMissedAttendanceCompletionRequirements(attendance, attendee)).toEqual(["SELECTIONS"])
+    expect(getAttendeeState(attendee, attendance)).toBe("RESERVED")
+    expect(buildRegistrationAvailabilityCompletionView(attendance, attendee)).toEqual({
+      attendeeState: "RESERVED",
+      completionDeadline: attendee.completionDeadline,
+      requirements: [
+        { requirement: "PAYMENT", completed: false },
+        { requirement: "SELECTIONS", completed: false },
+      ],
+      missingRequirements: ["PAYMENT"],
+      missedRequirements: ["SELECTIONS"],
+      paymentLink: "https://example.com/pay",
+    })
+  })
+
+  it("uses payment charge deadline when it is earlier than deregister deadline", () => {
+    const deregisterDeadline = addHours(getCurrentUTC(), 24)
+    const paymentChargeDeadline = subHours(getCurrentUTC(), 1)
+    const attendance = createAttendance({
+      attendancePrice: null,
+      deregisterDeadline,
+      selections: [foodSelection],
+    })
+    const attendee = createAttendee({
+      paymentChargeDeadline,
+      selections: [],
+    })
+
+    expect(getMissedAttendanceCompletionRequirements(attendance, attendee)).toEqual(["SELECTIONS"])
   })
 })
 
@@ -203,10 +448,33 @@ function createPaymentVerificationContext(deregisterDeadline: Date, paymentStatu
     mock()
   )
 
-  return { handle, attendee, attendanceService, markService, personalMarkService }
+  return { handle, attendee, attendance, attendanceService, markService, personalMarkService }
 }
 
 describe("missing payment penalties", () => {
+  it("only assigns a selections mark when selections are missing without required payment", async () => {
+    const { handle, attendee, attendance, attendanceService, markService, personalMarkService } =
+      createPaymentVerificationContext(addHours(getCurrentUTC(), 1), "UNPAID")
+    attendance.attendancePrice = null
+    attendance.selections = [foodSelection]
+    markService.create.mockReset().mockResolvedValue(mock<Mark>({ id: "missing-selections-mark" }))
+    const deregisterAttendee = vi.spyOn(attendanceService, "deregisterAttendee").mockResolvedValue()
+
+    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+
+    expect(markService.create).toHaveBeenCalledExactlyOnceWith(
+      handle,
+      expect.objectContaining({ type: "MISSING_SELECTIONS", weight: 2, duration: DEFAULT_MARK_DURATION }),
+      []
+    )
+    expect(personalMarkService.addToUser).toHaveBeenCalledExactlyOnceWith(
+      handle,
+      attendee.userId,
+      "missing-selections-mark"
+    )
+    expect(deregisterAttendee).toHaveBeenCalledWith(handle, attendee.id, { ignoreDeregistrationWindow: true })
+  })
+
   it("assigns a suspension and a separate one-point mark after the deregistration deadline", async () => {
     const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentVerificationContext(
       subMinutes(getCurrentUTC(), 60),

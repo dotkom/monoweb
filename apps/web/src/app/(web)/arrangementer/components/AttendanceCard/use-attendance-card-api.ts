@@ -156,7 +156,7 @@ export const useAttendanceCardApi = ({
     isSSEConnected,
   })
 
-  const selectionsMutation = useSetSelectionsOptionsMutation()
+  const selectionsMutation = useSetSelectionsOptionsMutation({ attendanceId: attendance.id })
 
   const registerForAttendance = (turnstileToken: string) => {
     registerMutation.mutate({ attendanceId: attendance.id, turnstileToken })

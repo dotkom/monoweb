@@ -1,5 +1,5 @@
-import { getStudyGrade } from "@dotkomonline/utils"
-import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { getCurrentUTC, getStudyGrade } from "@dotkomonline/utils"
+import { addHours, compareAsc, hoursToMilliseconds, isBefore, min, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -286,7 +286,7 @@ export type RegistrationAvailabilityRegistrationView = z.infer<typeof Registrati
 export const AttendeeStateSchema = z.enum(["QUEUED", "RESERVED", "REGISTERED"])
 export type AttendeeState = z.infer<typeof AttendeeStateSchema>
 
-export const AttendanceCompletionRequirementSchema = z.enum(["PAYMENT"])
+export const AttendanceCompletionRequirementSchema = z.enum(["PAYMENT", "SELECTIONS"])
 export type AttendanceCompletionRequirement = z.infer<typeof AttendanceCompletionRequirementSchema>
 
 export const AttendanceCompletionRequirementStateSchema = z.object({
@@ -300,6 +300,7 @@ export const RegistrationAvailabilityCompletionViewSchema = z.object({
   completionDeadline: z.date().nullable(),
   requirements: z.array(AttendanceCompletionRequirementStateSchema),
   missingRequirements: z.array(AttendanceCompletionRequirementSchema),
+  missedRequirements: z.array(AttendanceCompletionRequirementSchema),
   paymentLink: z.string().nullable(),
 })
 export type RegistrationAvailabilityCompletionView = z.infer<typeof RegistrationAvailabilityCompletionViewSchema>
@@ -501,49 +502,147 @@ type AttendeePaymentProps = Pick<
   "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedByUserId"
 >
 
-export function getApplicableAttendanceCompletionRequirements(
-  attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "registeredAt"> | null
-): AttendanceCompletionRequirement[] {
-  if (attendee?.registeredAt == null) {
-    return []
+export function hasAttendeeCompletedSelections(
+  attendanceSelections: AttendanceSelection[],
+  responses: AttendanceSelectionResponse[]
+): boolean {
+  return attendanceSelections.every((selection) => {
+    const response = responses.find((candidate) => candidate.selectionId === selection.id)
+
+    if (response === undefined || response.optionId.length === 0) {
+      return false
+    }
+
+    return selection.options.some((option) => option.id === response.optionId)
+  })
+}
+
+export function areAttendeeSelectionsEqual(
+  left: AttendanceSelectionResponse[],
+  right: AttendanceSelectionResponse[]
+): boolean {
+  if (left.length !== right.length) {
+    return false
   }
+
+  return left.every((response) => {
+    const other = right.find((candidate) => candidate.selectionId === response.selectionId)
+
+    return other !== undefined && other.optionId === response.optionId
+  })
+}
+
+export function getActualDeregisterDeadline(
+  attendance: Pick<Attendance, "deregisterDeadline">,
+  chargeScheduleDate: Date | null
+): Date {
+  if (chargeScheduleDate === null) {
+    return attendance.deregisterDeadline
+  }
+
+  return min([attendance.deregisterDeadline, chargeScheduleDate])
+}
+
+export function getActualDeregisterDeadlineForAttendee(
+  attendance: Pick<Attendance, "deregisterDeadline">,
+  attendee: Pick<Attendee, "paymentChargeDeadline">
+): Date {
+  return getActualDeregisterDeadline(attendance, attendee.paymentChargeDeadline)
+}
+
+export function isPastDeregisterDeadlineForAttendee(
+  attendance: Pick<Attendance, "deregisterDeadline">,
+  attendee: Pick<Attendee, "paymentChargeDeadline">,
+  now = getCurrentUTC()
+): boolean {
+  const deadline = getActualDeregisterDeadlineForAttendee(attendance, attendee)
+
+  return isBefore(deadline, now)
+}
+
+export function getApplicableAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice" | "selections">
+): AttendanceCompletionRequirement[] {
+  const requirements: AttendanceCompletionRequirement[] = []
 
   if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
-    return ["PAYMENT"]
+    requirements.push("PAYMENT")
   }
 
-  return []
+  if (attendance.selections.length > 0) {
+    requirements.push("SELECTIONS")
+  }
+
+  return requirements
+}
+
+export function attendanceHasCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice" | "selections">
+): boolean {
+  return getApplicableAttendanceCompletionRequirements(attendance).length > 0
 }
 
 export function isAttendanceCompletionRequirementCompleted(
   requirement: AttendanceCompletionRequirement,
   attendee: Attendee | null,
-  attendancePrice: number | null
+  attendance: Pick<Attendance, "attendancePrice" | "selections">
 ): boolean {
   if (attendee === null) {
     return false
   }
 
   if (requirement === "PAYMENT") {
-    return hasAttendeePaid(attendee, attendancePrice) === true
+    return hasAttendeePaid(attendee, attendance.attendancePrice) === true
+  }
+
+  if (requirement === "SELECTIONS") {
+    return hasAttendeeCompletedSelections(attendance.selections, attendee.selections)
   }
 
   return false
 }
 
-export function getMissingAttendanceCompletionRequirements(
-  attendance: Pick<Attendance, "attendancePrice">,
+export function getMissedAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice" | "selections" | "deregisterDeadline">,
   attendee: Attendee | null
 ): AttendanceCompletionRequirement[] {
-  return getApplicableAttendanceCompletionRequirements(attendance, attendee).filter(
-    (requirement) => !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice)
+  if (attendee === null || attendee.registeredAt === null) {
+    return []
+  }
+
+  const missedRequirements: AttendanceCompletionRequirement[] = []
+
+  if (
+    attendance.selections.length > 0 &&
+    !hasAttendeeCompletedSelections(attendance.selections, attendee.selections) &&
+    isPastDeregisterDeadlineForAttendee(attendance, attendee)
+  ) {
+    missedRequirements.push("SELECTIONS")
+  }
+
+  return missedRequirements
+}
+
+export function getMissingAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice" | "selections" | "deregisterDeadline">,
+  attendee: Attendee | null
+): AttendanceCompletionRequirement[] {
+  if (attendee === null || attendee.registeredAt === null) {
+    return []
+  }
+
+  const missedRequirements = new Set(getMissedAttendanceCompletionRequirements(attendance, attendee))
+
+  return getApplicableAttendanceCompletionRequirements(attendance).filter(
+    (requirement) =>
+      !missedRequirements.has(requirement) &&
+      !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance)
   )
 }
 
 export function getAttendeeState(
   attendee: Attendee | null,
-  attendance: Pick<Attendance, "attendancePrice">
+  attendance: Pick<Attendance, "attendancePrice" | "selections" | "deregisterDeadline">
 ): AttendeeState | null {
   if (attendee === null) {
     return null
@@ -561,18 +660,18 @@ export function getAttendeeState(
 }
 
 export function attendeeHasPendingCompletionDeadline(
-  attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "completionDeadline" | "registeredAt"> | null
+  attendance: Pick<Attendance, "attendancePrice" | "selections" | "deregisterDeadline">,
+  attendee: Attendee | null
 ): boolean {
   if (attendee === null || attendee.registeredAt === null || attendee.completionDeadline === null) {
     return false
   }
 
-  return getMissingAttendanceCompletionRequirements(attendance, attendee as Attendee).length > 0
+  return getMissingAttendanceCompletionRequirements(attendance, attendee).length > 0
 }
 
 export function buildRegistrationAvailabilityCompletionView(
-  attendance: Pick<Attendance, "attendancePrice">,
+  attendance: Pick<Attendance, "attendancePrice" | "selections" | "deregisterDeadline">,
   attendee: Attendee | null
 ): RegistrationAvailabilityCompletionView | null {
   if (attendee === null) {
@@ -585,16 +684,17 @@ export function buildRegistrationAvailabilityCompletionView(
     return null
   }
 
-  const requirements = getApplicableAttendanceCompletionRequirements(attendance, attendee)
+  const requirements = attendee.registeredAt !== null ? getApplicableAttendanceCompletionRequirements(attendance) : []
 
   return {
     attendeeState,
     completionDeadline: attendee.registeredAt !== null ? attendee.completionDeadline : null,
     requirements: requirements.map((requirement) => ({
       requirement,
-      completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
+      completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance),
     })),
     missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
+    missedRequirements: getMissedAttendanceCompletionRequirements(attendance, attendee),
     paymentLink: attendee.registeredAt !== null ? attendee.paymentLink : null,
   }
 }
