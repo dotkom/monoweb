@@ -225,7 +225,7 @@ export const GroupWriteForm = ({
         label="Bilde"
         maxSizeKiB={GROUP_IMAGE_MAX_SIZE_KIB}
         onFileUpload={fileUpload}
-        aspectRatio={{ width: 16, height: 9 }}
+        aspectRatio={{ width: 1, height: 1 }}
       />
       <SelectField
         control={form.control}
