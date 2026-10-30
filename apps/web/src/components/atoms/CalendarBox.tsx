@@ -8,7 +8,6 @@ interface CalendarBoxProps {
   start: Date
   end: Date
   className?: string
-  containerClassName?: string
   titleClassName?: string
   titleTextClassName?: string
   dayClassName?: string
@@ -67,15 +66,15 @@ const CalendarPage = ({
 }: CalendarPageProps) => (
   <div
     className={cn(
-      "flex h-fit min-w-8 flex-col items-center rounded-md border border-gray-200 dark:border-stone-700",
+      "flex min-h-11 h-fit min-w-11 flex-col items-center rounded-md border border-gray-200 dark:border-stone-800",
       endDay && "grid w-16 grid-cols-[1fr_auto_1fr] grid-rows-[auto_1fr] items-stretch",
-      endDay && showYear && "w-22.5",
+      endMonthLabel && showYear && "w-22.5",
       className
     )}
   >
     <div
       className={cn(
-        "flex w-full flex-row justify-center rounded-t-sm bg-gray-200 py-px dark:bg-stone-700",
+        "flex w-full flex-row justify-center rounded-t-sm bg-gray-200 py-px dark:bg-stone-800",
         endDay && "col-span-3 px-1.5",
         endMonthLabel && "grid grid-cols-subgrid items-center",
         titleClassName
@@ -139,7 +138,6 @@ export const CalendarBox = ({
   start,
   end,
   className,
-  containerClassName,
   titleClassName,
   titleTextClassName,
   dayClassName,
@@ -158,8 +156,12 @@ export const CalendarBox = ({
 
   const showYear = !isSameYear(start, end) || !thisYear
 
-  const sharedPageProps = {
+  const startMonthLabel = showYear ? `${startDate.month} ${startDate.year}` : startDate.month
+  const endMonthLabel = showYear ? `${endDate.month} ${endDate.year}` : endDate.month
+
+  const pageProps = {
     showYear,
+    className,
     titleClassName,
     titleTextClassName,
     dayClassName,
@@ -167,50 +169,20 @@ export const CalendarBox = ({
     weekdayTextClassName,
     arrowClassName,
     includeWeekday,
-  }
-
-  const startMonthLabel = showYear ? `${startDate.month} ${startDate.year}` : startDate.month
-  const endMonthLabel = showYear ? `${endDate.month} ${endDate.year}` : endDate.month
+    startDay: startDate.day,
+    startDayWeekday,
+    monthLabel: startMonthLabel,
+  } as const satisfies Partial<CalendarPageProps>
 
   if (isSameDay(start, end)) {
-    return (
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={startMonthLabel}
-        startDay={startDate.day}
-        startDayWeekday={startDayWeekday}
-        className={cn("min-h-9 min-w-9 dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", titleClassName)}
-      />
-    )
+    return <CalendarPage {...pageProps} />
   }
 
   if (isSameMonth(start, end)) {
-    return (
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={startMonthLabel}
-        startDay={startDate.day}
-        startDayWeekday={startDayWeekday}
-        endDay={endDate.day}
-        endDayWeekday={endDayWeekday}
-        className={cn("min-h-11 min-w-11 dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", titleClassName)}
-      />
-    )
+    return <CalendarPage {...pageProps} endDay={endDate.day} endDayWeekday={endDayWeekday} />
   }
 
   return (
-    <CalendarPage
-      {...sharedPageProps}
-      monthLabel={startMonthLabel}
-      endMonthLabel={endMonthLabel}
-      startDay={startDate.day}
-      startDayWeekday={startDayWeekday}
-      endDay={endDate.day}
-      endDayWeekday={endDayWeekday}
-      className={cn("min-h-11 min-w-11 dark:border-stone-800", className, containerClassName)}
-      titleClassName={cn("dark:bg-stone-800", titleClassName)}
-    />
+    <CalendarPage {...pageProps} endMonthLabel={endMonthLabel} endDay={endDate.day} endDayWeekday={endDayWeekday} />
   )
 }
