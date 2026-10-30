@@ -1,6 +1,7 @@
 "use client"
 
 import { Link } from "@/components/link"
+import { useDropdownNotifications } from "@/utils/use-dropdown-notifications"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useMyNotifications } from "@/utils/use-my-notifications"
 import type { UserNotification } from "@dotkomonline/rpc/notification"
@@ -99,18 +100,19 @@ function AuthenticatedNotificationDropdown() {
           </Tooltip>
         </div>
 
-        <NotificationScrollList
-          userNotifications={userNotifications}
-          isPending={notificationsQuery.isPending}
-          isError={notificationsQuery.isError}
-          isFetchingNextPage={notificationsQuery.isFetchingNextPage}
-          isLoading={notificationsQuery.isLoading}
-          hasNextPage={notificationsQuery.hasNextPage === true}
-          hasNoNotifications={hasNoNotifications}
-          onFetchNextPage={notificationsQuery.fetchNextPage}
-          onMarkAsRead={(notificationId) => markAsReadMutation.mutate({ notificationId })}
-          onNavigate={() => setIsOpen(false)}
-        />
+        {isOpen && (
+          <NotificationScrollList
+            userNotifications={userNotifications}
+            isPending={notificationsQuery.isPending}
+            isError={notificationsQuery.isError}
+            isFetchingNextPage={notificationsQuery.isFetchingNextPage}
+            isLoading={notificationsQuery.isLoading}
+            hasNextPage={notificationsQuery.hasNextPage === true}
+            onFetchNextPage={notificationsQuery.fetchNextPage}
+            onMarkAsRead={(notificationId) => markAsReadMutation.mutate({ notificationId })}
+            onNavigate={() => setIsOpen(false)}
+          />
+        )}
 
         <div className="shrink-0 border-t border-gray-200 px-2 pb-2 pt-1.5 dark:border-stone-700">
           <Button element={Link} href="/varslinger" variant="ghost" className="h-8 w-full rounded-b-xl rounded-t-xs">
@@ -129,7 +131,6 @@ function NotificationScrollList({
   isFetchingNextPage,
   isLoading,
   hasNextPage,
-  hasNoNotifications,
   onFetchNextPage,
   onMarkAsRead,
   onNavigate,
@@ -140,13 +141,14 @@ function NotificationScrollList({
   isFetchingNextPage: boolean
   isLoading: boolean
   hasNextPage: boolean
-  hasNoNotifications: boolean
   onFetchNextPage: () => void
   onMarkAsRead: (notificationId: string) => void
   onNavigate: () => void
 }) {
   const loaderElementReference = useRef<HTMLDivElement>(null)
   const scrollParentElementReference = useRef<HTMLDivElement>(null)
+  const visibleNotifications = useDropdownNotifications(userNotifications)
+  const hasNoUnreadNotifications = !isPending && !isError && !hasNextPage && visibleNotifications.length === 0
 
   useEffect(() => {
     const intersectionObserver = new IntersectionObserver(
@@ -191,11 +193,11 @@ function NotificationScrollList({
         <Text className="py-8 text-center text-sm text-muted-foreground">Varslingene kunne ikke lastes inn.</Text>
       )}
 
-      {hasNoNotifications && (
-        <Text className="py-8 text-center text-sm text-muted-foreground">Du har ingen varslinger ennå.</Text>
+      {hasNoUnreadNotifications && (
+        <Text className="py-8 text-center text-sm text-muted-foreground">Du har ingen uleste varslinger.</Text>
       )}
 
-      {userNotifications.map((userNotification) => {
+      {visibleNotifications.map((userNotification) => {
         const hasPayload = userNotification.notification.link.type !== "NONE"
         let payload = null
 
