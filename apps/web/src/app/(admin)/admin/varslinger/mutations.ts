@@ -3,24 +3,24 @@ import { useTRPC } from "@admin/lib/trpc-client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 
-export function useCreateNotificationMutation() {
+export function useCreateNotificationDraftMutation() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
   const router = useRouter()
 
   return useMutation(
-    trpc.notification.create.mutationOptions({
+    trpc.notification.createDraft.mutationOptions({
       onMutate: () => {
         notification.loading({
-          title: "Sender…",
-          message: "Varslingen sendes til mottakerne.",
+          title: "Oppretter utkast…",
+          message: "",
         })
       },
       onSuccess: async (data) => {
         notification.complete({
-          title: "Sendt",
-          message: `Sendt til ${data.recipientCount === 1 ? "1 person" : `${data.recipientCount} personer`}`,
+          title: "Utkast opprettet",
+          message: "Velg mottakere og forhåndsvis innholdet før du sender.",
         })
 
         await queryClient.invalidateQueries({
@@ -30,11 +30,11 @@ export function useCreateNotificationMutation() {
           queryKey: trpc.notification.getRecipientStats.queryKey(),
         })
 
-        router.replace(`/admin/varslinger/${data.notification.id}`)
+        router.replace(`/admin/varslinger/${data.id}`)
       },
       onError: (error) => {
         notification.fail({
-          title: "Kunne ikke sende",
+          title: "Kunne ikke opprette utkast",
           message: error.message,
           error: error,
         })
@@ -63,6 +63,45 @@ export function useEditNotificationMutation() {
         await queryClient.invalidateQueries({
           queryKey: trpc.notification.findMany.infiniteQueryKey(),
         })
+      },
+    })
+  )
+}
+
+export function useSaveNotificationDraftRecipientsMutation() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({ method: "update" })
+
+  return useMutation(
+    trpc.notification.saveDraftRecipients.mutationOptions({
+      onMutate: loading,
+      onError: fail,
+      onSuccess: async () => {
+        complete()
+        await queryClient.invalidateQueries({ queryKey: trpc.notification.get.queryKey() })
+      },
+    })
+  )
+}
+
+export function useSendNotificationDraftMutation() {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.notification.sendDraft.mutationOptions({
+      onMutate: () => notification.loading({ title: "Sender…", message: "" }),
+      onError: (error) => notification.fail({ title: "Kunne ikke sende", message: error.message, error }),
+      onSuccess: async (result) => {
+        notification.complete({ title: "Sendt", message: `Sendt til ${result.recipientCount} mottakere` })
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: trpc.notification.get.queryKey() }),
+          queryClient.invalidateQueries({ queryKey: trpc.notification.findMany.infiniteQueryKey() }),
+          queryClient.invalidateQueries({ queryKey: trpc.notification.getRecipientStats.queryKey() }),
+          queryClient.invalidateQueries({ queryKey: trpc.notification.findRecipients.infiniteQueryKey() }),
+        ])
       },
     })
   )

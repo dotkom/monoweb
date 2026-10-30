@@ -1,25 +1,21 @@
 "use client"
 
 import { NotificationsTable } from "@admin/varslinger/components/NotificationsTable"
-import { SendNotificationModal } from "@admin/varslinger/components/SendNotificationModal"
+import { CreateNotificationDraftModal } from "@admin/varslinger/components/CreateNotificationDraftModal"
 import { useNotificationsInfiniteQuery } from "@admin/varslinger/queries"
-import { Button, Text, Title } from "@dotkomonline/ui"
+import { Button, Title } from "@dotkomonline/ui"
 import { useState } from "react"
 import { useEventContext } from "../provider"
 import { useEventEditPermission } from "../../use-event-edit-permission"
 
 export default function EventNotificationsPage() {
-  const { event, attendance } = useEventContext()
+  const { event } = useEventContext()
   const { canEdit } = useEventEditPermission()
   const [isSendOpen, setIsSendOpen] = useState(false)
   const { notifications, isLoading, isPlaceholderData, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useNotificationsInfiniteQuery({
       byLink: { type: "EVENT", eventId: event.id },
     })
-
-  if (!attendance) {
-    return <Text>Du må legge til en påmelding før du kan sende varsler til påmeldte.</Text>
-  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -28,10 +24,10 @@ export default function EventNotificationsPage() {
         type="button"
         variant="secondary"
         className="w-fit"
-        disabled={!canEdit || attendance.attendees.length === 0}
+        disabled={!canEdit}
         onClick={() => setIsSendOpen(true)}
       >
-        Send melding til påmeldte
+        Opprett varsling
       </Button>
 
       <NotificationsTable
@@ -44,17 +40,14 @@ export default function EventNotificationsPage() {
         dimReadOnlyRows
       />
 
-      <SendNotificationModal
+      <CreateNotificationDraftModal
         open={isSendOpen}
         onOpenChange={setIsSendOpen}
         source={{
           type: "EVENT",
           eventId: event.id,
-          attendanceId: attendance.id,
           eventTitle: event.title,
           hostingGroupSlugs: event.hostingGroups.map((group) => group.slug),
-          hasPayment: attendance.attendancePrice !== null,
-          selections: attendance.selections,
         }}
       />
     </div>

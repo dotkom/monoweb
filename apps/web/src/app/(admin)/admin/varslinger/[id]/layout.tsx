@@ -9,12 +9,14 @@ import {
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import { getNotificationLinkTypeLabel } from "@dotkomonline/rpc/notification"
-import { Text } from "@dotkomonline/ui"
-import { IconFileText, IconUsers } from "@tabler/icons-react"
+import { Button, Text } from "@dotkomonline/ui"
+import { IconCheck, IconFileText, IconUsers } from "@tabler/icons-react"
+import Link from "next/link"
 import { type PropsWithChildren, use } from "react"
 import { useDeleteNotificationMutation } from "../mutations"
 import { useNotificationCreatedByQuery, useNotificationGetQuery, useNotificationRecipientStatsQuery } from "../queries"
-import { NotificationDetailsContext } from "./provider"
+import { SendNotificationDraftButton } from "../components/SendNotificationDraftButton"
+import { NotificationDetailsProvider } from "./provider"
 import {
   getActorGroupLabel,
   getCreatedByName,
@@ -36,7 +38,7 @@ export default function NotificationDetailsLayout({
   useBreadcrumbLabel(breadcrumbPath("varslinger", id), notification?.title ?? null)
   useBreadcrumbLabel(breadcrumbPath("varslinger", id, "mottakere"), "Mottakere")
 
-  const statsQuery = useNotificationRecipientStatsQuery(id, canManage)
+  const statsQuery = useNotificationRecipientStatsQuery(id, canManage && notification?.status === "SENT")
   const deleteNotification = useDeleteNotificationMutation()
 
   const { data: createdBy, isLoading: isCreatedByLoading } = useNotificationCreatedByQuery(notification?.createdById)
@@ -57,6 +59,8 @@ export default function NotificationDetailsLayout({
 
   const actorGroupLabel = getActorGroupLabel(notification.actorGroup)
   const createdByName = getCreatedByName(notification.createdById, createdBy?.name, isCreatedByLoading)
+  const isDraft = notification.status === "DRAFT"
+  const notificationDate = notification.sentAt ?? notification.createdAt
 
   const linkLabel = notification.link.type === "NONE" ? null : getNotificationLinkTypeLabel(notification.link.type)
   const linkHref = notification.link.type === "NONE" ? null : getNotificationLinkHref(notification.link)
@@ -76,43 +80,61 @@ export default function NotificationDetailsLayout({
   ]
 
   return (
-    <ResourceDetailLayout
-      title={notification.title}
-      copyIds={[{ value: notification.id }]}
-      backHref="/admin/varslinger"
-      navItems={navItems}
-      viewInWebProps={
-        linkHref === null
-          ? undefined
-          : {
-              href: linkHref,
-              label: getNotificationLinkActionLabel(notification.link.type),
-            }
-      }
-      onDelete={() => deleteNotification.mutate(notification.id)}
-      deleteConfirmTitle={formatDeleteConfirmText(statsQuery.data?.totalCount)}
-      description={
-        <div className="flex flex-col gap-2">
-          <Text className="text-sm text-muted-foreground">
-            Varsling sendt {formatSentAt(notification.createdAt)} som {actorGroupLabel} av {createdByName}
-          </Text>
+    <NotificationDetailsProvider key={notification.id} notification={notification}>
+      <ResourceDetailLayout
+        title={notification.title}
+        copyIds={[{ value: notification.id }]}
+        backHref="/admin/varslinger"
+        navItems={navItems}
+        headerActions={{
+          left: linkHref !== null && (
+            <Button
+              variant="outline"
+              element={Link}
+              href={linkHref}
+              target={notification.link.type === "URL" ? "_blank" : undefined}
+              rel={notification.link.type === "URL" ? "noopener noreferrer" : undefined}
+            >
+              {getNotificationLinkActionLabel(notification.link.type)}
+            </Button>
+          ),
+          right: isDraft ? (
+            <SendNotificationDraftButton />
+          ) : (
+            <div className="flex items-center gap-1.5 p-2 bg-green-50 dark:bg-green-900/33 rounded-lg">
+              <IconCheck className="size-5 text-green-600 dark:text-green-400" aria-hidden />
+              <Text className="text-sm font-medium">Varslingen er sendt</Text>
+            </div>
+          ),
+        }}
+        onDelete={() => deleteNotification.mutate(notification.id)}
+        deleteConfirmTitle={
+          isDraft ? "Er du sikker på at du vil slette utkastet?" : formatDeleteConfirmText(statsQuery.data?.totalCount)
+        }
+        description={
+          <div className="flex flex-col gap-2">
+            <Text className="text-sm text-muted-foreground">
+              {isDraft ? "Utkast opprettet" : "Varsling sendt"} {formatSentAt(notificationDate)} som {actorGroupLabel}{" "}
+              av {createdByName}
+            </Text>
 
-          {linkHref === null && linkLabel !== null && (
-            <Text className="text-sm text-muted-foreground">{linkLabel}</Text>
-          )}
-        </div>
-      }
-      readOnlyNotice={
-        canManage
-          ? undefined
-          : {
-              title: "Du kan ikke redigere varslingen.",
-              message: "Dette er fordi du ikke er avsender. Kontakt dotkom dersom du mener dette er en feil.",
-            }
-      }
-      missingDeletePermission={canManage ? undefined : true}
-    >
-      <NotificationDetailsContext.Provider value={{ notification }}>{children}</NotificationDetailsContext.Provider>
-    </ResourceDetailLayout>
+            {linkHref === null && linkLabel !== null && (
+              <Text className="text-sm text-muted-foreground">{linkLabel}</Text>
+            )}
+          </div>
+        }
+        readOnlyNotice={
+          canManage
+            ? undefined
+            : {
+                title: "Du kan ikke redigere varslingen.",
+                message: "Dette er fordi du ikke er avsender. Kontakt dotkom dersom du mener dette er en feil.",
+              }
+        }
+        missingDeletePermission={canManage ? undefined : true}
+      >
+        {children}
+      </ResourceDetailLayout>
+    </NotificationDetailsProvider>
   )
 }

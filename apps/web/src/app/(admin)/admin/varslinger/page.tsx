@@ -8,7 +8,7 @@ import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { NotificationsTable } from "./components/NotificationsTable"
-import { SendNotificationModal } from "./components/SendNotificationModal"
+import { CreateNotificationDraftModal } from "./components/CreateNotificationDraftModal"
 import { useNotificationsInfiniteQuery } from "./queries"
 
 type ScopeFilter = "alle" | "mine"
@@ -106,7 +106,7 @@ export default function NotificationsPage() {
       />
 
       {canCreate && (
-        <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ type: "GLOBAL" }} />
+        <CreateNotificationDraftModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ type: "GLOBAL" }} />
       )}
     </div>
   )

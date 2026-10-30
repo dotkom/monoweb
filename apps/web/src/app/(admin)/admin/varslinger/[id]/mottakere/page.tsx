@@ -8,6 +8,7 @@ import { IconMail, IconMailOpened, IconUsers } from "@tabler/icons-react"
 import { useState } from "react"
 import { AddRecipientsModal } from "../../components/AddRecipientsModal"
 import { NotificationRecipientsTable } from "../../components/NotificationRecipientsTable"
+import { NotificationDraftRecipients } from "../../components/NotificationDraftRecipients"
 import { useNotificationRecipientStatsQuery, useNotificationRecipientsInfiniteQuery } from "../../queries"
 import { useNotificationDetailsContext } from "../provider"
 import { formatPercent } from "../utils"
@@ -16,7 +17,8 @@ export default function NotificationRecipientsPage() {
   const { notification } = useNotificationDetailsContext()
   const authorization = useAuthorization()
   const canManage = canManageNotification(authorization, notification.actorGroup)
-  const statsQuery = useNotificationRecipientStatsQuery(notification.id, canManage)
+  const isSent = notification.status === "SENT"
+  const statsQuery = useNotificationRecipientStatsQuery(notification.id, canManage && isSent)
   const [isAddRecipientsOpen, setIsAddRecipientsOpen] = useState(false)
   const [recipientFilters, setRecipientFilters] = useState<NotificationRecipientFilterQuery>({})
 
@@ -28,10 +30,14 @@ export default function NotificationRecipientsPage() {
     hasNextPage: isRecipientsHasNextPage,
     fetchNextPage: fetchNextRecipientsPage,
     isError: isRecipientsError,
-  } = useNotificationRecipientsInfiniteQuery(notification.id, recipientFilters, canManage)
+  } = useNotificationRecipientsInfiniteQuery(notification.id, recipientFilters, canManage && isSent)
+
+  if (!isSent) {
+    return <NotificationDraftRecipients />
+  }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       {canManage && statsQuery.isPending && <div className="h-4 w-60 animate-pulse rounded-sm bg-muted" />}
 
       {canManage && statsQuery.isError && (
@@ -41,22 +47,22 @@ export default function NotificationRecipientsPage() {
       {canManage && statsQuery.data !== undefined && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1.5">
-            <IconUsers size={16} className="text-muted-foreground" />
-            <Text className="text-sm">{statsQuery.data.totalCount} mottakere</Text>
+            <IconUsers className="size-4.5 text-muted-foreground" />
+            <Text className="text-base">{statsQuery.data.totalCount} mottakere</Text>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <IconMailOpened size={16} className="text-muted-foreground" />
-              <Text className="text-sm">
+              <IconMailOpened className="size-4.5 text-muted-foreground" />
+              <Text className="text-base">
                 {formatPercent(statsQuery.data.readCount, statsQuery.data.totalCount)} lest{" "}
                 <span className="text-muted-foreground">({statsQuery.data.readCount})</span>
               </Text>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <IconMail size={16} className="text-muted-foreground" />
-              <Text className="text-sm">
+              <IconMail className="size-4.5 text-muted-foreground" />
+              <Text className="text-base">
                 {formatPercent(statsQuery.data.unreadCount, statsQuery.data.totalCount)} ulest{" "}
                 <span className="text-muted-foreground">({statsQuery.data.unreadCount})</span>
               </Text>

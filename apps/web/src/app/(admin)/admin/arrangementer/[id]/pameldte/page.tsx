@@ -1,7 +1,7 @@
 "use client"
 
 import { UserSearch } from "@admin/brukere/components/UserSearch"
-import { SendNotificationModal } from "@admin/varslinger/components/SendNotificationModal"
+import { CreateNotificationDraftModal } from "@admin/varslinger/components/CreateNotificationDraftModal"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
@@ -47,13 +47,8 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
         <Title size="md">Alle påmeldte</Title>
 
         <div className="flex flex-col gap-2">
-          <Button
-            variant="secondary"
-            className="w-fit"
-            disabled={attendance.attendees.length === 0 || !canEdit}
-            onClick={() => setNotifyOpen(true)}
-          >
-            Send melding til påmeldte
+          <Button variant="secondary" className="w-fit" disabled={!canEdit} onClick={() => setNotifyOpen(true)}>
+            Opprett varsling
           </Button>
           {attendeesWithoutEmail.length > 0 && (
             <div className="flex flex-col gap-1">
@@ -98,17 +93,14 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
 
       <div className="h-8" />
 
-      <SendNotificationModal
+      <CreateNotificationDraftModal
         open={notifyOpen}
         onOpenChange={setNotifyOpen}
         source={{
           type: "EVENT",
           eventId: event.id,
-          attendanceId: attendance.id,
           eventTitle: event.title,
           hostingGroupSlugs: event.hostingGroups.map((group) => group.slug),
-          hasPayment: attendance.attendancePrice !== null,
-          selections: attendance.selections,
         }}
       />
 
