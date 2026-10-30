@@ -16,7 +16,7 @@ export default function NotificationContentPage() {
         onContentChange={setContentDraft}
         className="min-w-0"
       />
-      <div className="min-w-0 lg:sticky lg:top-[calc(var(--resource-detail-header-bottom,0px)+1.5rem)]">
+      <div className="max-lg:hidden min-w-0 lg:sticky lg:top-[calc(var(--resource-detail-header-bottom,0px)+1.5rem)]">
         <NotificationPreview notification={previewNotification} />
       </div>
     </div>
