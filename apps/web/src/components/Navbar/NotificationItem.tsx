@@ -81,7 +81,7 @@ export function NotificationItem({
       <span
         aria-hidden
         className={cn(
-          "pointer-events-none w-1 shrink-0 self-stretch rounded-full",
+          "pointer-events-none relative w-1 shrink-0 self-stretch rounded-full",
           notificationAccentClasses[notificationConfiguration.color]
         )}
       />
@@ -89,29 +89,29 @@ export function NotificationItem({
       <div className="pointer-events-none relative flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex min-w-0 flex-col gap-1">
           <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-            <div
-              className={cn(
-                "inline-flex w-fit min-w-0 max-w-full items-start gap-1.5 rounded-sm",
-                isUnread && "bg-yellow-100 dark:bg-yellow-400/10"
-              )}
-            >
-              <Text element="span" className="min-w-0 line-clamp-2 wrap-anywhere text-sm font-medium">
-                {notification.title}
-              </Text>
-
-              {isUnread && (
-                <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
-              )}
-            </div>
+            <Text element="span" className="min-w-0 line-clamp-2 wrap-anywhere text-sm font-medium">
+              {notification.title}
+            </Text>
 
             <div className="size-6 shrink-0">
-              {isUnread && onMarkAsRead !== undefined && (
+              {onMarkAsRead !== undefined && (
                 <Button
                   variant="outline"
                   size="icon-xs"
                   aria-label="Merk som lest"
+                  aria-hidden={!isUnread}
+                  disabled={!isUnread}
+                  tabIndex={isUnread ? 0 : -1}
                   onClick={markAsRead}
-                  className="pointer-events-auto rounded-sm border-gray-200 bg-gray-50 hover:bg-gray-200/70 dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700 md:opacity-0 md:group-hover/container:opacity-100 md:group-focus-within/container:opacity-100"
+                  className={cn(
+                    "rounded-sm border-gray-200 bg-gray-50 transition-[opacity,scale] duration-300 ease-out motion-reduce:transition-none hover:bg-gray-200/70 dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+                    isUnread
+                      ? "pointer-events-auto scale-100"
+                      : "pointer-events-none scale-75 opacity-0 disabled:opacity-0 aria-disabled:opacity-0",
+                    isUnread &&
+                      notificationConfiguration.behavior !== "IMPORTANT" &&
+                      "md:opacity-0 md:group-hover/container:opacity-100 md:group-focus-within/container:opacity-100"
+                  )}
                 >
                   <IconCheck className="size-3.5" />
                 </Button>
