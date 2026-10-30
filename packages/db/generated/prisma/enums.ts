@@ -310,3 +310,19 @@ export const SidequestStatus = {
 } as const
 
 export type SidequestStatus = (typeof SidequestStatus)[keyof typeof SidequestStatus]
+
+
+export const CommitteeApplicationInterviewDuration = {
+  MINUTES_20: 'MINUTES_20',
+  MINUTES_30: 'MINUTES_30'
+} as const
+
+export type CommitteeApplicationInterviewDuration = (typeof CommitteeApplicationInterviewDuration)[keyof typeof CommitteeApplicationInterviewDuration]
+
+
+export const CommitteeApplicationGroupType = {
+  EXCLUSIVE: 'EXCLUSIVE',
+  ADDITIVE: 'ADDITIVE'
+} as const
+
+export type CommitteeApplicationGroupType = (typeof CommitteeApplicationGroupType)[keyof typeof CommitteeApplicationGroupType]
