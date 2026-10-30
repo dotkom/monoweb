@@ -55,7 +55,7 @@ interface EventListSectionData {
 export const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayMode, userId }) => {
   if (displayMode === "cards") {
     return (
-      <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
         {eventsWithAttendance.map(({ event, attendance }) => (
           <EventCard key={event.id} event={event} attendance={attendance} userId={userId} className="h-full min-w-0" />
         ))}
@@ -286,7 +286,7 @@ const EventListSection: FC<EventListSectionProps> = ({ eventSection, displayMode
 export const EventListSkeleton = ({ displayMode = "list" }: { displayMode?: EventListDisplayMode }) => {
   if (displayMode === "cards") {
     return (
-      <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
         <EventCardSkeleton />
         <EventCardSkeleton />
         <EventCardSkeleton />
