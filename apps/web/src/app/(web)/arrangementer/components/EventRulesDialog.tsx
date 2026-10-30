@@ -28,7 +28,7 @@ export const EventRulesDialog = ({ open, onOpenChange, trigger }: EventRulesDial
         <div className="flex flex-row gap-4 justify-between">
           <DialogTitle asChild>
             <Title element="h1" size="lg">
-              Prikkeregler
+              Arrangementregler
             </Title>
           </DialogTitle>
 
@@ -57,7 +57,7 @@ export const EventRulesButton = ({ variant = "ghost", withIcon = true, ...props 
       trigger={
         <Button variant={variant} {...props}>
           {withIcon && <IconBook2 className="size-4" />}
-          Prikkeregler
+          Arrangementregler
         </Button>
       }
     />

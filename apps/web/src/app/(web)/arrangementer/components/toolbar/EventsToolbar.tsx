@@ -5,6 +5,7 @@ interface EventsToolbarProps {
   ref: Ref<HTMLDivElement>
   /** Shows the floating surface */
   isFloating: boolean
+  isPanelOpen: boolean
   /** Enables transitions */
   isSettled: boolean
   /** Slot for the desktop filter panel, inside the floating surface */
@@ -13,10 +14,14 @@ interface EventsToolbarProps {
   children: ReactNode
 }
 
-/** Sticky toolbar that floats once stuck. Expects the `--events-toolbar-*` variables from the page */
+/**
+ * Sticky toolbar that floats once stuck. Expects `--events-toolbar-top` and `--events-toolbar-height` CSS variables
+ * to be set.
+ */
 export const EventsToolbar = ({
   ref,
   isFloating,
+  isPanelOpen,
   isSettled,
   panelContainerRef,
   className,
@@ -33,20 +38,21 @@ export const EventsToolbar = ({
         className
       )}
     >
-      {/* Background layer, which also grows behind the open panel */}
       <div
         className={cn(
           "absolute inset-x-0 top-0 -z-10 min-h-full rounded-3xl border border-transparent",
-          isSettled && "transition-[background-color,border-color,box-shadow] duration-300 ease-out",
-          isFloating &&
-            cn(
-              "border-gray-200 bg-gray-100/80 shadow-sm backdrop-blur-xl",
-              "dark:border-stone-700/30 dark:bg-stone-800/90"
-            )
+          panelContainerRef && "md:max-h-(--events-toolbar-height)",
+          isSettled && "duration-300 ease-out",
+          isSettled &&
+            (isPanelOpen
+              ? "transition-[background-color,border-color]"
+              : "transition-[background-color,border-color,box-shadow]"),
+          isFloating && cn("border-gray-200 bg-gray-100", "dark:border-stone-700/30 dark:bg-stone-800"),
+          isFloating && !isPanelOpen && "shadow-sm"
         )}
       >
         {panelContainerRef && (
-          // The filter panel renders here, so the background grows to cover it
+          // The panel paints its own surface below the fixed-height toolbar.
           <div className="max-md:hidden -m-px">
             {/* Pushes the panel below the controls */}
             <div aria-hidden="true" className="h-(--events-toolbar-height)" />

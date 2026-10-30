@@ -39,7 +39,8 @@ export const FilterChips = ({ chips, onResetAll, className }: FilterChipsProps) 
         </Button>
       ))}
 
-      <Button onClick={onResetAll} variant="secondary" iconRight={<IconTrash />} className="rounded-full">
+      <Button onClick={onResetAll} variant="secondary" className="rounded-full">
+        <IconTrash className="size-4" />
         Fjern alle
       </Button>
     </div>

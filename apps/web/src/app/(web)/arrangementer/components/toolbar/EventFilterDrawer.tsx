@@ -4,13 +4,13 @@ import type { EventFilterQuery } from "@dotkomonline/rpc/event"
 import type { Group } from "@dotkomonline/rpc/group"
 import { Button, Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@dotkomonline/ui"
 import { IconChevronsDown, IconFilter2 } from "@tabler/icons-react"
-import { type EventFilters, countActiveEventFilters } from "../../hooks/useEventFilters"
+import { type EventFilters, countActiveEventFilters } from "../../utils/event-filters"
 import { EventDateFilter } from "../filters/EventDateFilter"
 import { EventGroupFilter } from "../filters/EventGroupFilter"
 import { EventSortFilter } from "../filters/EventSortFilter"
 import { EventTypeFilter } from "../filters/EventTypeFilter"
 
-interface Props {
+interface EventFilterDrawerProps {
   filters: EventFilters
   queryFilter: EventFilterQuery
   groups: Group[]
@@ -19,7 +19,7 @@ interface Props {
 }
 
 /** Mobile filter drawer, including sort */
-export const EventFilterDrawer = ({ filters, queryFilter, groups, onChange, className }: Props) => {
+export const EventFilterDrawer = ({ filters, queryFilter, groups, onChange, className }: EventFilterDrawerProps) => {
   // Search has its own field
   const count = countActiveEventFilters(filters) - (filters.search ? 1 : 0)
 
@@ -29,7 +29,7 @@ export const EventFilterDrawer = ({ filters, queryFilter, groups, onChange, clas
         className={className}
         render={<Button variant="outline" className="relative rounded-lg size-10" />}
       >
-        <IconFilter2 className="size-5" />
+        <IconFilter2 className="size-4.75" />
         <span className="sr-only">Filter</span>
         <CountBadge count={count} className="absolute -right-2 -top-2 size-5" />
       </DrawerTrigger>

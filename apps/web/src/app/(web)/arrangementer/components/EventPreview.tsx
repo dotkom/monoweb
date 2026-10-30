@@ -47,6 +47,7 @@ export function EventPreview({
   const { icon, copy } = useCopyToClipboard()
 
   const triggerRef = useRef<HTMLAnchorElement | null>(null)
+  const drawerRef = useRef<HTMLDivElement | null>(null)
 
   const openPreview = useCallback((event: PreviewEvent, trigger: HTMLAnchorElement) => {
     if (trigger.closest('[data-slot="drawer-content"]') === null) {
@@ -79,12 +80,25 @@ export function EventPreview({
     }
   }, [open])
 
+  function getFinalFocus() {
+    const activeElement = document.activeElement
+    const isInsideDrawer = drawerRef.current?.contains(activeElement)
+
+    // Closing takes time. Preserve focus if the user has already moved to another control.
+    if (activeElement !== null && activeElement !== document.body && !isInsideDrawer) {
+      return false
+    }
+
+    return triggerRef.current
+  }
+
   return (
     <EventTurnstileProvider backgroundEnabled={open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
         <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
           <DrawerContent
+            ref={drawerRef}
             aria-describedby={undefined}
             showOverlay={open}
             style={open ? undefined : { pointerEvents: "none" }}
@@ -97,7 +111,7 @@ export function EventPreview({
               "data-[swipe-direction=right]:w-[min(--spacing(152),60vw)]",
               "data-[swipe-direction=right]:sm:max-w-none"
             )}
-            finalFocus={triggerRef}
+            finalFocus={getFinalFocus}
           >
             <DrawerHeader className="shrink-0 border-b border-field-border">
               <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>

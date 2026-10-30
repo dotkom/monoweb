@@ -19,12 +19,12 @@ const VIEW_OPTIONS: ViewOption[] = [
 
 const toggleGroupClassName = "shrink-0 h-10 bg-background"
 
-interface Props {
+interface EventsViewToggleProps {
   view: EventsView
   onChange: (view: EventsView) => void
 }
 
-export const EventsViewToggle = ({ view, onChange }: Props) => {
+export const EventsViewToggle = ({ view, onChange }: EventsViewToggleProps) => {
   const value = view === "month" || view === "week" ? "calendar" : view
 
   return (
@@ -51,7 +51,7 @@ export const EventsViewToggle = ({ view, onChange }: Props) => {
           aria-label={label}
           className="flex flex-row items-center gap-2 h-full border-field-border max-[474px]:justify-center max-[474px]:w-12"
         >
-          <Icon className="size-4.5" />
+          <Icon className="size-4.75" />
           <Text element="span" className="max-[474px]:hidden">
             {label}
           </Text>
@@ -61,7 +61,7 @@ export const EventsViewToggle = ({ view, onChange }: Props) => {
   )
 }
 
-export const CalendarViewToggle = ({ view, onChange }: Props) => (
+export const CalendarViewToggle = ({ view, onChange }: EventsViewToggleProps) => (
   <ToggleGroup
     className={toggleGroupClassName}
     multiple={false}

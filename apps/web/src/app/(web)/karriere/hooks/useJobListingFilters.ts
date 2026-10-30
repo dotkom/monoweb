@@ -15,7 +15,7 @@ const JobListingFiltersSchema = z.object({
   sort: JobListingSortSchema,
 })
 
-type JobListingFilters = z.infer<typeof JobListingFiltersSchema>
+export type JobListingFilters = z.infer<typeof JobListingFiltersSchema>
 
 export const useJobListingFilters = () => {
   const router = useRouter()

@@ -19,11 +19,11 @@ export const EventGroupFilter = ({ value, onChange, groups, fillHeight = false, 
   const [search, setSearch] = useState("")
 
   const handleToggle = (slug: GroupId) => {
-    const newGroups = value.includes(slug) ? value.filter((g) => g !== slug) : [...value, slug]
+    const newGroups = value.includes(slug) ? value.filter((groupSlug) => groupSlug !== slug) : [...value, slug]
     onChange(newGroups)
   }
 
-  const filtered = useMemo(() => {
+  const filteredGroups = useMemo(() => {
     const searchValue = search.trim().toLowerCase()
 
     return groups
@@ -43,7 +43,9 @@ export const EventGroupFilter = ({ value, onChange, groups, fillHeight = false, 
           group.slug.toLowerCase().includes(searchValue)
         )
       })
-      .toSorted((a, b) => getGroupDisplayName(a).localeCompare(getGroupDisplayName(b), "nb-NO"))
+      .toSorted((firstGroup, secondGroup) =>
+        getGroupDisplayName(firstGroup).localeCompare(getGroupDisplayName(secondGroup), "nb-NO")
+      )
   }, [search, groups, value])
 
   return (
@@ -72,8 +74,8 @@ export const EventGroupFilter = ({ value, onChange, groups, fillHeight = false, 
               fillHeight ? "absolute inset-0 rounded-b-xl" : "md:max-h-60"
             )}
           >
-            {filtered.length > 0 ? (
-              filtered.map((group) => {
+            {filteredGroups.length > 0 ? (
+              filteredGroups.map((group) => {
                 const isSelected = value.includes(group.slug)
                 const displayName = getGroupDisplayName(group)
 

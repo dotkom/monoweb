@@ -3,7 +3,7 @@ import { mapEventTypeToLabel } from "@dotkomonline/rpc/event"
 import { type Group, getGroupDisplayName } from "@dotkomonline/rpc/group"
 import { format } from "date-fns"
 import { nb } from "date-fns/locale"
-import { DEFAULT_EVENT_SORT, type EventFilters } from "../../hooks/useEventFilters"
+import { DEFAULT_EVENT_SORT, type EventFilters } from "../../utils/event-filters"
 import { getEventDateRange } from "../../utils/event-date"
 
 interface EventFilterChipsProps {
@@ -46,7 +46,7 @@ export const EventFilterChips = ({ filters, groups, onChange, onResetAll }: Even
     })
   }
 
-  if (filters.sort !== DEFAULT_EVENT_SORT) {
+  if (filters.sort === "CHRONOLOGICAL") {
     chips.push({ key: "sort", label: "Sorter kronologisk", onRemove: () => onChange({ sort: DEFAULT_EVENT_SORT }) })
   }
 

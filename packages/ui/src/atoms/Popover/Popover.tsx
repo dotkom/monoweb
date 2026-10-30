@@ -109,8 +109,8 @@ type InlineContentProps = PopoverPrimitive.Popup.Props & {
 export function PopoverInlineContent({ container, ...props }: InlineContentProps) {
   return (
     <PopoverPrimitive.Portal container={container} keepMounted>
-      {/* Override the positioner's inline styles to keep it in the flow */}
-      <PopoverPrimitive.Positioner className="static! transform-none! opacity-100!">
+      {/* Inline layout needs no anchor tracking, especially while the popup's height animates. */}
+      <PopoverPrimitive.Positioner disableAnchorTracking className="static! transform-none! opacity-100!">
         <PopoverPrimitive.Popup data-slot="popover-inline-content" {...props} />
       </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>

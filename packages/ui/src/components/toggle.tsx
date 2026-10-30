@@ -48,24 +48,22 @@ const toggleVariants = cva(
 
 type ToggleIndicator = "check"
 
-/** Check icon that expands in front of the label when the toggle is pressed */
 function ToggleCheckIndicator() {
   return (
     <span
       data-slot="toggle-indicator"
+      aria-hidden="true"
       className={cn(
-        "grid grid-cols-[0fr] transition-[grid-template-columns] duration-200 ease-out",
-        "group-aria-pressed/toggle:grid-cols-[1fr]"
+        "relative h-3.5 w-0 shrink-0 overflow-hidden transition-[width] duration-100 ease-out motion-reduce:transition-none",
+        "group-aria-pressed/toggle:w-4"
       )}
     >
-      <span className="min-w-0 overflow-hidden">
-        <IconCheck
-          className={cn(
-            "size-3.5 mr-1 -ml-0.5 scale-50 opacity-0 transition-[opacity,scale] duration-200 ease-out",
-            "group-aria-pressed/toggle:scale-100 group-aria-pressed/toggle:opacity-100"
-          )}
-        />
-      </span>
+      <IconCheck
+        className={cn(
+          "absolute top-0 -left-0.5 size-3.5 scale-50 opacity-0 transition-[opacity,scale] duration-100 ease-out motion-reduce:transition-none",
+          "group-aria-pressed/toggle:scale-100 group-aria-pressed/toggle:opacity-100"
+        )}
+      />
     </span>
   )
 }

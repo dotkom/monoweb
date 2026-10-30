@@ -27,7 +27,12 @@ export const EventTypeFilter = ({ value, onChange }: EventTypeFilterProps) => {
         onValueChange={(types) => onChange(types as EventType[])}
       >
         {EVENT_TYPE_OPTIONS.map((type) => (
-          <ToggleGroupItem key={type.value} value={type.value} indicator="check" className="bg-background">
+          <ToggleGroupItem
+            key={type.value}
+            value={type.value}
+            indicator="check"
+            className="bg-background transition-colors motion-reduce:transition-none"
+          >
             {type.label}
           </ToggleGroupItem>
         ))}

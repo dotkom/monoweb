@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { type EventsListViewMode, setEventsListViewCookie } from "./eventViewCookie"
-import { clearEventFilterParams } from "./useEventFilters"
+import { clearEventFilterParams } from "../utils/event-filters"
 
 export type EventsView = "cards" | "list" | "month" | "week"
 

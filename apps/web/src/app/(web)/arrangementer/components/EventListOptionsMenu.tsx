@@ -33,7 +33,7 @@ export const EventListOptionsMenu = ({ className }: { className?: string }) => {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setRulesOpen(true)}>
             <IconBook2 className="size-4" />
-            Prikkeregler
+            Arrangementregler
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
