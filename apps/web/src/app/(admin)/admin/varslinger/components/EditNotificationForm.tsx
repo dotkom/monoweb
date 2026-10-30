@@ -91,7 +91,7 @@ export function EditNotificationForm({
     <form className={cn("flex flex-col gap-4", className)} onSubmit={onSubmit}>
       <Text className="text-sm text-muted-foreground">
         {isDraft
-          ? "Lagre innholdet før du velger Send varsling øverst på siden."
+          ? "Lagre innholdet før du går til Send-fanen for å sende varslingen."
           : "Endringer vil ikke varsle på nytt, og bare oppdatere innholdet"}
       </Text>
 

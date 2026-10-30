@@ -12,19 +12,20 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogTitle,
-  Badge,
   Button,
   Checkbox,
   Label,
   Text,
+  Title,
 } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import { useId, useState } from "react"
 import { useNotificationDetailsContext } from "../[id]/provider"
+import { getActorGroupLabel } from "../[id]/utils"
 import { useSendNotificationDraftMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 
-export function SendNotificationDraftButton() {
+export function NotificationDraftSend() {
   const { notification, hasUnsavedRecipients, hasUnsavedContent } = useNotificationDetailsContext()
   const authorization = useAuthorization()
   const canSend = canSendNotification(authorization, notification)
@@ -64,6 +65,17 @@ export function SendNotificationDraftButton() {
   }
 
   const canSendDraft = sendDisabledReason === null
+  let recipientSummary = "Ingen mottakere valgt"
+
+  if (notification.draftRecipientSelection !== null) {
+    if (recipientPreview.isPending) {
+      recipientSummary = "Sjekker mottakere…"
+    } else if (recipientPreview.isForbidden || recipientPreview.isError) {
+      recipientSummary = "Mottakerlisten er ikke tilgjengelig"
+    } else {
+      recipientSummary = `${recipientCount} mottakere`
+    }
+  }
 
   const eventId = notification.link.type === "EVENT" ? notification.link.eventId : ""
   const eventQuery = useEventWithAttendancesGetQuery(eventId, isConfirmOpen && eventId.length > 0)
@@ -99,11 +111,38 @@ export function SendNotificationDraftButton() {
 
   return (
     <>
-      <div className="flex flex-col items-end gap-1.5">
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">Utkast</Badge>
+      <section className="flex max-w-2xl flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <Title element="h2" size="md">
+            Send varsling
+          </Title>
+          <Text className="text-sm text-muted-foreground">
+            Se over oppsummeringen før du sender. Ingen blir varslet før du bekrefter sendingen.
+          </Text>
+        </div>
+
+        <dl className="grid gap-4 text-sm sm:grid-cols-2">
+          <div className="flex flex-col gap-1 sm:col-span-2">
+            <dt className="text-muted-foreground">Tittel</dt>
+            <dd className="break-words font-medium">{notification.title || "Tittel mangler"}</dd>
+          </div>
+          <div className="flex flex-col gap-1">
+            <dt className="text-muted-foreground">Avsender</dt>
+            <dd className="font-medium">{getActorGroupLabel(notification.actorGroup)}</dd>
+          </div>
+          <div className="flex flex-col gap-1">
+            <dt className="text-muted-foreground">Mottakere</dt>
+            <dd className="font-medium">{recipientSummary}</dd>
+          </div>
+        </dl>
+
+        <div className="flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <Text id={sendDisabledReasonId} className="text-sm text-muted-foreground" aria-live="polite">
+            {sendDisabledReason ?? "Alt er klart for sending."}
+          </Text>
           <Button
             variant="default"
+            className="w-full shrink-0 sm:w-auto"
             disabled={!canSendDraft}
             onClick={() => setIsConfirmOpen(true)}
             title={sendDisabledReason ?? undefined}
@@ -112,13 +151,7 @@ export function SendNotificationDraftButton() {
             Send varsling
           </Button>
         </div>
-        <Text className="max-w-sm text-right text-sm">Varslingen er et utkast og er ikke sendt ennå.</Text>
-        {sendDisabledReason !== null && (
-          <Text id={sendDisabledReasonId} className="max-w-sm text-right text-xs text-muted-foreground">
-            {sendDisabledReason}
-          </Text>
-        )}
-      </div>
+      </section>
 
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
         <AlertDialogContent size="md">
