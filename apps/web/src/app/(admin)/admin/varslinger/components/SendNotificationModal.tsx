@@ -46,6 +46,8 @@ import { useCreateNotificationMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 import { EventAttendeeRecipientFilters } from "./EventAttendeeRecipientFilters"
 import { RecipientSelectionBuilder } from "./RecipientSelection"
+import { useRecipientSelectionDraft } from "./recipient-selection/use-recipient-selection-draft"
+import { getRecipientSelection } from "./recipient-selection/recipient-selection-draft"
 
 const FormSchema = z.object({
   title: z.string().min(1, "Tittel er påkrevd").max(120),
@@ -177,6 +179,8 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
 
     return getEventRecipientSelection(source.attendanceId, "RESERVED", "ALL", null)
   })
+  const recipientEditor = useRecipientSelectionDraft(recipientSelection)
+
   const [hasEditedShortDescription, setHasEditedShortDescription] = useState(false)
 
   const { handleSubmit, control, setValue, formState } = useForm<FormInput, unknown, FormValues>({
@@ -370,8 +374,11 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
 
       {source.type !== "EVENT" && (
         <RecipientSelectionBuilder
-          value={recipientSelection}
-          onChange={setRecipientSelection}
+          value={recipientEditor.draft}
+          onChange={(draft) => {
+            recipientEditor.setDraft(draft)
+            setRecipientSelection(getRecipientSelection(draft))
+          }}
           type={notificationType}
         />
       )}
@@ -413,7 +420,7 @@ function SendNotificationForm({ source, onClose }: { source: SendNotificationSou
         {source.type === "EVENT" && recipientSelection !== null && !isPreviewPending && (
           <Text className="text-sm text-muted-foreground">{formatRecipientCountLabel(recipientCount)}</Text>
         )}
-        <Button type="submit" disabled={!canSubmit}>
+        <Button type="submit" disabled={!canSubmit || recipientEditor.hasIncompleteRules}>
           Send
         </Button>
       </div>

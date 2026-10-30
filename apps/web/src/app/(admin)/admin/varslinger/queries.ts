@@ -5,76 +5,55 @@ import type {
   NotificationRecipientFilterQuery,
   NotificationRecipientSelection,
   NotificationType,
+  NotificationRecipientPreviewOptions,
 } from "@dotkomonline/rpc/notification"
 import { keepPreviousData, skipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
-import { useDebounce } from "use-debounce"
+import { useRecipientPreviewInput } from "./use-recipient-preview-input"
 
 export function useRecipientSelectionPreview(
   recipientSelection: NotificationRecipientSelection | null,
-  type: NotificationType
+  type: NotificationType,
+  options?: NotificationRecipientPreviewOptions
 ) {
   const trpc = useTRPC()
-  const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
-  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
-
-  const queryInput =
-    debouncedSerializedRecipientSelection === null
-      ? skipToken
-      : {
-          recipientSelection: JSON.parse(debouncedSerializedRecipientSelection) as NotificationRecipientSelection,
-          type,
-        }
+  const { queryInput, isDebouncing, isDisabled } = useRecipientPreviewInput(recipientSelection, type, "", options)
 
   const query = useQuery({
-    ...trpc.notification.previewRecipientSelection.queryOptions(queryInput),
+    ...trpc.notification.previewRecipientSelection.queryOptions(queryInput ?? skipToken),
     retry: false,
   })
 
-  const isDebouncing = serializedRecipientSelection !== debouncedSerializedRecipientSelection
-
   return {
     preview: query.data,
-    isPending: serializedRecipientSelection === null || isDebouncing || query.isFetching,
+    isPending: isDisabled || isDebouncing || query.isFetching,
     isForbidden: isTrpcErrorCode(query.error, "FORBIDDEN"),
+    isError: query.isError,
   }
 }
 
 export function useRecipientSelectionPreviewInfinite(
   recipientSelection: NotificationRecipientSelection | null,
   type: NotificationType,
-  search = ""
+  search = "",
+  options?: NotificationRecipientPreviewOptions
 ) {
   const trpc = useTRPC()
-  const serializedRecipientSelection = recipientSelection === null ? null : JSON.stringify(recipientSelection)
-  const [debouncedSerializedRecipientSelection] = useDebounce(serializedRecipientSelection, 400)
-  const trimmedSearch = search.trim()
-  const [debouncedSearch] = useDebounce(trimmedSearch, 300)
-
-  const queryInput =
-    debouncedSerializedRecipientSelection === null
-      ? skipToken
-      : {
-          recipientSelection: JSON.parse(debouncedSerializedRecipientSelection) as NotificationRecipientSelection,
-          type,
-          ...(debouncedSearch.length > 0 ? { search: debouncedSearch } : {}),
-        }
+  const { queryInput, isDebouncing, isDisabled } = useRecipientPreviewInput(recipientSelection, type, search, options)
 
   const { data, ...query } = useInfiniteQuery({
-    ...trpc.notification.previewRecipientSelection.infiniteQueryOptions(queryInput),
+    ...trpc.notification.previewRecipientSelection.infiniteQueryOptions(queryInput ?? skipToken),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     retry: false,
   })
 
-  const isDebouncing =
-    serializedRecipientSelection !== debouncedSerializedRecipientSelection || trimmedSearch !== debouncedSearch
   const recipients = useMemo(() => data?.pages.flatMap((page) => page.sample) ?? [], [data])
 
   return {
     ...query,
     preview: data?.pages[0],
     recipients,
-    isPending: serializedRecipientSelection === null || isDebouncing || query.isPending,
+    isPending: isDisabled || isDebouncing || query.isPending,
     isForbidden: isTrpcErrorCode(query.error, "FORBIDDEN"),
   }
 }
