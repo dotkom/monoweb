@@ -1,11 +1,12 @@
 import type { Article } from "@dotkomonline/rpc/article"
 import type { Group } from "@dotkomonline/rpc/group"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
-import { getNotificationTypeLabel, type NotificationType, NotificationTypeSchema } from "@dotkomonline/rpc/notification"
+import { getNotificationTypeLabel, NotificationTypeSchema } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
-import { Text } from "@dotkomonline/ui"
+import { Button, Title } from "@dotkomonline/ui"
+import { IconChecks } from "@tabler/icons-react"
 import { subHours } from "date-fns"
-import { type ReactNode, useState } from "react"
+import { type MouseEvent, type ReactNode, useState } from "react"
 import {
   createMockAttendanceSummary,
   createMockAttendee,
@@ -107,358 +108,292 @@ const jobListing: Pick<JobListing, "company" | "id" | "title"> = {
   company,
 }
 
-function StoryFrame({ children }: { children: ReactNode }) {
-  return <div className="w-full max-w-96">{children}</div>
-}
-
-function NotificationTypeRow({
-  label,
-  notification,
-  renderPayload,
-}: {
-  label: string
+type NotificationExample = {
   notification: NotificationItemNotification
   renderPayload?: () => ReactNode
-}) {
-  const [readAt, setReadAt] = useState<Date | null>(null)
-  let unreadPayload: ReactNode
-  let readPayload: ReactNode
+}
 
-  if (renderPayload !== undefined) {
-    unreadPayload = renderPayload()
-    readPayload = renderPayload()
+const notificationExamples: NotificationExample[] = [
+  {
+    notification: createNotification({
+      id: "notification-important",
+      type: "BROADCAST_IMPORTANT",
+      title: "Viktig informasjon fra Hovedstyret",
+      shortDescription: "Les informasjonen og bekreft at du har sett varslingen.",
+    }),
+  },
+  {
+    notification: createNotification({
+      id: "notification-important-long-content",
+      type: "BROADCAST_IMPORTANT",
+      title:
+        "Viktig informasjon fra Hovedstyret til alle medlemmer om omfattende endringer i påmeldingsregler, betalingsfrister, prikkeregler og praktisk gjennomføring av kommende arrangementer, generalforsamlingen og sosiale aktiviteter resten av semesteret som du må lese og bekrefte at du har fått med deg før de nye reglene trer i kraft",
+      shortDescription:
+        "Vi ber alle medlemmer om å lese gjennom hele denne meldingen før de melder seg på nye arrangementer. Endringene gjelder både reservasjon av plass, frister for betaling, avmelding ved sykdom og hvordan du kontakter arrangøren dersom du trenger tilrettelegging. Reglene gjelder også dersom du allerede står på venteliste eller har fått bekreftet en plass. Ta kontakt med Hovedstyret hvis noe er uklart, og merk varslingen som lest når du har satt deg inn i informasjonen og vet hva endringene betyr for deg.",
+    }),
+  },
+  {
+    notification: createNotification({
+      id: "notification-feedback",
+      type: "NEW_FEEDBACK_FORM",
+      title: "Hva syntes du om Ping med Bekk?",
+      shortDescription: "Gi oss en tilbakemelding på arrangementet før svarfristen går ut.",
+      actorGroup: null,
+    }),
+    renderPayload: () => <NotificationUrlPayload url={`https://online.ntnu.no/tilbakemelding/${event.id}`} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-broadcast",
+    }),
+  },
+  {
+    notification: createNotification({
+      id: "notification-url",
+      title: "Nye prikkeregler",
+      shortDescription: "Online har oppdatert prikkereglene. Les hele regelverket på wiki.",
+    }),
+    renderPayload: () => <NotificationUrlPayload url="https://wiki.online.ntnu.no/prikkeregler" />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-event",
+      type: "EVENT_UPDATE",
+      title: "Oppdatert: Ping med Bekk",
+      shortDescription: "Arrangementet har flyttet seg fra Trondheim Spektrum til Huset.",
+      actorGroup: null,
+    }),
+    renderPayload: () => <NotificationEventPayload event={event} attendance={attendance} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-article",
+      type: "NEW_ARTICLE",
+      title: "Ny artikkel: Online kjøper Scandic Lerkendal",
+      shortDescription: "En ny artikkel har blitt publisert på nettsiden.",
+    }),
+    renderPayload: () => <NotificationArticlePayload article={article} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-offline",
+      type: "NEW_OFFLINE",
+      title: "Ny Offline-utgave #67",
+      shortDescription: "Den nyeste utgaven av Offline er publisert.",
+      actorGroup: {
+        abbreviation: "Prokom",
+        name: "Profil- og aviskomiteen",
+        preferredDisplayName: "ABBREVIATION",
+      },
+    }),
+    renderPayload: () => <NotificationOfflinePayload offline={offline} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-group",
+      type: "NEW_INTEREST_GROUP",
+      title: "Ny interessegruppe",
+      shortDescription: "Dotkom har fått en ny gruppeside.",
+      actorGroup: group,
+    }),
+    renderPayload: () => <NotificationGroupPayload group={group} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-user",
+      type: "NEW_MARK",
+      title: "Du har fått en ny prikk",
+      shortDescription: "En prikk ble registrert av Hans Hansen.",
+    }),
+    renderPayload: () => <NotificationUserPayload user={attendee.user} userGrade={attendee.userGrade} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-job-listing",
+      type: "NEW_JOB_LISTING",
+      title: "Ny stillingsutlysning fra Bekk",
+      shortDescription: "Bekk søker studenter til sommerjobb.",
+      actorGroup: null,
+    }),
+    renderPayload: () => <NotificationJobListingPayload jobListing={jobListing} />,
+  },
+  {
+    notification: createNotification({
+      id: "notification-long-content",
+      type: "ATTENDANCE_REGISTRATION_FROM_QUEUE",
+      title: "Påmelding fra køen til et arrangement med en veldig lang tittel",
+      shortDescription:
+        "Arrangementet har fått en oppdatering: https://online.ntnu.no/en-veldig-lang-lenke-uten-mellomrom",
+      actorGroup: {
+        abbreviation: "Dotkom",
+        name: "Drifts- og utviklingskomiteen med et veldig langt navn",
+        preferredDisplayName: "NAME",
+      },
+    }),
+    renderPayload: () => <NotificationEventPayload event={event} attendance={attendance} />,
+  },
+]
+
+function DropdownPreviewContent({ height }: { height: number }) {
+  const [readAtByNotificationId, setReadAtByNotificationId] = useState<Record<string, Date>>({})
+  const hasUnreadNotifications = notificationExamples.some(({ notification }) => {
+    return readAtByNotificationId[notification.id] === undefined
+  })
+
+  const markAllAsRead = () => {
+    const readAt = new Date()
+
+    setReadAtByNotificationId((previousReadAtByNotificationId) => {
+      const updatedReadAtByNotificationId = { ...previousReadAtByNotificationId }
+
+      for (const { notification } of notificationExamples) {
+        updatedReadAtByNotificationId[notification.id] ??= readAt
+      }
+
+      return updatedReadAtByNotificationId
+    })
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <Text className="text-sm text-muted-foreground">{label}</Text>
-      <div className="grid max-w-5xl grid-cols-1 items-start gap-4 md:grid-cols-2">
-        <StoryFrame>
+    <div
+      style={{ height }}
+      className="flex w-full max-h-[calc(100dvh-6rem)] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white shadow-md dark:border-stone-700 dark:bg-stone-900"
+    >
+      <div className="flex shrink-0 items-center justify-between gap-2 px-4 pt-4">
+        <Title size="md" className="font-semibold text-gray-900 dark:text-white">
+          Varslinger
+        </Title>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Merk alle som lest"
+          disabled={!hasUnreadNotifications}
+          onClick={markAllAsRead}
+          icon={<IconChecks className="size-4.5" />}
+        />
+      </div>
+
+      <div className="mt-3 min-h-0 flex-1 space-y-5 overflow-x-hidden overflow-y-auto overscroll-contain px-4 pb-4">
+        {notificationExamples.map(({ notification, renderPayload }) => (
           <NotificationItem
+            key={notification.id}
             notification={notification}
-            readAt={readAt}
+            readAt={readAtByNotificationId[notification.id] ?? null}
             onMarkAsRead={() => {
-              setReadAt(new Date())
+              setReadAtByNotificationId((previousReadAtByNotificationId) => ({
+                ...previousReadAtByNotificationId,
+                [notification.id]: new Date(),
+              }))
             }}
+            className="last-of-type:-mb-2"
           >
-            {unreadPayload}
+            {renderPayload?.()}
           </NotificationItem>
-        </StoryFrame>
-        <StoryFrame>
-          <NotificationItem notification={notification} readAt={new Date()}>
-            {readPayload}
-          </NotificationItem>
-        </StoryFrame>
+        ))}
+      </div>
+
+      <div className="shrink-0 border-t border-gray-200 px-2 pb-2 pt-1.5 dark:border-stone-700">
+        <Button
+          element="a"
+          href="/varslinger"
+          variant="ghost"
+          className="h-8 w-full rounded-b-xl rounded-t-xs"
+          onClick={(clickEvent: MouseEvent<HTMLAnchorElement>) => clickEvent.preventDefault()}
+        >
+          Se alle varslinger
+        </Button>
       </div>
     </div>
   )
 }
 
-export function Broadcast() {
-  return <NotificationTypeRow label="Broadcast" notification={createNotification()} renderPayload={() => null} />
-}
+function DropdownPreview({ height = 544 }: { height?: number }) {
+  const [previewVersion, setPreviewVersion] = useState(0)
 
-export function BroadcastImportant() {
   return (
-    <NotificationTypeRow
-      label={getNotificationTypeLabel("BROADCAST_IMPORTANT")}
-      notification={createNotification({
-        title: "Viktig informasjon fra Hovedstyret",
-        shortDescription: "Les informasjonen og bekreft at du har sett varslingen.",
-        type: "BROADCAST_IMPORTANT",
-      })}
-    />
+    <div className="-m-2 flex max-w-96 flex-col gap-4">
+      <DropdownPreviewContent key={previewVersion} height={height} />
+      <Button
+        variant="outline"
+        className="w-fit"
+        onClick={() => setPreviewVersion((previousPreviewVersion) => previousPreviewVersion + 1)}
+      >
+        Tilbakestill varslinger
+      </Button>
+    </div>
   )
 }
 
-function EventNotificationPreview({
-  type,
-  title,
-  shortDescription,
-}: {
-  type: NotificationType
-  title: string
-  shortDescription: string
-}) {
+export function Default() {
   return (
-    <NotificationTypeRow
-      label={getNotificationTypeLabel(type)}
-      notification={createNotification({ type, title, shortDescription, actorGroup: null })}
-      renderPayload={() => <NotificationEventPayload event={event} attendance={attendance} />}
-    />
-  )
-}
-
-export function EventReminder() {
-  return (
-    <EventNotificationPreview
-      type="EVENT_REMINDER"
-      title="Ping med Bekk starter snart"
-      shortDescription="Husk arrangementet du er påmeldt. Vi gleder oss til å se deg!"
-    />
-  )
-}
-
-export function AttendanceRegistration() {
-  return (
-    <EventNotificationPreview
-      type="ATTENDANCE_REGISTRATION"
-      title="Du er påmeldt Ping med Bekk"
-      shortDescription="Påmeldingen din er bekreftet. Se arrangementet for praktisk informasjon."
-    />
-  )
-}
-
-export function AttendanceDeregistration() {
-  return (
-    <EventNotificationPreview
-      type="ATTENDANCE_DEREGISTRATION"
-      title="Du er avmeldt Ping med Bekk"
-      shortDescription="Du har ikke lenger en plass på arrangementet."
-    />
-  )
-}
-
-export function AttendanceRegisteredFromQueue() {
-  return (
-    <EventNotificationPreview
-      type="ATTENDANCE_REGISTRATION_FROM_QUEUE"
-      title="Du har fått plass på Ping med Bekk"
-      shortDescription="Du er flyttet fra køen og er nå påmeldt arrangementet."
-    />
-  )
-}
-
-export function AttendanceQueueUpdate() {
-  return (
-    <EventNotificationPreview
-      type="ATTENDANCE_QUEUE_UPDATE"
-      title="Ny plass i køen til Ping med Bekk"
-      shortDescription="Du er nå nummer 3 i køen. Vi varsler deg hvis du får plass."
-    />
-  )
-}
-
-export function AttendanceCompletionFailed() {
-  return (
-    <EventNotificationPreview
-      type="ATTENDANCE_COMPLETION_FAILED"
-      title="Påmeldingen til Ping med Bekk ble ikke fullført"
-      shortDescription="Fristen for å fullføre påmeldingen har gått ut, og du har mistet plassen din."
-    />
-  )
-}
-
-export function NewEvent() {
-  return (
-    <EventNotificationPreview
-      type="NEW_EVENT"
-      title="Nytt arrangement: Ping med Bekk"
-      shortDescription="Et nytt arrangement er publisert. Se informasjon og påmeldingsfrister."
-    />
-  )
-}
-
-export function JobListingReminder() {
-  return (
-    <NotificationTypeRow
-      label={getNotificationTypeLabel("JOB_LISTING_REMINDER")}
-      notification={createNotification({
-        title: "Søknadsfristen hos Bekk nærmer seg",
-        shortDescription: "Husk å sende søknaden din før fristen går ut.",
-        type: "JOB_LISTING_REMINDER",
-        actorGroup: null,
-      })}
-      renderPayload={() => <NotificationJobListingPayload jobListing={jobListing} />}
-    />
-  )
-}
-
-export function NewFeedbackForm() {
-  return (
-    <NotificationTypeRow
-      label={getNotificationTypeLabel("NEW_FEEDBACK_FORM")}
-      notification={createNotification({
-        title: "Hva syntes du om Ping med Bekk?",
-        shortDescription: "Gi oss en tilbakemelding på arrangementet før svarfristen går ut.",
-        type: "NEW_FEEDBACK_FORM",
-        actorGroup: null,
-      })}
-      renderPayload={() => <NotificationUrlPayload url={`https://online.ntnu.no/tilbakemelding/${event.id}`} />}
-    />
+    <div className="max-w-96">
+      <NotificationItem notification={createNotification()} readAt={null} />
+    </div>
   )
 }
 
 export function AccentColors() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex max-w-96 flex-col gap-5">
       {NotificationTypeSchema.options.map((notificationType) => (
-        <NotificationTypeRow
+        <NotificationItem
           key={notificationType}
-          label={getNotificationTypeLabel(notificationType)}
           notification={createNotification({
+            id: `notification-${notificationType}`,
             type: notificationType,
             title: getNotificationTypeLabel(notificationType),
             shortDescription: "Dette er en eksempelvarsling med innhold som går over flere linjer i listen.",
           })}
+          readAt={null}
         />
       ))}
     </div>
   )
 }
 
-export function NarrowLayout() {
-  const [readAt, setReadAt] = useState<Date | null>(null)
-
-  return (
-    <div className="w-64 max-w-full">
-      <NotificationItem
-        notification={createNotification({
-          title: "Påmelding fra køen til et arrangement med en veldig lang tittel",
-          shortDescription:
-            "Arrangementet har fått en oppdatering: https://online.ntnu.no/en-veldig-lang-lenke-uten-mellomrom",
-          type: "ATTENDANCE_REGISTRATION_FROM_QUEUE",
-          actorGroup: {
-            abbreviation: "Dotkom",
-            name: "Drifts- og utviklingskomiteen med et veldig langt navn",
-            preferredDisplayName: "NAME",
-          },
-        })}
-        readAt={readAt}
-        onMarkAsRead={() => {
-          setReadAt(new Date())
-        }}
-      >
-        <NotificationEventPayload event={event} attendance={attendance} />
-      </NotificationItem>
-    </div>
-  )
-}
-
-export function Url() {
-  return (
-    <NotificationTypeRow
-      label="URL"
-      notification={createNotification({
-        title: "Nye prikkeregler",
-        shortDescription: "Online har oppdatert prikkereglene. Les hele regelverket på wiki.",
-      })}
-      renderPayload={() => <NotificationUrlPayload url="https://wiki.online.ntnu.no/prikkeregler" />}
-    />
-  )
-}
-
-export function Event() {
-  return (
-    <NotificationTypeRow
-      label="Event"
-      notification={createNotification({
-        title: "Oppdatert: Ping med Bekk",
-        shortDescription: "Arrangementet har flyttet seg fra Trondheim Spektrum til Huset.",
-        type: "EVENT_UPDATE",
-      })}
-      renderPayload={() => <NotificationEventPayload event={event} attendance={attendance} />}
-    />
-  )
-}
-
-export function ArticlePayload() {
-  return (
-    <NotificationTypeRow
-      label="Article"
-      notification={createNotification({
-        title: "Ny artikkel: Online kjøper Scandic Lerkendal",
-        shortDescription: "En ny artikkel har blitt publisert på nettsiden.",
-        type: "NEW_ARTICLE",
-      })}
-      renderPayload={() => <NotificationArticlePayload article={article} />}
-    />
-  )
-}
-
-export function OfflinePayload() {
-  return (
-    <NotificationTypeRow
-      label="Offline"
-      notification={createNotification({
-        title: "Ny Offline-utgave #67",
-        shortDescription: "Den nyeste utgaven av Offline er publisert.",
-        type: "NEW_OFFLINE",
-        actorGroup: {
-          abbreviation: "Prokom",
-          name: "Profil- og aviskomiteen",
-          preferredDisplayName: "ABBREVIATION",
-        },
-      })}
-      renderPayload={() => <NotificationOfflinePayload offline={offline} />}
-    />
-  )
-}
-
-export function GroupPayload() {
-  return (
-    <NotificationTypeRow
-      label="Group"
-      notification={createNotification({
-        title: "Ny interessegruppe",
-        shortDescription: "Dotkom har fått en ny gruppeside.",
-        type: "NEW_INTEREST_GROUP",
-        actorGroup: group,
-      })}
-      renderPayload={() => <NotificationGroupPayload group={group} />}
-    />
-  )
-}
-
-export function User() {
-  return (
-    <NotificationTypeRow
-      label="User"
-      notification={createNotification({
-        title: "Du har fått en ny prikk",
-        shortDescription: "En prikk ble registrert av Hans Hansen.",
-        type: "NEW_MARK",
-      })}
-      renderPayload={() => <NotificationUserPayload user={attendee.user} userGrade={attendee.userGrade} />}
-    />
-  )
-}
-
-export function JobListingPayload() {
-  return (
-    <NotificationTypeRow
-      label="Job listing"
-      notification={createNotification({
-        title: "Ny stillingsutlysning fra Bekk",
-        shortDescription: "Bekk søker studenter til sommerjobb.",
-        type: "NEW_JOB_LISTING",
-      })}
-      renderPayload={() => <NotificationJobListingPayload jobListing={jobListing} />}
-    />
-  )
-}
-
 export function AllPayloads() {
+  const [readAtByNotificationId, setReadAtByNotificationId] = useState<Record<string, Date>>({})
+
   return (
-    <div className="flex flex-col gap-8">
-      <Broadcast />
-      <BroadcastImportant />
-      <Url />
-      <Event />
-      <EventReminder />
-      <AttendanceRegistration />
-      <AttendanceDeregistration />
-      <AttendanceRegisteredFromQueue />
-      <AttendanceQueueUpdate />
-      <AttendanceCompletionFailed />
-      <NewEvent />
-      <ArticlePayload />
-      <OfflinePayload />
-      <GroupPayload />
-      <User />
-      <JobListingPayload />
-      <JobListingReminder />
-      <NewFeedbackForm />
+    <div className="flex w-full max-w-5xl flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Title size="lg">Alle varslinger og innholdstyper</Title>
+        <Button variant="outline" onClick={() => setReadAtByNotificationId({})}>
+          Tilbakestill varslinger
+        </Button>
+      </div>
+
+      <div className="grid w-full grid-cols-1 items-start gap-6 md:grid-cols-2">
+        {notificationExamples.map(({ notification, renderPayload }) => (
+          <NotificationItem
+            key={notification.id}
+            notification={notification}
+            readAt={readAtByNotificationId[notification.id] ?? null}
+            onMarkAsRead={() => {
+              setReadAtByNotificationId((previousReadAtByNotificationId) => ({
+                ...previousReadAtByNotificationId,
+                [notification.id]: new Date(),
+              }))
+            }}
+          >
+            {renderPayload?.()}
+          </NotificationItem>
+        ))}
+      </div>
     </div>
   )
 }
+
+export function Dropdown() {
+  return <DropdownPreview />
+}
+
+export function MobileDropdown() {
+  return <DropdownPreview height={523} />
+}
+MobileDropdown.meta = { iframed: true, width: 375 }
+
+export function SmallMobileDropdown() {
+  return <DropdownPreview height={424} />
+}
+SmallMobileDropdown.meta = { iframed: true, width: 320 }
