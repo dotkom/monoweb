@@ -67,7 +67,7 @@ describe("default feedback notification behavior", () => {
       { id: "recipient", notificationId: notification.id, userId: "user-one", readAt: null },
     ])
     recipientResolver.resolve.mockResolvedValue({
-      recipients: [{ userId: "user-one", sourceLabels: ["User"] }],
+      recipients: [{ userId: "user-one", sourceLabels: ["User"], sourceRuleIndexes: [0] }],
       matchCount: 1,
       duplicateCount: 0,
       excludedCount: 0,

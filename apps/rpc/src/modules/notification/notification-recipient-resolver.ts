@@ -5,6 +5,7 @@ import type { UserId } from "../user/user"
 import type {
   NotificationRecipientResolution,
   NotificationRecipientSelection,
+  NotificationRecipientPreviewOptions,
   NotificationRecipientSelectionPreview,
   NotificationRecipientSelectionRule,
   NotificationType,
@@ -30,7 +31,8 @@ export interface NotificationRecipientResolver {
     recipientSelection: NotificationRecipientSelection,
     notificationType: NotificationType,
     page: Pageable,
-    search?: string
+    search?: string,
+    options?: NotificationRecipientPreviewOptions
   ): Promise<NotificationRecipientSelectionPreview>
 }
 
@@ -122,34 +124,35 @@ export function getNotificationRecipientResolver(
     async resolve(handle, recipientSelection, notificationType) {
       const matches = await Promise.all(recipientSelection.rules.map((rule) => matchRule(handle, rule)))
 
-      const sourceLabelsByUserId = new Map<UserId, string[]>()
+      const sourcesByUserId = new Map<UserId, { labels: string[]; ruleIndexes: number[] }>()
       let matchCount = 0
 
-      for (const match of matches) {
+      for (const [ruleIndex, match] of matches.entries()) {
         for (const userId of match.userIds) {
           matchCount += 1
-          const existingLabels = sourceLabelsByUserId.get(userId)
+          const existingSource = sourcesByUserId.get(userId)
 
-          if (existingLabels === undefined) {
-            sourceLabelsByUserId.set(userId, [match.label])
+          if (existingSource === undefined) {
+            sourcesByUserId.set(userId, { labels: [match.label], ruleIndexes: [ruleIndex] })
           } else {
-            existingLabels.push(match.label)
+            existingSource.labels.push(match.label)
+            existingSource.ruleIndexes.push(ruleIndex)
           }
         }
       }
 
-      const duplicateCount = matchCount - sourceLabelsByUserId.size
+      const duplicateCount = matchCount - sourcesByUserId.size
 
       const excludedUserIds = new Set(recipientSelection.excludedUserIds)
       let excludedCount = 0
 
       for (const userId of excludedUserIds) {
-        if (sourceLabelsByUserId.delete(userId)) {
+        if (sourcesByUserId.delete(userId)) {
           excludedCount += 1
         }
       }
 
-      const candidateUserIds = Array.from(sourceLabelsByUserId.keys())
+      const candidateUserIds = Array.from(sourcesByUserId.keys())
       const permissionField = getNotificationPermissionField(notificationType)
       let allowedUserIds = candidateUserIds
 
@@ -165,10 +168,15 @@ export function getNotificationRecipientResolver(
 
       const optedOutCount = candidateUserIds.length - allowedUserIds.length
 
-      const recipients = allowedUserIds.map((userId) => ({
-        userId,
-        sourceLabels: sourceLabelsByUserId.get(userId) ?? [],
-      }))
+      const recipients = allowedUserIds.map((userId) => {
+        const source = sourcesByUserId.get(userId)
+
+        return {
+          userId,
+          sourceLabels: source?.labels ?? [],
+          sourceRuleIndexes: source?.ruleIndexes ?? [],
+        }
+      })
 
       return {
         recipients,
@@ -179,9 +187,21 @@ export function getNotificationRecipientResolver(
       }
     },
 
-    async preview(handle, recipientSelection, notificationType, page, search) {
-      const { recipients, ...counts } = await this.resolve(handle, recipientSelection, notificationType)
-      const sourceLabelsByUserId = new Map(recipients.map((recipient) => [recipient.userId, recipient.sourceLabels]))
+    async preview(handle, recipientSelection, notificationType, page, search, options) {
+      const { recipients: resolvedRecipients, ...counts } = await this.resolve(
+        handle,
+        recipientSelection,
+        notificationType
+      )
+      const savedUserIds = new Set(
+        options?.notificationId === undefined
+          ? []
+          : await recipientQueryRepository.findSavedRecipientUserIds(handle, options.notificationId)
+      )
+      const recipients = options?.hideExistingRecipients
+        ? resolvedRecipients.filter((recipient) => !savedUserIds.has(recipient.userId))
+        : resolvedRecipients
+      const recipientSourcesByUserId = new Map(recipients.map((recipient) => [recipient.userId, recipient]))
       const summaries = await recipientQueryRepository.findUserSummaries(
         handle,
         recipients.map((recipient) => recipient.userId),
@@ -192,12 +212,18 @@ export function getNotificationRecipientResolver(
         }
       )
 
-      const sample = summaries.map((summary) => ({
-        userId: summary.id,
-        sourceLabels: sourceLabelsByUserId.get(summary.id) ?? [],
-        name: summary.name,
-        imageUrl: summary.imageUrl,
-      }))
+      const sample = summaries.map((summary) => {
+        const source = recipientSourcesByUserId.get(summary.id)
+
+        return {
+          userId: summary.id,
+          sourceLabels: source?.sourceLabels ?? [],
+          sourceRuleIndexes: source?.sourceRuleIndexes ?? [],
+          name: summary.name,
+          imageUrl: summary.imageUrl,
+          ...(options?.notificationId === undefined ? {} : { isExistingRecipient: savedUserIds.has(summary.id) }),
+        }
+      })
 
       return {
         ...counts,
