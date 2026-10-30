@@ -280,6 +280,8 @@ export type UserWhereInput = {
   userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
   adminRegistered?: Prisma.AttendeeListRelationFilter
   updatedEventPriorities?: Prisma.EventFeaturedPriorityListRelationFilter
+  committeeApplications?: Prisma.CommitteeApplicationListRelationFilter
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -316,6 +318,8 @@ export type UserOrderByWithRelationInput = {
   userFlagLinks?: Prisma.UserFlagLinkOrderByRelationAggregateInput
   adminRegistered?: Prisma.AttendeeOrderByRelationAggregateInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityOrderByRelationAggregateInput
+  committeeApplications?: Prisma.CommitteeApplicationOrderByRelationAggregateInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -355,6 +359,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
   adminRegistered?: Prisma.AttendeeListRelationFilter
   updatedEventPriorities?: Prisma.EventFeaturedPriorityListRelationFilter
+  committeeApplications?: Prisma.CommitteeApplicationListRelationFilter
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeListRelationFilter
 }, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
 
 export type UserOrderByWithAggregationInput = {
@@ -433,6 +439,8 @@ export type UserCreateInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -469,6 +477,8 @@ export type UserUncheckedCreateInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -505,6 +515,8 @@ export type UserUpdateInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -541,6 +553,8 @@ export type UserUncheckedUpdateInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -971,6 +985,34 @@ export type UserUpdateOneRequiredWithoutUserFlagLinksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserFlagLinksInput, Prisma.UserUpdateWithoutUserFlagLinksInput>, Prisma.UserUncheckedUpdateWithoutUserFlagLinksInput>
 }
 
+export type UserCreateNestedOneWithoutCommitteeApplicationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommitteeApplicationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommitteeApplicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommitteeApplicationsInput
+  upsert?: Prisma.UserUpsertWithoutCommitteeApplicationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommitteeApplicationsInput, Prisma.UserUpdateWithoutCommitteeApplicationsInput>, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationsInput>
+}
+
+export type UserCreateNestedOneWithoutCommitteeApplicationInterviewAttendeesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationInterviewAttendeesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommitteeApplicationInterviewAttendeesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommitteeApplicationInterviewAttendeesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationInterviewAttendeesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommitteeApplicationInterviewAttendeesInput
+  upsert?: Prisma.UserUpsertWithoutCommitteeApplicationInterviewAttendeesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUpdateWithoutCommitteeApplicationInterviewAttendeesInput>, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationInterviewAttendeesInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id: string
   username: string
@@ -1004,6 +1046,8 @@ export type UserCreateWithoutMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -1039,6 +1083,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1090,6 +1136,8 @@ export type UserUpdateWithoutMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1125,6 +1173,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutGroupMembershipsInput = {
@@ -1160,6 +1210,8 @@ export type UserCreateWithoutGroupMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -1195,6 +1247,8 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -1246,6 +1300,8 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -1281,6 +1337,8 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAttendeeInput = {
@@ -1316,6 +1374,8 @@ export type UserCreateWithoutAttendeeInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeeInput = {
@@ -1351,6 +1411,8 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeeInput = {
@@ -1391,6 +1453,8 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
@@ -1426,6 +1490,8 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAttendeesRefundedInput = {
@@ -1466,6 +1532,8 @@ export type UserCreateWithoutAdminRegisteredInput = {
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminRegisteredInput = {
@@ -1501,6 +1569,8 @@ export type UserUncheckedCreateWithoutAdminRegisteredInput = {
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdminRegisteredInput = {
@@ -1552,6 +1622,8 @@ export type UserUpdateWithoutAttendeeInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeeInput = {
@@ -1587,6 +1659,8 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAttendeesRefundedInput = {
@@ -1633,6 +1707,8 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
@@ -1668,6 +1744,8 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAdminRegisteredInput = {
@@ -1714,6 +1792,8 @@ export type UserUpdateWithoutAdminRegisteredInput = {
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminRegisteredInput = {
@@ -1749,6 +1829,8 @@ export type UserUncheckedUpdateWithoutAdminRegisteredInput = {
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUpdatedEventPrioritiesInput = {
@@ -1784,6 +1866,8 @@ export type UserCreateWithoutUpdatedEventPrioritiesInput = {
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUpdatedEventPrioritiesInput = {
@@ -1819,6 +1903,8 @@ export type UserUncheckedCreateWithoutUpdatedEventPrioritiesInput = {
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUpdatedEventPrioritiesInput = {
@@ -1870,6 +1956,8 @@ export type UserUpdateWithoutUpdatedEventPrioritiesInput = {
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUpdatedEventPrioritiesInput = {
@@ -1905,6 +1993,8 @@ export type UserUncheckedUpdateWithoutUpdatedEventPrioritiesInput = {
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonalMarkInput = {
@@ -1940,6 +2030,8 @@ export type UserCreateWithoutPersonalMarkInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalMarkInput = {
@@ -1975,6 +2067,8 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalMarkInput = {
@@ -2015,6 +2109,8 @@ export type UserCreateWithoutGivenMarksInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGivenMarksInput = {
@@ -2050,6 +2146,8 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGivenMarksInput = {
@@ -2101,6 +2199,8 @@ export type UserUpdateWithoutPersonalMarkInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalMarkInput = {
@@ -2136,6 +2236,8 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutGivenMarksInput = {
@@ -2182,6 +2284,8 @@ export type UserUpdateWithoutGivenMarksInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGivenMarksInput = {
@@ -2217,6 +2321,8 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPrivacyPermissionsInput = {
@@ -2252,6 +2358,8 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
@@ -2287,6 +2395,8 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPrivacyPermissionsInput = {
@@ -2338,6 +2448,8 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
@@ -2373,6 +2485,8 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPermissionsInput = {
@@ -2408,6 +2522,8 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
@@ -2443,6 +2559,8 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPermissionsInput = {
@@ -2494,6 +2612,8 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
@@ -2529,6 +2649,8 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2564,6 +2686,8 @@ export type UserCreateWithoutAuditLogsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2599,6 +2723,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2650,6 +2776,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2685,6 +2813,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeregisterReasonsInput = {
@@ -2720,6 +2850,8 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
@@ -2755,6 +2887,8 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeregisterReasonsInput = {
@@ -2806,6 +2940,8 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
@@ -2841,6 +2977,8 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsReceivedInput = {
@@ -2876,6 +3014,8 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
@@ -2911,6 +3051,8 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
@@ -2962,6 +3104,8 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
@@ -2997,6 +3141,8 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsCreatedInput = {
@@ -3032,6 +3178,8 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
@@ -3067,6 +3215,8 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsCreatedInput = {
@@ -3107,6 +3257,8 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
@@ -3142,6 +3294,8 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsUpdatedInput = {
@@ -3193,6 +3347,8 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
@@ -3228,6 +3384,8 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutNotificationsUpdatedInput = {
@@ -3274,6 +3432,8 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
@@ -3309,6 +3469,8 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestantsInput = {
@@ -3344,6 +3506,8 @@ export type UserCreateWithoutContestantsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestantsInput = {
@@ -3379,6 +3543,8 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestantsInput = {
@@ -3430,6 +3596,8 @@ export type UserUpdateWithoutContestantsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestantsInput = {
@@ -3465,6 +3633,8 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContestTeamsInput = {
@@ -3500,6 +3670,8 @@ export type UserCreateWithoutContestTeamsInput = {
   userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestTeamsInput = {
@@ -3535,6 +3707,8 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestTeamsInput = {
@@ -3612,6 +3786,8 @@ export type UserCreateWithoutUserFlagLinksInput = {
   contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
   adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserFlagLinksInput = {
@@ -3647,6 +3823,8 @@ export type UserUncheckedCreateWithoutUserFlagLinksInput = {
   contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
   adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserFlagLinksInput = {
@@ -3698,6 +3876,8 @@ export type UserUpdateWithoutUserFlagLinksInput = {
   contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
@@ -3733,6 +3913,336 @@ export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
   contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommitteeApplicationsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommitteeApplicationsInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommitteeApplicationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationsInput>
+}
+
+export type UserUpsertWithoutCommitteeApplicationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommitteeApplicationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommitteeApplicationsInput, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationsInput>
+}
+
+export type UserUpdateWithoutCommitteeApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommitteeApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommitteeApplicationInterviewAttendeesInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkCreateNestedManyWithoutUserInput
+  adminRegistered?: Prisma.AttendeeCreateNestedManyWithoutAdminRegisteredByInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommitteeApplicationInterviewAttendeesInput = {
+  id: string
+  username: string
+  name?: string | null
+  email?: string | null
+  imageUrl?: string | null
+  biography?: string | null
+  phone?: string | null
+  gender?: $Enums.Gender
+  dietaryRestrictions?: string | null
+  ntnuUsername?: string | null
+  workspaceUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  privacyPermissionsId?: string | null
+  notificationPermissionsId?: string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
+  personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  givenMarks?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutGivenByInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedCreateNestedManyWithoutPaymentRefundedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutUserInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedCreateNestedManyWithoutUserInput
+  notificationsCreated?: Prisma.NotificationUncheckedCreateNestedManyWithoutCreatedByInput
+  notificationsUpdated?: Prisma.NotificationUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  contestants?: Prisma.ContestantUncheckedCreateNestedManyWithoutUserInput
+  contestTeams?: Prisma.ContestTeamUncheckedCreateNestedManyWithoutMembersInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedCreateNestedManyWithoutUserInput
+  adminRegistered?: Prisma.AttendeeUncheckedCreateNestedManyWithoutAdminRegisteredByInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommitteeApplicationInterviewAttendeesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationInterviewAttendeesInput>
+}
+
+export type UserUpsertWithoutCommitteeApplicationInterviewAttendeesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationInterviewAttendeesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedCreateWithoutCommitteeApplicationInterviewAttendeesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommitteeApplicationInterviewAttendeesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommitteeApplicationInterviewAttendeesInput, Prisma.UserUncheckedUpdateWithoutCommitteeApplicationInterviewAttendeesInput>
+}
+
+export type UserUpdateWithoutCommitteeApplicationInterviewAttendeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
+  adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommitteeApplicationInterviewAttendeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biography?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  dietaryRestrictions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ntnuUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workspaceUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
+  personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  givenMarks?: Prisma.PersonalMarkUncheckedUpdateManyWithoutGivenByNestedInput
+  attendeesRefunded?: Prisma.AttendeeUncheckedUpdateManyWithoutPaymentRefundedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutUserNestedInput
+  notificationsReceived?: Prisma.NotificationRecipientUncheckedUpdateManyWithoutUserNestedInput
+  notificationsCreated?: Prisma.NotificationUncheckedUpdateManyWithoutCreatedByNestedInput
+  notificationsUpdated?: Prisma.NotificationUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  contestants?: Prisma.ContestantUncheckedUpdateManyWithoutUserNestedInput
+  contestTeams?: Prisma.ContestTeamUncheckedUpdateManyWithoutMembersNestedInput
+  userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
+  adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
+  updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpdateWithoutContestTeamsInput = {
@@ -3768,6 +4278,8 @@ export type UserUpdateWithoutContestTeamsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestTeamsInput = {
@@ -3803,6 +4315,8 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   userFlagLinks?: Prisma.UserFlagLinkUncheckedUpdateManyWithoutUserNestedInput
   adminRegistered?: Prisma.AttendeeUncheckedUpdateManyWithoutAdminRegisteredByNestedInput
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  committeeApplications?: Prisma.CommitteeApplicationUncheckedUpdateManyWithoutUserNestedInput
+  committeeApplicationInterviewAttendees?: Prisma.CommitteeApplicationInterviewAttendeeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
@@ -3845,6 +4359,8 @@ export type UserCountOutputType = {
   userFlagLinks: number
   adminRegistered: number
   updatedEventPriorities: number
+  committeeApplications: number
+  committeeApplicationInterviewAttendees: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3864,6 +4380,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   userFlagLinks?: boolean | UserCountOutputTypeCountUserFlagLinksArgs
   adminRegistered?: boolean | UserCountOutputTypeCountAdminRegisteredArgs
   updatedEventPriorities?: boolean | UserCountOutputTypeCountUpdatedEventPrioritiesArgs
+  committeeApplications?: boolean | UserCountOutputTypeCountCommitteeApplicationsArgs
+  committeeApplicationInterviewAttendees?: boolean | UserCountOutputTypeCountCommitteeApplicationInterviewAttendeesArgs
 }
 
 /**
@@ -3988,6 +4506,20 @@ export type UserCountOutputTypeCountUpdatedEventPrioritiesArgs<ExtArgs extends r
   where?: Prisma.EventFeaturedPriorityWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommitteeApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommitteeApplicationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommitteeApplicationInterviewAttendeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommitteeApplicationInterviewAttendeeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4023,6 +4555,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
   adminRegistered?: boolean | Prisma.User$adminRegisteredArgs<ExtArgs>
   updatedEventPriorities?: boolean | Prisma.User$updatedEventPrioritiesArgs<ExtArgs>
+  committeeApplications?: boolean | Prisma.User$committeeApplicationsArgs<ExtArgs>
+  committeeApplicationInterviewAttendees?: boolean | Prisma.User$committeeApplicationInterviewAttendeesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4100,6 +4634,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   userFlagLinks?: boolean | Prisma.User$userFlagLinksArgs<ExtArgs>
   adminRegistered?: boolean | Prisma.User$adminRegisteredArgs<ExtArgs>
   updatedEventPriorities?: boolean | Prisma.User$updatedEventPrioritiesArgs<ExtArgs>
+  committeeApplications?: boolean | Prisma.User$committeeApplicationsArgs<ExtArgs>
+  committeeApplicationInterviewAttendees?: boolean | Prisma.User$committeeApplicationInterviewAttendeesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4126,6 +4662,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     userFlagLinks: Prisma.$UserFlagLinkPayload<ExtArgs>[]
     adminRegistered: Prisma.$AttendeePayload<ExtArgs>[]
     updatedEventPriorities: Prisma.$EventFeaturedPriorityPayload<ExtArgs>[]
+    committeeApplications: Prisma.$CommitteeApplicationPayload<ExtArgs>[]
+    committeeApplicationInterviewAttendees: Prisma.$CommitteeApplicationInterviewAttendeePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     /**
@@ -4561,6 +5099,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   userFlagLinks<T extends Prisma.User$userFlagLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userFlagLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserFlagLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   adminRegistered<T extends Prisma.User$adminRegisteredArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminRegisteredArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   updatedEventPriorities<T extends Prisma.User$updatedEventPrioritiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$updatedEventPrioritiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventFeaturedPriorityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  committeeApplications<T extends Prisma.User$committeeApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$committeeApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  committeeApplicationInterviewAttendees<T extends Prisma.User$committeeApplicationInterviewAttendeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$committeeApplicationInterviewAttendeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommitteeApplicationInterviewAttendeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5426,6 +5966,54 @@ export type User$updatedEventPrioritiesArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.EventFeaturedPriorityScalarFieldEnum | Prisma.EventFeaturedPriorityScalarFieldEnum[]
+}
+
+/**
+ * User.committeeApplications
+ */
+export type User$committeeApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommitteeApplication
+   */
+  select?: Prisma.CommitteeApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommitteeApplication
+   */
+  omit?: Prisma.CommitteeApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommitteeApplicationInclude<ExtArgs> | null
+  where?: Prisma.CommitteeApplicationWhereInput
+  orderBy?: Prisma.CommitteeApplicationOrderByWithRelationInput | Prisma.CommitteeApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.CommitteeApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommitteeApplicationScalarFieldEnum | Prisma.CommitteeApplicationScalarFieldEnum[]
+}
+
+/**
+ * User.committeeApplicationInterviewAttendees
+ */
+export type User$committeeApplicationInterviewAttendeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommitteeApplicationInterviewAttendee
+   */
+  select?: Prisma.CommitteeApplicationInterviewAttendeeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommitteeApplicationInterviewAttendee
+   */
+  omit?: Prisma.CommitteeApplicationInterviewAttendeeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommitteeApplicationInterviewAttendeeInclude<ExtArgs> | null
+  where?: Prisma.CommitteeApplicationInterviewAttendeeWhereInput
+  orderBy?: Prisma.CommitteeApplicationInterviewAttendeeOrderByWithRelationInput | Prisma.CommitteeApplicationInterviewAttendeeOrderByWithRelationInput[]
+  cursor?: Prisma.CommitteeApplicationInterviewAttendeeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommitteeApplicationInterviewAttendeeScalarFieldEnum | Prisma.CommitteeApplicationInterviewAttendeeScalarFieldEnum[]
 }
 
 /**

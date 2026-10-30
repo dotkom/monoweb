@@ -94,7 +94,15 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  CommitteeApplicationPeriod: 'CommitteeApplicationPeriod',
+  CommitteeApplicationGroup: 'CommitteeApplicationGroup',
+  CommitteeApplication: 'CommitteeApplication',
+  CommitteeApplicationGroupSelection: 'CommitteeApplicationGroupSelection',
+  CommitteeApplicationInterviewAttendee: 'CommitteeApplicationInterviewAttendee',
+  CommitteeApplicationAvailability: 'CommitteeApplicationAvailability',
+  CommitteeApplicationInterviewBlock: 'CommitteeApplicationInterviewBlock',
+  CommitteeApplicationInterview: 'CommitteeApplicationInterview'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -714,6 +722,111 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
+
+
+export const CommitteeApplicationPeriodScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  interviewsPublishedAt: 'interviewsPublishedAt',
+  name: 'name',
+  isDraft: 'isDraft',
+  isEnabled: 'isEnabled',
+  applicationsOpenAt: 'applicationsOpenAt',
+  applicationsCloseAt: 'applicationsCloseAt',
+  interviewsStartDate: 'interviewsStartDate',
+  interviewsEndDate: 'interviewsEndDate'
+} as const
+
+export type CommitteeApplicationPeriodScalarFieldEnum = (typeof CommitteeApplicationPeriodScalarFieldEnum)[keyof typeof CommitteeApplicationPeriodScalarFieldEnum]
+
+
+export const CommitteeApplicationGroupScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  interviewDuration: 'interviewDuration',
+  type: 'type',
+  groupId: 'groupId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationGroupScalarFieldEnum = (typeof CommitteeApplicationGroupScalarFieldEnum)[keyof typeof CommitteeApplicationGroupScalarFieldEnum]
+
+
+export const CommitteeApplicationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  aboutMe: 'aboutMe',
+  studyYear: 'studyYear',
+  userId: 'userId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationScalarFieldEnum = (typeof CommitteeApplicationScalarFieldEnum)[keyof typeof CommitteeApplicationScalarFieldEnum]
+
+
+export const CommitteeApplicationGroupSelectionScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  rank: 'rank',
+  applicationId: 'applicationId',
+  applicationGroupId: 'applicationGroupId',
+  applicationPeriodId: 'applicationPeriodId'
+} as const
+
+export type CommitteeApplicationGroupSelectionScalarFieldEnum = (typeof CommitteeApplicationGroupSelectionScalarFieldEnum)[keyof typeof CommitteeApplicationGroupSelectionScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewAttendeeScalarFieldEnum = {
+  createdAt: 'createdAt',
+  groupSelectionId: 'groupSelectionId',
+  userId: 'userId'
+} as const
+
+export type CommitteeApplicationInterviewAttendeeScalarFieldEnum = (typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewAttendeeScalarFieldEnum]
+
+
+export const CommitteeApplicationAvailabilityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  applicationId: 'applicationId'
+} as const
+
+export type CommitteeApplicationAvailabilityScalarFieldEnum = (typeof CommitteeApplicationAvailabilityScalarFieldEnum)[keyof typeof CommitteeApplicationAvailabilityScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewBlockScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  locationName: 'locationName',
+  locationUrl: 'locationUrl',
+  applicationGroupId: 'applicationGroupId'
+} as const
+
+export type CommitteeApplicationInterviewBlockScalarFieldEnum = (typeof CommitteeApplicationInterviewBlockScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewBlockScalarFieldEnum]
+
+
+export const CommitteeApplicationInterviewScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  groupSelectionId: 'groupSelectionId',
+  applicationGroupId: 'applicationGroupId',
+  interviewBlockId: 'interviewBlockId'
+} as const
+
+export type CommitteeApplicationInterviewScalarFieldEnum = (typeof CommitteeApplicationInterviewScalarFieldEnum)[keyof typeof CommitteeApplicationInterviewScalarFieldEnum]
 
 
 export const SortOrder = {
