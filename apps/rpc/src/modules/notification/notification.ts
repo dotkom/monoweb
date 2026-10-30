@@ -271,6 +271,9 @@ export interface NotificationRecipientPreviewOptions {
   hideExistingRecipients?: boolean
 }
 
+export const NotificationStatusSchema = z.enum(["DRAFT", "SENT"])
+export type NotificationStatus = z.infer<typeof NotificationStatusSchema>
+
 export const MAXIMUM_NOTIFICATION_TITLE_LENGTH = 120 as const
 export const MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH = 160 as const
 
@@ -291,6 +294,8 @@ export const NotificationSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  status: NotificationStatusSchema,
+  sentAt: z.date().nullable(),
   title: z.string(),
   shortDescription: z.string(),
   content: z.string(),
@@ -313,6 +318,7 @@ export type NotificationId = Notification["id"]
  */
 export const NotificationManagementSchema = NotificationSchema.extend({
   initialRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
+  draftRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
 })
 
 export type NotificationManagement = z.infer<typeof NotificationManagementSchema>
@@ -326,8 +332,11 @@ export const NotificationWriteSchema = NotificationSchema.pick({
   actorGroupId: true,
   createdById: true,
   taskId: true,
+  status: true,
+  sentAt: true,
 }).extend({
-  initialRecipientSelection: NotificationRecipientSelectionSchema,
+  initialRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
+  draftRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
 })
 
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
@@ -340,18 +349,17 @@ export const NotificationUpdateSchema = NotificationMessageSchema.partial()
 
 export type NotificationUpdate = z.infer<typeof NotificationUpdateSchema>
 
-export const NotificationCreateSchema = z.object({
-  title: z.string().min(1, "Tittel er påkrevd").max(120),
-  shortDescription: z.string().min(1, "Kort beskrivelse er påkrevd").max(160),
-  content: z.string().optional(),
+export const NotificationDraftCreateSchema = NotificationMessageSchema.extend({
+  shortDescription: NotificationMessageSchema.shape.shortDescription.default(""),
+  content: NotificationMessageSchema.shape.content.default(""),
   type: z.enum(["BROADCAST", "BROADCAST_IMPORTANT"]),
   source: NotificationSourceSchema.default({ type: "GLOBAL" }),
   link: NotificationGlobalLinkSchema.default({ type: "NONE" }),
   actorGroupId: z.string().min(1, "Avsender er påkrevd"),
-  recipientSelection: NotificationRecipientSelectionSchema,
+  recipientSelection: NotificationRecipientSelectionSchema.nullable().default(null),
 })
 
-export type NotificationCreate = z.infer<typeof NotificationCreateSchema>
+export type NotificationDraftCreate = z.infer<typeof NotificationDraftCreateSchema>
 
 export const NotificationFilterQuerySchema = z
   .object({
@@ -449,3 +457,16 @@ export const NOTIFICATION_LINK_TYPE_LABELS = {
 export function getNotificationLinkTypeLabel(linkType: NotificationLink["type"]): string {
   return NOTIFICATION_LINK_TYPE_LABELS[linkType]
 }
+
+export const NotificationCreateSchema = z.object({
+  title: z.string().min(1, "Tittel er påkrevd").max(120),
+  shortDescription: z.string().min(1, "Kort beskrivelse er påkrevd").max(160),
+  content: z.string().optional(),
+  type: z.enum(["BROADCAST", "BROADCAST_IMPORTANT"]),
+  source: NotificationSourceSchema.default({ type: "GLOBAL" }),
+  link: NotificationGlobalLinkSchema.default({ type: "NONE" }),
+  actorGroupId: z.string().min(1, "Avsender er påkrevd"),
+  recipientSelection: NotificationRecipientSelectionSchema,
+})
+
+export type NotificationCreate = z.infer<typeof NotificationCreateSchema>

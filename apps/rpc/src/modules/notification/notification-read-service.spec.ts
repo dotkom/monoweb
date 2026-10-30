@@ -23,7 +23,8 @@ const notification: NotificationManagement = {
   content: "Feedback",
   createdAt: timestamp,
   updatedAt: timestamp,
-
+  status: "SENT",
+  sentAt: timestamp,
   link: { type: "URL", url: "https://online.ntnu.no/tilbakemelding/event-one" },
   actorGroupId: null,
   actorGroup: null,
@@ -31,6 +32,7 @@ const notification: NotificationManagement = {
   lastUpdatedById: null,
   taskId: null,
   initialRecipientSelection: null,
+  draftRecipientSelection: null,
 }
 
 beforeEach(() => {

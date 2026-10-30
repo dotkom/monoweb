@@ -166,7 +166,9 @@ function InboxNotificationRow({
   onMarkAsRead: () => void
 }) {
   const isUnread = userNotification.readAt === null
-  const relativeCreatedAt = useCompactRelativeTime(userNotification.notification.createdAt)
+  const relativeCreatedAt = useCompactRelativeTime(
+    userNotification.notification.sentAt ?? userNotification.notification.createdAt
+  )
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLAnchorElement>({
     notificationId: userNotification.notification.id,
     notificationType: userNotification.notification.type,
@@ -290,7 +292,9 @@ function InboxNotificationDetail({
   const notification = selectedUserNotification.notification
   const actorGroupName = notification.actorGroup === null ? null : getGroupDisplayName(notification.actorGroup)
   const hasFullDescription = richTextToPlainText(notification.content, null).trim().length > 0
-  const formattedCreatedAt = formatDate(notification.createdAt, "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })
+  const formattedCreatedAt = formatDate(notification.sentAt ?? notification.createdAt, "d. MMMM yyyy 'kl.' HH:mm", {
+    locale: nb,
+  })
 
   return (
     <article className="flex flex-col gap-6 md:p-6">

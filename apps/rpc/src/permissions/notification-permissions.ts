@@ -1,5 +1,9 @@
 import { GroupTypeSchema, type GroupId, type GroupType } from "../modules/group/group"
-import { NotificationTypeSchema, type NotificationCreate } from "../modules/notification/notification"
+import {
+  NotificationTypeSchema,
+  type NotificationDraftCreate,
+  type NotificationManagement,
+} from "../modules/notification/notification"
 import {
   CommitteeGroupSlug,
   hasAnyCommitteeAffiliation,
@@ -25,7 +29,7 @@ export function canCreateNotifications(principal: AffiliatedPrincipal): boolean 
 export function canCreateNotification(
   principal: AffiliatedPrincipal,
   actorGroup: NotificationGroup,
-  type: NotificationCreate["type"] = NotificationTypeSchema.enum.BROADCAST
+  type: NotificationDraftCreate["type"] = NotificationTypeSchema.enum.BROADCAST
 ): boolean {
   if (!canCreateNotifications(principal)) {
     return false
@@ -60,6 +64,21 @@ export function canManageNotification(principal: AffiliatedPrincipal, actorGroup
 
 export function canSendImportantNotification(principal: AffiliatedPrincipal): boolean {
   return isAdministrator(principal.affiliations)
+}
+
+export function canSendNotification(
+  principal: AffiliatedPrincipal,
+  notification: Pick<NotificationManagement, "actorGroup" | "type">
+): boolean {
+  if (!canManageNotification(principal, notification.actorGroup)) {
+    return false
+  }
+
+  if (notification.type === "BROADCAST_IMPORTANT") {
+    return canSendImportantNotification(principal)
+  }
+
+  return true
 }
 
 export function canTargetAllUsers(principal: AffiliatedPrincipal): boolean {
