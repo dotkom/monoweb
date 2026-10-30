@@ -198,7 +198,13 @@ export const GroupWriteForm = ({
         />
         <PreferredDisplayNamePreview control={form.control} />
       </div>
-      <RichTextField control={form.control} name="description" label="Beskrivelse" required onFileUpload={fileUpload} />
+      <RichTextField
+        control={form.control}
+        name="description"
+        label="Beskrivelse"
+        required
+        onFileUpload={(file) => fileUpload(file, { ephemeral: false })}
+      />
       <TextField
         control={form.control}
         name="email"

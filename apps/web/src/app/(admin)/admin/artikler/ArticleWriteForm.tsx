@@ -80,8 +80,20 @@ export const ArticleWriteForm = ({
         label="Tags"
         placeholder="Velg eller skriv inn en tag"
       />
-      <RichTextField control={form.control} name="excerpt" label="Ingress" required onFileUpload={fileUpload} />
-      <RichTextField control={form.control} name="content" label="Innhold" required onFileUpload={fileUpload} />
+      <RichTextField
+        control={form.control}
+        name="excerpt"
+        label="Ingress"
+        required
+        onFileUpload={(file) => fileUpload(file, { ephemeral: false })}
+      />
+      <RichTextField
+        control={form.control}
+        name="content"
+        label="Innhold"
+        required
+        onFileUpload={(file) => fileUpload(file, { ephemeral: false })}
+      />
 
       <Button type="submit" variant="default" className="w-fit" disabled={form.formState.disabled}>
         {submitLabel}

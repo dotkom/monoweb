@@ -647,12 +647,12 @@ const findFeaturedEventsProcedure = procedure
 export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
 export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
-  .input(z.object({ filename: z.string(), contentType: z.string() }))
+  .input(z.object({ filename: z.string(), contentType: z.string(), ephemeral: z.boolean().optional() }))
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canUploadEventFiles)))
   .mutation(async ({ ctx, input }) => {
-    return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+    return ctx.eventService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, input.ephemeral)
   })
 
 export const eventRouter = t.router({

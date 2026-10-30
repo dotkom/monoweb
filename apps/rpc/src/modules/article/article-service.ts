@@ -12,7 +12,7 @@ import {
   ARTICLE_IMAGE_MAX_SIZE_KIB,
 } from "./article"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, removeEphemeralTag, getS3KeyFromUrl, slugify } from "@dotkomonline/utils"
 import { compareAsc } from "date-fns"
 import { AlreadyExistsError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
@@ -53,7 +53,12 @@ export interface ArticleService {
   removeTag(handle: DBHandle, articleId: ArticleId, tag: ArticleTagName): Promise<void>
   setTags(handle: DBHandle, articleId: ArticleId, tags: ArticleTagName[]): Promise<ArticleTagName[]>
   findTagsOrderedByPopularity(handle: DBHandle): Promise<ArticleTag[]>
-  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+  createFileUpload(
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId,
+    ephemeral?: boolean
+  ): Promise<PresignedPost>
 }
 
 export function getArticleService(
@@ -66,12 +71,13 @@ export function getArticleService(
   return {
     async create(handle, data) {
       const existingArticle = await this.findBySlug(handle, data.slug)
-
       if (existingArticle) {
         throw new AlreadyExistsError(`Article(Slug=${data.slug}) already exists`)
       }
+      const article = await articleRepository.create(handle, data)
+      await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
 
-      return await articleRepository.create(handle, data)
+      return article
     },
 
     async update(handle, articleId, data) {
@@ -85,7 +91,13 @@ export function getArticleService(
         }
       }
 
-      return await articleRepository.update(handle, article.id, data)
+      const updated = await articleRepository.update(handle, article.id, data)
+
+      if (data.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+
+      return updated
     },
 
     async findManyByTags(handle, articleTags) {
@@ -209,13 +221,14 @@ export function getArticleService(
       return articleRepository.findTagsOrderedByPopularity(handle)
     },
 
-    async createFileUpload(filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId, ephemeral) {
       const uuid = crypto.randomUUID()
       const key = `article/${Date.now()}-${uuid}-${slugify(filename)}`
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        ephemeral,
         maxSizeKiB: ARTICLE_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,

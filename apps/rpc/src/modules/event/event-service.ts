@@ -20,7 +20,7 @@ import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getS3KeyFromUrl, removeEphemeralTag, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
@@ -83,7 +83,12 @@ export interface EventService {
   findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
-  createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+  createFileUpload(
+    filename: string,
+    contentType: string,
+    createdByUserId: UserId,
+    ephemeral?: boolean
+  ): Promise<PresignedPost>
 }
 
 export function getEventService(
@@ -95,7 +100,13 @@ export function getEventService(
 
   return {
     async createEvent(handle, data) {
-      return await eventRepository.create(handle, data)
+      const event = await eventRepository.create(handle, data)
+
+      if (data.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+
+      return event
     },
 
     async deleteEvent(handle, eventId) {
@@ -103,7 +114,12 @@ export function getEventService(
     },
 
     async updateEvent(handle, eventId, data) {
-      return await eventRepository.update(handle, eventId, data)
+      const event = await eventRepository.update(handle, eventId, data)
+      if (data.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(data.imageUrl))
+      }
+
+      return event
     },
 
     async findEvents(handle, query, page) {
@@ -248,13 +264,14 @@ export function getEventService(
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
     },
 
-    async createFileUpload(filename, contentType, createdByUserId) {
+    async createFileUpload(filename, contentType, createdByUserId, ephemeral) {
       const uuid = crypto.randomUUID()
       const key = `event/${Date.now()}-${uuid}-${slugify(filename)}`
 
       return await createS3PresignedPost(s3Client, {
         bucket: s3BucketName,
         key,
+        ephemeral,
         maxSizeKiB: EVENT_IMAGE_MAX_SIZE_KIB,
         contentType,
         createdByUserId,

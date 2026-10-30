@@ -10,7 +10,7 @@ import {
   COMPANY_IMAGE_MAX_SIZE_KIB,
 } from "./company"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getS3KeyFromUrl, removeEphemeralTag, slugify } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { CompanyRepository } from "./company-repository"
@@ -78,11 +78,19 @@ export function getCompanyService(
     },
 
     async create(handle, payload) {
-      return await companyRepository.create(handle, payload)
+      const company = await companyRepository.create(handle, payload)
+      if (payload.imageUrl !== null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(payload.imageUrl))
+      }
+      return company
     },
 
     async update(handle, companyId, payload): Promise<Company> {
-      return await companyRepository.update(handle, companyId, payload)
+      const company = await companyRepository.update(handle, companyId, payload)
+      if (payload.imageUrl != null) {
+        await removeEphemeralTag(s3Client, s3BucketName, getS3KeyFromUrl(payload.imageUrl))
+      }
+      return company
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {

@@ -376,13 +376,14 @@ const createFileUploadProcedure = procedure
     z.object({
       filename: z.string(),
       contentType: z.string(),
+      ephemeral: z.boolean().optional(),
     })
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canUploadGroupFiles)))
   .mutation(async ({ input, ctx }) => {
-    return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
+    return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject, input.ephemeral)
   })
 
 export const groupRouter = t.router({

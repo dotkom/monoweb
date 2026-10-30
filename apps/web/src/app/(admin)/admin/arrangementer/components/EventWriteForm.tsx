@@ -99,7 +99,13 @@ export function EventWriteForm({ onSubmit, disabled, submitLabel = "Opprett arra
   return (
     <Form form={resolvedForm} onSubmit={onSubmit}>
       <TextField control={control} name="title" label="Arrangementnavn" placeholder="Silent Disco" required />
-      <RichTextField control={control} name="description" label="Beskrivelse" required onFileUpload={uploadFile} />
+      <RichTextField
+        control={control}
+        name="description"
+        label="Beskrivelse"
+        required
+        onFileUpload={(file) => uploadFile(file, { ephemeral: false })}
+      />
       <TextField
         control={control}
         name="locationTitle"
