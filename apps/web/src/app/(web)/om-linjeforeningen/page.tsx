@@ -13,12 +13,12 @@ export default async function AboutOnlinePage() {
 
   return (
     <div>
-      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-200 dark:bg-transparent p-8">
+      <div className="flex flex-col items-center sm:text-center rounded-xl bg-blue-200 dark:bg-transparent halloween:bg-accent halloween:text-accent-foreground p-8">
         <Title size="xl" element="h1" className="mb-10">
           Bli kjent med{" "}
           <span className="relative inline-block">
             Online linjeforening
-            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-600 dark:bg-blue-700 rounded-2xl" />
+            <span className="absolute left-0 -bottom-6 h-4 w-full bg-blue-600 dark:bg-blue-700 halloween:bg-brand rounded-2xl" />
           </span>
         </Title>
         <Text>
@@ -46,7 +46,10 @@ export default async function AboutOnlinePage() {
           </div>
           <div className="text-left max-w-md mt-4 md:mt-0">
             <Text>
-              <Link href="https://wiki.online.ntnu.no/generalforsamlinger/" className="hover:underline text-blue-700">
+              <Link
+                href="https://wiki.online.ntnu.no/generalforsamlinger/"
+                className="hover:underline text-blue-700 halloween:text-gray-800 halloween:dark:text-brand"
+              >
                 Generalforsamlingen
               </Link>{" "}
               er den høyeste besluttende myndighet i Online.

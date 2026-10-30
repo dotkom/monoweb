@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
+import { PaletteBackdrop } from "@/components/backdrops/PaletteBackdrop"
 import { PaletteProvider } from "@/components/PaletteProvider"
 import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
 import {
@@ -75,11 +76,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   availablePalettes={getAvailablePalettes()}
                 >
                   <Toaster>
-                    <div className="page-shell">
-                      <Navbar />
-                      <main className="grow">{children}</main>
-                      <Footer />
-                    </div>
+                    <PaletteBackdrop>
+                      <div className="page-shell">
+                        <Navbar />
+                        <main className="grow">{children}</main>
+                        <Footer />
+                      </div>
+                    </PaletteBackdrop>
                   </Toaster>
                 </PaletteProvider>
               </ThemeProvider>

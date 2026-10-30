@@ -1,4 +1,6 @@
 import { type Icon, IconPumpkinScary } from "@tabler/icons-react"
+import type { FC, PropsWithChildren } from "react"
+import { HalloweenBackdrop } from "@/components/backdrops/HalloweenBackdrop"
 import type { Palette } from "./palette"
 
 interface PaletteConfig {
@@ -7,8 +9,10 @@ interface PaletteConfig {
   swatchClassName: string
   /** Replaces the sun/moon icon on the theme dropdown button */
   icon?: Icon
-  /** Full-width artwork shown in the hero instead of the 3D scene, with a transparent sky for the text to sit in */
-  heroArtwork?: { src: string; width: number; height: number }
+  /** Decorative artwork behind the public website */
+  Backdrop?: FC<PropsWithChildren>
+  /** Whether the homepage includes the interactive 3D logo */
+  showHeroScene?: boolean
 }
 
 /**
@@ -24,6 +28,7 @@ export const PALETTE_CONFIG: Record<Palette, PaletteConfig> = {
     label: "Halloween",
     swatchClassName: "bg-[#f7931e]",
     icon: IconPumpkinScary,
-    heroArtwork: { src: "/halloween-background.svg", width: 2400, height: 540 },
+    Backdrop: HalloweenBackdrop,
+    showHeroScene: false,
   },
 }
