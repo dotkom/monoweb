@@ -456,13 +456,13 @@ importers:
         specifier: ^6.1.21
         version: 6.1.21
       '@fullcalendar/interaction':
-        specifier: 6.1.21
+        specifier: ^6.1.21
         version: 6.1.21(@fullcalendar/core@6.1.21)
       '@fullcalendar/react':
         specifier: ^6.1.21
         version: 6.1.21(@fullcalendar/core@6.1.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@fullcalendar/timegrid':
-        specifier: 6.1.21
+        specifier: ^6.1.21
         version: 6.1.21(@fullcalendar/core@6.1.21)
       '@hello-pangea/dnd':
         specifier: ^18.0.1
