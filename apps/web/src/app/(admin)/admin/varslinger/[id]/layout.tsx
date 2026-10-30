@@ -9,13 +9,12 @@ import {
 import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
 import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
 import { getNotificationLinkTypeLabel } from "@dotkomonline/rpc/notification"
-import { Button, Text } from "@dotkomonline/ui"
-import { IconCheck, IconFileText, IconUsers } from "@tabler/icons-react"
+import { Badge, Button, Text, Tooltip, TooltipContent, TooltipTrigger } from "@dotkomonline/ui"
+import { IconCheck, IconFileText, IconSend, IconUsers } from "@tabler/icons-react"
 import Link from "next/link"
 import { type PropsWithChildren, use } from "react"
 import { useDeleteNotificationMutation } from "../mutations"
 import { useNotificationCreatedByQuery, useNotificationGetQuery, useNotificationRecipientStatsQuery } from "../queries"
-import { SendNotificationDraftButton } from "../components/SendNotificationDraftButton"
 import { NotificationDetailsProvider } from "./provider"
 import {
   getActorGroupLabel,
@@ -23,8 +22,10 @@ import {
   getNotificationLinkActionLabel,
   getNotificationLinkHref,
   formatDeleteConfirmText,
-  formatSentAt,
 } from "./utils"
+import { formatDate, isThisYear } from "date-fns"
+import { nb } from "date-fns/locale"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 
 export default function NotificationDetailsLayout({
   children,
@@ -37,6 +38,7 @@ export default function NotificationDetailsLayout({
 
   useBreadcrumbLabel(breadcrumbPath("varslinger", id), notification?.title ?? null)
   useBreadcrumbLabel(breadcrumbPath("varslinger", id, "mottakere"), "Mottakere")
+  useBreadcrumbLabel(breadcrumbPath("varslinger", id, "send"), notification?.status === "SENT" ? "Status" : "Send")
 
   const statsQuery = useNotificationRecipientStatsQuery(id, canManage && notification?.status === "SENT")
   const deleteNotification = useDeleteNotificationMutation()
@@ -60,7 +62,17 @@ export default function NotificationDetailsLayout({
   const actorGroupLabel = getActorGroupLabel(notification.actorGroup)
   const createdByName = getCreatedByName(notification.createdById, createdBy?.name, isCreatedByLoading)
   const isDraft = notification.status === "DRAFT"
+
   const notificationDate = notification.sentAt ?? notification.createdAt
+  const notificationDateString = formatDate(notificationDate, isThisYear(notificationDate) ? "d. MMM" : "d. MMM yyyy", {
+    locale: nb,
+  })
+
+  const notificationLongDateString = capitalizeFirstLetter(
+    formatDate(notificationDate, "EEEE dd. MMMM yyyy 'kl.' HH:mm", {
+      locale: nb,
+    })
+  )
 
   const linkLabel = notification.link.type === "NONE" ? null : getNotificationLinkTypeLabel(notification.link.type)
   const linkHref = notification.link.type === "NONE" ? null : getNotificationLinkHref(notification.link)
@@ -76,6 +88,11 @@ export default function NotificationDetailsLayout({
       href: `${basePath}/mottakere`,
       label: "Mottakere",
       icon: IconUsers,
+    },
+    {
+      href: `${basePath}/send`,
+      label: isDraft ? "Send" : "Status",
+      icon: isDraft ? IconSend : IconCheck,
     },
   ]
 
@@ -98,14 +115,6 @@ export default function NotificationDetailsLayout({
               {getNotificationLinkActionLabel(notification.link.type)}
             </Button>
           ),
-          right: isDraft ? (
-            <SendNotificationDraftButton />
-          ) : (
-            <div className="flex items-center gap-1.5 p-2 bg-green-50 dark:bg-green-900/33 rounded-lg">
-              <IconCheck className="size-5 text-green-600 dark:text-green-400" aria-hidden />
-              <Text className="text-sm font-medium">Varslingen er sendt</Text>
-            </div>
-          ),
         }}
         onDelete={() => deleteNotification.mutate(notification.id)}
         deleteConfirmTitle={
@@ -113,10 +122,29 @@ export default function NotificationDetailsLayout({
         }
         description={
           <div className="flex flex-col gap-2">
-            <Text className="text-sm text-muted-foreground">
-              {isDraft ? "Utkast opprettet" : "Varsling sendt"} {formatSentAt(notificationDate)} som {actorGroupLabel}{" "}
-              av {createdByName}
-            </Text>
+            <div className="flex flex-row items-center gap-2">
+              <Badge variant="secondary" color={isDraft ? "red" : "green"} className="border-none">
+                {isDraft ? "Utkast" : "Sendt"}
+              </Badge>
+
+              <span className="size-1.25 rounded-full bg-border" aria-hidden />
+
+              <Tooltip>
+                <TooltipTrigger delay={0}>
+                  <Text className="text-sm text-muted-foreground">
+                    {isDraft && "Opprettet "}
+                    {notificationDateString}
+                  </Text>
+                </TooltipTrigger>
+                <TooltipContent>{notificationLongDateString}</TooltipContent>
+              </Tooltip>
+
+              <span className="size-1.25 rounded-full bg-border" aria-hidden />
+
+              <Text className="text-sm text-muted-foreground">
+                Som {actorGroupLabel} av {createdByName}
+              </Text>
+            </div>
 
             {linkHref === null && linkLabel !== null && (
               <Text className="text-sm text-muted-foreground">{linkLabel}</Text>

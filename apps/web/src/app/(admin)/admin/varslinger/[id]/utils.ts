@@ -1,7 +1,5 @@
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { NotificationLink, NotificationManagement } from "@dotkomonline/rpc/notification"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 
 export function getActorGroupLabel(actorGroup: NotificationManagement["actorGroup"]): string {
   if (actorGroup === null) {
@@ -29,10 +27,6 @@ export function getCreatedByName(
   }
 
   return userName
-}
-
-export function formatSentAt(date: Date): string {
-  return formatDate(date, "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })
 }
 
 export function formatPercent(count: number, total: number): string {
