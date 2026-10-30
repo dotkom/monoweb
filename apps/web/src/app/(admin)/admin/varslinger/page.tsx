@@ -86,7 +86,7 @@ export default function NotificationsPage() {
             </ToggleGroup>
           )}
         </div>
-        <PermissionTooltip allowed={canCreate} label="Kun administratorer kan opprette varslinger">
+        <PermissionTooltip allowed={canCreate} label="Du har ikke tilgang til å opprette varslinger">
           <Button onClick={() => setIsCreateOpen(true)} disabled={!canCreate}>
             Ny varsling
           </Button>

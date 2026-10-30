@@ -19,7 +19,7 @@ export function canListNotifications(principal: AffiliatedPrincipal): boolean {
 }
 
 export function canCreateNotifications(principal: AffiliatedPrincipal): boolean {
-  return isAdministrator(principal.affiliations)
+  return isCommitteeMember(principal.affiliations)
 }
 
 export function canCreateNotification(
