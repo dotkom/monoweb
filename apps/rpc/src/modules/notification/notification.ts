@@ -457,16 +457,3 @@ export const NOTIFICATION_LINK_TYPE_LABELS = {
 export function getNotificationLinkTypeLabel(linkType: NotificationLink["type"]): string {
   return NOTIFICATION_LINK_TYPE_LABELS[linkType]
 }
-
-export const NotificationCreateSchema = z.object({
-  title: z.string().min(1, "Tittel er påkrevd").max(120),
-  shortDescription: z.string().min(1, "Kort beskrivelse er påkrevd").max(160),
-  content: z.string().optional(),
-  type: z.enum(["BROADCAST", "BROADCAST_IMPORTANT"]),
-  source: NotificationSourceSchema.default({ type: "GLOBAL" }),
-  link: NotificationGlobalLinkSchema.default({ type: "NONE" }),
-  actorGroupId: z.string().min(1, "Avsender er påkrevd"),
-  recipientSelection: NotificationRecipientSelectionSchema,
-})
-
-export type NotificationCreate = z.infer<typeof NotificationCreateSchema>

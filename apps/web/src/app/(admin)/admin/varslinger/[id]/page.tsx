@@ -1,21 +1,24 @@
 "use client"
 
-import { getNotificationTypeLabel } from "@dotkomonline/rpc/notification"
-import { Badge } from "@dotkomonline/ui"
-import { IconBell } from "@tabler/icons-react"
 import { EditNotificationForm } from "../components/EditNotificationForm"
+import { NotificationPreview } from "../components/NotificationPreview"
 import { useNotificationDetailsContext } from "./provider"
 
 export default function NotificationContentPage() {
-  const { notification } = useNotificationDetailsContext()
+  const { notification, contentDraft, setContentDraft } = useNotificationDetailsContext()
+  const previewNotification = { ...notification, ...contentDraft }
 
   return (
-    <div className="flex flex-col gap-4">
-      <Badge variant="secondary">
-        <IconBell />
-        {getNotificationTypeLabel(notification.type)}
-      </Badge>
-      <EditNotificationForm notification={notification} />
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+      <EditNotificationForm
+        notification={notification}
+        contentDraft={contentDraft}
+        onContentChange={setContentDraft}
+        className="min-w-0"
+      />
+      <div className="min-w-0 lg:sticky lg:top-[calc(var(--resource-detail-header-bottom,0px)+1.5rem)]">
+        <NotificationPreview notification={previewNotification} />
+      </div>
     </div>
   )
 }

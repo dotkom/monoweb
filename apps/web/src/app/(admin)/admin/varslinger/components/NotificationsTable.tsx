@@ -12,7 +12,7 @@ import {
   type NotificationManagement,
   type NotificationRecipientStats,
 } from "@dotkomonline/rpc/notification"
-import { DataTable, Text, TextLink } from "@dotkomonline/ui"
+import { Badge, DataTable, Text, TextLink } from "@dotkomonline/ui"
 import { useQueries } from "@tanstack/react-query"
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { useMemo } from "react"
@@ -102,7 +102,7 @@ export function NotificationsTable({
   const statsQueries = useQueries({
     queries: rows.map((notification) => ({
       ...trpc.notification.getRecipientStats.queryOptions(notification.id),
-      enabled: notification.canManage,
+      enabled: notification.canManage && notification.status === "SENT",
       retry: false,
     })),
   })
@@ -140,6 +140,11 @@ export function NotificationsTable({
           className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
         >
           {info.getValue()}
+          {info.row.original.status === "DRAFT" && (
+            <Badge className="ml-2" variant="secondary">
+              Utkast
+            </Badge>
+          )}
         </TextLink>
       ),
     })
@@ -151,7 +156,7 @@ export function NotificationsTable({
 
     const actorGroupColumn = columnHelper.accessor((notification) => getActorGroupLabel(notification), {
       id: "actorGroup",
-      header: () => "Sendt av",
+      header: () => "Avsender",
       cell: (info) => info.getValue(),
     })
 
@@ -164,9 +169,12 @@ export function NotificationsTable({
       }
     )
 
-    const createdAtColumn = columnHelper.accessor("createdAt", {
+    const sentAtColumn = columnHelper.accessor("sentAt", {
       header: () => "Sendt",
-      cell: (info) => <DateTooltip date={info.getValue()} />,
+      cell: (info) => {
+        const sentAt = info.getValue()
+        return sentAt === null ? "—" : <DateTooltip date={sentAt} />
+      },
     })
 
     const recipientsColumn = columnHelper.display({
@@ -174,7 +182,7 @@ export function NotificationsTable({
       header: () => "Mottakere",
       cell: (info) => (
         <RecipientStatsCell
-          canManage={info.row.original.canManage}
+          canManage={info.row.original.canManage && info.row.original.status === "SENT"}
           statsQuery={statsByNotificationId.get(info.row.original.id)}
         >
           {(stats) => stats.totalCount}
@@ -187,7 +195,7 @@ export function NotificationsTable({
       header: () => "Lest",
       cell: (info) => (
         <RecipientStatsCell
-          canManage={info.row.original.canManage}
+          canManage={info.row.original.canManage && info.row.original.status === "SENT"}
           statsQuery={statsByNotificationId.get(info.row.original.id)}
         >
           {(stats) => formatReadPercentage(stats)}
@@ -201,7 +209,7 @@ export function NotificationsTable({
       typeColumn,
       actorGroupColumn,
       ...(showLinkType ? [linkTypeColumn] : []),
-      createdAtColumn,
+      sentAtColumn,
       recipientsColumn,
       ...(showReadPercentage ? [readPercentageColumn] : []),
     ].filter((column): column is NonNullable<typeof column> => Boolean(column))
