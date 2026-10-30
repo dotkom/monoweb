@@ -229,6 +229,8 @@ export type NotificationRecipientSelection = z.infer<typeof NotificationRecipien
 export const ResolvedNotificationRecipientSchema = z.object({
   userId: z.string(),
   sourceLabels: z.array(z.string()).min(1),
+  /** Zero-based indexes into the selection's rules, in matching order. */
+  sourceRuleIndexes: z.array(z.number().int().nonnegative()).min(1),
 })
 
 export type ResolvedNotificationRecipient = z.infer<typeof ResolvedNotificationRecipientSchema>
@@ -256,12 +258,18 @@ export const NotificationRecipientSelectionPreviewSchema = NotificationRecipient
     ResolvedNotificationRecipientSchema.extend({
       name: z.string().nullable(),
       imageUrl: z.string().nullable(),
+      isExistingRecipient: z.boolean().optional(),
     })
   ),
   nextCursor: z.string().optional(),
 })
 
 export type NotificationRecipientSelectionPreview = z.infer<typeof NotificationRecipientSelectionPreviewSchema>
+
+export interface NotificationRecipientPreviewOptions {
+  notificationId?: NotificationId
+  hideExistingRecipients?: boolean
+}
 
 export const MAXIMUM_NOTIFICATION_TITLE_LENGTH = 120 as const
 export const MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH = 160 as const

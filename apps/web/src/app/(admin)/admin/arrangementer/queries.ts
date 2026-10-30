@@ -60,6 +60,12 @@ export const useEventWithAttendancesGetQuery = (id: EventId, enabled?: boolean) 
   return useQuery(trpc.event.getForAdmin.queryOptions(id, { enabled }))
 }
 
+export const useEventWithAttendancesByAttendanceIdGetQuery = (attendanceId: AttendanceId, enabled: boolean) => {
+  const trpc = useTRPC()
+
+  return useQuery(trpc.event.getForAdminByAttendanceId.queryOptions(attendanceId, { enabled }))
+}
+
 export const useFindParentEventQuery = (eventId: EventId) => {
   const trpc = useTRPC()
 

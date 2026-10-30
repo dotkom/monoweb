@@ -25,7 +25,7 @@ import { CompanySchema } from "../company/company"
 import { feedbackRouter } from "../feedback-form/feedback-router"
 import { GroupSchema } from "../group/group"
 import { UserSchema } from "../user/user"
-import { AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
+import { AttendanceSchema, AttendanceSummarySchema, AttendanceWriteSchema } from "./attendance"
 import { attendanceRouter } from "./attendance-router"
 import {
   BaseEventSchema,
@@ -78,6 +78,19 @@ const getEventForAdminProcedure = procedure
     const attendance = event.attendanceId
       ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
       : null
+
+    return { event, attendance }
+  })
+
+const getEventForAdminByAttendanceIdProcedure = procedure
+  .input(AttendanceSchema.shape.id)
+  .output(EventWithAttendanceSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(permitIf(canGetEventForAdmin)))
+  .use(withDatabaseTransaction())
+  .query(async ({ input, ctx: context }) => {
+    const event = await context.eventService.getByAttendanceId(context.handle, input)
+    const attendance = await context.attendanceService.findAttendanceById(context.handle, input)
 
     return { event, attendance }
   })
@@ -647,6 +660,7 @@ export const eventRouter = t.router({
   feedback: feedbackRouter,
   get: getEventProcedure,
   getForAdmin: getEventForAdminProcedure,
+  getForAdminByAttendanceId: getEventForAdminByAttendanceIdProcedure,
   find: findEventProcedure,
   create: createEventProcedure,
   edit: editEventProcedure,

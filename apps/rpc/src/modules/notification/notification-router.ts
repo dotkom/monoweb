@@ -294,6 +294,8 @@ const previewRecipientSelectionProcedure = procedure
       recipientSelection: NotificationRecipientSelectionSchema,
       type: NotificationTypeSchema,
       search: z.string().optional(),
+      notificationId: NotificationSchema.shape.id.optional(),
+      hideExistingRecipients: z.boolean().optional(),
     })
   )
   .output(NotificationRecipientSelectionPreviewSchema)
@@ -306,9 +308,20 @@ const previewRecipientSelectionProcedure = procedure
     )
     await authorizeRecipientSelection(ctx, input.recipientSelection)
 
-    const { recipientSelection, type, search, ...page } = input
+    const { recipientSelection, type, search, notificationId, hideExistingRecipients, ...page } = input
 
-    return await ctx.notificationService.previewRecipientSelection(ctx.handle, recipientSelection, type, page, search)
+    if (notificationId !== undefined) {
+      const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
+      await ctx.addAuthorizationGuard(
+        permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+        input
+      )
+    }
+
+    return await ctx.notificationService.previewRecipientSelection(ctx.handle, recipientSelection, type, page, search, {
+      notificationId,
+      hideExistingRecipients,
+    })
   })
 
 export type CreateNotificationInput = inferProcedureInput<typeof createNotificationProcedure>

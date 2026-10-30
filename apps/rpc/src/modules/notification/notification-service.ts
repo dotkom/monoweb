@@ -17,6 +17,7 @@ import type {
   NotificationRecipientListItem,
   NotificationRecipientFilterQuery,
   NotificationRecipientSelection,
+  NotificationRecipientPreviewOptions,
   NotificationRecipientSelectionPreview,
   NotificationRecipientStats,
   NotificationType,
@@ -69,7 +70,8 @@ export interface NotificationService {
     recipientSelection: NotificationRecipientSelection,
     notificationType: NotificationType,
     page: Pageable,
-    search?: string
+    search?: string,
+    options?: NotificationRecipientPreviewOptions
   ): Promise<NotificationRecipientSelectionPreview>
 
   findById(handle: DBHandle, notificationId: NotificationId): Promise<NotificationManagement | null>
@@ -193,8 +195,8 @@ export function getNotificationService(
       }
     },
 
-    async previewRecipientSelection(handle, recipientSelection, notificationType, page, search) {
-      return await recipientResolver.preview(handle, recipientSelection, notificationType, page, search)
+    async previewRecipientSelection(handle, recipientSelection, notificationType, page, search, options) {
+      return await recipientResolver.preview(handle, recipientSelection, notificationType, page, search, options)
     },
 
     async findById(handle, notificationId) {
