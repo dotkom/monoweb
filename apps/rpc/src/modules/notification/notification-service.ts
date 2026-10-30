@@ -3,22 +3,15 @@ import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { Pageable } from "@dotkomonline/utils"
 import { InvalidArgumentError, NotFoundError } from "../../error"
-import type { ArticleService } from "../article/article-service"
-import type { EventService } from "../event/event-service"
 import type { GroupId } from "../group/group"
-import type { GroupService } from "../group/group-service"
-import type { JobListingService } from "../job-listing/job-listing-service"
-import type { OfflineService } from "../offline/offline-service"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
-import type { UserService } from "../user/user-service"
-import { NotificationGlobalLinkSchema, NotificationUpdateSchema } from "./notification"
+import { NotificationUpdateSchema } from "./notification"
 import type {
   Notification,
   NotificationFilterQuery,
   NotificationGlobalLink,
   NotificationId,
-  NotificationLink,
   NotificationManagement,
   NotificationRecipient,
   NotificationRecipientListItem,
@@ -33,6 +26,7 @@ import type {
 } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import type { NotificationRepository } from "./notification-repository"
+import { getNotificationSourceResolver, type NotificationSourceServices } from "./notification-source-resolver"
 
 export interface NotificationSendInput {
   source: NotificationSource
@@ -50,15 +44,6 @@ export interface NotificationSendInput {
 export interface NotificationSendResult {
   notification: NotificationManagement
   recipientCount: number
-}
-
-export interface NotificationSourceServices {
-  eventService: Pick<EventService, "getEventById">
-  articleService: Pick<ArticleService, "getBySlug">
-  groupService: Pick<GroupService, "getBySlug">
-  userService: Pick<UserService, "getById">
-  offlineService: Pick<OfflineService, "getById">
-  jobListingService: Pick<JobListingService, "getById">
 }
 
 export const NEW_NOTIFICATION_EVENT = "notification:new"
@@ -133,74 +118,7 @@ export function getNotificationService(
 ): NotificationService {
   const logger = getLogger("notification-service")
 
-  async function resolveNotificationLink(handle: DBHandle, input: NotificationSendInput): Promise<NotificationLink> {
-    const source = input.source
-
-    if (source.type === "GLOBAL") {
-      const result = NotificationGlobalLinkSchema.safeParse(input.link ?? { type: "NONE" })
-
-      if (!result.success) {
-        throw new InvalidArgumentError("Global notifications can only have no link or a URL")
-      }
-
-      return result.data
-    }
-
-    if (input.link !== undefined && input.link.type !== "NONE") {
-      throw new InvalidArgumentError("Notifications from a specific context have a fixed link")
-    }
-
-    switch (source.type) {
-      case "EVENT": {
-        const event = await sourceServices.eventService.getEventById(handle, source.eventId)
-
-        return {
-          type: "EVENT",
-          eventId: event.id,
-        }
-      }
-      case "ARTICLE": {
-        const article = await sourceServices.articleService.getBySlug(handle, source.articleSlug)
-
-        return {
-          type: "ARTICLE",
-          articleSlug: article.slug,
-        }
-      }
-      case "GROUP": {
-        const group = await sourceServices.groupService.getBySlug(handle, source.groupSlug)
-
-        return {
-          type: "GROUP",
-          groupSlug: group.slug,
-        }
-      }
-      case "USER": {
-        const user = await sourceServices.userService.getById(handle, source.userId)
-
-        return {
-          type: "USER",
-          userId: user.id,
-        }
-      }
-      case "OFFLINE": {
-        const offline = await sourceServices.offlineService.getById(handle, source.offlineId)
-
-        return {
-          type: "OFFLINE",
-          offlineId: offline.id,
-        }
-      }
-      case "JOB_LISTING": {
-        const jobListing = await sourceServices.jobListingService.getById(handle, source.jobListingId)
-
-        return {
-          type: "JOB_LISTING",
-          jobListingId: jobListing.id,
-        }
-      }
-    }
-  }
+  const sourceResolver = getNotificationSourceResolver(sourceServices)
 
   function toInboxNotification(notification: NotificationManagement): Notification {
     const { initialRecipientSelection: _initialRecipientSelection, ...inboxNotification } = notification
@@ -239,7 +157,7 @@ export function getNotificationService(
 
   return {
     async send(handle, input) {
-      const link = await resolveNotificationLink(handle, input)
+      const { link } = await sourceResolver.resolve(handle, input)
 
       const recipientResolution = await recipientResolver.resolve(handle, input.recipientSelection, input.type)
 

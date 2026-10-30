@@ -6,7 +6,7 @@ import { getNotificationTypeConfiguration, type NotificationManagement } from ".
 import type { NotificationRepository } from "./notification-repository"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import { getNotificationService, NEW_NOTIFICATION_EVENT } from "./notification-service"
-import type { NotificationSourceServices } from "./notification-service"
+import type { NotificationSourceServices } from "./notification-source-resolver"
 
 const databaseHandle = mockDeep<DBHandle>()
 const repository = mockDeep<NotificationRepository>()

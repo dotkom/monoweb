@@ -263,6 +263,22 @@ export const NotificationRecipientSelectionPreviewSchema = NotificationRecipient
 
 export type NotificationRecipientSelectionPreview = z.infer<typeof NotificationRecipientSelectionPreviewSchema>
 
+export const MAXIMUM_NOTIFICATION_TITLE_LENGTH = 120 as const
+export const MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH = 160 as const
+
+export const NotificationMessageSchema = z.object({
+  title: z.string().trim().min(1, "Tittel er påkrevd").max(MAXIMUM_NOTIFICATION_TITLE_LENGTH),
+  shortDescription: z.string().max(MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH),
+  content: z.string(),
+})
+export type NotificationMessage = z.infer<typeof NotificationMessageSchema>
+
+export function hasCompleteNotificationMessage(
+  message: Pick<NotificationMessage, "title" | "shortDescription">
+): boolean {
+  return message.title.trim().length > 0 && message.shortDescription.trim().length > 0
+}
+
 export const NotificationSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
@@ -308,12 +324,7 @@ export const NotificationWriteSchema = NotificationSchema.pick({
 
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
 
-export const NotificationUpdateSchema = NotificationSchema.pick({
-  title: true,
-  shortDescription: true,
-  content: true,
-})
-  .partial()
+export const NotificationUpdateSchema = NotificationMessageSchema.partial()
   .extend({
     lastUpdatedById: z.string(),
   })
