@@ -123,15 +123,15 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async update(handle, notificationId, data) {
-      const { link, ...notificationData } = data
-
       const row = await handle.notification.update({
         where: {
           id: notificationId,
         },
         data: {
-          ...notificationData,
-          ...(link !== undefined ? serializeNotificationLink(link) : {}),
+          title: data.title,
+          shortDescription: data.shortDescription,
+          content: data.content,
+          lastUpdatedById: data.lastUpdatedById,
         },
         include: INCLUDE_ACTOR_GROUP,
       })
