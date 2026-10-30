@@ -959,6 +959,11 @@ enum NotificationType {
   NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
 }
 
+enum NotificationStatus {
+  DRAFT
+  SENT
+}
+
 model Notification {
   id                        String                  @id @default(uuid())
   createdAt                 DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -969,11 +974,15 @@ model Notification {
   /// The full rich text content of the notification.
   content                   String
   type                      NotificationType
+  status                    NotificationStatus      @default(SENT)
+  sentAt                    DateTime?               @default(now()) @map("sent_at") @db.Timestamptz(3)
   /// Can be an ID or a URL depending on the payload type.
   payload                   String?
   payloadType               NotificationPayloadType @map("payload_type")
   /// The rules used to select recipients when the notification was initially sent.
   initialRecipientSelection Json?                   @map("initial_recipient_selection")
+  /// Editable recipient rules for a draft. Resolved into a snapshot only when sent.
+  draftRecipientSelection   Json?                   @map("draft_recipient_selection")
 
   /// The group that created the notification or the system created on behalf of.
   actorGroupId    String? @map("actor_group_id")

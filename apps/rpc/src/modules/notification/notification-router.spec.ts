@@ -34,6 +34,8 @@ const notification: NotificationManagement = {
   id: "notification-1",
   createdAt: timestamp,
   updatedAt: timestamp,
+  status: "SENT",
+  sentAt: timestamp,
   title: "Message",
   shortDescription: "An update",
   content: "<p>An update</p>",
@@ -45,6 +47,7 @@ const notification: NotificationManagement = {
   lastUpdatedById: null,
   taskId: null,
   initialRecipientSelection: null,
+  draftRecipientSelection: null,
 }
 const message = {
   title: notification.title,

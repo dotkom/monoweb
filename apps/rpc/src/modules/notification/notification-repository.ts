@@ -1,4 +1,4 @@
-import type { DBHandle, Prisma } from "@dotkomonline/db"
+import { type DBHandle, Prisma } from "@dotkomonline/db"
 import { type Pageable, getCurrentUTC, pageQuery } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
@@ -28,6 +28,23 @@ import {
 export interface NotificationRepository {
   create(handle: DBHandle, data: NotificationWrite): Promise<NotificationManagement>
   update(handle: DBHandle, notificationId: NotificationId, data: NotificationUpdate): Promise<NotificationManagement>
+  saveDraftRecipients(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    recipientSelection: NotificationRecipientSelection | null,
+    updatedById: UserId
+  ): Promise<NotificationManagement | null>
+  publishDraft(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    data: {
+      expectedUpdatedAt: Date
+      recipientSelection: NotificationRecipientSelection
+      content: string
+      sentAt: Date
+      updatedById: UserId
+    }
+  ): Promise<NotificationManagement | null>
   delete(handle: DBHandle, notificationId: NotificationId): Promise<void>
   findById(handle: DBHandle, notificationId: NotificationId): Promise<NotificationManagement | null>
   findMany(handle: DBHandle, query: NotificationFilterQuery, page: Pageable): Promise<NotificationManagement[]>
@@ -59,7 +76,13 @@ const INCLUDE_ACTOR_GROUP = {
 type NotificationRow = Prisma.NotificationGetPayload<{ include: typeof INCLUDE_ACTOR_GROUP }>
 
 function mapInboxNotification(row: NotificationRow): Notification {
-  const { payloadType, payload, initialRecipientSelection: _initialRecipientSelection, ...rest } = row
+  const {
+    payloadType,
+    payload,
+    initialRecipientSelection: _initialRecipientSelection,
+    draftRecipientSelection: _draftRecipientSelection,
+    ...rest
+  } = row
 
   return parseOrReport(NotificationSchema, {
     ...rest,
@@ -68,17 +91,19 @@ function mapInboxNotification(row: NotificationRow): Notification {
 }
 
 function mapManagedNotification(row: NotificationRow): NotificationManagement {
-  const { payloadType, payload, initialRecipientSelection, ...rest } = row
-  let parsedInitialRecipientSelection: NotificationRecipientSelection | null = null
-
-  if (initialRecipientSelection !== null) {
-    parsedInitialRecipientSelection = parseOrReport(NotificationRecipientSelectionSchema, initialRecipientSelection)
-  }
+  const { payloadType, payload, initialRecipientSelection, draftRecipientSelection, ...rest } = row
 
   return parseOrReport(NotificationManagementSchema, {
     ...rest,
     link: parseNotificationLink({ payloadType, payload }),
-    initialRecipientSelection: parsedInitialRecipientSelection,
+    initialRecipientSelection:
+      initialRecipientSelection === null
+        ? null
+        : parseOrReport(NotificationRecipientSelectionSchema, initialRecipientSelection),
+    draftRecipientSelection:
+      draftRecipientSelection === null
+        ? null
+        : parseOrReport(NotificationRecipientSelectionSchema, draftRecipientSelection),
   })
 }
 
@@ -109,12 +134,14 @@ function buildWhereFromQuery(query: NotificationFilterQuery): Prisma.Notificatio
 export function getNotificationRepository(): NotificationRepository {
   return {
     async create(handle, data) {
-      const { link, ...notificationData } = data
+      const { link, initialRecipientSelection, draftRecipientSelection, ...notificationData } = data
 
       const row = await handle.notification.create({
         data: {
           ...notificationData,
           ...serializeNotificationLink(link),
+          initialRecipientSelection: initialRecipientSelection ?? Prisma.DbNull,
+          draftRecipientSelection: draftRecipientSelection ?? Prisma.DbNull,
         },
         include: INCLUDE_ACTOR_GROUP,
       })
@@ -147,6 +174,49 @@ export function getNotificationRepository(): NotificationRepository {
       })
     },
 
+    async saveDraftRecipients(handle, notificationId, recipientSelection, updatedById) {
+      const result = await handle.notification.updateMany({
+        where: {
+          id: notificationId,
+          status: "DRAFT",
+        },
+        data: {
+          draftRecipientSelection: recipientSelection ?? Prisma.DbNull,
+          lastUpdatedById: updatedById,
+        },
+      })
+
+      if (result.count === 0) {
+        return null
+      }
+
+      return await this.findById(handle, notificationId)
+    },
+
+    async publishDraft(handle, notificationId, data) {
+      const result = await handle.notification.updateMany({
+        where: {
+          id: notificationId,
+          status: "DRAFT",
+          updatedAt: data.expectedUpdatedAt,
+        },
+        data: {
+          status: "SENT",
+          sentAt: data.sentAt,
+          content: data.content,
+          initialRecipientSelection: data.recipientSelection,
+          draftRecipientSelection: Prisma.DbNull,
+          lastUpdatedById: data.updatedById,
+        },
+      })
+
+      if (result.count === 0) {
+        return null
+      }
+
+      return await this.findById(handle, notificationId)
+    },
+
     async findById(handle, notificationId) {
       const row = await handle.notification.findUnique({
         where: {
@@ -166,7 +236,14 @@ export function getNotificationRepository(): NotificationRepository {
       const rows = await handle.notification.findMany({
         ...pageQuery(page),
         where: buildWhereFromQuery(query),
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        orderBy: [
+          {
+            createdAt: "desc",
+          },
+          {
+            id: "desc",
+          },
+        ],
         include: INCLUDE_ACTOR_GROUP,
       })
 
@@ -223,7 +300,16 @@ export function getNotificationRepository(): NotificationRepository {
               }
             : {}),
         },
-        orderBy: [{ user: { name: "asc" } }, { id: "desc" }],
+        orderBy: [
+          {
+            user: {
+              name: "asc",
+            },
+          },
+          {
+            id: "desc",
+          },
+        ],
         select: {
           id: true,
           notificationId: true,
@@ -268,8 +354,20 @@ export function getNotificationRepository(): NotificationRepository {
         ...pageQuery(page),
         where: {
           userId,
+          notification: {
+            status: "SENT",
+          },
         },
-        orderBy: [{ notification: { createdAt: "desc" } }, { id: "desc" }],
+        orderBy: [
+          {
+            notification: {
+              sentAt: "desc",
+            },
+          },
+          {
+            id: "desc",
+          },
+        ],
         include: {
           notification: {
             include: INCLUDE_ACTOR_GROUP,
@@ -292,6 +390,9 @@ export function getNotificationRepository(): NotificationRepository {
         where: {
           userId,
           readAt: null,
+          notification: {
+            status: "SENT",
+          },
         },
       })
     },
@@ -304,6 +405,7 @@ export function getNotificationRepository(): NotificationRepository {
           notificationId,
           userId,
           readAt: null,
+          notification: { status: "SENT" },
         },
         data: {
           readAt: now,
@@ -317,7 +419,7 @@ export function getNotificationRepository(): NotificationRepository {
       const now = getCurrentUTC()
 
       const result = await handle.notificationRecipient.updateMany({
-        where: { userId, readAt: null },
+        where: { userId, readAt: null, notification: { status: "SENT" } },
         data: { readAt: now },
       })
 

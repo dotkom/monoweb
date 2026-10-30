@@ -26,6 +26,7 @@ export type NotificationItemNotification = Pick<
   Notification,
   "id" | "createdAt" | "link" | "shortDescription" | "title" | "type"
 > & {
+  sentAt?: Notification["sentAt"]
   actorGroup: Pick<NonNullable<Notification["actorGroup"]>, "abbreviation" | "name" | "preferredDisplayName"> | null
 }
 
@@ -47,7 +48,7 @@ export function NotificationItem({
 }: NotificationItemProps) {
   const isUnread = readAt === null
   const actorGroupName = notification.actorGroup === null ? null : getGroupDisplayName(notification.actorGroup)
-  const relativeCreatedAt = useCompactRelativeTime(notification.createdAt)
+  const relativeCreatedAt = useCompactRelativeTime(notification.sentAt ?? notification.createdAt)
   const notificationConfiguration = getNotificationTypeConfiguration(notification.type)
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLElement>({
     notificationId: notification.id,
