@@ -1,3 +1,4 @@
+import type { NotificationSourceServices } from "./notification-source-resolver"
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { beforeEach, describe, expect, it } from "vitest"
@@ -6,11 +7,7 @@ import { InvalidArgumentError, NotFoundError } from "../../error"
 import type { NotificationLink, NotificationManagement, NotificationSource, NotificationType } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import type { NotificationRepository } from "./notification-repository"
-import {
-  getNotificationService,
-  type NotificationSendInput,
-  type NotificationSourceServices,
-} from "./notification-service"
+import { getNotificationService, type NotificationSendInput } from "./notification-service"
 
 describe("notification payload behavior", () => {
   const databaseHandle = mockDeep<DBHandle>()
