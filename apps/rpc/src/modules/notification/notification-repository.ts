@@ -277,13 +277,14 @@ export function getNotificationRepository(): NotificationRepository {
         },
       })
 
-      const userNotifications = rows.map((row) => ({
-        id: row.id,
-        readAt: row.readAt,
-        notification: mapInboxNotification(row.notification),
-      }))
-
-      return parseOrReport(UserNotificationSchema.array(), userNotifications)
+      return parseOrReport(
+        UserNotificationSchema.array(),
+        rows.map((row) => ({
+          id: row.id,
+          readAt: row.readAt,
+          notification: mapInboxNotification(row.notification),
+        }))
+      )
     },
 
     async countUnreadForUser(handle, userId) {
@@ -316,13 +317,8 @@ export function getNotificationRepository(): NotificationRepository {
       const now = getCurrentUTC()
 
       const result = await handle.notificationRecipient.updateMany({
-        where: {
-          userId,
-          readAt: null,
-        },
-        data: {
-          readAt: now,
-        },
+        where: { userId, readAt: null },
+        data: { readAt: now },
       })
 
       return result.count

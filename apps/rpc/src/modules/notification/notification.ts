@@ -30,8 +30,6 @@ export const NotificationBehaviorSchema = z.enum([
   "DEFAULT",
   /** Requires the user to manually acknowledge the notification by marking it as read. */
   "IMPORTANT",
-  /** Remains in the dropdown while its condition is true, independently of read status. */
-  "STICKY",
 ])
 
 export type NotificationBehavior = z.infer<typeof NotificationBehaviorSchema>
@@ -58,7 +56,7 @@ export const NOTIFICATION_TYPE_CONFIGURATION = {
   NEW_JOB_LISTING: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
   NEW_OFFLINE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
   NEW_MARK: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
-  NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.STICKY },
+  NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
 } as const satisfies Record<NotificationType, NotificationTypeConfiguration>
 
 export function getNotificationTypeConfiguration(notificationType: NotificationType): NotificationTypeConfiguration {

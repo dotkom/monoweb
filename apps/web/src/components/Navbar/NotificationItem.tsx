@@ -2,6 +2,7 @@
 
 import { Link } from "@/components/link"
 import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
+import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import {
   getNotificationTypeConfiguration,
@@ -48,6 +49,12 @@ export function NotificationItem({
   const actorGroupName = notification.actorGroup === null ? null : getGroupDisplayName(notification.actorGroup)
   const relativeCreatedAt = useCompactRelativeTime(notification.createdAt)
   const notificationConfiguration = getNotificationTypeConfiguration(notification.type)
+  const elementReference = useMarkNotificationAsReadWhenVisible<HTMLElement>({
+    notificationId: notification.id,
+    notificationType: notification.type,
+    readAt,
+    onMarkAsRead,
+  })
 
   const markAsRead = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -57,6 +64,7 @@ export function NotificationItem({
 
   return (
     <article
+      ref={elementReference}
       className={cn(
         "group/container relative flex min-w-0 gap-3 rounded-lg p-2 -mx-2",
         "border border-transparent hover:border-gray-200 focus-within:border-gray-200 dark:hover:border-stone-700 dark:focus-within:border-stone-700",
