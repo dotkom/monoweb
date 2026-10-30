@@ -16,18 +16,7 @@ import {
   getNotificationLinkTypeLabel,
   type NotificationSource,
 } from "@dotkomonline/rpc/notification"
-import { COMMITTEE_AFFILIATIONS } from "@dotkomonline/rpc/permissions"
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-  Separator,
-  Text,
-  Textarea,
-  TextInput,
-} from "@dotkomonline/ui"
+import { Button, Dialog, DialogClose, DialogContent, DialogTitle, Separator, Text, Textarea } from "@dotkomonline/ui"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconX } from "@tabler/icons-react"
@@ -86,19 +75,18 @@ export function CreateNotificationDraftModal({
 
 function CreateNotificationDraftForm({ source, onClose }: { source: NotificationDraftSource; onClose: () => void }) {
   const authorization = useAuthorization()
-  const { groups } = useGroupAllQuery()
+  const { groups, isFetching: isFetchingGroups, isError: hasGroupsError } = useGroupAllQuery()
   const createDraft = useCreateNotificationDraftMutation()
   const canSendImportant = canSendImportantNotification(authorization)
   const [hasEditedShortDescription, setHasEditedShortDescription] = useState(false)
 
   const eligibleGroups = useMemo(() => {
-    const candidateGroupSlugs = source.type === "EVENT" ? source.hostingGroupSlugs : COMMITTEE_AFFILIATIONS
-
     return groups.filter((group) => {
-      const belongsToSource = candidateGroupSlugs.includes(group.slug)
-      const canSendAsGroup = canActAsNotificationGroup(authorization, group)
+      if (source.type === "EVENT" && !source.hostingGroupSlugs.includes(group.slug)) {
+        return false
+      }
 
-      return belongsToSource && canSendAsGroup
+      return canActAsNotificationGroup(authorization, group)
     })
   }, [authorization, groups, source])
 
@@ -122,8 +110,13 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
   const { field: shortDescriptionField } = useController({ control, name: "shortDescription" })
   const content = useWatch({ control, name: "content" })
   const actorGroupId = useWatch({ control, name: "actorGroupId" })
-  const selectedActorGroup = eligibleGroups.find((group) => group.slug === actorGroupId)
-  const selectedActorGroupName = selectedActorGroup === undefined ? "" : getGroupDisplayName(selectedActorGroup)
+  let senderDescription: string | undefined
+
+  if (senderOptions.length === 0 && !isFetchingGroups) {
+    senderDescription = hasGroupsError
+      ? "Kunne ikke hente avsendere."
+      : "Du har ikke tilgang til å sende som noen av gruppene."
+  }
 
   useEffect(() => {
     if (hasEditedShortDescription) {
@@ -201,11 +194,16 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
         />
       </FieldShell>
 
-      {senderOptions.length > 1 ? (
-        <SelectField control={control} name="actorGroupId" label="Avsender" required options={senderOptions} />
-      ) : (
-        <TextInput label="Avsender" value={selectedActorGroupName} readOnly />
-      )}
+      <SelectField
+        control={control}
+        name="actorGroupId"
+        label="Avsender"
+        required
+        options={senderOptions}
+        disabled={senderOptions.length === 0}
+        placeholder={isFetchingGroups ? "Laster avsendere…" : "Ingen tilgjengelige avsendere"}
+        description={senderDescription}
+      />
 
       <Separator />
       {source.type === "GLOBAL" ? (
