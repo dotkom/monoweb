@@ -110,21 +110,22 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee              Attendee[]
-  personalMark          PersonalMark[]
-  groupMemberships      GroupMembership[]
-  memberships           Membership[]
-  givenMarks            PersonalMark[]          @relation("GivenBy")
-  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
-  auditLogs             AuditLog[]
-  deregisterReasons     DeregisterReason[]
-  notificationsReceived NotificationRecipient[]
-  notificationsCreated  Notification[]          @relation("created_by")
-  notificationsUpdated  Notification[]          @relation("last_updated_by")
-  contestants           Contestant[]
-  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks         UserFlagLink[]
-  adminRegistered       Attendee[]              @relation("AdminRegisteredBy")
+  attendee               Attendee[]
+  personalMark           PersonalMark[]
+  groupMemberships       GroupMembership[]
+  memberships            Membership[]
+  givenMarks             PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded      Attendee[]              @relation(name: "RefundedBy")
+  auditLogs              AuditLog[]
+  deregisterReasons      DeregisterReason[]
+  notificationsReceived  NotificationRecipient[]
+  notificationsCreated   Notification[]          @relation("created_by")
+  notificationsUpdated   Notification[]          @relation("last_updated_by")
+  contestants            Contestant[]
+  contestTeams           ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks          UserFlagLink[]
+  adminRegistered        Attendee[]              @relation("AdminRegisteredBy")
+  updatedEventPriorities EventFeaturedPriority[]
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -427,11 +428,12 @@ model Event {
   type                    EventType
   visibility              EventVisibility @default(PUBLIC)
 
-  feedbackForm      FeedbackForm?
-  fadderuke         Fadderuke?
-  companies         EventCompany[]
-  hostingGroups     EventHostingGroup[]
-  deregisterReasons DeregisterReason[]
+  feedbackForm       FeedbackForm?
+  fadderuke          Fadderuke?
+  companies          EventCompany[]
+  hostingGroups      EventHostingGroup[]
+  deregisterReasons  DeregisterReason[]
+  featuredPriorities EventFeaturedPriority[]
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
@@ -449,6 +451,22 @@ model Event {
   @@index([attendanceId])
   @@index([parentId])
   @@map("event")
+}
+
+model EventFeaturedPriority {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  eventId             String  @map("event_id")
+  lastUpdatedByUserId String? @map("last_updated_by_user_id")
+  event               Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  lastUpdatedBy       User?   @relation(fields: [lastUpdatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([lastUpdatedByUserId])
+  @@index([eventId, expiresAt])
+  @@map("event_featured_priority")
 }
 
 model EventCompany {

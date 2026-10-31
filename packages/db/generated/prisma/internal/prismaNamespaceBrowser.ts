@@ -62,6 +62,7 @@ export const ModelName = {
   AttendancePool: 'AttendancePool',
   Attendee: 'Attendee',
   Event: 'Event',
+  EventFeaturedPriority: 'EventFeaturedPriority',
   EventCompany: 'EventCompany',
   Mark: 'Mark',
   MarkGroup: 'MarkGroup',
@@ -306,6 +307,18 @@ export const EventScalarFieldEnum = {
 } as const
 
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+export const EventFeaturedPriorityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  deletedAt: 'deletedAt',
+  eventId: 'eventId',
+  lastUpdatedByUserId: 'lastUpdatedByUserId'
+} as const
+
+export type EventFeaturedPriorityScalarFieldEnum = (typeof EventFeaturedPriorityScalarFieldEnum)[keyof typeof EventFeaturedPriorityScalarFieldEnum]
 
 
 export const EventCompanyScalarFieldEnum = {

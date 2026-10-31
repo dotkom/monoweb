@@ -1,13 +1,19 @@
 "use client"
 
+import { canManageEventFeaturedPriorities } from "@dotkomonline/rpc/event-permissions"
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { useGroupAllQuery } from "@admin/grupper/queries"
 import { EventEditForm } from "../components/EventEditForm"
+import { EventFeaturedPriority } from "../components/EventFeaturedPriority"
 import { ParentEventCard } from "../components/ParentEventCard"
 import { useUpdateEventMutation } from "../mutations"
 import { useEventEditPermission } from "../use-event-edit-permission"
 import { useEventContext } from "./provider"
+import { Separator } from "@dotkomonline/ui"
 
 export default function EventPage() {
+  const authorization = useAuthorization()
+  const canManagePriorities = canManageEventFeaturedPriorities(authorization)
   const { event } = useEventContext()
   const { canEdit } = useEventEditPermission()
   const edit = useUpdateEventMutation()
@@ -20,8 +26,13 @@ export default function EventPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
       <ParentEventCard eventId={event.id} disabled={!canEdit} />
+
+      {canManagePriorities && <EventFeaturedPriority key={event.id} eventId={event.id} />}
+
+      <Separator />
+
       <EventEditForm
         submitLabel="Oppdater arrangement"
         hostingGroups={groups}

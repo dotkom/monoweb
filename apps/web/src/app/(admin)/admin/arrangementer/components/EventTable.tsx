@@ -15,7 +15,9 @@ import { useAuthorization } from "@admin/auth/authorization-context"
 import { DateTooltip } from "@admin/components/DateTooltip"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import { isAdministrator } from "@dotkomonline/rpc/permissions"
-import { canEditEvent } from "@dotkomonline/rpc/event-permissions"
+import { canEditEvent, canManageEventFeaturedPriorities } from "@dotkomonline/rpc/event-permissions"
+import { useEventFeaturedPrioritiesQuery } from "../queries"
+import { EventPriorityIndicator } from "./EventPriorityIndicator"
 import { EventHostingGroupList } from "./EventHostingGroupList"
 
 export type EventTableRow = EventWithAttendanceView & {
@@ -32,6 +34,8 @@ interface Props {
   dimReadOnlyRows?: boolean
 }
 
+const columnHelper = createColumnHelper<EventTableRow>()
+
 export const EventTable = ({
   events,
   isLoading,
@@ -42,7 +46,9 @@ export const EventTable = ({
   dimReadOnlyRows = false,
 }: Props) => {
   const authorization = useAuthorization()
+  const canManagePriorities = canManageEventFeaturedPriorities(authorization)
   const isAdmin = isAdministrator(authorization.affiliations)
+  const { priorities } = useEventFeaturedPrioritiesQuery()
 
   const rows = useMemo(
     (): EventTableRow[] =>
@@ -57,7 +63,6 @@ export const EventTable = ({
     [authorization, events]
   )
 
-  const columnHelper = createColumnHelper<EventTableRow>()
   const columns = useMemo(
     () =>
       [
@@ -91,6 +96,7 @@ export const EventTable = ({
           },
           cell: (info) => {
             const event = info.getValue()
+            const priority = priorities.find((priority) => priority.eventId === event.id)
             const isDraft = event.status === EventStatusSchema.enum.DRAFT
 
             return (
@@ -99,6 +105,7 @@ export const EventTable = ({
                 className="flex items-center gap-2 w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
               >
                 {event.title}
+                {canManagePriorities && priority && <EventPriorityIndicator expiresAt={priority.expiresAt} />}
                 {isDraft && (
                   <Badge
                     color="orange"
@@ -129,7 +136,7 @@ export const EventTable = ({
           cell: (info) => mapEventTypeToLabel(info.getValue()),
         }),
       ].filter((column): column is NonNullable<typeof column> => Boolean(column)),
-    [columnHelper, isAdmin]
+    [isAdmin, canManagePriorities, priorities]
   )
 
   const table = useReactTable({

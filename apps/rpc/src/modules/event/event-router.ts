@@ -13,6 +13,7 @@ import {
   canGetEventForAdmin,
   canListDeregisterReasons,
   canListUnansweredFeedback,
+  canManageEventFeaturedPriorities,
   canUploadEventFiles,
   canViewEvent,
   canViewUnansweredFeedback,
@@ -20,6 +21,7 @@ import {
   isEventCommitteeOrganizer,
 } from "../../permissions/event-permissions"
 import { isCommitteeAffiliation } from "../../permissions/principal"
+import { ActiveFeaturedPrioritySchema, FeaturedPriorityWriteSchema } from "./event"
 import { procedure, t } from "../../trpc"
 import { CompanySchema } from "../company/company"
 import { feedbackRouter } from "../feedback-form/feedback-router"
@@ -644,6 +646,31 @@ const findFeaturedEventsProcedure = procedure
     return eventsWithAttendance
   })
 
+const setFeaturedPriorityProcedure = procedure
+  .input(FeaturedPriorityWriteSchema)
+  .use(withAuthentication())
+  .use(withAuthorization(permitIf(canManageEventFeaturedPriorities)))
+  .use(withDatabaseTransaction("Serializable"))
+  .use(withAuditLogEntry())
+  .mutation(async ({ ctx, input }) => {
+    await ctx.eventService.setFeaturedPriority(ctx.handle, input.eventId, input.priority, ctx.principal.subject)
+
+    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+
+    ctx.setAuditTransactionName(
+      `Set Featured Priority(EventID=${event.id},Title=${event.title},Enabled=${input.priority !== null})`
+    )
+  })
+
+const listFeaturedPrioritiesProcedure = procedure
+  .output(ActiveFeaturedPrioritySchema.array())
+  .use(withAuthentication())
+  .use(withAuthorization(permitIf(canManageEventFeaturedPriorities)))
+  .use(withDatabaseTransaction())
+  .query(({ ctx }) => {
+    return ctx.eventService.listFeaturedPriorities(ctx.handle)
+  })
+
 export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
 export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
@@ -676,6 +703,8 @@ export const eventRouter = t.router({
   findUnansweredByUser: findUnansweredByUserProcedure,
   isOrganizer: isOrganizerProcedure,
   findManyDeregisterReasonsWithEvent: findManyDeregisterReasonsWithEventProcedure,
-  createFileUpload: createFileUploadProcedure,
   findFeaturedEvents: findFeaturedEventsProcedure,
+  listFeaturedPriorities: listFeaturedPrioritiesProcedure,
+  setFeaturedPriority: setFeaturedPriorityProcedure,
+  createFileUpload: createFileUploadProcedure,
 })

@@ -1,11 +1,15 @@
+import { canManageEventFeaturedPriorities } from "@dotkomonline/rpc/event-permissions"
+import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceId } from "@dotkomonline/rpc/attendance"
 import type { EventFilterQuery, EventId } from "@dotkomonline/rpc/event"
 import type { FeedbackFormId } from "@dotkomonline/rpc/feedback-form"
 import type { UserId } from "@dotkomonline/rpc/user"
-import { keepPreviousData, type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { keepPreviousData, skipToken, type SkipToken, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 
+import { useAuthorization } from "@admin/auth/authorization-context"
 import { useTRPC } from "@admin/lib/trpc-client"
 import type { Pageable } from "@dotkomonline/utils"
+import { isAfter } from "date-fns"
 import { useMemo } from "react"
 
 interface UseEventAllQueryProps {
@@ -123,4 +127,25 @@ export const useEventParentQuery = (eventId: EventId, enabled = true) => {
 export const useEventChildEventsQuery = (eventId: EventId, enabled = true) => {
   const trpc = useTRPC()
   return useQuery(trpc.event.findChildEvents.queryOptions({ eventId }, { enabled }))
+}
+
+export const useEventFeaturedPrioritiesQuery = () => {
+  const now = new Date()
+
+  const authorization = useAuthorization()
+  const canManagePriorities = canManageEventFeaturedPriorities(authorization)
+  const trpc = useTRPC()
+
+  const { data: cachedData, ...query } = useQuery(
+    trpc.event.listFeaturedPriorities.queryOptions(canManagePriorities ? undefined : skipToken)
+  )
+
+  const data = canManagePriorities ? cachedData : undefined
+
+  const tick = useDeadlineTick(...(data?.map((priority) => priority.expiresAt) ?? []))
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: expired priorities must be removed when a deadline passes
+  const priorities = useMemo(() => data?.filter((priority) => isAfter(priority.expiresAt, now)) ?? [], [data, tick])
+
+  return { priorities, ...query }
 }

@@ -1,3 +1,4 @@
+import { addHours, isBefore, min } from "date-fns"
 import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
@@ -15,12 +16,17 @@ import {
   type EventWithFeedbackFormSchema,
   type EventWrite,
   EVENT_IMAGE_MAX_SIZE_KIB,
+  MAX_ACTIVE_FEATURED_PRIORITIES,
+  FEATURED_PRIORITY_DURATION_HOURS,
+  FeaturedPrioritySettingsSchema,
+  type ActiveFeaturedPriority,
+  type FeaturedPrioritySettings,
 } from "./event"
 import { COMMITTEE_AFFILIATIONS } from "../authorization-service"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
 import type { UserId } from "../user/user"
-import { createS3PresignedPost, slugify } from "@dotkomonline/utils"
+import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
 import type { EventRepository } from "./event-repository"
@@ -83,6 +89,15 @@ export interface EventService {
   findByAttendanceId(handle: DBHandle, attendanceId: AttendanceId): Promise<Event | null>
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
   findManyDeregisterReasonsWithEvent(handle: DBHandle, page: Pageable): Promise<DeregisterReasonWithEvent[]>
+
+  listFeaturedPriorities(handle: DBHandle): Promise<ActiveFeaturedPriority[]>
+  setFeaturedPriority(
+    handle: DBHandle,
+    eventId: EventId,
+    data: FeaturedPrioritySettings | null,
+    updatedByUserId: UserId
+  ): Promise<void>
+
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
 }
 
@@ -246,6 +261,52 @@ export function getEventService(
 
     async findManyDeregisterReasonsWithEvent(handle, page) {
       return await eventRepository.findManyDeregisterReasonsWithEvent(handle, page)
+    },
+
+    async listFeaturedPriorities(handle) {
+      return await eventRepository.listFeaturedPriorities(handle, getCurrentUTC())
+    },
+
+    async setFeaturedPriority(handle, eventId, data, updatedByUserId) {
+      if (data !== null && !FeaturedPrioritySettingsSchema.safeParse(data).success) {
+        throw new InvalidArgumentError(`Event(ID=${eventId}) has an invalid featured priority duration`)
+      }
+
+      const event = await this.getEventById(handle, eventId)
+
+      const now = getCurrentUTC()
+      const priorities = await eventRepository.listFeaturedPriorities(handle, now)
+      const existingPriority = priorities.find((priority) => priority.eventId === eventId)
+
+      if (data === null) {
+        if (existingPriority !== undefined) {
+          await eventRepository.updateFeaturedPriority(handle, existingPriority.id, { deletedAt: now }, updatedByUserId)
+        }
+
+        return
+      }
+
+      if (event.status !== "PUBLIC" || !isBefore(now, event.end)) {
+        throw new InvalidArgumentError(`Event(ID=${eventId}) must be published and not ended to be prioritized`)
+      }
+
+      const otherPriorities = priorities.filter((priority) => priority.eventId !== eventId)
+
+      if (otherPriorities.length >= MAX_ACTIVE_FEATURED_PRIORITIES) {
+        throw new InvalidArgumentError(
+          `Event(ID=${eventId}) cannot be prioritized, as the limit of ${MAX_ACTIVE_FEATURED_PRIORITIES} active priorities has been reached`
+        )
+      }
+
+      const expiresAt = min([event.end, addHours(now, FEATURED_PRIORITY_DURATION_HOURS[data.duration])])
+
+      if (existingPriority !== undefined) {
+        await eventRepository.updateFeaturedPriority(handle, existingPriority.id, { expiresAt }, updatedByUserId)
+
+        return
+      }
+
+      await eventRepository.createFeaturedPriority(handle, eventId, { expiresAt }, updatedByUserId)
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {

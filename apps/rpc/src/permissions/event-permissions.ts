@@ -18,6 +18,10 @@ export function canGetEventForAdmin(principal: AffiliatedPrincipal): boolean {
   return isCommitteeMember(principal.affiliations)
 }
 
+export function canManageEventFeaturedPriorities(principal: AffiliatedPrincipal): boolean {
+  return isAdministrator(principal.affiliations)
+}
+
 export function canUploadEventFiles(principal: AffiliatedPrincipal): boolean {
   return isCommitteeMember(principal.affiliations)
 }

@@ -82,6 +82,10 @@
 -- When excludeAttendedByUser is true, events the viewing user is already registered for are omitted.
 -- Anonymous viewers are unaffected.
 --
+-- Priorities preserve organic order, but reserve positions up to third place.
+-- One eligible priority has a floor of third; two have floors of second and third.
+-- Higher organic positions are preserved. Filtering and visibility apply before placement.
+--
 -- Events that have ended are not featured.
 
 WITH
@@ -399,13 +403,60 @@ WITH
         + company_last_chance_score * closing_multiplier AS featured_score
 
     FROM scoring_factors
+  ),
+
+  organic_ranking AS (
+    SELECT
+      id,
+
+      ROW_NUMBER() OVER (
+        ORDER BY featured_score DESC, start ASC, id ASC
+      ) AS organic_position,
+
+      EXISTS (
+        SELECT 1
+        FROM event_featured_priority
+        WHERE
+          event_featured_priority.event_id = scored_events.id
+          AND event_featured_priority.deleted_at IS NULL
+          AND event_featured_priority.expires_at > NOW()
+      ) AS is_priority
+
+    FROM scored_events
+  ),
+
+  priority_ranking AS (
+    SELECT
+      organic_ranking.*,
+
+      COUNT(*) FILTER (
+        WHERE is_priority
+      ) OVER () AS priority_count,
+
+      COUNT(*) FILTER (
+        WHERE is_priority
+      ) OVER (
+        ORDER BY organic_position
+      ) AS priorities_so_far
+
+    FROM organic_ranking
   )
 
-SELECT *
+SELECT scored_events.*
 FROM scored_events
+
+INNER JOIN priority_ranking
+  ON priority_ranking.id = scored_events.id
+
+-- Sort by the number of ordinary events preceding this event. Ordinary events come first
+-- within each gap, followed by priorities in organic order. This also works before pagination.
 ORDER BY
-  featured_score DESC,
-  start ASC,
-  id ASC
+  CASE
+    WHEN is_priority
+      THEN LEAST(organic_position - priorities_so_far, GREATEST(3 - priority_count, 0))
+    ELSE organic_position - priorities_so_far
+  END ASC,
+  is_priority ASC,
+  organic_position ASC
 OFFSET $1
 LIMIT $2;
