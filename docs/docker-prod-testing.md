@@ -4,7 +4,7 @@ Build and run the web app as a production Docker image locally, using real produ
 
 ## Prerequisites
 
-- Docker (OrbStack recommended on macOS for lower memory usage)
+- Docker with BuildKit support (OrbStack recommended on macOS for lower memory usage)
 - AWS CLI configured with the `dotkom` profile
 
 ## Setup
@@ -37,7 +37,7 @@ Use the `docker-build.sh` script to build from your local source with prod env v
 
 The script:
 1. Stops any existing container on port 3000 (frees memory for the build)
-2. Builds a Docker image from local source with env vars passed as build args
+2. Builds a Docker image from local source with public configuration passed as build arguments and credentials passed as BuildKit secrets
 3. Starts the container on port 3000
 4. Waits for the server to be ready
 

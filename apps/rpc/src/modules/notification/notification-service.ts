@@ -1,36 +1,42 @@
 import { type EventEmitter, on } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { Pageable } from "@dotkomonline/utils"
-import { NotFoundError } from "../../error"
+import { getCurrentUTC, richTextToPlainText, type Pageable } from "@dotkomonline/utils"
+import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { GroupId } from "../group/group"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
+import { hasCompleteNotificationMessage, NotificationUpdateSchema } from "./notification"
 import type {
   Notification,
+  NotificationDraftCreate,
   NotificationFilterQuery,
+  NotificationGlobalLink,
   NotificationId,
-  NotificationLink,
   NotificationManagement,
   NotificationRecipient,
   NotificationRecipientListItem,
   NotificationRecipientFilterQuery,
   NotificationRecipientSelection,
+  NotificationRecipientPreviewOptions,
   NotificationRecipientSelectionPreview,
   NotificationRecipientStats,
   NotificationType,
+  NotificationSource,
   NotificationUpdate,
   UserNotification,
 } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import type { NotificationRepository } from "./notification-repository"
+import { getNotificationSourceResolver, type NotificationSourceServices } from "./notification-source-resolver"
 
 export interface NotificationSendInput {
+  source: NotificationSource
   type: NotificationType
   title: string
   shortDescription: string
   content?: string
-  link?: NotificationLink
+  link?: NotificationGlobalLink
   recipientSelection: NotificationRecipientSelection
   actorGroupId?: GroupId | null
   createdById?: UserId | null
@@ -50,6 +56,22 @@ export interface NewNotificationEvent {
 }
 
 export interface NotificationService {
+  createDraft(
+    handle: DBHandle,
+    input: NotificationDraftCreate & { createdById: UserId }
+  ): Promise<NotificationManagement>
+  saveDraftRecipients(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    recipientSelection: NotificationRecipientSelection | null,
+    updatedById: UserId
+  ): Promise<NotificationManagement>
+  sendDraft(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    expectedUpdatedAt: Date,
+    updatedById: UserId
+  ): Promise<NotificationSendResult>
   /**
    * Create a notification and materialize its recipients from the given recipient selection.
    *
@@ -65,20 +87,13 @@ export interface NotificationService {
     recipientSelection: NotificationRecipientSelection,
     notificationType: NotificationType,
     page: Pageable,
-    search?: string
+    search?: string,
+    options?: NotificationRecipientPreviewOptions
   ): Promise<NotificationRecipientSelectionPreview>
 
   findById(handle: DBHandle, notificationId: NotificationId): Promise<NotificationManagement | null>
   getById(handle: DBHandle, notificationId: NotificationId): Promise<NotificationManagement>
   findMany(handle: DBHandle, query: NotificationFilterQuery, page: Pageable): Promise<NotificationManagement[]>
-  /**
-   * Update a notification by its id.
-   *
-   * This mutates the live notification row. Inbox reads join that row, so recipients will see the new title and
-   * content on the next fetch. Already-pushed subscription payloads are not rewritten.
-   *
-   * @throws {NotFoundError} if the notification does not exist
-   */
   update(handle: DBHandle, notificationId: NotificationId, data: NotificationUpdate): Promise<NotificationManagement>
   delete(handle: DBHandle, notificationId: NotificationId): Promise<void>
 
@@ -108,22 +123,42 @@ export interface NotificationService {
 export function getNotificationService(
   notificationRepository: NotificationRepository,
   recipientResolver: NotificationRecipientResolver,
+  sourceServices: NotificationSourceServices,
   eventEmitter: EventEmitter
 ): NotificationService {
   const logger = getLogger("notification-service")
 
+  const sourceResolver = getNotificationSourceResolver(sourceServices)
+
   function toInboxNotification(notification: NotificationManagement): Notification {
-    const { initialRecipientSelection: _initialRecipientSelection, ...inboxNotification } = notification
+    const {
+      initialRecipientSelection: _initialRecipientSelection,
+      draftRecipientSelection: _draftRecipientSelection,
+      ...inboxNotification
+    } = notification
 
     return inboxNotification
   }
 
-  function toUserNotification(recipient: NotificationRecipient, notification: Notification): UserNotification {
-    return {
-      id: recipient.id,
-      readAt: recipient.readAt,
-      notification,
+  function emitNewNotifications(recipients: NotificationRecipient[], notification: Notification): void {
+    for (const recipient of recipients) {
+      emitNewNotification(recipient.userId, {
+        id: recipient.id,
+        readAt: recipient.readAt,
+        notification,
+      })
     }
+  }
+
+  async function deliverNotification(
+    handle: DBHandle,
+    notification: NotificationManagement,
+    userIds: UserId[]
+  ): Promise<number> {
+    const recipients = await notificationRepository.addRecipients(handle, notification.id, userIds)
+    emitNewNotifications(recipients, toInboxNotification(notification))
+
+    return recipients.length
   }
 
   function mergeRecipientSelectionExclusions(
@@ -146,7 +181,88 @@ export function getNotificationService(
   }
 
   return {
+    async createDraft(handle, input) {
+      const { link, defaultRecipientSelection } = await sourceResolver.resolve(handle, input)
+      const draftRecipientSelection = input.recipientSelection ?? defaultRecipientSelection
+
+      return await notificationRepository.create(handle, {
+        title: input.title,
+        shortDescription: input.shortDescription,
+        content: input.content,
+        type: input.type,
+        link,
+        status: "DRAFT",
+        sentAt: null,
+        actorGroupId: input.actorGroupId,
+        createdById: input.createdById,
+        taskId: null,
+        initialRecipientSelection: null,
+        draftRecipientSelection,
+      })
+    },
+
+    async saveDraftRecipients(handle, notificationId, recipientSelection, updatedById) {
+      const notification = await notificationRepository.saveDraftRecipients(
+        handle,
+        notificationId,
+        recipientSelection,
+        updatedById
+      )
+
+      if (notification === null) {
+        throw new FailedPreconditionError("Recipient rules can only be saved on a draft")
+      }
+
+      return notification
+    },
+
+    async sendDraft(handle, notificationId, expectedUpdatedAt, updatedById) {
+      const draft = await this.getById(handle, notificationId)
+
+      if (draft.status !== "DRAFT" || draft.updatedAt.getTime() !== expectedUpdatedAt.getTime()) {
+        throw new FailedPreconditionError("The draft has changed or has already been sent. Refresh and try again.")
+      }
+
+      if (!hasCompleteNotificationMessage(draft)) {
+        throw new InvalidArgumentError("A title and short description are required before sending")
+      }
+
+      const recipientSelection = draft.draftRecipientSelection
+
+      if (recipientSelection === null) {
+        throw new InvalidArgumentError("Save at least one recipient rule before sending")
+      }
+
+      const resolution = await recipientResolver.resolve(handle, recipientSelection, draft.type)
+      const recipientUserIds = resolution.recipients.map((recipient) => recipient.userId)
+
+      if (recipientUserIds.length === 0) {
+        throw new InvalidArgumentError("The recipient selection does not match any recipients")
+      }
+
+      const hasMessageContent = richTextToPlainText(draft.content, null).trim().length > 0
+      const content = hasMessageContent ? draft.content : draft.shortDescription
+
+      const notification = await notificationRepository.publishDraft(handle, notificationId, {
+        expectedUpdatedAt,
+        recipientSelection,
+        content,
+        sentAt: getCurrentUTC(),
+        updatedById,
+      })
+
+      if (notification === null) {
+        throw new FailedPreconditionError("The draft has changed or has already been sent. Refresh and try again.")
+      }
+
+      const recipientCount = await deliverNotification(handle, notification, recipientUserIds)
+
+      return { notification, recipientCount }
+    },
+
     async send(handle, input) {
+      const { link } = await sourceResolver.resolve(handle, input)
+
       const recipientResolution = await recipientResolver.resolve(handle, input.recipientSelection, input.type)
 
       const notification = await notificationRepository.create(handle, {
@@ -154,7 +270,10 @@ export function getNotificationService(
         title: input.title,
         shortDescription: input.shortDescription,
         content: input.content ?? input.shortDescription,
-        link: input.link ?? { type: "NONE" },
+        link,
+        status: "SENT",
+        sentAt: getCurrentUTC(),
+        draftRecipientSelection: null,
         initialRecipientSelection: input.recipientSelection,
         actorGroupId: input.actorGroupId ?? null,
         createdById: input.createdById ?? null,
@@ -162,29 +281,20 @@ export function getNotificationService(
       })
 
       const recipientUserIds = recipientResolution.recipients.map((recipient) => recipient.userId)
-      const recipients = await notificationRepository.addRecipients(handle, notification.id, recipientUserIds)
+      const recipientCount = await deliverNotification(handle, notification, recipientUserIds)
 
       logger.info(
         "Sent Notification(ID=%s, Type=%s) to %d recipients",
         notification.id,
         notification.type,
-        recipients.length
+        recipientCount
       )
 
-      const inboxNotification = toInboxNotification(notification)
-
-      for (const recipient of recipients) {
-        emitNewNotification(recipient.userId, toUserNotification(recipient, inboxNotification))
-      }
-
-      return {
-        notification,
-        recipientCount: recipients.length,
-      }
+      return { notification, recipientCount }
     },
 
-    async previewRecipientSelection(handle, recipientSelection, notificationType, page, search) {
-      return await recipientResolver.preview(handle, recipientSelection, notificationType, page, search)
+    async previewRecipientSelection(handle, recipientSelection, notificationType, page, search, options) {
+      return await recipientResolver.preview(handle, recipientSelection, notificationType, page, search, options)
     },
 
     async findById(handle, notificationId) {
@@ -206,9 +316,23 @@ export function getNotificationService(
     },
 
     async update(handle, notificationId, data) {
-      await this.getById(handle, notificationId)
+      const update = NotificationUpdateSchema.safeParse(data)
 
-      return await notificationRepository.update(handle, notificationId, data)
+      if (!update.success) {
+        throw new InvalidArgumentError("Invalid notification update. The link target cannot be changed.")
+      }
+
+      const notification = await this.getById(handle, notificationId)
+
+      if (
+        notification.status === "SENT" &&
+        update.data.shortDescription !== undefined &&
+        update.data.shortDescription.trim().length === 0
+      ) {
+        throw new InvalidArgumentError("Sent notifications must have a short description")
+      }
+
+      return await notificationRepository.update(handle, notificationId, update.data)
     },
 
     async delete(handle, notificationId) {
@@ -219,6 +343,10 @@ export function getNotificationService(
 
     async addRecipients(handle, notificationId, recipientSelection) {
       const notification = await this.getById(handle, notificationId)
+
+      if (notification.status !== "SENT") {
+        throw new FailedPreconditionError("Send the draft before adding more recipients")
+      }
       const recipientSelectionWithInitialExclusions = mergeRecipientSelectionExclusions(
         notification.initialRecipientSelection,
         recipientSelection
@@ -230,17 +358,11 @@ export function getNotificationService(
       )
 
       const recipientUserIds = recipientResolution.recipients.map((recipient) => recipient.userId)
-      const addedRecipients = await notificationRepository.addRecipients(handle, notificationId, recipientUserIds)
+      const recipientCount = await deliverNotification(handle, notification, recipientUserIds)
 
-      logger.info("Added %d recipients to Notification(ID=%s)", addedRecipients.length, notificationId)
+      logger.info("Added %d recipients to Notification(ID=%s)", recipientCount, notificationId)
 
-      const inboxNotification = toInboxNotification(notification)
-
-      for (const recipient of addedRecipients) {
-        emitNewNotification(recipient.userId, toUserNotification(recipient, inboxNotification))
-      }
-
-      return addedRecipients.length
+      return recipientCount
     },
 
     async removeRecipients(handle, notificationId, userIds) {

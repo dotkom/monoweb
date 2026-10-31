@@ -5,10 +5,19 @@ import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { EventPreviewLink } from "@/components/molecules/EventListItem/EventPreviewLink"
 import { EventPreview } from "./EventPreview"
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@dotkomonline/ui"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@dotkomonline/ui"
 import type { EventListSubscription } from "../hooks/useEventListSubscription"
 import { TicketButton } from "./AttendanceCard/TicketButton"
-import { EventRules } from "./AttendanceCard/EventRules"
+import { EventRulesButton } from "./EventRulesDialog"
 import { PaymentExplanationDialogContent } from "./AttendanceCard/PaymentExplanationDialog"
 import { createMockAttendee } from "../../../../../.ladle/fixtures/attendance"
 
@@ -45,12 +54,16 @@ vi.mock("@dotkomonline/ui", async () => {
   const drawer = await import("@dotkomonline/ui/components/drawer")
   const scrollArea = await import("../../../../../../../packages/ui/src/atoms/ScrollArea/ScrollArea")
   const dialog = await import("../../../../../../../packages/ui/src/molecules/Dialog/Dialog")
+  const popover = await import("../../../../../../../packages/ui/src/atoms/Popover/Popover")
+  const tooltip = await import("../../../../../../../packages/ui/src/atoms/Tooltip/Tooltip")
   const { cn } = await import("@dotkomonline/ui/lib/utils")
 
   return {
     ...drawer,
     ...scrollArea,
     ...dialog,
+    ...tooltip,
+    ...popover,
     cn,
     ReadMore: ({ children }: React.PropsWithChildren) => <>{children}</>,
     Button: ({
@@ -118,7 +131,7 @@ vi.mock("./AttendanceCard/AttendanceCard", () => ({
           </DialogContent>
         </Dialog>
         <TicketButton attendee={createMockAttendee()} />
-        <EventRules />
+        <EventRulesButton />
         <Dialog>
           <DialogTrigger>Hvordan virker betaling?</DialogTrigger>
           <PaymentExplanationDialogContent />
@@ -151,6 +164,10 @@ beforeEach(() => {
   vi.stubGlobal("React", React)
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true)
   vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", true)
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
+  })
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -444,7 +461,7 @@ describe("desktop event preview", () => {
       (button) => button.textContent === triggerLabel
     )
     expect(trigger).toBeDefined()
-    trigger?.focus()
+    await act(async () => trigger?.focus())
     await act(async () => trigger?.click())
     await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
 
@@ -473,6 +490,60 @@ describe("desktop event preview", () => {
       previewOverlay?.click()
     })
     expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+  })
+
+  it("keeps a newly opened filter focused when the preview finishes closing", async () => {
+    vi.stubGlobal("BASE_UI_ANIMATIONS_DISABLED", false)
+    let finishClosing: () => void = () => {}
+    const closingAnimation = new Promise<void>((resolve) => {
+      finishClosing = resolve
+    })
+    Object.defineProperty(Element.prototype, "getAnimations", {
+      configurable: true,
+      value: function (this: Element) {
+        return this.matches('[data-slot="drawer-content"][data-ending-style]') ? [{ finished: closingAnimation }] : []
+      },
+    })
+
+    await act(async () => {
+      root.render(
+        <EventPreview>
+          <EventPreviewLink event={event} href="/arrangementer/testevent/event-one">
+            Testevent
+          </EventPreviewLink>
+          <Popover>
+            <PopoverTrigger>Filter</PopoverTrigger>
+            <PopoverContent initialFocus={false}>Filter controls</PopoverContent>
+          </Popover>
+        </EventPreview>
+      )
+    })
+    const link = container.querySelector("a") as HTMLAnchorElement
+    link.focus()
+    await act(async () => link.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+
+    const close = document.querySelector<HTMLButtonElement>('button[aria-label="Lukk arrangement"]')
+    await act(async () => close?.click())
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30)))
+    expect(document.querySelector('[data-slot="drawer-content"][data-ending-style]')).not.toBeNull()
+
+    const filter = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Filter")
+    expect(filter).toBeDefined()
+    await act(async () => {
+      filter?.focus()
+      filter?.click()
+    })
+    expect(document.querySelector('[data-slot="popover-content"][data-open]')).not.toBeNull()
+
+    await act(async () => {
+      finishClosing()
+      await new Promise((resolve) => setTimeout(resolve, 30))
+    })
+
+    expect(document.querySelector('[data-slot="drawer-content"]')).toBeNull()
+    expect(document.activeElement).toBe(filter)
+    expect(document.querySelector('[data-slot="popover-content"][data-open]')).not.toBeNull()
   })
 
   it("unlocks the page during closing and can open another event before the animation ends", async () => {

@@ -12,9 +12,10 @@ import { useState } from "react"
 interface Props {
   event: Event
   showAdminLink: boolean
+  smallTitle?: boolean
 }
 
-export const EventHeader: FC<Props> = ({ event, showAdminLink }) => {
+export const EventHeader: FC<Props> = ({ event, showAdminLink, smallTitle = false }) => {
   const [showFullImage, setShowFullImage] = useState(true)
   const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
   const adminUrl = new URL(`/admin/arrangementer/${event.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
@@ -79,7 +80,11 @@ export const EventHeader: FC<Props> = ({ event, showAdminLink }) => {
       </Tilt>
 
       <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center">
-        <Title element="h1" size="xl" title={event.title} className="text-3xl sm:text-4xl sm:line-clamp-3 leading-snug">
+        <Title
+          element="h1"
+          title={event.title}
+          className={cn("text-3xl sm:line-clamp-3 leading-snug", !smallTitle && "sm:text-4xl")}
+        >
           {event.title}
         </Title>
         {showAdminLink && (

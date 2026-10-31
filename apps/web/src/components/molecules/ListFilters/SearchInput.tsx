@@ -2,10 +2,11 @@
 
 import { cn, TextInput } from "@dotkomonline/ui"
 import { IconSearch } from "@tabler/icons-react"
-import { useEffect, useRef, useState } from "react"
+import { type Ref, useEffect, useRef, useState } from "react"
 import { useDebounce } from "use-debounce"
 
 interface SearchInputProps {
+  ref?: Ref<HTMLInputElement>
   initialValue: string
   onDebouncedChange: (value: string) => void
   placeholder?: string
@@ -14,6 +15,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput = ({
+  ref,
   initialValue,
   onDebouncedChange,
   placeholder = "Søk etter arrangementer...",
@@ -42,10 +44,11 @@ export const SearchInput = ({
 
   return (
     <div className={cn("relative", className)}>
-      <IconSearch className="w-7 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3" />
+      <IconSearch className="w-6.5 h-full pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-2.5" />
       <TextInput
+        ref={ref}
         containerClassName={cn("h-12 sm:h-full", containerClassName)}
-        className="pl-10 py-2 h-full"
+        className="pl-8 py-2 h-full"
         placeholder={placeholder}
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}

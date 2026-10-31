@@ -4,10 +4,14 @@ import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
+import { canManageArticles } from "../../permissions/article-permissions"
+import { canManageJobListings } from "../../permissions/job-listing-permissions"
+import { canManageOfflines } from "../../permissions/offline-permissions"
 import {
   canCreateNotification,
   canListNotifications,
   canManageNotification,
+  canSendNotification,
   canTargetAllUsers,
   canTargetEventAttendees,
   canTargetGroupMembers,
@@ -15,9 +19,10 @@ import {
 } from "../../permissions/notification-permissions"
 import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
-  NotificationCreateSchema,
+  NotificationDraftCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
+  type NotificationSource,
   NotificationRecipientFilterQuerySchema,
   NotificationRecipientListItemSchema,
   type NotificationRecipientSelection,
@@ -33,6 +38,72 @@ import {
 type AuthenticatedContext = TRPCContext & {
   principal: NonNullable<TRPCContext["principal"]>
   handle: DBHandle
+}
+
+async function authorizeNotificationSource(context: AuthenticatedContext, source: NotificationSource): Promise<void> {
+  switch (source.type) {
+    case "GLOBAL": {
+      return
+    }
+
+    case "EVENT": {
+      const event = await context.eventService.getEventById(context.handle, source.eventId)
+
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetEventAttendees(principal, event.hostingGroups)),
+        source
+      )
+
+      return
+    }
+
+    case "GROUP": {
+      const group = await context.groupService.getBySlug(context.handle, source.groupSlug)
+
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetGroupMembers(principal, group)),
+        source
+      )
+
+      return
+    }
+
+    case "ARTICLE": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageArticles(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "USER": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canTargetSpecificUsers(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "OFFLINE": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageOfflines(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "JOB_LISTING": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canManageJobListings(principal)),
+        source
+      )
+
+      return
+    }
+  }
 }
 
 /**
@@ -224,6 +295,8 @@ const previewRecipientSelectionProcedure = procedure
       recipientSelection: NotificationRecipientSelectionSchema,
       type: NotificationTypeSchema,
       search: z.string().optional(),
+      notificationId: NotificationSchema.shape.id.optional(),
+      hideExistingRecipients: z.boolean().optional(),
     })
   )
   .output(NotificationRecipientSelectionPreviewSchema)
@@ -236,21 +309,27 @@ const previewRecipientSelectionProcedure = procedure
     )
     await authorizeRecipientSelection(ctx, input.recipientSelection)
 
-    const { recipientSelection, type, search, ...page } = input
+    const { recipientSelection, type, search, notificationId, hideExistingRecipients, ...page } = input
 
-    return await ctx.notificationService.previewRecipientSelection(ctx.handle, recipientSelection, type, page, search)
+    if (notificationId !== undefined) {
+      const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
+      await ctx.addAuthorizationGuard(
+        permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+        input
+      )
+    }
+
+    return await ctx.notificationService.previewRecipientSelection(ctx.handle, recipientSelection, type, page, search, {
+      notificationId,
+      hideExistingRecipients,
+    })
   })
 
-export type CreateNotificationInput = inferProcedureInput<typeof createNotificationProcedure>
-export type CreateNotificationOutput = inferProcedureOutput<typeof createNotificationProcedure>
-const createNotificationProcedure = procedure
-  .input(NotificationCreateSchema)
-  .output(
-    z.object({
-      notification: NotificationManagementSchema,
-      recipientCount: z.number().int().nonnegative(),
-    })
-  )
+export type CreateNotificationDraftInput = inferProcedureInput<typeof createNotificationDraftProcedure>
+export type CreateNotificationDraftOutput = inferProcedureOutput<typeof createNotificationDraftProcedure>
+const createNotificationDraftProcedure = procedure
+  .input(NotificationDraftCreateSchema)
+  .output(NotificationManagementSchema)
   .use(withAuthentication())
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
@@ -261,24 +340,84 @@ const createNotificationProcedure = procedure
       permitIf((principal) => canCreateNotification(principal, actorGroup, input.type)),
       input
     )
-    await authorizeRecipientSelection(ctx, input.recipientSelection)
+    if (input.recipientSelection !== null) {
+      await authorizeRecipientSelection(ctx, input.recipientSelection)
+    }
 
-    const sentNotification = await ctx.notificationService.send(ctx.handle, {
-      type: input.type,
-      title: input.title,
-      shortDescription: input.shortDescription,
-      content: input.content,
-      link: input.link,
-      recipientSelection: input.recipientSelection,
-      actorGroupId: input.actorGroupId,
+    await authorizeNotificationSource(ctx, input.source)
+
+    const draft = await ctx.notificationService.createDraft(ctx.handle, {
+      ...input,
       createdById: ctx.principal.subject,
     })
 
-    ctx.setAuditTransactionName(
-      `Send Notification(ID=${sentNotification.notification.id},Title=${sentNotification.notification.title}) to ${sentNotification.recipientCount} ${sentNotification.recipientCount === 1 ? "recipient" : "recipients"}`
+    ctx.setAuditTransactionName(`Create Notification Draft(ID=${draft.id},Title=${draft.title})`)
+
+    return draft
+  })
+
+const saveDraftRecipientsProcedure = procedure
+  .input(
+    z.object({ id: NotificationSchema.shape.id, recipientSelection: NotificationRecipientSelectionSchema.nullable() })
+  )
+  .output(NotificationManagementSchema)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx: context }) => {
+    const notification = await context.notificationService.getById(context.handle, input.id)
+    await context.addAuthorizationGuard(
+      permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
+      input
     )
 
-    return sentNotification
+    if (input.recipientSelection !== null) {
+      await authorizeRecipientSelection(context, input.recipientSelection)
+    }
+
+    const draft = await context.notificationService.saveDraftRecipients(
+      context.handle,
+      input.id,
+      input.recipientSelection,
+      context.principal.subject
+    )
+
+    context.setAuditTransactionName(`Save notification draft Recipients(ID=${draft.id})`)
+
+    return draft
+  })
+
+const sendDraftProcedure = procedure
+  .input(z.object({ id: NotificationSchema.shape.id, expectedUpdatedAt: z.date() }))
+  .output(z.object({ notification: NotificationManagementSchema, recipientCount: z.number().int().nonnegative() }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx: context }) => {
+    const notification = await context.notificationService.getById(context.handle, input.id)
+    await context.addAuthorizationGuard(
+      permitIf((principal) => canSendNotification(principal, notification)),
+      input
+    )
+
+    if (notification.draftRecipientSelection !== null) {
+      await authorizeRecipientSelection(context, notification.draftRecipientSelection)
+    }
+
+    const source: NotificationSource =
+      notification.link.type === "NONE" || notification.link.type === "URL" ? { type: "GLOBAL" } : notification.link
+    await authorizeNotificationSource(context, source)
+
+    const result = await context.notificationService.sendDraft(
+      context.handle,
+      input.id,
+      input.expectedUpdatedAt,
+      context.principal.subject
+    )
+
+    context.setAuditTransactionName(`Send Notification(ID=${notification.id}) to ${result.recipientCount} recipients`)
+
+    return result
   })
 
 export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
@@ -474,7 +613,9 @@ export const notificationRouter = t.router({
   get: getNotificationProcedure,
   findMany: findNotificationsProcedure,
   previewRecipientSelection: previewRecipientSelectionProcedure,
-  create: createNotificationProcedure,
+  createDraft: createNotificationDraftProcedure,
+  saveDraftRecipients: saveDraftRecipientsProcedure,
+  sendDraft: sendDraftProcedure,
   edit: editNotificationProcedure,
   delete: deleteNotificationProcedure,
   findRecipients: findRecipientsProcedure,

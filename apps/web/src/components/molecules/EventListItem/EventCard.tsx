@@ -89,7 +89,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
 
 export const EventCardSkeleton: FC = () => {
   return (
-    <div className="flex flex-col gap-3 p-3 rounded-2xl min-w-0 animate-pulse">
+    <div className="flex flex-col gap-3 border border-transparent p-3 rounded-2xl min-w-0 animate-pulse">
       <div className="aspect-video w-full bg-gray-300 dark:bg-stone-600 rounded-lg" />
       <div className="h-6 max-w-[85%] bg-gray-300 dark:bg-stone-600 rounded-sm" />
       <div className="h-4 max-w-[60%] bg-gray-300 dark:bg-stone-600 rounded-sm" />

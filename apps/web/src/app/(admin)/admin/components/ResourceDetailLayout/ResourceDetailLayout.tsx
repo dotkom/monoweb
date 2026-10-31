@@ -6,7 +6,7 @@ import { Button, cn, Title, Tooltip, TooltipContent, TooltipTrigger } from "@dot
 import { IconArrowLeft, IconArrowUpRight, IconCheck, IconCopy, type TablerIcon } from "@tabler/icons-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { type PropsWithChildren, type ReactNode, useEffect, useState } from "react"
+import { type PropsWithChildren, type ReactNode, useEffect, useRef, useState } from "react"
 import { PermissionTooltip } from "../PermissionTooltip"
 import { ReadOnlyNotice } from "../ReadOnlyNotice"
 
@@ -28,6 +28,10 @@ export type ViewInWebLinkProps = {
 export type ResourceDetailLayoutProps = PropsWithChildren<{
   title: string
   description?: ReactNode
+  headerActions?: {
+    left?: ReactNode
+    right?: ReactNode
+  }
   backHref: string
   navItems: ResourceDetailNavItem[]
   viewInWebProps?: ViewInWebLinkProps
@@ -61,6 +65,7 @@ function isNavItemActive(pathname: string, item: ResourceDetailNavItem): boolean
 export function ResourceDetailLayout({
   title,
   description,
+  headerActions,
   backHref,
   navItems,
   viewInWebProps,
@@ -79,11 +84,39 @@ export function ResourceDetailLayout({
   const canCopyIds = isAdministrator
   const pathname = decodeURIComponent(rawPathname)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const layoutReference = useRef<HTMLDivElement>(null)
+  const headerReference = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const layout = layoutReference.current
+    const header = headerReference.current
+
+    if (layout === null || header === null) {
+      return
+    }
+
+    const updateHeaderOffset = () => {
+      const headerTop = Number.parseFloat(getComputedStyle(header).top)
+      const headerBottom = header.offsetHeight + headerTop
+
+      layout.style.setProperty("--resource-detail-header-bottom", `${headerBottom}px`)
+    }
+
+    updateHeaderOffset()
+
+    const resizeObserver = new ResizeObserver(updateHeaderOffset)
+    resizeObserver.observe(header)
+
+    return () => resizeObserver.disconnect()
+  }, [])
 
   return (
-    <div className={className}>
+    <div ref={layoutReference} className={className}>
       {/* Cover the scroll container's padding so content stays hidden behind the sticky header. */}
-      <div className="sticky -top-4 z-30 -mx-4 -mt-4 bg-background px-4 pt-4 md:-top-5.5 md:-mx-5.5 md:-mt-5.5 md:px-5.5 md:pt-5.5">
+      <div
+        ref={headerReference}
+        className="sticky -top-4 z-30 -mx-4 -mt-4 bg-background px-4 pt-4 md:-top-5.5 md:-mx-5.5 md:-mt-5.5 md:px-5.5 md:pt-5.5"
+      >
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <Button
             variant="outline"
@@ -94,6 +127,7 @@ export function ResourceDetailLayout({
           >
             Tilbake
           </Button>
+
           {viewInWebProps && (
             <Button
               variant="outline"
@@ -108,9 +142,13 @@ export function ResourceDetailLayout({
               {viewInWebProps.label}
             </Button>
           )}
+
+          {headerActions?.left}
+
           {copyIds.length > 0 &&
             canCopyIds &&
             copyIds.map((copyId) => <CopyIdButton key={copyId.value} id={copyId.value} label={copyId.label} />)}
+
           {onDelete && (
             <>
               <ConfirmDeleteModal
@@ -127,11 +165,16 @@ export function ResourceDetailLayout({
               />
             </>
           )}
+
+          {headerActions?.right && (
+            <div className="ml-auto flex flex-wrap items-center gap-2">{headerActions.right}</div>
+          )}
         </div>
 
         <Title element="h1" className="mt-4 font-title text-3xl font-semibold tracking-tight">
           {title}
         </Title>
+
         {description && <div className="mt-1 text-sm text-muted-foreground">{description}</div>}
 
         {readOnlyNotice && (

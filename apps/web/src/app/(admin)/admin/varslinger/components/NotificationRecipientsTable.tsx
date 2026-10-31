@@ -14,6 +14,7 @@ interface NotificationRecipientsTableProps {
   recipientFilters: NotificationRecipientFilterQuery
   setRecipientFilters: (filters: NotificationRecipientFilterQuery) => void
   canManage: boolean
+  onAddRecipients: () => void
   isLoading: boolean
   isPlaceholderData: boolean
   isFetchingNextPage: boolean
@@ -35,6 +36,7 @@ export function NotificationRecipientsTable({
   recipientFilters,
   setRecipientFilters,
   canManage,
+  onAddRecipients,
   isFetchingNextPage,
   hasNextPage,
   fetchNextPage,
@@ -110,14 +112,19 @@ export function NotificationRecipientsTable({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <NotificationRecipientFilters onChange={setRecipientFilters} defaultValues={recipientFilters} />
         {canManage && (
-          <Button
-            size="lg"
-            variant="destructive"
-            disabled={selectedCount === 0 || removeRecipients.isPending}
-            onClick={() => setIsRemoveOpen(true)}
-          >
-            Fjern valgte
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="lg"
+              variant="destructive"
+              disabled={selectedCount === 0 || removeRecipients.isPending}
+              onClick={() => setIsRemoveOpen(true)}
+            >
+              Fjern valgte
+            </Button>
+            <Button size="lg" variant="secondary" onClick={onAddRecipients}>
+              Send til flere
+            </Button>
+          </div>
         )}
       </div>
 

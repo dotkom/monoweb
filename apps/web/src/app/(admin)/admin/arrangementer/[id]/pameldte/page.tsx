@@ -1,6 +1,7 @@
 "use client"
 
 import { UserSearch } from "@admin/brukere/components/UserSearch"
+import { CreateNotificationDraftModal } from "@admin/varslinger/components/CreateNotificationDraftModal"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
@@ -12,7 +13,6 @@ import { useEventFeedbackFormGetQuery, useFeedbackAnswersGetQuery } from "../../
 import { useEventEditPermission } from "../../use-event-edit-permission"
 import { AttendeesTable } from "./components/AttendeesTable"
 import { ManualCreateUserAttendModal } from "./components/ManualCreateUserAttendModal"
-import { NotifyAttendeesModal } from "./components/NotifyAttendeesModal"
 import { QrCodeScanner } from "./components/QrCodeScanner"
 
 export default function EventAttendeesPage() {
@@ -47,13 +47,8 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
         <Title size="md">Alle påmeldte</Title>
 
         <div className="flex flex-col gap-2">
-          <Button
-            variant="secondary"
-            className="w-fit"
-            disabled={attendees.length === 0 || !canEdit}
-            onClick={() => setNotifyOpen(true)}
-          >
-            Send e-post til alle
+          <Button variant="secondary" className="w-fit" disabled={!canEdit} onClick={() => setNotifyOpen(true)}>
+            Opprett varsling
           </Button>
           {attendeesWithoutEmail.length > 0 && (
             <div className="flex flex-col gap-1">
@@ -98,7 +93,16 @@ const Page = ({ event, attendance, feedbackAnswers }: Props) => {
 
       <div className="h-8" />
 
-      <NotifyAttendeesModal open={notifyOpen} onOpenChange={setNotifyOpen} eventId={event.id} attendees={attendees} />
+      <CreateNotificationDraftModal
+        open={notifyOpen}
+        onOpenChange={setNotifyOpen}
+        source={{
+          type: "EVENT",
+          eventId: event.id,
+          eventTitle: event.title,
+          hostingGroupSlugs: event.hostingGroups.map((group) => group.slug),
+        }}
+      />
 
       {manualCreate && (
         <ManualCreateUserAttendModal

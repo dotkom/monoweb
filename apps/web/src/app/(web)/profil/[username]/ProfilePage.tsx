@@ -512,8 +512,8 @@ export function ProfilePage() {
         {isLoggedIn ? (
           futureEventWithAttendances !== undefined && pastEventWithAttendances !== undefined ? (
             <EventList
-              futureEventWithAttendances={futureEventWithAttendances.items}
-              pastEventWithAttendances={pastEventWithAttendances}
+              futureEvents={futureEventWithAttendances.items}
+              pastEvents={pastEventWithAttendances}
               pastLoadMore={{
                 fetchNextPage,
                 hasNextPage,
@@ -521,7 +521,6 @@ export function ProfilePage() {
                 isPlaceholderData,
                 isLoading: isPastEventsLoading,
               }}
-              viewMode="CHRONOLOGICAL"
             />
           ) : (
             <div className="flex flex-col gap-1">

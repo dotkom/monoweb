@@ -126,7 +126,10 @@ export const EventListCalendar = ({ filter, selectedDate, onSelectDate }: Props)
   )
 
   return (
-    <aside aria-label="Filtrer arrangementer etter dato" className="mt-2 rounded-xl border border-field-border p-3">
+    <aside
+      aria-label="Filtrer arrangementer etter dato"
+      className="rounded-xl border border-field-border bg-background p-3"
+    >
       <Calendar
         mode="single"
         locale={nb}

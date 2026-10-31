@@ -239,6 +239,14 @@ export const NotificationType = {
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
 
+export const NotificationStatus = {
+  DRAFT: 'DRAFT',
+  SENT: 'SENT'
+} as const
+
+export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
+
+
 export const ContestResultType = {
   SCORE: 'SCORE',
   DURATION: 'DURATION',

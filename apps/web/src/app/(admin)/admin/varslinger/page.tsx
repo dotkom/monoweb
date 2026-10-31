@@ -8,7 +8,7 @@ import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { NotificationsTable } from "./components/NotificationsTable"
-import { SendNotificationModal } from "./components/SendNotificationModal"
+import { CreateNotificationDraftModal } from "./components/CreateNotificationDraftModal"
 import { useNotificationsInfiniteQuery } from "./queries"
 
 type ScopeFilter = "alle" | "mine"
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
             </ToggleGroup>
           )}
         </div>
-        <PermissionTooltip allowed={canCreate} label="Kun administratorer kan opprette varslinger">
+        <PermissionTooltip allowed={canCreate} label="Du har ikke tilgang til å opprette varslinger">
           <Button onClick={() => setIsCreateOpen(true)} disabled={!canCreate}>
             Ny varsling
           </Button>
@@ -106,7 +106,7 @@ export default function NotificationsPage() {
       />
 
       {canCreate && (
-        <SendNotificationModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ kind: "GLOBAL" }} />
+        <CreateNotificationDraftModal open={isCreateOpen} onOpenChange={setIsCreateOpen} source={{ type: "GLOBAL" }} />
       )}
     </div>
   )

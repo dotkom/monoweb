@@ -5,20 +5,8 @@ import { JobListingListItem } from "@/components/molecules/JobListingItem/JobLis
 import { SearchInput } from "@/components/molecules/ListFilters/SearchInput"
 import { useTRPC } from "@/utils/trpc/client"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
-import {
-  Button,
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-  Text,
-  Title,
-  ToggleGroup,
-  ToggleGroupItem,
-  cn,
-} from "@dotkomonline/ui"
-import { IconFilter2, IconLayoutGrid, IconLayoutList, IconMoodConfuzed, IconSearch, IconX } from "@tabler/icons-react"
+import { Button, Text, Title, ToggleGroup, ToggleGroupItem, cn } from "@dotkomonline/ui"
+import { IconLayoutGrid, IconLayoutList, IconMoodConfuzed, IconSearch, IconX } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import { compareAsc, compareDesc } from "date-fns"
 import { useMemo, useState } from "react"
@@ -26,12 +14,13 @@ import { JobListingSkeletonList } from "./components/JobListingSkeletonList"
 import { JobEmploymentFilter } from "./components/filters/JobEmploymentFilter"
 import { JobFilterChips } from "./components/filters/JobFilterChips"
 import { JobLocationFilter } from "./components/filters/JobLocationFilter"
+import { JobFilterDrawer } from "./components/filters/JobFilterDrawer"
 import { JobSortFilter } from "./components/filters/JobSortFilter"
 import type { JobListingViewMode } from "./hooks/jobListingViewCookie"
 import { useJobListingFilters } from "./hooks/useJobListingFilters"
 import { useJobListingsView } from "./hooks/useJobListingsView"
 
-interface Props {
+interface CareerListPageProps {
   initialViewMode: JobListingViewMode
 }
 
@@ -46,14 +35,13 @@ const getLocations = (jobListings: JobListing[]) => {
   return Array.from(locations).sort((a, b) => a.localeCompare(b, "nb-NO"))
 }
 
-export const CareerListPage = ({ initialViewMode }: Props) => {
+export const CareerListPage = ({ initialViewMode }: CareerListPageProps) => {
   const { view, isCards, setView } = useJobListingsView(initialViewMode)
   const { filters, updateFilters, resetFilters } = useJobListingFilters()
 
   const trpc = useTRPC()
   const { data: jobListings, isLoading } = useQuery(trpc.jobListing.active.queryOptions())
 
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchBarOpen, setSearchBarOpen] = useState(filters.search.length > 0)
 
   const availableLocations = useMemo(() => getLocations(jobListings ?? []), [jobListings])
@@ -158,6 +146,7 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
             className="shrink-0 h-10"
             multiple={false}
             spacing={0}
+            color="blue"
             value={[view]}
             onValueChange={(value) => {
               const nextView = value.at(0)
@@ -188,55 +177,12 @@ export const CareerListPage = ({ initialViewMode }: Props) => {
           </ToggleGroup>
 
           <div className="flex justify-end items-stretch gap-2 w-full">
-            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-              <DrawerTrigger
-                className="md:hidden"
-                render={<Button variant="outline" className="relative rounded-lg size-10 sm:w-fit sm:h-full" />}
-              >
-                <IconFilter2 className="size-5" />
-                <span className="hidden sm:block text-sm pl-1">Filter</span>
-                {activeFilterCount > 0 && (
-                  <div className="absolute -right-2 -top-2 w-5 h-5 text-xs rounded-full flex items-center justify-center bg-blue-100 dark:bg-sky-900 text-blue-900 dark:text-sky-100">
-                    {activeFilterCount}
-                  </div>
-                )}
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="px-4 overflow-y-auto max-h-[80dvh]">
-                  <DrawerHeader>
-                    <DrawerTitle className="flex items-center gap-2">
-                      <IconFilter2 className="size-[1.25em]" />
-                      Filtrer stillinger
-                    </DrawerTitle>
-                  </DrawerHeader>
-
-                  <div className="px-4 pt-4 pb-20 sm:grid sm:grid-cols-2 sm:gap-6">
-                    <div>
-                      <div className="flex flex-col gap-2">
-                        <Text element="span" className="h-5.5 font-medium text-sm">
-                          Sorter
-                        </Text>
-                        <JobSortFilter value={filters.sort} onChange={(sort) => updateFilters({ sort })} />
-                      </div>
-                      <div className="mt-6">
-                        <JobEmploymentFilter
-                          value={filters.employments}
-                          onChange={(employments) => updateFilters({ employments })}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-6 sm:mt-0">
-                      <JobLocationFilter
-                        value={filters.locations}
-                        onChange={(locations) => updateFilters({ locations })}
-                        locations={availableLocations}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </DrawerContent>
-            </Drawer>
+            <JobFilterDrawer
+              filters={filters}
+              locations={availableLocations}
+              activeFilterCount={activeFilterCount}
+              onChange={updateFilters}
+            />
 
             <Button variant="outline" size="icon-xl" onClick={() => setSearchBarOpen((v) => !v)} className="sm:hidden">
               {searchBarOpen ? <IconX className="size-5" /> : <IconSearch className="size-5" />}

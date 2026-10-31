@@ -5,7 +5,7 @@
 #
 # Usage: ./docker-build.sh [label]
 
-set -e
+set -eo pipefail
 
 LABEL="${1:-local}"
 IMAGE_NAME="monoweb-test"
@@ -34,18 +34,33 @@ echo ""
 echo "[2/3] Building Docker image..."
 START_BUILD=$(date +%s)
 
-# Convert .env.docker lines into --build-arg flags
-BUILD_ARGS=""
-while IFS= read -r line; do
+# Pass public configuration as build arguments and credentials as BuildKit secrets.
+build_options=()
+secret_environment_variables=()
+while IFS= read -r environment_variable || [[ -n "$environment_variable" ]]; do
+    environment_variable="${environment_variable%$'\r'}"
     # Skip empty lines and comments
-    [[ -z "$line" || "$line" == \#* ]] && continue
-    BUILD_ARGS="$BUILD_ARGS --build-arg $line"
+    if [[ -z "$environment_variable" || "$environment_variable" == \#* ]]; then
+        continue
+    fi
+
+    environment_variable_name="${environment_variable%%=*}"
+
+    case "$environment_variable_name" in
+        AUTH0_CLIENT_SECRET|AUTH_SECRET|SIGNING_KEY|SENTRY_AUTH_TOKEN)
+            secret_environment_variables+=("$environment_variable")
+            build_options+=(--secret "id=$environment_variable_name,env=$environment_variable_name")
+            ;;
+        AUTH0_CLIENT_ID|AUTH0_ISSUER|AUTH0_AUDIENCES|NEXT_PUBLIC_*|RPC_HOST|SENTRY_DSN|SENTRY_RELEASE|DOPPLER_ENVIRONMENT)
+            build_options+=(--build-arg "$environment_variable")
+            ;;
+    esac
 done < "$ENV_FILE"
 
-docker build \
+env "${secret_environment_variables[@]}" docker build \
     -t "$IMAGE_NAME" \
     -f apps/web/Dockerfile \
-    $BUILD_ARGS \
+    "${build_options[@]}" \
     --progress plain \
     . 2>&1 | tail -30
 END_BUILD=$(date +%s)

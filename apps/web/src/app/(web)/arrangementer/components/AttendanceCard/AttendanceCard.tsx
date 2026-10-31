@@ -23,7 +23,7 @@ import { getAttendanceStatus } from "../attendanceStatus"
 import { AttendanceCalendarButton } from "./AttendanceCalendarButton"
 import { AttendanceDateInfo } from "./AttendanceDateInfo"
 import { AttendanceTurnstile } from "./AttendanceTurnstile"
-import { EventRulesDialogContent } from "./EventRules"
+import { EventRulesDialog } from "../EventRulesDialog"
 import { MainPoolCard } from "./MainPoolCard"
 import { RegistrationDelayStatus } from "./RegistrationDelayStatus"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
@@ -376,22 +376,19 @@ const DietaryPreferencesButton = () => (
 )
 
 const EventRulesButton = () => (
-  <Dialog>
-    <DialogTrigger
-      render={
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label="Arrangementregler"
-          className="px-0 sm:px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
-        >
-          <IconScript aria-hidden className="size-4" />
-          Regler
-        </Button>
-      }
-    />
-    <EventRulesDialogContent />
-  </Dialog>
+  <EventRulesDialog
+    trigger={
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-label="Arrangementregler"
+        className="px-0 sm:px-1.5 text-muted-foreground dark:hover:text-foreground max-sm:text-sm"
+      >
+        <IconScript aria-hidden className="size-4" />
+        Regler
+      </Button>
+    }
+  />
 )
 
 export const AttendanceCardSkeleton = () => {

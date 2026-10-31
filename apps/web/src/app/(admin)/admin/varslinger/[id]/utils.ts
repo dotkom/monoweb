@@ -1,7 +1,5 @@
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { NotificationLink, NotificationManagement } from "@dotkomonline/rpc/notification"
-import { formatDate } from "date-fns"
-import { nb } from "date-fns/locale"
 
 export function getActorGroupLabel(actorGroup: NotificationManagement["actorGroup"]): string {
   if (actorGroup === null) {
@@ -29,10 +27,6 @@ export function getCreatedByName(
   }
 
   return userName
-}
-
-export function formatSentAt(date: Date): string {
-  return formatDate(date, "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })
 }
 
 export function formatPercent(count: number, total: number): string {
@@ -73,6 +67,21 @@ export function getNotificationLinkHref(link: NotificationLink): string | null {
   }
 
   return null
+}
+
+export function getNotificationLinkActionLabel(linkType: NotificationLink["type"]): string {
+  const labels = {
+    NONE: "Se lenke",
+    URL: "Åpne lenke",
+    EVENT: "Se arrangement",
+    ARTICLE: "Se artikkel",
+    GROUP: "Se gruppe",
+    USER: "Se bruker",
+    OFFLINE: "Se Offline",
+    JOB_LISTING: "Se stillingsannonse",
+  } satisfies Record<NotificationLink["type"], string>
+
+  return labels[linkType]
 }
 
 export function formatDeleteConfirmText(recipientCount: number | undefined): string {

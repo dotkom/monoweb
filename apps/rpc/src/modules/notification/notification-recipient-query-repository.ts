@@ -41,6 +41,7 @@ export interface FindAttendeeUserIdsOptions {
 }
 
 export interface NotificationRecipientQueryRepository {
+  findSavedRecipientUserIds(handle: DBHandle, notificationId: string): Promise<UserId[]>
   findAllUserIds(handle: DBHandle, options: FindAllUserIdsOptions): Promise<UserId[]>
   findGroupMemberUserIds(
     handle: DBHandle,
@@ -380,6 +381,14 @@ export function getNotificationRecipientQueryRepository(): NotificationRecipient
       })
 
       return rows.map((row) => row.id)
+    },
+
+    async findSavedRecipientUserIds(handle, notificationId) {
+      const recipients = await handle.notificationRecipient.findMany({
+        where: { notificationId },
+        select: { userId: true },
+      })
+      return recipients.map((recipient) => recipient.userId)
     },
 
     async findUserSummaries(handle, userIds, options) {

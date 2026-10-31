@@ -47,6 +47,7 @@ export function EventPreview({
   const { icon, copy } = useCopyToClipboard()
 
   const triggerRef = useRef<HTMLAnchorElement | null>(null)
+  const drawerRef = useRef<HTMLDivElement | null>(null)
 
   const openPreview = useCallback((event: PreviewEvent, trigger: HTMLAnchorElement) => {
     if (trigger.closest('[data-slot="drawer-content"]') === null) {
@@ -79,12 +80,25 @@ export function EventPreview({
     }
   }, [open])
 
+  function getFinalFocus() {
+    const activeElement = document.activeElement
+    const isInsideDrawer = drawerRef.current?.contains(activeElement)
+
+    // Closing takes time. Preserve focus if the user has already moved to another control.
+    if (activeElement !== null && activeElement !== document.body && !isInsideDrawer) {
+      return false
+    }
+
+    return triggerRef.current
+  }
+
   return (
     <EventTurnstileProvider backgroundEnabled={open === false}>
       <EventPreviewContext.Provider value={openPreview}>
         <div className={className}>{children}</div>
         <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
           <DrawerContent
+            ref={drawerRef}
             aria-describedby={undefined}
             showOverlay={open}
             style={open ? undefined : { pointerEvents: "none" }}
@@ -97,7 +111,7 @@ export function EventPreview({
               "data-[swipe-direction=right]:w-[min(--spacing(152),60vw)]",
               "data-[swipe-direction=right]:sm:max-w-none"
             )}
-            finalFocus={triggerRef}
+            finalFocus={getFinalFocus}
           >
             <DrawerHeader className="shrink-0 border-b border-field-border">
               <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>
@@ -138,10 +152,10 @@ export function EventPreview({
             <ScrollArea.Root
               key={selectedEvent?.id}
               data-base-ui-swipe-ignore
-              className="relative min-h-0 flex-1 overflow-hidden"
+              className="relative min-h-0 min-w-0 flex-1 overflow-hidden"
             >
               <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
-                <ScrollArea.Content className="p-4">
+                <ScrollArea.Content style={{ minWidth: 0 }} className="w-full max-w-full p-4">
                   {selectedEvent !== null && (
                     <EventPreviewDetails
                       key={selectedEvent.id}
@@ -220,8 +234,8 @@ function EventPreviewDetails({
   const showDescription = event.description !== ""
 
   return (
-    <div className="flex min-w-0 flex-col gap-6">
-      <EventHeader event={event} showAdminLink={isOrganizer === true || isAdmin === true} />
+    <div className="flex w-full min-w-0 max-w-full flex-col gap-6 mb-17">
+      <EventHeader event={event} smallTitle showAdminLink={isOrganizer === true || isAdmin === true} />
 
       <section aria-label="Arrangementsinformasjon" className="flex flex-col gap-4">
         {parent !== null && (

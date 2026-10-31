@@ -26,12 +26,7 @@ export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) 
 
   return (
     <section className="flex w-full min-w-0 flex-row items-center gap-3 p-2 -mx-2 sm:gap-4">
-      <CalendarBox
-        start={start}
-        end={end}
-        className="shrink-0 min-h-11 min-w-11 bg-background dark:border-stone-700"
-        containerClassName="shrink-0"
-      />
+      <CalendarBox start={start} end={end} className="shrink-0 bg-background dark:border-stone-700" />
 
       {sameDay ? (
         <div className="flex min-w-0 flex-col">

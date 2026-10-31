@@ -2,7 +2,9 @@ import type { AttendanceView } from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import {
   Dialog,
+  DialogBody,
   DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
   Button,
@@ -79,7 +81,7 @@ export const ViewAttendeesButton = ({
     <Dialog open={attendeeListOpen} onOpenChange={setAttendeeListOpen}>
       <DialogTrigger asChild>{button}</DialogTrigger>
       <DialogContent size="lg" className="p-0!">
-        <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
+        <DialogHeader className="flex-row items-center justify-between px-4 pt-4 rounded-t-lg">
           <DialogTitle asChild>
             <Title element="h1" size="lg">
               Påmeldingsliste
@@ -88,26 +90,28 @@ export const ViewAttendeesButton = ({
           <DialogClose>
             <IconX className="size-[1.25em]" />
           </DialogClose>
-        </div>
+        </DialogHeader>
 
-        <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
-          <div className="flex flex-col gap-2">
-            <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-30">
-              Påmeldte
-            </Title>
-
-            <AttendeeList attendees={registeredAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
-          </div>
-
-          {queuedAttendees.length > 0 && (
-            <div className="flex flex-col gap-2 mt-6">
+        <DialogBody className="mx-0 mb-0 min-h-[25dvh]">
+          <div className="flex flex-col gap-1 px-3 pb-3">
+            <div className="flex flex-col gap-2">
               <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-30">
-                Kø
+                Påmeldte
               </Title>
-              <AttendeeList attendees={queuedAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
+
+              <AttendeeList attendees={registeredAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
             </div>
-          )}
-        </div>
+
+            {queuedAttendees.length > 0 && (
+              <div className="flex flex-col gap-2 mt-6">
+                <Title className="font-medium text-base px-2 py-1 bg-gray-100 dark:bg-stone-700 rounded-md sticky top-0 z-30">
+                  Kø
+                </Title>
+                <AttendeeList attendees={queuedAttendees} maxNumberOfAttendees={maxAttendees} user={user} />
+              </div>
+            )}
+          </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   )
