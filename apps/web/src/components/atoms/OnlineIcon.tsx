@@ -53,7 +53,6 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
     return light
   }
 
-  // The halloween palette swaps the lightning bolt for an orange one, in both color modes
   return (
     <>
       <span className="contents halloween:hidden">

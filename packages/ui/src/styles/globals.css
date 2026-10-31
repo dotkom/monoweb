@@ -3,7 +3,7 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
-/* Palettes are set by apps/web. This has to live in the stylesheet that generates the utilities */
+
 @custom-variant halloween (&:is([data-palette="halloween"] *));
 @custom-variant data-active (&[data-active]);
 

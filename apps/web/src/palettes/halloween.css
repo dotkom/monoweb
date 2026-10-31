@@ -1,17 +1,7 @@
-/*
- * Halloween palette. Retints the neutral scales (gray for light mode, stone for dark mode), brand colors and semantic
- * tokens. Status colors (red, green, yellow) are left alone. Components can opt into palette-specific tweaks with the
- * `halloween:` variant.
- *
- * These rules are unlayered, so they win over Tailwind's theme layer. Mode-specific tokens are scoped with
- * [data-theme="dark"] / :not([data-theme="dark"]) so they don't tie with the dark tokens from @dotkomonline/ui.
- */
-
 [data-palette="halloween"] {
   --halloween-night: #140b10;
   --logo-accent: var(--color-brand);
 
-  /* Light mode neutrals */
   --color-gray-50: oklch(0.982 0.012 75);
   --color-gray-100: oklch(0.962 0.022 70);
   --color-gray-200: oklch(0.922 0.035 65);
@@ -24,7 +14,6 @@
   --color-gray-900: oklch(0.21 0.03 20);
   --color-gray-950: oklch(0.15 0.025 15);
 
-  /* Dark mode neutrals */
   --color-stone-50: oklch(0.985 0.006 40);
   --color-stone-100: oklch(0.97 0.01 40);
   --color-stone-200: oklch(0.923 0.016 40);
@@ -39,7 +28,6 @@
 }
 
 [data-palette="halloween"]:not([data-theme="dark"]) {
-  /* A deeper orange than in dark mode, so brand text holds up on light backgrounds */
   --color-brand: oklch(0.66 0.18 50);
   --color-brand-accent: oklch(0.8 0.14 70);
 

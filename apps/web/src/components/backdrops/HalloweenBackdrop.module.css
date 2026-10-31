@@ -21,7 +21,6 @@
   color: var(--muted-foreground);
 }
 
-/* Keep the existing horizontal event carousel free of a native scrollbar. */
 .frame [class~="scrollbar-hide"] {
   scrollbar-width: none;
 }
@@ -30,14 +29,11 @@
   display: none;
 }
 
-/* The hero and featured events share one scene. Its ground continues behind
-   the cards, and its height follows the content rather than the viewport. */
 .frame [data-homepage-opening] {
   position: relative;
   isolation: isolate;
 }
 
-/* Only contrast changes where the existing event list crosses the dark ground. */
 .frame [data-featured-events] {
   color: #f5ece6;
 }
@@ -52,7 +48,6 @@
   color: var(--foreground);
 }
 
-/* Date chips have their own solid surface and must keep that surface's ink. */
 .frame [data-featured-events] [class~="bg-background"] {
   color: var(--foreground);
 }
@@ -85,7 +80,6 @@
 
 .frame [data-homepage-opening]::before,
 .frame [data-featured-events]::before {
-  /* A crisp curved edge keeps the vector artwork opaque all the way down. */
   mask-image: linear-gradient(#000 0 0), var(--scene-wave-mask);
   mask-size:
     100% calc(100% - var(--scene-wave-depth)),
@@ -94,7 +88,6 @@
   mask-repeat: no-repeat;
 }
 
-/* Original silhouettes frame terrain redrawn for a wide, shallow panorama. */
 .bottom {
   position: relative;
   z-index: 0;
@@ -106,8 +99,6 @@
   user-select: none;
 }
 
-/* Use the complete landscape on phones; the desktop panorama makes its
-   castle, forest and river too small and cover crops the outside landmarks. */
 @media (max-width: 639px) {
   .bottom {
     height: auto;
@@ -117,8 +108,6 @@
   }
 }
 
-/* The portrait scene fills the existing hero slot and the gap before events.
-   Its position follows wrapped copy and notices, rather than viewport guesses. */
 @media (max-width: 1023px) {
   .frame [data-homepage-opening]::before {
     content: none;
@@ -156,8 +145,6 @@
   }
 }
 
-/* Landmark positions follow the hillside while retaining their proportions.
-   The ground finishes above the heading when the content stops growing. */
 @media (min-width: 1600px) {
   .frame {
     --scene-wave-depth: 4rem;

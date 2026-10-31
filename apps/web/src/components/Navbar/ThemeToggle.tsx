@@ -88,7 +88,6 @@ export const ThemeToggle = () => {
   )
 }
 
-/** Whether there is more than one palette to pick between right now */
 export const useHasPaletteChoice = () => usePalette().availablePalettes.length > 1
 
 export const PaletteToggle = () => {

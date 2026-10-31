@@ -10,18 +10,13 @@ import {
 import { createContext, type FC, type PropsWithChildren, useCallback, useContext, useMemo, useState } from "react"
 
 interface PaletteContextValue {
-  /** What the user picked, which may be "default" */
   preference: PalettePreference
-  /** The palette actually applied */
   palette: Palette
-  /** What "default" currently resolves to */
   defaultPalette: Palette
-  /** Palettes that can be picked right now */
   availablePalettes: Palette[]
   setPreference: (preference: PalettePreference) => void
 }
 
-/** Used outside a provider, e.g. in the global error page, where there's nothing to pick */
 const FALLBACK_CONTEXT: PaletteContextValue = {
   preference: DEFAULT_PALETTE_PREFERENCE,
   palette: "classic",
@@ -32,7 +27,6 @@ const FALLBACK_CONTEXT: PaletteContextValue = {
 
 const PaletteContext = createContext<PaletteContextValue>(FALLBACK_CONTEXT)
 
-/** Everything date-dependent is resolved on the server, so the client doesn't disagree with it around midnight */
 interface PaletteProviderProps {
   initialPreference: PalettePreference
   initialPalette: Palette
@@ -40,10 +34,6 @@ interface PaletteProviderProps {
   availablePalettes: Palette[]
 }
 
-/**
- * Holds the selected color palette. The server renders `data-palette` on <html> from the cookie, so switching only
- * has to update the attribute and the cookie for the next request.
- */
 export const PaletteProvider: FC<PropsWithChildren<PaletteProviderProps>> = ({
   initialPreference,
   initialPalette,
