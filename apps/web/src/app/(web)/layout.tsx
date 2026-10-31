@@ -68,7 +68,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>
-              <ThemeProvider defaultTheme={palette === "halloween" ? "dark" : "system"} enableSystem attribute="data-theme">
+              <ThemeProvider
+                defaultTheme={palette === "halloween" ? "dark" : "system"}
+                enableSystem
+                attribute="data-theme"
+              >
                 <PaletteProvider
                   initialPreference={palettePreference}
                   initialPalette={palette}
