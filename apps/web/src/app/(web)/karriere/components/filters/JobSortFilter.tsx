@@ -1,19 +1,10 @@
 "use client"
 
-import {
-  cn,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@dotkomonline/ui"
-import { IconHourglassLow, IconCalendarPlus } from "@tabler/icons-react"
+import { cn, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
+import { IconCalendarPlus, IconHourglassLow } from "@tabler/icons-react"
 import type { JobListingSort } from "../../hooks/useJobListingFilters"
 
-const sortOptions = [
+const SORT_OPTIONS = [
   { value: "DEADLINE", label: "Frist", icon: IconHourglassLow },
   { value: "PUBLISHED", label: "Publisert", icon: IconCalendarPlus },
 ] as const
@@ -26,30 +17,27 @@ interface JobSortFilterProps {
 
 export const JobSortFilter = ({ value, onChange, className }: JobSortFilterProps) => {
   return (
-    <div className={cn("h-full self-stretch", className)}>
-      <Select
-        items={sortOptions}
-        value={value}
-        onValueChange={(selectedValue) => onChange(selectedValue as JobListingSort)}
-      >
-        <SelectTrigger className="rounded-lg min-w-43 font-normal h-10 md:h-full!">
-          <span className="flex items-center gap-1.5">
-            <span className="text-muted-foreground max-md:hidden">Sorter:</span>
-            <SelectValue className="font-medium text-foreground" />
-          </span>
-        </SelectTrigger>
-        <SelectContent position="popper" className="rounded-lg shadow-md">
-          <SelectGroup>
-            <SelectLabel className="font-medium">Sorter etter</SelectLabel>
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value} className="h-9">
-                <option.icon className="size-4.5" />
-                <span className="text-sm font-medium">{option.label}</span>
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
+    <ToggleGroup
+      aria-label="Sorter stillinger"
+      className={cn("shrink-0 h-10 bg-background", className)}
+      multiple={false}
+      spacing={0}
+      color="blue"
+      value={[value]}
+      onValueChange={(values) => {
+        const selectedOption = SORT_OPTIONS.find((option) => option.value === values.at(0))
+
+        if (selectedOption) {
+          onChange(selectedOption.value)
+        }
+      }}
+    >
+      {SORT_OPTIONS.map((option) => (
+        <ToggleGroupItem key={option.value} value={option.value} className="h-full gap-2 border-field-border">
+          <option.icon className="size-4.5" />
+          {option.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   )
 }

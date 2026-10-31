@@ -10,13 +10,15 @@ import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, cn } from "@dotkomonline/ui"
 import { IconMoodConfuzed } from "@tabler/icons-react"
 import { compareAsc, interval, isWithinInterval, subDays, subMilliseconds } from "date-fns"
-import type { FC } from "react"
-import z from "zod"
+import { memo, type FC } from "react"
+import type { EventListViewMode } from "../utils/event-filters"
+
+// Toolbar state changes should not rerender every event card and its attendance controls.
+const MemoizedEventCard = memo(EventCard)
+const MemoizedEventListItem = memo(EventListItem)
 
 const OPENING_SOON_DAYS_THRESHOLD = 7 as const
 
-export const EventListViewModeSchema = z.enum(["ATTENDANCE", "CHRONOLOGICAL"])
-export type EventListViewMode = z.infer<typeof EventListViewModeSchema>
 export type EventListDisplayMode = "cards" | "list"
 
 export type EventWithAttendanceDetails = EventWithAttendanceSummary | EventWithAttendanceView
@@ -57,14 +59,20 @@ export const EventItems: FC<EventItemsProps> = ({ eventsWithAttendance, displayM
     return (
       <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
         {eventsWithAttendance.map(({ event, attendance }) => (
-          <EventCard key={event.id} event={event} attendance={attendance} userId={userId} className="h-full min-w-0" />
+          <MemoizedEventCard
+            key={event.id}
+            event={event}
+            attendance={attendance}
+            userId={userId}
+            className="h-full min-w-0"
+          />
         ))}
       </div>
     )
   }
 
   return eventsWithAttendance.map(({ event, attendance }) => (
-    <EventListItem key={event.id} event={event} attendance={attendance} userId={userId} />
+    <MemoizedEventListItem key={event.id} event={event} attendance={attendance} userId={userId} />
   ))
 }
 

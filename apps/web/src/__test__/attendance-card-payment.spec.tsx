@@ -29,7 +29,7 @@ vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceDateInfo", () =
 vi.mock("@/app/arrangementer/components/AttendanceCard/AttendanceTurnstile", () => ({
   AttendanceTurnstile: () => null,
 }))
-vi.mock("@/app/arrangementer/components/AttendanceCard/EventRules", () => ({ EventRulesDialogContent: () => null }))
+vi.mock("@/app/arrangementer/components/EventRulesDialog", () => ({ EventRulesDialog: () => null }))
 vi.mock("@/app/arrangementer/components/AttendanceCard/MainPoolCard", () => ({
   MainPoolCard: () => <div data-testid="main-pool-card" />,
 }))

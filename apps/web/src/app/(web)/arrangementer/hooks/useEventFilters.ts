@@ -1,86 +1,42 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useCallback, useMemo } from "react"
-import { EventTypeSchema } from "@dotkomonline/rpc/event"
-import { GroupSchema } from "@dotkomonline/rpc/group"
-import { EventListViewModeSchema } from "../components/EventList"
-import { z } from "zod"
-
-const EventFiltersSchema = z.object({
-  search: z.string(),
-  types: z.array(EventTypeSchema),
-  groups: z.array(GroupSchema.shape.slug),
-  viewModeSort: EventListViewModeSchema,
-  date: z.iso.date().nullable().catch(null),
-})
-
-type EventFilters = z.infer<typeof EventFiltersSchema>
+import {
+  type EventFilters,
+  clearEventFilterParams,
+  parseEventFilters,
+  writeEventFilterParams,
+} from "../utils/event-filters"
 
 export const useEventFilters = () => {
-  const router = useRouter()
   const searchParams = useSearchParams()
+  const filters = useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString())
 
-  const filters: EventFilters = useMemo(() => {
-    return EventFiltersSchema.parse({
-      search: searchParams.get("q") ?? "",
-      types: searchParams.getAll("type"),
-      groups: searchParams.getAll("group"),
-      viewModeSort: searchParams.get("sort") ?? "ATTENDANCE",
-      date: searchParams.get("date"),
-    })
+    return parseEventFilters(params)
   }, [searchParams])
 
-  const updateFilters = useCallback(
-    (partial: Partial<EventFilters>) => {
-      const params = new URLSearchParams(searchParams.toString())
+  const updateFilters = useCallback((partial: Partial<EventFilters>) => {
+    // Read the current URL so consecutive clicks also preserve updates made before React rerenders.
+    const url = new URL(window.location.href)
 
-      const next = { ...filters, ...partial }
+    writeEventFilterParams(url.searchParams, {
+      ...parseEventFilters(url.searchParams),
+      ...partial,
+    })
 
-      params.delete("q")
-      params.delete("type")
-      params.delete("group")
-      params.delete("sort")
-      params.delete("date")
-
-      if (next.search) {
-        params.set("q", next.search)
-      }
-
-      for (const t of next.types) {
-        params.append("type", t)
-      }
-
-      for (const g of next.groups) {
-        params.append("group", g)
-      }
-
-      if (next.viewModeSort !== "ATTENDANCE") {
-        params.set("sort", next.viewModeSort)
-      }
-
-      if (next.date) {
-        params.set("date", next.date)
-      }
-
-      router.replace(`?${params.toString()}`, { scroll: false })
-    },
-    [router, searchParams, filters]
-  )
+    // This keeps useSearchParams in sync without a server navigation
+    window.history.replaceState(null, "", url)
+  }, [])
 
   const resetFilters = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.delete("q")
-    params.delete("type")
-    params.delete("group")
-    params.delete("sort")
-    params.delete("date")
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }, [router, searchParams])
+    const url = new URL(window.location.href)
 
-  return {
-    filters,
-    updateFilters,
-    resetFilters,
-  }
+    clearEventFilterParams(url.searchParams)
+
+    window.history.replaceState(null, "", url)
+  }, [])
+
+  return { filters, updateFilters, resetFilters }
 }

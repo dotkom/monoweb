@@ -77,7 +77,7 @@ export function CalendarSubscriptionPanel({ enabled = true }: { enabled?: boolea
         multiple={false}
         spacing={0}
         color="blue"
-        className="h-12 w-full"
+        className="h-11 w-full"
         value={[selectedFeed]}
         onValueChange={(values) => {
           const nextFeed = values.at(0)
