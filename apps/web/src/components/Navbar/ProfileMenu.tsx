@@ -311,7 +311,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
           <div className="flex items-center justify-between px-3">
             <div className="flex gap-3 items-center">
               <IconSunMoon className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Mørk modus</Text>
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
             </div>
             <div>
               <ThemeToggle />
@@ -322,7 +322,7 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
             <div className="flex items-center justify-between px-3 mt-1.5">
               <div className="flex gap-3 items-center">
                 <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
-                <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Tema</Text>
+                <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Utseende</Text>
               </div>
               <div>
                 <PaletteToggle />

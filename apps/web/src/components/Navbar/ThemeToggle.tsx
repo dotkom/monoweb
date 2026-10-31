@@ -143,7 +143,7 @@ export const ThemeDropdown: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="Velg modus og tema"
+        aria-label="Velg fargetema og utseende"
         className="flex items-center justify-center size-10 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
       >
         {PaletteIcon ? (
