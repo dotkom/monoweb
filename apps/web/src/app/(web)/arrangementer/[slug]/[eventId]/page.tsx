@@ -109,10 +109,8 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
           <TabsContent value="child-events" className="p-0 border-none mt-4">
             <div>
               <EventList
-                futureEventWithAttendances={futureChildEventWithAttendances}
-                pastEventWithAttendances={pastChildEventsWithAttendances}
-                alwaysShowChildEvents
-                viewMode="CHRONOLOGICAL"
+                futureEvents={futureChildEventWithAttendances}
+                pastEvents={pastChildEventsWithAttendances}
                 userId={user?.id}
               />
             </div>

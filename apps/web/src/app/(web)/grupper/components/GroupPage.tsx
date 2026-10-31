@@ -251,10 +251,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
 
       <div className="flex flex-col gap-4">
         <Title>{displayName ? `${displayName}s` : "Gruppens"} arrangementer</Title>
-        <EventList
-          futureEventWithAttendances={futureEventWithAttendances.items}
-          pastEventWithAttendances={pastEventWithAttendances.items}
-        />
+        <EventList futureEvents={futureEventWithAttendances.items} pastEvents={pastEventWithAttendances.items} />
       </div>
 
       {easterEgg?.mascot && <WanderingMascot config={easterEgg.mascot} />}
