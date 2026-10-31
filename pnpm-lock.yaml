@@ -264,7 +264,7 @@ importers:
     dependencies:
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
-        version: 3.1158.0
+        version: 3.1159.0
       '@aws-sdk/client-scheduler':
         specifier: ^3.844.0
         version: 3.1161.0
@@ -424,7 +424,7 @@ importers:
         version: 4.33.0(next@16.4.3(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@aws-sdk/client-s3':
         specifier: ^3.821.0
-        version: 3.1158.0
+        version: 3.1159.0
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.821.0
         version: 3.1161.0
@@ -1075,8 +1075,8 @@ importers:
         version: 4.6.7
     devDependencies:
       '@aws-sdk/client-s3':
-        specifier: 3.1158.0
-        version: 3.1158.0
+        specifier: 3.1159.0
+        version: 3.1159.0
       '@biomejs/biome':
         specifier: 2.4.16
         version: 2.4.16
@@ -1142,8 +1142,8 @@ packages:
     resolution: {integrity: sha512-CXNESwkQC9jdrUG6cKXBfudVt1frGcYQykcCYbNclVrsewuGMbo3PlFjRteMe4OftNAqhyc3xC2jTz7SUqLasQ==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-s3@3.1158.0':
-    resolution: {integrity: sha512-ytaS0QeydANmiLo20kXtAKHKxEriqVgtIC7WnRXfjYEgH3yfjxaxJvYEWQKLU0g8Fpb1Um287KfBIO/eg6aqXA==}
+  '@aws-sdk/client-s3@3.1159.0':
+    resolution: {integrity: sha512-el/Ihylk4PjJh/uJvYUeAzBiVLR6zt0xBOPIbciybePABWD/cOcxinHEPQslogm61LI2etnRrixSQltX94gzLA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-s3@3.1161.0':
@@ -7896,8 +7896,8 @@ packages:
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
-  schema-utils@4.8.1:
-    resolution: {integrity: sha512-x39pYlJPyH7Uge5QO64B9XGP9zLDc9WNmiQZc+CE3IzZPvMu3lHOuAMGpYNoPixEL7MSWlGhYTg5UlLSL8G6iw==}
+  schema-utils@4.8.2:
+    resolution: {integrity: sha512-iKlak3OFHF0dgD1nZRvgWQzG+P1TiEcMnLSBtIVBg937z5Jd6WE1c3SyZkXIyCfPHowL35yMsVvIjotm1c1qiw==}
     engines: {node: '>= 10.13.0'}
     hasBin: true
     peerDependencies:
@@ -8963,7 +8963,7 @@ snapshots:
       '@smithy/types': 4.19.0
       tslib: 2.8.1
 
-  '@aws-sdk/client-s3@3.1158.0':
+  '@aws-sdk/client-s3@3.1159.0':
     dependencies:
       '@aws-sdk/checksums': 3.1002.1
       '@aws-sdk/core': 3.979.1
@@ -15146,7 +15146,7 @@ snapshots:
   minimizer-webpack-plugin@5.14.0(lightningcss@1.30.2)(postcss@8.5.32)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32)):
     dependencies:
       jest-worker: 27.5.1
-      schema-utils: 4.8.1(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
+      schema-utils: 4.8.2(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
       terser: 5.51.2
       webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
     optionalDependencies:
@@ -15156,7 +15156,7 @@ snapshots:
   minimizer-webpack-plugin@5.14.0(postcss@8.5.32)(webpack@5.112.2(postcss@8.5.32)):
     dependencies:
       jest-worker: 27.5.1
-      schema-utils: 4.8.1(webpack@5.112.2(postcss@8.5.32))
+      schema-utils: 4.8.2(webpack@5.112.2(postcss@8.5.32))
       terser: 5.51.2
       webpack: 5.112.2(postcss@8.5.32)
     optionalDependencies:
@@ -16337,7 +16337,7 @@ snapshots:
 
   scheduler@0.27.0: {}
 
-  schema-utils@4.8.1(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32)):
+  schema-utils@4.8.2(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32)):
     dependencies:
       '@types/json-schema': 7.0.15
       ajv: 8.20.0
@@ -16346,7 +16346,7 @@ snapshots:
     optionalDependencies:
       webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
 
-  schema-utils@4.8.1(webpack@5.112.2(postcss@8.5.32)):
+  schema-utils@4.8.2(webpack@5.112.2(postcss@8.5.32)):
     dependencies:
       '@types/json-schema': 7.0.15
       ajv: 8.20.0
@@ -17282,7 +17282,7 @@ snapshots:
       graceful-fs: 4.2.11
       mime-db: 1.54.0
       minimizer-webpack-plugin: 5.14.0(lightningcss@1.30.2)(postcss@8.5.32)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      schema-utils: 4.8.1(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
+      schema-utils: 4.8.2(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
       tapable: 2.3.3
       watchpack: 2.6.3
       webpack-sources: 3.7.0
@@ -17319,7 +17319,7 @@ snapshots:
       graceful-fs: 4.2.11
       mime-db: 1.54.0
       minimizer-webpack-plugin: 5.14.0(postcss@8.5.32)(webpack@5.112.2(postcss@8.5.32))
-      schema-utils: 4.8.1(webpack@5.112.2(postcss@8.5.32))
+      schema-utils: 4.8.2(webpack@5.112.2(postcss@8.5.32))
       tapable: 2.3.3
       watchpack: 2.6.3
       webpack-sources: 3.7.0
