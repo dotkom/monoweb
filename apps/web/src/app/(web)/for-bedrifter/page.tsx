@@ -21,11 +21,11 @@ export default async function Page() {
 
 const HeroSection: FC = () => {
   return (
-    <section className="bg-amber-100 text-black w-full rounded-lg">
+    <section className="bg-amber-100 text-black halloween:bg-accent halloween:text-accent-foreground w-full rounded-lg">
       <div className="mx-auto flex max-w-[768px] flex-col text-center items-center p-4 pb-9">
         <Title element="h1" className="mb-8 mt-5 !text-4xl/relaxed lg:!text-5xl/tight">
           Er din bedrift på jakt etter skarpe <br />
-          <span className="relative after:content-[''] after:bg-amber-600  after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
+          <span className="relative after:content-[''] after:bg-amber-600 halloween:after:bg-brand after:rounded-full after:absolute after:left-0 after:-bottom-4 after:w-full after:h-4">
             IT&ndash;studenter?
           </span>
         </Title>
@@ -87,7 +87,7 @@ const ProductSection: FC = () => {
       </section>
       <section className="columns-2 max-w-4xl md:flex md:justify-evenly md:gap-20">
         {products.map((product) => (
-          <div key={product.name} className="flex flex-col pb-8 items-center text-brand-lighter">
+          <div key={product.name} className="flex flex-col pb-8 items-center text-brand-lighter halloween:text-brand">
             <product.icon className="h-[50px] lg:h-[100px]" fill="currentColor" stroke="currentColor" />
             <Text className="font-bold text-current">{product.name}</Text>
           </div>
@@ -100,15 +100,19 @@ const ProductSection: FC = () => {
 const ProcessSection: FC = () => {
   const steps = ["Kartlegging", "Intern Planlegging", "Tilbud", "Samarbeid"]
   return (
-    <section className="bg-blue-200 w-full py-10 rounded-lg ">
+    <section className="bg-blue-200 halloween:bg-accent halloween:text-accent-foreground w-full py-10 rounded-lg ">
       <div className="mx-auto flex flex-col items-center md:flex-wrap md:flex-row md:items-stretch justify-evenly max-w-[1024px] px-16 py-4 lg:flex-nowrap ">
         {steps.map((step, index) => (
           <Fragment key={step}>
             <div className="mb-1 w-36 flex flex-col items-center z-10 py-3">
-              <Circle size={700 / 15} color="bg-brand-lighter">
-                <span className="text-black font-bold text-background">{index + 1}</span>
+              <Circle size={700 / 15} color="bg-brand-lighter halloween:bg-brand">
+                <span className="text-black font-bold text-background halloween:text-brand-foreground">
+                  {index + 1}
+                </span>
               </Circle>
-              <span className="text-black text-center text-xl font-semibold mt-9 md:mt-14">{step}</span>
+              <span className="text-black halloween:text-accent-foreground text-center text-xl font-semibold mt-9 md:mt-14">
+                {step}
+              </span>
             </div>
             {index !== steps.length - 1 && (
               <svg
@@ -126,7 +130,7 @@ const ProcessSection: FC = () => {
                   strokeWidth="2"
                   strokeDasharray="6 6" // dash length
                   strokeDashoffset="0"
-                  className={index % 2 === 0 ? "animate-dash-backward" : "animate-dash-forward"}
+                  className={`halloween:stroke-brand ${index % 2 === 0 ? "animate-dash-backward" : "animate-dash-forward"}`}
                 />
               </svg>
             )}

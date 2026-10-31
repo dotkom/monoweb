@@ -3,6 +3,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
+
+@custom-variant halloween (&:is([data-palette="halloween"] *));
 @custom-variant data-active (&[data-active]);
 
 @theme inline {
@@ -27,6 +29,7 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-brand-foreground: var(--brand-foreground);
   --color-brand-accent-foreground: var(--brand-accent-foreground);
   --color-brand-accent: var(--brand-accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -71,6 +74,7 @@
   --secondary-foreground: oklch(0.21 0.034 264.665);
   --muted: oklch(0.967 0.003 264.542);
   --muted-foreground: oklch(0.551 0.027 264.364);
+  --brand-foreground: #fff;
   --brand-accent: var(--color-brand-accent, #fab759);
   --brand-accent-foreground: var(--black, #000);
   --accent: oklch(0.962 0.018 264.542);

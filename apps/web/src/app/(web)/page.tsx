@@ -69,51 +69,19 @@ export default async function App() {
           start={TZDate.tz("Europe/Oslo", 2026, 9, 27, 12, 0, 0)}
           end={TZDate.tz("Europe/Oslo", 2026, 10, 1, 23, 59, 59)}
         />
-        <OnlineHero />
-      </div>
+        <div data-homepage-opening className="flex flex-col gap-16">
+          <OnlineHero />
 
-      <div className="flex flex-col gap-4">
-        <Title className="text-3xl font-semibold">Arrangementer</Title>
+          <div data-featured-events className="flex flex-col gap-4">
+            <Title className="text-3xl font-semibold">Arrangementer</Title>
 
-        {events.length > 0 ? (
-          <>
-            <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
-              {events.map(({ event, attendance }) => (
-                <EventCard key={event.id} event={event} attendance={attendance} userId={user?.id} />
-              ))}
+            {events.length > 0 ? (
+              <>
+                <div className="hidden md:grid md:grid-cols-[2fr_2fr_1fr] gap-6 pr-6">
+                  {events.map(({ event, attendance }) => (
+                    <EventCard key={event.id} event={event} attendance={attendance} userId={user?.id} />
+                  ))}
 
-              <Tilt
-                tiltMaxAngleX={0.25}
-                tiltMaxAngleY={0.25}
-                scale={1.005}
-                glareBorderRadius="var(--radius-xl)"
-                className="h-full"
-              >
-                <Button
-                  variant="unstyled"
-                  element={Link}
-                  href="/arrangementer"
-                  className={cn(
-                    "flex flex-row items-center gap-3 rounded-xl w-full h-full min-h-48 transition-colors",
-                    "bg-gray-200 hover:bg-gray-100",
-                    "dark:bg-stone-700/60 dark:hover:bg-stone-700"
-                  )}
-                >
-                  <Text className="md:text-xl">Se alle</Text>
-                  <IconArrowRight className="size-6" />
-                </Button>
-              </Tilt>
-            </div>
-
-            <div className="md:hidden md:-mx-4">
-              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-                {events.map(({ event, attendance }) => (
-                  <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
-                    <EventCard event={event} attendance={attendance} userId={user?.id} />
-                  </div>
-                ))}
-
-                <div className="snap-center pr-4">
                   <Tilt
                     tiltMaxAngleX={0.25}
                     tiltMaxAngleY={0.25}
@@ -122,25 +90,60 @@ export default async function App() {
                     className="h-full"
                   >
                     <Button
+                      variant="unstyled"
                       element={Link}
                       href="/arrangementer"
                       className={cn(
-                        "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                        "bg-blue-200 hover:bg-blue-100",
-                        "dark:bg-brand dark:hover:bg-brand/75"
+                        "flex flex-row items-center gap-3 rounded-xl w-full h-full min-h-48 transition-colors",
+                        "bg-gray-200 hover:bg-gray-100",
+                        "dark:bg-stone-700/60 dark:hover:bg-stone-700"
                       )}
-                      iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
                     >
-                      <Text className="text-lg">Se alle</Text>
+                      <Text className="md:text-xl">Se alle</Text>
+                      <IconArrowRight className="size-6" />
                     </Button>
                   </Tilt>
                 </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
-        )}
+
+                <div className="md:hidden md:-mx-4">
+                  <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+                    {events.map(({ event, attendance }) => (
+                      <div key={event.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-center first:ml-0">
+                        <EventCard event={event} attendance={attendance} userId={user?.id} />
+                      </div>
+                    ))}
+
+                    <div className="snap-center pr-4">
+                      <Tilt
+                        tiltMaxAngleX={0.25}
+                        tiltMaxAngleY={0.25}
+                        scale={1.005}
+                        glareBorderRadius="var(--radius-xl)"
+                        className="h-full"
+                      >
+                        <Button
+                          element={Link}
+                          href="/arrangementer"
+                          className={cn(
+                            "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
+                            "bg-blue-200 hover:bg-blue-100 halloween:bg-gray-200 halloween:hover:bg-gray-100 halloween:text-foreground",
+                            "halloween:dark:bg-stone-700/60 halloween:dark:hover:bg-stone-700",
+                            "dark:bg-brand dark:hover:bg-brand/75"
+                          )}
+                          iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}
+                        >
+                          <Text className="text-lg">Se alle</Text>
+                        </Button>
+                      </Tilt>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Text className="text-gray-500 dark:text-stone-500">Det er ingen arrangementer å vise.</Text>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -203,7 +206,8 @@ export default async function App() {
                       href="/arrangementer"
                       className={cn(
                         "rounded-xl h-full min-h-48 aspect-square text-brand-800 hover:text-black gap-2 mr-4",
-                        "bg-blue-200 hover:bg-blue-100",
+                        "bg-blue-200 hover:bg-blue-100 halloween:bg-gray-200 halloween:hover:bg-gray-100 halloween:text-foreground",
+                        "halloween:dark:bg-stone-700/60 halloween:dark:hover:bg-stone-700",
                         "dark:bg-brand dark:hover:bg-brand/75"
                       )}
                       iconRight={<IconArrowRight className="size-5 md:w-6 md:h-6" />}

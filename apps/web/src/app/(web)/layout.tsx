@@ -1,6 +1,15 @@
 import { Footer } from "@/components/Footer/Footer"
 import { Navbar } from "@/components/Navbar/Navbar"
+import { PaletteBackdrop } from "@/components/backdrops/PaletteBackdrop"
+import { PaletteProvider } from "@/components/PaletteProvider"
 import { bodyFont, titleFont, monospaceFont, marcellusFont } from "@/lib/fonts"
+import {
+  getAvailablePalettes,
+  getDefaultPalette,
+  PALETTE_COOKIE_NAME,
+  parsePaletteCookie,
+  resolvePalette,
+} from "@/lib/palette"
 import { getAuthenticatedUser } from "@/utils/get-authenticated-user"
 import { QueryProvider } from "@/utils/trpc/QueryProvider"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
@@ -10,6 +19,7 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
+import { cookies } from "next/headers"
 import type { PropsWithChildren } from "react"
 import "../../globals.css"
 
@@ -34,30 +44,51 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const authState = await getAuthenticatedUser()
   // Hide the Auth0 user from the client when no usable token exists, so a stale cookie is not treated as logged-in.
   const auth0User = authState.sessionUser ?? undefined
+  const palettePreference = parsePaletteCookie((await cookies()).get(PALETTE_COOKIE_NAME)?.value)
+  const palette = resolvePalette(palettePreference)
 
   return (
     // suppressHydrationWarning is needed for next-themes, see https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
-    <html lang="no" suppressHydrationWarning className="scroll-smooth" data-scroll-behavior="smooth">
+    <html
+      lang="no"
+      suppressHydrationWarning
+      className="scroll-smooth"
+      data-scroll-behavior="smooth"
+      data-palette={palette}
+    >
       <body
         className={cn(
           titleFont.variable,
           bodyFont.variable,
           monospaceFont.variable,
           marcellusFont.variable,
-          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
+          "scrollbar-gutter-both overflow-x-clip bg-background"
         )}
       >
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>
-              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
-                <Toaster>
-                  <div className="page-shell">
-                    <Navbar />
-                    <main className="grow">{children}</main>
-                    <Footer />
-                  </div>
-                </Toaster>
+              <ThemeProvider
+                defaultTheme={palette === "halloween" ? "dark" : "system"}
+                enableSystem
+                attribute="data-theme"
+              >
+                <PaletteProvider
+                  initialPreference={palettePreference}
+                  initialPalette={palette}
+                  defaultPalette={getDefaultPalette()}
+                  availablePalettes={getAvailablePalettes()}
+                >
+                  <Toaster>
+                    <PaletteBackdrop>
+                      <div className="page-shell">
+                        <Navbar />
+                        <main className="grow">{children}</main>
+                        <Footer />
+                      </div>
+                    </PaletteBackdrop>
+                  </Toaster>
+                </PaletteProvider>
               </ThemeProvider>
             </QueryProvider>
           </Auth0Provider>

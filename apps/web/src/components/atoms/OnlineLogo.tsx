@@ -7,8 +7,8 @@ export type OnlineLogoProps = {
 }
 
 export const OnlineLogo: FC<OnlineLogoProps> = ({ className, style = "brand" }) => {
-  const lightningFill = "#FAB759"
-  const textFill = style === "brand" ? "#0B5374" : style === "black" ? "#FFFFFF" : "#000000"
+  const lightningFill = "var(--online-logo-accent, #FAB759)"
+  const textFill = `var(--online-logo-foreground, ${style === "brand" ? "#0B5374" : style === "black" ? "#FFFFFF" : "#000000"})`
 
   return (
     <div className={cn("aspect-643/167", className)}>

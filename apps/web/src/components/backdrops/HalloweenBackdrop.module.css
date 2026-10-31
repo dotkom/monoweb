@@ -1,0 +1,159 @@
+.frame {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  --scene-wave-depth: 2rem;
+  --scene-wave-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 48' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1600V12C1200 52 600 4 0 30Z'/%3E%3C/svg%3E");
+  --online-logo-foreground: var(--logo-foreground);
+  --online-logo-accent: var(--logo-accent);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.frame footer a svg path {
+  fill: currentColor;
+}
+
+.frame [class~="dark:text-stone-500"] {
+  color: var(--muted-foreground);
+}
+
+.frame [class~="scrollbar-hide"] {
+  scrollbar-width: none;
+}
+
+.frame [class~="scrollbar-hide"]::-webkit-scrollbar {
+  display: none;
+}
+
+.frame [data-homepage-opening] {
+  position: relative;
+  isolation: isolate;
+}
+
+.frame [data-featured-events] {
+  color: #f5ece6;
+}
+
+.frame [data-featured-events] [class~="text-gray-800"],
+.frame [data-featured-events] [class~="text-gray-500"],
+.frame [data-featured-events] [class~="text-muted-foreground"] {
+  color: #d5bfc9;
+}
+
+.frame [data-featured-events] [data-slot="button"] {
+  color: var(--foreground);
+}
+
+.frame [data-featured-events] [class~="bg-background"] {
+  color: var(--foreground);
+}
+
+.frame
+  [data-featured-events]
+  [class~="bg-background"]
+  [class~="text-muted-foreground"] {
+  color: var(--muted-foreground);
+}
+
+.frame [data-homepage-opening]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -5rem;
+  bottom: calc(-1 * var(--scene-wave-depth));
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background:
+    url("/halloween-top.svg") center top / 100% auto no-repeat,
+    linear-gradient(
+      to bottom,
+      transparent calc(100vw * 1100 / 1600 - 1px),
+      #1a0113 0
+    );
+  pointer-events: none;
+}
+
+.frame [data-homepage-opening]::before,
+.frame [data-featured-events]::before {
+  mask-image: linear-gradient(#000 0 0), var(--scene-wave-mask);
+  mask-size:
+    100% calc(100% - var(--scene-wave-depth)),
+    100% calc(var(--scene-wave-depth) + 1px);
+  mask-position: top, bottom;
+  mask-repeat: no-repeat;
+}
+
+.bottom {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: max(6rem, 22.5vw);
+  margin: 0;
+  background: url("/halloween-bottom.svg") center bottom / cover no-repeat;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 639px) {
+  .bottom {
+    height: auto;
+    aspect-ratio: 1024 / 856.564;
+    background-image: url("/halloween-bottom-mobile.svg");
+    background-size: 100% 100%;
+  }
+}
+
+@media (max-width: 1023px) {
+  .frame [data-homepage-opening]::before {
+    content: none;
+  }
+
+  .frame [data-hero-scene]::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: -4rem;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: url("/halloween-top-mobile.svg") center / 100% 100% no-repeat;
+    pointer-events: none;
+  }
+
+  .frame [data-featured-events] {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .frame [data-featured-events]::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -1px;
+    bottom: -2rem;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: #1a0113;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 1600px) {
+  .frame {
+    --scene-wave-depth: 4rem;
+    --scene-wave-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 48' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1600V8C1320 40 1120 40 800 20S240 4 0 36Z'/%3E%3C/svg%3E");
+  }
+
+  .frame [data-homepage-opening]::before {
+    background:
+      url("/halloween-top-wide.svg") center top / 100% 52rem no-repeat,
+      linear-gradient(to bottom, transparent calc(52rem - 1px), #1a0113 0);
+  }
+}
