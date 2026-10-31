@@ -10,6 +10,7 @@ import { nb } from "date-fns/locale"
 import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
+import { THEMES } from "@/utils/themes"
 import type { PropsWithChildren } from "react"
 import "../../globals.css"
 
@@ -44,13 +45,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           bodyFont.variable,
           monospaceFont.variable,
           marcellusFont.variable,
-          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900"
+          "scrollbar-gutter-both overflow-x-clip bg-white dark:bg-stone-900 halloween:bg-[url(/halloween-background.svg)] halloween:bg-fixed halloween:bg-bottom halloween:bg-no-repeat halloween:bg-cover"
         )}
       >
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
             <QueryProvider>
-              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme" themes={THEMES}>
                 <Toaster>
                   <div className="page-shell">
                     <Navbar />

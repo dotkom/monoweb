@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer/Footer"
 import { NavbarContent } from "@/components/Navbar/NavbarContent"
 import { Auth0Provider } from "@auth0/nextjs-auth0/client"
 import { ThemeProvider } from "next-themes"
+import { THEMES } from "@/utils/themes"
 import { setDefaultOptions as setDateFnsDefaultOptions } from "date-fns"
 import { nb } from "date-fns/locale"
 import "../globals.css"
@@ -30,7 +31,7 @@ export default function GlobalError({ error }: GlobalErrorProps) {
         <PlausibleProvider domain="online.ntnu.no">
           <Auth0Provider>
             <QueryProvider>
-              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
+              <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme" themes={THEMES}>
                 <div className="page-shell">
                   <NavbarContent />
                   <main className="grow flex flex-col gap-8">

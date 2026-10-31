@@ -19,7 +19,7 @@ export const Logo: React.FC = () => {
               <g transform="matrix(1,0,0,1,171.299,370.231)">
                 <path
                   d="M0,-101.72L-28.406,-59.668L-0.497,-59.312L-54.946,10.118L-33.175,-45.879L-60.813,-45.95L-29.288,-110.015C-29.288,-110.015 -21.027,-109.785 -13.921,-107.785C-6.834,-105.79 0,-101.72 0,-101.72Z"
-                  className="fill-[rgb(250,183,89)]"
+                  className="fill-[rgb(250,183,89)] halloween:fill-brand"
                   style={{ fillRule: "nonzero" }}
                 />
               </g>

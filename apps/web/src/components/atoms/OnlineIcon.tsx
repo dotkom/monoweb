@@ -43,6 +43,18 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
     />
   )
 
+  // halloween online logo (orange lightning)
+  const halloween = (
+    <Image
+      src="/online-logo-o-halloween.svg"
+      alt="Logo Online Linjeforening NTNU Trondheim Halloween"
+      width={size}
+      height={size}
+      className={cn("object-contain", inline ? "hidden halloween:inline-block" : "hidden halloween:block", className)}
+      {...props}
+    />
+  )
+
   if (variant === "dark") {
     return dark
   }
@@ -53,7 +65,8 @@ export const OnlineIcon: FC<OnlineIconProps> = ({
   return (
     <>
       {light}
-      {dark}
+      <span className="contents halloween:hidden">{dark}</span>
+      {halloween}
     </>
   )
 }
