@@ -106,8 +106,8 @@ export const CompanyView: FC<CompanyViewProps> = ({ company }) => {
           <EventListSkeleton />
         ) : (
           <EventList
-            futureEventWithAttendances={futureEventWithAttendances}
-            pastEventWithAttendances={pastEventWithAttendances}
+            futureEvents={futureEventWithAttendances}
+            pastEvents={pastEventWithAttendances}
             pastLoadMore={{
               fetchNextPage,
               hasNextPage,

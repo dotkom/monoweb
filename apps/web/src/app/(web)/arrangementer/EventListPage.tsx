@@ -177,13 +177,11 @@ export const EventListPage = ({ initialListViewMode, groups }: EventListPageProp
                     <EventListSkeleton displayMode={displayMode} />
                   ) : (
                     <EventList
-                      futureEventWithAttendances={eventListData.futureEvents}
-                      pastEventWithAttendances={eventListData.pastEvents}
+                      futureEvents={eventListData.futureEvents}
+                      pastEvents={eventListData.pastEvents}
                       registeredEventCount={eventListData.registeredEventCount}
                       futureLoadMore={eventListData.futureLoadMore}
                       pastLoadMore={eventListData.pastLoadMore}
-                      // Already ordered by the queries
-                      viewMode="CHRONOLOGICAL"
                       displayMode={displayMode}
                     />
                   )}
