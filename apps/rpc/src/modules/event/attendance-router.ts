@@ -84,6 +84,7 @@ const updatePoolProcedure = procedure
     z.object({
       id: AttendancePoolSchema.shape.id,
       input: AttendancePoolWriteSchema.partial(),
+      fillAddedSeats: z.boolean().default(false),
     })
   )
   .use(withAuthentication())
@@ -101,10 +102,15 @@ const updatePoolProcedure = procedure
 
     await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
-    const updatedPool = await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, {
-      ...pool,
-      ...input.input,
-    })
+    const updatedPool = await ctx.attendanceService.updateAttendancePool(
+      ctx.handle,
+      input.id,
+      {
+        ...pool,
+        ...input.input,
+      },
+      input.fillAddedSeats
+    )
 
     ctx.setAuditTransactionName(
       `Update AttendancePool(ID=${updatedPool.id},Title=${updatedPool.title}) for Event(ID=${event.id},Title=${event.title})`

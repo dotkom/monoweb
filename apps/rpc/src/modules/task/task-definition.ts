@@ -1,4 +1,4 @@
-import { AttendanceSchema, AttendeeSchema } from "../event/attendance"
+import { AttendancePoolSchema, AttendanceSchema, AttendeeSchema } from "../event/attendance"
 import { FeedbackFormSchema } from "../feedback-form/feedback-form"
 import type { TaskType } from "./task"
 import { z } from "zod"
@@ -38,10 +38,16 @@ export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
     type: "RESERVE_ATTENDEE",
     getSchema: () =>
-      z.object({
-        attendeeId: AttendeeSchema.shape.id,
-        attendanceId: AttendanceSchema.shape.id,
-      }),
+      z.union([
+        z.object({
+          attendeeId: AttendeeSchema.shape.id,
+          attendanceId: AttendanceSchema.shape.id,
+        }),
+        z.object({
+          attendancePoolId: AttendancePoolSchema.shape.id,
+          attendanceId: AttendanceSchema.shape.id,
+        }),
+      ]),
   }),
   MERGE_ATTENDANCE_POOLS: createTaskDefinition({
     type: "MERGE_ATTENDANCE_POOLS",
