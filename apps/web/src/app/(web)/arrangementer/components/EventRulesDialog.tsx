@@ -10,7 +10,7 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { IconBook2, IconX } from "@tabler/icons-react"
+import { IconScript, IconX } from "@tabler/icons-react"
 import type { ReactElement } from "react"
 
 interface EventRulesDialogProps {
@@ -56,7 +56,7 @@ export const EventRulesButton = ({ variant = "ghost", withIcon = true, ...props 
     <EventRulesDialog
       trigger={
         <Button variant={variant} {...props}>
-          {withIcon && <IconBook2 className="size-4" />}
+          {withIcon && <IconScript aria-hidden className="size-4" />}
           Arrangementregler
         </Button>
       }
