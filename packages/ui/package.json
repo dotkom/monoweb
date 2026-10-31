@@ -68,7 +68,7 @@
     "@ladle/react": "5.1.1",
     "@tailwindcss/postcss": "4.1.18",
     "@types/react": "19.2.18",
-    "postcss": "8.5.30",
+    "postcss": "8.5.32",
     "tailwindcss": "4.3.0",
     "typescript": "7.0.2",
     "vite": "6.4.4",
