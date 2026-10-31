@@ -152,10 +152,10 @@ export function EventPreview({
             <ScrollArea.Root
               key={selectedEvent?.id}
               data-base-ui-swipe-ignore
-              className="relative min-h-0 flex-1 overflow-hidden"
+              className="relative min-h-0 min-w-0 flex-1 overflow-hidden"
             >
               <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
-                <ScrollArea.Content className="max-w-full p-4">
+                <ScrollArea.Content style={{ minWidth: 0 }} className="w-full max-w-full p-4">
                   {selectedEvent !== null && (
                     <EventPreviewDetails
                       key={selectedEvent.id}
@@ -234,7 +234,7 @@ function EventPreviewDetails({
   const showDescription = event.description !== ""
 
   return (
-    <div className="flex min-w-0 flex-col gap-6 mb-17">
+    <div className="flex w-full min-w-0 max-w-full flex-col gap-6 mb-17">
       <EventHeader event={event} smallTitle showAdminLink={isOrganizer === true || isAdmin === true} />
 
       <section aria-label="Arrangementsinformasjon" className="flex flex-col gap-4">
