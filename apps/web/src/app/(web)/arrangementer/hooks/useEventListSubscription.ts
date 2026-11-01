@@ -36,12 +36,6 @@ export function useEventListSubscription({ events, enabled }: UseEventListSubscr
     ? [...new Set(events.flatMap(({ attendance }) => (attendance === null ? [] : [attendance.id])))]
     : []
 
-  const refreshEventLists = () => {
-    void queryClient.invalidateQueries(trpcClient.event.allSummaries.infiniteQueryFilter())
-    void queryClient.invalidateQueries(trpcClient.event.allSummariesByAttendingUserId.infiniteQueryFilter())
-    void queryClient.invalidateQueries(trpcClient.event.findFeaturedEvents.infiniteQueryFilter())
-  }
-
   const updateEventLists = (registerChangeEvent: BulkRegisterChangeEvent) => {
     const attendanceQuery = attendanceCardQueryOptions(trpcClient, registerChangeEvent.attendee.attendanceId)
     const availabilityQuery = trpcClient.event.attendance.getRegistrationAvailability.queryOptions({
@@ -116,16 +110,6 @@ export function useEventListSubscription({ events, enabled }: UseEventListSubscr
       },
       {
         enabled: enabled && eventIds.length > 0,
-        onStarted: () => {
-          refreshEventLists()
-
-          for (const attendanceId of attendanceIds) {
-            void queryClient.invalidateQueries(attendanceCardQueryOptions(trpcClient, attendanceId))
-            void queryClient.invalidateQueries(
-              trpcClient.event.attendance.getRegistrationAvailability.queryOptions({ attendanceId })
-            )
-          }
-        },
         onData: updateEventLists,
       }
     )

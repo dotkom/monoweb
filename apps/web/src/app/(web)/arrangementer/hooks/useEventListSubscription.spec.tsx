@@ -338,7 +338,7 @@ describe("event list subscription", () => {
     expect(queryClient.getQueryData(availabilityKey)?.registration?.willBeQueued).toBe(true)
   })
 
-  it("refreshes covered preview queries when the bulk stream reconnects", async () => {
+  it("does not refresh covered preview queries when the bulk stream reconnects", async () => {
     await renderSubscription([firstEvent])
     const attendanceKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
     const availabilityKey = queryOptions.event.attendance.getRegistrationAvailability.queryKey({
@@ -348,8 +348,8 @@ describe("event list subscription", () => {
     queryClient.setQueryData(availabilityKey, createMockRegistrationAvailability())
 
     await act(async () => startConnection())
-    expect(queryClient.getQueryState(attendanceKey)?.isInvalidated).toBe(true)
-    expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(attendanceKey)?.isInvalidated).toBe(false)
+    expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(false)
   })
 
   it("uses one stream for unique event IDs and keeps it stable when events are reordered", async () => {
@@ -408,20 +408,20 @@ describe("event list subscription", () => {
     expect(queryClient.getQueryState(registeredEventsKey)?.isInvalidated).toBe(false)
   })
 
-  it("refreshes summaries whenever the stream starts or reconnects", async () => {
+  it("does not refresh summaries when the stream starts or reconnects", async () => {
     await renderSubscription()
     const { summariesKey, registeredEventsKey, featuredEventsKey } = seedLists()
 
     await act(async () => startConnection())
 
     for (const queryKey of [summariesKey, registeredEventsKey, featuredEventsKey]) {
-      expect(queryClient.getQueryState(queryKey)?.isInvalidated).toBe(true)
+      expect(queryClient.getQueryState(queryKey)?.isInvalidated).toBe(false)
     }
 
     await act(async () => sendUpdate(createUpdate()))
     expect(queryClient.getQueryState(summariesKey)?.isInvalidated).toBe(false)
 
     await act(async () => startConnection())
-    expect(queryClient.getQueryState(summariesKey)?.isInvalidated).toBe(true)
+    expect(queryClient.getQueryState(summariesKey)?.isInvalidated).toBe(false)
   })
 })
