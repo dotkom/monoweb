@@ -102,11 +102,7 @@ export default function EventPage() {
         Arrangementer
       </Title>
 
-      {canManagePriorities && (
-        <div className="my-6">
-          <PrioritizedEvents />
-        </div>
-      )}
+      {canManagePriorities && <PrioritizedEvents />}
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-end justify-between gap-4">
