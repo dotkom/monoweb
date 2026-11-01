@@ -1,4 +1,5 @@
 import { SendEmailCommand } from "@aws-sdk/client-ses"
+import type { S3Client } from "@aws-sdk/client-s3"
 import type { SESClient } from "@aws-sdk/client-ses"
 import { DeleteMessageCommand, type Message, ReceiveMessageCommand } from "@aws-sdk/client-sqs"
 import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
@@ -10,6 +11,7 @@ import { IllegalStateError } from "../../error"
 import { InvalidArgumentError } from "../../error"
 import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails, renderEmailTemplate } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
+import { getEmailImageService } from "./email-image"
 
 function formatSesSourceAddress(source: string): string {
   if (source !== DEFAULT_EMAIL_SOURCE) {
@@ -78,10 +80,16 @@ export function getEmptyEmailService(): EmailService {
 export function getEmailService(
   sesClient: SESClient,
   sqsClient: SQSClient,
+  storageClient: S3Client,
   configuration: ConfigurationWithAmazonSesEmail
 ): EmailService {
   const logger = getLogger("email-service")
   const tracer = trace.getTracer("@dotkomonline/monoweb-rpc/email-service")
+  const emailImageService = getEmailImageService(
+    storageClient,
+    configuration.AWS_S3_BUCKET,
+    configuration.AWS_CLOUDFRONT_URL
+  )
 
   logger.info(
     "EmailService constructed against SQS Queue Url=%s with emails sent from AWS Region %s",
@@ -116,7 +124,15 @@ export function getEmailService(
           throw new IllegalStateError(`Failed to find email template for Type=${payload.data.type}`)
         }
 
-        const html = await renderEmailTemplate(emailTemplate, payload.data.data)
+        let templateData = payload.data.data
+        if (typeof templateData === "object" && templateData !== null && "eventImageUrl" in templateData) {
+          templateData = {
+            ...templateData,
+            eventImageUrl: await emailImageService.getImageUrl(templateData.eventImageUrl),
+          }
+        }
+
+        const html = await renderEmailTemplate(emailTemplate, templateData)
 
         const sendEmailCommand = new SendEmailCommand({
           Source: formatSesSourceAddress(payload.data.source),

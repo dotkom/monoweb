@@ -1,6 +1,8 @@
 import { cp, mkdir, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
+import mustache from "mustache"
+import { resizeEmailImage } from "../modules/email/email-image"
 import { type InferEmailData, emails, renderEmailTemplate } from "../modules/email/email-template"
 
 const outputDirectory = fileURLToPath(new URL("../../dist/email-previews/", import.meta.url))
@@ -100,6 +102,16 @@ const sampleData = {
 
 await mkdir(outputDirectory, { recursive: true })
 
+const imageResponse = await fetch(eventData.eventImageUrl, { signal: AbortSignal.timeout(10_000) })
+if (!imageResponse.ok) {
+  throw new Error(`Failed to download preview image: ${imageResponse.status}`)
+}
+
+await writeFile(
+  join(outputDirectory, "event-image.jpg"),
+  await resizeEmailImage(new Uint8Array(await imageResponse.arrayBuffer()))
+)
+
 // We copy the email icons to the dist directory so we can serve them locally without needing to have them in prod
 await cp(new URL("../../../web/public/email-icons/", import.meta.url), join(outputDirectory, "email-icons"), {
   recursive: true,
@@ -109,7 +121,9 @@ async function writePreview(filename: string, html: string): Promise<void> {
   await writeFile(
     join(outputDirectory, filename),
     // We use the local paths to the icons we just copied instead of the regular production URLs
-    html.replaceAll("https://online.ntnu.no/email-icons/", "email-icons/"),
+    html
+      .replaceAll("https://online.ntnu.no/email-icons/", "email-icons/")
+      .replaceAll(mustache.escape(eventData.eventImageUrl), "event-image.jpg"),
     "utf-8"
   )
 }
