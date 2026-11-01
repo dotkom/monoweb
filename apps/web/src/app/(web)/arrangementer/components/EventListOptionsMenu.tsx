@@ -1,7 +1,7 @@
 "use client"
 
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, cn } from "@dotkomonline/ui"
-import { IconBook2, IconCalendarPlus, IconDots } from "@tabler/icons-react"
+import { IconCalendarPlus, IconDots, IconScript } from "@tabler/icons-react"
 import { useState } from "react"
 import { EventRulesButton, EventRulesDialog } from "./EventRulesDialog"
 import { CalendarSubscriptionDialog } from "./CalendarSubscriptionDialog"
@@ -32,7 +32,7 @@ export const EventListOptionsMenu = ({ className }: { className?: string }) => {
             Abonner
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setRulesOpen(true)}>
-            <IconBook2 className="size-4" />
+            <IconScript aria-hidden className="size-4" />
             Arrangementregler
           </DropdownMenuItem>
         </DropdownMenuContent>
