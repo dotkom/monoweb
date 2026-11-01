@@ -48,7 +48,7 @@ export const PrioritizedEvents: FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-3 w-fit">
+    <div className="flex flex-col gap-3 w-fit my-6">
       <Title size="sm">
         Prioriterte arrangementer{" "}
         <span className="text-muted-foreground">
