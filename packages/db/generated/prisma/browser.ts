@@ -73,6 +73,11 @@ export type Attendee = Prisma.AttendeeModel
  */
 export type Event = Prisma.EventModel
 /**
+ * Model EventFeaturedPriority
+ * 
+ */
+export type EventFeaturedPriority = Prisma.EventFeaturedPriorityModel
+/**
  * Model EventCompany
  * 
  */

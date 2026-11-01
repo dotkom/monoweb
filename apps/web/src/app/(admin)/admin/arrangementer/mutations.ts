@@ -586,3 +586,22 @@ export const useEventFileUploadMutation = () => {
     return await uploadFileToS3PresignedPost(env.AWS_CLOUDFRONT_URL, presignedPost, file)
   }
 }
+
+export const useUpdateEventFeaturedPriorityMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({ method: "update" })
+  return useMutation(
+    trpc.event.setFeaturedPriority.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+        await Promise.all([
+          queryClient.invalidateQueries(trpc.event.listFeaturedPriorities.queryOptions()),
+          queryClient.invalidateQueries({ queryKey: trpc.event.findFeaturedEvents.queryKey() }),
+        ])
+      },
+    })
+  )
+}

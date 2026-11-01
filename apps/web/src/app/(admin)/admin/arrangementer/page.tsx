@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuthorization } from "@admin/auth/authorization-context"
-import { canCreateEvents } from "@dotkomonline/rpc/event-permissions"
+import { canCreateEvents, canManageEventFeaturedPriorities } from "@dotkomonline/rpc/event-permissions"
 import { PermissionTooltip } from "@admin/components/PermissionTooltip"
 import type { EventFilterQuery, EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { Button, Title, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
@@ -12,6 +12,7 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState } from "react"
 import { EventFilters } from "./components/EventFilters"
+import { PrioritizedEvents } from "./components/PrioritizedEvents"
 import { EventTable } from "./components/EventTable"
 import { useEventAllInfiniteQuery } from "./queries"
 
@@ -44,6 +45,7 @@ export default function EventPage() {
 
   const authorization = useAuthorization()
   const { isAdministrator, affiliations } = authorization
+  const canManagePriorities = canManageEventFeaturedPriorities(authorization)
   const canCreate = canCreateEvents(authorization)
 
   const affiliationSlugs = useMemo(() => [...affiliations.keys()], [affiliations])
@@ -99,6 +101,12 @@ export default function EventPage() {
       <Title element="h1" className="text-4xl">
         Arrangementer
       </Title>
+
+      {canManagePriorities && (
+        <div className="my-6">
+          <PrioritizedEvents />
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-end justify-between gap-4">

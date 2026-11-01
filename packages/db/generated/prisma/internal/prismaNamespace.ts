@@ -395,6 +395,7 @@ export const ModelName = {
   AttendancePool: 'AttendancePool',
   Attendee: 'Attendee',
   Event: 'Event',
+  EventFeaturedPriority: 'EventFeaturedPriority',
   EventCompany: 'EventCompany',
   Mark: 'Mark',
   MarkGroup: 'MarkGroup',
@@ -442,7 +443,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventFeaturedPriority" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1257,6 +1258,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.EventCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.EventCountAggregateOutputType> | number
+        }
+      }
+    }
+    EventFeaturedPriority: {
+      payload: Prisma.$EventFeaturedPriorityPayload<ExtArgs>
+      fields: Prisma.EventFeaturedPriorityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EventFeaturedPriorityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EventFeaturedPriorityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        findFirst: {
+          args: Prisma.EventFeaturedPriorityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EventFeaturedPriorityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        findMany: {
+          args: Prisma.EventFeaturedPriorityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>[]
+        }
+        create: {
+          args: Prisma.EventFeaturedPriorityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        createMany: {
+          args: Prisma.EventFeaturedPriorityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EventFeaturedPriorityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>[]
+        }
+        delete: {
+          args: Prisma.EventFeaturedPriorityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        update: {
+          args: Prisma.EventFeaturedPriorityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        deleteMany: {
+          args: Prisma.EventFeaturedPriorityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EventFeaturedPriorityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EventFeaturedPriorityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>[]
+        }
+        upsert: {
+          args: Prisma.EventFeaturedPriorityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventFeaturedPriorityPayload>
+        }
+        aggregate: {
+          args: Prisma.EventFeaturedPriorityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEventFeaturedPriority>
+        }
+        groupBy: {
+          args: Prisma.EventFeaturedPriorityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventFeaturedPriorityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EventFeaturedPriorityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventFeaturedPriorityCountAggregateOutputType> | number
         }
       }
     }
@@ -3867,6 +3942,18 @@ export const EventScalarFieldEnum = {
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
 
 
+export const EventFeaturedPriorityScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  deletedAt: 'deletedAt',
+  eventId: 'eventId',
+  lastUpdatedByUserId: 'lastUpdatedByUserId'
+} as const
+
+export type EventFeaturedPriorityScalarFieldEnum = (typeof EventFeaturedPriorityScalarFieldEnum)[keyof typeof EventFeaturedPriorityScalarFieldEnum]
+
+
 export const EventCompanyScalarFieldEnum = {
   eventId: 'eventId',
   companyId: 'companyId'
@@ -4835,6 +4922,7 @@ export type GlobalOmitConfig = {
   attendancePool?: Prisma.AttendancePoolOmit
   attendee?: Prisma.AttendeeOmit
   event?: Prisma.EventOmit
+  eventFeaturedPriority?: Prisma.EventFeaturedPriorityOmit
   eventCompany?: Prisma.EventCompanyOmit
   mark?: Prisma.MarkOmit
   markGroup?: Prisma.MarkGroupOmit

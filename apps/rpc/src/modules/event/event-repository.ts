@@ -16,6 +16,9 @@ import {
   EventSummarySchema,
   EventWithFeedbackFormSchema,
   type EventWrite,
+  type ActiveFeaturedPriority,
+  ActiveFeaturedPrioritySchema,
+  type FeaturedPriority,
 } from "./event"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
@@ -107,6 +110,20 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
 
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
+
+  listFeaturedPriorities(handle: DBHandle, now: Date): Promise<ActiveFeaturedPriority[]>
+  createFeaturedPriority(
+    handle: DBHandle,
+    eventId: EventId,
+    priority: FeaturedPriority,
+    lastUpdatedByUserId: UserId
+  ): Promise<void>
+  updateFeaturedPriority(
+    handle: DBHandle,
+    priorityId: string,
+    data: Partial<FeaturedPriority> & { deletedAt?: Date },
+    lastUpdatedByUserId: UserId
+  ): Promise<void>
 }
 
 export function getEventRepository(): EventRepository {
@@ -645,6 +662,55 @@ export function getEventRepository(): EventRepository {
         }
 
         return parseOrReport(DeregisterReasonWithEventSchema, deregisterReason)
+      })
+    },
+
+    async listFeaturedPriorities(handle, now) {
+      const rows = await handle.eventFeaturedPriority.findMany({
+        where: {
+          deletedAt: null,
+          expiresAt: {
+            gt: now,
+          },
+        },
+        include: {
+          event: {
+            select: {
+              title: true,
+            },
+          },
+        },
+        orderBy: {
+          expiresAt: "asc",
+        },
+      })
+
+      const priorities = rows.map(({ id, eventId, expiresAt, event }) => {
+        return { id, eventId, expiresAt, title: event.title }
+      })
+
+      return parseOrReport(ActiveFeaturedPrioritySchema.array(), priorities)
+    },
+
+    async createFeaturedPriority(handle, eventId, priority, lastUpdatedByUserId) {
+      await handle.eventFeaturedPriority.create({
+        data: {
+          eventId,
+          ...priority,
+          lastUpdatedByUserId,
+        },
+      })
+    },
+
+    async updateFeaturedPriority(handle, priorityId, data, lastUpdatedByUserId) {
+      await handle.eventFeaturedPriority.update({
+        where: {
+          id: priorityId,
+        },
+        data: {
+          ...data,
+          lastUpdatedByUserId,
+        },
       })
     },
   }

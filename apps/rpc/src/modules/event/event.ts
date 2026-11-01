@@ -260,3 +260,48 @@ export function findFirstHostingGroupEmail(event: Event): string | null {
   const validGroupTypes: GroupType[] = ["COMMITTEE", "NODE_COMMITTEE"]
   return event.hostingGroups.filter((group) => group.email && validGroupTypes.includes(group.type)).at(0)?.email ?? null
 }
+
+// Keep this below the three reserved top positions in prisma/sql/findFeaturedEvents.sql.
+// Update that query's GREATEST(3 - priority_count, 0) expression when changing this limit.
+export const MAX_ACTIVE_FEATURED_PRIORITIES = 2 as const
+
+export const FeaturedPrioritySchema = z.object({
+  expiresAt: z.date(),
+})
+
+export type FeaturedPriority = z.infer<typeof FeaturedPrioritySchema>
+
+export const ActiveFeaturedPrioritySchema = FeaturedPrioritySchema.extend({
+  id: z.string(),
+  eventId: z.string(),
+  title: z.string(),
+})
+
+export type ActiveFeaturedPriority = z.infer<typeof ActiveFeaturedPrioritySchema>
+
+export const FeaturedPriorityDurationSchema = z.enum([
+  "SIX_HOURS", //
+  "ONE_DAY",
+  "THREE_DAYS",
+  "ONE_WEEK",
+])
+
+export type FeaturedPriorityDuration = z.infer<typeof FeaturedPriorityDurationSchema>
+
+export const FEATURED_PRIORITY_DURATION_HOURS = {
+  SIX_HOURS: 6,
+  ONE_DAY: 24,
+  THREE_DAYS: 72,
+  ONE_WEEK: 168,
+} as const satisfies Record<FeaturedPriorityDuration, number>
+
+export const FeaturedPrioritySettingsSchema = z.object({
+  duration: FeaturedPriorityDurationSchema,
+})
+
+export type FeaturedPrioritySettings = z.infer<typeof FeaturedPrioritySettingsSchema>
+
+export const FeaturedPriorityWriteSchema = z.object({
+  eventId: z.string(),
+  priority: FeaturedPrioritySettingsSchema.nullable(),
+})

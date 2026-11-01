@@ -175,6 +175,13 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { createdById: toId },
     })
   },
+  updatedEventPriorities: async (handle: DBHandle, fromId: string, toId: string) => {
+    await handle.eventFeaturedPriority.updateMany({
+      where: { lastUpdatedByUserId: fromId },
+      data: { lastUpdatedByUserId: toId },
+    })
+  },
+
   notificationsUpdated: async (handle: DBHandle, fromId: string, toId: string) => {
     await handle.notification.updateMany({
       where: { lastUpdatedById: fromId },

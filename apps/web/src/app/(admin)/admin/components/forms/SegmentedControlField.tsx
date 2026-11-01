@@ -16,6 +16,7 @@ type SegmentedControlFieldProps<TFieldValues extends FieldValues> = {
   disabled?: boolean
   className?: string
   fullWidth?: boolean
+  onValueChange?: (value: string | null) => void
   fixedWidth?: boolean
 }
 
@@ -30,6 +31,7 @@ export function SegmentedControlField<TFieldValues extends FieldValues>({
   className,
   fullWidth = false,
   fixedWidth = false,
+  onValueChange,
 }: SegmentedControlFieldProps<TFieldValues>) {
   const { field, fieldState } = useController({ control, name })
   const error = getFieldErrorMessage(fieldState.error?.message)
@@ -54,13 +56,17 @@ export function SegmentedControlField<TFieldValues extends FieldValues>({
         value={selectedValue ? [selectedValue] : []}
         onValueChange={(next) => {
           const value = next.at(0)
+
           if (value !== undefined) {
             field.onChange(value)
+            onValueChange?.(value)
+
             return
           }
 
           if (!required) {
             field.onChange(null)
+            onValueChange?.(null)
           }
         }}
       >
