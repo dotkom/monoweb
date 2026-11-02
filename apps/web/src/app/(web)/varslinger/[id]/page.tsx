@@ -1,5 +1,5 @@
 import { getServerSession } from "@/auth"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createNotificationPageUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
 
 interface NotificationDetailPageProps {
@@ -13,7 +13,7 @@ export default async function Page({ params }: NotificationDetailPageProps) {
   const session = await getServerSession()
 
   if (session === null) {
-    redirect(createAuthorizeUrl({ returnTo: `/varslinger/${encodeURIComponent(id)}` }))
+    redirect(createAuthorizeUrl({ returnTo: createNotificationPageUrl(id) }))
   }
 
   return null

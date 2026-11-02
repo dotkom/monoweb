@@ -1,7 +1,13 @@
 import { type EventEmitter, on } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { formatEmailSubject, getCurrentUTC, richTextToPlainText, type Pageable } from "@dotkomonline/utils"
+import {
+  createAbsoluteNotificationPageUrl,
+  formatEmailSubject,
+  getCurrentUTC,
+  richTextToPlainText,
+  type Pageable,
+} from "@dotkomonline/utils"
 import { z } from "zod"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
@@ -203,7 +209,7 @@ export function getNotificationService(
       const sourceEmail =
         groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_SOURCE
       const senderName = group === null ? "Linjeforeningen Online" : getGroupDisplayName(group)
-      const notificationUrl = new URL(`/varslinger/${encodeURIComponent(notification.id)}`, webOrigin).toString()
+      const notificationUrl = createAbsoluteNotificationPageUrl(webOrigin, notification.id)
       const linkUrl = notification.link.type === "URL" ? notification.link.url : null
 
       await emailService.send(

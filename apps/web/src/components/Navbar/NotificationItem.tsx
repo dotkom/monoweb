@@ -10,6 +10,7 @@ import {
   type NotificationColor,
 } from "@dotkomonline/rpc/notification"
 import { Button, Text, cn } from "@dotkomonline/ui"
+import { createNotificationPageUrl } from "@dotkomonline/utils"
 import { IconCheck } from "@tabler/icons-react"
 import type { MouseEvent, PropsWithChildren } from "react"
 
@@ -73,7 +74,7 @@ export function NotificationItem({
       )}
     >
       <Link
-        href={`/varslinger/${notification.id}`}
+        href={createNotificationPageUrl(notification.id)}
         aria-label={notification.title}
         onClick={onNavigate}
         className="absolute inset-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"

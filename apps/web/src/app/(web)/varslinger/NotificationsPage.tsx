@@ -8,7 +8,7 @@ import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notificat
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { UserNotification } from "@dotkomonline/rpc/notification"
 import { Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import { createNotificationPageUrl, richTextToPlainText } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconArrowLeft, IconBellOff, IconCheck, IconChecks } from "@tabler/icons-react"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
@@ -179,7 +179,7 @@ function InboxNotificationRow({
   return (
     <Link
       ref={elementReference}
-      href={`/varslinger/${userNotification.notification.id}`}
+      href={createNotificationPageUrl(userNotification.notification.id)}
       aria-current={isSelected ? "page" : undefined}
       className={cn(
         "flex gap-3 border-b border-gray-200 px-4 py-3 transition-colors dark:border-stone-700",

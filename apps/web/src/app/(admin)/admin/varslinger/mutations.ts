@@ -114,11 +114,11 @@ export function useSendNotificationEmailMutation() {
   return useMutation(
     trpc.notification.sendEmail.mutationOptions({
       onMutate: () => notification.loading({ title: "Sender e-post…", message: "" }),
-      onSuccess: () => notification.complete({ title: "E-post sendt", message: "E-postene er lagt i kø." }),
+      onSuccess: () => notification.complete({ title: "E-postutsending startet", message: "" }),
       onError: (error) =>
         notification.fail({
           title: "Varslingen ble sendt, men e-post feilet",
-          message: "Noen e-poster kunne ikke legges i kø. Kontakt Dotkom.",
+          message: "Kunne ikke starte e-postutsending til alle mottakere. Kontakt Dotkom.",
           error,
         }),
     })
