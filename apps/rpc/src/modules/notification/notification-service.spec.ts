@@ -1,5 +1,6 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
+import type { EmailService } from "../email/email-service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { mock, mockDeep, mockReset } from "vitest-mock-extended"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
@@ -16,7 +17,15 @@ describe("notification payload behavior", () => {
   const recipientResolver = mock<NotificationRecipientResolver>()
   const sourceServices = mockDeep<NotificationSourceServices>()
   const eventEmitter = new EventEmitter()
-  const service = getNotificationService(repository, recipientResolver, sourceServices, eventEmitter)
+  const emailService = mockDeep<EmailService>()
+  const service = getNotificationService(
+    repository,
+    recipientResolver,
+    sourceServices,
+    eventEmitter,
+    emailService,
+    "https://example.com"
+  )
   const timestamp = new Date("2026-10-27T12:00:00Z")
   const notification: NotificationManagement = {
     id: "notification-1",

@@ -1,4 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
+import { FailedPreconditionError } from "../../error"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
@@ -420,6 +421,29 @@ const sendDraftProcedure = procedure
     return result
   })
 
+const sendNotificationEmailProcedure = procedure
+  .input(
+    z.object({
+      id: NotificationSchema.shape.id,
+      expectedSentAt: z.date(),
+    })
+  )
+  .use(withAuthentication())
+  .mutation(async ({ input, ctx: context }) => {
+    const notification = await context.notificationService.getById(context.prisma, input.id)
+
+    await context.addAuthorizationGuard(
+      permitIf((principal) => canSendNotification(principal, notification)),
+      input
+    )
+
+    if (notification.status !== "SENT" || notification.sentAt?.getTime() !== input.expectedSentAt.getTime()) {
+      throw new FailedPreconditionError("The notification has not been sent or has changed. Refresh and try again.")
+    }
+
+    await context.notificationService.sendEmail(context.prisma, notification)
+  })
+
 export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
 export type EditNotificationOutput = inferProcedureOutput<typeof editNotificationProcedure>
 const editNotificationProcedure = procedure
@@ -616,6 +640,7 @@ export const notificationRouter = t.router({
   createDraft: createNotificationDraftProcedure,
   saveDraftRecipients: saveDraftRecipientsProcedure,
   sendDraft: sendDraftProcedure,
+  sendEmail: sendNotificationEmailProcedure,
   edit: editNotificationProcedure,
   delete: deleteNotificationProcedure,
   findRecipients: findRecipientsProcedure,

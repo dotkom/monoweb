@@ -41,6 +41,13 @@ const committeeEmailData = {
 
 // Every template must have sample data matching its definition.
 const sampleData = {
+  NOTIFICATION: {
+    title: "Viktig informasjon fra Online",
+    message: "<p>Hei! Her er <strong>ny informasjon</strong> til deg.</p>",
+    senderName: "Fagkom",
+    notificationUrl: "https://online.ntnu.no/varslinger/preview",
+    linkUrl: "https://online.ntnu.no/nyheter/eksempel",
+  },
   COMPANY_COLLABORATION_RECEIPT: companyCollaborationData,
   COMPANY_COLLABORATION_NOTIFICATION: companyCollaborationData,
   COMPANY_INVOICE_NOTIFICATION: {

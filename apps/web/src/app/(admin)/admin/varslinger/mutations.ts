@@ -107,6 +107,24 @@ export function useSendNotificationDraftMutation() {
   )
 }
 
+export function useSendNotificationEmailMutation() {
+  const trpc = useTRPC()
+  const notification = useQueryNotification()
+
+  return useMutation(
+    trpc.notification.sendEmail.mutationOptions({
+      onMutate: () => notification.loading({ title: "Sender e-post…", message: "" }),
+      onSuccess: () => notification.complete({ title: "E-post sendt", message: "E-postene er lagt i kø." }),
+      onError: (error) =>
+        notification.fail({
+          title: "Varslingen ble sendt, men e-post feilet",
+          message: "Noen e-poster kunne ikke legges i kø. Kontakt Dotkom.",
+          error,
+        }),
+    })
+  )
+}
+
 export function useDeleteNotificationMutation() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

@@ -1,7 +1,5 @@
 "use client"
 
-import { useNotifyAttendeesMutation } from "@admin/arrangementer/mutations"
-import { useEventWithAttendancesGetQuery } from "@admin/arrangementer/queries"
 import { useAuthorization } from "@admin/auth/authorization-context"
 import { hasCompleteNotificationMessage } from "@dotkomonline/rpc/notification"
 import { canSendNotification } from "@dotkomonline/rpc/notification-permissions"
@@ -10,7 +8,6 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogTitle,
   Button,
   Checkbox,
@@ -18,11 +15,11 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { formatEmailSubject, richTextToPlainText } from "@dotkomonline/utils"
+import { formatEmailSubject } from "@dotkomonline/utils"
 import { useId, useState } from "react"
 import { useNotificationDetailsContext } from "../[id]/provider"
 import { getActorGroupLabel } from "../[id]/utils"
-import { useSendNotificationDraftMutation } from "../mutations"
+import { useSendNotificationDraftMutation, useSendNotificationEmailMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 
 export function NotificationDraftSend() {
@@ -33,12 +30,12 @@ export function NotificationDraftSend() {
   const [sendEmail, setSendEmail] = useState(false)
   const sendDisabledReasonId = useId()
   const sendDraft = useSendNotificationDraftMutation()
-  const notifyAttendees = useNotifyAttendeesMutation()
+  const sendNotificationEmail = useSendNotificationEmailMutation()
 
   const recipientPreview = useRecipientSelectionPreview(notification.draftRecipientSelection, notification.type)
   const recipientCount = recipientPreview.preview?.recipientCount ?? 0
   const hasCompleteContent = hasCompleteNotificationMessage(notification)
-  const isSending = sendDraft.isPending || notifyAttendees.isPending
+  const isSending = sendDraft.isPending || sendNotificationEmail.isPending
 
   let sendDisabledReason: string | null = null
 
@@ -77,33 +74,28 @@ export function NotificationDraftSend() {
     }
   }
 
-  const eventId = notification.link.type === "EVENT" ? notification.link.eventId : ""
-  const eventQuery = useEventWithAttendancesGetQuery(eventId, isConfirmOpen && eventId.length > 0)
-  const eventAttendance = eventQuery.data?.attendance
-  const hasEmailOption = eventAttendance !== undefined && eventAttendance !== null
-
   const confirmSend = async () => {
     if (!canSendDraft || isSending) {
       return
     }
 
+    let result: Awaited<ReturnType<typeof sendDraft.mutateAsync>>
+
     try {
-      await sendDraft.mutateAsync({ id: notification.id, expectedUpdatedAt: notification.updatedAt })
+      result = await sendDraft.mutateAsync({ id: notification.id, expectedUpdatedAt: notification.updatedAt })
     } catch {
       return
     }
 
-    // Publication succeeded. An optional email failure must not invite a second publication.
     setIsConfirmOpen(false)
 
-    if (sendEmail && hasEmailOption) {
-      const plainContent = richTextToPlainText(notification.content, null).trim()
-      const emailMessage = plainContent.length > 0 ? notification.content : notification.shortDescription
-
+    if (sendEmail && result.notification.sentAt !== null) {
       try {
-        await notifyAttendees.mutateAsync({ eventId, message: emailMessage, title: notification.title })
+        await sendNotificationEmail.mutateAsync({
+          id: result.notification.id,
+          expectedSentAt: result.notification.sentAt,
+        })
       } catch {
-        // The email mutation reports its own error; the in-app notification remains sent.
         return
       }
     }
@@ -140,6 +132,7 @@ export function NotificationDraftSend() {
           <Text id={sendDisabledReasonId} className="text-sm text-muted-foreground" aria-live="polite">
             {sendDisabledReason ?? "Alt er klart for sending."}
           </Text>
+
           <Button
             variant="default"
             className="w-full shrink-0 sm:w-auto"
@@ -156,30 +149,37 @@ export function NotificationDraftSend() {
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
         <AlertDialogContent size="md">
           <AlertDialogTitle>Send varsling?</AlertDialogTitle>
+
           <AlertDialogDescription>
-            «{notification.title}» sendes til {recipientCount} mottakere. Mottakerlisten oppdateres ved sending.
+            «{notification.title}» sendes til {recipientCount} mottakere.
           </AlertDialogDescription>
-          {hasEmailOption && sendEmail && (
-            <Text className="text-sm">E-postemne: {formatEmailSubject(notification.title)}</Text>
-          )}
-          {hasEmailOption && (
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="send-draft-email"
-                checked={sendEmail}
-                onCheckedChange={(checked) => setSendEmail(checked === true)}
-                disabled={isSending}
-              />
-              <Label htmlFor="send-draft-email">Send også e-post til alle påmeldte på arrangementet</Label>
-            </div>
-          )}
+
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1">
+            <Checkbox
+              id="send-draft-email"
+              checked={sendEmail}
+              onCheckedChange={(checked) => setSendEmail(checked === true)}
+              disabled={isSending}
+            />
+            <Label htmlFor="send-draft-email">Send også e-post til mottakere med e-postadresse</Label>
+            {sendEmail && (
+              <Text className="text-sm text-muted-foreground col-start-2">
+                Emne: {formatEmailSubject(notification.title)}
+              </Text>
+            )}
+          </div>
+
           {sendDisabledReason !== null && <Text className="text-sm">{sendDisabledReason}</Text>}
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSending}>Avbryt</AlertDialogCancel>
-            <Button disabled={!canSendDraft || eventQuery.isLoading} onClick={confirmSend}>
+
+          <div className="grid grid-cols-2 gap-2">
+            <AlertDialogCancel variant="secondary" disabled={isSending}>
+              Avbryt
+            </AlertDialogCancel>
+
+            <Button variant="default" disabled={!canSendDraft} onClick={confirmSend} className="h-full">
               Send varsling
             </Button>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     </>

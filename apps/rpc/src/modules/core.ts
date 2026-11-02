@@ -264,7 +264,9 @@ export async function createServiceLayer(
       offlineService,
       jobListingService,
     },
-    eventEmitter
+    eventEmitter,
+    emailService,
+    configuration.WEB_PUBLIC_ORIGIN
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)

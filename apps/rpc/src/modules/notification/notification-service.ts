@@ -1,9 +1,12 @@
 import { type EventEmitter, on } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { getCurrentUTC, richTextToPlainText, type Pageable } from "@dotkomonline/utils"
+import { formatEmailSubject, getCurrentUTC, richTextToPlainText, type Pageable } from "@dotkomonline/utils"
+import { z } from "zod"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
-import type { GroupId } from "../group/group"
+import type { EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { getGroupDisplayName, type GroupId } from "../group/group"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
 import { hasCompleteNotificationMessage, NotificationUpdateSchema } from "./notification"
@@ -79,6 +82,7 @@ export interface NotificationService {
    * added automatically.
    */
   send(handle: DBHandle, input: NotificationSendInput): Promise<NotificationSendResult>
+  sendEmail(handle: DBHandle, notification: NotificationManagement): Promise<void>
   /**
    * Resolve a recipient selection without writing anything, so the UI can show who would be notified.
    */
@@ -124,7 +128,9 @@ export function getNotificationService(
   notificationRepository: NotificationRepository,
   recipientResolver: NotificationRecipientResolver,
   sourceServices: NotificationSourceServices,
-  eventEmitter: EventEmitter
+  eventEmitter: EventEmitter,
+  emailService: EmailService,
+  webOrigin: string
 ): NotificationService {
   const logger = getLogger("notification-service")
 
@@ -181,6 +187,51 @@ export function getNotificationService(
   }
 
   return {
+    async sendEmail(handle, notification) {
+      const recipientEmailAddresses = await notificationRepository.findRecipientEmails(handle, notification.id)
+
+      const recipientEmails = [
+        ...new Set(recipientEmailAddresses.filter((email) => z.email().safeParse(email).success)),
+      ]
+
+      if (recipientEmails.length === 0) {
+        return
+      }
+
+      const group = notification.actorGroup
+      const groupEmail = group?.email ?? null
+      const sourceEmail =
+        groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_SOURCE
+      const senderName = group === null ? "Linjeforeningen Online" : getGroupDisplayName(group)
+      const notificationUrl = new URL(`/varslinger/${encodeURIComponent(notification.id)}`, webOrigin).toString()
+      const linkUrl = notification.link.type === "URL" ? notification.link.url : null
+
+      // Match event email sends: keep each message to 25 BCC recipients.
+      const batchSize = 25
+
+      for (let startIndex = 0; startIndex < recipientEmails.length; startIndex += batchSize) {
+        const batchEmails = recipientEmails.slice(startIndex, startIndex + batchSize)
+
+        await emailService.send(
+          sourceEmail,
+          [sourceEmail],
+          [],
+          [],
+          batchEmails,
+          formatEmailSubject(notification.title),
+          emails.NOTIFICATION,
+          {
+            title: notification.title,
+            message: notification.content,
+            senderName,
+            notificationUrl,
+            linkUrl,
+          },
+          group === null ? undefined : senderName
+        )
+      }
+    },
+
     async createDraft(handle, input) {
       const { link, defaultRecipientSelection } = await sourceResolver.resolve(handle, input)
       const draftRecipientSelection = input.recipientSelection ?? defaultRecipientSelection

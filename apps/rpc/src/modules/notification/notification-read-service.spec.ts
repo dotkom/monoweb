@@ -1,5 +1,6 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
+import type { EmailService } from "../email/email-service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { mockDeep, mockReset } from "vitest-mock-extended"
 import { getNotificationTypeConfiguration, type NotificationManagement } from "./notification"
@@ -13,7 +14,15 @@ const repository = mockDeep<NotificationRepository>()
 const recipientResolver = mockDeep<NotificationRecipientResolver>()
 const eventEmitter = new EventEmitter()
 const sourceServices = mockDeep<NotificationSourceServices>()
-const service = getNotificationService(repository, recipientResolver, sourceServices, eventEmitter)
+const emailService = mockDeep<EmailService>()
+const service = getNotificationService(
+  repository,
+  recipientResolver,
+  sourceServices,
+  eventEmitter,
+  emailService,
+  "https://example.com"
+)
 const timestamp = new Date("2026-10-30T12:00:00Z")
 const notification: NotificationManagement = {
   id: "feedback",
