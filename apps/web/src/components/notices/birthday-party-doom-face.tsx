@@ -2,6 +2,7 @@
 
 import { Link } from "@/components/link"
 import { cn } from "@dotkomonline/ui"
+import { createUserProfileUrl } from "@dotkomonline/utils"
 import { secondsToMilliseconds } from "date-fns"
 import Image from "next/image"
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
@@ -62,8 +63,8 @@ export const DOOM_CHARACTERS = ["brage", "andre"] as const
 export type DoomCharacter = (typeof DOOM_CHARACTERS)[number]
 
 const CHARACTER_PROFILE_HREF: Record<DoomCharacter, string> = {
-  andre: "/profil/andre",
-  brage: "/profil/dotkom",
+  andre: createUserProfileUrl("andre"),
+  brage: createUserProfileUrl("dotkom"),
 }
 
 const CHARACTER_PROFILE_LABEL: Record<DoomCharacter, string> = {
