@@ -49,10 +49,9 @@ export type FindManyCompaniesInput = inferProcedureInput<typeof findManyCompanie
 export type FindManyCompaniesOutput = inferProcedureOutput<typeof findManyCompaniesProcedure>
 const findManyCompaniesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: CompanyFilterQuerySchema.optional() }).prefault({}))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
-    const companies = await ctx.companyService.findMany(ctx.handle, { ...filter }, page)
+    const companies = await ctx.companyService.findMany(ctx.prisma, { ...filter }, page)
 
     return {
       items: companies,
@@ -64,29 +63,25 @@ export type FindCompanyByIdInput = inferProcedureInput<typeof findCompanyByIdPro
 export type FindCompanyByIdOutput = inferProcedureOutput<typeof findCompanyByIdProcedure>
 const findCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.findById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.findById(ctx.prisma, input))
 
 export type GetCompanyByIdInput = inferProcedureInput<typeof getCompanyByIdProcedure>
 export type GetCompanyByIdOutput = inferProcedureOutput<typeof getCompanyByIdProcedure>
 const getCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.getById(ctx.prisma, input))
 
 export type FindCompanyBySlugInput = inferProcedureInput<typeof findCompanyBySlugProcedure>
 export type FindCompanyBySlugOutput = inferProcedureOutput<typeof findCompanyBySlugProcedure>
 const findCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.findBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.findBySlug(ctx.prisma, input))
 
 export type GetCompanyBySlugInput = inferProcedureInput<typeof getCompanyBySlugProcedure>
 export type GetCompanyBySlugOutput = inferProcedureOutput<typeof getCompanyBySlugProcedure>
 const getCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.getBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.getBySlug(ctx.prisma, input))
 
 export type CreateCompanyFileUploadInput = inferProcedureInput<typeof createCompanyFileUploadProcedure>
 export type CreateCompanyFileUploadOutput = inferProcedureOutput<typeof createCompanyFileUploadProcedure>

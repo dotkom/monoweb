@@ -127,19 +127,15 @@ export type GetContestByIdInput = inferProcedureInput<typeof getContestByIdProce
 export type GetContestByIdOutput = inferProcedureOutput<typeof getContestByIdProcedure>
 const getContestByIdProcedure = procedure
   .input(z.object({ contestId: ContestSchema.shape.id }))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.contestService.getById(ctx.handle, input.contestId)
+    return ctx.contestService.getById(ctx.prisma, input.contestId)
   })
 
 export type FindManyContestsInput = inferProcedureInput<typeof findManyContestsProcedure>
 export type FindManyContestsOutput = inferProcedureOutput<typeof findManyContestsProcedure>
-const findManyContestsProcedure = procedure
-  .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.contestService.findMany(ctx.handle, input)
-  })
+const findManyContestsProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  return ctx.contestService.findMany(ctx.prisma, input)
+})
 
 export type SetWinnerInput = inferProcedureInput<typeof setWinnerProcedure>
 export type SetWinnerOutput = inferProcedureOutput<typeof setWinnerProcedure>
@@ -329,11 +325,10 @@ export type GetContestWithContestantsInput = inferProcedureInput<typeof getConte
 export type GetContestWithContestantsOutput = inferProcedureOutput<typeof getContestWithContestantsProcedure>
 const getContestWithContestantsProcedure = procedure
   .input(z.object({ contestId: ContestSchema.shape.id }))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const isAuthenticated = ctx.principal !== null
 
-    let { contest, contestants } = await ctx.contestService.getContestWithContestants(ctx.handle, input.contestId)
+    let { contest, contestants } = await ctx.contestService.getContestWithContestants(ctx.prisma, input.contestId)
 
     if (!isAuthenticated) {
       contestants = sanitizeContestantDetailsForPublic(contestants)

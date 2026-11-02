@@ -60,16 +60,14 @@ export type AllArticlesInput = inferProcedureInput<typeof allArticlesProcedure>
 export type AllArticlesOutput = inferProcedureOutput<typeof allArticlesProcedure>
 const allArticlesProcedure = procedure
   .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.handle, {}, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.prisma, {}, input))
 
 export type FindArticlesInput = inferProcedureInput<typeof findArticlesProcedure>
 export type FindArticlesOutput = inferProcedureOutput<typeof findArticlesProcedure>
 const findArticlesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filters: ArticleFilterQuerySchema }))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.articleService.findMany(ctx.handle, input.filters, input)
+    const items = await ctx.articleService.findMany(ctx.prisma, input.filters, input)
 
     return {
       items,
@@ -81,42 +79,35 @@ export type FindArticleInput = inferProcedureInput<typeof findArticleProcedure>
 export type FindArticleOutput = inferProcedureOutput<typeof findArticleProcedure>
 const findArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.prisma, input))
 
 export type FindArticleBySlugInput = inferProcedureInput<typeof findArticleBySlugProcedure>
 export type FindArticleBySlugOutput = inferProcedureOutput<typeof findArticleBySlugProcedure>
 const findArticleBySlugProcedure = procedure
   .input(ArticleSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findBySlug(ctx.prisma, input))
 
 export type GetArticleInput = inferProcedureInput<typeof getArticleProcedure>
 export type GetArticleOutput = inferProcedureOutput<typeof getArticleProcedure>
 const getArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.prisma, input))
 
 export type GetArticleBySlugInput = inferProcedureInput<typeof getArticleBySlugProcedure>
 export type GetArticleBySlugOutput = inferProcedureOutput<typeof getArticleBySlugProcedure>
 const getArticleBySlugProcedure = procedure
   .input(ArticleSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.getBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.getBySlug(ctx.prisma, input))
 
 export type FindRelatedArticlesInput = inferProcedureInput<typeof findRelatedArticlesProcedure>
 export type FindRelatedArticlesOutput = inferProcedureOutput<typeof findRelatedArticlesProcedure>
 const findRelatedArticlesProcedure = procedure
   .input(ArticleSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.prisma, input))
 
 export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
 export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
-const getArticleTagsProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.getTags(ctx.handle))
+const getArticleTagsProcedure = procedure.query(async ({ ctx }) => ctx.articleService.getTags(ctx.prisma))
 
 export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
   typeof findArticleTagsOrderedByPopularityProcedure
@@ -124,9 +115,9 @@ export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
 export type FindArticleTagsOrderedByPopularityOutput = inferProcedureOutput<
   typeof findArticleTagsOrderedByPopularityProcedure
 >
-const findArticleTagsOrderedByPopularityProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findTagsOrderedByPopularity(ctx.handle))
+const findArticleTagsOrderedByPopularityProcedure = procedure.query(async ({ ctx }) =>
+  ctx.articleService.findTagsOrderedByPopularity(ctx.prisma)
+)
 
 export type AddArticleTagInput = inferProcedureInput<typeof addArticleTagProcedure>
 export type AddArticleTagOutput = inferProcedureOutput<typeof addArticleTagProcedure>

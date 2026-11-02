@@ -1,13 +1,11 @@
-import type { DBHandle } from "@dotkomonline/db"
-import { FailedPreconditionError } from "../../error"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
+import { FailedPreconditionError } from "../../error"
 import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
 import { canManageArticles } from "../../permissions/article-permissions"
 import { canManageJobListings } from "../../permissions/job-listing-permissions"
-import { canManageOfflines } from "../../permissions/offline-permissions"
 import {
   canCreateNotification,
   canListNotifications,
@@ -18,12 +16,12 @@ import {
   canTargetGroupMembers,
   canTargetSpecificUsers,
 } from "../../permissions/notification-permissions"
+import { canManageOfflines } from "../../permissions/offline-permissions"
 import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
   NotificationDraftCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
-  type NotificationSource,
   NotificationRecipientFilterQuerySchema,
   NotificationRecipientListItemSchema,
   type NotificationRecipientSelection,
@@ -31,6 +29,7 @@ import {
   NotificationRecipientSelectionSchema,
   NotificationRecipientStatsSchema,
   NotificationSchema,
+  type NotificationSource,
   NotificationTypeSchema,
   NotificationUpdateSchema,
   UserNotificationSchema,
@@ -38,7 +37,6 @@ import {
 
 type AuthenticatedContext = TRPCContext & {
   principal: NonNullable<TRPCContext["principal"]>
-  handle: DBHandle
 }
 
 async function authorizeNotificationSource(context: AuthenticatedContext, source: NotificationSource): Promise<void> {
@@ -48,7 +46,7 @@ async function authorizeNotificationSource(context: AuthenticatedContext, source
     }
 
     case "EVENT": {
-      const event = await context.eventService.getEventById(context.handle, source.eventId)
+      const event = await context.eventService.getEventById(context.prisma, source.eventId)
 
       await context.addAuthorizationGuard(
         permitIf((principal) => canTargetEventAttendees(principal, event.hostingGroups)),
@@ -59,7 +57,7 @@ async function authorizeNotificationSource(context: AuthenticatedContext, source
     }
 
     case "GROUP": {
-      const group = await context.groupService.getBySlug(context.handle, source.groupSlug)
+      const group = await context.groupService.getBySlug(context.prisma, source.groupSlug)
 
       await context.addAuthorizationGuard(
         permitIf((principal) => canTargetGroupMembers(principal, group)),
@@ -141,7 +139,7 @@ async function authorizeRecipientSelection(
       }
 
       case "GROUP_MEMBERS": {
-        const group = await ctx.groupService.getBySlug(ctx.handle, rule.groupSlug)
+        const group = await ctx.groupService.getBySlug(ctx.prisma, rule.groupSlug)
 
         await ctx.addAuthorizationGuard(
           permitIf((principal) => canTargetGroupMembers(principal, group)),
@@ -152,7 +150,7 @@ async function authorizeRecipientSelection(
       }
 
       case "EVENT_ATTENDEES": {
-        const event = await ctx.eventService.getByAttendanceId(ctx.handle, rule.attendanceId)
+        const event = await ctx.eventService.getByAttendanceId(ctx.prisma, rule.attendanceId)
 
         await ctx.addAuthorizationGuard(
           permitIf((principal) => canTargetEventAttendees(principal, event.hostingGroups)),
@@ -236,14 +234,13 @@ const findNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema.nullable())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canListNotifications(principal)),
       input
     )
 
-    return await ctx.notificationService.findById(ctx.handle, input)
+    return await ctx.notificationService.findById(ctx.prisma, input)
   })
 
 export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
@@ -252,14 +249,13 @@ const getNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canListNotifications(principal)),
       input
     )
 
-    return await ctx.notificationService.getById(ctx.handle, input)
+    return await ctx.notificationService.getById(ctx.prisma, input)
   })
 
 export type FindNotificationsInput = inferProcedureInput<typeof findNotificationsProcedure>
@@ -272,7 +268,6 @@ const findNotificationsProcedure = procedure
   )
   .output(PaginatedNotificationsSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canListNotifications(principal)),
@@ -280,7 +275,7 @@ const findNotificationsProcedure = procedure
     )
 
     const { filters, ...page } = input
-    const items = await ctx.notificationService.findMany(ctx.handle, filters, page)
+    const items = await ctx.notificationService.findMany(ctx.prisma, filters, page)
 
     return {
       items,
@@ -302,7 +297,6 @@ const previewRecipientSelectionProcedure = procedure
   )
   .output(NotificationRecipientSelectionPreviewSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canListNotifications(principal)),
@@ -313,14 +307,14 @@ const previewRecipientSelectionProcedure = procedure
     const { recipientSelection, type, search, notificationId, hideExistingRecipients, ...page } = input
 
     if (notificationId !== undefined) {
-      const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
+      const notification = await ctx.notificationService.getById(ctx.prisma, notificationId)
       await ctx.addAuthorizationGuard(
         permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
         input
       )
     }
 
-    return await ctx.notificationService.previewRecipientSelection(ctx.handle, recipientSelection, type, page, search, {
+    return await ctx.notificationService.previewRecipientSelection(ctx.prisma, recipientSelection, type, page, search, {
       notificationId,
       hideExistingRecipients,
     })
@@ -515,17 +509,16 @@ const findRecipientsProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { notificationId, filters, ...page } = input
-    const notification = await ctx.notificationService.getById(ctx.handle, notificationId)
+    const notification = await ctx.notificationService.getById(ctx.prisma, notificationId)
 
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
       input
     )
 
-    const items = await ctx.notificationService.findRecipients(ctx.handle, notificationId, filters, page)
+    const items = await ctx.notificationService.findRecipients(ctx.prisma, notificationId, filters, page)
 
     return {
       items,
@@ -539,16 +532,15 @@ const getRecipientStatsProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationRecipientStatsSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const notification = await ctx.notificationService.getById(ctx.handle, input)
+    const notification = await ctx.notificationService.getById(ctx.prisma, input)
 
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canManageNotification(principal, notification.actorGroup)),
       input
     )
 
-    return await ctx.notificationService.getRecipientStats(ctx.handle, input)
+    return await ctx.notificationService.getRecipientStats(ctx.prisma, input)
   })
 
 export type AddRecipientsInput = inferProcedureInput<typeof addRecipientsProcedure>

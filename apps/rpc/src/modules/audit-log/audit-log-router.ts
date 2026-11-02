@@ -1,9 +1,9 @@
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { canAccessAuditLog } from "../../permissions/audit-log-permissions"
 import z from "zod"
 import { permitIf } from "../../authorization"
-import { withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { withAuthentication, withAuthorization } from "../../middlewares"
+import { canAccessAuditLog } from "../../permissions/audit-log-permissions"
 import { procedure, t } from "../../trpc"
 import { AuditActivitySchema, AuditLogFilterQuerySchema, AuditLogSchema } from "./audit-log"
 
@@ -23,9 +23,8 @@ const findAuditLogsProcedure = procedure
   )
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canAccessAuditLog(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.auditLogService.findMany(ctx.handle, input.filter, input)
+    const items = await ctx.auditLogService.findMany(ctx.prisma, input.filter, input)
 
     return {
       items,
@@ -39,9 +38,8 @@ const allAuditLogsProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canAccessAuditLog(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.auditLogService.findMany(ctx.handle, {}, input)
+    return ctx.auditLogService.findMany(ctx.prisma, {}, input)
   })
 
 export type GetAuditLogByIdInput = inferProcedureInput<typeof getAuditLogByIdProcedure>
@@ -50,9 +48,8 @@ const getAuditLogByIdProcedure = procedure
   .input(AuditLogSchema.shape.id)
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canAccessAuditLog(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.auditLogService.getById(ctx.handle, input)
+    return ctx.auditLogService.getById(ctx.prisma, input)
   })
 
 export type GetAuditLogsByUserIdInput = inferProcedureInput<typeof getAuditLogsByUserIdProcedure>
@@ -61,9 +58,8 @@ const getAuditLogsByUserIdProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canAccessAuditLog(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.auditLogService.findManyByUserId(ctx.handle, ctx.principal.subject, input)
+    return ctx.auditLogService.findManyByUserId(ctx.prisma, ctx.principal.subject, input)
   })
 
 export type FindAuditActivitiesInput = inferProcedureInput<typeof findAuditActivitiesProcedure>
@@ -84,10 +80,9 @@ const findAuditActivitiesProcedure = procedure
   )
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canAccessAuditLog(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const auditActivities = await ctx.auditLogService.findManyAuditActivities(
-      ctx.handle,
+      ctx.prisma,
       input.filter,
       input.cursor,
       input.limit

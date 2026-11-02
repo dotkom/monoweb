@@ -54,16 +54,15 @@ export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
 const getEventProcedure = procedure
   .input(EventSchema.shape.id)
   .output(EventWithAttendanceViewSchema)
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getEventById(ctx.handle, input)
+    const event = await ctx.eventService.getEventById(ctx.prisma, input)
 
     if (!canViewEvent(ctx.principal, event.visibility)) {
       throw new NotFoundError(`Event(ID=${input}) not found`)
     }
 
     const attendance = event.attendanceId
-      ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
+      ? await ctx.attendanceService.findAttendanceById(ctx.prisma, event.attendanceId)
       : null
 
     return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
@@ -74,11 +73,10 @@ const getEventForAdminProcedure = procedure
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canGetEventForAdmin)))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getEventById(ctx.handle, input)
+    const event = await ctx.eventService.getEventById(ctx.prisma, input)
     const attendance = event.attendanceId
-      ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
+      ? await ctx.attendanceService.findAttendanceById(ctx.prisma, event.attendanceId)
       : null
 
     return { event, attendance }
@@ -89,10 +87,9 @@ const getEventForAdminByAttendanceIdProcedure = procedure
   .output(EventWithAttendanceSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canGetEventForAdmin)))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx: context }) => {
-    const event = await context.eventService.getByAttendanceId(context.handle, input)
-    const attendance = await context.attendanceService.findAttendanceById(context.handle, input)
+    const event = await context.eventService.getByAttendanceId(context.prisma, input)
+    const attendance = await context.attendanceService.findAttendanceById(context.prisma, input)
 
     return { event, attendance }
   })
@@ -102,9 +99,8 @@ export type FindEventOutput = inferProcedureOutput<typeof findEventProcedure>
 const findEventProcedure = procedure
   .input(EventSchema.shape.id)
   .output(EventWithAttendanceViewSchema.nullable())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const event = await ctx.eventService.findEventById(ctx.handle, input)
+    const event = await ctx.eventService.findEventById(ctx.prisma, input)
     if (!event) {
       return null
     }
@@ -114,7 +110,7 @@ const findEventProcedure = procedure
     }
 
     const attendance = event.attendanceId
-      ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
+      ? await ctx.attendanceService.findAttendanceById(ctx.prisma, event.attendanceId)
       : null
 
     return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
@@ -242,15 +238,14 @@ const allEventsProcedure = procedure
       nextCursor: EventSchema.shape.id.optional(),
     })
   )
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
 
     const excludingVisibility = excludedVisibilitiesFor(ctx.principal, filter?.excludingVisibility ?? [])
 
-    const events = await ctx.eventService.findEvents(ctx.handle, { ...filter, excludingVisibility }, page)
+    const events = await ctx.eventService.findEvents(ctx.prisma, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
     )
 
@@ -279,15 +274,14 @@ const allEventSummariesProcedure = procedure
       nextCursor: EventSchema.shape.id.optional(),
     })
   )
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
 
     const excludingVisibility = excludedVisibilitiesFor(ctx.principal, filter?.excludingVisibility ?? [])
 
-    const events = await ctx.eventService.findEventSummaries(ctx.handle, { ...filter, excludingVisibility }, page)
+    const events = await ctx.eventService.findEventSummaries(ctx.prisma, { ...filter, excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((id) => id !== null),
       ctx.principal?.subject
     )
@@ -319,20 +313,19 @@ const allByAttendingUserIdProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { id, filter, ...page } = input
 
     const excludingVisibility = excludedVisibilitiesFor(ctx.principal, filter?.excludingVisibility ?? [])
 
     const events = await ctx.eventService.findEventsByAttendingUserId(
-      ctx.handle,
+      ctx.prisma,
       id,
       { ...filter, excludingVisibility },
       page
     )
     const attendances = await ctx.attendanceService.getAttendancesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
     )
 
@@ -362,7 +355,6 @@ const allByAttendingUserIdForCalendarProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const expectedServiceSubject = `${ctx.configuration.AUTH0_WEB_CLIENT_ID}@clients`
 
@@ -372,12 +364,12 @@ const allByAttendingUserIdForCalendarProcedure = procedure
 
     const { id, ...page } = input
 
-    const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.handle, id)
+    const userAffiliations = await ctx.authorizationService.getGroupAffiliations(ctx.prisma, id)
     const excludingVisibility = excludedVisibilitiesFor({ affiliations: userAffiliations }, [])
 
-    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.handle, id, { excludingVisibility }, page)
+    const events = await ctx.eventService.findEventsByAttendingUserId(ctx.prisma, id, { excludingVisibility }, page)
     const attendances = await ctx.attendanceService.getAttendancesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null)
     )
 
@@ -413,7 +405,6 @@ const allSummariesByAttendingUserIdProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { id, filter, registeredOnly, ...page } = input
     const isViewingOwnEvents = ctx.principal.subject === id
@@ -423,14 +414,14 @@ const allSummariesByAttendingUserIdProcedure = procedure
     })
 
     const events = await ctx.eventService.findEventSummariesByAttendingUserId(
-      ctx.handle,
+      ctx.prisma,
       id,
       { ...filter, excludingVisibility },
       page,
       registeredOnly
     )
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((attendanceId) => attendanceId !== null),
       ctx.principal?.subject
     )
@@ -482,9 +473,8 @@ export type FindParentEventOutput = inferProcedureOutput<typeof findParentEventP
 const findParentEventProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceViewSchema.nullable())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const childEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    const childEvent = await ctx.eventService.findEventById(ctx.prisma, input.eventId)
     if (!childEvent?.parentId) {
       return null
     }
@@ -493,7 +483,7 @@ const findParentEventProcedure = procedure
       return null
     }
 
-    const event = await ctx.eventService.findEventById(ctx.handle, childEvent.parentId)
+    const event = await ctx.eventService.findEventById(ctx.prisma, childEvent.parentId)
     if (!event) {
       return null
     }
@@ -503,7 +493,7 @@ const findParentEventProcedure = procedure
     }
 
     const attendance = event.attendanceId
-      ? await ctx.attendanceService.findAttendanceById(ctx.handle, event.attendanceId)
+      ? await ctx.attendanceService.findAttendanceById(ctx.prisma, event.attendanceId)
       : null
 
     return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
@@ -514,17 +504,16 @@ export type FindChildEventsOutput = inferProcedureOutput<typeof findChildEventsP
 const findChildEventsProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceViewSchema.array())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const parentEvent = await ctx.eventService.findEventById(ctx.handle, input.eventId)
+    const parentEvent = await ctx.eventService.findEventById(ctx.prisma, input.eventId)
     if (parentEvent === null || !canViewEvent(ctx.principal, parentEvent.visibility)) {
       return []
     }
 
-    const childEvents = await ctx.eventService.findByParentEventId(ctx.handle, input.eventId, { orderBy: "asc" })
+    const childEvents = await ctx.eventService.findByParentEventId(ctx.prisma, input.eventId, { orderBy: "asc" })
     const events = childEvents.filter((event) => canViewEvent(ctx.principal, event.visibility))
     const attendances = await ctx.attendanceService.getAttendancesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((id) => id !== null)
     )
     return events.map((event) =>
@@ -545,9 +534,8 @@ const findUnansweredByUserProcedure = procedure
   .output(EventWithFeedbackFormSchema.array())
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal, input) => canListUnansweredFeedback(principal, input))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const allEvents = await ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(ctx.handle, input)
+    const allEvents = await ctx.eventService.findEventsWithUnansweredFeedbackFormByUserId(ctx.prisma, input)
 
     return allEvents.filter((event) =>
       canViewUnansweredFeedback(
@@ -564,9 +552,8 @@ const isOrganizerProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(z.boolean())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const event = await ctx.eventService.getEventById(ctx.prisma, input.eventId)
 
     return isEventCommitteeOrganizer(
       ctx.principal,
@@ -584,9 +571,8 @@ const findManyDeregisterReasonsWithEventProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canListDeregisterReasons)))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const rows = await ctx.eventService.findManyDeregisterReasonsWithEvent(ctx.handle, input)
+    const rows = await ctx.eventService.findManyDeregisterReasonsWithEvent(ctx.prisma, input)
 
     return {
       items: rows,
@@ -616,12 +602,11 @@ const findFeaturedEventsProcedure = procedure
       })
       .array()
   )
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const excludingVisibility = excludedVisibilitiesFor(ctx.principal, input.filter?.excludingVisibility ?? [])
 
     const events = await ctx.eventService.findFeaturedEvents(
-      ctx.handle,
+      ctx.prisma,
       {
         ...input.filter,
         excludingVisibility,
@@ -633,7 +618,7 @@ const findFeaturedEventsProcedure = procedure
     )
 
     const attendances = await ctx.attendanceService.getAttendanceSummariesByIds(
-      ctx.handle,
+      ctx.prisma,
       events.map((item) => item.attendanceId).filter((id) => id !== null),
       ctx.principal?.subject
     )
@@ -650,6 +635,8 @@ const setFeaturedPriorityProcedure = procedure
   .input(FeaturedPriorityWriteSchema)
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canManageEventFeaturedPriorities)))
+  // This is set to Serializable to avoid phantom reads while setting the featured priority,
+  // as there is a cap at how many events can be featured at a time.
   .use(withDatabaseTransaction("Serializable"))
   .use(withAuditLogEntry())
   .mutation(async ({ ctx, input }) => {
@@ -666,9 +653,8 @@ const listFeaturedPrioritiesProcedure = procedure
   .output(ActiveFeaturedPrioritySchema.array())
   .use(withAuthentication())
   .use(withAuthorization(permitIf(canManageEventFeaturedPriorities)))
-  .use(withDatabaseTransaction())
   .query(({ ctx }) => {
-    return ctx.eventService.listFeaturedPriorities(ctx.handle)
+    return ctx.eventService.listFeaturedPriorities(ctx.prisma)
   })
 
 export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
