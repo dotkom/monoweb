@@ -160,6 +160,16 @@ export const createAbsoluteUserProfileUrl = (origin: string, username: string): 
   return toAbsoluteUrl(origin, createUserProfileUrl(username))
 }
 
+export const createNotificationPageUrl = (notificationId: string): `/varslinger/${string}` => {
+  return `/varslinger/${encodeURIComponent(notificationId)}`
+}
+
+export const createAbsoluteNotificationPageUrl = (origin: string, notificationId: string): string => {
+  const notificationPageUrl = createNotificationPageUrl(notificationId)
+
+  return toAbsoluteUrl(origin, notificationPageUrl)
+}
+
 export const createJobListingSlug = (jobListingTitle: string): string => {
   return slugify(jobListingTitle)
 }
