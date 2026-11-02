@@ -2,7 +2,13 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
+import {
+  createS3PresignedPost,
+  formatEmailSubject,
+  slugify,
+  getNextSemesterStart,
+  getCurrentSemesterStart,
+} from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import * as crypto from "node:crypto"
@@ -1047,13 +1053,13 @@ export function getUserService(
     },
 
     async sendBugReportEmail(data) {
-      emailService.send(
+      await emailService.send(
         DEFAULT_EMAIL_SOURCE,
         data.email === undefined || data.email === "" ? [] : [data.email],
         ["dotkom@online.ntnu.no"],
         [],
         [],
-        `(Online) Problem rapportert: ${data.title}`,
+        formatEmailSubject(`Problem rapportert: ${data.title}`),
         emails.BUG_REPORT,
         {
           title: data.title,

@@ -31,7 +31,14 @@ import {
   isAttendable,
   isAttendeeChargedAndUnrefunded,
 } from "./attendance"
-import { createAbsoluteEventPageUrl, createPoolName, getCurrentUTC, getStudyGrade, ogJoin } from "@dotkomonline/utils"
+import {
+  createAbsoluteEventPageUrl,
+  createPoolName,
+  formatEmailSubject,
+  getCurrentUTC,
+  getStudyGrade,
+  ogJoin,
+} from "@dotkomonline/utils"
 import {
   addDays,
   addHours,
@@ -363,7 +370,7 @@ export function getAttendanceService(
       [attendee.user.email],
       [],
       [],
-      `Du har rykket frem i køen til ${event.title}`,
+      formatEmailSubject(`Du har rykket frem i køen til ${event.title}`),
       emails.QUEUE_NOTIFICATION,
       {
         eventName: event.title,
@@ -395,7 +402,7 @@ export function getAttendanceService(
       [attendee.user.email],
       [],
       [],
-      `Du er påmeldt ${event.title} hos Linjeforeningen Online`,
+      formatEmailSubject(`Du er påmeldt ${event.title}`),
       emails.EVENT_ATTENDANCE,
       {
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
@@ -1636,7 +1643,7 @@ export function getAttendanceService(
           [],
           [],
           bcc,
-          `Tilbakemelding på ${event.title}`,
+          formatEmailSubject(`Tilbakemelding på ${event.title}`),
           emails.FEEDBACK_FORM_LINK,
           {
             eventName: event.title,
@@ -1850,7 +1857,7 @@ export function getAttendanceService(
           [],
           [],
           attendeeEmails,
-          title,
+          formatEmailSubject(title),
           emails.EVENT_MESSAGE,
           {
             eventName: event.title,

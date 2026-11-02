@@ -1,7 +1,7 @@
 import { TZDate } from "@date-fns/tz"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { slugify, type SlugifyOptions } from "@dotkomonline/utils"
+import { formatEmailSubject, slugify, type SlugifyOptions } from "@dotkomonline/utils"
 import type { admin_directory_v1 } from "@googleapis/admin"
 import { compareAsc, isAfter } from "date-fns"
 import { GaxiosError, type GaxiosResponseWithHTTP2 } from "googleapis-common"
@@ -336,7 +336,7 @@ export function getWorkspaceService(
         [user.email],
         [],
         [],
-        "(Online) Opprettelse av komité-e-postadresse",
+        formatEmailSubject("Opprettelse av komité-e-postadresse"),
         emails.COMMITTEE_EMAIL_CREATED_2FA_ENFORCED,
         {
           firstName,
@@ -354,7 +354,7 @@ export function getWorkspaceService(
         [user.email],
         [],
         [],
-        "(Online) Opprettelse av komité-e-postadresse",
+        formatEmailSubject("Opprettelse av komité-e-postadresse"),
         emails.COMMITTEE_EMAIL_CREATED,
         {
           firstName,

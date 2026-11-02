@@ -1,3 +1,4 @@
+import { formatEmailSubject } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
@@ -39,7 +40,7 @@ const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(asy
     [BEDKOM_EMAIL],
     [],
     [],
-    `[Interesse] ${input.companyName}`,
+    formatEmailSubject(`[Interesse] ${input.companyName}`),
     emails.COMPANY_COLLABORATION_NOTIFICATION,
     {
       companyName: input.companyName,
@@ -65,7 +66,7 @@ const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(asy
     [input.contactEmail],
     [],
     [],
-    "Kvittering for meldt interesse til Online",
+    formatEmailSubject("Takk for interessen!"),
     emails.COMPANY_COLLABORATION_RECEIPT,
     {
       companyName: input.companyName,

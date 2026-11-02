@@ -12,6 +12,7 @@ import {
   type NotificationManagement,
 } from "@dotkomonline/rpc/notification"
 import { Button, cn, Text } from "@dotkomonline/ui"
+import { formatEmailSubject } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
@@ -96,6 +97,11 @@ export function EditNotificationForm({
       </Text>
 
       <TextField control={control} name="title" label="Tittel" required />
+      {isDraft && notification.link.type === "EVENT" && (
+        <Text className="text-sm text-muted-foreground">
+          E-postemne ved utsending: {formatEmailSubject(title ?? "")}
+        </Text>
+      )}
       <RichTextField control={control} name="content" label="Melding" isEmail />
       <TextareaField
         control={control}

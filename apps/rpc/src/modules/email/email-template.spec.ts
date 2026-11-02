@@ -52,7 +52,7 @@ const sampleData = {
 
 describe("renderEmailTemplate", () => {
   it.each([
-    ["COMPANY_COLLABORATION_RECEIPT", "Kvittering for meldt interesse til Online", "Hei Ola Nordmann!"],
+    ["COMPANY_COLLABORATION_RECEIPT", "Takk for interessen!", "Hei Ola Nordmann!"],
     ["COMPANY_COLLABORATION_NOTIFICATION", "Ny interesse fra Testbedrift", "Hei Bedkom!"],
     ["COMPANY_INVOICE_NOTIFICATION", "Fakturainformasjon fra Testbedrift", "Testbedrift"],
     ["FEEDBACK_FORM_LINK", "Tilbakemelding på Testarrangement", "Gi tilbakemelding"],

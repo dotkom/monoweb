@@ -12,7 +12,7 @@ import {
   formatMarkCount,
 } from "./mark"
 import type { UserId } from "../user/user"
-import { getPunishmentExpiryDate } from "@dotkomonline/utils"
+import { formatEmailSubject, getPunishmentExpiryDate } from "@dotkomonline/utils"
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
@@ -183,7 +183,7 @@ export function getPersonalMarkService(
         [user.email],
         [],
         [],
-        isSuspension ? "Du har blitt suspendert" : `Du har fått ${markCountLabel}`,
+        formatEmailSubject(isSuspension ? "Du har blitt suspendert" : `Du har fått ${markCountLabel}`),
         emails.RECEIVED_MARK,
         {
           title: mark.title,

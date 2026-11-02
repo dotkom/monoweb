@@ -437,7 +437,7 @@ const sendBugReportEmailProcedure = procedure
   .input(BugReportFormSchema)
   .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
-    ctx.userService.sendBugReportEmail(input)
+    await ctx.userService.sendBugReportEmail(input)
   })
 
 export const userRouter = t.router({
