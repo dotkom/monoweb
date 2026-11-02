@@ -7,7 +7,7 @@ import { Link } from "@/components/link"
 import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { Button, Title } from "@dotkomonline/ui"
-import { createAuthorizeUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createUserProfileUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import { IconArrowLeft } from "@tabler/icons-react"
 import { redirect } from "next/navigation"
 import { useUserUpdateMutation } from "../mutations"
@@ -75,7 +75,7 @@ const EditProfilePage = () => {
 
         <Button
           element={Link}
-          href={`/profil/${dbUser.username}`}
+          href={createUserProfileUrl(dbUser.username)}
           prefetch={false}
           icon={<IconArrowLeft className="size-5" />}
           className="w-fit"

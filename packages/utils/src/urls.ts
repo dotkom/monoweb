@@ -152,6 +152,14 @@ export const createAbsoluteEventPageUrl = (
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
 
+export const createUserProfileUrl = (username: string): `/profil/${string}` => {
+  return `/profil/${encodeURIComponent(username)}`
+}
+
+export const createAbsoluteUserProfileUrl = (origin: string, username: string): string => {
+  return toAbsoluteUrl(origin, createUserProfileUrl(username))
+}
+
 export const createJobListingSlug = (jobListingTitle: string): string => {
   return slugify(jobListingTitle)
 }

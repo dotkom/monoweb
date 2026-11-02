@@ -15,7 +15,7 @@ import {
   cn,
   Text,
 } from "@dotkomonline/ui"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createUserProfileUrl } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconTrophy, IconUser, IconUsers, IconX } from "@tabler/icons-react"
 import Link from "next/link"
 
@@ -101,7 +101,7 @@ export function TeamModal({ contestant, rank, userId, onClose }: TeamModalProps)
             {members.map((member) => (
               <li key={member.id}>
                 <Link
-                  href={`/profil/${member.username}`}
+                  href={createUserProfileUrl(member.username)}
                   prefetch={false}
                   className={cn(
                     "flex items-center gap-2 rounded-xl p-2 -m-2 bg-white/12 dark:bg-black/6 hover:bg-white/25 dark:hover:bg-black/18 transition-colors",

@@ -32,7 +32,7 @@ import {
   Title,
   cn,
 } from "@dotkomonline/ui"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { createUserProfileUrl, getCurrentUTC } from "@dotkomonline/utils"
 import {
   IconArrowUpRight,
   IconQuestionMark,
@@ -200,7 +200,7 @@ export const GroupPage = async ({ params }: CommitteePageProps) => {
               (leader ? (
                 <Link
                   prefetch={false}
-                  href={`/profil/${leader.username}`}
+                  href={createUserProfileUrl(leader.username)}
                   className={cn(
                     "flex flex-row w-fit items-center gap-1 px-1.5 py-1 rounded-md transition-colors",
                     "bg-slate-50 hover:bg-slate-100 hover:text-gray-700",
@@ -281,7 +281,7 @@ const GroupMemberEntry = ({ userId, member }: GroupMemberEntryProps) => {
     <Link
       prefetch={false}
       key={member.id}
-      href={`/profil/${member.username}`}
+      href={createUserProfileUrl(member.username)}
       className={cn(
         "flex flex-row items-center gap-3 p-2 rounded-lg transition-colors",
         !isVerified && !isUser && "bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700",

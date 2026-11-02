@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage, cn, Text } from "@dotkomonline/ui"
 import { IconUser } from "@tabler/icons-react"
 import type { AttendeeSummary } from "@dotkomonline/rpc/attendance"
 import { isKnight } from "@dotkomonline/rpc/user"
+import { createUserProfileUrl } from "@dotkomonline/utils"
 import Link from "next/link.js"
 import { createContext, useContext, type JSX, type ReactNode } from "react"
 import {
@@ -38,7 +39,7 @@ interface PlateRootProps extends PlateProps {
 
 function PlateRoot({ attendee, user, smallIcons, largeIcon, isCurrentUser, className, children }: PlateRootProps) {
   const contextValue: PlateProps = { attendee, user, smallIcons, largeIcon, isCurrentUser }
-  const profileHref = `/profil/${user.username}`
+  const profileHref = createUserProfileUrl(user.username)
   const profileLabel = user.name ?? user.username
 
   return (

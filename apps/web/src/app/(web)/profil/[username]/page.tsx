@@ -1,6 +1,6 @@
 import { ProfilePage } from "@/app/profil/[username]/ProfilePage"
 import { getServerSession } from "@/auth"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createUserProfileUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
 
 interface ProfilePageProps {
@@ -14,7 +14,7 @@ export default async function Page({ params }: ProfilePageProps) {
   const session = await getServerSession()
 
   if (session === null) {
-    redirect(createAuthorizeUrl({ returnTo: `/profil/${encodeURIComponent(username)}` }))
+    redirect(createAuthorizeUrl({ returnTo: createUserProfileUrl(username) }))
   }
 
   return <ProfilePage />

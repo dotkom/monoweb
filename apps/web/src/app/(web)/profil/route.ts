@@ -1,6 +1,6 @@
 import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { createAuthorizeUrl } from "@dotkomonline/utils"
+import { createAuthorizeUrl, createUserProfileUrl } from "@dotkomonline/utils"
 import { redirect } from "next/navigation"
 import type { NextRequest } from "next/server"
 
@@ -32,5 +32,5 @@ export async function GET(req: NextRequest) {
     redirect("/")
   }
 
-  redirect(`/profil/${user.username}${req.nextUrl.search}`)
+  redirect(`${createUserProfileUrl(user.username)}${req.nextUrl.search}`)
 }

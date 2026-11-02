@@ -12,7 +12,7 @@ import { useTRPC } from "@admin/lib/trpc-client"
 import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
 import { findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
 import { canEditUserProfile, canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
-import { getStudyGrade } from "@dotkomonline/utils"
+import { createAbsoluteUserProfileUrl, getStudyGrade } from "@dotkomonline/utils"
 import {
   IconBuildingWarehouse,
   IconCircles,
@@ -149,7 +149,7 @@ export default function UserDetailsLayout({
       readOnlyNotice={readOnlyNotice}
       viewInWebProps={{
         label: "Se brukerprofil",
-        href: new URL(`profil/${user.username}`, env.NEXT_PUBLIC_WEB_URL).toString(),
+        href: createAbsoluteUserProfileUrl(env.NEXT_PUBLIC_WEB_URL, user.username),
         prefetch: false,
       }}
     >
