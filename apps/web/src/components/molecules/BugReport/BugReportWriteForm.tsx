@@ -1,5 +1,6 @@
 import { type BugReportFormResult, BugReportFormSchema } from "@dotkomonline/rpc/user"
-import { Button, Textarea, TextInput, toast } from "@dotkomonline/ui"
+import { Button, Text, Textarea, TextInput, toast } from "@dotkomonline/ui"
+import { formatEmailSubject } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconMail } from "@tabler/icons-react"
 import { useMutation } from "@tanstack/react-query"
@@ -18,6 +19,8 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
   const mutate = useMutation(
     trpc.user.sendBugReportEmail.mutationOptions({
       onSuccess: () => {
+        setOpen(false)
+
         toast.add({
           title: "Suksess",
           description: "E-post har blitt sendt til Dotkom",
@@ -41,9 +44,7 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
   })
 
   const handleSubmit = (values: BugReportFormResult) => {
-    mutate.mutateAsync(values)
-
-    setOpen(false)
+    mutate.mutate(values)
   }
 
   return (
@@ -76,6 +77,9 @@ export const BugReportForm = ({ setOpen }: BugReportProps) => {
           />
         )}
       />
+      <Text className="text-sm text-muted-foreground">
+        E-postemne: {formatEmailSubject(`Problem rapportert: ${form.watch("title") ?? ""}`)}
+      </Text>
       <Controller
         control={form.control}
         name="body"

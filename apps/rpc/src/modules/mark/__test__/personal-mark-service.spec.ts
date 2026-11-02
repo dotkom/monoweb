@@ -89,7 +89,7 @@ describe("personal mark notification", () => {
     ])
     await context.service.sendReceivedMarkEmail(context.handle, awarded.personalMark)
     const { subject, data, html } = await context.notification()
-    expect(subject).toBe("Du har fått 1 prikk")
+    expect(subject).toBe("(Online) Du har fått 1 prikk")
     expect(data).toMatchObject({
       markCountLabel: "1 prikk",
       totalMarkCountLabel: "3 prikker",
@@ -111,7 +111,7 @@ describe("personal mark notification", () => {
     const context = setup([createAward("existing", 5), awarded])
     await context.service.sendReceivedMarkEmail(context.handle, awarded.personalMark)
     const { subject, data, html } = await context.notification()
-    expect(subject).toBe("Du har fått 1 prikk")
+    expect(subject).toBe("(Online) Du har fått 1 prikk")
     expect(data).toMatchObject({ totalMarkCountLabel: "6 prikker", isSuspension: false, isSuspended: true })
     expect(html).toContain("Du har fått 1 prikk for:")
     expect(html).toContain("Du er suspendert fra å melde deg på Onlines arrangementer.")
@@ -125,7 +125,7 @@ describe("personal mark notification", () => {
     const context = setup([createAward("existing", 1), awarded])
     await context.service.sendReceivedMarkEmail(context.handle, awarded.personalMark)
     const { subject, data, html } = await context.notification()
-    expect(subject).toBe("Du har blitt suspendert")
+    expect(subject).toBe("(Online) Du har blitt suspendert")
     expect(data).toMatchObject({ totalMarkCountLabel: "7 prikker", isSuspension: true, isSuspended: true })
     expect(data.endsAt).not.toBeNull()
     expect(html).toContain("Du har blitt suspendert for:")
@@ -149,7 +149,7 @@ describe("personal mark notification", () => {
     const context = setup([createAward("suspension", 6, 100_000), awarded])
     await context.service.sendReceivedMarkEmail(context.handle, awarded.personalMark)
     const { subject, data, html } = await context.notification()
-    expect(subject).toBe("Du har fått 2 prikker")
+    expect(subject).toBe("(Online) Du har fått 2 prikker")
     expect(data).toMatchObject({ totalMarkCountLabel: "8 prikker", isSuspension: false, isSuspended: true })
     expect(html).toContain("Du har fått 2 prikker for:")
     expect(html).toContain("Du er suspendert")

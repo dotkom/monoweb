@@ -118,8 +118,8 @@ export const emails = {
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
     type: "COMPANY_COLLABORATION_RECEIPT",
     layout: {
-      title: "Kvittering for meldt interesse til Online",
-      preheader: "Vi har mottatt interessen fra {{ companyName }}.",
+      title: "Takk for interessen!",
+      preheader: "Vi har mottatt skjemaet fra {{ companyName }}.",
       footerReason: "Du mottar denne e-posten fordi du har fylt inn et interesseskjema hos Linjeforeningen Online.",
     },
     getSchema: () =>
@@ -144,7 +144,7 @@ export const emails = {
     type: "COMPANY_COLLABORATION_NOTIFICATION",
     layout: {
       title: "Ny interesse fra {{ companyName }}",
-      preheader: "{{ companyName }} har meldt interesse for samarbeid med Online.",
+      preheader: "{{ companyName }} har sendt inn skjema for samarbeid med Online.",
       footerReason: "Du mottar denne e-posten fordi du er registrert som medlem i Bedriftskomiteen i Online.",
     },
     getSchema: () =>

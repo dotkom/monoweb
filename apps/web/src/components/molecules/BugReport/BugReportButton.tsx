@@ -52,7 +52,7 @@ export const BugReportButton = ({ message, error }: BugReportButtonProps) => {
 
     body += message
 
-    mutate.mutateAsync({
+    mutate.mutate({
       title: "Admin bug report",
       body: body,
       email: dbUser?.email ?? undefined,

@@ -17,7 +17,7 @@ import {
   type NotificationSource,
 } from "@dotkomonline/rpc/notification"
 import { Button, Dialog, DialogClose, DialogContent, DialogTitle, Separator, Text, Textarea } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import { formatEmailSubject, richTextToPlainText } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconX } from "@tabler/icons-react"
 import { type ChangeEvent, useEffect, useMemo, useState } from "react"
@@ -109,6 +109,7 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
 
   const { field: shortDescriptionField } = useController({ control, name: "shortDescription" })
   const content = useWatch({ control, name: "content" })
+  const title = useWatch({ control, name: "title" })
   const actorGroupId = useWatch({ control, name: "actorGroupId" })
   let senderDescription: string | undefined
 
@@ -176,6 +177,11 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
         Opprett et utkast. Du kan forhåndsvise innholdet og velge mottakere før du sender.
       </Text>
       <TextField control={control} name="title" label="Tittel" required />
+      {source.type === "EVENT" && (
+        <Text className="text-sm text-muted-foreground">
+          E-postemne ved utsending: {formatEmailSubject(title ?? "")}
+        </Text>
+      )}
       <RichTextField control={control} name="content" label="Melding" isEmail />
       <FieldShell
         id="shortDescription"

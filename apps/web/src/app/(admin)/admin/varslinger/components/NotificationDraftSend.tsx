@@ -18,7 +18,7 @@ import {
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import { formatEmailSubject, richTextToPlainText } from "@dotkomonline/utils"
 import { useId, useState } from "react"
 import { useNotificationDetailsContext } from "../[id]/provider"
 import { getActorGroupLabel } from "../[id]/utils"
@@ -159,6 +159,9 @@ export function NotificationDraftSend() {
           <AlertDialogDescription>
             «{notification.title}» sendes til {recipientCount} mottakere. Mottakerlisten oppdateres ved sending.
           </AlertDialogDescription>
+          {hasEmailOption && sendEmail && (
+            <Text className="text-sm">E-postemne: {formatEmailSubject(notification.title)}</Text>
+          )}
           {hasEmailOption && (
             <div className="flex items-center gap-2">
               <Checkbox
