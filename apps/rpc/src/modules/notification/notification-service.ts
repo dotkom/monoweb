@@ -206,30 +206,23 @@ export function getNotificationService(
       const notificationUrl = new URL(`/varslinger/${encodeURIComponent(notification.id)}`, webOrigin).toString()
       const linkUrl = notification.link.type === "URL" ? notification.link.url : null
 
-      // Match event email sends: keep each message to 25 BCC recipients.
-      const batchSize = 25
-
-      for (let startIndex = 0; startIndex < recipientEmails.length; startIndex += batchSize) {
-        const batchEmails = recipientEmails.slice(startIndex, startIndex + batchSize)
-
-        await emailService.send(
-          sourceEmail,
-          [sourceEmail],
-          [],
-          [],
-          batchEmails,
-          formatEmailSubject(notification.title),
-          emails.NOTIFICATION,
-          {
-            title: notification.title,
-            message: notification.content,
-            senderName,
-            notificationUrl,
-            linkUrl,
-          },
-          group === null ? undefined : senderName
-        )
-      }
+      await emailService.send(
+        sourceEmail,
+        [sourceEmail],
+        [],
+        [],
+        recipientEmails,
+        formatEmailSubject(notification.title),
+        emails.NOTIFICATION,
+        {
+          title: notification.title,
+          message: notification.content,
+          senderName,
+          notificationUrl,
+          linkUrl,
+        },
+        group === null ? undefined : senderName
+      )
     },
 
     async createDraft(handle, input) {
