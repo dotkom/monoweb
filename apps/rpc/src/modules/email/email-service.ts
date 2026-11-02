@@ -45,6 +45,9 @@ const EmailMessageSchema = z.object({
   data: z.any(),
 })
 
+// In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
+const EMAIL_RECIPIENT_BATCH_SIZE = 25
+
 export interface EmailService {
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
   send<TDef extends EmailTemplate<any, any>>(
@@ -224,28 +227,47 @@ export function getEmailService(
             "email.subject": subject,
           })
 
-          const cmd = new SendMessageCommand({
-            QueueUrl: configuration.email.awsSqsQueueUrl,
-            MessageBody: JSON.stringify(
-              EmailMessageSchema.parse({
-                source,
-                sourceName,
-                replyTo,
-                to,
-                cc,
-                bcc,
-                subject,
-                type: definition.type,
-                data: result.data,
-              } satisfies z.infer<typeof EmailMessageSchema>)
-            ),
+          const message = EmailMessageSchema.parse({
+            source,
+            sourceName,
+            replyTo,
+            to,
+            cc,
+            bcc,
+            subject,
+            type: definition.type,
+            data: result.data,
           })
-          const response = await sqsClient.send(cmd)
-          logger.info(
-            "Posted Message(ID=%s) to AWS SQS Queue %s",
-            response.MessageId ?? "<unknown>",
-            configuration.email.awsSqsQueueUrl
-          )
+
+          const recipientBatches: { to: string[]; cc: string[]; bcc: string[] }[] = []
+
+          for (const destination of ["to", "cc", "bcc"] as const) {
+            for (const address of message[destination]) {
+              let batch = recipientBatches.at(-1)
+              const recipientCount = batch === undefined ? 0 : batch.to.length + batch.cc.length + batch.bcc.length
+
+              if (batch === undefined || recipientCount === EMAIL_RECIPIENT_BATCH_SIZE) {
+                batch = { to: [], cc: [], bcc: [] }
+                recipientBatches.push(batch)
+              }
+
+              batch[destination].push(address)
+            }
+          }
+
+          for (const recipients of recipientBatches) {
+            const command = new SendMessageCommand({
+              QueueUrl: configuration.email.awsSqsQueueUrl,
+              MessageBody: JSON.stringify({ ...message, ...recipients }),
+            })
+            const response = await sqsClient.send(command)
+
+            logger.info(
+              "Posted Message(ID=%s) to AWS SQS Queue %s",
+              response.MessageId ?? "<unknown>",
+              configuration.email.awsSqsQueueUrl
+            )
+          }
         } finally {
           span.end()
         }

@@ -1831,43 +1831,26 @@ export function getAttendanceService(
 
       const sourceName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
 
-      // In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
-      const batchSize = 25
+      const attendeeEmails = attendance.attendees
+        .map((attendee) => attendee.user.email)
+        .filter((email): email is string => email !== null)
 
-      for (let batchStartIndex = 0; batchStartIndex < attendance.attendees.length; batchStartIndex += batchSize) {
-        const attendees = attendance.attendees.slice(batchStartIndex, batchStartIndex + batchSize)
-        const attendeeEmails = attendees.map((a) => a.user.email).filter((e) => e !== null)
-
-        const currentBatchIndex = Math.floor(batchStartIndex / batchSize) + 1
-        const totalBatches = Math.ceil(attendance.attendees.length / batchSize)
-
-        logger.info(
-          "Scheduling emails %s..%s in batch %s/%s for notification for Event(ID=%s, Name=%s)",
-          batchStartIndex + 1,
-          batchStartIndex + attendees.length,
-          currentBatchIndex,
-          totalBatches,
-          event.id,
-          event.title
-        )
-
-        await emailService.send(
-          sourceEmail,
-          [sourceEmail],
-          [],
-          [],
-          attendeeEmails,
-          formatEmailSubject(title),
-          emails.EVENT_MESSAGE,
-          {
-            eventName: event.title,
-            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-            eventImageUrl: event.imageUrl,
-            message,
-          },
-          sourceName
-        )
-      }
+      await emailService.send(
+        sourceEmail,
+        [sourceEmail],
+        [],
+        [],
+        attendeeEmails,
+        formatEmailSubject(title),
+        emails.EVENT_MESSAGE,
+        {
+          eventName: event.title,
+          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+          eventImageUrl: event.imageUrl,
+          message,
+        },
+        sourceName
+      )
     },
   }
 }
