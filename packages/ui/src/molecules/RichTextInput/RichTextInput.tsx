@@ -104,7 +104,7 @@ function EditorToolbar({
   onInsertImage?: () => void
 }) {
   return (
-    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-field-border bg-background p-1">
+    <div className="sticky top-[var(--rich-text-toolbar-top,0px)] z-10 flex flex-wrap items-center gap-0.5 border-b border-field-border bg-background p-1">
       <ToolbarControl
         aria-label="Undo"
         title="Undo"
@@ -449,12 +449,12 @@ export function RichTextInput({
   }
 
   return (
-    <div className={cn("overflow-hidden rounded-md border border-field-border bg-background", className)}>
+    <div className={cn("overflow-clip rounded-md border border-field-border bg-background", className)}>
       {!disabled && (
         <EditorToolbar
           editor={editor}
           isEmail={isEmail}
-          onInsertImage={!isEmail && onFileUpload !== undefined ? openImageUploadModal : undefined}
+          onInsertImage={onFileUpload ? openImageUploadModal : undefined}
         />
       )}
       <EditorContent editor={editor} className={cn(richTextInputClasses, disabled && "opacity-60")} />
