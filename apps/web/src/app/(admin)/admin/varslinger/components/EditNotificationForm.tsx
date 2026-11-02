@@ -97,7 +97,7 @@ export function EditNotificationForm({
       </Text>
 
       <TextField control={control} name="title" label="Tittel" required />
-      {isDraft && notification.link.type === "EVENT" && (
+      {isDraft && (
         <Text className="text-sm text-muted-foreground">
           E-postemne ved utsending: {formatEmailSubject(title ?? "")}
         </Text>

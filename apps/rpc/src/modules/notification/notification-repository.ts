@@ -51,6 +51,7 @@ export interface NotificationRepository {
 
   addRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<NotificationRecipient[]>
   removeRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<number>
+  findRecipientEmails(handle: DBHandle, notificationId: NotificationId): Promise<string[]>
   findRecipients(
     handle: DBHandle,
     notificationId: NotificationId,
@@ -282,6 +283,23 @@ export function getNotificationRepository(): NotificationRepository {
       })
 
       return result.count
+    },
+
+    async findRecipientEmails(handle, notificationId) {
+      const recipients = await handle.notificationRecipient.findMany({
+        where: {
+          notificationId,
+        },
+        select: {
+          user: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      })
+
+      return recipients.map((recipient) => recipient.user.email).filter((email): email is string => email !== null)
     },
 
     async findRecipients(handle, notificationId, filters, page) {

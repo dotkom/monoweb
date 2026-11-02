@@ -20,6 +20,7 @@ export type EmailType =
   | "COMMITTEE_EMAIL_CREATED"
   | "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED"
   | "BUG_REPORT"
+  | "NOTIFICATION"
 
 type TemplateButtons = Record<
   string,
@@ -115,6 +116,35 @@ const EventImageUrlSchema = z
   .catch(null)
 
 export const emails = {
+  NOTIFICATION: createEmailTemplate({
+    type: "NOTIFICATION",
+    layout: {
+      title: "{{ title }}",
+      preheader: "Ny melding fra {{ senderName }}.",
+      footerReason: "Du mottar denne e-posten fordi du er mottaker av en varsling fra Linjeforeningen Online.",
+    },
+    getButtons: (data) => {
+      const buttons: TemplateButtons = {
+        notification: { href: data.notificationUrl, label: "Se varslingen" },
+      }
+
+      if (data.linkUrl !== null) {
+        buttons.link = { href: data.linkUrl, label: "Åpne lenken" }
+      }
+
+      return buttons
+    },
+    getSchema: () =>
+      z.object({
+        title: z.string(),
+        message: z.string(),
+        senderName: z.string(),
+        notificationUrl: z.url(),
+        linkUrl: z.url().nullable(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ message: data.message }),
+  }),
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
     type: "COMPANY_COLLABORATION_RECEIPT",
     layout: {

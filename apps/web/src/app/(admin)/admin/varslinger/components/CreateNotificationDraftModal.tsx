@@ -177,11 +177,7 @@ function CreateNotificationDraftForm({ source, onClose }: { source: Notification
         Opprett et utkast. Du kan forhåndsvise innholdet og velge mottakere før du sender.
       </Text>
       <TextField control={control} name="title" label="Tittel" required />
-      {source.type === "EVENT" && (
-        <Text className="text-sm text-muted-foreground">
-          E-postemne ved utsending: {formatEmailSubject(title ?? "")}
-        </Text>
-      )}
+      <Text className="text-sm text-muted-foreground">E-postemne ved utsending: {formatEmailSubject(title ?? "")}</Text>
       <RichTextField control={control} name="content" label="Melding" isEmail />
       <FieldShell
         id="shortDescription"
