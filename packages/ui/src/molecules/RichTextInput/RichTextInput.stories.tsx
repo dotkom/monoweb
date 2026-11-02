@@ -22,3 +22,9 @@ export const WithoutImageUpload = () => {
 
   return <RichTextInput value={value} onChange={setValue} />
 }
+
+export const Email = () => {
+  const [value, setValue] = useState("<h2>Hei!</h2><p>En <strong>viktig</strong> melding.</p>")
+
+  return <RichTextInput value={value} onChange={setValue} isEmail />
+}

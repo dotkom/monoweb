@@ -11,7 +11,16 @@ import { InvalidArgumentError } from "../../error"
 import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails, renderEmailTemplate } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
 
-function formatSesSourceAddress(source: string): string {
+function formatSesSourceAddress(source: string, sourceName?: string): string {
+  if (sourceName !== undefined) {
+    // Ten Unicode code points fit within RFC 2047's 75-character encoded-word limit,
+    // including four-byte UTF-8 characters. Encoding also handles punctuation in names.
+    const nameParts = sourceName.match(/.{1,10}/gu) ?? []
+    const encodedName = nameParts.map((part) => `=?UTF-8?B?${Buffer.from(part).toString("base64")}?=`).join(" ")
+
+    return `${encodedName} <${source}>`
+  }
+
   if (source !== DEFAULT_EMAIL_SOURCE) {
     return source
   }
@@ -21,6 +30,12 @@ function formatSesSourceAddress(source: string): string {
 
 const EmailMessageSchema = z.object({
   source: z.email(),
+  sourceName: z
+    .string()
+    .trim()
+    .min(1)
+    .regex(/^[^\r\n]+$/)
+    .optional(),
   replyTo: z.email().array(),
   to: z.email().array(),
   cc: z.email().array(),
@@ -40,7 +55,8 @@ export interface EmailService {
     bcc: string[],
     subject: string,
     definition: TDef,
-    data: InferEmailData<TDef>
+    data: InferEmailData<TDef>,
+    sourceName?: string
   ): Promise<void>
   /**
    * Start the SQS Consumer for actually submitting emails to SES.
@@ -119,7 +135,7 @@ export function getEmailService(
         const html = await renderEmailTemplate(emailTemplate, payload.data.data)
 
         const sendEmailCommand = new SendEmailCommand({
-          Source: formatSesSourceAddress(payload.data.source),
+          Source: formatSesSourceAddress(payload.data.source, payload.data.sourceName),
           ReplyToAddresses: payload.data.replyTo,
           Destination: {
             ToAddresses: payload.data.to,
@@ -175,7 +191,7 @@ export function getEmailService(
   }
 
   return {
-    async send(source, replyTo, to, cc, bcc, subject, definition, data) {
+    async send(source, replyTo, to, cc, bcc, subject, definition, data, sourceName) {
       return await tracer.startActiveSpan("EmailService/QueueEmail", async (span) => {
         try {
           logger.info(
@@ -213,6 +229,7 @@ export function getEmailService(
             MessageBody: JSON.stringify(
               EmailMessageSchema.parse({
                 source,
+                sourceName,
                 replyTo,
                 to,
                 cc,

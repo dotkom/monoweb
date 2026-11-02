@@ -96,7 +96,7 @@ export function EditNotificationForm({
       </Text>
 
       <TextField control={control} name="title" label="Tittel" required />
-      <RichTextField control={control} name="content" label="Melding" />
+      <RichTextField control={control} name="content" label="Melding" isEmail />
       <TextareaField
         control={control}
         name="shortDescription"

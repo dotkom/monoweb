@@ -54,6 +54,7 @@ export type RichTextInputProps = {
   onChange: (value: string) => void
   disabled?: boolean
   className?: string
+  isEmail?: boolean
   onFileUpload?: (file: File) => Promise<string>
 }
 
@@ -93,7 +94,15 @@ function ToolbarSeparator() {
   return <Separator orientation="vertical" className="mx-0 h-6 self-center" />
 }
 
-function EditorToolbar({ editor, onInsertImage }: { editor: Editor; onInsertImage?: () => void }) {
+function EditorToolbar({
+  editor,
+  isEmail,
+  onInsertImage,
+}: {
+  editor: Editor
+  isEmail: boolean
+  onInsertImage?: () => void
+}) {
   return (
     <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-field-border bg-background p-1">
       <ToolbarControl
@@ -154,14 +163,16 @@ function EditorToolbar({ editor, onInsertImage }: { editor: Editor; onInsertImag
       >
         <IconStrikethrough className="size-5" />
       </ToolbarControl>
-      <ToolbarControl
-        aria-label="Code block"
-        title="Code block"
-        active={editor.isActive("codeBlock")}
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-      >
-        <IconCode className="size-5" />
-      </ToolbarControl>
+      {!isEmail && (
+        <ToolbarControl
+          aria-label="Code block"
+          title="Code block"
+          active={editor.isActive("codeBlock")}
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        >
+          <IconCode className="size-5" />
+        </ToolbarControl>
+      )}
       <LinkToolbarControl editor={editor} />
       <ToolbarControl
         aria-label="Unlink"
@@ -214,13 +225,15 @@ function EditorToolbar({ editor, onInsertImage }: { editor: Editor; onInsertImag
       >
         <IconListNumbers className="size-5" />
       </ToolbarControl>
-      <ToolbarControl
-        aria-label="Horizontal rule"
-        title="Horizontal rule"
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-      >
-        <IconSeparator className="size-5" />
-      </ToolbarControl>
+      {!isEmail && (
+        <ToolbarControl
+          aria-label="Horizontal rule"
+          title="Horizontal rule"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          <IconSeparator className="size-5" />
+        </ToolbarControl>
+      )}
 
       {onInsertImage && (
         <>
@@ -231,83 +244,94 @@ function EditorToolbar({ editor, onInsertImage }: { editor: Editor; onInsertImag
         </>
       )}
 
-      <ToolbarSeparator />
+      {!isEmail && (
+        <>
+          <ToolbarSeparator />
 
-      <ToolbarControl
-        aria-label="Insert table"
-        title="Insert table"
-        onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 2, withHeaderRow: true }).run()}
-      >
-        <IconTablePlus className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Add column after"
-        title="Add column after"
-        onClick={() => editor.chain().focus().addColumnAfter().run()}
-      >
-        <IconColumnInsertRight className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Add row after"
-        title="Add row after"
-        onClick={() => editor.chain().focus().addRowAfter().run()}
-      >
-        <IconRowInsertBottom className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Delete column"
-        title="Delete column"
-        onClick={() => editor.chain().focus().deleteColumn().run()}
-      >
-        <IconTableColumn className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Delete row"
-        title="Delete row"
-        onClick={() => editor.chain().focus().deleteRow().run()}
-      >
-        <IconTableRow className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Split cells"
-        title="Split cells"
-        onClick={() => editor.chain().focus().splitCell().run()}
-      >
-        <IconColumns2 className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Merge cells"
-        title="Merge cells (select multiple cells)"
-        onClick={() => editor.chain().focus().mergeCells().run()}
-      >
-        <IconColumns1 className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Toggle header row"
-        title="Toggle header row"
-        onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-      >
-        <IconLayoutNavbarFilled className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Toggle header column"
-        title="Toggle header column"
-        onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
-      >
-        <IconLayoutSidebarFilled className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Delete table"
-        title="Delete table"
-        onClick={() => editor.chain().focus().deleteTable().run()}
-      >
-        <IconTableOff className="size-5" />
-      </ToolbarControl>
+          <ToolbarControl
+            aria-label="Insert table"
+            title="Insert table"
+            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 2, withHeaderRow: true }).run()}
+          >
+            <IconTablePlus className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Add column after"
+            title="Add column after"
+            onClick={() => editor.chain().focus().addColumnAfter().run()}
+          >
+            <IconColumnInsertRight className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Add row after"
+            title="Add row after"
+            onClick={() => editor.chain().focus().addRowAfter().run()}
+          >
+            <IconRowInsertBottom className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Delete column"
+            title="Delete column"
+            onClick={() => editor.chain().focus().deleteColumn().run()}
+          >
+            <IconTableColumn className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Delete row"
+            title="Delete row"
+            onClick={() => editor.chain().focus().deleteRow().run()}
+          >
+            <IconTableRow className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Split cells"
+            title="Split cells"
+            onClick={() => editor.chain().focus().splitCell().run()}
+          >
+            <IconColumns2 className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Merge cells"
+            title="Merge cells (select multiple cells)"
+            onClick={() => editor.chain().focus().mergeCells().run()}
+          >
+            <IconColumns1 className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Toggle header row"
+            title="Toggle header row"
+            onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+          >
+            <IconLayoutNavbarFilled className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Toggle header column"
+            title="Toggle header column"
+            onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
+          >
+            <IconLayoutSidebarFilled className="size-5" />
+          </ToolbarControl>
+          <ToolbarControl
+            aria-label="Delete table"
+            title="Delete table"
+            onClick={() => editor.chain().focus().deleteTable().run()}
+          >
+            <IconTableOff className="size-5" />
+          </ToolbarControl>
+        </>
+      )}
     </div>
   )
 }
 
-export function RichTextInput({ value, onChange, disabled = false, className, onFileUpload }: RichTextInputProps) {
+export function RichTextInput({
+  value,
+  onChange,
+  disabled = false,
+  className,
+  onFileUpload,
+  isEmail = false,
+}: RichTextInputProps) {
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
   const editorRef = useRef<Editor | null>(null)
   const imageInsertionSelectionRef = useRef<{ from: number; to: number } | null>(null)
@@ -316,6 +340,8 @@ export function RichTextInput({ value, onChange, disabled = false, className, on
     editable: !disabled,
     extensions: [
       StarterKit.configure({
+        codeBlock: isEmail ? false : undefined,
+        horizontalRule: isEmail ? false : undefined,
         link: false,
         underline: false,
       }),
@@ -323,22 +349,26 @@ export function RichTextInput({ value, onChange, disabled = false, className, on
       Link.configure({
         openOnClick: false,
       }),
-      TableKit.configure({
-        table: {
-          resizable: !disabled,
-        },
-      }),
-      Image.configure({
-        inline: false,
-        resize: disabled
-          ? { enabled: false }
-          : {
-              enabled: true,
-              minWidth: 25,
-              minHeight: 25,
-              alwaysPreserveAspectRatio: true,
-            },
-      }),
+      ...(isEmail
+        ? []
+        : [
+            TableKit.configure({
+              table: {
+                resizable: !disabled,
+              },
+            }),
+            Image.configure({
+              inline: false,
+              resize: disabled
+                ? { enabled: false }
+                : {
+                    enabled: true,
+                    minWidth: 25,
+                    minHeight: 25,
+                    alwaysPreserveAspectRatio: true,
+                  },
+            }),
+          ]),
     ],
     content: value,
     immediatelyRender: false,
@@ -420,10 +450,16 @@ export function RichTextInput({ value, onChange, disabled = false, className, on
 
   return (
     <div className={cn("overflow-hidden rounded-md border border-field-border bg-background", className)}>
-      {!disabled && <EditorToolbar editor={editor} onInsertImage={onFileUpload ? openImageUploadModal : undefined} />}
+      {!disabled && (
+        <EditorToolbar
+          editor={editor}
+          isEmail={isEmail}
+          onInsertImage={!isEmail && onFileUpload !== undefined ? openImageUploadModal : undefined}
+        />
+      )}
       <EditorContent editor={editor} className={cn(richTextInputClasses, disabled && "opacity-60")} />
 
-      {onFileUpload && (
+      {!isEmail && onFileUpload !== undefined && (
         <ImageUploadModal
           open={isImageUploadModalOpen}
           onOpenChange={handleImageModalOpenChange}
