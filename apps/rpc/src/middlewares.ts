@@ -66,44 +66,13 @@ export function withAuditLogEntry<TContext extends TRPCContext & WithTransaction
     TContext & WithTransaction & { setAuditTransactionName: SetAuditTransactionName },
     TInput
   > = async ({ ctx, next, path }) => {
-    if (ctx.principal !== null) {
-      // We use a PostgreSQL configuration parameter, isolated to the current transaction to tell which user is
-
-      // performing a change. Additionally, we have a PostgreSQL trigger on most tables to insert entries into the
-      // `audit_log` table upon change. This trigger reads the configuration parameter.
-      //
-      // See https://www.postgresql.org/docs/9.3/functions-admin.html for details
-      //
-      // The PostgreSQL trigger is found inside the migrations folder in /packages/db.
-      await ctx.handle.$executeRaw`SELECT set_config('app.current_user_id', ${ctx.principal.subject}, true)`
-    }
-
-    // Create an audit event that all subsequent audit log entries will be connected to.
-    // `path` is used as a temporary name as we don't know it until after the procedure has finished.
-    const auditTransaction = await ctx.handle.auditTransaction.create({
-      data: { name: path, procedure: path },
-    })
-    await ctx.handle.$executeRaw`SELECT set_config('app.audit_transaction_id', ${auditTransaction.id}, true)`
-
-    const auditTransactionName: { value?: string } = {}
-    const result = await next({
-      ctx: {
-        setAuditTransactionName(name: string) {
-          auditTransactionName.value = name
-        },
-      },
-    })
-
-    // After the procedure has finished, update the audit event with the actual name.
-    if (result.ok && auditTransactionName.value !== undefined) {
-      await ctx.handle.auditTransaction.update({
-        where: { id: auditTransaction.id },
-        data: { name: auditTransactionName.value },
-      })
-    }
-
-    return result
+    return runWithAuditLogEntry(
+      { handle: ctx.handle, principal: ctx.principal, procedure: path },
+      ({ setAuditTransactionName }) => next({ ctx: { setAuditTransactionName } }),
+      (result) => result.ok
+    )
   }
+
   return handler
 }
 
@@ -133,4 +102,101 @@ export function withAuthorization<TContext extends TRPCContext, TInput>(rule: Ru
     return await next({ ctx })
   }
   return handler
+}
+
+/**
+ * Runs the given function with the audit log entry attached to the transaction.
+ */
+export async function runWithAuditLogEntry<T>(
+  options: {
+    handle: DBHandle
+    principal: TRPCContext["principal"]
+    procedure: string
+  },
+  fn: (args: { setAuditTransactionName: SetAuditTransactionName }) => Promise<T>,
+  shouldUpdateAuditTransactionName: (result: T) => boolean = () => true
+): Promise<T> {
+  const { handle, principal, procedure } = options
+
+  if (principal !== null) {
+    // We use a PostgreSQL configuration parameter, isolated to the current transaction to tell which user is
+    // performing a change. Additionally, we have a PostgreSQL trigger on most tables to insert entries into the
+    // `audit_log` table upon change. This trigger reads the configuration parameter.
+    //
+    // See https://www.postgresql.org/docs/9.3/functions-admin.html for details
+    //
+    // The PostgreSQL trigger is found inside the migrations folder in /packages/db.
+    await handle.$executeRaw`SELECT set_config('app.current_user_id', ${principal.subject}, true)`
+  }
+
+  // Create an audit event that all subsequent audit log entries will be connected to.
+  // `procedure` is used as a temporary name, as the name is derived after the procedure has finished and is not known at this point.
+  const auditTransaction = await handle.auditTransaction.create({
+    data: { name: procedure, procedure: procedure },
+  })
+  await handle.$executeRaw`SELECT set_config('app.audit_transaction_id', ${auditTransaction.id}, true)`
+
+  const auditTransactionName: { value?: string } = {}
+  const result = await fn({
+    setAuditTransactionName(name: string) {
+      auditTransactionName.value = name
+    },
+  })
+
+  if (shouldUpdateAuditTransactionName(result) && auditTransactionName.value !== undefined) {
+    await handle.auditTransaction.update({
+      where: { id: auditTransaction.id },
+      data: { name: auditTransactionName.value },
+    })
+  }
+
+  return result
+}
+
+/**
+ * Runs the given function in a PostgreSQL transaction.
+ */
+export async function runInDatabaseTransaction<T>(
+  options: {
+    prisma: TRPCContext["prisma"]
+    isolationLevel?: Prisma.TransactionIsolationLevel
+  },
+  fn: (handle: DBHandle) => Promise<T>
+): Promise<T> {
+  return options.prisma.$transaction(fn, {
+    isolationLevel: options.isolationLevel ?? "ReadCommitted",
+  })
+}
+
+type AuditedTransactionOptions = {
+  prisma: TRPCContext["prisma"]
+  principal: TRPCContext["principal"]
+  procedure: string
+  isolationLevel?: Prisma.TransactionIsolationLevel
+}
+
+type AuditedTransactionCallback<T> = (args: {
+  handle: DBHandle
+  setAuditTransactionName: SetAuditTransactionName
+}) => Promise<T>
+
+type AuditedTransactionFn = <T>(fn: AuditedTransactionCallback<T>) => Promise<T>
+
+/**
+ * Runs the given function in a PostgreSQL transaction with the audit log entry attached to the transaction.
+ */
+export async function runInAuditedDatabaseTransaction<T>(
+  options: AuditedTransactionOptions,
+  fn: AuditedTransactionCallback<T>
+): Promise<T> {
+  return runInDatabaseTransaction({ prisma: options.prisma, isolationLevel: options.isolationLevel }, (handle) =>
+    runWithAuditLogEntry(
+      { handle, principal: options.principal, procedure: options.procedure },
+      ({ setAuditTransactionName }) => fn({ handle, setAuditTransactionName })
+    )
+  )
+}
+
+export function createAuditedDatabaseTransaction(options: AuditedTransactionOptions): AuditedTransactionFn {
+  return (fn) => runInAuditedDatabaseTransaction(options, fn)
 }
