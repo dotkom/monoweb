@@ -7,7 +7,12 @@ import { on } from "node:events"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
-import { withAuditLogEntry, withAuthentication, withDatabaseTransaction } from "../../middlewares"
+import {
+  createAuditedDatabaseTransaction,
+  withAuditLogEntry,
+  withAuthentication,
+  withDatabaseTransaction,
+} from "../../middlewares"
 import {
   canManageEventAttendance,
   canUpdateAttendeeSelections,
@@ -330,11 +335,11 @@ export type RegisterForEventOutput = inferProcedureOutput<typeof registerForEven
 const registerForEventProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id, turnstileToken: z.string() }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
+  .mutation(async ({ input, ctx, path }) => {
+    // We run this outside the transaction to avoid holding a pool connection during external I/O.
+    // This would cause prisma pool starvation on large events.
     const result = await ctx.attendanceService.getRegistrationAvailability(
-      ctx.handle,
+      ctx.prisma,
       input.attendanceId,
       input.turnstileToken,
       ctx.principal.subject,
@@ -352,13 +357,21 @@ const registerForEventProcedure = procedure
       throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
     }
 
-    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result)
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
+    })
 
-    ctx.setAuditTransactionName(
-      `Register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
-    )
+    return transaction(async ({ handle, setAuditTransactionName }) => {
+      const attendee = await ctx.attendanceService.registerAttendee(handle, result)
 
-    return attendee
+      setAuditTransactionName(
+        `Register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
+      )
+
+      return attendee
+    })
   })
 
 export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeProcedure>
