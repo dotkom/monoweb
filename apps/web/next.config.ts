@@ -60,7 +60,7 @@ export default withSentryConfig(config, {
   authToken: process.env.SENTRY_AUTH_TOKEN,
   widenClientFileUpload: true,
   sourcemaps: {
-    disable: true,
+    deleteSourcemapsAfterUpload: true,
   },
   _experimental: {
     turbopackReactComponentAnnotation: { enabled: true },
