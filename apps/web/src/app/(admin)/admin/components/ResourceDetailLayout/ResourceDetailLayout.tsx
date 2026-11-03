@@ -97,9 +97,10 @@ export function ResourceDetailLayout({
 
     const updateHeaderOffset = () => {
       const headerTop = Number.parseFloat(getComputedStyle(header).top)
-      const headerBottom = header.offsetHeight + headerTop
+      const headerBottom = header.getBoundingClientRect().height + headerTop
 
       layout.style.setProperty("--resource-detail-header-bottom", `${headerBottom}px`)
+      layout.style.setProperty("--rich-text-toolbar-top", `${headerBottom}px`)
     }
 
     updateHeaderOffset()
