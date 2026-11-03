@@ -46,30 +46,21 @@ const editOfflineProcedure = procedure
 
 export type AllOfflineInput = inferProcedureInput<typeof allOfflineProcedure>
 export type AllOfflineOutput = inferProcedureOutput<typeof allOfflineProcedure>
-const allOfflineProcedure = procedure
-  .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.findMany(ctx.handle, input)
-  })
+const allOfflineProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  return ctx.offlineService.findMany(ctx.prisma, input)
+})
 
 export type FindOfflineInput = inferProcedureInput<typeof findOfflineProcedure>
 export type FindOfflineOutput = inferProcedureOutput<typeof findOfflineProcedure>
-const findOfflineProcedure = procedure
-  .input(OfflineSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.findById(ctx.handle, input)
-  })
+const findOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.offlineService.findById(ctx.prisma, input)
+})
 
 export type GetOfflineInput = inferProcedureInput<typeof getOfflineProcedure>
 export type GetOfflineOutput = inferProcedureOutput<typeof getOfflineProcedure>
-const getOfflineProcedure = procedure
-  .input(OfflineSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.getById(ctx.handle, input)
-  })
+const getOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.offlineService.getById(ctx.prisma, input)
+})
 
 export type CreateOfflineFileUploadInput = inferProcedureInput<typeof createOfflineFileUploadProcedure>
 export type CreateOfflineFileUploadOutput = inferProcedureOutput<typeof createOfflineFileUploadProcedure>
@@ -82,9 +73,8 @@ const createOfflineFileUploadProcedure = procedure
   )
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
-  .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+    return ctx.offlineService.createFileUpload(ctx.prisma, input.filename, input.contentType, ctx.principal.subject)
   })
 
 export type CreateOfflineImageUploadInput = inferProcedureInput<typeof createOfflineImageUploadProcedure>
@@ -98,9 +88,8 @@ const createOfflineImageUploadProcedure = procedure
   )
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
-  .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.createImageUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+    return ctx.offlineService.createImageUpload(ctx.prisma, input.filename, input.contentType, ctx.principal.subject)
   })
 
 export const offlineRouter = t.router({

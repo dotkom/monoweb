@@ -77,9 +77,8 @@ export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
 const getMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const mark = await ctx.markService.getById(ctx.handle, input)
+    const mark = await ctx.markService.getById(ctx.prisma, input)
     const groupIds = mark.groups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -95,7 +94,6 @@ export type FindMarksOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canListMarks(principal)),
@@ -113,7 +111,7 @@ const findManyProcedure = procedure
           ),
         ]
 
-    const marks = await ctx.markService.findMany(ctx.handle, { ...filter, byGroupId }, page)
+    const marks = await ctx.markService.findMany(ctx.prisma, { ...filter, byGroupId }, page)
 
     return {
       items: marks,

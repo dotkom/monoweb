@@ -79,7 +79,6 @@ const findWorkspaceUserProcedure = procedure
   )
   .output(WorkspaceUserSchema.nullable())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canFindWorkspaceUser(principal, input.userId, hasCustomKey(input.customKey))),
@@ -89,7 +88,7 @@ const findWorkspaceUserProcedure = procedure
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.findWorkspaceUser(ctx.handle, input.userId, input.customKey)
+    return await workspaceService.findWorkspaceUser(ctx.prisma, input.userId, input.customKey)
   })
 
 export type LinkWorkspaceUserInput = inferProcedureInput<typeof linkWorkspaceUserProcedure>
@@ -218,7 +217,6 @@ const findWorkspaceGroupProcedure = procedure
   )
   .output(WorkspaceGroupSchema.nullable())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canFindWorkspaceGroup(principal, input.groupSlug, hasCustomKey(input.customKey))),
@@ -228,7 +226,7 @@ const findWorkspaceGroupProcedure = procedure
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.findWorkspaceGroup(ctx.handle, input.groupSlug, input.customKey)
+    return await workspaceService.findWorkspaceGroup(ctx.prisma, input.groupSlug, input.customKey)
   })
 
 export type SynchronizeWorkspaceGroupInput = inferProcedureInput<typeof synchronizeWorkspaceGroupProcedure>
@@ -267,12 +265,11 @@ const getMembersForWorkspaceGroupProcedure = procedure
   .output(WorkspaceMemberLinkSchema.array())
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal, input) => canGetWorkspaceGroupMembers(principal, input.groupSlug))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.getMembersForGroup(ctx.handle, input.groupSlug)
+    return await workspaceService.getMembersForGroup(ctx.prisma, input.groupSlug)
   })
 
 export type GetGroupsForWorkspaceUserInput = inferProcedureInput<typeof getGroupsForUserWorkspaceProcedure>
@@ -286,12 +283,11 @@ const getGroupsForUserWorkspaceProcedure = procedure
   .output(WorkspaceGroupLinkSchema.array())
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal, input) => canGetWorkspaceGroupsForUser(principal, input.userId))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const workspaceService = ctx.workspaceService
     invariant(workspaceService, "Workspace service is not available")
 
-    return await workspaceService.getWorkspaceGroupsForWorkspaceUser(ctx.handle, input.userId)
+    return await workspaceService.getWorkspaceGroupsForWorkspaceUser(ctx.prisma, input.userId)
   })
 
 export const workspaceRouter = t.router({

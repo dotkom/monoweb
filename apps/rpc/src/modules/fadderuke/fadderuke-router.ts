@@ -11,27 +11,22 @@ export type FindFadderukeByYearOutput = inferProcedureOutput<typeof findByYearPr
 const findByYearProcedure = procedure
   .input(z.int())
   .output(FadderukeSchema.nullable())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.fadderukeService.findByYear(ctx.handle, input)
+    return ctx.fadderukeService.findByYear(ctx.prisma, input)
   })
 
 export type FindManyFadderukerOutput = inferProcedureOutput<typeof findManyProcedure>
-const findManyProcedure = procedure
-  .output(FadderukeSchema.array())
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return ctx.fadderukeService.findMany(ctx.handle)
-  })
+const findManyProcedure = procedure.output(FadderukeSchema.array()).query(async ({ ctx }) => {
+  return ctx.fadderukeService.findMany(ctx.prisma)
+})
 
 export type GetFadderukeByIdInput = inferProcedureInput<typeof getByIdProcedure>
 export type GetFadderukeByIdOutput = inferProcedureOutput<typeof getByIdProcedure>
 const getByIdProcedure = procedure
   .input(FadderukeSchema.shape.id)
   .output(FadderukeSchema)
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.fadderukeService.getById(ctx.handle, input)
+    return ctx.fadderukeService.getById(ctx.prisma, input)
   })
 
 export type CreateFadderukeInput = inferProcedureInput<typeof createProcedure>

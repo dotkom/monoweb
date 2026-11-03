@@ -63,8 +63,13 @@ describe("authenticated event visibility", () => {
     })
 
     expect(findEventSummaries).toHaveBeenCalledWith(
-      transactionHandle,
-      expect.objectContaining({ excludingVisibility: ["COMMITTEE_ONLY", "AUTHENTICATED"] }),
+      context.prisma,
+      expect.objectContaining({
+        byId: [],
+        byStatus: ["PUBLIC"],
+        excludingVisibility: ["COMMITTEE_ONLY", "AUTHENTICATED"],
+        orderBy: "asc",
+      }),
       { take: 20 }
     )
   })
@@ -88,8 +93,13 @@ describe("authenticated event visibility", () => {
     })
 
     expect(findEventSummaries).toHaveBeenCalledWith(
-      transactionHandle,
-      expect.objectContaining({ excludingVisibility: ["COMMITTEE_ONLY"] }),
+      context.prisma,
+      expect.objectContaining({
+        byId: [],
+        byStatus: ["PUBLIC"],
+        excludingVisibility: ["COMMITTEE_ONLY"],
+        orderBy: "asc",
+      }),
       { take: 20 }
     )
   })

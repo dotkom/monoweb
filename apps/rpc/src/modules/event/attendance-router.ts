@@ -263,10 +263,9 @@ export type GetSelectionsResultsOutput = inferProcedureOutput<typeof getSelectio
 const getSelectionsResultsProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.prisma, input.attendanceId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.prisma, attendance.id)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
@@ -299,14 +298,13 @@ const getRegistrationAvailabilityProcedure = procedure
   )
   .output(RegistrationAvailabilityViewSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const userId = ctx.principal.subject
-    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.attendanceId)
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.prisma, input.attendanceId)
     const attendee = attendance.attendees.find((attendee) => attendee.userId === userId)
 
     if (attendee !== undefined) {
-      const chargeScheduleDate = await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
+      const chargeScheduleDate = await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.prisma, attendee.id)
 
       return RegistrationAvailabilityViewSchema.parse(
         buildDeregistrationAvailabilityView(userId, attendee, attendance, chargeScheduleDate)
@@ -314,8 +312,8 @@ const getRegistrationAvailabilityProcedure = procedure
     }
 
     const [punishment, result] = await Promise.all([
-      ctx.personalMarkService.findPunishmentByUserId(ctx.handle, userId),
-      ctx.attendanceService.getRegistrationAvailability(ctx.handle, input.attendanceId, null, userId, {
+      ctx.personalMarkService.findPunishmentByUserId(ctx.prisma, userId),
+      ctx.attendanceService.getRegistrationAvailability(ctx.prisma, input.attendanceId, null, userId, {
         ignoreRegistrationWindow: false,
         immediateReservation: false,
         immediatePayment: true,
@@ -378,7 +376,6 @@ export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeP
 export type OnRegisterChangeOutput = inferProcedureOutput<typeof onRegisterChangeProcedure>
 const onRegisterChangeProcedure = procedureTraceErrorsOnly
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
-  .use(withDatabaseTransaction())
   .subscription(async function* ({ input, ctx, signal }) {
     for await (const [data] of on(ctx.eventEmitter, "attendance:register-change", { signal })) {
       const registerChangeEvent = RegisterChangeEventSchema.parse(data)
@@ -663,19 +660,18 @@ export type GetAttendanceOutput = inferProcedureOutput<typeof getAttendanceProce
 const getAttendanceProcedure = procedure
   .input(z.object({ id: AttendanceSchema.shape.id }))
   .output(AttendanceViewSchema)
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.prisma, input.id)
+
     return buildAttendanceView(attendance, ctx.principal?.subject ?? null)
   })
 
 const getAttendanceForAdminProcedure = procedure
   .input(z.object({ id: AttendanceSchema.shape.id }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const attendance = await ctx.attendanceService.getAttendanceById(ctx.handle, input.id)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
+    const attendance = await ctx.attendanceService.getAttendanceById(ctx.prisma, input.id)
+    const event = await ctx.eventService.getByAttendanceId(ctx.prisma, attendance.id)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -718,10 +714,9 @@ const findChargeAttendeeScheduleDateProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .output(z.date().nullable())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.prisma, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.prisma, attendee.attendanceId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -729,7 +724,7 @@ const findChargeAttendeeScheduleDateProcedure = procedure
       input
     )
 
-    return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.handle, attendee.id)
+    return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.prisma, attendee.id)
   })
 
 export type NotifyAttendeesInput = inferProcedureInput<typeof notifyAttendeesProcedure>
@@ -747,9 +742,8 @@ const notifyAttendeesProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getEventById(ctx.handle, input.eventId)
+    const event = await ctx.eventService.getEventById(ctx.prisma, input.eventId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -761,7 +755,7 @@ const notifyAttendeesProcedure = procedure
       throw new FailedPreconditionError("Event does not have attendance")
     }
 
-    await ctx.attendanceService.notifyAttendees(ctx.handle, event.attendanceId, input.message, input.title)
+    await ctx.attendanceService.notifyAttendees(ctx.prisma, event.attendanceId, input.message, input.title)
   })
 
 export const attendanceRouter = t.router({

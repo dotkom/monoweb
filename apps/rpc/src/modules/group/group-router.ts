@@ -43,38 +43,33 @@ export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
 export type AllGroupsOutput = inferProcedureOutput<typeof allGroupsProcedure>
 const allGroupsProcedure = procedure
   .input(z.object({ filter: z.object({ includeEmailGroups: z.boolean().optional() }).optional() }).optional())
-  .use(withDatabaseTransaction())
   .query(async ({ ctx, input }) =>
-    ctx.groupService.findMany(ctx.handle, { includeEmailGroups: input?.filter?.includeEmailGroups ?? false })
+    ctx.groupService.findMany(ctx.prisma, { includeEmailGroups: input?.filter?.includeEmailGroups ?? false })
   )
 
 export type AllGroupsByTypeInput = inferProcedureInput<typeof allByTypeProcedure>
 export type AllGroupsByTypeOutput = inferProcedureOutput<typeof allByTypeProcedure>
 const allByTypeProcedure = procedure
   .input(GroupSchema.shape.type)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.findManyByType(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.groupService.findManyByType(ctx.prisma, input))
 
 export type FindGroupInput = inferProcedureInput<typeof findGroupProcedure>
 export type FindGroupOutput = inferProcedureOutput<typeof findGroupProcedure>
 const findGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.findBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.groupService.findBySlug(ctx.prisma, input))
 
 export type GetGroupInput = inferProcedureInput<typeof getGroupProcedure>
 export type GetGroupOutput = inferProcedureOutput<typeof getGroupProcedure>
 const getGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.groupService.getBySlug(ctx.prisma, input))
 
 export type GetByTypeInput = inferProcedureInput<typeof getByTypeProcedure>
 export type GetByTypeOutput = inferProcedureOutput<typeof getByTypeProcedure>
 const getByTypeProcedure = procedure
   .input(z.object({ groupId: GroupSchema.shape.slug, type: GroupSchema.shape.type }))
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getBySlugAndType(ctx.handle, input.groupId, input.type))
+  .query(async ({ input, ctx }) => ctx.groupService.getBySlugAndType(ctx.prisma, input.groupId, input.type))
 
 export type UpdateGroupInput = inferProcedureInput<typeof updateGroupProcedure>
 export type UpdateGroupOutput = inferProcedureOutput<typeof updateGroupProcedure>
@@ -127,16 +122,13 @@ const deleteGroupProcedure = procedure
 
 export type GetMembersInput = inferProcedureInput<typeof getMembersProcedure>
 export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
-const getMembersProcedure = procedure
-  .input(GroupSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
-    if (!ctx.principal && input !== CommitteeGroupSlug.HOVEDSTYRET) {
-      return ctx.groupService.findLeadersBySlug(ctx.handle, input)
-    }
-    return ctx.groupService.findMembersBySlug(ctx.handle, input)
-  })
+const getMembersProcedure = procedure.input(GroupSchema.shape.slug).query(async ({ input, ctx }) => {
+  // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
+  if (!ctx.principal && input !== CommitteeGroupSlug.HOVEDSTYRET) {
+    return ctx.groupService.findLeadersBySlug(ctx.prisma, input)
+  }
+  return ctx.groupService.findMembersBySlug(ctx.prisma, input)
+})
 
 export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
 export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>
@@ -147,8 +139,7 @@ const getMemberProcedure = procedure
       userId: GroupMembershipSchema.shape.userId,
     })
   )
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.handle, input.groupId, input.userId))
+  .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.prisma, input.groupId, input.userId))
 
 export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
 export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>
@@ -159,9 +150,8 @@ const allByMemberProcedure = procedure
       filter: GroupByMemberFilterSchema.optional(),
     })
   )
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) =>
-    ctx.groupService.findManyByMemberUserId(ctx.handle, input.userId, {
+    ctx.groupService.findManyByMemberUserId(ctx.prisma, input.userId, {
       includeEmailGroups: input.filter?.includeEmailGroups ?? false,
       includeEmailOnlyMemberships: input.filter?.includeEmailOnlyMemberships ?? false,
     })
@@ -172,8 +162,7 @@ export type AllMembershipsByUserIdOutput = inferProcedureOutput<typeof allMember
 const allMembershipsByUserIdProcedure = procedure
   .input(GroupMembershipSchema.shape.userId)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.groupService.allMembershipsByUserId(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.groupService.allMembershipsByUserId(ctx.prisma, input))
 
 export type StartMembershipInput = inferProcedureInput<typeof startMembershipProcedure>
 export type StartMembershipOutput = inferProcedureOutput<typeof startMembershipProcedure>

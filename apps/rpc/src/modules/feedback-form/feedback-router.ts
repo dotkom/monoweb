@@ -26,9 +26,8 @@ export type GetFeedbackEligibilityOutput = inferProcedureOutput<typeof getFeedba
 const getFeedbackEligibilityProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.feedbackFormService.getFeedbackEligibility(ctx.handle, input, ctx.principal.subject)
+    return ctx.feedbackFormService.getFeedbackEligibility(ctx.prisma, input, ctx.principal.subject)
   })
 
 export type GetFeedbackFormStaffPreviewInput = inferProcedureInput<typeof getFeedbackFormStaffPreviewProcedure>
@@ -36,10 +35,9 @@ export type GetFeedbackFormStaffPreviewOutput = inferProcedureOutput<typeof getF
 const getFeedbackFormStaffPreviewProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
-    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.prisma, input)
+    const event = await ctx.eventService.getEventById(ctx.prisma, feedbackForm.eventId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -183,39 +181,34 @@ export type GetFormByIdInput = inferProcedureInput<typeof getFormByIdProcedure>
 export type GetFormByIdOutput = inferProcedureOutput<typeof getFormByIdProcedure>
 const getFormByIdProcedure = procedure
   .input(FeedbackFormIdSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.feedbackFormService.getById(ctx.prisma, input))
 
 export type FindFormByEventIdInput = inferProcedureInput<typeof findFormByEventIdProcedure>
 export type FindFormByEventIdOutput = inferProcedureOutput<typeof findFormByEventIdProcedure>
 const findFormByEventIdProcedure = procedure
   .input(EventSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(ctx.prisma, input))
 
 export type GetFormByEventIdInput = inferProcedureInput<typeof getFormByEventIdProcedure>
 export type GetFormByEventIdOutput = inferProcedureOutput<typeof getFormByEventIdProcedure>
 const getFormByEventIdProcedure = procedure
   .input(EventSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormService.getByEventId(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.feedbackFormService.getByEventId(ctx.prisma, input))
 
 export type GetPublicFormInput = inferProcedureInput<typeof getPublicFormProcedure>
 export type GetPublicFormOutput = inferProcedureOutput<typeof getPublicFormProcedure>
 const getPublicFormProcedure = procedure
   .input(FeedbackPublicResultsTokenSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormService.getPublicForm(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.feedbackFormService.getPublicForm(ctx.prisma, input))
 
 export type GetPublicResultsTokenInput = inferProcedureInput<typeof getPublicResultsTokenProcedure>
 export type GetPublicResultsTokenOutput = inferProcedureOutput<typeof getPublicResultsTokenProcedure>
 const getPublicResultsTokenProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
-    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.prisma, input)
+    const event = await ctx.eventService.getEventById(ctx.prisma, feedbackForm.eventId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -223,7 +216,7 @@ const getPublicResultsTokenProcedure = procedure
       input
     )
 
-    return ctx.feedbackFormService.getPublicResultsToken(ctx.handle, input)
+    return ctx.feedbackFormService.getPublicResultsToken(ctx.prisma, input)
   })
 
 export type CreateAnswerInput = inferProcedureInput<typeof createAnswerProcedure>
@@ -280,10 +273,9 @@ const findAnswerByAttendeeProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input.formId)
-    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.prisma, input.formId)
+    const event = await ctx.eventService.getEventById(ctx.prisma, feedbackForm.eventId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -291,7 +283,7 @@ const findAnswerByAttendeeProcedure = procedure
       input
     )
 
-    return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
+    return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.prisma, input.formId, input.attendeeId)
   })
 
 export type FindOwnAnswerByAttendeeInput = inferProcedureInput<typeof findOwnAnswerByAttendeeProcedure>
@@ -304,16 +296,15 @@ const findOwnAnswerByAttendeeProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.prisma, input.attendeeId)
 
     await ctx.addAuthorizationGuard(
       permitIf((principal) => canViewOwnFeedbackAnswer(principal, attendee.userId)),
       input
     )
 
-    return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.handle, input.formId, input.attendeeId)
+    return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.prisma, input.formId, input.attendeeId)
   })
 
 export type GetAllAnswersInput = inferProcedureInput<typeof getAllAnswersProcedure>
@@ -321,10 +312,9 @@ export type GetAllAnswersOutput = inferProcedureOutput<typeof getAllAnswersProce
 const getAllAnswersProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const feedbackForm = await ctx.feedbackFormService.getById(ctx.handle, input)
-    const event = await ctx.eventService.getEventById(ctx.handle, feedbackForm.eventId)
+    const feedbackForm = await ctx.feedbackFormService.getById(ctx.prisma, input)
+    const event = await ctx.eventService.getEventById(ctx.prisma, feedbackForm.eventId)
     const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
     await ctx.addAuthorizationGuard(
@@ -332,15 +322,14 @@ const getAllAnswersProcedure = procedure
       input
     )
 
-    return ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.handle, input)
+    return ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.prisma, input)
   })
 
 export type GetPublicAnswersInput = inferProcedureInput<typeof getPublicAnswersProcedure>
 export type GetPublicAnswersOutput = inferProcedureOutput<typeof getPublicAnswersProcedure>
 const getPublicAnswersProcedure = procedure
   .input(FeedbackPublicResultsTokenSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.findManyByPublicResultsToken(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.findManyByPublicResultsToken(ctx.prisma, input))
 
 export type DeleteQuestionAnswerInput = inferProcedureInput<typeof deleteQuestionAnswerProcedure>
 export type DeleteQuestionAnswerOutput = inferProcedureOutput<typeof deleteQuestionAnswerProcedure>

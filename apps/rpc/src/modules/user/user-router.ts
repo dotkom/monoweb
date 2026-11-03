@@ -29,9 +29,8 @@ const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
   .use(withAuthentication())
   .use(withAuthorization(permitIf((principal) => canListUsers(principal))))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.userService.findUsers(ctx.handle, { ...input.filter }, input)
+    const items = await ctx.userService.findUsers(ctx.prisma, { ...input.filter }, input)
 
     return {
       items,
@@ -44,9 +43,8 @@ export type GetUserOutput = inferProcedureOutput<typeof getUserProcedure>
 const getUserProcedure = procedure
   .input(UserSchema.shape.id)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.getById(ctx.handle, input)
+    return ctx.userService.getById(ctx.prisma, input)
   })
 
 export type GetUserByUsernameInput = inferProcedureInput<typeof getUserByUsernameProcedure>
@@ -54,9 +52,8 @@ export type GetUserByUsernameOutput = inferProcedureOutput<typeof getUserByUsern
 const getUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.getByUsername(ctx.handle, input)
+    return ctx.userService.getByUsername(ctx.prisma, input)
   })
 
 export type FindUserByUsernameInput = inferProcedureInput<typeof findUserByUsernameProcedure>
@@ -64,9 +61,8 @@ export type FindUserByUsernameOutput = inferProcedureOutput<typeof findUserByUse
 const findUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    return ctx.userService.findByUsername(ctx.handle, input)
+    return ctx.userService.findByUsername(ctx.prisma, input)
   })
 
 export type CreateUserFileUploadInput = inferProcedureInput<typeof createUserFileUploadProcedure>
@@ -81,7 +77,6 @@ const createUserFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .mutation(async ({ input, ctx }) => {
     const userId = input?.userId ?? ctx.principal.subject
 
@@ -91,7 +86,7 @@ const createUserFileUploadProcedure = procedure
     )
 
     return await ctx.userService.createFileUpload(
-      ctx.handle,
+      ctx.prisma,
       input.filename,
       input.contentType,
       userId,
@@ -173,20 +168,18 @@ const deleteUserMembershipProcedure = procedure
 
 export type GetMeInput = inferProcedureInput<typeof getMeProcedure>
 export type GetMeOutput = inferProcedureOutput<typeof getMeProcedure>
-const getMeProcedure = procedure
-  .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => {
-    return ctx.userService.getById(ctx.handle, ctx.principal.subject)
-  })
+const getMeProcedure = procedure.use(withAuthentication()).query(async ({ ctx }) => {
+  return ctx.userService.getById(ctx.prisma, ctx.principal.subject)
+})
 
 export type FindMeInput = inferProcedureInput<typeof findMeProcedure>
 export type FindMeOutput = inferProcedureOutput<typeof findMeProcedure>
-const findMeProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
+const findMeProcedure = procedure.query(async ({ ctx }) => {
   if (!ctx?.principal?.subject) {
     return null
   }
-  return ctx.userService.findById(ctx.handle, ctx.principal.subject)
+
+  return ctx.userService.findById(ctx.prisma, ctx.principal.subject)
 })
 
 export type UpdateUserInput = inferProcedureInput<typeof updateUserProcedure>
@@ -256,6 +249,7 @@ const isStaffProcedure = procedure.query(async ({ ctx }) => {
   if (principal === null) {
     return false
   }
+
   return ctx.authorizationService.isCommitteeMember(principal.affiliations)
 })
 
@@ -266,6 +260,7 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   if (principal === null) {
     return false
   }
+
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
@@ -406,9 +401,8 @@ export type HasDuplicateUserOutput = inferProcedureOutput<typeof hasDuplicateUse
 const hasDuplicateUserProcedure = procedure
   .output(z.string().nullable())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ ctx }) => {
-    return ctx.userService.hasDuplicateUser(ctx.handle, ctx.principal.subject)
+    return ctx.userService.hasDuplicateUser(ctx.prisma, ctx.principal.subject)
   })
 
 export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
@@ -416,7 +410,6 @@ export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0Conn
 const getAuth0ConnectionsProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }).optional())
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const userId = input?.userId ?? ctx.principal.subject
 
