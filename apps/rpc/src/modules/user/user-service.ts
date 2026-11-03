@@ -3,6 +3,7 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import {
+  createAbsoluteUserProfileUrl,
   createS3PresignedPost,
   formatEmailSubject,
   slugify,
@@ -169,7 +170,7 @@ export interface UserService {
     createdByUserId: UserId
   ): Promise<PresignedPost>
 
-  sendBugReportEmail(data: BugReportFormResult): Promise<void>
+  sendBugReportEmail(handle: DBHandle, userId: UserId, data: BugReportFormResult): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -182,7 +183,8 @@ export function getUserService(
   membershipService: MembershipService,
   client: S3Client,
   bucket: string,
-  emailService: EmailService
+  emailService: EmailService,
+  webOrigin: string
 ): UserService {
   const logger = getLogger("user-service")
 
@@ -1052,19 +1054,30 @@ export function getUserService(
       })
     },
 
-    async sendBugReportEmail(data) {
+    async sendBugReportEmail(handle, userId, data) {
+      const user = await this.getById(handle, userId)
+
+      if (user.email === null) {
+        throw new InvalidArgumentError(
+          "Du må ha en e-postadresse for å rapportere en feil. Gå til innstillinger/bruker eller kontakt Dotkom."
+        )
+      }
+
       await emailService.send(
         DEFAULT_EMAIL_SOURCE,
-        data.email === undefined || data.email === "" ? [] : [data.email],
-        ["dotkom@online.ntnu.no"],
+        [user.email, "dotkom@online.ntnu.no"],
+        [user.email, "dotkom@online.ntnu.no"],
         [],
         [],
-        formatEmailSubject(`Problem rapportert: ${data.title}`),
+        formatEmailSubject("Takk for at du meldte fra!"),
         emails.BUG_REPORT,
         {
           title: data.title,
-          email: data.email,
+          firstName: user.name?.trim().split(/\s+/)[0] ?? null,
+          name: user.name,
+          profileUrl: createAbsoluteUserProfileUrl(webOrigin, user.username),
           body: data.body,
+          userAgent: data.userAgent,
         }
       )
     },
