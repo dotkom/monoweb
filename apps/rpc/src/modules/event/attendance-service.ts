@@ -127,6 +127,10 @@ type EventRegistrationOptions = {
 
 type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
+  automaticDeregistrationReason?: {
+    title: string
+    details: string | null
+  }
 }
 
 export type { RegistrationRejectionCause, RegistrationUserCause, RegistrationWindowCause } from "./attendance"
@@ -381,11 +385,7 @@ export function getAttendanceService(
     )
   }
 
-  function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
-    if (attendee.user.email === null) {
-      return
-    }
-
+  function getOrganizerEmails(event: Event): string[] {
     const organizerEmails = event.hostingGroups
       .map((group) => group.email)
       .filter((email): email is string => email !== null && z.email().safeParse(email).success)
@@ -393,6 +393,16 @@ export function getAttendanceService(
     if (organizerEmails.length === 0) {
       organizerEmails.push("dotkom@online.ntnu.no")
     }
+
+    return organizerEmails
+  }
+
+  function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
+    if (attendee.user.email === null) {
+      return
+    }
+
+    const organizerEmails = getOrganizerEmails(event)
 
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
@@ -409,6 +419,36 @@ export function getAttendanceService(
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
+      }
+    )
+  }
+
+  function sendEventAutomaticDeregistrationEmail(
+    event: Event,
+    attendee: Attendee,
+    reason: { title: string; details: string | null }
+  ) {
+    if (attendee.user.email === null) {
+      return
+    }
+
+    const organizerEmails = getOrganizerEmails(event)
+
+    void emailService.send(
+      DEFAULT_EMAIL_SOURCE,
+      getReplyToAddresses(organizerEmails),
+      [attendee.user.email],
+      [],
+      [],
+      formatEmailSubject(`Du har blitt avmeldt ${event.title}`),
+      emails.EVENT_AUTOMATIC_DEREGISTRATION,
+      {
+        eventName: event.title,
+        eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
+        title: reason.title,
+        details: reason.details,
+        organizerEmail: organizerEmails[0] ?? DEFAULT_EMAIL_SOURCE,
       }
     )
   }
@@ -1023,6 +1063,10 @@ export function getAttendanceService(
         options
       )
 
+      if (options.automaticDeregistrationReason !== undefined) {
+        sendEventAutomaticDeregistrationEmail(event, attendee, options.automaticDeregistrationReason)
+      }
+
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
 
@@ -1525,6 +1569,10 @@ export function getAttendanceService(
         await this.deregisterAttendee(handle, attendeeId, {
           // TODO: Maybe this should be false?
           ignoreDeregistrationWindow: true,
+          automaticDeregistrationReason: {
+            title: "Avmeldt på grunn av manglende betaling",
+            details: "Betalingen for arrangementet ble ikke gjennomført innen fristen.",
+          },
         })
       } else {
         await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {

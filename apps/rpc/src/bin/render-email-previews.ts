@@ -70,6 +70,12 @@ const sampleData = {
     ...eventData,
     deregistrationDeadline: "2026-11-10T12:00:00Z",
   },
+  EVENT_AUTOMATIC_DEREGISTRATION: {
+    ...eventData,
+    title: "Avmeldt på grunn av manglende betaling",
+    details: "Betalingen for arrangementet ble ikke gjennomført innen fristen.",
+    organizerEmail: "bedkom@online.ntnu.no",
+  },
   EVENT_MESSAGE: {
     ...eventData,
     message: "<p>Velkommen til bedriftspresentasjonen!</p><p>Vi møtes ved hovedinngangen klokken 17.00.</p>",
