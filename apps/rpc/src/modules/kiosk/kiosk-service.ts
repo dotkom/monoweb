@@ -1,5 +1,5 @@
 import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-fns"
-import type { ProductsReturn, ProductStock, StockReturn } from "./zettle"
+import type { ProductsReturn, ProductStock, StockReturn } from "./kiosk"
 import { InternalServerError } from "../../error"
 
 class TTLCache<T> {
@@ -131,11 +131,11 @@ export function aggregateProductsWithStock(products: ProductsReturn, stock: Stoc
   }))
 }
 
-export interface ZettleService {
+export interface KioskService {
   getProductStock(): Promise<ProductStock[]>
 }
 
-export function getZettleService(): ZettleService {
+export function getKioskService(): KioskService {
   const tokenCache = new TTLCache<string>({
     ttl: secondsToMilliseconds(7150), // access token expiry is always 7200 seconds
     fetchfn: async () => {
