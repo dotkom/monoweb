@@ -89,7 +89,9 @@ const getProducts = async (token: string): Promise<ProductsReturn> => {
   })
 
   if (!res.ok) {
-    logger.error(`zettle products fetch (products.izettle.com/organizations/{orgId}/products) failed with error: ${await res.json()}`)
+    logger.error(
+      `zettle products fetch (products.izettle.com/organizations/{orgId}/products) failed with error: ${await res.json()}`
+    )
     throw new InternalServerError("Product fetch failed")
   }
 
@@ -106,7 +108,9 @@ const getStock = async (token: string): Promise<StockReturn> => {
   })
 
   if (!res.ok) {
-    logger.error(`zettle inventory fetch (inventory.izettle.com/v3/stock/{inventoryId}) failed with error: ${await res.json()}`)
+    logger.error(
+      `zettle inventory fetch (inventory.izettle.com/v3/stock/{inventoryId}) failed with error: ${await res.json()}`
+    )
     throw new InternalServerError("Stock fetch failed")
   }
 
