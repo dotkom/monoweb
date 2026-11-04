@@ -1,5 +1,5 @@
 import { Text, Title } from "@dotkomonline/ui"
-import { KontoretMap } from "../components/KontoretMap"
+import { KontoretMap } from "../components/A4Map"
 import { getKontoretRooms, CAMPUS_ID, MAP_ZOOM } from "./rooms"
 
 const OfficePage = async () => {

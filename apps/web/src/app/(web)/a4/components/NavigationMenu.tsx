@@ -1,23 +1,18 @@
 "use client"
 
-import { IconNotes, IconPizza, IconSofa } from "@tabler/icons-react"
+import { IconMapPin2, IconSofa } from "@tabler/icons-react"
 import { MenuItem } from "./MenuItem"
 
 export const navigationItems = [
   {
-    slug: "/kontoret/om-kontoret",
+    slug: "/a4/om-a4",
+    icon: IconMapPin2,
+    title: "Om A4",
+  },
+  {
+    slug: "/a4/kontoret",
     icon: IconSofa,
     title: "Kontoret",
-  },
-  {
-    slug: "/kontoret/regler",
-    icon: IconNotes,
-    title: "Regler",
-  },
-  {
-    slug: "/kontoret/kiosk",
-    icon: IconPizza,
-    title: "Kiosken",
   },
 ]
 
