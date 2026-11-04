@@ -144,7 +144,7 @@ export function getZettleService(): ZettleService {
   })
 
   const productCache = new TTLCache<ProductStock[]>({
-    ttl: secondsToMilliseconds(5)
+    ttl: secondsToMilliseconds(5),
   })
 
   const getAccessToken = async () => {
