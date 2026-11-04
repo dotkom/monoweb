@@ -1,6 +1,9 @@
 import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-fns"
 import type { ProductsReturn, ProductStock, StockReturn } from "./kiosk"
 import { InternalServerError } from "../../error"
+import { getLogger } from "@dotkomonline/logger"
+
+const logger = getLogger("kiosk-service")
 
 class TTLCache<T> {
   value: T | null = null
@@ -54,7 +57,7 @@ const fetchAccessToken = async () => {
   const zettleSecretKey = process.env.ZETTLE_API_SECRET_KEY
 
   if (zettleClientId === undefined || zettleSecretKey === undefined) {
-    // LOG: ("Missing zettle secrets")
+    logger.error("Missing zettle secrets")
     return "" // !"" will evaluate to true, throwing later if getAccessToken fails to fetch
   }
 
@@ -69,7 +72,7 @@ const fetchAccessToken = async () => {
   })
 
   if (!res.ok) {
-    // Log something I dunno
+    logger.error(`zettle auth token fetch failed with error: ${await res.json()}`)
     return ""
   }
 
@@ -86,7 +89,9 @@ const getProducts = async (token: string): Promise<ProductsReturn> => {
   })
 
   if (!res.ok) {
-    // Log something
+    logger.error(
+      `zettle products fetch (products.izettle.com/organizations/{orgId}/products) failed with error: ${await res.json()}`
+    )
     throw new InternalServerError("Product fetch failed")
   }
 
@@ -103,7 +108,9 @@ const getStock = async (token: string): Promise<StockReturn> => {
   })
 
   if (!res.ok) {
-    // Log something
+    logger.error(
+      `zettle inventory fetch (inventory.izettle.com/v3/stock/{inventoryId}) failed with error: ${await res.json()}`
+    )
     throw new InternalServerError("Stock fetch failed")
   }
 
