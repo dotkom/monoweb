@@ -1,6 +1,6 @@
 import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-fns"
 import type { ProductsReturn, ProductStock, StockReturn } from "./zettle"
-import { InternalServerError } from "src/error"
+import { InternalServerError } from "../../error"
 
 class TTLCache<T> {
   value: T | null = null
