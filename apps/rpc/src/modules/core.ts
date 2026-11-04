@@ -67,7 +67,7 @@ import { getUserMergingService } from "./user/user-merging-service"
 import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-import { getZettleService } from "./zettle/zettle-service"
+import { getKioskService } from "./kiosk/kiosk-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -323,7 +323,7 @@ export async function createServiceLayer(
       : null
 
   const authorizationService = getAuthorizationService()
-  const zettleService = getZettleService()
+  const kioskService = getKioskService()
 
   return {
     eventEmitter,
@@ -354,7 +354,7 @@ export async function createServiceLayer(
     notificationService,
     recurringTaskService,
     workspaceService,
-    zettleService,
+    kioskService,
     sidequestService,
 
     rpcJwtService: clients.rpcJwtService,
