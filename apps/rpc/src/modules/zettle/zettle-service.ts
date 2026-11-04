@@ -159,11 +159,10 @@ export function getZettleService(): ZettleService {
 
   return {
     getProductStock: async () => {
-      const token = await getAccessToken()
-
       let productList = productCache.get()
 
       if (!productList) {
+        const token = await getAccessToken()
         const products = await getProducts(token)
         const stock = await getStock(token)
 
