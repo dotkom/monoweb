@@ -1,0 +1,159 @@
+"use client"
+
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { ResourceDetailError } from "@admin/components/ResourceDetailLayout/ResourceDetailError"
+import {
+  ResourceDetailLayout,
+  type ResourceDetailNavItem,
+} from "@admin/components/ResourceDetailLayout/ResourceDetailLayout"
+import { breadcrumbPath, useBreadcrumbLabel } from "@admin/lib/breadcrumb-context"
+import { env } from "@admin/lib/env"
+import { useTRPC } from "@admin/lib/trpc-client"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { findActiveMembership, getMembershipTypeName } from "@dotkomonline/rpc/user"
+import { canEditUserProfile, canManageUserMemberships } from "@dotkomonline/rpc/user-permissions"
+import { createAbsoluteUserProfileUrl, getStudyGrade } from "@dotkomonline/utils"
+import {
+  IconBuildingWarehouse,
+  IconCircles,
+  IconClipboardList,
+  IconExclamationMark,
+  IconSitemap,
+  IconWheelchair,
+} from "@tabler/icons-react"
+import { useQuery } from "@tanstack/react-query"
+import { usePathname } from "next/navigation"
+import { type PropsWithChildren, use, useMemo } from "react"
+import { UserDetailsContext } from "./provider"
+
+export default function UserDetailsLayout({
+  children,
+  params,
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
+  const trpc = useTRPC()
+  const id = decodeURIComponent(use(params).id)
+  const pathname = usePathname()
+  const authorization = useAuthorization()
+  const canManageMemberships = canManageUserMemberships(authorization)
+
+  const { data: user, isLoading, isError, error } = useQuery(trpc.user.get.queryOptions(id))
+
+  useBreadcrumbLabel(breadcrumbPath("brukere", id), user ? (user.name ?? user.email ?? "Ukjent bruker") : null)
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "medlemskap"), "Medlemskap")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "grupper"), "Grupper")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "arrangementer"), "Arrangementer")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "prikker-og-suspensjoner"), "Prikker & Suspensjoner")
+  useBreadcrumbLabel(breadcrumbPath("brukere", id, "hendelseslogg"), "Hendelseslogg")
+
+  const basePath = `/admin/brukere/${id}`
+
+  const navItems: ResourceDetailNavItem[] = useMemo(() => {
+    const items: ResourceDetailNavItem[] = [
+      {
+        href: basePath,
+        label: "Info",
+        icon: IconBuildingWarehouse,
+      },
+      {
+        href: `${basePath}/medlemskap`,
+        label: "Medlemskap",
+        icon: IconCircles,
+      },
+      {
+        href: `${basePath}/grupper`,
+        label: "Grupper",
+        icon: IconSitemap,
+      },
+      {
+        href: `${basePath}/arrangementer`,
+        label: "Arrangementer",
+        icon: IconWheelchair,
+      },
+      {
+        href: `${basePath}/prikker-og-suspensjoner`,
+        label: "Prikker & Suspensjoner",
+        icon: IconExclamationMark,
+      },
+    ]
+
+    // TODO: This and similar should use `navigation.ts`
+    if (canAccessAuditLog(authorization)) {
+      items.push({
+        href: `${basePath}/hendelseslogg`,
+        label: "Hendelseslogg",
+        icon: IconClipboardList,
+      })
+    }
+
+    return items
+  }, [authorization, basePath])
+
+  const readOnlyNotice = useMemo(() => {
+    if (!user) {
+      return undefined
+    }
+
+    const canEdit = canEditUserProfile(authorization, user.id)
+    const decodedPath = decodeURIComponent(pathname)
+    const isMedlemskapRoute =
+      decodedPath === `${basePath}/medlemskap` || decodedPath.startsWith(`${basePath}/medlemskap/`)
+
+    if (isMedlemskapRoute) {
+      if (!canManageMemberships) {
+        return {
+          title: "Du kan ikke redigere medlemskap.",
+          message: "Dette er fordi du ikke er administrator. Kontakt dotkom dersom du mener dette er en feil.",
+        }
+      }
+
+      return undefined
+    }
+
+    if (!canEdit) {
+      return {
+        title: "Du kan ikke redigere denne brukerprofilen.",
+        message: "Dette er fordi du kun kan redigere din egen profil.",
+      }
+    }
+
+    return undefined
+  }, [authorization, basePath, canManageMemberships, pathname, user])
+
+  if (isLoading) {
+    return null
+  }
+
+  if (isError || !user) {
+    return (
+      <ResourceDetailError
+        backHref="/admin/brukere"
+        title="Feil ved henting av bruker"
+        message={error?.message ?? (user === null ? `Bruker ${id} ble ikke funnet` : "Ukjent feil")}
+      />
+    )
+  }
+
+  const activeMembership = findActiveMembership(user)
+  const grade = activeMembership?.semester != null ? getStudyGrade(activeMembership.semester) : null
+  const membershipType = activeMembership ? getMembershipTypeName(activeMembership.type) : null
+
+  const description = grade != null && membershipType != null ? `${grade}. klasse (${membershipType})` : undefined
+
+  return (
+    <ResourceDetailLayout
+      title={user.name ?? user.email ?? user.id}
+      copyIds={[{ value: user.id }]}
+      description={description}
+      backHref="/admin/brukere"
+      navItems={navItems}
+      readOnlyNotice={readOnlyNotice}
+      viewInWebProps={{
+        label: "Se brukerprofil",
+        href: createAbsoluteUserProfileUrl(env.NEXT_PUBLIC_WEB_URL, user.username),
+        prefetch: false,
+      }}
+    >
+      <UserDetailsContext.Provider value={{ user }}>{children}</UserDetailsContext.Provider>
+    </ResourceDetailLayout>
+  )
+}

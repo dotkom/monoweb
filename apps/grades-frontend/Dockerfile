@@ -1,16 +1,17 @@
+# syntax=docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+
 FROM node:22-alpine@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b AS base
 
 # Next.js evaluates a lot of code at build-time for things like SSG and SSR. For this reason, we need some of the
 # runtime variables to be available at build-time.
 #
-# These build arguments loosely mirror the src/env.ts file
+# Only non-secret configuration uses build arguments. Credentials are mounted for the build command below.
 ARG NEXT_PUBLIC_ORIGIN
 ARG NEXT_PUBLIC_BACKEND_HOST
 ARG NEXT_PUBLIC_HOME_URL
 ARG BACKEND_HOST
 
 ARG SENTRY_DSN
-ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_RELEASE
 
 ARG DOPPLER_ENVIRONMENT
@@ -30,9 +31,6 @@ ENV NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
 ENV NEXT_PUBLIC_HOME_URL=${NEXT_PUBLIC_HOME_URL}
 ENV BACKEND_HOST=${BACKEND_HOST}
 
-# Allow Sentry to upload source maps and build artifacts during build.
-ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-
 # The following are public build-time variables that instrument and configure Sentry
 ENV SENTRY_DSN=${SENTRY_DSN}
 ENV NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
@@ -41,7 +39,9 @@ ENV NEXT_PUBLIC_SENTRY_RELEASE=${SENTRY_RELEASE}
 ENV DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
 ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
 
-RUN pnpm run --filter @dotkomonline/grades-frontend build
+# Allow Sentry to upload build artifacts without storing the token in image metadata or layers.
+RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+    pnpm run --filter @dotkomonline/grades-frontend build
 
 # Step 2: Only install the necessary dependencies for the production build of this application.
 FROM base AS installer

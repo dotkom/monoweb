@@ -1,6 +1,6 @@
 resource "auth0_tenant" "tenant" {
   allow_organization_name_in_authentication_api = false
-  allowed_logout_urls                           = ["https://online.ntnu.no","https://online.ntnu.no/*"]
+  allowed_logout_urls                           = ["https://online.ntnu.no", "https://online.ntnu.no/*"]
   default_audience                              = "https://online.ntnu.no"
   default_directory                             = null
   default_redirection_uri                       = "https://online.ntnu.no"
@@ -128,15 +128,15 @@ resource "auth0_connection" "feide" {
   show_as_button = null
   strategy       = "oauth2"
   options {
-    icon_url               = "https://online.ntnu.no/feide-symbol-black.svg"
-    allowed_audiences      = []
-    api_enable_users       = false
-    auth_params            = {}
-    authorization_endpoint = "https://auth.dataporten.no/oauth/authorization"
-    token_endpoint         = "https://auth.dataporten.no/oauth/token"
-    client_id              = var.FEIDE_CLIENT_ID
-    client_secret          = var.FEIDE_CLIENT_SECRET
-    scopes                 = ["email", "groups", "openid", "phone_number", "profile", "userid-feide"]
+    icon_url                 = "https://online.ntnu.no/feide-symbol-black.svg"
+    allowed_audiences        = []
+    api_enable_users         = false
+    auth_params              = {}
+    authorization_endpoint   = "https://auth.dataporten.no/oauth/authorization"
+    token_endpoint           = "https://auth.dataporten.no/oauth/token"
+    client_id                = var.FEIDE_CLIENT_ID
+    client_secret            = var.FEIDE_CLIENT_SECRET
+    scopes                   = ["email", "groups", "openid", "phone_number", "profile", "userid-feide"]
     set_user_root_attributes = "on_first_login"
     scripts = {
       fetchUserProfile = file("js/fetchUserProfile.js")
@@ -152,8 +152,8 @@ resource "auth0_client" "vengeful_vineyard_frontend" {
   ]
   app_type = "spa"
   allowed_logout_urls = {
-    "dev" = ["http://localhost:3000","http://localhost:3000/*"]
-    "prd" = ["https://vinstraff.no","https://vinstraff.no/*"]
+    "dev" = ["http://localhost:3000", "http://localhost:3000/*"]
+    "prd" = ["https://vinstraff.no", "https://vinstraff.no/*"]
   }[terraform.workspace]
   callbacks = {
     "dev" = [
@@ -208,6 +208,7 @@ locals {
     appkom-onlineapp     = data.auth0_client.appkom_events_app
     appkom-autobank      = data.auth0_client.appkom_autobank
     appkom-veldedighet   = data.auth0_client.appkom_veldedighet
+    ola-mastersal        = data.auth0_client.ola_mastersal
   }
 }
 
@@ -291,7 +292,8 @@ resource "auth0_connection_clients" "username_password_authentication" {
     auth0_client.appkom_opptak.client_id,
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
-    auth0_client.appkom_veldedighet.client_id
+    auth0_client.appkom_veldedighet.client_id,
+    auth0_client.ola_mastersal.client_id,
   ]
 }
 
@@ -306,6 +308,7 @@ resource "auth0_connection_clients" "feide" {
     auth0_client.appkom_events_app.client_id,
     auth0_client.appkom_autobank.client_id,
     auth0_client.appkom_veldedighet.client_id,
+    auth0_client.ola_mastersal.client_id,
   ]
 }
 
@@ -510,8 +513,8 @@ resource "auth0_client" "monoweb_dashboard" {
   }[terraform.workspace])
   allowed_logout_urls = concat(
     {
-      "dev" = ["http://localhost:3002","http://localhost:3002/*"]
-      "prd" = ["https://dashboard.online.ntnu.no","https://dashboard.online.ntnu.no/*"]
+      "dev" = ["http://localhost:3002", "http://localhost:3002/*"]
+      "prd" = ["https://dashboard.online.ntnu.no", "https://dashboard.online.ntnu.no/*"]
     }[terraform.workspace]
   )
   grant_types     = ["authorization_code", "refresh_token", "client_credentials"]

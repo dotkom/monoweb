@@ -10,6 +10,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "paths": {
+      "*": ["./*"],
       "@/*": ["./src/*"]
     },
     "incremental": true,

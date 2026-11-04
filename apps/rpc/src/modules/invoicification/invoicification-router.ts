@@ -1,3 +1,4 @@
+import { formatEmailSubject } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
@@ -43,7 +44,7 @@ const submitInvoiceProcedure = procedure.input(InvoiceFormSchema).mutation(async
     [BEDKOM_EMAIL],
     [],
     [],
-    `[Faktura] ${input.companyName}`,
+    formatEmailSubject(`[Faktura] ${input.companyName}`),
     emails.COMPANY_INVOICE_NOTIFICATION,
     {
       companyName: input.companyName,

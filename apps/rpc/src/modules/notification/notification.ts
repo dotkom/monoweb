@@ -4,20 +4,64 @@ import { GroupSchema } from "../group/group"
 export const NotificationTypeSchema = z.enum([
   "BROADCAST",
   "BROADCAST_IMPORTANT",
-  "EVENT_REGISTRATION",
   "EVENT_REMINDER",
   "EVENT_UPDATE",
+  "ATTENDANCE_REGISTRATION",
+  "ATTENDANCE_DEREGISTRATION",
+  "ATTENDANCE_REGISTRATION_FROM_QUEUE",
+  "ATTENDANCE_QUEUE_UPDATE",
+  "ATTENDANCE_COMPLETION_FAILED",
   "JOB_LISTING_REMINDER",
   "NEW_ARTICLE",
   "NEW_EVENT",
-  "NEW_FEEDBACK_FORM",
   "NEW_INTEREST_GROUP",
   "NEW_JOB_LISTING",
-  "NEW_MARK",
   "NEW_OFFLINE",
+  "NEW_MARK",
+  "NEW_FEEDBACK_FORM",
 ])
 
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
+
+export type NotificationColor = "blue" | "purple" | "green" | "red" | "gray" | "yellow"
+
+export const NotificationBehaviorSchema = z.enum([
+  /** Can be automatically marked as read when visible in the notification dropdown. */
+  "DEFAULT",
+  /** Requires the user to manually acknowledge the notification by marking it as read. */
+  "IMPORTANT",
+])
+
+export type NotificationBehavior = z.infer<typeof NotificationBehaviorSchema>
+
+export interface NotificationTypeConfiguration {
+  color: NotificationColor
+  behavior: NotificationBehavior
+}
+
+export const NOTIFICATION_TYPE_CONFIGURATION = {
+  BROADCAST: { color: "blue", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  BROADCAST_IMPORTANT: { color: "blue", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
+  EVENT_REMINDER: { color: "purple", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  EVENT_UPDATE: { color: "purple", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  ATTENDANCE_REGISTRATION: { color: "green", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  ATTENDANCE_DEREGISTRATION: { color: "red", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  ATTENDANCE_REGISTRATION_FROM_QUEUE: { color: "green", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  ATTENDANCE_QUEUE_UPDATE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  ATTENDANCE_COMPLETION_FAILED: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
+  JOB_LISTING_REMINDER: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_ARTICLE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_EVENT: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_INTEREST_GROUP: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_JOB_LISTING: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_OFFLINE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_MARK: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
+  NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+} as const satisfies Record<NotificationType, NotificationTypeConfiguration>
+
+export function getNotificationTypeConfiguration(notificationType: NotificationType): NotificationTypeConfiguration {
+  return NOTIFICATION_TYPE_CONFIGURATION[notificationType]
+}
 
 export const NotificationPayloadTypeSchema = z.enum([
   "NONE",
@@ -32,9 +76,14 @@ export const NotificationPayloadTypeSchema = z.enum([
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
 
-export const NotificationLinkSchema = z.discriminatedUnion("type", [
+export const NotificationGlobalLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("NONE") }),
-  z.object({ type: z.literal("URL"), url: z.string().url() }),
+  z.object({ type: z.literal("URL"), url: z.url() }),
+])
+
+export type NotificationGlobalLink = z.infer<typeof NotificationGlobalLinkSchema>
+
+export const NotificationResourceLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("EVENT"), eventId: z.string() }),
   z.object({ type: z.literal("ARTICLE"), articleSlug: z.string() }),
   z.object({ type: z.literal("GROUP"), groupSlug: z.string() }),
@@ -43,7 +92,20 @@ export const NotificationLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("JOB_LISTING"), jobListingId: z.string() }),
 ])
 
+export const NotificationLinkSchema = z.discriminatedUnion("type", [
+  ...NotificationGlobalLinkSchema.options,
+  ...NotificationResourceLinkSchema.options,
+])
+
 export type NotificationLink = z.infer<typeof NotificationLinkSchema>
+
+/** Creation context only; it is not stored separately from the immutable payload. */
+export const NotificationSourceSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("GLOBAL") }),
+  ...NotificationResourceLinkSchema.options,
+])
+
+export type NotificationSource = z.infer<typeof NotificationSourceSchema>
 
 export interface NotificationLinkColumns {
   payloadType: NotificationPayloadType
@@ -167,6 +229,8 @@ export type NotificationRecipientSelection = z.infer<typeof NotificationRecipien
 export const ResolvedNotificationRecipientSchema = z.object({
   userId: z.string(),
   sourceLabels: z.array(z.string()).min(1),
+  /** Zero-based indexes into the selection's rules, in matching order. */
+  sourceRuleIndexes: z.array(z.number().int().nonnegative()).min(1),
 })
 
 export type ResolvedNotificationRecipient = z.infer<typeof ResolvedNotificationRecipientSchema>
@@ -194,6 +258,7 @@ export const NotificationRecipientSelectionPreviewSchema = NotificationRecipient
     ResolvedNotificationRecipientSchema.extend({
       name: z.string().nullable(),
       imageUrl: z.string().nullable(),
+      isExistingRecipient: z.boolean().optional(),
     })
   ),
   nextCursor: z.string().optional(),
@@ -201,10 +266,36 @@ export const NotificationRecipientSelectionPreviewSchema = NotificationRecipient
 
 export type NotificationRecipientSelectionPreview = z.infer<typeof NotificationRecipientSelectionPreviewSchema>
 
+export interface NotificationRecipientPreviewOptions {
+  notificationId?: NotificationId
+  hideExistingRecipients?: boolean
+}
+
+export const NotificationStatusSchema = z.enum(["DRAFT", "SENT"])
+export type NotificationStatus = z.infer<typeof NotificationStatusSchema>
+
+export const MAXIMUM_NOTIFICATION_TITLE_LENGTH = 120 as const
+export const MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH = 160 as const
+
+export const NotificationMessageSchema = z.object({
+  title: z.string().trim().min(1, "Tittel er påkrevd").max(MAXIMUM_NOTIFICATION_TITLE_LENGTH),
+  shortDescription: z.string().max(MAXIMUM_NOTIFICATION_SHORT_DESCRIPTION_LENGTH),
+  content: z.string(),
+})
+export type NotificationMessage = z.infer<typeof NotificationMessageSchema>
+
+export function hasCompleteNotificationMessage(
+  message: Pick<NotificationMessage, "title" | "shortDescription">
+): boolean {
+  return message.title.trim().length > 0 && message.shortDescription.trim().length > 0
+}
+
 export const NotificationSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  status: NotificationStatusSchema,
+  sentAt: z.date().nullable(),
   title: z.string(),
   shortDescription: z.string(),
   content: z.string(),
@@ -227,6 +318,7 @@ export type NotificationId = Notification["id"]
  */
 export const NotificationManagementSchema = NotificationSchema.extend({
   initialRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
+  draftRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
 })
 
 export type NotificationManagement = z.infer<typeof NotificationManagementSchema>
@@ -240,36 +332,34 @@ export const NotificationWriteSchema = NotificationSchema.pick({
   actorGroupId: true,
   createdById: true,
   taskId: true,
+  status: true,
+  sentAt: true,
 }).extend({
-  initialRecipientSelection: NotificationRecipientSelectionSchema,
+  initialRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
+  draftRecipientSelection: NotificationRecipientSelectionSchema.nullable(),
 })
 
 export type NotificationWrite = z.infer<typeof NotificationWriteSchema>
 
-export const NotificationUpdateSchema = NotificationSchema.pick({
-  title: true,
-  shortDescription: true,
-  content: true,
-  link: true,
-})
-  .partial()
+export const NotificationUpdateSchema = NotificationMessageSchema.partial()
   .extend({
     lastUpdatedById: z.string(),
   })
+  .strict()
 
 export type NotificationUpdate = z.infer<typeof NotificationUpdateSchema>
 
-export const NotificationCreateSchema = z.object({
-  title: z.string().min(1, "Tittel er påkrevd").max(120),
-  shortDescription: z.string().min(1, "Kort beskrivelse er påkrevd").max(160),
-  content: z.string().optional(),
+export const NotificationDraftCreateSchema = NotificationMessageSchema.extend({
+  shortDescription: NotificationMessageSchema.shape.shortDescription.default(""),
+  content: NotificationMessageSchema.shape.content.default(""),
   type: z.enum(["BROADCAST", "BROADCAST_IMPORTANT"]),
-  link: NotificationLinkSchema.default({ type: "NONE" }),
+  source: NotificationSourceSchema.default({ type: "GLOBAL" }),
+  link: NotificationGlobalLinkSchema.default({ type: "NONE" }),
   actorGroupId: z.string().min(1, "Avsender er påkrevd"),
-  recipientSelection: NotificationRecipientSelectionSchema,
+  recipientSelection: NotificationRecipientSelectionSchema.nullable().default(null),
 })
 
-export type NotificationCreate = z.infer<typeof NotificationCreateSchema>
+export type NotificationDraftCreate = z.infer<typeof NotificationDraftCreateSchema>
 
 export const NotificationFilterQuerySchema = z
   .object({
@@ -277,6 +367,7 @@ export const NotificationFilterQuerySchema = z
     byActorGroupId: z.string().array(),
     /** All notifications pointing to a specific entity, e.g. every notification about one event. */
     byLink: NotificationLinkSchema,
+    bySearchTerm: z.string().optional(),
   })
   .partial()
 
@@ -291,6 +382,14 @@ export const NotificationRecipientSchema = z.object({
 
 export type NotificationRecipient = z.infer<typeof NotificationRecipientSchema>
 export type NotificationRecipientId = NotificationRecipient["id"]
+
+export const NotificationRecipientFilterQuerySchema = z
+  .object({
+    bySearchTerm: z.string().optional(),
+  })
+  .partial()
+
+export type NotificationRecipientFilterQuery = z.infer<typeof NotificationRecipientFilterQuerySchema>
 
 export const NotificationRecipientListItemSchema = NotificationRecipientSchema.omit({
   readAt: true,
@@ -323,9 +422,13 @@ export type UserNotification = z.infer<typeof UserNotificationSchema>
 export const NOTIFICATION_TYPE_LABELS = {
   BROADCAST: "Generell varsling",
   BROADCAST_IMPORTANT: "Viktig varsling",
-  EVENT_REGISTRATION: "Påmelding åpnet",
   EVENT_REMINDER: "Påminnelse om arrangement",
   EVENT_UPDATE: "Oppdatering om arrangement",
+  ATTENDANCE_REGISTRATION: "Påmelding til arrangement",
+  ATTENDANCE_DEREGISTRATION: "Avmelding fra arrangement",
+  ATTENDANCE_REGISTRATION_FROM_QUEUE: "Påmeldt fra køen",
+  ATTENDANCE_QUEUE_UPDATE: "Oppdatering om køen",
+  ATTENDANCE_COMPLETION_FAILED: "Påmelding ikke fullført",
   JOB_LISTING_REMINDER: "Påminnelse om stillingsutlysning",
   NEW_ARTICLE: "Ny artikkel",
   NEW_EVENT: "Nytt arrangement",

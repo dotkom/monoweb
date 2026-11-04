@@ -4,7 +4,9 @@ import type { AppRouter } from "@dotkomonline/rpc"
 import {
   AUTH0_TOKEN_REFRESH_BUFFER_SECONDS,
   AuthErrorCode,
+  RpcRequestSource,
   createClearSessionUrl,
+  getRpcRequestSourceHeaders,
   toAbsoluteUrl,
 } from "@dotkomonline/utils"
 import * as trpc from "@trpc/client"
@@ -55,6 +57,7 @@ function createAuthenticatedClient(accessToken: string) {
         transformer: superjson,
         url: `${env.RPC_HOST}/api/trpc`,
         headers: async () => ({
+          ...getRpcRequestSourceHeaders(RpcRequestSource.Web),
           Authorization: `Bearer ${accessToken}`,
         }),
       }),

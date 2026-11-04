@@ -4,7 +4,9 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
-    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
     "jsx": "preserve",
     "incremental": true,
     "strictNullChecks": true

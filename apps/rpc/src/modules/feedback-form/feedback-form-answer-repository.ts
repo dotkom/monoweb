@@ -1,18 +1,26 @@
-import { type DBHandle, type FeedbackQuestionAnswer, type FeedbackQuestionOption, Prisma } from "@dotkomonline/db"
+import {
+  type FeedbackQuestionAnswer as DBFeedbackQuestionAnswer,
+  type FeedbackQuestionOption as DBFeedbackQuestionOption,
+  type DBHandle,
+  Prisma,
+} from "@dotkomonline/db"
+import { parseOrReport } from "../../invariant"
+import type { AttendeeId } from "../event/attendance"
 import {
   type FeedbackFormAnswer,
+  type FeedbackFormAnswerId,
   FeedbackFormAnswerSchema,
   type FeedbackFormAnswerWrite,
   type FeedbackFormId,
   type FeedbackPublicResultsToken,
+  type FeedbackQuestionAnswer,
   type FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerSchema,
   type FeedbackQuestionAnswerWrite,
 } from "./feedback-form"
-import type { AttendeeId } from "../event/attendance"
-import { parseOrReport } from "../../invariant"
 
 export interface FeedbackFormAnswerRepository {
+  findById(handle: DBHandle, feedbackFormAnswerId: FeedbackFormAnswerId): Promise<FeedbackFormAnswer | null>
   create(
     handle: DBHandle,
     formAnswerData: FeedbackFormAnswerWrite,
@@ -23,6 +31,10 @@ export interface FeedbackFormAnswerRepository {
     handle: DBHandle,
     publicResultsToken: FeedbackPublicResultsToken
   ): Promise<FeedbackFormAnswer[]>
+  findQuestionAnswerById(
+    handle: DBHandle,
+    feedbackQuestionAnswerId: FeedbackQuestionAnswerId
+  ): Promise<FeedbackQuestionAnswer | null>
   findAnswerByAttendee(
     handle: DBHandle,
     feedbackFormId: FeedbackFormId,
@@ -33,6 +45,21 @@ export interface FeedbackFormAnswerRepository {
 
 export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository {
   return {
+    async findById(handle, feedbackFormAnswerId) {
+      const formAnswer = await handle.feedbackFormAnswer.findUnique({
+        where: {
+          id: feedbackFormAnswerId,
+        },
+        include: QUERY_WITH_ANSWERS,
+      })
+
+      if (formAnswer === null) {
+        return null
+      }
+
+      return mapFormAnswer(formAnswer, formAnswer.answers)
+    },
+
     async create(handle, formAnswerData, questionAnswersData) {
       const answer = await handle.feedbackFormAnswer.create({
         data: {
@@ -87,6 +114,37 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
       return formAnswers.map((answer) => mapFormAnswer(answer, answer.answers))
     },
 
+    async findQuestionAnswerById(handle, feedbackQuestionAnswerId) {
+      const questionAnswer = await handle.feedbackQuestionAnswer.findUnique({
+        where: {
+          id: feedbackQuestionAnswerId,
+        },
+        include: {
+          selectedOptions: {
+            include: {
+              feedbackQuestionOption: true,
+            },
+          },
+        },
+      })
+
+      if (questionAnswer === null) {
+        return null
+      }
+
+      return parseOrReport(FeedbackQuestionAnswerSchema, {
+        id: questionAnswer.id,
+        questionId: questionAnswer.questionId,
+        formAnswerId: questionAnswer.formAnswerId,
+        value: FeedbackQuestionAnswerSchema.shape.value.parse(questionAnswer.value),
+        selectedOptions: questionAnswer.selectedOptions.map((link) => ({
+          id: link.feedbackQuestionOption.id,
+          questionId: link.feedbackQuestionOption.questionId,
+          name: link.feedbackQuestionOption.name,
+        })),
+      })
+    },
+
     async findAnswerByAttendee(handle, feedbackFormId, attendeeId) {
       const answer = await handle.feedbackFormAnswer.findFirst({
         where: {
@@ -96,7 +154,9 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
         include: QUERY_WITH_ANSWERS,
       })
 
-      if (!answer) return null
+      if (answer === null) {
+        return null
+      }
 
       return mapFormAnswer(answer, answer.answers)
     },
@@ -113,9 +173,9 @@ export function getFeedbackFormAnswerRepository(): FeedbackFormAnswerRepository 
 
 function mapFormAnswer(
   formAnswer: Omit<FeedbackFormAnswer, "questionAnswers">,
-  questionAnswers: (FeedbackQuestionAnswer & {
+  questionAnswers: (DBFeedbackQuestionAnswer & {
     selectedOptions: {
-      feedbackQuestionOption: FeedbackQuestionOption
+      feedbackQuestionOption: DBFeedbackQuestionOption
     }[]
   })[]
 ): FeedbackFormAnswer {

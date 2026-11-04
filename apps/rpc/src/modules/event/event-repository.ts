@@ -16,6 +16,9 @@ import {
   EventSummarySchema,
   EventWithFeedbackFormSchema,
   type EventWrite,
+  type ActiveFeaturedPriority,
+  ActiveFeaturedPrioritySchema,
+  type FeaturedPriority,
 } from "./event"
 import type { CompanyId } from "../company/company"
 import type { GroupId } from "../group/group"
@@ -83,7 +86,7 @@ export interface EventRepository {
   findMany(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<Event[]>
   findManySummary(handle: DBHandle, query: EventFilterQuery, page: Pageable): Promise<EventSummary[]>
 
-  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId): Promise<EventId[]>
+  findIdsByAttendingUserId(handle: DBHandle, attendingUserId: UserId, registeredOnly?: boolean): Promise<EventId[]>
   findByParentEventId(
     handle: DBHandle,
     parentEventId: EventId,
@@ -107,6 +110,20 @@ export interface EventRepository {
   deleteEventCompanies(handle: DBHandle, eventId: EventId, companyIds: Set<CompanyId>): Promise<void>
 
   createDeregisterReason(handle: DBHandle, data: DeregisterReasonWrite): Promise<DeregisterReason>
+
+  listFeaturedPriorities(handle: DBHandle, now: Date): Promise<ActiveFeaturedPriority[]>
+  createFeaturedPriority(
+    handle: DBHandle,
+    eventId: EventId,
+    priority: FeaturedPriority,
+    lastUpdatedByUserId: UserId
+  ): Promise<void>
+  updateFeaturedPriority(
+    handle: DBHandle,
+    priorityId: string,
+    data: Partial<FeaturedPriority> & { deletedAt?: Date },
+    lastUpdatedByUserId: UserId
+  ): Promise<void>
 }
 
 export function getEventRepository(): EventRepository {
@@ -179,6 +196,12 @@ export function getEventRepository(): EventRepository {
                       in: query.byType,
                     }
                   : undefined,
+              visibility:
+                query.byVisibility && query.byVisibility.length > 0
+                  ? {
+                      in: query.byVisibility,
+                    }
+                  : undefined,
               parentId: query.excludingChildEvents
                 ? {
                     equals: null,
@@ -210,7 +233,10 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
               type: {
-                notIn: query.excludingType ?? ["INTERNAL"],
+                notIn: query.excludingType ?? [],
+              },
+              visibility: {
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -250,6 +276,7 @@ export function getEventRepository(): EventRepository {
           start: true,
           end: true,
           type: true,
+          visibility: true,
           status: true,
           imageUrl: true,
           parentId: true,
@@ -291,6 +318,12 @@ export function getEventRepository(): EventRepository {
                       in: query.byType,
                     }
                   : undefined,
+              visibility:
+                query.byVisibility && query.byVisibility.length > 0
+                  ? {
+                      in: query.byVisibility,
+                    }
+                  : undefined,
             },
             {
               OR: [
@@ -317,7 +350,10 @@ export function getEventRepository(): EventRepository {
                   }
                 : undefined,
               type: {
-                notIn: query.excludingType ?? ["INTERNAL"],
+                notIn: query.excludingType ?? [],
+              },
+              visibility: {
+                notIn: query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
               },
             },
             {
@@ -408,10 +444,11 @@ export function getEventRepository(): EventRepository {
       })
     },
 
-    async findIdsByAttendingUserId(handle, userId) {
+    async findIdsByAttendingUserId(handle, userId, registeredOnly = false) {
       const attendees = await handle.attendee.findMany({
         where: {
           userId,
+          registeredAt: registeredOnly ? { not: null } : undefined,
         },
         include: {
           attendance: {
@@ -448,10 +485,12 @@ export function getEventRepository(): EventRepository {
           query.byOrganizingCompany ?? [],
           query.byOrganizingGroup ?? [],
           query.excludingOrganizingGroup ?? [],
-          query.excludingType ?? ["INTERNAL"],
+          query.excludingType ?? [],
           query.byHasFeedbackForm ?? null,
           userId,
-          excludeAttendedByUser
+          excludeAttendedByUser,
+          query.excludingVisibility ?? ["AUTHENTICATED", "COMMITTEE_ONLY"],
+          query.byVisibility ?? []
         )
       )
 
@@ -607,16 +646,71 @@ export function getEventRepository(): EventRepository {
 
       return rows.map((row) => {
         const { event, ...rest } = row
-        const deregisterReason = {
-          event: {
+        let linkedEvent = null
+
+        if (event !== null) {
+          linkedEvent = {
             ...event,
-            companies: event.companies.map((c) => c.company),
-            hostingGroups: event.hostingGroups.map((g) => g.group),
-          },
+            companies: event.companies.map((eventCompany) => eventCompany.company),
+            hostingGroups: event.hostingGroups.map((eventHostingGroup) => eventHostingGroup.group),
+          }
+        }
+
+        const deregisterReason = {
+          event: linkedEvent,
           ...rest,
         }
 
         return parseOrReport(DeregisterReasonWithEventSchema, deregisterReason)
+      })
+    },
+
+    async listFeaturedPriorities(handle, now) {
+      const rows = await handle.eventFeaturedPriority.findMany({
+        where: {
+          deletedAt: null,
+          expiresAt: {
+            gt: now,
+          },
+        },
+        include: {
+          event: {
+            select: {
+              title: true,
+            },
+          },
+        },
+        orderBy: {
+          expiresAt: "asc",
+        },
+      })
+
+      const priorities = rows.map(({ id, eventId, expiresAt, event }) => {
+        return { id, eventId, expiresAt, title: event.title }
+      })
+
+      return parseOrReport(ActiveFeaturedPrioritySchema.array(), priorities)
+    },
+
+    async createFeaturedPriority(handle, eventId, priority, lastUpdatedByUserId) {
+      await handle.eventFeaturedPriority.create({
+        data: {
+          eventId,
+          ...priority,
+          lastUpdatedByUserId,
+        },
+      })
+    },
+
+    async updateFeaturedPriority(handle, priorityId, data, lastUpdatedByUserId) {
+      await handle.eventFeaturedPriority.update({
+        where: {
+          id: priorityId,
+        },
+        data: {
+          ...data,
+          lastUpdatedByUserId,
+        },
       })
     },
   }

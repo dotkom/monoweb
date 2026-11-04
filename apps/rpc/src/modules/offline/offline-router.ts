@@ -1,31 +1,26 @@
-import { GroupRoleTypeEnum } from "../group/group"
-import { OfflineSchema, OfflineWriteSchema } from "./offline"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { hasGroupRole, isAdministrator, isCommitteeMember, or } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { canManageOfflines } from "../../permissions/offline-permissions"
+import { z } from "zod"
+import { permitIf } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
-import { CommitteeGroupSlug } from "../authorization-service"
+import { OfflineSchema, OfflineWriteSchema } from "./offline"
 
 export type CreateOfflineInput = inferProcedureInput<typeof createOfflineProcedure>
 export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProcedure>
 const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
-      )
-    )
-  )
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.create(ctx.handle, input)
+    const createdOffline = await ctx.offlineService.create(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Create Offline(ID=${createdOffline.id},Title=${createdOffline.title})`)
+
+    return createdOffline
   })
 
 export type EditOfflineInput = inferProcedureInput<typeof editOfflineProcedure>
@@ -38,47 +33,34 @@ const editOfflineProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(
-    withAuthorization(
-      or(
-        isAdministrator(),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.LEADER),
-        hasGroupRole(CommitteeGroupSlug.REDAKSJONEN, GroupRoleTypeEnum.DEPUTY_LEADER)
-      )
-    )
-  )
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input: changes, ctx }) => {
-    return ctx.offlineService.update(ctx.handle, changes.id, changes.input)
+    const updatedOffline = await ctx.offlineService.update(ctx.handle, changes.id, changes.input)
+
+    ctx.setAuditTransactionName(`Update Offline(ID=${updatedOffline.id},Title=${updatedOffline.title})`)
+
+    return updatedOffline
   })
 
 export type AllOfflineInput = inferProcedureInput<typeof allOfflineProcedure>
 export type AllOfflineOutput = inferProcedureOutput<typeof allOfflineProcedure>
-const allOfflineProcedure = procedure
-  .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.findMany(ctx.handle, input)
-  })
+const allOfflineProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  return ctx.offlineService.findMany(ctx.prisma, input)
+})
 
 export type FindOfflineInput = inferProcedureInput<typeof findOfflineProcedure>
 export type FindOfflineOutput = inferProcedureOutput<typeof findOfflineProcedure>
-const findOfflineProcedure = procedure
-  .input(OfflineSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.findById(ctx.handle, input)
-  })
+const findOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.offlineService.findById(ctx.prisma, input)
+})
 
 export type GetOfflineInput = inferProcedureInput<typeof getOfflineProcedure>
 export type GetOfflineOutput = inferProcedureOutput<typeof getOfflineProcedure>
-const getOfflineProcedure = procedure
-  .input(OfflineSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.offlineService.getById(ctx.handle, input)
-  })
+const getOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.offlineService.getById(ctx.prisma, input)
+})
 
 export type CreateOfflineFileUploadInput = inferProcedureInput<typeof createOfflineFileUploadProcedure>
 export type CreateOfflineFileUploadOutput = inferProcedureOutput<typeof createOfflineFileUploadProcedure>
@@ -90,11 +72,9 @@ const createOfflineFileUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.createFileUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+    return ctx.offlineService.createFileUpload(ctx.prisma, input.filename, input.contentType, ctx.principal.subject)
   })
 
 export type CreateOfflineImageUploadInput = inferProcedureInput<typeof createOfflineImageUploadProcedure>
@@ -107,11 +87,9 @@ const createOfflineImageUploadProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
+  .use(withAuthorization(permitIf((principal) => canManageOfflines(principal))))
   .mutation(async ({ input, ctx }) => {
-    return ctx.offlineService.createImageUpload(ctx.handle, input.filename, input.contentType, ctx.principal.subject)
+    return ctx.offlineService.createImageUpload(ctx.prisma, input.filename, input.contentType, ctx.principal.subject)
   })
 
 export const offlineRouter = t.router({

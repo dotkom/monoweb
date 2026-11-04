@@ -72,7 +72,7 @@ model Membership {
   semester       Int?
 
   userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([userId], name: "idx_membership_user_id")
   @@map("membership")
@@ -110,22 +110,24 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee              Attendee[]
-  personalMark          PersonalMark[]
-  groupMemberships      GroupMembership[]
-  memberships           Membership[]
-  givenMarks            PersonalMark[]          @relation("GivenBy")
-  attendeesRefunded     Attendee[]              @relation(name: "RefundedBy")
-  auditLogs             AuditLog[]
-  deregisterReasons     DeregisterReason[]
-  notificationsReceived NotificationRecipient[]
-  notificationsCreated  Notification[]          @relation("created_by")
-  notificationsUpdated  Notification[]          @relation("last_updated_by")
-  contestants           Contestant[]
-  contestTeams          ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks         UserFlagLink[]
-  birthdayPartyGuess    BirthdayPartyGuess?
+  attendee               Attendee[]
+  personalMark           PersonalMark[]
+  groupMemberships       GroupMembership[]
+  memberships            Membership[]
+  givenMarks             PersonalMark[]          @relation("GivenBy")
+  attendeesRefunded      Attendee[]              @relation(name: "RefundedBy")
+  auditLogs              AuditLog[]
+  deregisterReasons      DeregisterReason[]
+  notificationsReceived  NotificationRecipient[]
+  notificationsCreated   Notification[]          @relation("created_by")
+  notificationsUpdated   Notification[]          @relation("last_updated_by")
+  contestants            Contestant[]
+  contestTeams           ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks          UserFlagLink[]
+  adminRegistered        Attendee[]              @relation("AdminRegisteredBy")
+  updatedEventPriorities EventFeaturedPriority[]
 
+  /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
 }
 
@@ -142,8 +144,8 @@ model Company {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  events     EventCompany[]
-  JobListing JobListing[]
+  events      EventCompany[]
+  jobListings JobListing[]
 
   @@map("company")
 }
@@ -226,6 +228,8 @@ model GroupMembership {
 
   roles GroupMembershipRole[]
 
+  @@index([groupId])
+  @@index([userId])
   @@map("group_membership")
 }
 
@@ -235,21 +239,31 @@ model GroupMembershipRole {
   membership   GroupMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
   role         GroupRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index membershipId
   @@id([membershipId, roleId])
+  @@index([roleId])
   @@map("group_membership_role")
 }
 
 enum GroupRoleType {
+  /// "Komitéleder" (committee leader) or "interessegruppeansvarlig" (interest group coordinator).
   LEADER            @map("LEADER")
+  /// "Vinstraffansvarlig". A role responsible for managing their committee's members' punishments for not doing their
+  /// duties. These punishments are per 2026 external from monoweb (not marks/personal marks).
   PUNISHER          @map("PUNISHER")
+  /// "Økonomiansvarlig". A role responsible for managing their committee's finances.
   TREASURER         @map("TREASURER")
+  /// The generic member role.
   COSMETIC          @map("COSMETIC")
+  /// "Nestleder". Acting leader if the leader is temporarily unable to fulfill their duties.
   DEPUTY_LEADER     @map("DEPUTY_LEADER")
+  /// "Tillitsvalgt". A person who is trusted by the members to see and hear them confidentially.
   TRUSTEE           @map("TRUSTEE")
+  /// A role for users who should be in the email list and otherwise not be regarded as a member of the group.
   EMAIL_ONLY        @map("EMAIL_ONLY")
+  /// "Permittert". A person who is unable to fulfill their duties, often due to being on exchange abroad or being voted
+  /// a member of Hovedstyret.
   TEMPORARILY_LEAVE @map("TEMPORARILY_LEAVE")
-  /// The editor in chief for Online's magazine "Offline" ("Redaktør" in Norwegian)
-  EDITOR_IN_CHIEF   @map("EDITOR_IN_CHIEF")
 
   @@map("group_role_type")
 }
@@ -285,9 +299,6 @@ enum EventType {
   ACADEMIC         @map("ACADEMIC")
   /// Sosialt
   SOCIAL           @map("SOCIAL")
-  // This type is for the rare occation we have an event that is only open to committee members.
-  /// Komitéarrangement
-  INTERNAL         @map("INTERNAL")
   OTHER            @map("OTHER")
   // This type is for a committe called "velkom" and are special social events for new students.
   // These have a separate type because we have historically hid these from event lists to not
@@ -297,6 +308,14 @@ enum EventType {
   WELCOME          @map("WELCOME")
 
   @@map("event_type")
+}
+
+enum EventVisibility {
+  PUBLIC         @map("PUBLIC")
+  AUTHENTICATED  @map("AUTHENTICATED")
+  COMMITTEE_ONLY @map("COMMITTEE_ONLY")
+
+  @@map("event_visibility")
 }
 
 model Attendance {
@@ -328,95 +347,137 @@ model AttendancePool {
 
   attendanceId String     @map("attendance_id")
   taskId       String?    @map("task_id")
-  attendance   Attendance @relation(fields: [attendanceId], references: [id])
-  task         Task?      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  attendance   Attendance @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
+  task         Task?      @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   attendees Attendee[]
 
   @@index([attendanceId], name: "idx_attendance_pool_attendance_id")
+  @@index([taskId])
   @@map("attendance_pool")
 }
 
 model Attendee {
-  id                    String              @id @default(uuid())
+  id                         String              @id @default(uuid())
+  /// The time the user requested attendance to the event.
+  createdAt                  DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                  DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   /// To preserve the user's grade at the time of registration
-  userGrade             Int?                @map("user_grade")
-  feedbackFormAnswer    FeedbackFormAnswer?
+  userGrade                  Int?                @map("user_grade")
+  feedbackFormAnswer         FeedbackFormAnswer?
   /// Which options the user has selected from the Attendance selections
-  selections            Json                @default("[]")
-  reserved              Boolean
-  earliestReservationAt DateTime            @map("earliest_reservation_at") @db.Timestamptz(3)
-  attendedAt            DateTime?           @map("attended_at") @db.Timestamptz(3)
-  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt             DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  paymentDeadline       DateTime?           @map("payment_deadline")
-  paymentLink           String?             @map("payment_link")
-  paymentId             String?             @map("payment_id")
-  paymentReservedAt     DateTime?           @map("payment_reserved_at")
-  paymentChargeDeadline DateTime?           @map("payment_charge_deadline")
-  paymentChargedAt      DateTime?           @map("payment_charged_at")
-  paymentRefundedAt     DateTime?           @map("payment_refunded_at")
-  paymentCheckoutUrl    String?             @map("payment_checkout_url")
+  selections                 Json                @default("[]")
+  /// The time the attendee was given a seat in the event.
+  /// - `DateTime` = has a seat
+  /// - `null` = in queue for a seat
+  registeredAt               DateTime?           @map("registered_at") @db.Timestamptz(3)
+  /// The delay imposed by the attendance pool, in whole hours. `null` means no delay. This is used to add a delay for
+  /// specific study years.
+  registrationPoolDelayHours Int?                @map("registration_pool_delay_hours")
+  /// The delay imposed by marks, in whole hours. `null` means no delay.
+  registrationMarkDelayHours Int?                @map("registration_mark_delay_hours")
+  /// The time the attendee was marked as attended, meaning showing up to the event in person.
+  attendedAt                 DateTime?           @map("attended_at") @db.Timestamptz(3)
+  /// The deadline for completing registration. `null` means there are no actions needed to complete registration.
+  ///
+  /// To complete registration:
+  /// - Complete payment
+  completionDeadline         DateTime?           @map("completion_deadline")
+  paymentLink                String?             @map("payment_link")
+  paymentId                  String?             @map("payment_id")
+  paymentReservedAt          DateTime?           @map("payment_reserved_at")
+  paymentChargeDeadline      DateTime?           @map("payment_charge_deadline")
+  paymentChargedAt           DateTime?           @map("payment_charged_at")
+  paymentRefundedAt          DateTime?           @map("payment_refunded_at")
+  paymentCheckoutUrl         String?             @map("payment_checkout_url")
 
-  attendanceId        String         @map("attendance_id")
-  userId              String         @map("user_id")
-  attendancePoolId    String         @map("attendance_pool_id")
-  paymentRefundedById String?        @map("payment_refunded_by_id")
-  attendance          Attendance     @relation(fields: [attendanceId], references: [id])
-  user                User           @relation(fields: [userId], references: [id])
-  attendancePool      AttendancePool @relation(fields: [attendancePoolId], references: [id])
-  paymentRefundedBy   User?          @relation(fields: [paymentRefundedById], references: [id], name: "RefundedBy")
+  attendanceId            String         @map("attendance_id")
+  userId                  String         @map("user_id")
+  attendancePoolId        String         @map("attendance_pool_id")
+  paymentRefundedByUserId String?        @map("payment_refunded_by_user_id")
+  adminRegisteredByUserId String?        @map("admin_registered_by_user_id")
+  attendance              Attendance     @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
+  user                    User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  attendancePool          AttendancePool @relation(fields: [attendancePoolId], references: [id], onDelete: Restrict)
+  paymentRefundedBy       User?          @relation(fields: [paymentRefundedByUserId], references: [id], name: "RefundedBy", onDelete: SetNull)
+  adminRegisteredBy       User?          @relation(fields: [adminRegisteredByUserId], references: [id], name: "AdminRegisteredBy", onDelete: SetNull)
 
   @@unique([attendanceId, userId], name: "attendee_unique")
+  @@index([userId])
+  @@index([attendancePoolId])
+  @@index([paymentRefundedByUserId])
+  @@index([adminRegisteredByUserId])
   @@map("attendee")
 }
 
 model Event {
-  id                      String        @id @default(uuid())
+  id                      String          @id @default(uuid())
+  createdAt               DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   title                   String
-  start                   DateTime      @db.Timestamptz(3)
-  end                     DateTime      @db.Timestamptz(3)
+  start                   DateTime        @db.Timestamptz(3)
+  end                     DateTime        @db.Timestamptz(3)
   status                  EventStatus
   description             String
-  shortDescription        String?       @map("short_description")
-  imageUrl                String?       @map("image_url")
-  locationTitle           String?       @map("location_title")
-  locationAddress         String?       @map("location_address")
-  locationLink            String?       @map("location_link")
+  shortDescription        String?         @map("short_description")
+  imageUrl                String?         @map("image_url")
+  locationTitle           String?         @map("location_title")
+  locationAddress         String?         @map("location_address")
+  locationLink            String?         @map("location_link")
+  markForMissedAttendance Boolean         @default(true) @map("mark_for_missed_attendance")
   type                    EventType
-  feedbackForm            FeedbackForm?
-  markForMissedAttendance Boolean       @default(true) @map("mark_for_missed_attendance")
-  fadderuke               Fadderuke?
-  createdAt               DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt               DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  visibility              EventVisibility @default(PUBLIC)
+
+  feedbackForm       FeedbackForm?
+  fadderuke          Fadderuke?
+  companies          EventCompany[]
+  hostingGroups      EventHostingGroup[]
+  deregisterReasons  DeregisterReason[]
+  featuredPriorities EventFeaturedPriority[]
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
   contestId    String?     @map("contest_id")
-  attendance   Attendance? @relation(fields: [attendanceId], references: [id])
-  parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey")
+  attendance   Attendance? @relation(fields: [attendanceId], references: [id], onDelete: SetNull)
+  parent       Event?      @relation("children", fields: [parentId], references: [id], map: "event_parent_fkey", onDelete: SetNull)
   children     Event[]     @relation("children")
   contest      Contest?    @relation(fields: [contestId], references: [id], onDelete: SetNull)
-
-  companies         EventCompany[]
-  hostingGroups     EventHostingGroup[]
-  deregisterReasons DeregisterReason[]
 
   /// Historical metadata -- This is the id of the event in the previous version of OnlineWeb, if it was imported from
   /// the previous version
   metadataImportId Int? @map("metadata_import_id")
 
   @@index([contestId])
+  @@index([attendanceId])
+  @@index([parentId])
   @@map("event")
+}
+
+model EventFeaturedPriority {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  eventId             String  @map("event_id")
+  lastUpdatedByUserId String? @map("last_updated_by_user_id")
+  event               Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  lastUpdatedBy       User?   @relation(fields: [lastUpdatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([lastUpdatedByUserId])
+  @@index([eventId, expiresAt])
+  @@map("event_featured_priority")
 }
 
 model EventCompany {
   eventId   String  @map("event_id")
   companyId String  @map("company_id")
-  event     Event   @relation(fields: [eventId], references: [id])
-  company   Company @relation(fields: [companyId], references: [id])
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
+  /// prisma-lint-ignore-model require-field-index eventId
   @@id([eventId, companyId])
+  @@index([companyId])
   @@map("event_company")
 }
 
@@ -448,10 +509,12 @@ model Mark {
 model MarkGroup {
   markId  String @map("mark_id")
   groupId String @map("group_id")
-  mark    Mark   @relation(fields: [markId], references: [id])
-  group   Group  @relation(fields: [groupId], references: [slug])
+  mark    Mark   @relation(fields: [markId], references: [id], onDelete: Cascade)
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index markId
   @@id([markId, groupId])
+  @@index([groupId])
   @@map("mark_group")
 }
 
@@ -461,17 +524,20 @@ model PersonalMark {
   markId    String  @map("mark_id")
   userId    String  @map("user_id")
   givenById String? @map("given_by_id")
-  mark      Mark    @relation(fields: [markId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
-  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id])
+  mark      Mark    @relation(fields: [markId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  givenBy   User?   @relation("GivenBy", fields: [givenById], references: [id], onDelete: SetNull)
 
+  /// prisma-lint-ignore-model require-field-index markId
   @@id([markId, userId])
+  @@index([userId])
+  @@index([givenById])
   @@map("personal_mark")
 }
 
 model PrivacyPermissions {
   id                String   @id @default(uuid())
-  user              User     @relation(fields: [userId], references: [id])
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String   @unique @map("user_id")
   // TODO: rename to ~"privateProfile" and require authentication to view profile if true
   profileVisible    Boolean  @default(true) @map("profile_visible")
@@ -490,7 +556,7 @@ model PrivacyPermissions {
 
 model NotificationPermissions {
   id                          String   @id @default(uuid())
-  user                        User     @relation(fields: [userId], references: [id])
+  user                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                      String   @unique @map("user_id")
   applications                Boolean  @default(true)
   newArticles                 Boolean  @default(true) @map("new_articles")
@@ -509,9 +575,10 @@ model NotificationPermissions {
 model EventHostingGroup {
   groupId String @map("group_id")
   eventId String @map("event_id")
-  group   Group  @relation(fields: [groupId], references: [slug])
-  event   Event  @relation(fields: [eventId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [slug], onDelete: Restrict)
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index groupId
   @@id([groupId, eventId])
   @@index([eventId], name: "idx_event_hosting_group_event_id")
   @@map("event_hosting_group")
@@ -545,10 +612,11 @@ model JobListing {
   updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   companyId String  @map("company_id")
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
 
   locations JobListingLocation[]
 
+  @@index([companyId])
   @@map("job_listing")
 }
 
@@ -557,17 +625,18 @@ model JobListingLocation {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
 
   jobListingId String     @map("job_listing_id")
-  jobListing   JobListing @relation(fields: [jobListingId], references: [id])
+  jobListing   JobListing @relation(fields: [jobListingId], references: [id], onDelete: Cascade)
 
   @@id([name, jobListingId])
+  @@index([jobListingId])
   @@map("job_listing_location")
 }
 
 model Offline {
   id          String   @id @default(uuid())
   title       String
-  fileUrl     String?  @map("file_url")
-  imageUrl    String?  @map("image_url")
+  fileUrl     String   @map("file_url")
+  imageUrl    String   @map("image_url")
   publishedAt DateTime @map("published_at") @db.Timestamptz(3)
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -580,11 +649,10 @@ model Article {
   slug         String   @unique
   title        String
   author       String
-  photographer String
+  photographer String?
   imageUrl     String   @map("image_url")
   excerpt      String
   content      String
-  isFeatured   Boolean  @default(false) @map("is_featured")
   vimeoId      String?  @map("vimeo_id")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -605,10 +673,12 @@ model ArticleTag {
 model ArticleTagLink {
   articleId String     @map("article_id")
   tagName   String     @map("tag_name")
-  article   Article    @relation(fields: [articleId], references: [id])
-  tag       ArticleTag @relation(fields: [tagName], references: [name])
+  article   Article    @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       ArticleTag @relation(fields: [tagName], references: [name], onDelete: Restrict)
 
+  /// prisma-lint-ignore-model require-field-index articleId
   @@id([articleId, tagName])
+  @@index([tagName])
   @@map("article_tag_link")
 }
 
@@ -616,7 +686,7 @@ enum TaskType {
   RESERVE_ATTENDEE                       @map("RESERVE_ATTENDEE")
   CHARGE_ATTENDEE                        @map("CHARGE_ATTENDEE")
   MERGE_ATTENDANCE_POOLS                 @map("MERGE_ATTENDANCE_POOLS")
-  VERIFY_PAYMENT                         @map("VERIFY_PAYMENT")
+  VERIFY_ATTENDANCE_COMPLETION           @map("VERIFY_ATTENDANCE_COMPLETION")
   VERIFY_FEEDBACK_ANSWERED               @map("VERIFY_FEEDBACK_ANSWERED")
   SEND_FEEDBACK_FORM_EMAILS              @map("SEND_FEEDBACK_FORM_EMAILS")
   VERIFY_ATTENDEE_ATTENDED               @map("VERIFY_ATTENDEE_ATTENDED")
@@ -633,6 +703,9 @@ enum TaskStatus {
   COMPLETED @map("COMPLETED")
   FAILED    @map("FAILED")
   CANCELED  @map("CANCELED")
+  /// The task execution was skipped because its preconditions were not met, typically because one or more payload entities had been deleted.
+  /// For example, if an attendee deregisters before the VERIFY_ATTENDANCE_COMPLETION task is executed, the task is skipped because the attendee no longer exists.
+  SKIPPED   @map("SKIPPED")
 
   @@map("task_status")
 }
@@ -653,6 +726,7 @@ model Task {
   notifications   Notification[]
 
   @@index([scheduledAt, status], name: "idx_job_scheduled_at_status")
+  @@index([recurringTaskId])
   @@map("task")
 }
 
@@ -702,7 +776,7 @@ model FeedbackForm {
   answerDeadline     DateTime @map("answer_deadline") @db.Timestamptz(3)
 
   eventId String @unique @map("event_id")
-  event   Event  @relation(fields: [eventId], references: [id])
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   questions FeedbackQuestion[]
   answers   FeedbackFormAnswer[]
@@ -726,6 +800,7 @@ model FeedbackQuestion {
   options FeedbackQuestionOption[]
   answers FeedbackQuestionAnswer[] @relation("QuestionAnswers")
 
+  @@index([feedbackFormId])
   @@map("feedback_question")
 }
 
@@ -748,21 +823,26 @@ model FeedbackQuestionAnswer {
 
   questionId   String             @map("question_id")
   formAnswerId String             @map("form_answer_id")
-  question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id])
+  question     FeedbackQuestion   @relation("QuestionAnswers", fields: [questionId], references: [id], onDelete: Cascade)
   formAnswer   FeedbackFormAnswer @relation("FormAnswers", fields: [formAnswerId], references: [id], onDelete: Cascade)
 
   selectedOptions FeedbackQuestionAnswerOptionLink[]
 
+  @@index([questionId])
+  @@index([formAnswerId])
   @@map("feedback_question_answer")
 }
 
 model FeedbackQuestionAnswerOptionLink {
   feedbackQuestionOptionId String                 @map("feedback_question_option_id")
   feedbackQuestionAnswerId String                 @map("feedback_question_answer_id")
-  feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id])
+  feedbackQuestionOption   FeedbackQuestionOption @relation(fields: [feedbackQuestionOptionId], references: [id], onDelete: Cascade)
   feedbackQuestionAnswer   FeedbackQuestionAnswer @relation(fields: [feedbackQuestionAnswerId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index feedbackQuestionOptionId
   @@id([feedbackQuestionOptionId, feedbackQuestionAnswerId])
+  @@index([feedbackQuestionAnswerId])
+  /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("feedback_answer_option_link")
 }
 
@@ -773,12 +853,25 @@ model FeedbackFormAnswer {
 
   feedbackFormId String       @map("feedback_form_id")
   attendeeId     String       @unique @map("attendee_id")
-  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id])
+  feedbackForm   FeedbackForm @relation(fields: [feedbackFormId], references: [id], onDelete: Cascade)
   attendee       Attendee     @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
 
   answers FeedbackQuestionAnswer[] @relation("FormAnswers")
 
+  @@index([feedbackFormId])
   @@map("feedback_form_answer")
+}
+
+model AuditTransaction {
+  id        String   @id @default(uuid())
+  name      String
+  procedure String?  @map("procedure")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  logs AuditLog[]
+
+  @@map("audit_transaction")
 }
 
 model AuditLog {
@@ -793,9 +886,14 @@ model AuditLog {
 
   /// User relation is optional because the system can execute operations without a user to link it to. For example with
   /// recurring tasks.
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String? @map("user_id")
 
+  auditTransactionId String?           @map("audit_transaction_id")
+  auditTransaction   AuditTransaction? @relation(fields: [auditTransactionId], references: [id])
+
+  @@index([userId])
+  @@index([auditTransactionId])
   @@map("audit_log")
 }
 
@@ -807,11 +905,13 @@ model DeregisterReason {
   details      String?
   userGrade    Int?                 @map("user_grade")
 
-  userId  String @map("user_id")
-  eventId String @map("event_id")
-  user    User   @relation(fields: [userId], references: [id])
-  event   Event  @relation(fields: [eventId], references: [id])
+  userId  String  @map("user_id")
+  eventId String? @map("event_id")
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event?  @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
+  @@index([eventId])
   @@map("deregister_reason")
 }
 
@@ -841,19 +941,45 @@ enum NotificationPayloadType {
 }
 
 enum NotificationType {
-  BROADCAST            @map("BROADCAST")
-  BROADCAST_IMPORTANT  @map("BROADCAST_IMPORTANT")
-  EVENT_REGISTRATION   @map("EVENT_REGISTRATION")
-  EVENT_REMINDER       @map("EVENT_REMINDER")
-  EVENT_UPDATE         @map("EVENT_UPDATE")
-  JOB_LISTING_REMINDER @map("JOB_LISTING_REMINDER")
-  NEW_ARTICLE          @map("NEW_ARTICLE")
-  NEW_EVENT            @map("NEW_EVENT")
-  NEW_INTEREST_GROUP   @map("NEW_INTEREST_GROUP")
-  NEW_JOB_LISTING      @map("NEW_JOB_LISTING")
-  NEW_OFFLINE          @map("NEW_OFFLINE")
-  NEW_MARK             @map("NEW_MARK")
-  NEW_FEEDBACK_FORM    @map("NEW_FEEDBACK_FORM")
+  /// A message that is sent to all (or a lot of) users.
+  BROADCAST                          @map("BROADCAST")
+  /// A message that is sent to all (or a lot of) users.
+  BROADCAST_IMPORTANT                @map("BROADCAST_IMPORTANT")
+  /// A reminder about an event you are subscribed to is happening soon.
+  EVENT_REMINDER                     @map("EVENT_REMINDER")
+  /// A message about changes to an event you are subscribed to.
+  EVENT_UPDATE                       @map("EVENT_UPDATE")
+  /// A message about your attendance registration for an event.
+  ATTENDANCE_REGISTRATION            @map("ATTENDANCE_REGISTRATION")
+  /// A message about your deregistration from an event.
+  ATTENDANCE_DEREGISTRATION          @map("ATTENDANCE_DEREGISTRATION")
+  /// A message about your registration from the attendance queue for an event.
+  ATTENDANCE_REGISTRATION_FROM_QUEUE @map("ATTENDANCE_REGISTRATION_FROM_QUEUE")
+  /// A message about changes to your queue position for an event.
+  ATTENDANCE_QUEUE_UPDATE            @map("ATTENDANCE_QUEUE_UPDATE")
+  /// A message about the failure of your attendance completion.
+  ATTENDANCE_COMPLETION_FAILED       @map("ATTENDANCE_COMPLETION_FAILED")
+  /// A reminder about a job listing you are interested in.
+  JOB_LISTING_REMINDER               @map("JOB_LISTING_REMINDER")
+  /// A new article has been published.
+  NEW_ARTICLE                        @map("NEW_ARTICLE")
+  /// A new event has been published.
+  NEW_EVENT                          @map("NEW_EVENT")
+  /// A new interest group has been published.
+  NEW_INTEREST_GROUP                 @map("NEW_INTEREST_GROUP")
+  /// A new job listing has been published.
+  NEW_JOB_LISTING                    @map("NEW_JOB_LISTING")
+  /// A new offline has been published.
+  NEW_OFFLINE                        @map("NEW_OFFLINE")
+  /// A message about a new mark you have received.
+  NEW_MARK                           @map("NEW_MARK")
+  /// A message about a new feedback form you have received.
+  NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
+}
+
+enum NotificationStatus {
+  DRAFT
+  SENT
 }
 
 model Notification {
@@ -866,11 +992,15 @@ model Notification {
   /// The full rich text content of the notification.
   content                   String
   type                      NotificationType
+  status                    NotificationStatus      @default(SENT)
+  sentAt                    DateTime?               @default(now()) @map("sent_at") @db.Timestamptz(3)
   /// Can be an ID or a URL depending on the payload type.
   payload                   String?
   payloadType               NotificationPayloadType @map("payload_type")
   /// The rules used to select recipients when the notification was initially sent.
   initialRecipientSelection Json?                   @map("initial_recipient_selection")
+  /// Editable recipient rules for a draft. Resolved into a snapshot only when sent.
+  draftRecipientSelection   Json?                   @map("draft_recipient_selection")
 
   /// The group that created the notification or the system created on behalf of.
   actorGroupId    String? @map("actor_group_id")
@@ -883,13 +1013,17 @@ model Notification {
   taskId          String? @map("task_id")
   actorGroup      Group?  @relation(fields: [actorGroupId], references: [slug], onDelete: SetNull)
   createdBy       User?   @relation("created_by", fields: [createdById], references: [id], onDelete: SetNull)
-  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id])
+  lastUpdatedBy   User?   @relation("last_updated_by", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
   task            Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
 
   recipients NotificationRecipient[]
 
   @@index([createdAt])
   @@index([payloadType, payload])
+  @@index([actorGroupId])
+  @@index([createdById])
+  @@index([lastUpdatedById])
+  @@index([taskId])
   @@map("notification")
 }
 
@@ -949,12 +1083,13 @@ model Contestant {
   contestId String  @map("contest_id")
   userId    String? @map("user_id")
   contest   Contest @relation("ContestContestants", fields: [contestId], references: [id], onDelete: Cascade)
-  user      User?   @relation(fields: [userId], references: [id])
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   team       ContestTeam?
   wonContest Contest?     @relation("ContestWinner")
 
   @@unique([contestId, userId])
+  @@index([userId])
   @@map("contestant")
 }
 
@@ -995,17 +1130,7 @@ model UserFlagLink {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userFlag   UserFlag @relation(fields: [userFlagId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([userFlagId])
   @@map("user_flag_link")
-}
-
-model BirthdayPartyGuess {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
-  guess     Int      @map("guess")
-
-  userId String @unique @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("birthday_party_guess")
 }

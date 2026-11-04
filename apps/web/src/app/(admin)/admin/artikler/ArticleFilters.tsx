@@ -1,0 +1,29 @@
+import { Form } from "@admin/components/forms/Form"
+import { SearchField } from "@admin/components/forms/SearchField"
+import type { ArticleFilterQuery } from "@dotkomonline/rpc/article"
+import { useEffect } from "react"
+import { useForm, useWatch } from "react-hook-form"
+import { useDebounce } from "use-debounce"
+
+interface Props {
+  onChange(filters: ArticleFilterQuery): void
+  defaultValues?: ArticleFilterQuery
+}
+
+export const ArticleFilters = ({ onChange, defaultValues }: Props) => {
+  const form = useForm<ArticleFilterQuery>({
+    defaultValues,
+  })
+  const data = useWatch(form) as ArticleFilterQuery
+  const [debouncedData] = useDebounce(data, 300)
+
+  useEffect(() => {
+    onChange(debouncedData)
+  }, [onChange, debouncedData])
+
+  return (
+    <Form form={form} onSubmit={onChange} className="flex flex-row flex-wrap gap-2">
+      <SearchField fixedWidth control={form.control} name="bySearchTerm" placeholder="Søk etter artikler..." />
+    </Form>
+  )
+}

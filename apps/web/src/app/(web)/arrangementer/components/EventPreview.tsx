@@ -1,0 +1,293 @@
+"use client"
+
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { EventPreviewContext, type PreviewEvent } from "@/components/molecules/EventListItem/EventPreviewLink"
+import { env } from "@/env"
+import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
+import { useCopyToClipboard } from "@/utils/use-copy-to-clipboard"
+import {
+  Button,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  ReadMore,
+  ScrollArea,
+  Text,
+  Title,
+  cn,
+} from "@dotkomonline/ui"
+import { createAbsoluteEventPageUrl, createEventPageUrl } from "@dotkomonline/utils"
+import { IconCheck, IconChevronsRight, IconCopy, IconMaximize } from "@tabler/icons-react"
+import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
+import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from "react"
+import { AttendanceCard } from "./AttendanceCard/AttendanceCard"
+import { EventDescription } from "./EventDescription"
+import { EventHeader, SkeletonEventHeader } from "./EventHeader"
+import { OrganizerPill } from "./OrganizerPill"
+import { LocationBox } from "./TimeLocationBox/LocationBox"
+import { TimeBox } from "./TimeLocationBox/TimeBox"
+import { EventTurnstileProvider } from "./EventTurnstileProvider"
+import type { EventListSubscription } from "../hooks/useEventListSubscription"
+
+export function EventPreview({
+  children,
+  className,
+  listSubscription = null,
+}: PropsWithChildren<{
+  className?: string
+  listSubscription?: EventListSubscription | null
+}>) {
+  const [selectedEvent, setSelectedEvent] = useState<PreviewEvent | null>(null)
+  const [open, setOpen] = useState(false)
+
+  const { icon, copy } = useCopyToClipboard()
+
+  const triggerRef = useRef<HTMLAnchorElement | null>(null)
+  const drawerRef = useRef<HTMLDivElement | null>(null)
+
+  const openPreview = useCallback((event: PreviewEvent, trigger: HTMLAnchorElement) => {
+    if (trigger.closest('[data-slot="drawer-content"]') === null) {
+      triggerRef.current = trigger
+    }
+
+    setSelectedEvent(event)
+    setOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (open === false) {
+      return
+    }
+
+    const desktop = window.matchMedia("(min-width: 768px)")
+
+    const closeOnMobile = () => {
+      if (desktop.matches === false) {
+        setOpen(false)
+      }
+    }
+
+    closeOnMobile()
+
+    desktop.addEventListener("change", closeOnMobile)
+
+    return () => {
+      desktop.removeEventListener("change", closeOnMobile)
+    }
+  }, [open])
+
+  function getFinalFocus() {
+    const activeElement = document.activeElement
+    const isInsideDrawer = drawerRef.current?.contains(activeElement)
+
+    // Closing takes time. Preserve focus if the user has already moved to another control.
+    if (activeElement !== null && activeElement !== document.body && !isInsideDrawer) {
+      return false
+    }
+
+    return triggerRef.current
+  }
+
+  return (
+    <EventTurnstileProvider backgroundEnabled={open === false}>
+      <EventPreviewContext.Provider value={openPreview}>
+        <div className={className}>{children}</div>
+        <Drawer swipeDirection="right" open={open} onOpenChange={setOpen}>
+          <DrawerContent
+            ref={drawerRef}
+            aria-describedby={undefined}
+            showOverlay={open}
+            style={open ? undefined : { pointerEvents: "none" }}
+            overlayClassName="bg-black/20 dark:bg-black/50 supports-backdrop-filter:backdrop-blur-none"
+            className={cn(
+              "overflow-hidden border border-field-border shadow-xl text-base [--drawer-inset:1rem]",
+              "data-[swipe-direction=right]:inset-y-4",
+              "data-[swipe-direction=right]:right-4",
+              "data-[swipe-direction=right]:rounded-xl",
+              "data-[swipe-direction=right]:w-[min(--spacing(152),60vw)]",
+              "data-[swipe-direction=right]:sm:max-w-none"
+            )}
+            finalFocus={getFinalFocus}
+          >
+            <DrawerHeader className="shrink-0 border-b border-field-border">
+              <DrawerTitle className="sr-only">{selectedEvent?.title ?? "Arrangement"}</DrawerTitle>
+
+              <div className="flex flex-row items-center gap-5">
+                <DrawerClose render={<Button variant="ghost" size="icon" aria-label="Lukk arrangement" />}>
+                  <IconChevronsRight className="size-5" />
+                </DrawerClose>
+
+                <div className="flex flex-row items-center gap-2">
+                  {selectedEvent !== null && (
+                    <Button
+                      onClick={() => {
+                        const eventUrl = createAbsoluteEventPageUrl(
+                          env.NEXT_PUBLIC_ORIGIN,
+                          selectedEvent.id,
+                          selectedEvent.title
+                        )
+
+                        void copy(eventUrl)
+                      }}
+                    >
+                      {icon === "check" ? <IconCheck className="size-4" /> : <IconCopy className="size-4" />}
+                      Kopier lenke
+                    </Button>
+                  )}
+
+                  {selectedEvent !== null && (
+                    <Button element={Link} href={createEventPageUrl(selectedEvent.id, selectedEvent.title)}>
+                      <IconMaximize className="size-4" />
+                      Åpne arrangementsiden
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </DrawerHeader>
+
+            <ScrollArea.Root
+              key={selectedEvent?.id}
+              data-base-ui-swipe-ignore
+              className="relative min-h-0 min-w-0 flex-1 overflow-hidden"
+            >
+              <ScrollArea.Viewport className="absolute inset-0 overscroll-contain">
+                <ScrollArea.Content style={{ minWidth: 0 }} className="w-full max-w-full p-4">
+                  {selectedEvent !== null && (
+                    <EventPreviewDetails
+                      key={selectedEvent.id}
+                      eventId={selectedEvent.id}
+                      enableTurnstile={open}
+                      listSubscription={listSubscription}
+                    />
+                  )}
+                </ScrollArea.Content>
+              </ScrollArea.Viewport>
+
+              <ScrollArea.Scrollbar orientation="vertical" className="w-2.5 p-0.5">
+                <ScrollArea.Thumb className="w-full rounded-full bg-gray-400/30 hover:bg-gray-400 dark:bg-stone-700 dark:hover:bg-stone-500 transition-colors" />
+              </ScrollArea.Scrollbar>
+            </ScrollArea.Root>
+          </DrawerContent>
+        </Drawer>
+      </EventPreviewContext.Provider>
+    </EventTurnstileProvider>
+  )
+}
+
+function EventPreviewDetails({
+  eventId,
+  enableTurnstile,
+  listSubscription,
+}: {
+  eventId: string
+  enableTurnstile: boolean
+  listSubscription: EventListSubscription | null
+}) {
+  const trpc = useTRPC()
+  const { dbUser } = useAuthenticatedUser()
+
+  const eventQuery = useQuery(trpc.event.find.queryOptions(eventId))
+
+  const { data: parent = null } = useQuery(trpc.event.findParentEvent.queryOptions({ eventId }))
+
+  const { data: isOrganizer } = useQuery({
+    ...trpc.event.isOrganizer.queryOptions({ eventId }),
+    enabled: dbUser !== null,
+  })
+
+  const { data: isAdmin } = useQuery({
+    ...trpc.user.isAdmin.queryOptions(),
+    enabled: dbUser !== null,
+  })
+
+  if (eventQuery.isLoading === true) {
+    return <SkeletonEventHeader />
+  }
+
+  if (eventQuery.isError === true) {
+    return (
+      <div role="alert" className="flex flex-col items-start gap-3">
+        <Text>Kunne ikke laste arrangementet.</Text>
+        <Button variant="outline" onClick={() => void eventQuery.refetch()}>
+          Prøv igjen
+        </Button>
+      </div>
+    )
+  }
+
+  const eventDetail = eventQuery.data ?? null
+
+  if (eventDetail === null) {
+    return <Text>Arrangementet finnes ikke eller er ikke tilgjengelig.</Text>
+  }
+
+  const { event, attendance } = eventDetail
+
+  const bulkSubscription =
+    attendance !== null && listSubscription?.attendanceIds.includes(attendance.id) ? listSubscription : undefined
+
+  const showAttendanceCard = attendance !== null
+  const showDescription = event.description !== ""
+
+  return (
+    <div className="flex w-full min-w-0 max-w-full flex-col gap-6 mb-17">
+      <EventHeader event={event} smallTitle showAdminLink={isOrganizer === true || isAdmin === true} />
+
+      <section aria-label="Arrangementsinformasjon" className="flex flex-col gap-4">
+        {parent !== null && (
+          <div className="rounded-xl border border-field-border p-3">
+            <Title element="h2" size="sm">
+              Arrangementet er en del av
+            </Title>
+            <EventListItem event={parent.event} attendance={parent.attendance} userId={dbUser?.id} />
+          </div>
+        )}
+
+        <TimeBox event={event} showAddToCalendar={attendance === null} />
+        <LocationBox event={event} />
+
+        {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            {event.hostingGroups.map((group) => (
+              <OrganizerPill key={group.slug} item={group} />
+            ))}
+
+            {event.companies.map((company) => (
+              <OrganizerPill key={company.id} item={company} />
+            ))}
+          </div>
+        ) : (
+          <Text className="text-muted-foreground">Ingen arrangører</Text>
+        )}
+      </section>
+
+      {showDescription &&
+        (showAttendanceCard ? (
+          <ReadMore maxLines={8}>
+            <EventDescription description={event.description} />
+          </ReadMore>
+        ) : (
+          <EventDescription description={event.description} />
+        ))}
+
+      {showAttendanceCard && (
+        <div className="w-112 max-w-full self-center">
+          <AttendanceCard
+            initialAttendance={attendance}
+            initialRegistrationAvailability={null}
+            parentEvent={parent?.event ?? null}
+            user={dbUser}
+            event={event}
+            enableTurnstile={enableTurnstile}
+            deferTurnstile
+            bulkSubscription={bulkSubscription}
+          />
+        </div>
+      )}
+    </div>
+  )
+}

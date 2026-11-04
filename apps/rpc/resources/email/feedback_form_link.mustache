@@ -1,36 +1,43 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="nb">
-  <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta name="x-apple-disable-message-reformatting"/>
-  </head>
-  <body style="background-color: rgb(255, 255, 255);">
-    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 37.5em">
+{{> event-image }}
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei!</p>
+    <p style="margin: 0;">Takk for at du deltok på {{ eventName }} {{ eventStart }}. Vi vil gjerne høre hva du syntes om arrangementet.</p>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0;">
+    <p class="text-notice" style="margin: 0; color: #b91c1c; font-size: 14px; line-height: 21px;">Det er obligatorisk å svare på tilbakemeldingsskjemaet.</p>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0; font-size: 0;">
+    <!--[if mso]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="padding-right: 8px;"><![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="display: inline-table; vertical-align: top; margin: 0 8px 8px 0;">
       <tbody>
-        <tr style="width: 100%">
-          <td>
-            <h2>Tilbakemelding på {{ eventName }}</h2>
-            <p>Hei, vi ønsker tilbakemelding på <a href="{{ eventLink }}">{{ eventName }}</a> som du deltok på {{ eventStart }}.</p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <p>Du kan svare her: <a href="{{ feedbackLink }}">{{ feedbackLink }}</a>.</p>
-            <p>Siste frist til å svare på skjemaet er {{ feedbackDeadline }}.</p>
-            <p>Eventuelle spørsmål sendes til <a href="mailto:{{ organizerEmail }}">{{ organizerEmail }}</a>.</p>
-          </td>
-        </tr>
-
-        <tr style="width: 100%">
-          <td>
-            <h3 style="font-size: 0.9em; margin-top: 3rem">Linjeforeningen Online</h3>
-            <p style="font-size: 0.75em; color: gray">Du mottar denne e-posten fordi du deltok på arrangementet {{ eventName }}</p>
-            <p style="font-size: 0.75em; color: gray">Org. Nr. 992 548 045 &ndash; Høgskoleringen 5, 7034 Trondheim</p>
-            <p style="font-size: 0.75em; color: gray">Alle datoer er i norsk tid.</p>
-          </td>
+        <tr>
+          {{# buttons.feedback }}
+          {{> primary-button }}
+          {{/ buttons.feedback }}
         </tr>
       </tbody>
     </table>
-  </body>
-</html>
+    <!--[if mso]></td><td><![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="display: inline-table; vertical-align: top; margin: 0 8px 8px 0;">
+      <tbody>
+        <tr>
+          {{# buttons.event }}
+          {{> secondary-button }}
+          {{/ buttons.event }}
+        </tr>
+      </tbody>
+    </table>
+    <!--[if mso]></td></tr></table><![endif]-->
+  </td>
+</tr>
+<tr>
+  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Siste frist til å svare er {{ feedbackDeadline }}.</p>
+    <p style="margin: 0;">Har du spørsmål, kan du kontakte <a href="mailto:{{ organizerEmail }}" style="color: inherit; text-decoration: underline;">{{ organizerEmail }}</a>.</p>
+  </td>
+</tr>

@@ -13,13 +13,13 @@ interface MobileMenuCardProps {
 
 export const MobileMenuCard: FC<MobileMenuCardProps> = ({ title, href, icon: IconComponent, onClick }) => {
   return (
-    <DropdownMenuItem asChild className="flex-[1_1_auto] cursor-pointer p-0">
+    <DropdownMenuItem asChild variant="uncolored" className="flex-[1_1_auto] cursor-pointer p-0">
       <Link
         href={href}
         onClick={onClick}
         className={cn(
           "relative flex flex-col items-start justify-start p-4 rounded-xl transition-colors",
-          "bg-blue-100 hover:bg-blue-200 dark:bg-stone-700 dark:hover:bg-stone-600",
+          "bg-gray-100 hover:bg-gray-200 data-highlighted:bg-gray-200 dark:bg-stone-700 dark:hover:bg-stone-600 dark:data-highlighted:bg-stone-600",
           "border border-gray-300/80 dark:border-stone-600"
         )}
       >

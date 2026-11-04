@@ -6,7 +6,7 @@ import type { FadderukeRepository } from "./fadderuke-repository"
 export interface FadderukeService {
   create(handle: DBHandle, data: FadderukeWrite): Promise<Fadderuke>
   update(handle: DBHandle, fadderukeId: FadderukeId, data: Partial<FadderukeWrite>): Promise<Fadderuke>
-  delete(handle: DBHandle, fadderukeId: FadderukeId): Promise<void>
+  delete(handle: DBHandle, fadderukeId: FadderukeId): Promise<Fadderuke>
   getById(handle: DBHandle, fadderukeId: FadderukeId): Promise<Fadderuke>
   findByYear(handle: DBHandle, year: number): Promise<Fadderuke | null>
   findMany(handle: DBHandle): Promise<Fadderuke[]>
@@ -27,7 +27,7 @@ export function getFadderukeService(fadderukeRepository: FadderukeRepository): F
     async delete(handle, fadderukeId) {
       await this.getById(handle, fadderukeId)
 
-      await fadderukeRepository.delete(handle, fadderukeId)
+      return await fadderukeRepository.delete(handle, fadderukeId)
     },
 
     async getById(handle, fadderukeId) {

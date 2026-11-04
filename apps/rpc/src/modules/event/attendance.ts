@@ -1,5 +1,5 @@
-import { buildLimitedDepthJsonSchema, getStudyGrade } from "@dotkomonline/utils"
-import { compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { getStudyGrade } from "@dotkomonline/utils"
+import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -7,7 +7,7 @@ import { type User, type UserId, UserSchema, findActiveMembership } from "../use
 /**
  * Grace period after registration during which deregistration requires no reason.
  *
- * This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour payment deadline.
+ * This duration was chosen arbitrarily, though it seemed nice to not overlap with the 1 hour completion deadline.
  * Frontends should account for a few seconds to account for clock skew to avoid errors near the grace period end.
  */
 export const DEREGISTER_GRACE_PERIOD_MS = hoursToMilliseconds(2)
@@ -44,14 +44,19 @@ export const AttendeeSelectionResponseSchema = AttendanceSelectionResponseSchema
 
 const AttendeeBaseSchema = z.object({
   id: z.string(),
-  userGrade: z.number().int().nullable(),
-  selections: buildLimitedDepthJsonSchema().default("[]"),
-  reserved: z.boolean(),
-  earliestReservationAt: z.date(),
+  userGrade: z.int().nullable(),
+  selections: z.array(AttendanceSelectionResponseSchema),
+  registeredAt: z.date().nullable(),
+  registrationPoolDelayHours: z.int().nullable(),
+  registrationMarkDelayHours: z.int().nullable(),
+  /**
+   * Computed from createdAt + registration delays
+   */
+  registrationEligibleAt: z.date(),
   attendedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  paymentDeadline: z.date().nullable(),
+  completionDeadline: z.date().nullable(),
   paymentLink: z.string().nullable(),
   paymentId: z.string().nullable(),
   paymentReservedAt: z.date().nullable(),
@@ -62,7 +67,8 @@ const AttendeeBaseSchema = z.object({
   attendanceId: z.string(),
   userId: z.string(),
   attendancePoolId: z.string(),
-  paymentRefundedById: z.string().nullable(),
+  adminRegisteredByUserId: z.string().nullable(),
+  paymentRefundedByUserId: z.string().nullable(),
 })
 
 export type AttendeeId = Attendee["id"]
@@ -74,51 +80,88 @@ export type Attendee = z.infer<typeof AttendeeSchema>
  */
 export const AttendeeSchema = AttendeeBaseSchema.extend({
   user: UserSchema,
-  selections: z.array(AttendanceSelectionResponseSchema),
 })
+
+export const AttendeeSummarySchema = AttendeeSchema.pick({
+  id: true,
+  userId: true,
+  attendanceId: true,
+  attendancePoolId: true,
+  registeredAt: true,
+  userGrade: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
+  registrationEligibleAt: true,
+}).extend({
+  user: UserSchema.pick({
+    id: true,
+    name: true,
+    username: true,
+    imageUrl: true,
+  }).extend({
+    flags: UserSchema.shape.flags.element
+      .pick({
+        name: true,
+        description: true,
+        imageUrl: true,
+        awardedAt: true,
+        awardedReason: true,
+      })
+      .array(),
+    memberships: UserSchema.shape.memberships.element.pick({ type: true }).array(),
+  }),
+})
+
+export type AttendeeSummary = z.infer<typeof AttendeeSummarySchema>
 
 export type AttendeeWrite = z.infer<typeof AttendeeWriteSchema>
 export const AttendeeWriteSchema = AttendeeSchema.pick({
+  adminRegisteredByUserId: true,
   attendedAt: true,
-  earliestReservationAt: true,
-  reserved: true,
+  registeredAt: true,
+  registrationPoolDelayHours: true,
+  registrationMarkDelayHours: true,
   selections: true,
   /** The attending user's grade at time of registration. */
   userGrade: true,
 })
 
+export function getAttendeeRegistrationEligibleAt(
+  attendee: Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours">
+): Date {
+  const poolDelayHours = attendee.registrationPoolDelayHours ?? 0
+  const markDelayHours = attendee.registrationMarkDelayHours ?? 0
+
+  return addHours(attendee.createdAt, poolDelayHours + markDelayHours)
+}
+
 export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
 export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
   paymentChargedAt: true,
   paymentId: true,
-  paymentDeadline: true,
   paymentChargeDeadline: true,
   paymentLink: true,
   paymentReservedAt: true,
   paymentRefundedAt: true,
-  paymentRefundedById: true,
+  paymentRefundedByUserId: true,
   paymentCheckoutUrl: true,
 })
 
 // The 96-hour limit is arbitrary
 export const MAX_MERGE_DELAY_HOURS = 96
 
-const AttendancePoolBaseSchema = z.object({
+export type AttendancePoolId = AttendancePool["id"]
+export type AttendancePool = z.infer<typeof AttendancePoolSchema>
+export const AttendancePoolSchema = z.object({
   id: z.string(),
   title: z.string(),
   mergeDelayHours: z.number().int().nullable(),
-  yearCriteria: buildLimitedDepthJsonSchema(),
+  yearCriteria: z.array(z.number()),
   capacity: z.number().int(),
   createdAt: z.date(),
   updatedAt: z.date(),
   attendanceId: z.string(),
   taskId: z.string().nullable(),
-})
-
-export type AttendancePoolId = AttendancePool["id"]
-export type AttendancePool = z.infer<typeof AttendancePoolSchema>
-export const AttendancePoolSchema = AttendancePoolBaseSchema.extend({
-  yearCriteria: z.array(z.number()),
 })
 
 export type AttendancePoolWrite = z.infer<typeof AttendancePoolWriteSchema>
@@ -140,7 +183,7 @@ const AttendanceBaseSchema = z.object({
   registerStart: z.date(),
   registerEnd: z.date(),
   deregisterDeadline: z.date(),
-  selections: buildLimitedDepthJsonSchema().default("[]"),
+  selections: z.array(AttendanceSelectionSchema),
   createdAt: z.date(),
   updatedAt: z.date(),
   attendancePrice: z.number().int().nullable(),
@@ -151,8 +194,27 @@ export type AttendanceId = Attendance["id"]
 export const AttendanceSchema = AttendanceBaseSchema.extend({
   pools: z.array(AttendancePoolSchema),
   attendees: z.array(AttendeeSchema),
-  selections: z.array(AttendanceSelectionSchema),
 })
+
+export const AttendanceViewSchema = AttendanceSchema.extend({
+  attendees: z.array(z.union([AttendeeSchema, AttendeeSummarySchema])),
+  attendedAttendeeCount: z.number().int().nonnegative().optional(),
+})
+export type AttendanceView = z.infer<typeof AttendanceViewSchema>
+
+export function buildAttendanceView(attendance: Attendance, currentUserId: UserId | null): AttendanceView {
+  return {
+    ...attendance,
+    attendedAttendeeCount: attendance.attendees.filter((attendee) => attendee.attendedAt !== null).length,
+    attendees: attendance.attendees.map((attendee) => {
+      if (currentUserId !== null && attendee.userId === currentUserId) {
+        return attendee
+      }
+
+      return AttendeeSummarySchema.parse(attendee)
+    }),
+  }
+}
 
 export type AttendanceWrite = z.infer<typeof AttendanceWriteSchema>
 export const AttendanceWriteSchema = AttendanceSchema.pick({
@@ -165,7 +227,7 @@ export const AttendanceWriteSchema = AttendanceSchema.pick({
 export const AttendanceSummarySchema = AttendanceBaseSchema.extend({
   currentUserAttendee: AttendeeSchema.nullable(),
   pools: z.array(AttendancePoolSchema),
-  reservedAttendeeCount: z.number(),
+  registeredAttendeeCount: z.number(),
 })
 export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>
 
@@ -216,10 +278,31 @@ export const RegistrationAvailabilityRegistrationViewSchema = z.object({
   eventRejectionCause: RegistrationWindowCauseSchema.nullable(),
   userRejectionCause: RegistrationUserCauseSchema.nullable(),
   reservationActiveAt: z.date().nullable(),
-  willBeUnreserved: z.boolean(),
+  willBeQueued: z.boolean(),
   hasMergeDelay: z.boolean(),
 })
 export type RegistrationAvailabilityRegistrationView = z.infer<typeof RegistrationAvailabilityRegistrationViewSchema>
+
+export const AttendeeStateSchema = z.enum(["QUEUED", "RESERVED", "REGISTERED"])
+export type AttendeeState = z.infer<typeof AttendeeStateSchema>
+
+export const AttendanceCompletionRequirementSchema = z.enum(["PAYMENT"])
+export type AttendanceCompletionRequirement = z.infer<typeof AttendanceCompletionRequirementSchema>
+
+export const AttendanceCompletionRequirementStateSchema = z.object({
+  requirement: AttendanceCompletionRequirementSchema,
+  completed: z.boolean(),
+})
+export type AttendanceCompletionRequirementState = z.infer<typeof AttendanceCompletionRequirementStateSchema>
+
+export const RegistrationAvailabilityCompletionViewSchema = z.object({
+  attendeeState: AttendeeStateSchema,
+  completionDeadline: z.date().nullable(),
+  requirements: z.array(AttendanceCompletionRequirementStateSchema),
+  missingRequirements: z.array(AttendanceCompletionRequirementSchema),
+  paymentLink: z.string().nullable(),
+})
+export type RegistrationAvailabilityCompletionView = z.infer<typeof RegistrationAvailabilityCompletionViewSchema>
 
 export const RegistrationAvailabilityViewSchema = z.object({
   userId: UserSchema.shape.id,
@@ -227,12 +310,13 @@ export const RegistrationAvailabilityViewSchema = z.object({
   pool: RegistrationAvailabilityPoolViewSchema.nullable(),
   registration: RegistrationAvailabilityRegistrationViewSchema.nullable(),
   deregistration: RegistrationAvailabilityDeregistrationViewSchema.nullable(),
+  completion: RegistrationAvailabilityCompletionViewSchema.nullable(),
 })
 export type RegistrationAvailabilityView = z.infer<typeof RegistrationAvailabilityViewSchema>
 
 export const PoolOccupancySchema = z.object({
   poolId: AttendancePoolSchema.shape.id,
-  reservedCount: z.number(),
+  registeredCount: z.number(),
   capacity: z.number(),
   isPoolFull: z.boolean(),
 })
@@ -240,42 +324,85 @@ export type PoolOccupancy = z.infer<typeof PoolOccupancySchema>
 
 export const RegisterChangeEventSchema = z.object({
   attendee: AttendeeSchema,
-  status: z.enum(["registered", "deregistered", "reserved"]),
+  /**
+   * - `registered`: The attendee has registered for the event.
+   * - `deregistered`: The attendee has deregistered from the event.
+   * - `updated`: The attendee's data (for example queue status) has been updated.
+   */
+  status: z.enum(["registered", "deregistered", "updated"]),
   poolOccupancies: z.array(PoolOccupancySchema),
 })
 export type RegisterChangeEvent = z.infer<typeof RegisterChangeEventSchema>
 
+export const BulkRegisterChangeEventSchema = z.discriminatedUnion("isCurrentUser", [
+  RegisterChangeEventSchema.extend({
+    isCurrentUser: z.literal(true),
+    registeredAttendeeCount: z.number().int().nonnegative(),
+  }),
+  RegisterChangeEventSchema.extend({
+    isCurrentUser: z.literal(false),
+    attendee: AttendeeSummarySchema,
+    registeredAttendeeCount: z.number().int().nonnegative(),
+  }),
+])
+
+export type BulkRegisterChangeEvent = z.infer<typeof BulkRegisterChangeEventSchema>
+
+export function buildBulkRegisterChangeEvent(
+  registerChangeEvent: RegisterChangeEvent,
+  currentUserId: UserId | null
+): BulkRegisterChangeEvent {
+  const { attendee, status, poolOccupancies } = registerChangeEvent
+  const registeredAttendeeCount = poolOccupancies.reduce((total, occupancy) => total + occupancy.registeredCount, 0)
+
+  if (currentUserId !== null && attendee.userId === currentUserId) {
+    return { isCurrentUser: true, attendee, status, poolOccupancies, registeredAttendeeCount }
+  }
+
+  return {
+    isCurrentUser: false,
+    attendee: AttendeeSummarySchema.parse(attendee),
+    status,
+    poolOccupancies,
+    registeredAttendeeCount,
+  }
+}
+
 export function buildPoolOccupancies(attendance: Attendance): PoolOccupancy[] {
   return attendance.pools.map((pool) => {
-    const reservedCount = getReservedAttendeeCount(attendance, pool.id)
-    const isPoolFull = pool.capacity !== 0 && reservedCount >= pool.capacity
+    const registeredCount = getRegisteredAttendeeCount(attendance, pool.id)
+    const isPoolFull = pool.capacity !== 0 && registeredCount >= pool.capacity
 
     return {
       poolId: pool.id,
-      reservedCount,
+      registeredCount,
       capacity: pool.capacity,
       isPoolFull,
     }
   })
 }
 
-export function getReservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+export function getRegisteredAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && attendee.reserved).length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt !== null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 1 : 0), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt !== null ? 1 : 0), 0)
 }
 
-export function getUnreservedAttendeeCount(attendance: Attendance, poolId?: AttendancePoolId): number {
+export function getQueuedAttendeeCount(attendance: AttendanceView, poolId?: AttendancePoolId): number {
   if (poolId) {
-    return attendance.attendees.filter((attendee) => attendee.attendancePoolId === poolId && !attendee.reserved).length
+    return attendance.attendees.filter(
+      (attendee) => attendee.attendancePoolId === poolId && attendee.registeredAt === null
+    ).length
   }
 
-  return attendance.attendees.reduce((total, attendee) => total + (attendee.reserved ? 0 : 1), 0)
+  return attendance.attendees.reduce((total, attendee) => total + (attendee.registeredAt === null ? 1 : 0), 0)
 }
 
-export function getAttendanceCapacity(attendance: Attendance | AttendanceSummary): number {
+export function getAttendanceCapacity(attendance: Pick<Attendance, "pools">): number {
   return attendance.pools.reduce((total, pool) => total + pool.capacity, 0)
 }
 
@@ -294,7 +421,7 @@ export function isAttendable(user: User, pool: AttendancePool) {
   return pool.yearCriteria.includes(grade)
 }
 
-export const getAttendee = (attendance: Attendance | AttendanceSummary | null, user: User | UserId | null) => {
+export const getAttendee = (attendance: AttendanceView | AttendanceSummary | null, user: User | UserId | null) => {
   if (!attendance) {
     return null
   }
@@ -309,10 +436,14 @@ export const getAttendee = (attendance: Attendance | AttendanceSummary | null, u
 
   const userId = typeof user === "string" ? user : user.id
 
-  return attendance.attendees?.find((attendee) => attendee.userId === userId) ?? null
+  return (
+    attendance.attendees.find(
+      (attendee): attendee is Attendee => attendee.userId === userId && "selections" in attendee
+    ) ?? null
+  )
 }
 
-export const getAttendablePool = (attendance: Attendance, user: User | null) => {
+export const getAttendablePool = (attendance: AttendanceView, user: User | null) => {
   if (!user) {
     return null
   }
@@ -326,7 +457,7 @@ export const getAttendablePool = (attendance: Attendance, user: User | null) => 
   return attendance.pools.find((pool) => isAttendable(user, pool)) ?? null
 }
 
-export const getNonAttendablePools = (attendance: Attendance, user: User | null) => {
+export const getNonAttendablePools = (attendance: AttendanceView, user: User | null) => {
   const attendablePool = getAttendablePool(attendance, user)
 
   return attendance.pools
@@ -341,7 +472,7 @@ export const getNonAttendablePools = (attendance: Attendance, user: User | null)
     })
 }
 
-export const getAttendeeQueuePosition = (attendance: Attendance, user: User | null) => {
+export const getAttendeeQueuePosition = (attendance: AttendanceView, user: User | null) => {
   const attendee = getAttendee(attendance, user)
   const pool = getAttendablePool(attendance, user)
 
@@ -349,27 +480,127 @@ export const getAttendeeQueuePosition = (attendance: Attendance, user: User | nu
     return null
   }
 
-  const unreservedAttendees = attendance.attendees
-    .filter((attendee) => attendee.attendancePoolId === pool.id && !attendee.reserved)
-    .toSorted((a, b) => compareAsc(a.earliestReservationAt, b.earliestReservationAt))
+  const queuedAttendees = attendance.attendees
+    .filter((attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt === null)
+    .toSorted((firstAttendee, secondAttendee) =>
+      compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+    )
 
-  const index = unreservedAttendees.indexOf(attendee)
+  const attendeeIndex = queuedAttendees.findIndex((queuedAttendee) => queuedAttendee.id === attendee.id)
 
-  if (index === -1) {
+  if (attendeeIndex === -1) {
     return null
   }
 
   // Queue position is 1-indexed but arrays are 0-indexed, so we add 1
-  return index + 1
+  return attendeeIndex + 1
 }
 
 type AttendeePaymentProps = Pick<
   Attendee,
-  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "paymentDeadline" | "paymentRefundedById"
+  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedByUserId"
 >
 
+export function getApplicableAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Pick<Attendee, "registeredAt"> | null
+): AttendanceCompletionRequirement[] {
+  if (attendee?.registeredAt == null) {
+    return []
+  }
+
+  if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
+    return ["PAYMENT"]
+  }
+
+  return []
+}
+
+export function isAttendanceCompletionRequirementCompleted(
+  requirement: AttendanceCompletionRequirement,
+  attendee: Attendee | null,
+  attendancePrice: number | null
+): boolean {
+  if (attendee === null) {
+    return false
+  }
+
+  if (requirement === "PAYMENT") {
+    return hasAttendeePaid(attendee, attendancePrice) === true
+  }
+
+  return false
+}
+
+export function getMissingAttendanceCompletionRequirements(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Attendee | null
+): AttendanceCompletionRequirement[] {
+  return getApplicableAttendanceCompletionRequirements(attendance, attendee).filter(
+    (requirement) => !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice)
+  )
+}
+
+export function getAttendeeState(
+  attendee: Attendee | null,
+  attendance: Pick<Attendance, "attendancePrice">
+): AttendeeState | null {
+  if (attendee === null) {
+    return null
+  }
+
+  if (attendee.registeredAt === null) {
+    return "QUEUED"
+  }
+
+  if (getMissingAttendanceCompletionRequirements(attendance, attendee).length > 0) {
+    return "RESERVED"
+  }
+
+  return "REGISTERED"
+}
+
+export function attendeeHasPendingCompletionDeadline(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Pick<Attendee, "completionDeadline" | "registeredAt"> | null
+): boolean {
+  if (attendee === null || attendee.registeredAt === null || attendee.completionDeadline === null) {
+    return false
+  }
+
+  return getMissingAttendanceCompletionRequirements(attendance, attendee as Attendee).length > 0
+}
+
+export function buildRegistrationAvailabilityCompletionView(
+  attendance: Pick<Attendance, "attendancePrice">,
+  attendee: Attendee | null
+): RegistrationAvailabilityCompletionView | null {
+  if (attendee === null) {
+    return null
+  }
+
+  const attendeeState = getAttendeeState(attendee, attendance)
+
+  if (attendeeState === null) {
+    return null
+  }
+
+  const requirements = getApplicableAttendanceCompletionRequirements(attendance, attendee)
+
+  return {
+    attendeeState,
+    completionDeadline: attendee.registeredAt !== null ? attendee.completionDeadline : null,
+    requirements: requirements.map((requirement) => ({
+      requirement,
+      completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
+    })),
+    missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
+    paymentLink: attendee.registeredAt !== null ? attendee.paymentLink : null,
+  }
+}
+
 export const hasAttendeePaid = (
-  attendee: Omit<AttendeePaymentProps, "paymentRefundedById"> | null,
+  attendee: Omit<AttendeePaymentProps, "paymentRefundedByUserId"> | null,
   attendancePrice: number | null,
   options?: { excludePaymentReservation?: boolean }
 ): boolean | null => {
@@ -384,7 +615,7 @@ export const hasAttendeePaid = (
   const hasBeenRefunded = attendee.paymentRefundedAt !== null
   const hasBeenCharged = attendee.paymentChargedAt !== null
   const hasReserved = options?.excludePaymentReservation ? false : attendee.paymentReservedAt !== null
-  const hasDeadline = attendee.paymentDeadline !== null
+  const hasDeadline = attendee.completionDeadline !== null
 
   return hasBeenCharged || hasReserved || (hasBeenRefunded && !hasDeadline)
 }
@@ -408,11 +639,11 @@ export const getAttendeePaymentStatus = (attendee: AttendeePaymentProps): Attend
     return "reserved"
   }
 
-  if (attendee.paymentRefundedById !== null) {
+  if (attendee.paymentRefundedByUserId !== null) {
     return "cancelled"
   }
 
-  if (attendee.paymentDeadline !== null) {
+  if (attendee.completionDeadline !== null) {
     return "pending"
   }
 

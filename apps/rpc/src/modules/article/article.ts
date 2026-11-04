@@ -1,4 +1,4 @@
-import { buildAnyOfFilter, buildBooleanFilter, buildSearchFilter } from "@dotkomonline/utils"
+import { buildAnyOfFilter, buildSearchFilter } from "@dotkomonline/utils"
 import { z } from "zod"
 
 export const ArticleTagSchema = z.object({
@@ -16,11 +16,10 @@ export const ArticleSchema = z.object({
   slug: z.string(),
   title: z.string(),
   author: z.string(),
-  photographer: z.string(),
+  photographer: z.string().nullable(),
   imageUrl: z.string(),
   excerpt: z.string(),
   content: z.string(),
-  isFeatured: z.boolean(),
   vimeoId: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -45,7 +44,6 @@ export const ArticleFilterQuerySchema = z
   .object({
     bySearchTerm: buildSearchFilter(),
     byTags: buildAnyOfFilter(ArticleTagSchema.shape.name),
-    byIsFeatured: buildBooleanFilter(),
   })
   .partial()
 

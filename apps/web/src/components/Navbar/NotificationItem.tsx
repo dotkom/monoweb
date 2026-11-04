@@ -2,16 +2,32 @@
 
 import { Link } from "@/components/link"
 import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
+import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
-import type { Notification } from "@dotkomonline/rpc/notification"
-import { Text, cn } from "@dotkomonline/ui"
+import {
+  getNotificationTypeConfiguration,
+  type Notification,
+  type NotificationColor,
+} from "@dotkomonline/rpc/notification"
+import { Button, Text, cn } from "@dotkomonline/ui"
+import { createNotificationPageUrl } from "@dotkomonline/utils"
 import { IconCheck } from "@tabler/icons-react"
 import type { MouseEvent, PropsWithChildren } from "react"
 
+const notificationAccentClasses = {
+  blue: "bg-blue-200 dark:bg-blue-400/33",
+  purple: "bg-purple-200 dark:bg-purple-400/33",
+  green: "bg-green-200 dark:bg-green-400/33",
+  red: "bg-red-200 dark:bg-red-400/33",
+  gray: "bg-gray-200 dark:bg-stone-500/33",
+  yellow: "bg-yellow-200 dark:bg-yellow-400/33",
+} as const satisfies Record<NotificationColor, string>
+
 export type NotificationItemNotification = Pick<
   Notification,
-  "id" | "createdAt" | "shortDescription" | "title" | "type"
+  "id" | "createdAt" | "link" | "shortDescription" | "title" | "type"
 > & {
+  sentAt?: Notification["sentAt"]
   actorGroup: Pick<NonNullable<Notification["actorGroup"]>, "abbreviation" | "name" | "preferredDisplayName"> | null
 }
 
@@ -33,7 +49,14 @@ export function NotificationItem({
 }: NotificationItemProps) {
   const isUnread = readAt === null
   const actorGroupName = notification.actorGroup === null ? null : getGroupDisplayName(notification.actorGroup)
-  const relativeCreatedAt = useCompactRelativeTime(notification.createdAt)
+  const relativeCreatedAt = useCompactRelativeTime(notification.sentAt ?? notification.createdAt)
+  const notificationConfiguration = getNotificationTypeConfiguration(notification.type)
+  const elementReference = useMarkNotificationAsReadWhenVisible<HTMLElement>({
+    notificationId: notification.id,
+    notificationType: notification.type,
+    readAt,
+    onMarkAsRead,
+  })
 
   const markAsRead = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -43,54 +66,77 @@ export function NotificationItem({
 
   return (
     <article
+      ref={elementReference}
       className={cn(
-        "group/container relative flex min-w-0 gap-2 rounded-lg p-2 -mx-2",
-        "border border-transparent hover:border-gray-200 dark:hover:border-stone-700",
+        "group/container relative flex min-w-0 gap-3 rounded-lg p-2 -mx-2",
+        "border border-transparent hover:border-gray-200 focus-within:border-gray-200 dark:hover:border-stone-700 dark:focus-within:border-stone-700",
         className
       )}
     >
       <Link
-        href={`/varslinger/${notification.id}`}
+        href={createNotificationPageUrl(notification.id)}
         aria-label={notification.title}
         onClick={onNavigate}
-        className="absolute inset-0 rounded-lg"
+        className="absolute inset-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       />
 
-      <div className="pointer-events-none relative flex min-w-0 grow flex-col gap-2">
-        <div className="flex min-w-0 grow flex-col gap-1">
-          <div className="flex w-full min-w-0 items-center gap-1.5">
-            <div
-              className={cn(
-                "inline-flex min-w-0 items-center gap-1.5",
-                isUnread &&
-                  "rounded-sm px-1.5 pt-1.5 -mx-1.5 -mt-1.5 py-px -mb-px bg-yellow-100 dark:bg-yellow-400/10 group-hover/container:rounded-tl-md"
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none relative w-1 shrink-0 self-stretch rounded-full",
+          notificationAccentClasses[notificationConfiguration.color]
+        )}
+      />
+
+      <div className="pointer-events-none relative flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+            <Text element="span" className="min-w-0 line-clamp-2 wrap-anywhere text-sm font-medium">
+              {notification.title}
+            </Text>
+
+            <div className="size-6 shrink-0">
+              {onMarkAsRead !== undefined && (
+                <Button
+                  variant="outline"
+                  size="icon-xs"
+                  aria-label="Merk som lest"
+                  aria-hidden={!isUnread}
+                  disabled={!isUnread}
+                  tabIndex={isUnread ? 0 : -1}
+                  onClick={markAsRead}
+                  className={cn(
+                    "rounded-sm border-gray-200 bg-gray-50 transition-[opacity,scale] duration-300 ease-out motion-reduce:transition-none hover:bg-gray-200/70 dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+                    isUnread
+                      ? "pointer-events-auto scale-100"
+                      : "pointer-events-none scale-75 opacity-0 disabled:opacity-0 aria-disabled:opacity-0",
+                    isUnread &&
+                      notificationConfiguration.behavior !== "IMPORTANT" &&
+                      "md:opacity-0 md:group-hover/container:opacity-100 md:group-focus-within/container:opacity-100"
+                  )}
+                >
+                  <IconCheck className="size-3.5" />
+                </Button>
               )}
-            >
-              <Text element="span" className="min-w-0 line-clamp-2 text-sm font-semibold">
-                {notification.title}
-              </Text>
-
-              {isUnread && <span aria-hidden className="size-2 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />}
             </div>
-
-            {isUnread && (
-              <button
-                type="button"
-                aria-label="Merk som lest"
-                onClick={markAsRead}
-                className="ml-auto shrink-0 rounded-sm p-1 -m-1 border border-gray-200 dark:border-stone-700 opacity-0 pointer-events-none group-hover/container:pointer-events-auto group-hover/container:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100 bg-gray-50 hover:bg-gray-200/70 dark:hover:bg-stone-700"
-              >
-                <IconCheck className="size-3.5" />
-              </button>
-            )}
           </div>
 
-          <Text className="line-clamp-2 text-sm">{notification.shortDescription}</Text>
+          <Text
+            className={cn(
+              "wrap-anywhere text-sm text-muted-foreground",
+              // If you're sending someone a link, the idea is that you need to provide more context for it than if
+              // you're sending something to do with an existing article, for example. Therefore we show another line of
+              // text if there is no payload or a URL-payload. There's also more space for the text.
+              notification.link.type === "NONE" || notification.link.type === "URL" ? "line-clamp-3" : "line-clamp-2"
+            )}
+          >
+            {notification.shortDescription}
+          </Text>
         </div>
 
         {children && <div className="pointer-events-auto min-w-0">{children}</div>}
 
-        <div className="flex min-w-0 flex-row gap-1.5">
+        <div className="flex min-w-0 items-center gap-1.5">
           <Text className="shrink-0 text-xs text-muted-foreground" suppressHydrationWarning>
             {relativeCreatedAt}
           </Text>

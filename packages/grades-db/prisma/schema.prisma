@@ -72,9 +72,9 @@ model Course {
   examTypeNo         String? @map("exam_type_no")
   examTypeEn         String? @map("exam_type_en")
 
-  candidateCount Int   @map("candidate_count")
-  averageGradeLastThreeYears   Float @map("average_grade_last_three_years")
-  passRateLastThreeYears       Float @map("pass_rate_last_three_years")
+  candidateCount             Int   @map("candidate_count")
+  averageGradeLastThreeYears Float @map("average_grade_last_three_years")
+  passRateLastThreeYears     Float @map("pass_rate_last_three_years")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -84,16 +84,16 @@ model Course {
   campuses           Campus[]            @default([])
   gradeDistributions GradeDistribution[]
 
-  creditReductions        CreditReduction[] @relation("course_credit_reductions")
+  creditReductions          CreditReduction[] @relation("course_credit_reductions")
   creditReductionsAsOverlap CreditReduction[] @relation("course_credit_reductions_as_overlap")
 
   aliases CourseAlias[]
 
   facultyId String?  @map("faculty_id")
-  faculty   Faculty? @relation(fields: [facultyId], references: [id])
+  faculty   Faculty? @relation(fields: [facultyId], references: [id], onDelete: SetNull)
 
   departmentId String?     @map("department_id")
-  department   Department? @relation(fields: [departmentId], references: [id])
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
 
   /// Metadata used to speed up sync by limiting how far back the scraper has to check for changes
   latestYearCheckedForNtnuData Int? @map("latest_year_checked_for_ntnu_data")
@@ -101,6 +101,8 @@ model Course {
   @@index(fields: [nameNo(ops: raw("gin_trgm_ops"))], type: Gin)
   @@index(fields: [nameEn(ops: raw("gin_trgm_ops"))], type: Gin)
   @@index(fields: [code(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([facultyId])
+  @@index([departmentId])
   @@map("course")
 }
 
@@ -108,16 +110,16 @@ model GradeDistribution {
   id String @id @default(uuid())
 
   // For letter-graded courses
-  gradeACount Int
-  gradeBCount Int
-  gradeCCount Int
-  gradeDCount Int
-  gradeECount Int
-  gradeFCount Int
+  gradeACount Int @map("grade_a_count")
+  gradeBCount Int @map("grade_b_count")
+  gradeCCount Int @map("grade_c_count")
+  gradeDCount Int @map("grade_d_count")
+  gradeECount Int @map("grade_e_count")
+  gradeFCount Int @map("grade_f_count")
 
   // For pass/fail courses
-  passedCount Int
-  failedCount Int
+  passedCount Int @map("passed_count")
+  failedCount Int @map("failed_count")
 
   courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -158,13 +160,14 @@ model Department {
   courses Course[]
 
   facultyId String  @map("faculty_id")
-  faculty   Faculty @relation(fields: [facultyId], references: [id])
+  faculty   Faculty @relation(fields: [facultyId], references: [id], onDelete: Restrict)
 
+  @@index([facultyId])
   @@map("department")
 }
 
 model CourseAlias {
-  alias String  @map("alias")
+  alias String @map("alias")
 
   /// Whether the alias is used for SEO purposes, i.e. shown on the course page and used in metadata.
   /// Necessary because some aliases are not guaranteed to be correct.
@@ -173,6 +176,7 @@ model CourseAlias {
   courseId String @map("course_id")
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
+  /// prisma-lint-ignore-model require-field-index courseId
   @@id([courseId, alias])
   @@map("course_alias")
 }
@@ -190,6 +194,8 @@ model CreditReduction {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
+  /// prisma-lint-ignore-model require-field-index courseId
   @@id([courseId, overlapCourseId])
+  @@index([overlapCourseId])
   @@map("credit_reduction")
 }

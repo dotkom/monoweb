@@ -2,7 +2,6 @@ import { cn } from "@dotkomonline/ui"
 
 type HamburgerProps = {
   open: boolean
-  size?: number
   className?: string
 }
 

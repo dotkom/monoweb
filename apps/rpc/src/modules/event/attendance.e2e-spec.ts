@@ -467,8 +467,8 @@ describe("attendance integration tests", async () => {
     invariant(result.success)
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.userId).toEqual(user.id)
-    expect(attendee.earliestReservationAt).toSatisfy(isFuture)
-    expect(attendee.reserved).toBe(false)
+    expect(attendee.registrationEligibleAt).toSatisfy(isFuture)
+    expect(attendee.registeredAt).toBeNull()
   })
 
   it("should add a reservation time if the pool is a merge pool with delay", async () => {
@@ -503,8 +503,8 @@ describe("attendance integration tests", async () => {
     invariant(result.success)
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.userId).toEqual(user.id)
-    expect(attendee.earliestReservationAt).toSatisfy(isFuture)
-    expect(attendee.reserved).toBe(false)
+    expect(attendee.registrationEligibleAt).toSatisfy(isFuture)
+    expect(attendee.registeredAt).toBeNull()
   })
 
   it("should immediately reserve spots if immediateReservation=true", async () => {
@@ -536,10 +536,10 @@ describe("attendance integration tests", async () => {
     })
     invariant(result.success)
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
-    expect(attendee.reserved).toBe(true)
+    expect(attendee.registeredAt).not.toBeNull()
   })
 
-  it("should deregister an unreserved attendee before the deadline", async () => {
+  it("should deregister a queued attendee before the deadline", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
@@ -566,7 +566,7 @@ describe("attendance integration tests", async () => {
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
 
     await core.attendanceService.updateAttendeeById(dbClient, attendee.id, {
-      reserved: false,
+      registeredAt: null,
     })
 
     await core.attendanceService.updateAttendanceById(dbClient, attendance.id, {
@@ -579,7 +579,7 @@ describe("attendance integration tests", async () => {
     ).resolves.toBeUndefined()
   })
 
-  it("should not deregister a reserved attendee past the deadline", async () => {
+  it("should not deregister a registered attendee past the deadline", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
@@ -667,8 +667,8 @@ describe("attendance integration tests", async () => {
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
 
     expect(attendee.userId).toEqual(user.id)
-    expect(attendee.earliestReservationAt).toSatisfy(isFuture)
-    expect(attendee.reserved).toBe(true)
+    expect(attendee.registrationEligibleAt).toSatisfy(isFuture)
+    expect(attendee.registeredAt).not.toBeNull()
   })
 
   it("should allow registering a user through admin even if they have no active membership", async () => {
@@ -715,7 +715,7 @@ describe("attendance integration tests", async () => {
 
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.userGrade).toBeNull()
-    expect(attendee.reserved).toBe(true)
+    expect(attendee.registeredAt).not.toBeNull()
   })
 
   it("should try to attend the next user in line after deregistering", async () => {
@@ -771,12 +771,12 @@ describe("attendance integration tests", async () => {
     invariant(betaAttendeeResult.success)
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, betaAttendeeResult)
 
-    expect(alphaAttendee.reserved).toBe(true)
-    expect(betaAttendee.reserved).toBe(true)
+    expect(alphaAttendee.registeredAt).not.toBeNull()
+    expect(betaAttendee.registeredAt).not.toBeNull()
 
-    // Manually kick beta attendee out of the pool, so that they are unreserved.
+    // Manually move the beta attendee to the queue.
     await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
-      reserved: false,
+      registeredAt: null,
     })
 
     await expect(
@@ -788,10 +788,10 @@ describe("attendance integration tests", async () => {
     const updatedAttendance = await core.attendanceService.getAttendanceByAttendeeId(dbClient, betaAttendee.id)
     const betaAttendanceUpdated = updatedAttendance.attendees.find((attendee) => attendee.id === betaAttendee.id)
     expect(betaAttendanceUpdated).toBeDefined()
-    expect(betaAttendanceUpdated?.reserved).toBe(true)
+    expect(betaAttendanceUpdated?.registeredAt).toBeInstanceOf(Date)
   })
 
-  it("should not try attending the next user in line if the deregistered user is not reserved", async () => {
+  it("should not promote the next user in line if the deregistered user is queued", async () => {
     const alphaSubject = randomUUID()
     const betaSubject = randomUUID()
     auth0Client.users.get.mockImplementation(async ({ id }) => getMockAuth0UserResponse(id))
@@ -809,7 +809,7 @@ describe("attendance integration tests", async () => {
         yearCriteria: [1],
       })
     )
-    // Neither users get immediate reservation, so they are not reserved, and the bump will not reserve the next user
+    // Neither user gets an immediate reservation, so both are queued and deregistration will not promote the next user
     const alphaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
       dbClient,
       attendance.id,
@@ -843,15 +843,15 @@ describe("attendance integration tests", async () => {
     invariant(betaAttendeeResult.success)
     const betaAttendee = await core.attendanceService.registerAttendee(dbClient, betaAttendeeResult)
 
-    expect(alphaAttendee.reserved).toBe(true)
-    expect(betaAttendee.reserved).toBe(true)
+    expect(alphaAttendee.registeredAt).not.toBeNull()
+    expect(betaAttendee.registeredAt).not.toBeNull()
 
-    // Manually kick both of them to the waitlist to simulate that they are not reserved.
+    // Manually move both attendees to the queue.
     await core.attendanceService.updateAttendeeById(dbClient, alphaAttendee.id, {
-      reserved: false,
+      registeredAt: null,
     })
     await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
-      reserved: false,
+      registeredAt: null,
     })
 
     await expect(
@@ -863,7 +863,7 @@ describe("attendance integration tests", async () => {
     const updatedAttendance = await core.attendanceService.getAttendanceByAttendeeId(dbClient, betaAttendee.id)
     const betaAttendanceUpdated = updatedAttendance.attendees.find((attendee) => attendee.id === betaAttendee.id)
     expect(betaAttendanceUpdated).toBeDefined()
-    expect(betaAttendanceUpdated?.reserved).toBe(false)
+    expect(betaAttendanceUpdated?.registeredAt).toBeNull()
   })
 
   it("should registrer the physical attendance of a user for an event", async () => {
@@ -893,7 +893,7 @@ describe("attendance integration tests", async () => {
     })
     invariant(result.success)
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
-    expect(attendee.reserved).toBe(true)
+    expect(attendee.registeredAt).not.toBeNull()
 
     await expect(
       core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())

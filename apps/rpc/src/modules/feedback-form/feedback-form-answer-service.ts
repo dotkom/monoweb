@@ -1,18 +1,21 @@
 import type { DBHandle } from "@dotkomonline/db"
+import { NotFoundError } from "../../error"
+import type { AttendeeId } from "../event/attendance"
 import type {
   FeedbackFormAnswer,
+  FeedbackFormAnswerId,
   FeedbackFormAnswerWrite,
   FeedbackFormId,
   FeedbackPublicResultsToken,
+  FeedbackQuestionAnswer,
   FeedbackQuestionAnswerId,
   FeedbackQuestionAnswerWrite,
 } from "./feedback-form"
-import type { AttendeeId } from "../event/attendance"
-import { NotFoundError } from "../../error"
 import type { FeedbackFormAnswerRepository } from "./feedback-form-answer-repository"
 import type { FeedbackFormService } from "./feedback-form-service"
 
 export interface FeedbackFormAnswerService {
+  getById(handle: DBHandle, feedbackFormAnswerId: FeedbackFormAnswerId): Promise<FeedbackFormAnswer>
   create(
     handle: DBHandle,
     formAnswerData: FeedbackFormAnswerWrite,
@@ -28,6 +31,10 @@ export interface FeedbackFormAnswerService {
     feedbackFormId: FeedbackFormId,
     attendeeId: AttendeeId
   ): Promise<FeedbackFormAnswer | null>
+  getQuestionAnswerById(
+    handle: DBHandle,
+    feedbackQuestionAnswerId: FeedbackQuestionAnswerId
+  ): Promise<FeedbackQuestionAnswer>
   deleteQuestionAnswer(handle: DBHandle, feedbackQuestionAnswerId: FeedbackQuestionAnswerId): Promise<void>
 }
 
@@ -36,6 +43,15 @@ export function getFeedbackFormAnswerService(
   formService: FeedbackFormService
 ): FeedbackFormAnswerService {
   return {
+    async getById(handle, feedbackFormAnswerId) {
+      const formAnswer = await formAnswerRepository.findById(handle, feedbackFormAnswerId)
+      if (!formAnswer) {
+        throw new NotFoundError(`FeedbackFormAnswer(ID=${feedbackFormAnswerId}) not found`)
+      }
+
+      return formAnswer
+    },
+
     async create(handle, formAnswerData, questionAnswersData) {
       const validatedQuestionAnswers = questionAnswersData.filter(
         (questionAnswer) => questionAnswer.value !== null || questionAnswer.selectedOptions.length > 0
@@ -66,6 +82,15 @@ export function getFeedbackFormAnswerService(
 
     async findAnswerByAttendee(handle, feedbackFormId, attendeeId) {
       return await formAnswerRepository.findAnswerByAttendee(handle, feedbackFormId, attendeeId)
+    },
+
+    async getQuestionAnswerById(handle, feedbackQuestionAnswerId) {
+      const questionAnswer = await formAnswerRepository.findQuestionAnswerById(handle, feedbackQuestionAnswerId)
+      if (!questionAnswer) {
+        throw new NotFoundError(`FeedbackQuestionAnswer(ID=${feedbackQuestionAnswerId}) not found`)
+      }
+
+      return questionAnswer
     },
 
     async deleteQuestionAnswer(handle, feedbackQuestionAnswerId) {

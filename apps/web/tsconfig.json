@@ -8,9 +8,11 @@
   ],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
+      "*": ["./*"],
+      "@/app/*": ["./src/app/(web)/*", "./src/app/*"],
+      "@admin/*": ["./src/app/(admin)/admin/*"],
       "@/*": ["./src/*"]
     },
     "incremental": true,

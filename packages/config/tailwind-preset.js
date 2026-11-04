@@ -1,12 +1,9 @@
-const colors = require("tailwindcss/colors")
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class", '[data-theme="dark"]'],
   // Relative to the project when the preset is loaded from a tailwind.config.js
   content: ["./src/**/*.{js,ts,jsx,tsx}", "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    colors,
     extend: {
       fontFamily: {
         title: ["var(--font-title, 'Figtree Variable')"],

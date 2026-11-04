@@ -1,8 +1,12 @@
 import { addWeeks } from "date-fns"
 import type { Prisma } from ".."
-import type { Event } from "../"
+export const fixtureFeedbackFormId = {
+  nearestFutureEvent: "f0a1b2c3-d4e5-4789-a012-3456789abcde",
+  volleyballAnswers: "f1a2b3c4-d5e6-4789-a012-3456789abcde",
+} as const
 
-export const getFeedbackFormFixture = (event: Event): Prisma.FeedbackFormUncheckedCreateInput => ({
+export const getFeedbackFormFixture = (event: { id: string; end: Date }): Prisma.FeedbackFormUncheckedCreateInput => ({
+  id: fixtureFeedbackFormId.nearestFutureEvent,
   answerDeadline: addWeeks(event.end, 1),
   eventId: event.id,
   questions: {

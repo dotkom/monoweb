@@ -46,6 +46,7 @@ export function getCompanyRepository(): CompanyRepository {
                   mode: "insensitive",
                 }
               : undefined,
+          id: filter.byIds !== undefined && filter.byIds.length > 0 ? { in: filter.byIds } : undefined,
         },
       })
       return parseOrReport(CompanySchema.array(), companies)

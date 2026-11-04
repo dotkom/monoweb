@@ -1,5 +1,7 @@
+import type { AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import { Text } from "@dotkomonline/ui"
-import { addDays } from "date-fns"
+import { addDays, addMinutes, subMinutes } from "date-fns"
+import { Fragment } from "react"
 import {
   createMockAttendanceSummary,
   createMockAttendee,
@@ -9,7 +11,7 @@ import {
 } from "../../../../.ladle/fixtures/attendance"
 import { EventCard } from "./EventCard"
 
-const createReservedAttendees = (count: number) =>
+const createRegisteredAttendees = (count: number) =>
   Array.from({ length: count }, (_, index) =>
     createMockAttendee({
       id: `00000000-0000-4000-8000-0000000001${index}`,
@@ -18,7 +20,7 @@ const createReservedAttendees = (count: number) =>
         id: `00000000-0000-4000-8000-0000000000${index + 1}`,
         username: `bruker${index + 1}`,
       }),
-      reserved: true,
+      registeredAt: new Date(),
     })
   )
 
@@ -37,7 +39,7 @@ export const Default = () => {
   const attendance = createMockAttendanceSummary({
     attendancePrice: 100,
     capacity: 20,
-    attendees: createReservedAttendees(4),
+    attendees: createRegisteredAttendees(4),
   })
 
   return (
@@ -47,9 +49,9 @@ export const Default = () => {
   )
 }
 
-export const AllStates = () => {
+export const Examples = () => {
   const user = createMockUser()
-  const reservedAttendee = createMockAttendee({ user, reserved: true })
+  const registeredAttendee = createMockAttendee({ user, registeredAt: new Date(), paymentReservedAt: new Date() })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
@@ -60,7 +62,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(4),
+            attendees: createRegisteredAttendees(4),
           })}
         />
       </div>
@@ -69,19 +71,19 @@ export const AllStates = () => {
         <Text className="text-sm text-muted-foreground">Free event</Text>
         <EventCard
           event={baseEvent}
-          attendance={createMockAttendanceSummary({ capacity: 20, attendees: createReservedAttendees(4) })}
+          attendance={createMockAttendanceSummary({ capacity: 20, attendees: createRegisteredAttendees(4) })}
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Text className="text-sm text-muted-foreground">Reserved attendee</Text>
+        <Text className="text-sm text-muted-foreground">Registered attendee</Text>
         <EventCard
           event={baseEvent}
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: [reservedAttendee],
-            currentUserAttendee: reservedAttendee,
+            attendees: [registeredAttendee],
+            currentUserAttendee: registeredAttendee,
           })}
           userId={MOCK_USER_ID}
         />
@@ -98,7 +100,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(20),
+            attendees: createRegisteredAttendees(20),
           })}
         />
       </div>
@@ -110,7 +112,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 20,
-            attendees: createReservedAttendees(4),
+            attendees: createRegisteredAttendees(4),
           })}
         />
       </div>
@@ -148,7 +150,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 100,
             capacity: 40,
-            attendees: createReservedAttendees(12),
+            attendees: createRegisteredAttendees(12),
           })}
         />
       </div>
@@ -164,7 +166,7 @@ export const AllStates = () => {
           })}
           attendance={createMockAttendanceSummary({
             capacity: 100,
-            attendees: createReservedAttendees(56),
+            attendees: createRegisteredAttendees(56),
           })}
         />
       </div>
@@ -181,7 +183,7 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 150,
             capacity: 80,
-            attendees: createReservedAttendees(80),
+            attendees: createRegisteredAttendees(80),
           })}
         />
       </div>
@@ -200,9 +202,102 @@ export const AllStates = () => {
           attendance={createMockAttendanceSummary({
             attendancePrice: 150,
             capacity: 80,
-            attendees: createReservedAttendees(80),
+            attendees: createRegisteredAttendees(80),
           })}
         />
+      </div>
+    </div>
+  )
+}
+
+export const AllStates = () => {
+  const now = new Date()
+  const columns = ["Unregistered", "In queue", "Reserved", "Registered"] as const
+  const rows: { label: string; attendance: AttendanceSummary; reservedOnly?: boolean }[] = [
+    {
+      label: "Open with price",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Free event",
+      attendance: createMockAttendanceSummary({ capacity: 20 }),
+    },
+    {
+      label: "Full event",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Deregister deadline passed",
+      attendance: createMockAttendanceSummary({ status: "CLOSED", attendancePrice: 100, capacity: 20 }),
+    },
+    {
+      label: "Completion deadline passed",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+      reservedOnly: true,
+    },
+    {
+      label: "Payment link unavailable",
+      attendance: createMockAttendanceSummary({ attendancePrice: 100, capacity: 20 }),
+      reservedOnly: true,
+    },
+    {
+      label: "Not opened",
+      attendance: createMockAttendanceSummary({ status: "NOT_OPENED", attendancePrice: 100, capacity: 20 }),
+    },
+  ]
+
+  return (
+    <div className="overflow-x-auto">
+      <div className="grid min-w-[1120px] max-w-[1600px] grid-cols-4 items-start gap-x-6 gap-y-8">
+        {columns.map((column) => (
+          <Text key={column} className="font-medium">
+            {column}
+          </Text>
+        ))}
+        {rows.map((row) => (
+          <Fragment key={row.label}>
+            {columns.map((column) => {
+              const isReserved = column === "Reserved"
+              const isPaidEvent = (row.attendance.attendancePrice ?? 0) > 0
+              const isApplicable =
+                (!isReserved || isPaidEvent) &&
+                (!row.reservedOnly || isReserved) &&
+                (row.label !== "Not opened" || column === "Unregistered")
+              const attendee =
+                column === "Unregistered"
+                  ? null
+                  : createMockAttendee({
+                      registeredAt: column === "In queue" ? null : now,
+                      createdAt: subMinutes(now, 5),
+                      paymentReservedAt: column === "Registered" && isPaidEvent ? now : null,
+                      completionDeadline: isReserved
+                        ? addMinutes(now, row.label === "Completion deadline passed" ? -1 : 10)
+                        : null,
+                      paymentLink:
+                        isReserved && row.label !== "Payment link unavailable" ? "https://example.com/payment" : null,
+                    })
+
+              return (
+                <div key={column} className="flex min-w-0 flex-col gap-2">
+                  {isApplicable && (
+                    <>
+                      <Text className="text-sm text-muted-foreground">{row.label}</Text>
+                      <EventCard
+                        event={baseEvent}
+                        attendance={{
+                          ...row.attendance,
+                          registeredAttendeeCount: row.label === "Full event" ? 20 : 4,
+                          currentUserAttendee: attendee,
+                        }}
+                        userId={MOCK_USER_ID}
+                      />
+                    </>
+                  )}
+                </div>
+              )
+            })}
+          </Fragment>
+        ))}
       </div>
     </div>
   )

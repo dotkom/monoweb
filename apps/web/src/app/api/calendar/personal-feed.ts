@@ -9,7 +9,7 @@ import { env } from "@/env"
 import { getRpcServiceAccessToken } from "@/lib/rpc-service-access-token"
 import { createServerClientWithAccessToken } from "@/utils/trpc/server"
 import { getLogger } from "@dotkomonline/logger"
-import type { EventWithAttendance } from "@dotkomonline/rpc/event"
+import type { EventWithAttendanceView } from "@dotkomonline/rpc/event"
 import { errors, jwtVerify } from "jose"
 import { NextResponse } from "next/server"
 
@@ -54,8 +54,8 @@ export async function createPersonalCalendarFeedResponse(key: string): Promise<N
 async function loadAllAttendingEvents(
   serviceClient: ReturnType<typeof createServerClientWithAccessToken>,
   userId: string
-): Promise<EventWithAttendance[]> {
-  const items: EventWithAttendance[] = []
+): Promise<EventWithAttendanceView[]> {
+  const items: EventWithAttendanceView[] = []
   let cursor: string | undefined
 
   do {

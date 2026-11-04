@@ -1,23 +1,22 @@
-import { buildLimitedDepthJsonSchema } from "@dotkomonline/utils"
 import { z } from "zod"
 
 export const TaskTypeSchema = z.enum([
   "RESERVE_ATTENDEE",
   "CHARGE_ATTENDEE",
   "MERGE_ATTENDANCE_POOLS",
-  "VERIFY_PAYMENT",
+  "VERIFY_ATTENDANCE_COMPLETION",
   "VERIFY_FEEDBACK_ANSWERED",
   "SEND_FEEDBACK_FORM_EMAILS",
   "VERIFY_ATTENDEE_ATTENDED",
 ])
 
-export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED"])
+export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED", "SKIPPED"])
 
 export const TaskSchema = z.object({
   id: z.string(),
   type: TaskTypeSchema,
   status: TaskStatusSchema.default("PENDING"),
-  payload: buildLimitedDepthJsonSchema().default("{}"),
+  payload: z.unknown().default("{}"),
   createdAt: z.date(),
   scheduledAt: z.date(),
   processedAt: z.date().nullable(),
@@ -27,7 +26,7 @@ export const TaskSchema = z.object({
 export const RecurringTaskSchema = z.object({
   id: z.string(),
   type: TaskTypeSchema,
-  payload: buildLimitedDepthJsonSchema().default("{}"),
+  payload: z.unknown().default("{}"),
   createdAt: z.date(),
   schedule: z.string(),
   lastRunAt: z.date().nullable(),

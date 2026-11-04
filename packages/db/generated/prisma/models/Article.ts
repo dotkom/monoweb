@@ -33,7 +33,6 @@ export type ArticleMinAggregateOutputType = {
   imageUrl: string | null
   excerpt: string | null
   content: string | null
-  isFeatured: boolean | null
   vimeoId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -48,7 +47,6 @@ export type ArticleMaxAggregateOutputType = {
   imageUrl: string | null
   excerpt: string | null
   content: string | null
-  isFeatured: boolean | null
   vimeoId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,7 +61,6 @@ export type ArticleCountAggregateOutputType = {
   imageUrl: number
   excerpt: number
   content: number
-  isFeatured: number
   vimeoId: number
   createdAt: number
   updatedAt: number
@@ -80,7 +77,6 @@ export type ArticleMinAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -95,7 +91,6 @@ export type ArticleMaxAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -110,7 +105,6 @@ export type ArticleCountAggregateInputType = {
   imageUrl?: true
   excerpt?: true
   content?: true
-  isFeatured?: true
   vimeoId?: true
   createdAt?: true
   updatedAt?: true
@@ -194,11 +188,10 @@ export type ArticleGroupByOutputType = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured: boolean
   vimeoId: string | null
   createdAt: Date
   updatedAt: Date
@@ -230,11 +223,10 @@ export type ArticleWhereInput = {
   slug?: Prisma.StringFilter<"Article"> | string
   title?: Prisma.StringFilter<"Article"> | string
   author?: Prisma.StringFilter<"Article"> | string
-  photographer?: Prisma.StringFilter<"Article"> | string
+  photographer?: Prisma.StringNullableFilter<"Article"> | string | null
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
-  isFeatured?: Prisma.BoolFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
@@ -246,11 +238,10 @@ export type ArticleOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
-  photographer?: Prisma.SortOrder
+  photographer?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -265,11 +256,10 @@ export type ArticleWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ArticleWhereInput | Prisma.ArticleWhereInput[]
   title?: Prisma.StringFilter<"Article"> | string
   author?: Prisma.StringFilter<"Article"> | string
-  photographer?: Prisma.StringFilter<"Article"> | string
+  photographer?: Prisma.StringNullableFilter<"Article"> | string | null
   imageUrl?: Prisma.StringFilter<"Article"> | string
   excerpt?: Prisma.StringFilter<"Article"> | string
   content?: Prisma.StringFilter<"Article"> | string
-  isFeatured?: Prisma.BoolFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Article"> | Date | string
@@ -281,11 +271,10 @@ export type ArticleOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   title?: Prisma.SortOrder
   author?: Prisma.SortOrder
-  photographer?: Prisma.SortOrder
+  photographer?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -302,11 +291,10 @@ export type ArticleScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Article"> | string
   title?: Prisma.StringWithAggregatesFilter<"Article"> | string
   author?: Prisma.StringWithAggregatesFilter<"Article"> | string
-  photographer?: Prisma.StringWithAggregatesFilter<"Article"> | string
+  photographer?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   imageUrl?: Prisma.StringWithAggregatesFilter<"Article"> | string
   excerpt?: Prisma.StringWithAggregatesFilter<"Article"> | string
   content?: Prisma.StringWithAggregatesFilter<"Article"> | string
-  isFeatured?: Prisma.BoolWithAggregatesFilter<"Article"> | boolean
   vimeoId?: Prisma.StringNullableWithAggregatesFilter<"Article"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Article"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Article"> | Date | string
@@ -317,11 +305,10 @@ export type ArticleCreateInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -333,11 +320,10 @@ export type ArticleUncheckedCreateInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -349,11 +335,10 @@ export type ArticleUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -365,11 +350,10 @@ export type ArticleUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,11 +365,10 @@ export type ArticleCreateManyInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -396,11 +379,10 @@ export type ArticleUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -411,11 +393,10 @@ export type ArticleUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -430,7 +411,6 @@ export type ArticleCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -445,7 +425,6 @@ export type ArticleMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -460,7 +439,6 @@ export type ArticleMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isFeatured?: Prisma.SortOrder
   vimeoId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -490,11 +468,10 @@ export type ArticleCreateWithoutTagsInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -505,11 +482,10 @@ export type ArticleUncheckedCreateWithoutTagsInput = {
   slug: string
   title: string
   author: string
-  photographer: string
+  photographer?: string | null
   imageUrl: string
   excerpt: string
   content: string
-  isFeatured?: boolean
   vimeoId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -536,11 +512,10 @@ export type ArticleUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -551,11 +526,10 @@ export type ArticleUncheckedUpdateWithoutTagsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.StringFieldUpdateOperationsInput | string
-  photographer?: Prisma.StringFieldUpdateOperationsInput | string
+  photographer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vimeoId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -601,7 +575,6 @@ export type ArticleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -618,7 +591,6 @@ export type ArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -633,7 +605,6 @@ export type ArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -648,13 +619,12 @@ export type ArticleSelectScalar = {
   imageUrl?: boolean
   excerpt?: boolean
   content?: boolean
-  isFeatured?: boolean
   vimeoId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "author" | "photographer" | "imageUrl" | "excerpt" | "content" | "isFeatured" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+export type ArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "author" | "photographer" | "imageUrl" | "excerpt" | "content" | "vimeoId" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
 export type ArticleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tags?: boolean | Prisma.Article$tagsArgs<ExtArgs>
   _count?: boolean | Prisma.ArticleCountOutputTypeDefaultArgs<ExtArgs>
@@ -672,11 +642,10 @@ export type $ArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     slug: string
     title: string
     author: string
-    photographer: string
+    photographer: string | null
     imageUrl: string
     excerpt: string
     content: string
-    isFeatured: boolean
     vimeoId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1112,7 +1081,6 @@ export interface ArticleFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Article", 'String'>
   readonly excerpt: Prisma.FieldRef<"Article", 'String'>
   readonly content: Prisma.FieldRef<"Article", 'String'>
-  readonly isFeatured: Prisma.FieldRef<"Article", 'Boolean'>
   readonly vimeoId: Prisma.FieldRef<"Article", 'String'>
   readonly createdAt: Prisma.FieldRef<"Article", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Article", 'DateTime'>

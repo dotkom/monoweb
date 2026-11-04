@@ -58,6 +58,7 @@ import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
+import { getKioskService } from "./kiosk/kiosk-service"
 import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
@@ -207,7 +208,9 @@ export async function createServiceLayer(
     clients.auth0Client,
     membershipService,
     clients.s3Client,
-    configuration.AWS_S3_BUCKET
+    configuration.AWS_S3_BUCKET,
+    emailService,
+    configuration.WEB_PUBLIC_ORIGIN
   )
   const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
   const jobListingService = getJobListingService(jobListingRepository)
@@ -255,7 +258,17 @@ export async function createServiceLayer(
   const notificationService = getNotificationService(
     notificationRepository,
     notificationRecipientResolver,
-    eventEmitter
+    {
+      eventService,
+      articleService,
+      groupService,
+      userService,
+      offlineService,
+      jobListingService,
+    },
+    eventEmitter,
+    emailService,
+    configuration.WEB_PUBLIC_ORIGIN
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
@@ -282,6 +295,7 @@ export async function createServiceLayer(
       : null
 
   const authorizationService = getAuthorizationService()
+  const kioskService = getKioskService()
 
   return {
     eventEmitter,
@@ -310,6 +324,7 @@ export async function createServiceLayer(
     notificationService,
     recurringTaskService,
     workspaceService,
+    kioskService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,
