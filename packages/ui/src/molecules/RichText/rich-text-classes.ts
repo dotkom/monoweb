@@ -16,6 +16,7 @@ export const richTextSharedClasses = cn(
 const richTextReaderOnlyClasses = cn(
   "[&_.table-wrapper]:overflow-x-auto",
   "[&_.image-wrapper]:overflow-x-auto",
+  "[&_.code-wrapper]:overflow-x-auto",
   "prose-img:max-w-none",
   "prose-th:p-2.5 prose-th:align-top prose-th:h-fit prose-th:border prose-th:border-(--tw-prose-td-borders)",
   "prose-td:p-2.5 prose-td:align-top prose-td:h-fit prose-td:border prose-td:border-(--tw-prose-td-borders)",

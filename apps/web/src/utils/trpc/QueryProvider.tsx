@@ -3,15 +3,19 @@
 import { env } from "@/env"
 import { getAccessToken } from "@auth0/nextjs-auth0"
 import type { AppRouter } from "@dotkomonline/rpc"
-import { createClearSessionUrl, isAccessTokenFetchFailure, toAbsoluteUrl } from "@dotkomonline/utils"
+import {
+  HTTP_REQUEST_SOURCE_HEADER,
+  RpcRequestSource,
+  createClearSessionUrl,
+  isAccessTokenFetchFailure,
+  toAbsoluteUrl,
+} from "@dotkomonline/utils"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import {
   type CreateTRPCClientOptions,
   createTRPCClient,
-  httpBatchLink,
   httpSubscriptionLink,
   loggerLink,
-  retryLink,
   splitLink,
 } from "@trpc/client"
 import { minutesToMilliseconds } from "date-fns"
@@ -27,6 +31,7 @@ import {
 } from "react"
 import superjson from "superjson"
 import { TRPCProvider } from "./client"
+import { createRpcHttpLink } from "./http-link"
 
 // connecting is default, pending is when it is open, and idle idk
 export type TRPCSSEConnectionState = "connecting" | "pending" | "idle"
@@ -96,60 +101,33 @@ export const QueryProvider = ({ children }: PropsWithChildren) => {
         splitLink({
           condition: (op) => op.type === "subscription",
           true: [
-            retryLink({
-              retry: ({ error, attempts }) => {
-                const errorCode = error.data?.code
-                const isAuthenticationError = errorCode === "UNAUTHORIZED" || errorCode === "FORBIDDEN"
-                const hasRemainingAttempts = attempts < 3
-
-                return hasRemainingAttempts && isAuthenticationError
-              },
-            }),
             httpSubscriptionLink({
               transformer: superjson,
               url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
               EventSource: EventSourcePolyfill,
               eventSourceOptions: async () => {
+                const headers: Record<string, string> = {
+                  [HTTP_REQUEST_SOURCE_HEADER]: RpcRequestSource.Web,
+                }
+
                 try {
                   const token = await fetchSharedAccessToken()
 
                   if (token !== undefined) {
-                    return {
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                      },
-                    }
+                    headers.Authorization = `Bearer ${token}`
                   }
                 } catch (error) {
                   scheduleRecoveryRedirect(error)
                 }
 
-                return {}
+                return { headers }
               },
             }),
           ],
-          false: httpBatchLink({
-            transformer: superjson,
+          false: createRpcHttpLink({
             url: `${env.NEXT_PUBLIC_RPC_HOST}/api/trpc`,
-            async fetch(url, options) {
-              const headers = new Headers(options?.headers)
-
-              try {
-                const token = await fetchSharedAccessToken()
-
-                if (token !== undefined) {
-                  headers.set("Authorization", `Bearer ${token}`)
-                }
-              } catch (error) {
-                scheduleRecoveryRedirect(error)
-              }
-
-              return fetch(url, {
-                ...options,
-                credentials: "include",
-                headers,
-              })
-            },
+            getAccessToken: fetchSharedAccessToken,
+            onAccessTokenError: scheduleRecoveryRedirect,
           }),
         }),
       ],

@@ -71,6 +71,70 @@
     "./audit-log": {
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
+    },
+    "./permissions": {
+      "import": "./src/permissions/principal.ts",
+      "types": "./src/permissions/principal.ts"
+    },
+    "./event-permissions": {
+      "import": "./src/permissions/event-permissions.ts",
+      "types": "./src/permissions/event-permissions.ts"
+    },
+    "./feedback-form-permissions": {
+      "import": "./src/permissions/feedback-form-permissions.ts",
+      "types": "./src/permissions/feedback-form-permissions.ts"
+    },
+    "./attendance-permissions": {
+      "import": "./src/permissions/attendance-permissions.ts",
+      "types": "./src/permissions/attendance-permissions.ts"
+    },
+    "./article-permissions": {
+      "import": "./src/permissions/article-permissions.ts",
+      "types": "./src/permissions/article-permissions.ts"
+    },
+    "./audit-log-permissions": {
+      "import": "./src/permissions/audit-log-permissions.ts",
+      "types": "./src/permissions/audit-log-permissions.ts"
+    },
+    "./offline-permissions": {
+      "import": "./src/permissions/offline-permissions.ts",
+      "types": "./src/permissions/offline-permissions.ts"
+    },
+    "./fadderuke-permissions": {
+      "import": "./src/permissions/fadderuke-permissions.ts",
+      "types": "./src/permissions/fadderuke-permissions.ts"
+    },
+    "./company-permissions": {
+      "import": "./src/permissions/company-permissions.ts",
+      "types": "./src/permissions/company-permissions.ts"
+    },
+    "./job-listing-permissions": {
+      "import": "./src/permissions/job-listing-permissions.ts",
+      "types": "./src/permissions/job-listing-permissions.ts"
+    },
+    "./contest-permissions": {
+      "import": "./src/permissions/contest-permissions.ts",
+      "types": "./src/permissions/contest-permissions.ts"
+    },
+    "./mark-permissions": {
+      "import": "./src/permissions/mark-permissions.ts",
+      "types": "./src/permissions/mark-permissions.ts"
+    },
+    "./notification-permissions": {
+      "import": "./src/permissions/notification-permissions.ts",
+      "types": "./src/permissions/notification-permissions.ts"
+    },
+    "./user-permissions": {
+      "import": "./src/permissions/user-permissions.ts",
+      "types": "./src/permissions/user-permissions.ts"
+    },
+    "./group-permissions": {
+      "import": "./src/permissions/group-permissions.ts",
+      "types": "./src/permissions/group-permissions.ts"
+    },
+    "./workspace-permissions": {
+      "import": "./src/permissions/workspace-permissions.ts",
+      "types": "./src/permissions/workspace-permissions.ts"
     }
   },
   "scripts": {
@@ -82,6 +146,7 @@
     "lint-check": "biome check .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "emails:preview": "tsx src/bin/render-email-previews.ts",
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
@@ -113,6 +178,7 @@
     "fastify-raw-body": "^5.0.0",
     "googleapis-common": "8.0.3",
     "import-in-the-middle": "^3.0.1",
+    "isomorphic-dompurify": "^3.0.0",
     "jose": "^6.0.11",
     "lru-cache": "^11.1.0",
     "marked": "^16.1.1",
@@ -131,14 +197,14 @@
     "@faker-js/faker": "9.9.0",
     "@testcontainers/postgresql": "11.14.0",
     "@types/mustache": "4.2.6",
-    "@types/node": "22.19.7",
-    "@types/ws": "8.18.1",
+    "@types/node": "22.20.5",
+    "@types/ws": "8.18.2",
     "@vitest/coverage-v8": "3.2.7",
     "@vitest/ui": "3.2.7",
     "dotenv-cli": "8.0.0",
     "tslib": "2.8.1",
-    "tsx": "4.21.0",
-    "typescript": "5.9.3",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
     "vitest": "3.2.7",
     "vitest-mock-extended": "3.1.1"
   }

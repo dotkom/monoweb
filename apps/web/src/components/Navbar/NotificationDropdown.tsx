@@ -1,13 +1,13 @@
 "use client"
 
 import { Link } from "@/components/link"
+import { useDropdownNotifications } from "@/utils/use-dropdown-notifications"
 import { useFullPathname } from "@/utils/use-full-pathname"
 import { useMyNotifications } from "@/utils/use-my-notifications"
 import type { UserNotification } from "@dotkomonline/rpc/notification"
 import {
   Button,
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuTrigger,
   Text,
   Title,
@@ -18,14 +18,15 @@ import {
 import { createAuthorizeUrl } from "@dotkomonline/utils"
 import { IconBell, IconChecks, IconLogin2 } from "@tabler/icons-react"
 import { useEffect, useRef, useState } from "react"
+import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationItem } from "./NotificationItem"
 import { NotificationPayload } from "./NotificationPayload"
 
 const triggerClassName =
-  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-blue-200 dark:hover:bg-stone-700"
+  "relative flex size-10 items-center justify-center rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-stone-700/50"
 
 const contentClassName =
-  "flex w-[min(24rem,calc(100vw-2rem))] max-h-[min(34rem,calc(100dvh-var(--navbar-height)-5rem))] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white p-0 shadow-md dark:border-stone-700 dark:bg-stone-900"
+  "flex w-[calc(100vw-2rem)] xs:w-96 max-h-[min(34rem,calc(100dvh-var(--navbar-height)-5rem))] flex-col overflow-hidden rounded-3xl border border-gray-300/70 bg-white p-0 shadow-md dark:border-stone-700 dark:bg-stone-900"
 
 export function NotificationDropdown({ isAuthenticated }: { isAuthenticated: boolean }) {
   if (!isAuthenticated) {
@@ -70,13 +71,13 @@ function AuthenticatedNotificationDropdown() {
           {hasUnreadNotifications && (
             <span
               aria-hidden
-              className="absolute right-0 top-0 size-3 rounded-full border-2 border-blue-100 bg-red-500 dark:border-stone-800"
+              className="absolute right-0 top-0 size-3 rounded-full border-2 border-gray-100 bg-red-500 dark:border-stone-800"
             />
           )}
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
+      <NavbarDropdownContent className={contentClassName}>
         <div className="flex shrink-0 items-center justify-between gap-2 px-4 pt-4">
           <Title size="md" className="font-semibold text-gray-900 dark:text-white">
             Varslinger
@@ -99,27 +100,26 @@ function AuthenticatedNotificationDropdown() {
           </Tooltip>
         </div>
 
-        <NotificationScrollList
-          userNotifications={userNotifications}
-          isPending={notificationsQuery.isPending}
-          isError={notificationsQuery.isError}
-          isFetchingNextPage={notificationsQuery.isFetchingNextPage}
-          isLoading={notificationsQuery.isLoading}
-          hasNextPage={notificationsQuery.hasNextPage === true}
-          hasNoNotifications={hasNoNotifications}
-          onFetchNextPage={() => {
-            void notificationsQuery.fetchNextPage()
-          }}
-          onMarkAsRead={(notificationId) => markAsReadMutation.mutate({ notificationId })}
-          onNavigate={() => setIsOpen(false)}
-        />
+        {isOpen && (
+          <NotificationScrollList
+            userNotifications={userNotifications}
+            isPending={notificationsQuery.isPending}
+            isError={notificationsQuery.isError}
+            isFetchingNextPage={notificationsQuery.isFetchingNextPage}
+            isLoading={notificationsQuery.isLoading}
+            hasNextPage={notificationsQuery.hasNextPage === true}
+            onFetchNextPage={notificationsQuery.fetchNextPage}
+            onMarkAsRead={(notificationId) => markAsReadMutation.mutate({ notificationId })}
+            onNavigate={() => setIsOpen(false)}
+          />
+        )}
 
         <div className="shrink-0 border-t border-gray-200 px-2 pb-2 pt-1.5 dark:border-stone-700">
           <Button element={Link} href="/varslinger" variant="ghost" className="h-8 w-full rounded-b-xl rounded-t-xs">
             Se alle varslinger
           </Button>
         </div>
-      </DropdownMenuContent>
+      </NavbarDropdownContent>
     </DropdownMenu>
   )
 }
@@ -131,7 +131,6 @@ function NotificationScrollList({
   isFetchingNextPage,
   isLoading,
   hasNextPage,
-  hasNoNotifications,
   onFetchNextPage,
   onMarkAsRead,
   onNavigate,
@@ -142,13 +141,14 @@ function NotificationScrollList({
   isFetchingNextPage: boolean
   isLoading: boolean
   hasNextPage: boolean
-  hasNoNotifications: boolean
   onFetchNextPage: () => void
   onMarkAsRead: (notificationId: string) => void
   onNavigate: () => void
 }) {
   const loaderElementReference = useRef<HTMLDivElement>(null)
   const scrollParentElementReference = useRef<HTMLDivElement>(null)
+  const visibleNotifications = useDropdownNotifications(userNotifications)
+  const hasNoUnreadNotifications = !isPending && !isError && !hasNextPage && visibleNotifications.length === 0
 
   useEffect(() => {
     const intersectionObserver = new IntersectionObserver(
@@ -193,11 +193,11 @@ function NotificationScrollList({
         <Text className="py-8 text-center text-sm text-muted-foreground">Varslingene kunne ikke lastes inn.</Text>
       )}
 
-      {hasNoNotifications && (
-        <Text className="py-8 text-center text-sm text-muted-foreground">Du har ingen varslinger ennå.</Text>
+      {hasNoUnreadNotifications && (
+        <Text className="py-8 text-center text-sm text-muted-foreground">Du har ingen uleste varslinger.</Text>
       )}
 
-      {userNotifications.map((userNotification) => {
+      {visibleNotifications.map((userNotification) => {
         const hasPayload = userNotification.notification.link.type !== "NONE"
         let payload = null
 
@@ -218,7 +218,7 @@ function NotificationScrollList({
               onMarkAsRead(userNotification.notification.id)
             }}
             onNavigate={onNavigate}
-            className="last-of-type:-mb-2 last-of-type:rounded-b-xl"
+            className="last-of-type:-mb-2"
           >
             {payload}
           </NotificationItem>
@@ -243,7 +243,7 @@ function UnauthenticatedNotificationDropdown() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className={contentClassName} sideOffset={24} positionMethod="fixed">
+      <NavbarDropdownContent className={contentClassName}>
         <div className="flex flex-col gap-4 p-4">
           <Title size="md" className="font-semibold text-gray-900 dark:text-white">
             Varslinger
@@ -254,6 +254,7 @@ function UnauthenticatedNotificationDropdown() {
           <Button
             element="a"
             variant="default"
+            color="gray"
             href={createAuthorizeUrl({ returnTo: fullPathname })}
             icon={<IconLogin2 className="size-5" />}
             className="w-fit"
@@ -261,7 +262,7 @@ function UnauthenticatedNotificationDropdown() {
             Logg inn
           </Button>
         </div>
-      </DropdownMenuContent>
+      </NavbarDropdownContent>
     </DropdownMenu>
   )
 }

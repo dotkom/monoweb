@@ -2,8 +2,9 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { canManageCompanies } from "../../permissions/company-permissions"
 import { procedure, t } from "../../trpc"
 import { CompanyFilterQuerySchema, CompanySchema, CompanyWriteSchema } from "./company"
 
@@ -12,11 +13,15 @@ export type CreateCompanyOutput = inferProcedureOutput<typeof createCompanyProce
 const createCompanyProcedure = procedure
   .input(CompanyWriteSchema)
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageCompanies)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.companyService.create(ctx.handle, input)
+    const createdCompany = await ctx.companyService.create(ctx.handle, input)
+
+    ctx.setAuditTransactionName(`Create Company(ID=${createdCompany.id},Name=${createdCompany.name})`)
+
+    return createdCompany
   })
 
 export type EditCompanyInput = inferProcedureInput<typeof editCompanyProcedure>
@@ -29,21 +34,24 @@ const editCompanyProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageCompanies)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.companyService.update(ctx.handle, input.id, input.input)
+    const updatedCompany = await ctx.companyService.update(ctx.handle, input.id, input.input)
+
+    ctx.setAuditTransactionName(`Update Company(ID=${updatedCompany.id},Name=${updatedCompany.name})`)
+
+    return updatedCompany
   })
 
 export type FindManyCompaniesInput = inferProcedureInput<typeof findManyCompaniesProcedure>
 export type FindManyCompaniesOutput = inferProcedureOutput<typeof findManyCompaniesProcedure>
 const findManyCompaniesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: CompanyFilterQuerySchema.optional() }).prefault({}))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
-    const companies = await ctx.companyService.findMany(ctx.handle, { ...filter }, page)
+    const companies = await ctx.companyService.findMany(ctx.prisma, { ...filter }, page)
 
     return {
       items: companies,
@@ -55,29 +63,25 @@ export type FindCompanyByIdInput = inferProcedureInput<typeof findCompanyByIdPro
 export type FindCompanyByIdOutput = inferProcedureOutput<typeof findCompanyByIdProcedure>
 const findCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.findById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.findById(ctx.prisma, input))
 
 export type GetCompanyByIdInput = inferProcedureInput<typeof getCompanyByIdProcedure>
 export type GetCompanyByIdOutput = inferProcedureOutput<typeof getCompanyByIdProcedure>
 const getCompanyByIdProcedure = procedure
   .input(CompanySchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.getById(ctx.prisma, input))
 
 export type FindCompanyBySlugInput = inferProcedureInput<typeof findCompanyBySlugProcedure>
 export type FindCompanyBySlugOutput = inferProcedureOutput<typeof findCompanyBySlugProcedure>
 const findCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.findBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.findBySlug(ctx.prisma, input))
 
 export type GetCompanyBySlugInput = inferProcedureInput<typeof getCompanyBySlugProcedure>
 export type GetCompanyBySlugOutput = inferProcedureOutput<typeof getCompanyBySlugProcedure>
 const getCompanyBySlugProcedure = procedure
   .input(CompanySchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.companyService.getBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.companyService.getBySlug(ctx.prisma, input))
 
 export type CreateCompanyFileUploadInput = inferProcedureInput<typeof createCompanyFileUploadProcedure>
 export type CreateCompanyFileUploadOutput = inferProcedureOutput<typeof createCompanyFileUploadProcedure>
@@ -90,7 +94,7 @@ const createCompanyFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageCompanies)))
   .mutation(async ({ ctx, input }) => {
     return ctx.companyService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })

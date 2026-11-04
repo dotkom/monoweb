@@ -25,7 +25,7 @@ describe("group router service forwarding", () => {
 
     await caller.getMembers(CommitteeGroupSlug.DOTKOM)
 
-    expect(groupService.findLeadersBySlug).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM)
+    expect(groupService.findLeadersBySlug).toHaveBeenCalledWith(ctx.prisma, CommitteeGroupSlug.DOTKOM)
     expect(groupService.findMembersBySlug).not.toHaveBeenCalled()
   })
 
@@ -50,7 +50,7 @@ describe("group router service forwarding", () => {
 
     await caller.getMembers(CommitteeGroupSlug.HOVEDSTYRET)
 
-    expect(groupService.findMembersBySlug).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.HOVEDSTYRET)
+    expect(groupService.findMembersBySlug).toHaveBeenCalledWith(ctx.prisma, CommitteeGroupSlug.HOVEDSTYRET)
     expect(groupService.findLeadersBySlug).not.toHaveBeenCalled()
   })
 
@@ -77,6 +77,6 @@ describe("group router service forwarding", () => {
 
     await caller.getMember({ groupId: CommitteeGroupSlug.DOTKOM, userId: "user-1" })
 
-    expect(groupService.getMember).toHaveBeenCalledWith(txHandle, CommitteeGroupSlug.DOTKOM, "user-1")
+    expect(groupService.getMember).toHaveBeenCalledWith(ctx.prisma, CommitteeGroupSlug.DOTKOM, "user-1")
   })
 })

@@ -1,0 +1,310 @@
+"use client"
+
+import type { Authorization } from "@admin/auth/authorization-context"
+import { canManageArticles } from "@dotkomonline/rpc/article-permissions"
+import { canAccessAuditLog } from "@dotkomonline/rpc/audit-log-permissions"
+import { canManageCompanies } from "@dotkomonline/rpc/company-permissions"
+import { canCreateContests } from "@dotkomonline/rpc/contest-permissions"
+import { canCreateEvents, canListDeregisterReasons } from "@dotkomonline/rpc/event-permissions"
+import { canManageFadderuker } from "@dotkomonline/rpc/fadderuke-permissions"
+import { canCreateGroups } from "@dotkomonline/rpc/group-permissions"
+import { canManageJobListings } from "@dotkomonline/rpc/job-listing-permissions"
+import { canCreateMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canManageOfflines } from "@dotkomonline/rpc/offline-permissions"
+import {
+  IconArticle,
+  IconAward,
+  IconBan,
+  IconBell,
+  IconBriefcase,
+  IconClipboardList,
+  IconConfetti,
+  IconDeviceMobileShare,
+  IconHeartHandshake,
+  IconPhotoShare,
+  IconSitemap,
+  IconSkull,
+  IconUserMinus,
+  IconUsers,
+  IconWheelchair,
+  type TablerIcon,
+} from "@tabler/icons-react"
+import { canListMarks } from "@dotkomonline/rpc/mark-permissions"
+import { canListUsers } from "@dotkomonline/rpc/user-permissions"
+import { canCreateNotifications, canListNotifications } from "@dotkomonline/rpc/notification-permissions"
+
+export type Navigation = {
+  label: string
+  icon: TablerIcon
+  href: string
+  openInNewTab?: boolean
+  keywords?: string[]
+  createActions?: {
+    label: string
+    href: string
+    resourceName: string
+    canAccess?: (authorization: Authorization) => boolean
+  }[]
+  canAccess?: (authorization: Authorization) => boolean
+}
+
+export type NavigationGroup = {
+  label?: string
+  items: Navigation[]
+}
+
+// Keywords are used for search.
+// For a `createAction` to display in search results,
+// both the parent page and the action must be accessible to the user.
+export const navigationGroups: NavigationGroup[] = [
+  {
+    label: "Arrangementer",
+    items: [
+      {
+        label: "Arrangementer",
+        icon: IconWheelchair, // This is sacred and shall not be changed
+        href: "/admin/arrangementer",
+        keywords: ["arrangement", "arrangementer", "event", "events"],
+        createActions: [
+          {
+            label: "Nytt arrangement",
+            href: "/admin/arrangementer/ny",
+            resourceName: "arrangement",
+            canAccess: (authorization) => canCreateEvents(authorization),
+          },
+        ],
+      },
+      {
+        label: "Prikker og suspensjoner",
+        icon: IconBan,
+        href: "/admin/prikker",
+        keywords: ["prikk", "prikker", "suspensjon", "suspensjoner", "mark", "marks"],
+        canAccess: (authorization) => canListMarks(authorization),
+        createActions: [
+          {
+            label: "Ny prikk",
+            href: "/admin/prikker?create=prikk",
+            resourceName: "prikk",
+            canAccess: (authorization) => canCreateMarks(authorization),
+          },
+          {
+            label: "Ny suspensjon",
+            href: "/admin/prikker?create=suspensjon",
+            resourceName: "suspensjon",
+            canAccess: (authorization) => canCreateMarks(authorization),
+          },
+        ],
+      },
+      {
+        label: "Konkurranser",
+        icon: IconAward,
+        href: "/admin/konkurranser",
+        keywords: ["konkurranse", "konkurranser"],
+        createActions: [
+          {
+            label: "Ny konkurranse",
+            href: "/admin/konkurranser/ny",
+            resourceName: "konkurranse",
+            canAccess: (authorization) => canCreateContests(authorization),
+          },
+        ],
+      },
+      {
+        label: "Avmeldingsgrunner",
+        icon: IconUserMinus,
+        href: "/admin/avmeldingsgrunner",
+        keywords: ["avmeldingsgrunn", "avmeldingsgrunner"],
+        canAccess: (authorization) => canListDeregisterReasons(authorization),
+      },
+    ],
+  },
+  {
+    label: "Katalog",
+    items: [
+      {
+        label: "Brukere",
+        icon: IconUsers,
+        href: "/admin/brukere",
+        keywords: ["bruker", "brukere", "user", "users"],
+        canAccess: (authorization) => canListUsers(authorization),
+      },
+      {
+        label: "Grupper",
+        icon: IconSitemap,
+        href: "/admin/grupper",
+        keywords: ["gruppe", "grupper", "group", "groups"],
+        createActions: [
+          {
+            label: "Ny gruppe",
+            href: "/admin/grupper/ny",
+            resourceName: "gruppe",
+            canAccess: (authorization) => canCreateGroups(authorization),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Bedrifter",
+    items: [
+      {
+        label: "Jobbutlysninger",
+        icon: IconHeartHandshake,
+        href: "/admin/karriere",
+        keywords: ["jobb", "jobbannonser", "karriere", "jobs"],
+        canAccess: (authorization) => canManageJobListings(authorization),
+        createActions: [
+          {
+            label: "Ny jobbannonse",
+            href: "/admin/karriere/ny",
+            resourceName: "jobbannonse",
+          },
+        ],
+      },
+      {
+        label: "Bedrifter",
+        icon: IconBriefcase,
+        href: "/admin/bedrifter",
+        keywords: ["bedrift", "bedrifter", "company", "companies"],
+        canAccess: (authorization) => canManageCompanies(authorization),
+        createActions: [
+          {
+            label: "Ny bedrift",
+            href: "/admin/bedrifter/ny",
+            resourceName: "bedrift",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Redaksjonelt",
+    items: [
+      {
+        label: "Artikler",
+        icon: IconArticle,
+        href: "/admin/artikler",
+        keywords: ["artikkel", "artikler"],
+        canAccess: (authorization) => canManageArticles(authorization),
+        createActions: [
+          {
+            label: "Ny artikkel",
+            href: "/admin/artikler/ny",
+            resourceName: "artikkel",
+          },
+        ],
+      },
+      {
+        label: "Offline",
+        icon: IconSkull, // This is sacred and shall not be changed
+        href: "/admin/offline",
+        keywords: ["offline"],
+        canAccess: (authorization) => canManageOfflines(authorization),
+        createActions: [
+          {
+            label: "Ny offline",
+            href: "/admin/offline/ny",
+            resourceName: "offline",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Medier",
+    items: [
+      {
+        label: "Plakatbestilling",
+        icon: IconPhotoShare,
+        href: "https://fern-smelt-8a2.notion.site/1c7ae7670a5180f2ada1c29699a1f44f",
+        openInNewTab: true,
+      },
+      {
+        label: "SoMe-bestilling",
+        icon: IconDeviceMobileShare,
+        href: "https://fern-smelt-8a2.notion.site/3e9ae7670a518023ab1bdc4e5214d8c3",
+        openInNewTab: true,
+      },
+    ],
+  },
+  {
+    label: "Annet",
+    items: [
+      {
+        label: "Varslinger",
+        icon: IconBell,
+        href: "/admin/varslinger",
+        keywords: ["varsling", "varslinger"],
+        canAccess: (authorization) => canListNotifications(authorization),
+        createActions: [
+          {
+            label: "Ny varsling",
+            href: "/admin/varslinger?create=varsling",
+            resourceName: "varsling",
+            canAccess: (authorization) => canCreateNotifications(authorization),
+          },
+        ],
+      },
+      {
+        label: "Fadderukene",
+        icon: IconConfetti,
+        href: "/admin/fadderukene",
+        keywords: ["fadderuke", "fadderuker", "fadderukene"],
+        canAccess: (authorization) => canManageFadderuker(authorization),
+        createActions: [
+          {
+            label: "Ny fadderuke",
+            href: "/admin/fadderukene/ny",
+            resourceName: "fadderuke",
+          },
+        ],
+      },
+      {
+        label: "Hendelseslogg",
+        icon: IconClipboardList,
+        href: "/admin/logg",
+        keywords: ["hendelseslogg", "logg", "audit"],
+        canAccess: (authorization) => canAccessAuditLog(authorization),
+      },
+    ],
+  },
+]
+
+export const navigations = navigationGroups.flatMap((group) => group.items)
+
+const navigationBreadcrumbLabels: Record<string, string> = {}
+
+for (const navigation of navigations) {
+  navigationBreadcrumbLabels[navigation.href] = navigation.label
+
+  for (const action of navigation.createActions ?? []) {
+    navigationBreadcrumbLabels[action.href] = action.label
+  }
+}
+
+export { navigationBreadcrumbLabels }
+
+export function filterNavigationsUserHasAccessTo(navigations: Navigation[], authorization: Authorization) {
+  return navigations
+    .filter((navigation) => navigation.canAccess === undefined || navigation.canAccess(authorization))
+    .map((page) => {
+      const { createActions, ...pageData } = page
+      const createActionsUserHasAccessTo = createActions?.filter(
+        (action) => action.canAccess === undefined || action.canAccess(authorization)
+      )
+
+      return {
+        ...pageData,
+        createActions: createActionsUserHasAccessTo,
+      }
+    })
+}
+
+export function filterNavigationGroupsUserHasAccessTo(groups: NavigationGroup[], authorization: Authorization) {
+  return groups
+    .map((group) => ({
+      ...group,
+      items: filterNavigationsUserHasAccessTo(group.items, authorization),
+    }))
+    .filter((group) => group.items.length > 0)
+}

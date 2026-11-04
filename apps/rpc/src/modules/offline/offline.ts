@@ -3,8 +3,8 @@ import { z } from "zod"
 export const OfflineSchema = z.object({
   id: z.string(),
   title: z.string(),
-  fileUrl: z.string().nullable(),
-  imageUrl: z.string().nullable(),
+  fileUrl: z.string(),
+  imageUrl: z.string(),
   publishedAt: z.date(),
   createdAt: z.date(),
   updatedAt: z.date(),

@@ -1,8 +1,9 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { canManageArticles } from "../../permissions/article-permissions"
 import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
+import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
 import { procedure, t } from "../../trpc"
 import { ArticleFilterQuerySchema, ArticleSchema, ArticleTagSchema, ArticleWriteSchema } from "./article"
@@ -17,12 +18,15 @@ const createArticleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const article = await ctx.articleService.create(ctx.handle, input.article)
     const tags = await ctx.articleService.setTags(ctx.handle, article.id, input.tags)
+
+    ctx.setAuditTransactionName(`Create Article(ID=${article.id},Title=${article.title})`)
+
     return {
       ...article,
       tags,
@@ -40,12 +44,15 @@ const editArticleProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
     const article = await ctx.articleService.update(ctx.handle, input.id, input.input)
     const tags = await ctx.articleService.setTags(ctx.handle, input.id, input.tags)
+
+    ctx.setAuditTransactionName(`Update Article(ID=${article.id},Title=${article.title})`)
+
     return { ...article, tags }
   })
 
@@ -53,16 +60,14 @@ export type AllArticlesInput = inferProcedureInput<typeof allArticlesProcedure>
 export type AllArticlesOutput = inferProcedureOutput<typeof allArticlesProcedure>
 const allArticlesProcedure = procedure
   .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.handle, {}, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findMany(ctx.prisma, {}, input))
 
 export type FindArticlesInput = inferProcedureInput<typeof findArticlesProcedure>
 export type FindArticlesOutput = inferProcedureOutput<typeof findArticlesProcedure>
 const findArticlesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filters: ArticleFilterQuerySchema }))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
-    const items = await ctx.articleService.findMany(ctx.handle, input.filters, input)
+    const items = await ctx.articleService.findMany(ctx.prisma, input.filters, input)
 
     return {
       items,
@@ -74,48 +79,35 @@ export type FindArticleInput = inferProcedureInput<typeof findArticleProcedure>
 export type FindArticleOutput = inferProcedureOutput<typeof findArticleProcedure>
 const findArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findById(ctx.prisma, input))
 
 export type FindArticleBySlugInput = inferProcedureInput<typeof findArticleBySlugProcedure>
 export type FindArticleBySlugOutput = inferProcedureOutput<typeof findArticleBySlugProcedure>
 const findArticleBySlugProcedure = procedure
   .input(ArticleSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.findBySlug(ctx.prisma, input))
 
 export type GetArticleInput = inferProcedureInput<typeof getArticleProcedure>
 export type GetArticleOutput = inferProcedureOutput<typeof getArticleProcedure>
 const getArticleProcedure = procedure
   .input(ArticleSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.getById(ctx.prisma, input))
 
 export type GetArticleBySlugInput = inferProcedureInput<typeof getArticleBySlugProcedure>
 export type GetArticleBySlugOutput = inferProcedureOutput<typeof getArticleBySlugProcedure>
 const getArticleBySlugProcedure = procedure
   .input(ArticleSchema.shape.slug)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.getBySlug(ctx.handle, input))
+  .query(async ({ input, ctx }) => ctx.articleService.getBySlug(ctx.prisma, input))
 
 export type FindRelatedArticlesInput = inferProcedureInput<typeof findRelatedArticlesProcedure>
 export type FindRelatedArticlesOutput = inferProcedureOutput<typeof findRelatedArticlesProcedure>
 const findRelatedArticlesProcedure = procedure
   .input(ArticleSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.handle, input))
-
-export type FindFeaturedArticlesInput = inferProcedureInput<typeof findFeaturedArticlesProcedure>
-export type FindFeaturedArticlesOutput = inferProcedureOutput<typeof findFeaturedArticlesProcedure>
-const findFeaturedArticlesProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findFeatured(ctx.handle))
+  .query(async ({ input, ctx }) => ctx.articleService.findRelated(ctx.prisma, input))
 
 export type GetArticleTagsInput = inferProcedureInput<typeof getArticleTagsProcedure>
 export type GetArticleTagsOutput = inferProcedureOutput<typeof getArticleTagsProcedure>
-const getArticleTagsProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.getTags(ctx.handle))
+const getArticleTagsProcedure = procedure.query(async ({ ctx }) => ctx.articleService.getTags(ctx.prisma))
 
 export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
   typeof findArticleTagsOrderedByPopularityProcedure
@@ -123,9 +115,9 @@ export type FindArticleTagsOrderedByPopularityInput = inferProcedureInput<
 export type FindArticleTagsOrderedByPopularityOutput = inferProcedureOutput<
   typeof findArticleTagsOrderedByPopularityProcedure
 >
-const findArticleTagsOrderedByPopularityProcedure = procedure
-  .use(withDatabaseTransaction())
-  .query(async ({ ctx }) => ctx.articleService.findTagsOrderedByPopularity(ctx.handle))
+const findArticleTagsOrderedByPopularityProcedure = procedure.query(async ({ ctx }) =>
+  ctx.articleService.findTagsOrderedByPopularity(ctx.prisma)
+)
 
 export type AddArticleTagInput = inferProcedureInput<typeof addArticleTagProcedure>
 export type AddArticleTagOutput = inferProcedureOutput<typeof addArticleTagProcedure>
@@ -137,11 +129,14 @@ const addArticleTagProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.addTag(ctx.handle, input.id, input.tag)
+    await ctx.articleService.addTag(ctx.handle, input.id, input.tag)
+    const article = await ctx.articleService.getById(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(`Add ArticleTag(Name=${input.tag}) to Article(ID=${input.id},Title=${article.title})`)
   })
 
 export type RemoveArticleTagInput = inferProcedureInput<typeof removeArticleTagProcedure>
@@ -154,11 +149,16 @@ const removeArticleTagProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
+    await ctx.articleService.removeTag(ctx.handle, input.id, input.tag)
+    const article = await ctx.articleService.getById(ctx.handle, input.id)
+
+    ctx.setAuditTransactionName(
+      `Remove ArticleTag(Name=${input.tag}) from Article(ID=${input.id},Title=${article.title})`
+    )
   })
 
 export type CreateArticleFileUploadInput = inferProcedureInput<typeof createArticleFileUploadProcedure>
@@ -172,7 +172,7 @@ const createArticleFileUploadProcedure = procedure
   )
   .output(z.custom<PresignedPost>())
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf((principal) => canManageArticles(principal))))
   .mutation(async ({ input, ctx }) => {
     return await ctx.articleService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
@@ -187,7 +187,6 @@ export const articleRouter = t.router({
   get: getArticleProcedure,
   getBySlug: getArticleBySlugProcedure,
   related: findRelatedArticlesProcedure,
-  featured: findFeaturedArticlesProcedure,
   getTags: getArticleTagsProcedure,
   findTagsOrderedByPopularity: findArticleTagsOrderedByPopularityProcedure,
   addTag: addArticleTagProcedure,

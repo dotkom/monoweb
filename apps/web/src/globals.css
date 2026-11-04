@@ -1,5 +1,15 @@
 @import url("@dotkomonline/config/tailwind.css");
 @import url("@dotkomonline/ui/globals.css");
+@import url("./palettes/halloween.css");
+
+:root {
+  --logo-foreground: rgb(11 83 116);
+  --logo-accent: rgb(250 183 89);
+}
+
+[data-theme="dark"] {
+  --logo-foreground: #fff;
+}
 
 @layer base {
   body {

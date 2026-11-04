@@ -21,7 +21,7 @@ export const PenaltyRules = ({ variant = "default" }: PenaltyRulesProps) => {
       <WhatIsAMark compact={compact} />
       <WhatGivesAMark compact={compact} />
       <CancellationPolicy compact={compact} />
-      <WaitlistPolicy compact={compact} />
+      <QueuePolicy compact={compact} />
       <PaymentPolicy compact={compact} />
       <BehaviorPolicy compact={compact} />
       <CompanyEventPolicy compact={compact} />
@@ -127,7 +127,7 @@ const CancellationPolicy = ({ compact }: RuleVariantProps) => (
   </RuleSection>
 )
 
-const WaitlistPolicy = ({ compact }: RuleVariantProps) => (
+const QueuePolicy = ({ compact }: RuleVariantProps) => (
   <RuleSection>
     <RuleTitle compact={compact}>Venteliste</RuleTitle>
     <RuleList>

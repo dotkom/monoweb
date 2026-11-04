@@ -181,6 +181,27 @@ export const UserFilterQuerySchema = z
   .partial()
 export type UserFilterQuery = z.infer<typeof UserFilterQuerySchema>
 
+export const BUG_REPORT_TITLE_MAX_LENGTH = 200
+export const BUG_REPORT_BODY_MAX_LENGTH = 10000
+
+export const BugReportFormSchema = z.object({
+  userAgent: z.string().max(2048).optional(),
+  title: z.string().max(BUG_REPORT_TITLE_MAX_LENGTH).trim().min(1, "Rapporten trenger tittel"),
+  body: z
+    .string()
+    .max(BUG_REPORT_BODY_MAX_LENGTH)
+    .trim()
+    .min(1, "Rapporten trenger innhold")
+    .transform((body) => {
+      // Normalize line endings to \n
+      const normalizedBody = body.replace(/\r\n|\r/g, "\n")
+
+      // Squash multiple consecutive empty lines to two empty lines
+      return normalizedBody.replace(/\n(?:[\t\s]*\n){2,}/g, "\n\n")
+    }),
+})
+export type BugReportFormResult = z.infer<typeof BugReportFormSchema>
+
 export const FlagNameSchema = z.enum(["VANITY_VERIFIED", "EXCEPTIONALLY_DISTINGUISHED"])
 export type FlagName = z.infer<typeof FlagNameSchema>
 
@@ -193,15 +214,15 @@ export function getFlagLabel(name: FlagName) {
   }
 }
 
-export function isKnight(user: Pick<User, "memberships">) {
+export function isKnight(user: { memberships: Pick<Membership, "type">[] }) {
   return user.memberships.some(({ type }) => type === MembershipTypeSchema.enum.KNIGHT)
 }
 
-export function isVanityVerified(user: Pick<User, "flags">) {
+export function isVanityVerified(user: { flags: Pick<UserFlag, "name">[] }) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.VANITY_VERIFIED)
 }
 
-export function isExceptionallyDistinguished(user: Pick<User, "flags">) {
+export function isExceptionallyDistinguished(user: { flags: Pick<UserFlag, "name">[] }) {
   return user.flags.some(({ name }) => name === FlagNameSchema.enum.EXCEPTIONALLY_DISTINGUISHED)
 }
 
@@ -397,12 +418,3 @@ const NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA = Auth0ProviderSchema.extract(["auth0
 export function canUpdateEmailForAuth0Provider(provider: Auth0Provider): boolean {
   return NON_FEDERATED_AUTH0_PROVIDERS_SCHEMA.safeParse(provider).success
 }
-
-export const BirthdayPartyGuessSchema = z.object({
-  id: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  guess: z.number(),
-  userId: z.string(),
-})
-export type BirthdayPartyGuess = z.infer<typeof BirthdayPartyGuessSchema>

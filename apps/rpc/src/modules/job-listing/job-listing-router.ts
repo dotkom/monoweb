@@ -1,3 +1,10 @@
+import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import { z } from "zod"
+import { permitIf } from "../../authorization"
+import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
+import { canManageJobListings } from "../../permissions/job-listing-permissions"
+import { procedure, t } from "../../trpc"
 import { CompanySchema } from "../company/company"
 import {
   JobListingFilterQuerySchema,
@@ -5,12 +12,6 @@ import {
   JobListingSchema,
   JobListingWriteSchema,
 } from "./job-listing"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
-import { z } from "zod"
-import { isCommitteeMember } from "../../authorization"
-import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
-import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import { procedure, t } from "../../trpc"
 
 export type CreateJobListingInput = inferProcedureInput<typeof createJobListingProcedure>
 export type CreateJobListingOutput = inferProcedureOutput<typeof createJobListingProcedure>
@@ -23,11 +24,20 @@ const createJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageJobListings)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.jobListingService.create(ctx.handle, input.companyId, input.input, input.locationIds)
+    const createdJobListing = await ctx.jobListingService.create(
+      ctx.handle,
+      input.companyId,
+      input.input,
+      input.locationIds
+    )
+
+    ctx.setAuditTransactionName(`Create JobListing(ID=${createdJobListing.id},Title=${createdJobListing.title})`)
+
+    return createdJobListing
   })
 
 export type EditJobListingInput = inferProcedureInput<typeof editJobListingProcedure>
@@ -42,21 +52,24 @@ const editJobListingProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withAuthorization(isCommitteeMember()))
+  .use(withAuthorization(permitIf(canManageJobListings)))
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    return ctx.jobListingService.update(ctx.handle, input.id, input.input, input.locationIds)
+    const updatedJobListing = await ctx.jobListingService.update(ctx.handle, input.id, input.input, input.locationIds)
+
+    ctx.setAuditTransactionName(`Update JobListing(ID=${updatedJobListing.id},Title=${updatedJobListing.title})`)
+
+    return updatedJobListing
   })
 
 export type FindManyJobListingsInput = inferProcedureInput<typeof findManyJobListingsProcedure>
 export type FindManyJobListingsOutput = inferProcedureOutput<typeof findManyJobListingsProcedure>
 const findManyJobListingsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).prefault({}))
-  .use(withDatabaseTransaction())
   .query(async ({ input, ctx }) => {
     const { filter, ...page } = input
-    const jobListings = await ctx.jobListingService.findMany(ctx.handle, { ...filter }, page)
+    const jobListings = await ctx.jobListingService.findMany(ctx.prisma, { ...filter }, page)
 
     return {
       items: jobListings,
@@ -66,35 +79,26 @@ const findManyJobListingsProcedure = procedure
 
 export type ActiveJobListingsInput = inferProcedureInput<typeof activeJobListingsProcedure>
 export type ActiveJobListingsOutput = inferProcedureOutput<typeof activeJobListingsProcedure>
-const activeJobListingsProcedure = procedure
-  .input(PaginateInputSchema)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.jobListingService.findActiveJobListings(ctx.handle, input)
-  })
+const activeJobListingsProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
+  return ctx.jobListingService.findActiveJobListings(ctx.prisma, input)
+})
 
 export type GetJobListingInput = inferProcedureInput<typeof getJobListingProcedure>
 export type GetJobListingOutput = inferProcedureOutput<typeof getJobListingProcedure>
-const getJobListingProcedure = procedure
-  .input(JobListingSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.jobListingService.getById(ctx.handle, input)
-  })
+const getJobListingProcedure = procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.jobListingService.getById(ctx.prisma, input)
+})
 
 export type FindJobListingInput = inferProcedureInput<typeof findJobListingProcedure>
 export type FindJobListingOutput = inferProcedureOutput<typeof findJobListingProcedure>
-const findJobListingProcedure = procedure
-  .input(JobListingSchema.shape.id)
-  .use(withDatabaseTransaction())
-  .query(async ({ input, ctx }) => {
-    return ctx.jobListingService.findById(ctx.handle, input)
-  })
+const findJobListingProcedure = procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => {
+  return ctx.jobListingService.findById(ctx.prisma, input)
+})
 
 export type GetJobListingLocationsInput = inferProcedureInput<typeof getJobListingLocationsProcedure>
 export type GetJobListingLocationsOutput = inferProcedureOutput<typeof getJobListingLocationsProcedure>
-const getJobListingLocationsProcedure = procedure.use(withDatabaseTransaction()).query(async ({ ctx }) => {
-  return ctx.jobListingService.findJobListingLocations(ctx.handle)
+const getJobListingLocationsProcedure = procedure.query(async ({ ctx }) => {
+  return ctx.jobListingService.findJobListingLocations(ctx.prisma)
 })
 
 export const jobListingRouter = t.router({

@@ -4,7 +4,9 @@ import { fileURLToPath } from "node:url"
 import { TZDate } from "@date-fns/tz"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
+import mustache from "mustache"
 import { z } from "zod"
+import { renderEmailRichText } from "./email-rich-text"
 
 export type EmailType =
   | "COMPANY_COLLABORATION_RECEIPT"
@@ -14,13 +16,32 @@ export type EmailType =
   | "EVENT_ATTENDANCE"
   | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
-  | "WAITLIST_NOTIFICATION"
+  | "QUEUE_NOTIFICATION"
   | "COMMITTEE_EMAIL_CREATED"
   | "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED"
+  | "BUG_REPORT"
+  | "NOTIFICATION"
+
+type TemplateButtons = Record<
+  string,
+  {
+    href: string
+    label: string
+  }
+>
 
 export interface EmailTemplate<TData, TType extends EmailType> {
   getSchema(): z.ZodType<TData>
   getTemplate(): Promise<string>
+  // Text fields are Mustache partials, so their variables are escaped in the same render as the content.
+  layout: {
+    title: string
+    preheader: string
+    footerReason: string
+    showTimezone?: boolean
+  }
+  getButtons?(data: TData): TemplateButtons
+  getRichText?(data: TData): Record<string, string | null>
   type: TType
 }
 
@@ -35,6 +56,49 @@ export function createEmailTemplate<const TData, const TType extends EmailType>(
 
 const templates = fileURLToPath(new URL("../../../resources/email", import.meta.url))
 
+async function getEmailPartials(): Promise<Record<string, string>> {
+  const names = ["styles", "header", "footer", "event-image", "primary-button", "secondary-button"]
+
+  const entries = await Promise.all(
+    names.map(async (name) => [name, await fsp.readFile(path.join(templates, "partials", `${name}.mustache`), "utf-8")])
+  )
+
+  return Object.fromEntries(entries)
+}
+
+export async function renderEmailTemplate<TData>(
+  definition: EmailTemplate<TData, EmailType>,
+  data: TData
+): Promise<string> {
+  const [layout, content, partials] = await Promise.all([
+    fsp.readFile(path.join(templates, "layout.mustache"), "utf-8"),
+    definition.getTemplate(),
+    getEmailPartials(),
+  ])
+
+  const richTextData = definition.getRichText?.(data) ?? {}
+  const richText = Object.fromEntries(
+    Object.entries(richTextData).map(([name, value]) => [name, renderEmailRichText(value ?? "")])
+  )
+
+  return mustache.render(
+    layout,
+    {
+      ...data,
+      layout: definition.layout,
+      buttons: definition.getButtons?.(data),
+      richText,
+    },
+    {
+      ...partials,
+      content,
+      title: definition.layout.title,
+      preheader: definition.layout.preheader,
+      footerReason: definition.layout.footerReason,
+    }
+  )
+}
+
 export const DEFAULT_EMAIL_SOURCE = "varslinger@online.ntnu.no"
 export const DEFAULT_EMAIL_FROM = `Linjeforeningen Online <${DEFAULT_EMAIL_SOURCE}>`
 
@@ -46,9 +110,48 @@ export function getReplyToAddresses(addresses: string[]): string[] {
   return [DEFAULT_EMAIL_SOURCE]
 }
 
+const EventImageUrlSchema = z
+  .url({ protocol: /^https?$/ })
+  .nullish()
+  .catch(null)
+
 export const emails = {
+  NOTIFICATION: createEmailTemplate({
+    type: "NOTIFICATION",
+    layout: {
+      title: "{{ title }}",
+      preheader: "Ny melding fra {{ senderName }}.",
+      footerReason: "Du mottar denne e-posten fordi du er mottaker av en varsling fra Linjeforeningen Online.",
+    },
+    getButtons: (data) => {
+      const buttons: TemplateButtons = {
+        notification: { href: data.notificationUrl, label: "Se varslingen" },
+      }
+
+      if (data.linkUrl !== null) {
+        buttons.link = { href: data.linkUrl, label: "Åpne lenken" }
+      }
+
+      return buttons
+    },
+    getSchema: () =>
+      z.object({
+        title: z.string(),
+        message: z.string(),
+        senderName: z.string(),
+        notificationUrl: z.url(),
+        linkUrl: z.url().nullable(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ message: data.message }),
+  }),
   COMPANY_COLLABORATION_RECEIPT: createEmailTemplate({
     type: "COMPANY_COLLABORATION_RECEIPT",
+    layout: {
+      title: "Takk for interessen!",
+      preheader: "Vi har mottatt skjemaet fra {{ companyName }}.",
+      footerReason: "Du mottar denne e-posten fordi du har fylt inn et interesseskjema hos Linjeforeningen Online.",
+    },
     getSchema: () =>
       z.object({
         companyName: z.string().min(1).max(140),
@@ -65,9 +168,15 @@ export const emails = {
         comment: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_collaboration_receipt.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   COMPANY_COLLABORATION_NOTIFICATION: createEmailTemplate({
     type: "COMPANY_COLLABORATION_NOTIFICATION",
+    layout: {
+      title: "Ny interesse fra {{ companyName }}",
+      preheader: "{{ companyName }} har sendt inn skjema for samarbeid med Online.",
+      footerReason: "Du mottar denne e-posten fordi du er registrert som medlem i Bedriftskomiteen i Online.",
+    },
     getSchema: () =>
       z.object({
         companyName: z.string().min(1).max(140),
@@ -84,9 +193,15 @@ export const emails = {
         comment: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_collaboration_notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   COMPANY_INVOICE_NOTIFICATION: createEmailTemplate({
     type: "COMPANY_INVOICE_NOTIFICATION",
+    layout: {
+      title: "Fakturainformasjon fra {{ companyName }}",
+      preheader: "{{ companyName }} har sendt inn fakturainformasjon.",
+      footerReason: "Du mottar denne e-posten fordi du er registrert som medlem i Bedriftskomiteen i Online.",
+    },
     getSchema: () =>
       z.object({
         companyName: z.string().min(1, "Bedriftsnavnet kan ikke være tomt"),
@@ -101,13 +216,25 @@ export const emails = {
         comment: z.string().nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "company_invoice_notification.mustache"), "utf-8"),
+    getRichText: (data) => ({ comment: data.comment }),
   }),
   FEEDBACK_FORM_LINK: createEmailTemplate({
     type: "FEEDBACK_FORM_LINK",
+    layout: {
+      title: "Tilbakemelding på {{ eventName }}",
+      preheader: "Hva syntes du om {{ eventName }}?",
+      footerReason: "Du mottar denne e-posten fordi du deltok på {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      feedback: { href: data.feedbackLink, label: "Gi tilbakemelding" },
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
     getSchema: () =>
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         feedbackLink: z.url(),
         eventStart: z
           .string()
@@ -121,10 +248,20 @@ export const emails = {
   }),
   EVENT_ATTENDANCE: createEmailTemplate({
     type: "EVENT_ATTENDANCE",
+    layout: {
+      title: "Du er påmeldt {{ eventName }}",
+      preheader: "Påmeldingen din til {{ eventName }} er bekreftet. Vi gleder oss til å se deg!",
+      footerReason: "Du mottar denne e-posten fordi du har meldt deg på {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
     getSchema: () =>
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         deregistrationDeadline: z
           .string()
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
@@ -133,39 +270,86 @@ export const emails = {
   }),
   EVENT_MESSAGE: createEmailTemplate({
     type: "EVENT_MESSAGE",
+    layout: {
+      title: "Viktig informasjon om {{ eventName }}",
+      preheader: "Du har fått en melding fra arrangørene av {{ eventName }}.",
+      footerReason: "Du mottar denne e-posten fordi du er påmeldt {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
     getSchema: () =>
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         message: z.string(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
+    getRichText: (data) => ({ message: data.message }),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",
+    layout: {
+      title:
+        "{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }}",
+      preheader:
+        "{{# isSuspension }}Du har blitt suspendert{{/ isSuspension }}{{^ isSuspension }}Du har fått {{ markCountLabel }}{{/ isSuspension }} for: {{ title }}.",
+      footerReason: "Du mottar denne e-posten fordi du er medlem i Linjeforeningen Online.",
+      showTimezone: true,
+    },
+    getButtons: () => ({
+      rules: { href: "https://wiki.online.ntnu.no/online-info/prikkeregler/", label: "Les arrangementreglene" },
+      profile: { href: "https://online.ntnu.no/profil", label: "Se prikkene dine" },
+    }),
     getSchema: () =>
       z.object({
         title: z.string(),
         details: z.string().nullable(),
-        weight: z.number(),
+        markCountLabel: z.string().min(1),
+        totalMarkCountLabel: z.string().min(1),
+        responsibleGroups: z.array(z.object({ name: z.string(), email: z.string().nullable() })),
+        isSuspension: z.boolean(),
+        isSuspended: z.boolean(),
         endsAt: z
           .string()
-          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
+          .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb }))
+          .nullable(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "received_mark.mustache"), "utf-8"),
+    getRichText: (data) => ({ details: data.details }),
   }),
-  WAITLIST_NOTIFICATION: createEmailTemplate({
-    type: "WAITLIST_NOTIFICATION",
+  QUEUE_NOTIFICATION: createEmailTemplate({
+    type: "QUEUE_NOTIFICATION",
+    layout: {
+      title: "Du har rykket frem i køen til {{ eventName }}",
+      preheader: "Du er nå på {{ position }}. plass i køen til {{ eventName }}.",
+      footerReason: "Du mottar denne e-posten fordi du står i kø til {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
     getSchema: () =>
       z.object({
         eventName: z.string(),
         eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
         position: z.number(),
       }),
-    getTemplate: async () => fsp.readFile(path.join(templates, "waitlist_notification.mustache"), "utf-8"),
+    getTemplate: async () => fsp.readFile(path.join(templates, "queue_notification.mustache"), "utf-8"),
   }),
   COMMITTEE_EMAIL_CREATED: createEmailTemplate({
     type: "COMMITTEE_EMAIL_CREATED",
+    layout: {
+      title: "Opprettelse av komité-e-postadresse",
+      preheader: "Vi har opprettet en komité-e-postadresse for deg.",
+      footerReason: "Du mottar denne e-posten fordi det er opprettet en komité-e-postadresse for deg.",
+    },
+    getButtons: () => ({
+      gmail: { href: "https://mail.google.com/", label: "Åpne Gmail" },
+    }),
     getSchema: () =>
       z.object({
         firstName: z.string().min(1),
@@ -178,6 +362,14 @@ export const emails = {
   }),
   COMMITTEE_EMAIL_CREATED_2FA_ENFORCED: createEmailTemplate({
     type: "COMMITTEE_EMAIL_CREATED_2FA_ENFORCED",
+    layout: {
+      title: "Opprettelse av komité-e-postadresse",
+      preheader: "Vi har opprettet en komité-e-postadresse for deg.",
+      footerReason: "Du mottar denne e-posten fordi det er opprettet en komité-e-postadresse for deg.",
+    },
+    getButtons: () => ({
+      gmail: { href: "https://mail.google.com/", label: "Åpne Gmail" },
+    }),
     getSchema: () =>
       z.object({
         firstName: z.string().min(1),
@@ -189,6 +381,25 @@ export const emails = {
       }),
     getTemplate: async () =>
       fsp.readFile(path.join(templates, "committee_email_created_2fa_enforced.mustache"), "utf-8"),
+  }),
+  BUG_REPORT: createEmailTemplate({
+    type: "BUG_REPORT",
+    layout: {
+      title: "Takk for at du meldte fra!",
+      preheader: "Takk for at du meldte fra om en feil på OnlineWeb.",
+      footerReason: "Du mottar denne e-posten som bekreftelse på meldingen din til Dotkom.",
+    },
+    getSchema: () =>
+      z.object({
+        firstName: z.string().nullable(),
+        name: z.string().nullable(),
+        profileUrl: z.url(),
+        userAgent: z.string().optional(),
+        title: z.string(),
+        body: z.string(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "bug_report_form.mustache"), "utf-8"),
+    getRichText: (data) => ({ body: data.body }),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<string, EmailTemplate<any, any>>

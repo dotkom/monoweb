@@ -69,5 +69,8 @@ const wrapOverflowingElements = (sanitizedHtml: string) => {
       // The regex is hard to read but it matches <img />, <img></img> and
       // <img> (no closing tag, which is what Tiptap generates)
       .replace(/<img\b([^>]*?)(?:\/>|>(?:\s*<\/img>)?)/g, '<div class="image-wrapper"><img$1 /></div>')
+      // Wrap pre (multi-line code blocks)
+      .replace(/<pre/g, '<div class="code-wrapper"><pre')
+      .replace(/<\/pre>/g, "</pre></div>")
   )
 }

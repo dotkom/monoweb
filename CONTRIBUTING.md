@@ -108,7 +108,6 @@ Please consult the example [.env.example](.env.example) file for the environment
 The following applications run on the following ports:
 
 - `/apps/web`: 3000
-- `/apps/dashboard`: 3002
 - `/packages/ui`: 61000 (ladle)
 
 ## Testing

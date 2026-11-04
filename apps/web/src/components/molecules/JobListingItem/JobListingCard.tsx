@@ -1,5 +1,6 @@
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import { Text, Title, cn } from "@dotkomonline/ui"
+import { createJobListingPageUrl } from "@dotkomonline/utils"
 import { IconClockHour3, IconHourglassLow, IconMapPin } from "@tabler/icons-react"
 import { isPast } from "date-fns"
 import Link from "next/link"
@@ -18,7 +19,7 @@ export const JobListingCard: FC<JobListingCardProps> = ({ jobListing, className 
 
   return (
     <Link
-      href={`/karriere/${id}`}
+      href={createJobListingPageUrl(id, title)}
       className={cn(
         "group flex flex-col w-full min-w-0 h-fit gap-3 p-3 rounded-2xl transition-colors",
         "border border-transparent hover:border-gray-200 dark:hover:border-stone-700 dark:hover:bg-stone-800/20",

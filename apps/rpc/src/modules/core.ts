@@ -208,7 +208,9 @@ export async function createServiceLayer(
     clients.auth0Client,
     membershipService,
     clients.s3Client,
-    configuration.AWS_S3_BUCKET
+    configuration.AWS_S3_BUCKET,
+    emailService,
+    configuration.WEB_PUBLIC_ORIGIN
   )
   const groupService = getGroupService(groupRepository, userService, clients.s3Client, configuration.AWS_S3_BUCKET)
   const jobListingService = getJobListingService(jobListingRepository)
@@ -256,7 +258,17 @@ export async function createServiceLayer(
   const notificationService = getNotificationService(
     notificationRepository,
     notificationRecipientResolver,
-    eventEmitter
+    {
+      eventService,
+      articleService,
+      groupService,
+      userService,
+      offlineService,
+      jobListingService,
+    },
+    eventEmitter,
+    emailService,
+    configuration.WEB_PUBLIC_ORIGIN
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)

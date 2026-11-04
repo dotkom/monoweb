@@ -6,7 +6,7 @@ import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group
 import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "#lib/utils"
-import { toggleVariants } from "#components/toggle"
+import { ToggleCheckIndicator, type ToggleIndicator, toggleVariants } from "#components/toggle"
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
@@ -63,8 +63,9 @@ function ToggleGroupItem({
   variant = "outline",
   size = "default",
   color = "default",
+  indicator,
   ...props
-}: TogglePrimitive.Props & VariantProps<typeof toggleVariants>) {
+}: TogglePrimitive.Props & VariantProps<typeof toggleVariants> & { indicator?: ToggleIndicator }) {
   const context = React.useContext(ToggleGroupContext)
   const resolvedVariant = context.variant || variant
   const resolvedSize = context.size || size
@@ -84,10 +85,12 @@ function ToggleGroupItem({
           size: resolvedSize,
           color: resolvedColor,
         }),
+        indicator && "gap-0",
         className
       )}
       {...props}
     >
+      {indicator === "check" && <ToggleCheckIndicator />}
       {children}
     </TogglePrimitive>
   )

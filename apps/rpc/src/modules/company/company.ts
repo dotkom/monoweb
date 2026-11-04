@@ -48,5 +48,6 @@ export const CompanyFilterQuerySchema = z
     bySearchTerm: buildSearchFilter(),
     orderBy: createSortOrder(),
     sortBy: CompanyFilterSortSchema.default(COMPANY_FILTER_SORT_DEFAULT),
+    byIds: z.array(z.string()).optional(),
   })
   .partial()

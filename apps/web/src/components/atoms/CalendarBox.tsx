@@ -8,7 +8,6 @@ interface CalendarBoxProps {
   start: Date
   end: Date
   className?: string
-  containerClassName?: string
   titleClassName?: string
   titleTextClassName?: string
   dayClassName?: string
@@ -26,6 +25,8 @@ interface CalendarDateParts {
 
 interface CalendarPageProps {
   monthLabel: string
+  endMonthLabel?: string
+  showYear: boolean
   startDay: string
   endDay?: string
   startDayWeekday?: string
@@ -42,12 +43,14 @@ interface CalendarPageProps {
 
 const getCalendarDateParts = (date: Date): CalendarDateParts => ({
   year: formatDate(date, "yy", { locale: nb }),
-  month: formatDate(date, "MMM", { locale: nb }).replace(".", ""),
+  month: formatDate(date, "MMM", { locale: nb }).replace(".", "").slice(0, 3),
   day: formatDate(date, "dd", { locale: nb }),
 })
 
 const CalendarPage = ({
   monthLabel,
+  endMonthLabel,
+  showYear,
   startDay,
   endDay,
   startDayWeekday,
@@ -63,28 +66,54 @@ const CalendarPage = ({
 }: CalendarPageProps) => (
   <div
     className={cn(
-      "flex h-fit min-w-8 flex-col items-center rounded-md border border-gray-200 dark:border-stone-700",
+      "flex min-h-11 h-fit min-w-11 flex-col items-center rounded-md border border-gray-200 dark:border-stone-800",
+      endDay && "grid w-16 grid-cols-[1fr_auto_1fr] grid-rows-[auto_1fr] items-stretch",
+      endMonthLabel && showYear && "w-22.5",
       className
     )}
   >
     <div
       className={cn(
-        "flex w-full flex-row justify-center rounded-t-sm bg-gray-200 py-px dark:bg-stone-700",
+        "flex w-full flex-row justify-center rounded-t-sm bg-gray-200 py-px dark:bg-stone-800",
+        endDay && "col-span-3 px-1.5",
+        endMonthLabel && "grid grid-cols-subgrid items-center",
         titleClassName
       )}
     >
       <Text
-        className={cn("text-[0.625rem] font-medium uppercase tracking-tight text-muted-foreground", titleTextClassName)}
+        className={cn(
+          "text-center text-[0.625rem] font-mono [word-spacing:-0.25em] font-medium uppercase tracking-tight text-muted-foreground",
+          endMonthLabel && "whitespace-nowrap",
+          titleTextClassName
+        )}
       >
         {monthLabel}
       </Text>
+      {endMonthLabel && (
+        <Text
+          className={cn(
+            "col-start-3 whitespace-nowrap text-center text-[0.625rem] font-mono [word-spacing:-0.25em] font-medium uppercase tracking-tight text-muted-foreground",
+            titleTextClassName
+          )}
+        >
+          {endMonthLabel}
+        </Text>
+      )}
     </div>
 
-    <div className={cn("flex flex-row items-baseline px-1 py-0.5", dayClassName)}>
+    <div
+      className={cn(
+        "my-auto flex flex-row items-baseline px-1 py-0.5",
+        endDay && "col-span-3 grid grid-cols-subgrid px-1.5",
+        dayClassName
+      )}
+    >
       <div className="flex flex-col items-center">
-        <Text className={cn("text-base/4", dayTextClassName)}>{startDay}</Text>
+        <Text className={cn("text-base/4 font-mono", dayTextClassName)}>{startDay}</Text>
         {includeWeekday && (
-          <Text className={cn("text-[0.625rem]/3 text-muted-foreground", weekdayTextClassName)}>{startDayWeekday}</Text>
+          <Text className={cn("text-[9px]/2 font-mono uppercase text-muted-foreground", weekdayTextClassName)}>
+            {startDayWeekday}
+          </Text>
         )}
       </div>
 
@@ -92,9 +121,9 @@ const CalendarPage = ({
         <>
           <IconArrowRight className={cn("size-3 text-muted-foreground", arrowClassName)} />
           <div className="flex flex-col items-center">
-            <Text className={cn("text-base/4", dayTextClassName)}>{endDay}</Text>
+            <Text className={cn("text-base/4 font-mono", dayTextClassName)}>{endDay}</Text>
             {includeWeekday && (
-              <Text className={cn("text-[0.625rem]/3 text-muted-foreground", weekdayTextClassName)}>
+              <Text className={cn("text-[9px]/2 font-mono uppercase text-muted-foreground", weekdayTextClassName)}>
                 {endDayWeekday}
               </Text>
             )}
@@ -109,7 +138,6 @@ export const CalendarBox = ({
   start,
   end,
   className,
-  containerClassName,
   titleClassName,
   titleTextClassName,
   dayClassName,
@@ -126,7 +154,14 @@ export const CalendarBox = ({
   const startDayWeekday = capitalizeFirstLetter(formatDate(start, "EEE", { locale: nb }))
   const endDayWeekday = capitalizeFirstLetter(formatDate(end, "EEE", { locale: nb }))
 
-  const sharedPageProps = {
+  const showYear = !isSameYear(start, end) || !thisYear
+
+  const startMonthLabel = showYear ? `${startDate.month} ${startDate.year}` : startDate.month
+  const endMonthLabel = showYear ? `${endDate.month} ${endDate.year}` : endDate.month
+
+  const pageProps = {
+    showYear,
+    className,
     titleClassName,
     titleTextClassName,
     dayClassName,
@@ -134,64 +169,20 @@ export const CalendarBox = ({
     weekdayTextClassName,
     arrowClassName,
     includeWeekday,
-  }
-
-  const showYear = !isSameYear(start, end) || !thisYear
-  const startMonthLabel = showYear ? `${startDate.month} ${startDate.year}` : startDate.month
-  const endMonthLabel = showYear ? `${endDate.month} ${endDate.year}` : endDate.month
+    startDay: startDate.day,
+    startDayWeekday,
+    monthLabel: startMonthLabel,
+  } as const satisfies Partial<CalendarPageProps>
 
   if (isSameDay(start, end)) {
-    return (
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={startMonthLabel}
-        startDay={startDate.day}
-        startDayWeekday={startDayWeekday}
-        className={cn("min-w-11 dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", titleClassName)}
-      />
-    )
+    return <CalendarPage {...pageProps} />
   }
 
   if (isSameMonth(start, end)) {
-    return (
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={startMonthLabel}
-        startDay={startDate.day}
-        startDayWeekday={startDayWeekday}
-        endDay={endDate.day}
-        endDayWeekday={endDayWeekday}
-        className={cn("min-w-11 dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", titleClassName)}
-        dayClassName={cn("px-2", dayClassName)}
-      />
-    )
+    return <CalendarPage {...pageProps} endDay={endDate.day} endDayWeekday={endDayWeekday} />
   }
 
   return (
-    <div className={cn("flex flex-row items-center gap-0.5", containerClassName)}>
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={startMonthLabel}
-        startDay={startDate.day}
-        startDayWeekday={startDayWeekday}
-        className={cn("dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", showYear && "px-1", titleClassName)}
-        titleTextClassName={cn(showYear && "text-nowrap", titleTextClassName)}
-      />
-
-      <IconArrowRight className={cn("size-3.5 text-muted-foreground", arrowClassName)} />
-
-      <CalendarPage
-        {...sharedPageProps}
-        monthLabel={endMonthLabel}
-        startDay={endDate.day}
-        startDayWeekday={endDayWeekday}
-        className={cn("dark:border-stone-800", className)}
-        titleClassName={cn("dark:bg-stone-800", showYear && "px-1", titleClassName)}
-        titleTextClassName={cn(showYear && "text-nowrap", titleTextClassName)}
-      />
-    </div>
+    <CalendarPage {...pageProps} endMonthLabel={endMonthLabel} endDay={endDate.day} endDayWeekday={endDayWeekday} />
   )
 }
