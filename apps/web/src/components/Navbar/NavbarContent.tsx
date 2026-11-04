@@ -102,10 +102,10 @@ const links: MenuLink[] = [
         description: "Onlines wiki, brukt av hele Trondheim.",
       },
       {
-        title: "Kontoret",
-        href: "/kontoret",
+        title: "A4",
+        href: "/a4",
         icon: IconSofa,
-        description: "Informasjon om kontoret og varetelling i kiosken",
+        description: "Informasjon om A4 og kontoret.",
       },
     ],
   },

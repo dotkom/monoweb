@@ -3,7 +3,7 @@
 import { cn, Text, ToggleGroup, ToggleGroupItem } from "@dotkomonline/ui"
 import type { FC } from "react"
 import { useState } from "react"
-import type { KontoretRoom } from "../om-kontoret/rooms"
+import type { KontoretRoom } from "../om-a4/rooms"
 import { MazeMapView } from "./MazeMapView"
 
 interface KontoretMapProps {
