@@ -17,6 +17,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         min: subMonths(getCurrentUTC(), 1),
         max: null,
       },
+      excludingVisibility: ["AUTHENTICATED", "COMMITTEE_ONLY"],
     },
   })
 

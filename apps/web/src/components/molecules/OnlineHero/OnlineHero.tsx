@@ -6,6 +6,8 @@ import Spline from "@splinetool/react-spline"
 import { IconArrowUpRight, IconBriefcase, IconRotate3d } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import { Link } from "@/components/link"
+import { usePalette } from "@/components/PaletteProvider"
+import { PALETTE_CONFIG } from "@/lib/palette-config"
 import type { FC } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Logo } from "./Logo"
@@ -31,6 +33,7 @@ interface PointerInteraction {
 
 export const OnlineHero: FC = () => {
   const { resolvedTheme, setTheme } = useTheme()
+  const showScene = PALETTE_CONFIG[usePalette().palette].showHeroScene !== false
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [mounted, setMounted] = useState<boolean>(false)
@@ -198,18 +201,17 @@ export const OnlineHero: FC = () => {
       </div>
 
       <div className="lg:-ml-8 relative w-full">
-        <div className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
-          {(!mounted || isLoading) && (
+        <div data-hero-scene className="relative inset-0 max-w-[600px] aspect-10/9 mx-auto lg:mx-0">
+          {showScene && (!mounted || isLoading) && (
             <div className="absolute inset-0 bg-gray-100 dark:bg-stone-800 rounded-xl animate-pulse w-[80%] h-[80%] m-auto" />
           )}
-          {mounted && (
+          {showScene && mounted && (
             <div ref={containerRef} className="absolute inset-0 overflow-hidden rounded-[40%]">
               <Spline scene={SPLINE_SCENE_URL} onLoad={onSplineLoad} onSplineMouseDown={lightSwitch} />
               <div
                 className={cn(
                   "pointer-events-none absolute inset-0 rounded-[39%]",
-                  "shadow-[inset_0_0_20px_22px_#fff] transition-opacity duration-700",
-                  "dark:shadow-[inset_0_0_20px_22px_#1c1917]",
+                  "shadow-[inset_0_0_20px_22px_var(--background)] transition-opacity duration-700",
                   isLoading ? "opacity-0" : "opacity-100"
                 )}
               />

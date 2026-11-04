@@ -1,0 +1,235 @@
+"use client"
+
+import { useAuthorization } from "@admin/auth/authorization-context"
+import { DateTooltip } from "@admin/components/DateTooltip"
+import { EditableRowIndicator } from "@admin/components/EditableRowIndicator"
+import { useTRPC } from "@admin/lib/trpc-client"
+import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { canManageNotification } from "@dotkomonline/rpc/notification-permissions"
+import {
+  getNotificationLinkTypeLabel,
+  getNotificationTypeLabel,
+  type NotificationManagement,
+  type NotificationRecipientStats,
+} from "@dotkomonline/rpc/notification"
+import { Badge, DataTable, Text, TextLink } from "@dotkomonline/ui"
+import { useQueries } from "@tanstack/react-query"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { useMemo } from "react"
+
+type NotificationTableRow = NotificationManagement & {
+  canManage: boolean
+}
+
+function getActorGroupLabel(notification: NotificationManagement): string {
+  if (notification.actorGroup === null) {
+    return "System"
+  }
+
+  return getGroupDisplayName(notification.actorGroup)
+}
+
+function formatReadPercentage(stats: NotificationRecipientStats): string {
+  if (stats.totalCount === 0) {
+    return "—"
+  }
+
+  return `${Math.round((stats.readCount / stats.totalCount) * 100)}%`
+}
+
+function RecipientStatsCell({
+  canManage,
+  statsQuery,
+  children,
+}: {
+  canManage: boolean
+  statsQuery: { isPending: boolean; data: NotificationRecipientStats | undefined } | undefined
+  children: (stats: NotificationRecipientStats) => string | number
+}) {
+  if (!canManage) {
+    return <Text className="text-sm text-muted-foreground">—</Text>
+  }
+
+  if (statsQuery === undefined || statsQuery.isPending) {
+    return <div className="h-4 w-10 animate-pulse rounded-sm bg-muted" />
+  }
+
+  if (statsQuery.data === undefined) {
+    return <Text className="text-sm text-muted-foreground">—</Text>
+  }
+
+  return children(statsQuery.data)
+}
+
+interface Props {
+  notifications: NotificationManagement[]
+  showLinkType?: boolean
+  showReadPercentage?: boolean
+  dimReadOnlyRows?: boolean
+  isLoading: boolean
+  isPlaceholderData: boolean
+  isFetchingNextPage: boolean
+  hasNextPage: boolean
+  fetchNextPage: () => void
+}
+
+export function NotificationsTable({
+  notifications,
+  showLinkType = false,
+  showReadPercentage = true,
+  dimReadOnlyRows = false,
+  isLoading,
+  isPlaceholderData,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+}: Props) {
+  const trpc = useTRPC()
+  const authorization = useAuthorization()
+  const columnHelper = createColumnHelper<NotificationTableRow>()
+
+  const rows = useMemo(
+    (): NotificationTableRow[] =>
+      notifications.map((notification) => ({
+        ...notification,
+        canManage: canManageNotification(authorization, notification.actorGroup),
+      })),
+    [authorization, notifications]
+  )
+
+  const hasAnyReadOnlyRow = rows.some((row) => !row.canManage)
+
+  const statsQueries = useQueries({
+    queries: rows.map((notification) => ({
+      ...trpc.notification.getRecipientStats.queryOptions(notification.id),
+      enabled: notification.canManage && notification.status === "SENT",
+      retry: false,
+    })),
+  })
+
+  const statsByNotificationId = useMemo(() => {
+    return new Map(rows.map((notification, index) => [notification.id, statsQueries[index]]))
+  }, [rows, statsQueries])
+
+  const columns = useMemo(() => {
+    const editableIndicatorColumn = hasAnyReadOnlyRow
+      ? columnHelper.accessor("canManage", {
+          header: () => null,
+          meta: {
+            fit: true,
+            noPadding: true,
+          },
+          cell: (info) => (
+            <EditableRowIndicator
+              canEdit={info.getValue()}
+              readOnlyLabel="Du kan se denne varslingen, men ikke redigere den"
+              editableLabel="Du kan redigere denne varslingen"
+            />
+          ),
+        })
+      : null
+
+    const titleColumn = columnHelper.accessor("title", {
+      header: () => "Tittel",
+      meta: {
+        smallPadding: true,
+      },
+      cell: (info) => (
+        <TextLink
+          href={`/admin/varslinger/${info.row.original.id}`}
+          className="block w-full rounded-sm p-1 text-sm no-underline transition-colors duration-75 hover:bg-blue-500/10"
+        >
+          {info.getValue()}
+          {info.row.original.status === "DRAFT" && (
+            <Badge className="ml-2" variant="secondary">
+              Utkast
+            </Badge>
+          )}
+        </TextLink>
+      ),
+    })
+
+    const typeColumn = columnHelper.accessor("type", {
+      header: () => "Type",
+      cell: (info) => getNotificationTypeLabel(info.getValue()),
+    })
+
+    const actorGroupColumn = columnHelper.accessor((notification) => getActorGroupLabel(notification), {
+      id: "actorGroup",
+      header: () => "Avsender",
+      cell: (info) => info.getValue(),
+    })
+
+    const linkTypeColumn = columnHelper.accessor(
+      (notification) => getNotificationLinkTypeLabel(notification.link.type),
+      {
+        id: "linkType",
+        header: () => "Lenke",
+        cell: (info) => info.getValue(),
+      }
+    )
+
+    const sentAtColumn = columnHelper.accessor("sentAt", {
+      header: () => "Sendt",
+      cell: (info) => {
+        const sentAt = info.getValue()
+        return sentAt === null ? "—" : <DateTooltip date={sentAt} />
+      },
+    })
+
+    const recipientsColumn = columnHelper.display({
+      id: "recipients",
+      header: () => "Mottakere",
+      cell: (info) => (
+        <RecipientStatsCell
+          canManage={info.row.original.canManage && info.row.original.status === "SENT"}
+          statsQuery={statsByNotificationId.get(info.row.original.id)}
+        >
+          {(stats) => stats.totalCount}
+        </RecipientStatsCell>
+      ),
+    })
+
+    const readPercentageColumn = columnHelper.display({
+      id: "readPercentage",
+      header: () => "Lest",
+      cell: (info) => (
+        <RecipientStatsCell
+          canManage={info.row.original.canManage && info.row.original.status === "SENT"}
+          statsQuery={statsByNotificationId.get(info.row.original.id)}
+        >
+          {(stats) => formatReadPercentage(stats)}
+        </RecipientStatsCell>
+      ),
+    })
+
+    return [
+      editableIndicatorColumn,
+      titleColumn,
+      typeColumn,
+      actorGroupColumn,
+      ...(showLinkType ? [linkTypeColumn] : []),
+      sentAtColumn,
+      recipientsColumn,
+      ...(showReadPercentage ? [readPercentageColumn] : []),
+    ].filter((column): column is NonNullable<typeof column> => Boolean(column))
+  }, [columnHelper, hasAnyReadOnlyRow, showLinkType, showReadPercentage, statsByNotificationId])
+
+  const table = useReactTable({
+    data: rows,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
+
+  return (
+    <DataTable
+      table={table}
+      fetchNextPage={fetchNextPage}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      isLoading={isLoading}
+      isPlaceholderData={isPlaceholderData}
+      getRowClassName={(row) => (dimReadOnlyRows && !row.original.canManage ? "opacity-65" : undefined)}
+    />
+  )
+}

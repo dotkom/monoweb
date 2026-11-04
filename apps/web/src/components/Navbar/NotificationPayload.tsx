@@ -5,7 +5,7 @@ import { EventListItem } from "@/components/molecules/EventListItem/EventListIte
 import { getUserIcons, getUserPlate } from "@/app/arrangementer/components/AttendanceCard/AttendeeList/UserPlate"
 import { useTRPC } from "@/utils/trpc/client"
 import type { Article } from "@dotkomonline/rpc/article"
-import type { Attendance, AttendanceSummary } from "@dotkomonline/rpc/attendance"
+import type { AttendanceView, AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import type { Group } from "@dotkomonline/rpc/group"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
@@ -14,7 +14,7 @@ import type { Notification } from "@dotkomonline/rpc/notification"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import type { User } from "@dotkomonline/rpc/user"
 import { AvatarFallback, cn, Text } from "@dotkomonline/ui"
-import { richTextToPlainText } from "@dotkomonline/utils"
+import { createJobListingPageUrl, richTextToPlainText } from "@dotkomonline/utils"
 import { IconArrowUpRight, IconBriefcase, IconQuestionMark } from "@tabler/icons-react"
 import { useQuery } from "@tanstack/react-query"
 import Image from "next/image"
@@ -162,7 +162,7 @@ export function NotificationEventPayload({
   userId,
 }: {
   event: Event | EventSummary
-  attendance: Attendance | AttendanceSummary | null
+  attendance: AttendanceView | AttendanceSummary | null
   userId?: string | null
 }) {
   return (
@@ -208,14 +208,10 @@ export function NotificationArticlePayload({
 }
 
 export function NotificationOfflinePayload({ offline }: { offline: Pick<Offline, "fileUrl" | "imageUrl" | "title"> }) {
-  const href = offline.fileUrl ?? "/offline"
-
   return (
-    <Link href={href} className={payloadCardClassName}>
+    <Link href={offline.fileUrl} className={payloadCardClassName}>
       <div className="relative h-16 w-auto aspect-[0.777] shrink-0 overflow-hidden rounded-sm bg-gray-200 dark:bg-stone-700">
-        {offline.imageUrl !== null && (
-          <Image src={offline.imageUrl} alt="" fill sizes="64px" className="object-cover" />
-        )}
+        <Image src={offline.imageUrl} alt="" fill sizes="64px" className="object-cover" />
       </div>
 
       <Text className="line-clamp-2 text-sm font-medium">{offline.title}</Text>
@@ -282,7 +278,7 @@ export function NotificationJobListingPayload({
   jobListing: Pick<JobListing, "company" | "id" | "title">
 }) {
   return (
-    <Link href={`/karriere/${jobListing.id}`} className={payloadCardClassName}>
+    <Link href={createJobListingPageUrl(jobListing.id, jobListing.title)} className={payloadCardClassName}>
       <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
         {jobListing.company.imageUrl === null && <IconBriefcase aria-hidden className="size-6 text-gray-500" />}
 

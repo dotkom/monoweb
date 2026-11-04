@@ -379,7 +379,7 @@ export type JobListingCreateInput = {
   rollingAdmission: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutJobListingInput
+  company: Prisma.CompanyCreateNestedOneWithoutJobListingsInput
   locations?: Prisma.JobListingLocationCreateNestedManyWithoutJobListingInput
 }
 
@@ -419,7 +419,7 @@ export type JobListingUpdateInput = {
   rollingAdmission?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutJobListingNestedInput
+  company?: Prisma.CompanyUpdateOneRequiredWithoutJobListingsNestedInput
   locations?: Prisma.JobListingLocationUpdateManyWithoutJobListingNestedInput
 }
 
@@ -733,7 +733,7 @@ export type JobListingCreateWithoutLocationsInput = {
   rollingAdmission: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutJobListingInput
+  company: Prisma.CompanyCreateNestedOneWithoutJobListingsInput
 }
 
 export type JobListingUncheckedCreateWithoutLocationsInput = {
@@ -787,7 +787,7 @@ export type JobListingUpdateWithoutLocationsInput = {
   rollingAdmission?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutJobListingNestedInput
+  company?: Prisma.CompanyUpdateOneRequiredWithoutJobListingsNestedInput
 }
 
 export type JobListingUncheckedUpdateWithoutLocationsInput = {

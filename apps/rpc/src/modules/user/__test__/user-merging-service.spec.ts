@@ -12,6 +12,7 @@ import { getUserMergingService, pickAuth0PrimaryUserId } from "../user-merging-s
 import type { UserRepository } from "../user-repository"
 import { mergeUsers as mergeUsersInDatabase } from "../user-merging"
 import { getUserService } from "../user-service"
+import type { EmailService } from "../../email/email-service"
 
 vi.mock("../user-merging", () => ({
   mergeUsers: vi.fn().mockResolvedValue(undefined),
@@ -73,7 +74,9 @@ describe("UserMergingService", () => {
       managementClient,
       membershipService,
       s3Client,
-      "fake-aws-bucket"
+      "fake-aws-bucket",
+      mockDeep<EmailService>(),
+      "http://localhost:3000"
     )
 
     const userMergingService = getUserMergingService(

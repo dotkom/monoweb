@@ -1,0 +1,25 @@
+import { cn } from "../../utils"
+
+export type TableColumnMeta = {
+  fit?: boolean
+  smallPadding?: boolean
+  noPadding?: boolean
+  wrap?: boolean
+}
+
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData, TValue> extends TableColumnMeta {}
+}
+
+export function getTableColumnClassName(meta?: TableColumnMeta, forCell = false): string {
+  if (meta === undefined) {
+    return ""
+  }
+
+  return cn(
+    meta.fit && "w-[1%] whitespace-nowrap",
+    meta.smallPadding && forCell && "p-1",
+    meta.noPadding && forCell && "p-0",
+    meta.wrap && "whitespace-normal min-w-0"
+  )
+}

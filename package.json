@@ -17,12 +17,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc -F @dotkomonline/emails build",
+    "build": "pnpm run -F @dotkomonline/web -F @dotkomonline/rpc -F @dotkomonline/emails build",
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
+    "prisma-schema-lint-check": "prisma-lint packages/db/prisma/schema.prisma packages/grades-db/prisma/schema.prisma",
+    "tflint-check": "tflint --chdir=infra --recursive --format=compact",
     "test": "pnpm run -r test",
+    "emails:preview": "pnpm --filter @dotkomonline/rpc emails:preview",
     "test:it": "pnpm run -r test:it",
-    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/dashboard -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
+    "dev": "pnpm -rc --parallel -F @dotkomonline/ui -F @dotkomonline/web -F @dotkomonline/rpc exec doppler run --preserve-env pnpm run dev",
     "dev:web-ladle": "pnpm -F @dotkomonline/web run ladle",
     "dev:ui-ladle": "pnpm -F @dotkomonline/ui run dev",
     "grades:dev": "pnpm -rc --parallel -F @dotkomonline/grades-backend -F @dotkomonline/grades-frontend exec doppler run --preserve-env pnpm run dev",
@@ -54,13 +57,14 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
+  "packageManager": "pnpm@10.34.9+sha512.f49b5a8ea0fdedb44bb3c0c1d6575092a53c2950d95b7ad15df11f17974877a2de3a01c07e934e9b28ce716e51c09a94962c7306d09be2e1e4b18a8c8762fd32",
   "engines": {
     "node": ">=22.0.0",
     "pnpm": ">=10.15.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
-    "typescript": "5.9.3"
+    "prisma-lint": "0.13.1",
+    "typescript": "7.0.2"
   }
 }

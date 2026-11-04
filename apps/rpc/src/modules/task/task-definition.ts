@@ -20,7 +20,7 @@ export function createTaskDefinition<const TData, const TType extends TaskType>(
 
 export type ReserveAttendeeTaskDefinition = typeof tasks.RESERVE_ATTENDEE
 export type MergeAttendancePoolsTaskDefinition = typeof tasks.MERGE_ATTENDANCE_POOLS
-export type VerifyPaymentTaskDefinition = typeof tasks.VERIFY_PAYMENT
+export type VerifyAttendanceCompletionTaskDefinition = typeof tasks.VERIFY_ATTENDANCE_COMPLETION
 export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
@@ -28,7 +28,7 @@ export type VerifyAttendeeAttendedTaskDefinition = typeof tasks.VERIFY_ATTENDEE_
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
-  | VerifyPaymentTaskDefinition
+  | VerifyAttendanceCompletionTaskDefinition
   | ChargeAttendeeTaskDefinition
   | VerifyFeedbackAnsweredTaskDefinition
   | SendFeedbackFormEmailsTaskDefinition
@@ -50,8 +50,8 @@ export const tasks = {
         attendanceId: AttendanceSchema.shape.id,
       }),
   }),
-  VERIFY_PAYMENT: createTaskDefinition({
-    type: "VERIFY_PAYMENT",
+  VERIFY_ATTENDANCE_COMPLETION: createTaskDefinition({
+    type: "VERIFY_ATTENDANCE_COMPLETION",
     getSchema: () =>
       z.object({
         attendeeId: AttendeeSchema.shape.id,

@@ -3,7 +3,6 @@
 import { SessionRecoveryDropdown } from "@/components/auth/SessionRecoveryDropdown"
 import { useIdentityLinkRequiresLogin } from "@/components/notices/identity-link-success-notice"
 import { Link } from "@/components/link"
-import { env } from "@/env"
 import type { AuthState } from "@/utils/authenticated-user-state"
 import { useTRPC } from "@/utils/trpc/client"
 import { useFullPathname } from "@/utils/use-full-pathname"
@@ -12,16 +11,14 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Button,
+  cn,
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Text,
-  Title,
 } from "@dotkomonline/ui"
 import { createLogoutUrl, getSessionRecoveryMessages } from "@dotkomonline/utils"
 import {
@@ -32,100 +29,23 @@ import {
   IconLock,
   IconLogout2,
   IconMailForward,
-  IconMessageReport,
-  IconMoon,
   IconPalette,
   IconSettings,
-  IconSun,
+  IconSunMoon,
   IconUser,
 } from "@tabler/icons-react"
 import { skipToken, useQuery } from "@tanstack/react-query"
 import { type ComponentType, type FC, Fragment, useState } from "react"
+import { ContactDebugDropdown } from "./ContactDebugDropdown"
+import { NavbarDropdownContent } from "./NavbarDropdownContent"
 import { NotificationDropdown } from "./NotificationDropdown"
-import { ThemeToggle } from "./ThemeToggle"
+import { PaletteToggle, ThemeDropdown, ThemeToggle, useHasPaletteChoice } from "./ThemeToggle"
 import { OnlineIcon } from "../atoms/OnlineIcon"
-
-const DEBUG_CONTACT_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLScvjEqVsiRIYnVqCNqbH_-nmYk3Ux6la8a7KZzsY3sJDbW-iA/viewform"
-
-const ThemeDropdown: FC = () => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700">
-        <IconSun width={22} height={22} className="dark:hidden" />
-        <IconMoon width={22} height={22} className="hidden dark:block" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        sideOffset={24}
-        positionMethod="fixed"
-        className="w-fit -mr-3 rounded-xl border border-gray-300/70 bg-blue-50 p-2 shadow-md dark:border-stone-700 dark:bg-stone-800 sm:p-1.5"
-      >
-        <ThemeToggle />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
-
-const ContactDebugDropdown: FC = () => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <button
-        aria-label="Kontakt debug, les mer om debug"
-        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-200 dark:hover:bg-stone-700 transition-colors"
-        type="button"
-      >
-        <IconMessageReport width={24} height={24} />
-      </button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent
-      align="end"
-      className="w-[calc(100vw-2rem)] mx-2.75 xs:w-80 xs:mr-0 p-6 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 rounded-3xl shadow-md"
-      sideOffset={24}
-      positionMethod="fixed"
-    >
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <IconMessageReport width={24} height={24} />
-          <Title size="md" className="font-semibold text-gray-900 dark:text-white">
-            Opplevd noe ugreit?
-          </Title>
-        </div>
-        <Text className="text-sm px-1 text-gray-700 dark:text-stone-200">
-          Her kan du ta kontakt med Debug. De har taushetsplikt, og alle innsendelser blir håndtert konfidensielt uten
-          innsyn fra ledelsen i Online.
-        </Text>
-        <div className="flex flex-col gap-2">
-          <Button
-            element={Link}
-            variant="unstyled"
-            href={DEBUG_CONTACT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 rounded-lg bg-blue-100 dark:bg-stone-700 hover:bg-blue-200 dark:hover:bg-stone-600 transition-colors"
-          >
-            <span className="font-medium text-gray-900 dark:text-stone-100">Ta kontakt</span>
-            <IconArrowUpRight width={16} height={16} />
-          </Button>
-          <Button
-            element={Link}
-            variant="ghost"
-            href="/grupper/debug"
-            rel="noopener noreferrer"
-            className="w-fit text-gray-600 dark:text-stone-300"
-          >
-            <span className="text-sm">Les mer om Debug</span>
-          </Button>
-        </div>
-      </div>
-    </DropdownMenuContent>
-  </DropdownMenu>
-)
+import { BugReportModal } from "../molecules/BugReport/BugReportModal"
 
 const UnauthenticatedActions: FC = () => {
   return (
     <div className="flex items-center">
-      <NotificationDropdown isAuthenticated={false} />
       <ContactDebugDropdown />
       <ThemeDropdown />
     </div>
@@ -171,8 +91,8 @@ const linkGroups: LinkGroup[] = [
     links: [
       {
         icon: IconAdjustments,
-        label: "Dashboard",
-        href: env.NEXT_PUBLIC_DASHBOARD_URL,
+        label: "Adminside",
+        href: "/admin",
         openInNewTab: true,
         adminOnly: true,
       },
@@ -192,12 +112,6 @@ const linkGroups: LinkGroup[] = [
         icon: IconMailForward,
         label: "Kontakt oss",
         href: "mailto:hovedstyret@online.ntnu.no",
-        openInNewTab: true,
-      },
-      {
-        icon: IconBug,
-        label: "Rapporter en feil",
-        href: "mailto:dotkom@online.ntnu.no",
         openInNewTab: true,
       },
     ],
@@ -221,18 +135,22 @@ export const ProfileMenu: FC<{ authState: AuthState }> = ({ authState }) => {
 
   if (isInvalid && sessionRecoveryMessages !== null) {
     return (
-      <div className="flex gap-2">
-        <NotificationDropdown isAuthenticated={false} />
-        <ContactDebugDropdown />
+      <div className="flex gap-2.5">
+        <div className="flex gap-0.5">
+          <ContactDebugDropdown />
+          <NotificationDropdown isAuthenticated={false} />
+        </div>
         <SessionRecoveryDropdown {...sessionRecoveryMessages} returnTo={fullPathname} />
       </div>
     )
   }
 
   return (
-    <div className="flex gap-2">
-      <NotificationDropdown isAuthenticated />
-      <ContactDebugDropdown />
+    <div className="flex gap-2.5">
+      <div className="flex gap-0.5">
+        <ContactDebugDropdown />
+        <NotificationDropdown isAuthenticated />
+      </div>
       <AvatarDropdown dbUser={dbUser} />
     </div>
   )
@@ -243,7 +161,9 @@ type AvatarDropdownProps = {
 }
 
 export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
+  const hasPaletteChoice = useHasPaletteChoice()
   const [open, setOpen] = useState(false)
+  const [isBugReportModalOpen, setBugReportModalOpen] = useState(false)
   const trpc = useTRPC()
 
   const isStaffResponse = useQuery({
@@ -268,127 +188,164 @@ export const AvatarDropdown: FC<AvatarDropdownProps> = ({ dbUser }) => {
   const showFeedbackFormPing = eventsMissingFeedback && eventsMissingFeedback.length > 0
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Åpne profilmeny"
-          className="relative rounded-full transition-all duration-200 focus:outline-none"
-        >
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
-            <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-800 text-white">
-              <IconUser className="size-5" />
-            </AvatarFallback>
-          </Avatar>
-          {showFeedbackFormPing && !open && <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-[calc(100vw-2rem)] mx-2.75 xs:w-72 xs:-mr-3 rounded-3xl p-3 bg-blue-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md"
-        sideOffset={24}
-        positionMethod="fixed"
-      >
-        <DropdownMenuLabel className="font-normal p-3 mb-2">
-          <div className="flex flex-col min-w-0 flex-1">
-            <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-              {user?.name || "Bruker"}
-            </Text>
-            <Text className="text-xs text-gray-600 dark:text-stone-400 truncate">{user?.email || ""}</Text>
-          </div>
-        </DropdownMenuLabel>
+    <>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label="Åpne profilmeny"
+            className="relative rounded-full transition-all duration-200 focus:outline-none"
+          >
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={user?.imageUrl ?? undefined} alt={user?.name ?? "Profilbilde"} />
+              <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-800 dark:from-blue-400 dark:to-blue-800 text-white">
+                <IconUser className="size-5" />
+              </AvatarFallback>
+            </Avatar>
+            {showFeedbackFormPing && !open && (
+              <span className="absolute top-0 right-0 size-3 rounded-full bg-red-500" />
+            )}
+          </button>
+        </DropdownMenuTrigger>
+        <NavbarDropdownContent className="w-[calc(100vw-2rem)] xs:w-72 rounded-3xl p-3 bg-gray-50 dark:bg-stone-800 border border-gray-300/70 dark:border-stone-700 shadow-md">
+          <DropdownMenuLabel className="font-normal p-3 mb-2">
+            <div className="flex flex-col min-w-0 flex-1">
+              <Text className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                {user?.name || "Bruker"}
+              </Text>
+              <Text className="text-xs text-gray-600 dark:text-stone-400 truncate">{user?.email || ""}</Text>
+            </div>
+          </DropdownMenuLabel>
 
-        {filteredLinkGroups.map((group, i, { length }) => {
-          const notLast = i !== length - 1
-          const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
+          {filteredLinkGroups.map((group, i, { length }) => {
+            const notLast = i !== length - 1
+            const allLinksAdminOnly = group.links.every((link) => link.adminOnly)
 
-          return (
-            <Fragment key={group.id}>
-              {allLinksAdminOnly && (
-                <div className="flex items-center gap-1 px-1.5 py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
-                  <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                  <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                </div>
-              )}
+            return (
+              <Fragment key={group.id}>
+                {allLinksAdminOnly && (
+                  <div className="flex items-center gap-3 px-[calc(--spacing(3)+1px)] py-1 mb-1 bg-amber-100 dark:bg-amber-900 rounded-md">
+                    <div className="w-5 flex items-center justify-center">
+                      <IconLock className="size-3.5 text-amber-700 dark:text-amber-300" />
+                    </div>
 
-              <DropdownMenuGroup className="space-y-1">
-                {group.links.map((link) => {
-                  const isProfile = link.href === "/profil"
-                  const IconComponent = link.icon
+                    <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                  </div>
+                )}
 
-                  return (
-                    <DropdownMenuItem
-                      asChild
-                      variant="uncolored"
-                      onClick={() => setOpen(false)}
-                      key={link.label}
-                      className="rounded-lg hover:bg-blue-100 focus:bg-blue-100 dark:hover:bg-stone-700 dark:focus:bg-stone-700 transition-colors cursor-pointer"
-                    >
-                      <Link
-                        className="flex items-center gap-3 min-h-9 px-3"
-                        href={link.href ?? "#"}
-                        target={link.openInNewTab ? "_blank" : undefined}
-                        rel="noreferrer"
+                <DropdownMenuGroup className="space-y-1">
+                  {group.links.map((link) => {
+                    const isProfile = link.href === "/profil"
+                    const IconComponent = link.icon
+
+                    return (
+                      <DropdownMenuItem
+                        asChild
+                        variant="uncolored"
+                        onClick={() => setOpen(false)}
+                        key={link.label}
+                        className={cn(
+                          "rounded-lg transition-colors cursor-pointer",
+                          "hover:bg-gray-100 focus:bg-gray-100 data-highlighted:bg-gray-100",
+                          "dark:hover:bg-stone-700/25 dark:focus:bg-stone-700/25 dark:data-highlighted:bg-stone-700/25",
+                          "border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+                        )}
                       >
-                        <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+                        <Link
+                          className="flex items-center gap-3 min-h-9 px-3"
+                          href={link.href ?? "#"}
+                          target={link.openInNewTab ? "_blank" : undefined}
+                          rel="noreferrer"
+                        >
+                          <IconComponent className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
 
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex flex-row gap-2 items-center">
-                            <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
-                            {showFeedbackFormPing && open && isProfile && (
-                              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex flex-row gap-2 items-center">
+                              <Text className="text-sm font-medium text-gray-900 dark:text-white">{link.label}</Text>
+                              {showFeedbackFormPing && open && isProfile && (
+                                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                              )}
+                            </div>
+
+                            {link.adminOnly && !allLinksAdminOnly && (
+                              <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
+                                <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
+                                <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
+                              </div>
                             )}
                           </div>
 
-                          {link.adminOnly && !allLinksAdminOnly && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900 rounded-full">
-                              <IconLock className="size-3 text-amber-700 dark:text-amber-300" />
-                              <Text className="text-xs font-medium text-amber-700 dark:text-amber-300">Admin</Text>
-                            </div>
+                          {link.openInNewTab && (
+                            <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
                           )}
-                        </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </DropdownMenuGroup>
 
-                        {link.openInNewTab && (
-                          <IconArrowUpRight className="size-5 shrink-0 text-gray-400 dark:text-stone-400" />
-                        )}
-                      </Link>
-                    </DropdownMenuItem>
-                  )
-                })}
-              </DropdownMenuGroup>
+                {notLast && <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />}
+              </Fragment>
+            )
+          })}
 
-              {notLast && <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />}
-            </Fragment>
-          )
-        })}
+          <DropdownMenuItem
+            asChild
+            onClick={() => setBugReportModalOpen(true)}
+            variant="uncolored"
+            className={cn(
+              "rounded-lg transition-colors cursor-pointer",
+              "hover:bg-gray-100 focus:bg-gray-100 data-highlighted:bg-gray-100",
+              "dark:hover:bg-stone-700/25 dark:focus:bg-stone-700/25 dark:data-highlighted:bg-stone-700/25",
+              "border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+            )}
+          >
+            <div className="flex items-center w-full ml-px gap-3 text-sm py-2">
+              <IconBug className="size-5 shrink-0" />
+              <Text className="text-sm font-medium">Rapporter en feil</Text>
+            </div>
+          </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
+          <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
 
-        <div className="flex items-center justify-between px-3">
-          <div className="flex gap-3 items-center">
-            <IconPalette className="size-5 text-gray-600 dark:text-stone-300" />
-            <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
+          <div className="flex items-center justify-between px-3">
+            <div className="flex gap-3 items-center">
+              <IconSunMoon className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+              <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Fargetema</Text>
+            </div>
+            <div>
+              <ThemeToggle />
+            </div>
           </div>
-          <div>
-            <ThemeToggle />
-          </div>
-        </div>
 
-        <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
+          {hasPaletteChoice && (
+            <div className="flex items-center justify-between px-3 mt-1.5">
+              <div className="flex gap-3 items-center">
+                <IconPalette className="size-5 shrink-0 text-gray-600 dark:text-stone-300" />
+                <Text className="text-sm font-medium text-gray-900 dark:text-stone-100">Utseende</Text>
+              </div>
+              <div>
+                <PaletteToggle />
+              </div>
+            </div>
+          )}
 
-        <DropdownMenuItem
-          asChild
-          onClick={() => setOpen(false)}
-          variant="destructive"
-          className="rounded-lg cursor-pointer px-3"
-        >
-          <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
-            <IconLogout2 className="size-5" />
-            <Text className="text-sm font-medium">Logg ut</Text>
-          </a>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuSeparator className="my-2.5 mx-2 bg-gray-300 dark:bg-stone-700" />
+
+          <DropdownMenuItem
+            asChild
+            onClick={() => setOpen(false)}
+            variant="destructive"
+            className="rounded-lg cursor-pointer px-3"
+          >
+            <a href={createLogoutUrl()} className="flex items-center w-full gap-3 text-sm py-2">
+              <IconLogout2 className="size-5" />
+              <Text className="text-sm font-medium">Logg ut</Text>
+            </a>
+          </DropdownMenuItem>
+        </NavbarDropdownContent>
+      </DropdownMenu>
+      <BugReportModal open={isBugReportModalOpen} setOpen={setBugReportModalOpen} />
+    </>
   )
 }

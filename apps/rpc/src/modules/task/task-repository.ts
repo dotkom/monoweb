@@ -15,7 +15,7 @@ export interface TaskRepository {
   findNextPendingTask(handle: DBHandle): Promise<Task | null>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
-  findVerifyPaymentTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
+  findVerifyAttendanceCompletionTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findChargeAttendeeTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
   findVerifyFeedbackAnsweredTask(handle: DBHandle, feedbackFormId: FeedbackFormId): Promise<Task | null>
 }
@@ -125,10 +125,10 @@ export function getTaskRepository(): TaskRepository {
 
       return parseOrReport(TaskSchema.nullable(), task)
     },
-    async findVerifyPaymentTask(handle, attendeeId) {
+    async findVerifyAttendanceCompletionTask(handle, attendeeId) {
       const task = await handle.task.findFirst({
         where: {
-          type: tasks.VERIFY_PAYMENT.type,
+          type: tasks.VERIFY_ATTENDANCE_COMPLETION.type,
           payload: {
             path: ["attendeeId"],
             equals: attendeeId,

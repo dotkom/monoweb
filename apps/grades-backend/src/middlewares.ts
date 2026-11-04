@@ -26,11 +26,17 @@ export function withDatabaseTransaction<TContext extends TRPCContext, TInput>(
   const handler: MiddlewareFunction<TContext, TContext & WithTransaction, TInput> = async ({ ctx, next }) => {
     return await ctx.prisma.$transaction(
       async (handle) => {
-        return await next({
+        const result = await next({
           ctx: Object.assign(ctx, {
             handle,
           }),
         })
+
+        if (!result.ok) {
+          throw result.error
+        }
+
+        return result
       },
       {
         isolationLevel,

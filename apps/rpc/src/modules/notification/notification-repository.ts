@@ -1,5 +1,5 @@
-import type { DBHandle, Prisma } from "@dotkomonline/db"
-import { type Pageable, pageQuery } from "@dotkomonline/utils"
+import { type DBHandle, Prisma } from "@dotkomonline/db"
+import { type Pageable, getCurrentUTC, pageQuery } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
 import {
@@ -9,12 +9,13 @@ import {
   type NotificationManagement,
   NotificationManagementSchema,
   type NotificationRecipient,
+  type NotificationRecipientFilterQuery,
   type NotificationRecipientListItem,
   NotificationRecipientListItemSchema,
   NotificationRecipientSchema,
   type NotificationRecipientSelection,
-  type NotificationRecipientStats,
   NotificationRecipientSelectionSchema,
+  type NotificationRecipientStats,
   NotificationSchema,
   type NotificationUpdate,
   type NotificationWrite,
@@ -23,20 +24,38 @@ import {
   parseNotificationLink,
   serializeNotificationLink,
 } from "./notification"
-import { getCurrentUTC } from "@dotkomonline/utils"
 
 export interface NotificationRepository {
   create(handle: DBHandle, data: NotificationWrite): Promise<NotificationManagement>
   update(handle: DBHandle, notificationId: NotificationId, data: NotificationUpdate): Promise<NotificationManagement>
+  saveDraftRecipients(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    recipientSelection: NotificationRecipientSelection | null,
+    updatedById: UserId
+  ): Promise<NotificationManagement | null>
+  publishDraft(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    data: {
+      expectedUpdatedAt: Date
+      recipientSelection: NotificationRecipientSelection
+      content: string
+      sentAt: Date
+      updatedById: UserId
+    }
+  ): Promise<NotificationManagement | null>
   delete(handle: DBHandle, notificationId: NotificationId): Promise<void>
   findById(handle: DBHandle, notificationId: NotificationId): Promise<NotificationManagement | null>
   findMany(handle: DBHandle, query: NotificationFilterQuery, page: Pageable): Promise<NotificationManagement[]>
 
   addRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<NotificationRecipient[]>
   removeRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<number>
+  findRecipientEmails(handle: DBHandle, notificationId: NotificationId): Promise<string[]>
   findRecipients(
     handle: DBHandle,
     notificationId: NotificationId,
+    filters: NotificationRecipientFilterQuery,
     page: Pageable
   ): Promise<NotificationRecipientListItem[]>
   getRecipientStats(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipientStats>
@@ -58,7 +77,13 @@ const INCLUDE_ACTOR_GROUP = {
 type NotificationRow = Prisma.NotificationGetPayload<{ include: typeof INCLUDE_ACTOR_GROUP }>
 
 function mapInboxNotification(row: NotificationRow): Notification {
-  const { payloadType, payload, initialRecipientSelection: _initialRecipientSelection, ...rest } = row
+  const {
+    payloadType,
+    payload,
+    initialRecipientSelection: _initialRecipientSelection,
+    draftRecipientSelection: _draftRecipientSelection,
+    ...rest
+  } = row
 
   return parseOrReport(NotificationSchema, {
     ...rest,
@@ -67,17 +92,19 @@ function mapInboxNotification(row: NotificationRow): Notification {
 }
 
 function mapManagedNotification(row: NotificationRow): NotificationManagement {
-  const { payloadType, payload, initialRecipientSelection, ...rest } = row
-  let parsedInitialRecipientSelection: NotificationRecipientSelection | null = null
-
-  if (initialRecipientSelection !== null) {
-    parsedInitialRecipientSelection = parseOrReport(NotificationRecipientSelectionSchema, initialRecipientSelection)
-  }
+  const { payloadType, payload, initialRecipientSelection, draftRecipientSelection, ...rest } = row
 
   return parseOrReport(NotificationManagementSchema, {
     ...rest,
     link: parseNotificationLink({ payloadType, payload }),
-    initialRecipientSelection: parsedInitialRecipientSelection,
+    initialRecipientSelection:
+      initialRecipientSelection === null
+        ? null
+        : parseOrReport(NotificationRecipientSelectionSchema, initialRecipientSelection),
+    draftRecipientSelection:
+      draftRecipientSelection === null
+        ? null
+        : parseOrReport(NotificationRecipientSelectionSchema, draftRecipientSelection),
   })
 }
 
@@ -98,18 +125,24 @@ function buildWhereFromQuery(query: NotificationFilterQuery): Prisma.Notificatio
     where.payload = linkColumns.payload
   }
 
+  if (query.bySearchTerm !== undefined && query.bySearchTerm.length > 0) {
+    where.title = { contains: query.bySearchTerm, mode: "insensitive" }
+  }
+
   return where
 }
 
 export function getNotificationRepository(): NotificationRepository {
   return {
     async create(handle, data) {
-      const { link, ...notificationData } = data
+      const { link, initialRecipientSelection, draftRecipientSelection, ...notificationData } = data
 
       const row = await handle.notification.create({
         data: {
           ...notificationData,
           ...serializeNotificationLink(link),
+          initialRecipientSelection: initialRecipientSelection ?? Prisma.DbNull,
+          draftRecipientSelection: draftRecipientSelection ?? Prisma.DbNull,
         },
         include: INCLUDE_ACTOR_GROUP,
       })
@@ -118,15 +151,15 @@ export function getNotificationRepository(): NotificationRepository {
     },
 
     async update(handle, notificationId, data) {
-      const { link, ...notificationData } = data
-
       const row = await handle.notification.update({
         where: {
           id: notificationId,
         },
         data: {
-          ...notificationData,
-          ...(link !== undefined ? serializeNotificationLink(link) : {}),
+          title: data.title,
+          shortDescription: data.shortDescription,
+          content: data.content,
+          lastUpdatedById: data.lastUpdatedById,
         },
         include: INCLUDE_ACTOR_GROUP,
       })
@@ -140,6 +173,49 @@ export function getNotificationRepository(): NotificationRepository {
           id: notificationId,
         },
       })
+    },
+
+    async saveDraftRecipients(handle, notificationId, recipientSelection, updatedById) {
+      const result = await handle.notification.updateMany({
+        where: {
+          id: notificationId,
+          status: "DRAFT",
+        },
+        data: {
+          draftRecipientSelection: recipientSelection ?? Prisma.DbNull,
+          lastUpdatedById: updatedById,
+        },
+      })
+
+      if (result.count === 0) {
+        return null
+      }
+
+      return await this.findById(handle, notificationId)
+    },
+
+    async publishDraft(handle, notificationId, data) {
+      const result = await handle.notification.updateMany({
+        where: {
+          id: notificationId,
+          status: "DRAFT",
+          updatedAt: data.expectedUpdatedAt,
+        },
+        data: {
+          status: "SENT",
+          sentAt: data.sentAt,
+          content: data.content,
+          initialRecipientSelection: data.recipientSelection,
+          draftRecipientSelection: Prisma.DbNull,
+          lastUpdatedById: data.updatedById,
+        },
+      })
+
+      if (result.count === 0) {
+        return null
+      }
+
+      return await this.findById(handle, notificationId)
     },
 
     async findById(handle, notificationId) {
@@ -161,7 +237,14 @@ export function getNotificationRepository(): NotificationRepository {
       const rows = await handle.notification.findMany({
         ...pageQuery(page),
         where: buildWhereFromQuery(query),
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        orderBy: [
+          {
+            createdAt: "desc",
+          },
+          {
+            id: "desc",
+          },
+        ],
         include: INCLUDE_ACTOR_GROUP,
       })
 
@@ -202,13 +285,49 @@ export function getNotificationRepository(): NotificationRepository {
       return result.count
     },
 
-    async findRecipients(handle, notificationId, page) {
+    async findRecipientEmails(handle, notificationId) {
+      const recipients = await handle.notificationRecipient.findMany({
+        where: {
+          notificationId,
+        },
+        select: {
+          user: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      })
+
+      return recipients.map((recipient) => recipient.user.email).filter((email): email is string => email !== null)
+    },
+
+    async findRecipients(handle, notificationId, filters, page) {
       const rows = await handle.notificationRecipient.findMany({
         ...pageQuery(page),
         where: {
           notificationId,
+          ...(filters.bySearchTerm !== undefined
+            ? {
+                user: {
+                  name: {
+                    contains: filters.bySearchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              }
+            : {}),
         },
-        orderBy: [{ user: { name: "asc" } }, { id: "desc" }],
+        orderBy: [
+          {
+            user: {
+              name: "asc",
+            },
+          },
+          {
+            id: "desc",
+          },
+        ],
         select: {
           id: true,
           notificationId: true,
@@ -253,8 +372,20 @@ export function getNotificationRepository(): NotificationRepository {
         ...pageQuery(page),
         where: {
           userId,
+          notification: {
+            status: "SENT",
+          },
         },
-        orderBy: [{ notification: { createdAt: "desc" } }, { id: "desc" }],
+        orderBy: [
+          {
+            notification: {
+              sentAt: "desc",
+            },
+          },
+          {
+            id: "desc",
+          },
+        ],
         include: {
           notification: {
             include: INCLUDE_ACTOR_GROUP,
@@ -262,13 +393,14 @@ export function getNotificationRepository(): NotificationRepository {
         },
       })
 
-      const userNotifications = rows.map((row) => ({
-        id: row.id,
-        readAt: row.readAt,
-        notification: mapInboxNotification(row.notification),
-      }))
-
-      return parseOrReport(UserNotificationSchema.array(), userNotifications)
+      return parseOrReport(
+        UserNotificationSchema.array(),
+        rows.map((row) => ({
+          id: row.id,
+          readAt: row.readAt,
+          notification: mapInboxNotification(row.notification),
+        }))
+      )
     },
 
     async countUnreadForUser(handle, userId) {
@@ -276,6 +408,9 @@ export function getNotificationRepository(): NotificationRepository {
         where: {
           userId,
           readAt: null,
+          notification: {
+            status: "SENT",
+          },
         },
       })
     },
@@ -288,6 +423,7 @@ export function getNotificationRepository(): NotificationRepository {
           notificationId,
           userId,
           readAt: null,
+          notification: { status: "SENT" },
         },
         data: {
           readAt: now,
@@ -301,13 +437,8 @@ export function getNotificationRepository(): NotificationRepository {
       const now = getCurrentUTC()
 
       const result = await handle.notificationRecipient.updateMany({
-        where: {
-          userId,
-          readAt: null,
-        },
-        data: {
-          readAt: now,
-        },
+        where: { userId, readAt: null, notification: { status: "SENT" } },
+        data: { readAt: now },
       })
 
       return result.count

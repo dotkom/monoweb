@@ -1,3 +1,4 @@
+import { type Context, SpanStatusCode } from "@opentelemetry/api"
 import { logs } from "@opentelemetry/api-logs"
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-proto"
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-proto"
@@ -9,10 +10,48 @@ import { type Resource, detectResources, resourceFromAttributes } from "@opentel
 import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs"
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { NodeSDK } from "@opentelemetry/sdk-node"
+import { BatchSpanProcessor, type ReadableSpan, type Span, type SpanProcessor } from "@opentelemetry/sdk-trace-node"
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions"
 import { OpenTelemetryTransportV3 } from "@opentelemetry/winston-transport"
 import { PrismaInstrumentation } from "@prisma/instrumentation"
 import winston from "winston"
+
+/** When set on a span, the exporter keeps it only if the span status is an error. */
+export const EXPORT_SPAN_ON_ERROR_ATTRIBUTE = "app.trace.export_on_error"
+
+/**
+ * Drops successful spans that opted into error-only export.
+ *
+ * The span is still recorded in-process. This only decides whether it is queued for OTLP.
+ */
+class ExportOnErrorSpanProcessor implements SpanProcessor {
+  private readonly inner: SpanProcessor
+
+  constructor(inner: SpanProcessor) {
+    this.inner = inner
+  }
+
+  onStart(span: Span, parentContext: Context): void {
+    this.inner.onStart(span, parentContext)
+  }
+
+  onEnd(span: ReadableSpan): void {
+    const exportOnError = span.attributes[EXPORT_SPAN_ON_ERROR_ATTRIBUTE] === true
+    if (exportOnError && span.status.code !== SpanStatusCode.ERROR) {
+      return
+    }
+
+    this.inner.onEnd(span)
+  }
+
+  shutdown(): Promise<void> {
+    return this.inner.shutdown()
+  }
+
+  forceFlush(): Promise<void> {
+    return this.inner.forceFlush()
+  }
+}
 
 export function getResource(serviceName: string, version = "0.1.0"): Resource {
   return resourceFromAttributes({
@@ -37,7 +76,7 @@ export function startOpenTelemetry(resource: Resource) {
   const telemetry = new NodeSDK({
     resource,
     metricReader: new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() }),
-    traceExporter: new OTLPTraceExporter(),
+    spanProcessors: [new ExportOnErrorSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter()))],
     logRecordProcessors: [logRecordProcessor],
     instrumentations: [new WinstonInstrumentation(), new PrismaInstrumentation()],
   })

@@ -1,19 +1,19 @@
-import { getAttendee, type Attendance, type AttendanceSummary } from "@dotkomonline/rpc/attendance"
+import { getAttendee, type AttendanceView, type AttendanceSummary } from "@dotkomonline/rpc/attendance"
 import type { Event, EventSummary } from "@dotkomonline/rpc/event"
 import type { UserId } from "@dotkomonline/rpc/user"
 import { Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconMapPin } from "@tabler/icons-react"
 import { isPast } from "date-fns"
-import Link from "next/link"
 import type { FC } from "react"
 import { AttendanceStatus } from "./AttendanceStatus"
 import { EventImage } from "./EventImage"
 import { EventPrice } from "./EventPrice"
+import { EventPreviewLink } from "./EventPreviewLink"
 
 export interface EventCardProps {
   event: Event | EventSummary
-  attendance: Attendance | AttendanceSummary | null
+  attendance: AttendanceView | AttendanceSummary | null
   userId?: UserId | null
   className?: string
 }
@@ -24,7 +24,8 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
   const eventHasEnded = isPast(event.end)
 
   return (
-    <Link
+    <EventPreviewLink
+      event={event}
       href={createEventPageUrl(id, title)}
       className={cn(
         "group flex flex-col w-full min-w-0 h-fit gap-3 p-3 rounded-2xl transition-colors",
@@ -41,7 +42,6 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
         eventType={type}
         className="w-full min-w-0"
         imageClassName="aspect-video w-full"
-        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
         showCalendarBox
       />
 
@@ -78,18 +78,18 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
             <>
               <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={eventHasEnded} />
 
-              <EventPrice price={attendance.attendancePrice} />
+              {attendee?.registeredAt == null && <EventPrice price={attendance.attendancePrice} />}
             </>
           )}
         </div>
       </div>
-    </Link>
+    </EventPreviewLink>
   )
 }
 
 export const EventCardSkeleton: FC = () => {
   return (
-    <div className="flex flex-col gap-3 p-3 rounded-2xl min-w-0 animate-pulse">
+    <div className="flex flex-col gap-3 border border-transparent p-3 rounded-2xl min-w-0 animate-pulse">
       <div className="aspect-video w-full bg-gray-300 dark:bg-stone-600 rounded-lg" />
       <div className="h-6 max-w-[85%] bg-gray-300 dark:bg-stone-600 rounded-sm" />
       <div className="h-4 max-w-[60%] bg-gray-300 dark:bg-stone-600 rounded-sm" />

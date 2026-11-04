@@ -2,7 +2,14 @@ import type { S3Client } from "@aws-sdk/client-s3"
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import { createS3PresignedPost, slugify, getNextSemesterStart, getCurrentSemesterStart } from "@dotkomonline/utils"
+import {
+  createAbsoluteUserProfileUrl,
+  createS3PresignedPost,
+  formatEmailSubject,
+  slugify,
+  getNextSemesterStart,
+  getCurrentSemesterStart,
+} from "@dotkomonline/utils"
 import { trace } from "@opentelemetry/api"
 import type { ManagementClient } from "auth0"
 import * as crypto from "node:crypto"
@@ -42,10 +49,12 @@ import {
   GenderSchema,
   type UserFlagWithUsers,
   type UserFlagWrite,
-  type BirthdayPartyGuess,
   type Auth0Provider,
   Auth0ProviderSchema,
+  type BugReportFormResult,
 } from "./user"
+import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import type { EmailService } from "../email/email-service"
 
 export interface UserService {
   register(handle: DBHandle, subject: string): Promise<User>
@@ -161,7 +170,7 @@ export interface UserService {
     createdByUserId: UserId
   ): Promise<PresignedPost>
 
-  getBirthdayPartyGuess(handle: DBHandle, userId: UserId): Promise<BirthdayPartyGuess | null>
+  sendBugReportEmail(handle: DBHandle, userId: UserId, data: BugReportFormResult): Promise<void>
 }
 
 const ONLINE_MASTER_PROGRAMMES = ["MSIT"]
@@ -173,7 +182,9 @@ export function getUserService(
   managementClient: ManagementClient,
   membershipService: MembershipService,
   client: S3Client,
-  bucket: string
+  bucket: string,
+  emailService: EmailService,
+  webOrigin: string
 ): UserService {
   const logger = getLogger("user-service")
 
@@ -1043,8 +1054,32 @@ export function getUserService(
       })
     },
 
-    async getBirthdayPartyGuess(handle, userId) {
-      return userRepository.findBirthdayPartyGuessByUserId(handle, userId)
+    async sendBugReportEmail(handle, userId, data) {
+      const user = await this.getById(handle, userId)
+
+      if (user.email === null) {
+        throw new InvalidArgumentError(
+          "Du må ha en e-postadresse for å rapportere en feil. Gå til innstillinger/bruker eller kontakt Dotkom."
+        )
+      }
+
+      await emailService.send(
+        DEFAULT_EMAIL_SOURCE,
+        [user.email, "dotkom@online.ntnu.no"],
+        [user.email, "dotkom@online.ntnu.no"],
+        [],
+        [],
+        formatEmailSubject("Takk for at du meldte fra!"),
+        emails.BUG_REPORT,
+        {
+          title: data.title,
+          firstName: user.name?.trim().split(/\s+/)[0] ?? null,
+          name: user.name,
+          profileUrl: createAbsoluteUserProfileUrl(webOrigin, user.username),
+          body: data.body,
+          userAgent: data.userAgent,
+        }
+      )
     },
   }
 }

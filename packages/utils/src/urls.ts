@@ -152,6 +152,47 @@ export const createAbsoluteEventPageUrl = (
   return `${origin}/arrangementer/${slug}/${eventId}`
 }
 
+export const createUserProfileUrl = (username: string): `/profil/${string}` => {
+  return `/profil/${encodeURIComponent(username)}`
+}
+
+export const createAbsoluteUserProfileUrl = (origin: string, username: string): string => {
+  return toAbsoluteUrl(origin, createUserProfileUrl(username))
+}
+
+export const createNotificationPageUrl = (notificationId: string): `/varslinger/${string}` => {
+  return `/varslinger/${encodeURIComponent(notificationId)}`
+}
+
+export const createAbsoluteNotificationPageUrl = (origin: string, notificationId: string): string => {
+  const notificationPageUrl = createNotificationPageUrl(notificationId)
+
+  return toAbsoluteUrl(origin, notificationPageUrl)
+}
+
+export const createJobListingSlug = (jobListingTitle: string): string => {
+  return slugify(jobListingTitle)
+}
+
+export const createJobListingPageUrl = (
+  jobListingId: string,
+  jobListingTitle?: string
+): `/karriere/${string}/${string}` => {
+  const slug = jobListingTitle ? createJobListingSlug(jobListingTitle) : "jobbutlysning"
+
+  return `/karriere/${slug}/${jobListingId}`
+}
+
+export const createAbsoluteJobListingPageUrl = (
+  origin: string,
+  jobListingId: string,
+  jobListingTitle?: string
+): `${string}/karriere/${string}/${string}` => {
+  const slug = jobListingTitle ? createJobListingSlug(jobListingTitle) : "jobbutlysning"
+
+  return `${origin}/karriere/${slug}/${jobListingId}`
+}
+
 export const createCloudFrontUrl = (cloudFrontUrl: string, key: string): string => {
   return new URL(key, cloudFrontUrl).toString()
 }

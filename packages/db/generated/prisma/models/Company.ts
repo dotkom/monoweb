@@ -231,7 +231,7 @@ export type CompanyWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   events?: Prisma.EventCompanyListRelationFilter
-  JobListing?: Prisma.JobListingListRelationFilter
+  jobListings?: Prisma.JobListingListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -247,7 +247,7 @@ export type CompanyOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   events?: Prisma.EventCompanyOrderByRelationAggregateInput
-  JobListing?: Prisma.JobListingOrderByRelationAggregateInput
+  jobListings?: Prisma.JobListingOrderByRelationAggregateInput
 }
 
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -266,7 +266,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   events?: Prisma.EventCompanyListRelationFilter
-  JobListing?: Prisma.JobListingListRelationFilter
+  jobListings?: Prisma.JobListingListRelationFilter
 }, "id" | "slug">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -316,7 +316,7 @@ export type CompanyCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCompanyCreateNestedManyWithoutCompanyInput
-  JobListing?: Prisma.JobListingCreateNestedManyWithoutCompanyInput
+  jobListings?: Prisma.JobListingCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -332,7 +332,7 @@ export type CompanyUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutCompanyInput
-  JobListing?: Prisma.JobListingUncheckedCreateNestedManyWithoutCompanyInput
+  jobListings?: Prisma.JobListingUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -348,7 +348,7 @@ export type CompanyUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventCompanyUpdateManyWithoutCompanyNestedInput
-  JobListing?: Prisma.JobListingUpdateManyWithoutCompanyNestedInput
+  jobListings?: Prisma.JobListingUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -364,7 +364,7 @@ export type CompanyUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.EventCompanyUncheckedUpdateManyWithoutCompanyNestedInput
-  JobListing?: Prisma.JobListingUncheckedUpdateManyWithoutCompanyNestedInput
+  jobListings?: Prisma.JobListingUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -470,18 +470,18 @@ export type CompanyUpdateOneRequiredWithoutEventsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutEventsInput, Prisma.CompanyUpdateWithoutEventsInput>, Prisma.CompanyUncheckedUpdateWithoutEventsInput>
 }
 
-export type CompanyCreateNestedOneWithoutJobListingInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingInput, Prisma.CompanyUncheckedCreateWithoutJobListingInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutJobListingInput
+export type CompanyCreateNestedOneWithoutJobListingsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingsInput, Prisma.CompanyUncheckedCreateWithoutJobListingsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutJobListingsInput
   connect?: Prisma.CompanyWhereUniqueInput
 }
 
-export type CompanyUpdateOneRequiredWithoutJobListingNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingInput, Prisma.CompanyUncheckedCreateWithoutJobListingInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutJobListingInput
-  upsert?: Prisma.CompanyUpsertWithoutJobListingInput
+export type CompanyUpdateOneRequiredWithoutJobListingsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingsInput, Prisma.CompanyUncheckedCreateWithoutJobListingsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutJobListingsInput
+  upsert?: Prisma.CompanyUpsertWithoutJobListingsInput
   connect?: Prisma.CompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutJobListingInput, Prisma.CompanyUpdateWithoutJobListingInput>, Prisma.CompanyUncheckedUpdateWithoutJobListingInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutJobListingsInput, Prisma.CompanyUpdateWithoutJobListingsInput>, Prisma.CompanyUncheckedUpdateWithoutJobListingsInput>
 }
 
 export type CompanyCreateWithoutEventsInput = {
@@ -496,7 +496,7 @@ export type CompanyCreateWithoutEventsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  JobListing?: Prisma.JobListingCreateNestedManyWithoutCompanyInput
+  jobListings?: Prisma.JobListingCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutEventsInput = {
@@ -511,7 +511,7 @@ export type CompanyUncheckedCreateWithoutEventsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  JobListing?: Prisma.JobListingUncheckedCreateNestedManyWithoutCompanyInput
+  jobListings?: Prisma.JobListingUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutEventsInput = {
@@ -542,7 +542,7 @@ export type CompanyUpdateWithoutEventsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  JobListing?: Prisma.JobListingUpdateManyWithoutCompanyNestedInput
+  jobListings?: Prisma.JobListingUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutEventsInput = {
@@ -557,10 +557,10 @@ export type CompanyUncheckedUpdateWithoutEventsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  JobListing?: Prisma.JobListingUncheckedUpdateManyWithoutCompanyNestedInput
+  jobListings?: Prisma.JobListingUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
-export type CompanyCreateWithoutJobListingInput = {
+export type CompanyCreateWithoutJobListingsInput = {
   id?: string
   name: string
   slug: string
@@ -575,7 +575,7 @@ export type CompanyCreateWithoutJobListingInput = {
   events?: Prisma.EventCompanyCreateNestedManyWithoutCompanyInput
 }
 
-export type CompanyUncheckedCreateWithoutJobListingInput = {
+export type CompanyUncheckedCreateWithoutJobListingsInput = {
   id?: string
   name: string
   slug: string
@@ -590,23 +590,23 @@ export type CompanyUncheckedCreateWithoutJobListingInput = {
   events?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
-export type CompanyCreateOrConnectWithoutJobListingInput = {
+export type CompanyCreateOrConnectWithoutJobListingsInput = {
   where: Prisma.CompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingInput, Prisma.CompanyUncheckedCreateWithoutJobListingInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingsInput, Prisma.CompanyUncheckedCreateWithoutJobListingsInput>
 }
 
-export type CompanyUpsertWithoutJobListingInput = {
-  update: Prisma.XOR<Prisma.CompanyUpdateWithoutJobListingInput, Prisma.CompanyUncheckedUpdateWithoutJobListingInput>
-  create: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingInput, Prisma.CompanyUncheckedCreateWithoutJobListingInput>
+export type CompanyUpsertWithoutJobListingsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutJobListingsInput, Prisma.CompanyUncheckedUpdateWithoutJobListingsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutJobListingsInput, Prisma.CompanyUncheckedCreateWithoutJobListingsInput>
   where?: Prisma.CompanyWhereInput
 }
 
-export type CompanyUpdateToOneWithWhereWithoutJobListingInput = {
+export type CompanyUpdateToOneWithWhereWithoutJobListingsInput = {
   where?: Prisma.CompanyWhereInput
-  data: Prisma.XOR<Prisma.CompanyUpdateWithoutJobListingInput, Prisma.CompanyUncheckedUpdateWithoutJobListingInput>
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutJobListingsInput, Prisma.CompanyUncheckedUpdateWithoutJobListingsInput>
 }
 
-export type CompanyUpdateWithoutJobListingInput = {
+export type CompanyUpdateWithoutJobListingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -621,7 +621,7 @@ export type CompanyUpdateWithoutJobListingInput = {
   events?: Prisma.EventCompanyUpdateManyWithoutCompanyNestedInput
 }
 
-export type CompanyUncheckedUpdateWithoutJobListingInput = {
+export type CompanyUncheckedUpdateWithoutJobListingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -643,12 +643,12 @@ export type CompanyUncheckedUpdateWithoutJobListingInput = {
 
 export type CompanyCountOutputType = {
   events: number
-  JobListing: number
+  jobListings: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | CompanyCountOutputTypeCountEventsArgs
-  JobListing?: boolean | CompanyCountOutputTypeCountJobListingArgs
+  jobListings?: boolean | CompanyCountOutputTypeCountJobListingsArgs
 }
 
 /**
@@ -671,7 +671,7 @@ export type CompanyCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.
 /**
  * CompanyCountOutputType without action
  */
-export type CompanyCountOutputTypeCountJobListingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type CompanyCountOutputTypeCountJobListingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.JobListingWhereInput
 }
 
@@ -689,7 +689,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   events?: boolean | Prisma.Company$eventsArgs<ExtArgs>
-  JobListing?: boolean | Prisma.Company$JobListingArgs<ExtArgs>
+  jobListings?: boolean | Prisma.Company$jobListingsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -738,7 +738,7 @@ export type CompanySelectScalar = {
 export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "phone" | "email" | "website" | "location" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.Company$eventsArgs<ExtArgs>
-  JobListing?: boolean | Prisma.Company$JobListingArgs<ExtArgs>
+  jobListings?: boolean | Prisma.Company$jobListingsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -748,7 +748,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Company"
   objects: {
     events: Prisma.$EventCompanyPayload<ExtArgs>[]
-    JobListing: Prisma.$JobListingPayload<ExtArgs>[]
+    jobListings: Prisma.$JobListingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1157,7 +1157,7 @@ readonly fields: CompanyFieldRefs;
 export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   events<T extends Prisma.Company$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventCompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  JobListing<T extends Prisma.Company$JobListingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$JobListingArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  jobListings<T extends Prisma.Company$jobListingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$jobListingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1624,9 +1624,9 @@ export type Company$eventsArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Company.JobListing
+ * Company.jobListings
  */
-export type Company$JobListingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Company$jobListingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the JobListing
    */

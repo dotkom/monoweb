@@ -41,6 +41,7 @@ export interface FindAttendeeUserIdsOptions {
 }
 
 export interface NotificationRecipientQueryRepository {
+  findSavedRecipientUserIds(handle: DBHandle, notificationId: string): Promise<UserId[]>
   findAllUserIds(handle: DBHandle, options: FindAllUserIdsOptions): Promise<UserId[]>
   findGroupMemberUserIds(
     handle: DBHandle,
@@ -86,7 +87,7 @@ const paidAttendeePaymentConditions: Prisma.AttendeeWhereInput[] = [
   { paymentChargedAt: { not: null } },
   { paymentReservedAt: { not: null } },
   {
-    AND: [{ paymentRefundedAt: { not: null } }, { paymentDeadline: null }],
+    AND: [{ paymentRefundedAt: { not: null } }, { completionDeadline: null }],
   },
 ]
 
@@ -94,11 +95,11 @@ export function buildAttendeeSelectionFilter(options: FindAttendeeUserIdsOptions
   const attendeeFilter: Prisma.AttendeeWhereInput = {}
 
   if (options.reservationStatus === "RESERVED") {
-    attendeeFilter.reserved = true
+    attendeeFilter.registeredAt = { not: null }
   }
 
   if (options.reservationStatus === "UNRESERVED") {
-    attendeeFilter.reserved = false
+    attendeeFilter.registeredAt = null
   }
 
   const extraFilters: Prisma.AttendeeWhereInput[] = []
@@ -380,6 +381,14 @@ export function getNotificationRecipientQueryRepository(): NotificationRecipient
       })
 
       return rows.map((row) => row.id)
+    },
+
+    async findSavedRecipientUserIds(handle, notificationId) {
+      const recipients = await handle.notificationRecipient.findMany({
+        where: { notificationId },
+        select: { userId: true },
+      })
+      return recipients.map((recipient) => recipient.userId)
     },
 
     async findUserSummaries(handle, userIds, options) {

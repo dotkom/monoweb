@@ -1,8 +1,14 @@
 import type { DBHandle } from "@dotkomonline/db"
-import type { AuditLog, AuditLogFilterQuery, AuditLogId } from "./audit-log"
-import type { UserId } from "../user/user"
-import { NotFoundError } from "../../error"
 import type { Pageable } from "@dotkomonline/utils"
+import { NotFoundError } from "../../error"
+import type { UserId } from "../user/user"
+import {
+  AuditActivityTypeSchema,
+  type AuditActivity,
+  type AuditLog,
+  type AuditLogFilterQuery,
+  type AuditLogId,
+} from "./audit-log"
 import type { AuditLogRepository } from "./audit-log-repository"
 
 export interface AuditLogService {
@@ -10,6 +16,12 @@ export interface AuditLogService {
   getById(handle: DBHandle, auditLogId: AuditLogId): Promise<AuditLog>
   findMany(handle: DBHandle, query: AuditLogFilterQuery, page: Pageable): Promise<AuditLog[]>
   findManyByUserId(handle: DBHandle, userId: UserId, page: Pageable): Promise<AuditLog[]>
+  findManyAuditActivities(
+    handle: DBHandle,
+    query: AuditLogFilterQuery,
+    offset: number,
+    limit: number
+  ): Promise<AuditActivity[]>
 }
 
 export function getAuditLogService(auditLogRepository: AuditLogRepository): AuditLogService {
@@ -36,5 +48,77 @@ export function getAuditLogService(auditLogRepository: AuditLogRepository): Audi
       const auditLog = await auditLogRepository.findManyByUserId(handle, userId, page)
       return auditLog
     },
+
+    async findManyAuditActivities(handle, query, offset, limit) {
+      const activityIds = await auditLogRepository.findManyActivityIds(handle, query, offset, limit)
+      const auditLogs = await auditLogRepository.findManyByIds(
+        handle,
+        activityIds
+          .filter((activity) => activity.type === AuditActivityTypeSchema.enum.audit_log)
+          .map((activity) => activity.id)
+      )
+      const auditTransactionsWithLogs = await auditLogRepository.findManyAuditTransactionsWithLogsByIds(
+        handle,
+        activityIds
+          .filter((activity) => activity.type === AuditActivityTypeSchema.enum.audit_transaction)
+          .map((activity) => activity.id)
+      )
+
+      const auditActivities: AuditActivity[] = []
+
+      for (const activityId of activityIds) {
+        if (activityId.type === AuditActivityTypeSchema.enum.audit_log) {
+          const auditLog = auditLogs.find((log) => log.id === activityId.id)
+          if (auditLog !== undefined && !isTimestampOnlyUpdate(auditLog)) {
+            auditActivities.push({
+              id: activityId.id,
+              createdAt: activityId.createdAt,
+              name: null,
+              procedure: null,
+              userId: auditLog.userId,
+              user: auditLog.user,
+              logs: [auditLog],
+            })
+          }
+        } else if (activityId.type === AuditActivityTypeSchema.enum.audit_transaction) {
+          const auditTransactionWithLogs = auditTransactionsWithLogs.find(
+            (transaction) => transaction.id === activityId.id
+          )
+          if (auditTransactionWithLogs !== undefined) {
+            const logs = auditTransactionWithLogs.logs.filter((log) => !isTimestampOnlyUpdate(log))
+            if (logs.length === 0) {
+              continue
+            }
+
+            const user = logs.at(0)?.user
+
+            auditActivities.push({
+              id: activityId.id,
+              createdAt: activityId.createdAt,
+              name: auditTransactionWithLogs.name,
+              procedure: auditTransactionWithLogs.procedure,
+              userId: user?.id ?? null,
+              user: user ?? null,
+              logs,
+            })
+          }
+        }
+      }
+
+      return auditActivities
+    },
   }
+}
+
+function isTimestampOnlyUpdate(auditLog: AuditLog) {
+  if (auditLog.operation !== "UPDATE" || !isRecord(auditLog.rowData)) {
+    return false
+  }
+
+  const keys = Object.keys(auditLog.rowData).filter((key) => key !== "updated_at" && key !== "updatedAt")
+  return keys.length === 0
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }

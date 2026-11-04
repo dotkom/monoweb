@@ -15,21 +15,37 @@ import {
   type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
+  getAttendeeRegistrationEligibleAt,
 } from "./attendance"
 import type { EventId } from "./event"
 import type { TaskId } from "../task/task"
 import { type UserId, normalizeDbUser } from "../user/user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
+import { compareAsc } from "date-fns"
 
-type WithUserFlagLinks = { user: Parameters<typeof normalizeDbUser>[0]; [k: string]: unknown }
-
-function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
-  return { ...attendee, user: normalizeDbUser(attendee.user) }
+type WithUserFlagLinks = Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours"> & {
+  user: Parameters<typeof normalizeDbUser>[0]
+  [key: string]: unknown
 }
 
-function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [k: string]: unknown }>(attendance: T) {
-  return { ...attendance, attendees: attendance.attendees.map(normalizeAttendee) }
+function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
+  return {
+    ...attendee,
+    registrationEligibleAt: getAttendeeRegistrationEligibleAt(attendee),
+    user: normalizeDbUser(attendee.user),
+  }
+}
+
+function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [key: string]: unknown }>(attendance: T) {
+  return {
+    ...attendance,
+    attendees: attendance.attendees
+      .map(normalizeAttendee)
+      .toSorted((firstAttendee, secondAttendee) =>
+        compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+      ),
+  }
 }
 
 export interface AttendanceRepository {
@@ -63,6 +79,11 @@ export interface AttendanceRepository {
     handle: DBHandle,
     attendeeId: AttendeeId,
     data: Partial<AttendeePaymentWrite>
+  ): Promise<Attendee>
+  updateAttendeeCompletionDeadline(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    completionDeadline: Date | null
   ): Promise<Attendee>
   /** Move all attendees from one of multiple old pools to a new pool. */
   updateAttendeeAttendancePoolIdByAttendancePoolIds(
@@ -122,7 +143,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -154,7 +175,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -175,7 +196,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             select: {
               attendees: {
                 where: {
-                  reserved: true,
+                  registeredAt: { not: null },
                 },
               },
             },
@@ -197,7 +218,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             where: userId ? { userId } : undefined,
             take: 1,
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -211,7 +232,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         return {
           ...attendance,
           currentUserAttendee: currentAttendee ? normalizeAttendee(currentAttendee) : null,
-          reservedAttendeeCount: attendance._count.attendees,
+          registeredAttendeeCount: attendance._count.attendees,
         }
       })
 
@@ -243,7 +264,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -277,7 +298,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -311,7 +332,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -345,7 +366,7 @@ export function getAttendanceRepository(): AttendanceRepository {
               },
             },
             orderBy: {
-              earliestReservationAt: "asc",
+              createdAt: "asc",
             },
           },
         },
@@ -404,9 +425,12 @@ export function getAttendanceRepository(): AttendanceRepository {
     },
 
     async createAttendee(handle, attendanceId, attendancePoolId, userId, data) {
+      const { adminRegisteredByUserId, ...attendeeData } = data
       const attendee = await handle.attendee.create({
         data: {
-          ...data,
+          ...attendeeData,
+          adminRegisteredBy:
+            adminRegisteredByUserId === null ? undefined : { connect: { id: adminRegisteredByUserId } },
           attendance: {
             connect: { id: attendanceId },
           },
@@ -493,6 +517,31 @@ export function getAttendanceRepository(): AttendanceRepository {
           id: attendeeId,
         },
         data,
+        include: {
+          user: {
+            include: {
+              memberships: true,
+              userFlagLinks: {
+                include: {
+                  userFlag: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
+    },
+
+    async updateAttendeeCompletionDeadline(handle, attendeeId, completionDeadline) {
+      const attendee = await handle.attendee.update({
+        where: {
+          id: attendeeId,
+        },
+        data: {
+          completionDeadline,
+        },
         include: {
           user: {
             include: {
