@@ -15,6 +15,7 @@ import { NextResponse } from "next/server"
 import superjson from "superjson"
 import { env } from "@/env"
 import { Auth0JwtService } from "@/lib/auth0-jwt"
+import { cookies } from "next/headers"
 
 declare module "@auth0/nextjs-auth0/types" {
   interface User {
@@ -48,7 +49,9 @@ function wait(milliseconds: number): Promise<void> {
   })
 }
 
-type RegisterUserResult = { ok: true } | { ok: false; code: typeof AuthErrorCode.REGISTER_FAILED }
+type RegisterUserResult =
+  | { ok: true; membershipChange: "first" | "renewed" | null }
+  | { ok: false; code: typeof AuthErrorCode.REGISTER_FAILED }
 
 function createAuthenticatedClient(accessToken: string) {
   return trpc.createTRPCClient<AppRouter>({
@@ -78,8 +81,8 @@ async function registerUserAfterSignIn(accessToken: string): Promise<RegisterUse
         throw new Error("No sub in JWT")
       }
 
-      await client.user.register.mutate(jwt.payload.sub)
-      return { ok: true }
+      const registration = await client.user.register.mutate(jwt.payload.sub)
+      return { ok: true, membershipChange: registration.membershipChange }
     } catch (error) {
       console.error(`[web:auth0] register attempt ${attempt + 1} failed`, error)
 
@@ -167,6 +170,9 @@ export const auth0 = new Auth0Client({
       return NextResponse.redirect(url)
     }
 
+    const baseUrl = ctx.appBaseUrl ?? env.NEXT_PUBLIC_ORIGIN
+    const returnToUrl = new URL(ctx.returnTo ?? "/", baseUrl)
+
     if (session?.tokenSet?.accessToken !== undefined && session.tokenSet.accessToken !== "") {
       const registerResult = await registerUserAfterSignIn(session.tokenSet.accessToken)
 
@@ -181,6 +187,18 @@ export const auth0 = new Auth0Client({
         return NextResponse.redirect(new URL(clearSessionPath, env.NEXT_PUBLIC_ORIGIN))
       }
 
+      if (registerResult.membershipChange !== null) {
+        if (registerResult.membershipChange === "first") {
+          const cookieStore = await cookies()
+          cookieStore.set("should_welcome", "true", {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+          })
+        }
+      }
+
       const duplicateUserId = await findDuplicateUserAfterSignIn(session.tokenSet.accessToken)
       session.duplicateUserId = duplicateUserId
 
@@ -193,9 +211,7 @@ export const auth0 = new Auth0Client({
       }
     }
 
-    const baseUrl = ctx.appBaseUrl ?? env.NEXT_PUBLIC_ORIGIN
-
-    return NextResponse.redirect(new URL(ctx.returnTo ?? "/", baseUrl))
+    return NextResponse.redirect(returnToUrl)
   },
 })
 

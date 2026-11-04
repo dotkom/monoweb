@@ -12,6 +12,7 @@ import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
 import type { PropsWithChildren } from "react"
 import "../../globals.css"
+import { MembershipWelcome } from "src/utils/membership-welcome/MembershipWelcome"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 <Toaster>
                   <div className="page-shell">
                     <Navbar />
+                    <MembershipWelcome />
                     <main className="grow">{children}</main>
                     <Footer />
                   </div>

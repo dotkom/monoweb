@@ -48,9 +48,10 @@ import {
 } from "./user"
 import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
 import type { EmailService } from "../email/email-service"
+import type { NotificationService } from "../notification/notification-service"
 
 export interface UserService {
-  register(handle: DBHandle, subject: string): Promise<User>
+  register(handle: DBHandle, subject: string): Promise<{ user: User, membershipChange: "first" | "renewed" | null }>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
    * Request a change of the user's contact email.
@@ -120,7 +121,7 @@ export interface UserService {
    *
    * This function should only be called if you actually want to registrer an automatically discovered membership.
    */
-  discoverMembership(handle: DBHandle, userId: UserId): Promise<User>
+  discoverMembership(handle: DBHandle, userId: UserId): Promise<{ user: User, membershipChange: "first" | "renewed" | null }>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
@@ -176,7 +177,8 @@ export function getUserService(
   membershipService: MembershipService,
   client: S3Client,
   bucket: string,
-  emailService: EmailService
+  emailService: EmailService,
+  notificationService: NotificationService
 ): UserService {
   const logger = getLogger("user-service")
 
@@ -561,7 +563,9 @@ export function getUserService(
         return null
       }
 
-      return await this.register(handle, userId)
+      const result = await this.register(handle, userId)
+
+      return result.user
     },
 
     async getById(handle, userId) {
@@ -654,7 +658,7 @@ export function getUserService(
         // If the best active membership is KNIGHT, we attempt to discover a new membership for the user, in case they
         // can find a "better" membership this way.
         if (membership !== null && membership.type !== "KNIGHT") {
-          return syncedUser
+          return {user: syncedUser, membershipChange: null}
         }
 
         // The membership of this user has expired since their last sign-in. Attempt to discover a need one.
@@ -851,6 +855,7 @@ export function getUserService(
     async discoverMembership(handle, userId) {
       const accessToken = await this.findFeideAccessTokenByUserId(userId)
       const user = await this.getById(handle, userId)
+      let membershipChange: "first" | "renewed" | null = null
 
       if (accessToken !== null) {
         // We spawn a separate OpenTelemetry span for the entire membership operation so that its easier to trace and
@@ -883,6 +888,9 @@ export function getUserService(
                   // wrong in our logic.
                   if (isMembershipActive(applicableMembership)) {
                     logger.info("Discovered applicable membership for user %s: %o", user.id, applicableMembership)
+
+                    membershipChange = user.memberships.length === 0 ? "first" : "renewed"
+
                     await userRepository.createMembership(handle, user.id, applicableMembership)
                   } else {
                     logger.warn(
@@ -899,7 +907,7 @@ export function getUserService(
           })
       }
 
-      return user
+      return {user, membershipChange}
     },
 
     async createMembership(handle, userId, data) {
@@ -922,7 +930,34 @@ export function getUserService(
         }
       }
 
+      // Check that user exists
       const user = await this.getById(handle, userId)
+      
+      console.log("new membershup created, sent notification")
+
+      if (user.memberships.length === 0) {
+        
+      } else {
+        // await notificationService.send(handle, {
+        //   type: "",
+        //   title: "johan test",
+        //   shortDescription: "jdkjg",
+        //   content: "dfsjdfkldsfhieiiuehoeruyghiwrigwoiturewjk",
+        //   link: {
+        //     type: "URL",
+        //     url: "https://onlinentnu.slack.com/"
+        //   },
+        //   recipientSelection: {
+        //     rules: [
+        //       {
+        //         type: "USERS",
+        //         userIds: [userId]
+        //       }
+        //     ],
+        //     excludedUserIds: []
+        //   }
+        // })
+      }
 
       return await userRepository.createMembership(handle, user.id, data)
     },
