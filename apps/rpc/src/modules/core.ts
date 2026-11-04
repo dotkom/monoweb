@@ -58,6 +58,7 @@ import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
+import { getZettleService } from "./zettle/zettle-service"
 import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getContestRepository } from "./contest/contest-repository"
 import { getContestService } from "./contest/contest-service"
@@ -282,6 +283,7 @@ export async function createServiceLayer(
       : null
 
   const authorizationService = getAuthorizationService()
+  const zettleService = getZettleService()
 
   return {
     eventEmitter,
@@ -310,6 +312,7 @@ export async function createServiceLayer(
     notificationService,
     recurringTaskService,
     workspaceService,
+    zettleService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,
