@@ -9,6 +9,7 @@ import type Stripe from "stripe"
 import { afterAll, beforeEach } from "vitest"
 import { type DeepMockProxy, mockDeep } from "vitest-mock-extended"
 import type { Configuration } from "./src/configuration"
+import type { Auth0JwtService } from "./src/lib/auth0-jwt"
 import { createServiceLayer } from "./src/modules/core"
 
 faker.seed(69)
@@ -47,6 +48,9 @@ async function createServiceLayerForTesting() {
       sqsClient,
       sesClient,
       auth0Client,
+      webAuth0Client: mockDeep<ManagementClient>(),
+      rpcJwtService: mockDeep<Auth0JwtService>(),
+      webJwtService: mockDeep<Auth0JwtService>(),
       stripe,
       workspaceDirectory: null,
     },
