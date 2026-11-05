@@ -98,7 +98,7 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
     case "COPIES_OF_UNDERTALE":
       return "Undertale kopier"
     case "PK":
-      return "PowerKings"
+      return "Powerkings"
     case "STORSTIPEND":
       return "Andel storstipend"
     case "DAYS_OF_SAMF_MEMBERSHIP":
