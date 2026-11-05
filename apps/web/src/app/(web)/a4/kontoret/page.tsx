@@ -22,9 +22,9 @@ const KioskPage = () => {
         arbeidsøkter, skippertak og liknende.
       </Text>
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 max-md:flex-col max-md:items-start">
         <Title element="h2" size="lg">
-          Gjenstående loot i kiosken:
+          Loot i kiosken:
         </Title>
         <CurrencySelect value={currency} onChange={setCurrency} />
       </div>

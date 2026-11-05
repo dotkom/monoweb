@@ -20,6 +20,7 @@ export const CURRENCY_VALUES = [
   "BEERS_AT_CIRCUS",
   "ATB_MONTHLY_TICKETS",
   "OW_BUCKS",
+  "ANIMALS",
   "67",
 ] as const
 
@@ -72,6 +73,8 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(value * Math.random() * 5).toFixed(2)} OW bucks` // OW bucks is a really volatile currency
     case "PIZZA_BUDGET":
       return `${value}/30000 av dotkoms gamle pizzabudsjett` // We used to get 30k a year for pizza :(
+    case "ANIMALS":
+      return `${(value / (179 / 11)).toFixed(4)} animals` // A CD of the album V costs 179kr, and there is 11 songs on the album
     default:
       return "Ukjent pris"
   }
@@ -119,6 +122,8 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "OW Bucks"
     case "PIZZA_BUDGET":
       return "Andeler av dotkoms gamle pizzabudsjett"
+    case "ANIMALS":
+      return "Animals av Maroon 5"
     default:
       return "Ukjent pris"
   }
