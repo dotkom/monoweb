@@ -77,7 +77,7 @@ const updateGroupProcedure = procedure
   .input(
     z.object({
       id: GroupSchema.shape.slug,
-      values: GroupWriteSchema,
+      values: GroupWriteSchema.omit({ slug: true }),
     })
   )
   .use(withAuthentication())

@@ -15,7 +15,6 @@ import {
   getGroupRecruitmentMethodName,
   getGroupTypeName,
   GROUP_IMAGE_MAX_SIZE_KIB,
-  type GroupId,
   GroupMemberVisibilitySchema,
   GroupRecruitmentMethodSchema,
   GroupTypeSchema,
@@ -24,20 +23,27 @@ import {
 } from "@dotkomonline/rpc/group"
 import { canCreateGroup, canUpdateGroup } from "@dotkomonline/rpc/group-permissions"
 import { Button, Text } from "@dotkomonline/ui"
-import { getCurrentUTC, slugify } from "@dotkomonline/utils"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMemo } from "react"
 import { useForm, type UseFormReturn, useWatch } from "react-hook-form"
 import z from "zod"
 import { useGroupFileUploadMutation } from "../mutations"
-import { useGroupAllQuery } from "../queries"
 
 const FormSchema = GroupWriteSchema.omit({
   deactivatedAt: true,
   workspaceGroupId: true,
-}).extend({
-  isActive: z.boolean(),
+  slug: true,
 })
+  .extend({
+    isActive: z.boolean(),
+  })
+  .superRefine((data, ctx) => {
+    const issues = validateGroupWrite(data)
+    for (const issue of issues) {
+      ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
+    }
+  })
 
 type FormInput = z.input<typeof FormSchema>
 type FormResult = z.output<typeof FormSchema>
@@ -50,41 +56,8 @@ const DEFAULT_VALUES: Partial<FormResult> = {
   isActive: true,
 }
 
-const validateGroupWrite = (
-  group: FormResult,
-  existingGroupSlugs: GroupId[],
-  initialSlug?: string
-): z.core.$ZodIssue[] => {
+const validateGroupWrite = (group: FormResult): z.core.$ZodIssue[] => {
   const issues: z.core.$ZodIssue[] = []
-
-  if (!group.slug) {
-    return issues
-  }
-
-  if (group.slug.trim().length < 2) {
-    issues.push({
-      code: "custom",
-      message: "Slug må være minst 2 tegn lang",
-      path: ["slug"],
-    })
-  }
-
-  if (group.slug !== slugify(group.slug)) {
-    issues.push({
-      code: "custom",
-      message: "Slug kan kun inneholde små bokstaver uten mellomrom eller spesialtegn",
-      path: ["slug"],
-    })
-  }
-
-  if (group.slug !== initialSlug && existingGroupSlugs.includes(group.slug)) {
-    issues.push({
-      code: "custom",
-      message: "Slug er opptatt",
-      path: ["slug"],
-    })
-  }
-
   if (group.preferredDisplayName === "NAME" && !group.name?.trim()) {
     issues.push({
       code: "custom",
@@ -109,9 +82,7 @@ export const GroupWriteForm = ({
   defaultValues = DEFAULT_VALUES,
   disabled,
 }: GroupWriteFormProps) => {
-  const { groups } = useGroupAllQuery()
   const authorization = useAuthorization()
-  const existingGroupSlugs = groups.map((group) => group.slug)
   const fileUpload = useGroupFileUploadMutation()
   const groupId = defaultValues.slug
   const currentType = defaultValues.type ?? null
@@ -131,19 +102,8 @@ export const GroupWriteForm = ({
     [authorization, currentType, groupId]
   )
 
-  const validationSchema = useMemo(
-    () =>
-      FormSchema.superRefine((data, ctx) => {
-        const issues = validateGroupWrite(data, existingGroupSlugs, defaultValues.slug)
-        for (const issue of issues) {
-          ctx.addIssue({ code: "custom", message: issue.message, path: issue.path })
-        }
-      }),
-    [existingGroupSlugs, defaultValues.slug]
-  )
-
   const form = useForm<FormInput, unknown, FormResult>({
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       ...DEFAULT_VALUES,
       ...defaultValues,
@@ -171,15 +131,11 @@ export const GroupWriteForm = ({
           showLeaderAsContact: data.showLeaderAsContact,
           memberVisibility: data.memberVisibility,
           recruitmentMethod: data.recruitmentMethod,
-          slug: data.slug,
           deactivatedAt,
           workspaceGroupId: defaultValues?.workspaceGroupId ?? null,
         })
       }}
     >
-      {defaultValues.slug && (
-        <TextField control={form.control} name="slug" label="Slug" placeholder="dotkom" required />
-      )}
       <TextField control={form.control} name="name" label="Navn" placeholder="Drifts- og utviklingskomiteen" />
       <TextField control={form.control} name="abbreviation" label="Kort navn" placeholder="Dotkom" required />
       <div className="flex flex-col gap-1">
