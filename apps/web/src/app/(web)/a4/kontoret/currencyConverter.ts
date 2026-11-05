@@ -20,11 +20,12 @@ export const CURRENCY_VALUES = [
   "BEERS_AT_CIRCUS",
   "ATB_MONTHLY_TICKETS",
   "OW_BUCKS",
-  "PIZZA_BUDGET",
   "67",
 ] as const
 
-export const Currencies = z.enum(CURRENCY_VALUES)
+// CURRENCY_VALUES are the currencies shown in the UI dropdown, in display order.
+// PIZZA_BUDGET is kept as a valid enum value for future use, but is not shown.
+export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET"])
 
 export type CurrenciesType = z.infer<typeof Currencies>
 
@@ -44,7 +45,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "FIFA_POINTS":
       return `${((value / 279) * 2800).toFixed(2)} FIFA points` // 2800 FC points costs 279
     case "CS_KEYS":
-      return `${(value / 28).toFixed(2)} CS keys` // A CS key costs 28kr
+      return `${(value / 28).toFixed(2)} keys` // A CS key costs 28kr
     case "GTA_DOLLARS":
       return `$${((value / 39) * 200_000).toFixed(2)}` // a $200000 shark card costs 39kr
     case "COPIES_OF_UNDERTALE":
@@ -52,7 +53,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "PK":
       return `${(value / 10.33).toFixed(2)} PK-er` // A PK costs 10,33kr in the kiosk
     case "STORSTIPEND":
-      return `${(value / 30_976).toFixed(6)} Storstipend` // Storstipend v27 will be 30976kr
+      return `${(value / 30_976).toFixed(6)} storstipend` // Storstipend v27 will be 30976kr
     case "DAYS_OF_SAMF_MEMBERSHIP":
       return `${((value / 1100) * yearsToDays(3)).toFixed(2)} dager med Samf-medlemskap` // 3 years samf membership costs 1100kr
     case "DAYS_OF_APPLECARE_PLUS":
