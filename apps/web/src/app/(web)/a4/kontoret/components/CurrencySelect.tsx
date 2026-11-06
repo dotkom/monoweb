@@ -40,7 +40,7 @@ export const CurrencySelect = ({ value, onChange }: CurrencySelectProps) => {
         </SelectTrigger>
         <SelectContent>
           {visibleCurrencies.map((currency) => (
-            <SelectItem key={currency} value={currency}>
+            <SelectItem className="cursor-pointer" key={currency} value={currency}>
               {mapCurrencyEnumToString(currency)}
             </SelectItem>
           ))}
