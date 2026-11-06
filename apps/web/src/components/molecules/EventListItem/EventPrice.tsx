@@ -15,7 +15,7 @@ export const EventPrice: FC<EventPriceProps> = ({ price, className }) => {
   return (
     <div className={cn("flex flex-row items-center gap-1.5 text-gray-800 dark:text-stone-400", className)}>
       <IconCoins className="size-4" />
-      <Text className="text-xs md:text-sm">{price} kr</Text>
+      <Text className="text-sm">{price} kr</Text>
     </div>
   )
 }
