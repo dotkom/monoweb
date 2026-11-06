@@ -19,8 +19,8 @@ export const StockList = ({ products, currency }: StockListProps) => (
       </TableRow>
     </TableHeader>
     <TableBody>
-      {products.map((product) => (
-        <StockListItem key={product.id} product={product} currency={currency} />
+      {products.map((product, i) => (
+        <StockListItem key={product.id} product={product} index={i} currency={currency} />
       ))}
     </TableBody>
   </Table>
