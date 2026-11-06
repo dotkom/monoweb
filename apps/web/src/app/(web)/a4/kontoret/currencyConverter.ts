@@ -76,7 +76,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "ANIMALS":
       return `${(value / (179 / 11)).toFixed(4)} animals` // A CD of the album V costs 179kr, and there is 11 songs on the album
     default:
-      return "Ukjent pris"
+      return `${value.toFixed(2)} kr`
   }
 }
 
@@ -125,6 +125,6 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
     case "ANIMALS":
       return "Animals av Maroon 5"
     default:
-      return "Ukjent pris"
+      return "Ukjent valuta"
   }
 }
