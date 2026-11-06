@@ -40,7 +40,7 @@ interface EventListItemAttendanceStatusProps {
   attendance: AttendanceSummary | AttendanceView
   attendee: Attendee | null
   eventEndInPast: boolean
-  size?: "default" | "sm" | "lg"
+  size?: "default" | "sm" | "md" | "lg"
   classNames?: AttendanceStatusClassNames
 }
 
@@ -95,7 +95,12 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const isSm = size === "sm"
   const isLg = size === "lg"
   const iconSizeClassName = isSm ? "size-3.5" : isLg ? "size-5" : "size-4"
-  const textSizeClassName = isSm ? "text-xs" : isLg ? "text-sm md:text-base" : "text-xs md:text-sm"
+  const textSizeClassName = {
+    default: "text-xs md:text-sm",
+    sm: "text-xs",
+    md: "text-sm",
+    lg: "text-sm md:text-base",
+  }[size]
 
   if (showRegistrationOpensSoon) {
     return (
