@@ -79,6 +79,7 @@ export const AttendanceCard = ({
   const {
     attendance,
     registrationAvailability,
+    registrationDeadline,
     registerForAttendance: registerWithToken,
     deregisterForAttendance,
     setSelectionOptions: handleSelectionChange,
@@ -221,7 +222,12 @@ export const AttendanceCard = ({
           )}
 
           <div className="sm:px-3">
-            <AttendanceDateInfo attendance={attendance} attendee={attendee} chargeScheduleDate={chargeScheduleDate} />
+            <AttendanceDateInfo
+              attendance={attendance}
+              attendee={attendee}
+              chargeScheduleDate={chargeScheduleDate}
+              registrationDeadline={registrationDeadline}
+            />
           </div>
 
           <AttendanceSection contentClassName="pt-8">

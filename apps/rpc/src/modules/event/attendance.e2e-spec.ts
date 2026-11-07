@@ -4,9 +4,9 @@ import { type MembershipWrite, findActiveMembership } from "../user/user"
 import { getCurrentUTC, getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
-import { addDays, addHours, addMinutes, isFuture, subHours } from "date-fns"
+import { addDays, addHours, addMilliseconds, addMinutes, isFuture, subHours } from "date-fns"
 import invariant from "tiny-invariant"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { buildDeregistrationAvailabilityView, buildRegistrationAvailabilityView } from "./attendance-service"
@@ -376,6 +376,107 @@ describe("attendance integration tests", async () => {
     expect(registration.success).toBe(true)
   })
 
+  it.each([
+    { description: "pool delay", poolDelayHours: 4, markWeight: 0 },
+    { description: "mark delay", poolDelayHours: null, markWeight: 2 },
+    { description: "combined pool and mark delays", poolDelayHours: 3, markWeight: 1 },
+  ])("should enforce the shortened registration deadline for $description", async ({ poolDelayHours, markWeight }) => {
+    const subject = randomUUID()
+    auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
+
+    const registrationDeadline = getCurrentUTC()
+    const event = await core.eventService.createEvent(dbClient, getMockEvent())
+    const attendance = await core.attendanceService.createAttendance(
+      dbClient,
+      getMockAttendance({
+        registerStart: subHours(registrationDeadline, 20),
+        registerEnd: addHours(registrationDeadline, 4),
+      })
+    )
+    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        mergeDelayHours: poolDelayHours,
+        capacity: 0,
+        yearCriteria: [1],
+      })
+    )
+
+    const userWithoutMembership = await core.userService.register(dbClient, subject)
+    const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+
+    if (markWeight > 0) {
+      const group = await core.groupService.create(dbClient, getMockGroup())
+      const mark = await core.markService.create(
+        dbClient,
+        {
+          type: "MANUAL",
+          title: "Utsatt påmelding",
+          details: null,
+          duration: 14,
+          weight: markWeight,
+        },
+        [group.slug]
+      )
+      await core.personalMarkService.addToUser(dbClient, user.id, mark.id, user.id)
+    }
+
+    const options = {
+      immediateReservation: false,
+      immediatePayment: false,
+      ignoreRegistrationWindow: false,
+      overriddenAttendancePoolId: null,
+      ignoreRegisteredToParent: false,
+      overrideTurnstileCheck: true,
+    }
+
+    try {
+      vi.setSystemTime(registrationDeadline)
+
+      const availability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        options
+      )
+
+      expect(availability).toMatchObject({ success: true, reservationActiveAt: attendance.registerEnd })
+
+      vi.setSystemTime(addMilliseconds(registrationDeadline, 1))
+
+      const closedAvailability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        options
+      )
+
+      expect(closedAvailability).toMatchObject({ success: false, eventCause: "TOO_LATE", userCause: null })
+
+      const overriddenAvailability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        {
+          ...options,
+          ignoreRegistrationWindow: true,
+        }
+      )
+
+      expect(overriddenAvailability).toMatchObject({
+        success: true,
+        bypassedChecks: expect.arrayContaining(["IGNORE_REGISTRATION_END"]),
+      })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it("should not allow registering twice for the same attendance", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
@@ -476,7 +577,12 @@ describe("attendance integration tests", async () => {
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
-    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    const attendance = await core.attendanceService.createAttendance(
+      dbClient,
+      getMockAttendance({
+        registerEnd: addHours(getCurrentUTC(), 48),
+      })
+    )
     await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // The membership for the test user is registered to be a first year student
     await core.attendanceService.createAttendancePool(
@@ -626,7 +732,12 @@ describe("attendance integration tests", async () => {
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
-    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    const attendance = await core.attendanceService.createAttendance(
+      dbClient,
+      getMockAttendance({
+        registerEnd: addHours(getCurrentUTC(), 48),
+      })
+    )
     await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
     // We create an attendance pool that the user cannot attend, because they are not a 5th year student
     const pool = await core.attendanceService.createAttendancePool(

@@ -1,5 +1,5 @@
 import { getStudyGrade } from "@dotkomonline/utils"
-import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
+import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds, subHours } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
@@ -195,6 +195,16 @@ export const AttendanceSchema = AttendanceBaseSchema.extend({
   pools: z.array(AttendancePoolSchema),
   attendees: z.array(AttendeeSchema),
 })
+
+export function getRegistrationDeadline(
+  attendance: Pick<Attendance, "registerEnd">,
+  poolDelayHours: number | null,
+  markDelayHours: number | null
+): Date {
+  const totalDelayHours = (poolDelayHours ?? 0) + (markDelayHours ?? 0)
+
+  return subHours(attendance.registerEnd, totalDelayHours)
+}
 
 export const AttendanceViewSchema = AttendanceSchema.extend({
   attendees: z.array(z.union([AttendeeSchema, AttendeeSummarySchema])),

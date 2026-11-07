@@ -5,6 +5,7 @@ import {
   DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
   DEREGISTER_GRACE_PERIOD_MS,
   buildRegistrationAvailabilityCompletionView,
+  getRegistrationDeadline,
   isAttendeeChargedAndUnrefunded,
 } from "@dotkomonline/rpc/attendance"
 import { addMilliseconds, isAfter, min } from "date-fns"
@@ -35,6 +36,26 @@ export function getAttendanceCardRegistrationAvailability(
     // This means the two views disagree, so we don't offer any actions
     if (availability.deregistration !== null) {
       return undefined
+    }
+
+    const registrationDeadline = getRegistrationDeadline(
+      attendance,
+      availability.pool?.mergeDelayHours ?? null,
+      availability.punishment?.delay ?? null
+    )
+
+    const registration = availability.registration
+
+    if (registration?.canRegister === true && isAfter(now, registrationDeadline)) {
+      return {
+        ...availability,
+        completion: null,
+        registration: {
+          ...registration,
+          canRegister: false,
+          eventRejectionCause: "TOO_LATE",
+        },
+      }
     }
 
     return { ...availability, completion: null }

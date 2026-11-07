@@ -4,7 +4,12 @@ import { useTRPCSSERegisterChangeConnectionState } from "@/utils/trpc/QueryProvi
 import { useTRPC } from "@/utils/trpc/client"
 import { useDeadlineTick } from "@/utils/use-deadline-tick"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
-import { type AttendanceView, type AttendanceSelectionResponse, getAttendee } from "@dotkomonline/rpc/attendance"
+import {
+  type AttendanceView,
+  type AttendanceSelectionResponse,
+  getAttendee,
+  getRegistrationDeadline,
+} from "@dotkomonline/rpc/attendance"
 import type { User } from "@dotkomonline/rpc/user"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useSubscription } from "@trpc/tanstack-react-query"
@@ -108,14 +113,23 @@ export const useAttendanceCardApi = ({
   )
 
   const attendee = getAttendee(attendance, user)
+
+  const poolDelayHours =
+    attendee?.registrationPoolDelayHours ?? cachedRegistrationAvailability?.pool?.mergeDelayHours ?? null
+  const markDelayHours =
+    attendee?.registrationMarkDelayHours ?? cachedRegistrationAvailability?.punishment?.delay ?? null
+  const registrationDeadline = getRegistrationDeadline(attendance, poolDelayHours, markDelayHours)
+
   const registrationAvailability = getAttendanceCardRegistrationAvailability(
     attendance,
     attendee,
     cachedRegistrationAvailability
   )
+
   const deadlineTick = useDeadlineTick(
     attendance.registerStart,
     attendance.registerEnd,
+    registrationDeadline,
     attendance.deregisterDeadline,
     cachedRegistrationAvailability?.deregistration?.chargeScheduleDate,
     getDeregisterGracePeriodEnd(attendee),
@@ -183,6 +197,7 @@ export const useAttendanceCardApi = ({
   return {
     attendance,
     registrationAvailability,
+    registrationDeadline,
     registerForAttendance,
     deregisterForAttendance,
     setSelectionOptions,

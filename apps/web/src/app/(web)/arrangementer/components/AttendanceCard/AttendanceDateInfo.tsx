@@ -44,10 +44,18 @@ interface AttendanceDateInfoProps {
   attendance: AttendanceView
   attendee: Attendee | null
   chargeScheduleDate?: Date | null
+  registrationDeadline?: Date
 }
 
-export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }: AttendanceDateInfoProps) => {
-  const { registerStart, registerEnd, deregisterDeadline } = attendance
+export const AttendanceDateInfo = ({
+  attendance,
+  attendee,
+  chargeScheduleDate,
+  registrationDeadline,
+}: AttendanceDateInfoProps) => {
+  const { registerStart, deregisterDeadline } = attendance
+  const registerEnd = registrationDeadline ?? attendance.registerEnd
+  const isRegistrationDeadlineEarlier = !isEqual(registerEnd, attendance.registerEnd)
 
   const actualDeregisterDeadline = chargeScheduleDate
     ? min([deregisterDeadline, chargeScheduleDate])
@@ -96,7 +104,7 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
         isPast(registerEnd) ? "Lukket" : "Lukker",
         registerEnd,
         formatDate(registerEnd, "HH:mm", { locale: nb }),
-        false
+        isRegistrationDeadlineEarlier
       ),
     },
     {
@@ -148,6 +156,12 @@ export const AttendanceDateInfo = ({ attendance, attendee, chargeScheduleDate }:
         {renderTimelineItems(16)}
       </Timeline>
       <AttendanceSection className="mt-2">
+        {isRegistrationDeadlineEarlier && (
+          <Text className="text-xs text-gray-500 dark:text-stone-500">
+            Påmeldingsfristen din er tidligere på grunn av utsettelse.
+          </Text>
+        )}
+
         {showDeregisterDeadlineNotice && (
           <Text className="text-xs text-gray-500 dark:text-stone-500">Avmeldingsfrist er endret grunnet betaling.</Text>
         )}
