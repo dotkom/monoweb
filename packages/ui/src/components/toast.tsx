@@ -80,14 +80,20 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
 }
 
 function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
-  return <ToastPrimitive.Title data-slot="toast-title" className={cn("text-sm font-medium", className)} {...props} />
+  return (
+    <ToastPrimitive.Title
+      data-slot="toast-title"
+      className={cn("wrap-anywhere text-sm font-medium", className)}
+      {...props}
+    />
+  )
 }
 
 function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
   return (
     <ToastPrimitive.Description
       data-slot="toast-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("wrap-anywhere text-sm text-muted-foreground", className)}
       {...props}
     />
   )
@@ -165,23 +171,25 @@ function ToastList() {
     customAction?: boolean
   }>()
 
-  return toasts.map((toastItem) => (
-    <Toast key={toastItem.id} toast={toastItem}>
-      <ToastContent className="justify-between">
-        <div className="flex items-center gap-3">
-          <ToastIcon type={toastItem.type} />
-          <div className={cn("flex gap-2", toastItem.data?.actionLayout)}>
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <ToastTitle />
-              <ToastDescription />
+  return toasts.map((toastItem) => {
+    return (
+      <Toast key={toastItem.id} toast={toastItem}>
+        <ToastContent className="justify-between">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <ToastIcon type={toastItem.type} />
+            <div className={cn("flex min-w-0 flex-1 gap-2", toastItem.data?.actionLayout)}>
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <ToastTitle />
+                <ToastDescription />
+              </div>
+              {toastItem.data?.customAction ? toastItem.actionProps?.children : <ToastAction className="self-center" />}
             </div>
-            {toastItem.data?.customAction ? toastItem.actionProps?.children : <ToastAction />}
           </div>
-        </div>
-        <ToastClose />
-      </ToastContent>
-    </Toast>
-  ))
+          <ToastClose />
+        </ToastContent>
+      </Toast>
+    )
+  })
 }
 
 function Toaster({ children, toastManager = toast, ...props }: ToastPrimitive.Provider.Props) {

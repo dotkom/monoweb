@@ -572,6 +572,9 @@ importers:
       jsdom:
         specifier: 28.1.0
         version: 28.1.0
+      lru-cache:
+        specifier: ^11.1.0
+        version: 11.5.3
       next:
         specifier: 16.4.3
         version: 16.4.3(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
