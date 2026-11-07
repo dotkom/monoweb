@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import type { AttendancePoolWrite, AttendanceWrite } from "./attendance"
+import type { AttendancePoolWrite, AttendanceWrite, Attendee } from "./attendance"
 import { type MembershipWrite, findActiveMembership } from "../user/user"
 import { getCurrentUTC, getCurrentSemesterStart, getNextSemesterStart, isSpringSemester } from "@dotkomonline/utils"
 import { faker } from "@faker-js/faker"
@@ -95,6 +95,43 @@ export function getMockAuth0UserResponse(subject: string): ApiResponse<GetUsers2
   }
 }
 
+async function createUserWithMembership() {
+  const subject = randomUUID()
+  const userWithoutMembership = await core.userService.register(dbClient, subject)
+
+  return await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+}
+
+async function createAttendanceRegistrationContext(poolOverrides: Partial<AttendancePoolWrite> = {}) {
+  auth0Client.users.get.mockImplementation(async ({ id }) => {
+    return getMockAuth0UserResponse(id)
+  })
+
+  const event = await core.eventService.createEvent(dbClient, getMockEvent())
+  const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+  await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
+
+  const pool = await core.attendanceService.createAttendancePool(
+    dbClient,
+    attendance.id,
+    getMockAttendancePool({
+      yearCriteria: [1],
+      ...poolOverrides,
+    })
+  )
+  const user = await createUserWithMembership()
+  const options = {
+    immediateReservation: false,
+    immediatePayment: false,
+    ignoreRegistrationWindow: false,
+    overriddenAttendancePoolId: null,
+    ignoreRegisteredToParent: false,
+    overrideTurnstileCheck: true,
+  }
+
+  return { event, attendance, pool, user, options }
+}
+
 describe("attendance integration tests", async () => {
   it("should deny attendance with negative or less than 1 hour", async () => {
     await expect(() =>
@@ -115,6 +152,62 @@ describe("attendance integration tests", async () => {
         selections: [],
       })
     ).rejects.toThrowError(InvalidArgumentError)
+
+    const registerStart = getCurrentUTC()
+    const registerEnd = addHours(registerStart, 1)
+    const attendance = await core.attendanceService.createAttendance(
+      dbClient,
+      getMockAttendance({
+        registerStart,
+        registerEnd,
+      })
+    )
+
+    expect(attendance).toMatchObject({ registerStart, registerEnd })
+  })
+
+  it("should validate attendance pool bounds on creation and update", async () => {
+    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    const pool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+    const invalidPoolOverrides: Partial<AttendancePoolWrite>[] = [
+      { capacity: -1 },
+      { mergeDelayHours: -1 },
+      { mergeDelayHours: 97 },
+      { yearCriteria: [0] },
+      { yearCriteria: [6] },
+    ]
+
+    for (const overrides of invalidPoolOverrides) {
+      const data = getMockAttendancePool({
+        capacity: 0,
+        yearCriteria: [2],
+        ...overrides,
+      })
+
+      await expect(core.attendanceService.createAttendancePool(dbClient, attendance.id, data)).rejects.toThrow(
+        InvalidArgumentError
+      )
+      await expect(core.attendanceService.updateAttendancePool(dbClient, pool.id, data)).rejects.toThrow(
+        InvalidArgumentError
+      )
+    }
+
+    for (const mergeDelayHours of [0, 96]) {
+      const data = getMockAttendancePool({
+        capacity: 0,
+        mergeDelayHours,
+        yearCriteria: [1, 5],
+      })
+      const updatedPool = await core.attendanceService.updateAttendancePool(dbClient, pool.id, data)
+
+      expect(updatedPool).toMatchObject({ capacity: 0, mergeDelayHours, yearCriteria: [1, 5] })
+    }
   })
 
   it("should prevent overlapping year constraints upon creation", async () => {
@@ -374,6 +467,55 @@ describe("attendance integration tests", async () => {
       }
     )
     expect(registration.success).toBe(true)
+    invariant(registration.success)
+
+    const options = { ...registration.options, ignoreRegistrationWindow: false }
+
+    try {
+      for (const registrationTime of [attendance.registerStart, attendance.registerEnd]) {
+        vi.setSystemTime(registrationTime)
+
+        const boundaryAvailability = await core.attendanceService.getRegistrationAvailability(
+          dbClient,
+          attendance.id,
+          null,
+          user.id,
+          options
+        )
+
+        expect(boundaryAvailability.success).toBe(true)
+      }
+
+      vi.setSystemTime(addMilliseconds(attendance.registerEnd, 1))
+
+      const closedAvailability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        options
+      )
+
+      expect(closedAvailability).toMatchObject({ success: false, eventCause: "TOO_LATE", userCause: null })
+
+      const overriddenAvailability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        { ...options, ignoreRegistrationWindow: true }
+      )
+
+      invariant(overriddenAvailability.success)
+
+      const registrationEndBypasses = overriddenAvailability.bypassedChecks.filter((cause) => {
+        return cause === "IGNORE_REGISTRATION_END"
+      })
+
+      expect(registrationEndBypasses).toHaveLength(1)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it.each([
@@ -477,6 +619,131 @@ describe("attendance integration tests", async () => {
     }
   })
 
+  it("should select the matching study year pool and reject an unknown pool override", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext({ yearCriteria: [2] })
+    const matchingPool = await core.attendanceService.createAttendancePool(
+      dbClient,
+      attendance.id,
+      getMockAttendancePool({
+        yearCriteria: [1],
+      })
+    )
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+
+    expect(availability).toMatchObject({ success: true, pool: { id: matchingPool.id } })
+
+    const invalidOverride = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      { ...options, overriddenAttendancePoolId: randomUUID() }
+    )
+
+    expect(invalidOverride).toMatchObject({ success: false, eventCause: null, userCause: "NO_MATCHING_POOL" })
+  })
+
+  it("should require a parent reservation unless explicitly overridden", async () => {
+    const { event, attendance, user, options } = await createAttendanceRegistrationContext()
+    const parentEvent = await core.eventService.createEvent(dbClient, getMockEvent())
+    const parentAttendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
+    await core.eventService.updateEventAttendance(dbClient, parentEvent.id, parentAttendance.id)
+    await core.eventService.updateEventParent(dbClient, event.id, parentEvent.id)
+    await core.attendanceService.createAttendancePool(
+      dbClient,
+      parentAttendance.id,
+      getMockAttendancePool({
+        capacity: 0,
+        mergeDelayHours: 4,
+        yearCriteria: [1],
+      })
+    )
+
+    const missingParentRegistration = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+
+    expect(missingParentRegistration).toMatchObject({ success: false, userCause: "MISSING_PARENT_REGISTRATION" })
+
+    const overriddenAvailability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      { ...options, ignoreRegisteredToParent: true }
+    )
+
+    expect(overriddenAvailability).toMatchObject({
+      success: true,
+      bypassedChecks: expect.arrayContaining(["IGNORE_PARENT"]),
+    })
+
+    const parentAvailability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      parentAttendance.id,
+      null,
+      user.id,
+      options
+    )
+    invariant(parentAvailability.success)
+
+    const parentAttendee = await core.attendanceService.registerAttendee(dbClient, parentAvailability)
+
+    expect(parentAttendee.registeredAt).toBeNull()
+
+    const missingParentReservation = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+
+    expect(missingParentReservation).toMatchObject({ success: false, userCause: "MISSING_PARENT_RESERVATION" })
+
+    await core.attendanceService.updateAttendeeById(dbClient, parentAttendee.id, { registeredAt: getCurrentUTC() })
+
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+
+    expect(availability.success).toBe(true)
+  })
+
+  it("should immediately reserve seats in a pool with unlimited capacity", async () => {
+    const { attendance, options } = await createAttendanceRegistrationContext({ capacity: 0 })
+
+    for (let attendeeIndex = 0; attendeeIndex < 2; attendeeIndex += 1) {
+      const user = await createUserWithMembership()
+      const availability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        user.id,
+        options
+      )
+      invariant(availability.success)
+
+      const attendee = await core.attendanceService.registerAttendee(dbClient, availability)
+
+      expect(attendee.registeredAt).toBeInstanceOf(Date)
+    }
+  })
+
   it("should not allow registering twice for the same attendance", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
@@ -570,6 +837,8 @@ describe("attendance integration tests", async () => {
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.registrationEligibleAt).toSatisfy(isFuture)
     expect(attendee.registeredAt).toBeNull()
+    expect(attendee.registrationMarkDelayHours).toBe(1)
+    expect(attendee.registrationEligibleAt.getTime()).toBe(addHours(attendee.createdAt, 1).getTime())
   })
 
   it("should add a reservation time if the pool is a merge pool with delay", async () => {
@@ -611,6 +880,34 @@ describe("attendance integration tests", async () => {
     expect(attendee.userId).toEqual(user.id)
     expect(attendee.registrationEligibleAt).toSatisfy(isFuture)
     expect(attendee.registeredAt).toBeNull()
+    expect(attendee.registrationPoolDelayHours).toBe(24)
+    expect(attendee.registrationEligibleAt.getTime()).toBe(addHours(attendee.createdAt, 24).getTime())
+
+    try {
+      vi.setSystemTime(attendee.registrationEligibleAt)
+
+      await core.attendanceService.executeReserveAttendeeTask(dbClient, {
+        attendanceId: attendance.id,
+        attendeeId: attendee.id,
+      })
+
+      const reservedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+      expect(reservedAttendee.registeredAt).toEqual(attendee.registrationEligibleAt)
+
+      vi.setSystemTime(addMinutes(attendee.registrationEligibleAt, 1))
+
+      await core.attendanceService.executeReserveAttendeeTask(dbClient, {
+        attendanceId: attendance.id,
+        attendeeId: attendee.id,
+      })
+
+      const unchangedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+      expect(unchangedAttendee.registeredAt).toEqual(reservedAttendee.registeredAt)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("should immediately reserve spots if immediateReservation=true", async () => {
@@ -645,7 +942,7 @@ describe("attendance integration tests", async () => {
     expect(attendee.registeredAt).not.toBeNull()
   })
 
-  it("should deregister a queued attendee before the deadline", async () => {
+  it("should deregister a queued attendee after the deadline", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
     const event = await core.eventService.createEvent(dbClient, getMockEvent())
@@ -683,6 +980,48 @@ describe("attendance integration tests", async () => {
         ignoreDeregistrationWindow: false,
       })
     ).resolves.toBeUndefined()
+  })
+
+  it("should prevent deregistration until a charged payment is refunded", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext()
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+    invariant(availability.success)
+
+    const attendee = await core.attendanceService.registerAttendee(dbClient, availability)
+    await dbClient.attendee.update({
+      where: {
+        id: attendee.id,
+      },
+      data: {
+        paymentChargedAt: getCurrentUTC(),
+      },
+    })
+
+    await expect(
+      core.attendanceService.deregisterAttendee(dbClient, attendee.id, { ignoreDeregistrationWindow: true })
+    ).rejects.toThrow(FailedPreconditionError)
+
+    const chargedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+    expect(chargedAttendee.paymentChargedAt).toBeInstanceOf(Date)
+
+    await dbClient.attendee.update({
+      where: {
+        id: attendee.id,
+      },
+      data: {
+        paymentRefundedAt: getCurrentUTC(),
+      },
+    })
+    await core.attendanceService.deregisterAttendee(dbClient, attendee.id, { ignoreDeregistrationWindow: false })
+
+    await expect(core.attendanceService.getAttendeeById(dbClient, attendee.id)).rejects.toThrow(NotFoundError)
   })
 
   it("should not deregister a registered attendee past the deadline", async () => {
@@ -830,76 +1169,93 @@ describe("attendance integration tests", async () => {
   })
 
   it("should try to attend the next user in line after deregistering", async () => {
-    const alphaSubject = randomUUID()
-    const betaSubject = randomUUID()
-    auth0Client.users.get.mockImplementation(async ({ id }) => getMockAuth0UserResponse(id))
-    const alphaWOM = await core.userService.register(dbClient, alphaSubject)
-    const betaWOM = await core.userService.register(dbClient, betaSubject)
-    const alpha = await core.userService.createMembership(dbClient, alphaWOM.id, getMockMembership())
-    const beta = await core.userService.createMembership(dbClient, betaWOM.id, getMockMembership())
-    const event = await core.eventService.createEvent(dbClient, getMockEvent())
-    const attendance = await core.attendanceService.createAttendance(dbClient, getMockAttendance())
-    await core.eventService.updateEventAttendance(dbClient, event.id, attendance.id)
-    await core.attendanceService.createAttendancePool(
+    const { attendance, user, options } = await createAttendanceRegistrationContext({ capacity: 1 })
+    const availability = await core.attendanceService.getRegistrationAvailability(
       dbClient,
       attendance.id,
-      getMockAttendancePool({
-        yearCriteria: [1],
+      null,
+      user.id,
+      options
+    )
+    invariant(availability.success)
+
+    const registeredAttendee = await core.attendanceService.registerAttendee(dbClient, availability)
+    const queuedAttendees: Attendee[] = []
+
+    expect(registeredAttendee.registeredAt).toBeInstanceOf(Date)
+
+    for (let attendeeIndex = 0; attendeeIndex < 3; attendeeIndex += 1) {
+      const queuedUser = await createUserWithMembership()
+      const queuedAvailability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        queuedUser.id,
+        options
+      )
+      invariant(queuedAvailability.success)
+
+      const queuedAttendee = await core.attendanceService.registerAttendee(dbClient, queuedAvailability)
+
+      expect(queuedAttendee.registeredAt).toBeNull()
+      queuedAttendees.push(queuedAttendee)
+    }
+
+    const [delayedAttendee, laterEligibleAttendee, earlierEligibleAttendee] = queuedAttendees
+    const now = getCurrentUTC()
+
+    // Eligibility order deliberately differs from request order, and one attendee is still serving a delay.
+    for (const [attendee, createdAt, delayHours] of [
+      [delayedAttendee, subHours(now, 3), 4],
+      [laterEligibleAttendee, subHours(now, 3), 2],
+      [earlierEligibleAttendee, subHours(now, 2), 0],
+    ] as const) {
+      await dbClient.attendee.update({
+        where: {
+          id: attendee.id,
+        },
+        data: {
+          createdAt,
+          registrationPoolDelayHours: delayHours,
+        },
       })
-    )
+    }
 
-    // Alpha gets immediate reservation, so that beta can be next in line
-    const alphaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
-      dbClient,
-      attendance.id,
-      null,
-      alpha.id,
-      {
-        immediateReservation: true,
-        immediatePayment: false,
-        ignoreRegistrationWindow: false,
-        overriddenAttendancePoolId: null,
-        ignoreRegisteredToParent: false,
-        overrideTurnstileCheck: true,
-      }
-    )
-    invariant(alphaAttendeeResult.success)
-    const alphaAttendee = await core.attendanceService.registerAttendee(dbClient, alphaAttendeeResult)
-    const betaAttendeeResult = await core.attendanceService.getRegistrationAvailability(
-      dbClient,
-      attendance.id,
-      null,
-      beta.id,
-      {
-        immediateReservation: false,
-        immediatePayment: false,
-        ignoreRegistrationWindow: false,
-        overriddenAttendancePoolId: null,
-        ignoreRegisteredToParent: false,
-        overrideTurnstileCheck: true,
-      }
-    )
-    invariant(betaAttendeeResult.success)
-    const betaAttendee = await core.attendanceService.registerAttendee(dbClient, betaAttendeeResult)
-
-    expect(alphaAttendee.registeredAt).not.toBeNull()
-    expect(betaAttendee.registeredAt).not.toBeNull()
-
-    // Manually move the beta attendee to the queue.
-    await core.attendanceService.updateAttendeeById(dbClient, betaAttendee.id, {
-      registeredAt: null,
+    await core.attendanceService.executeReserveAttendeeTask(dbClient, {
+      attendanceId: attendance.id,
+      attendeeId: earlierEligibleAttendee.id,
     })
 
-    await expect(
-      core.attendanceService.deregisterAttendee(dbClient, alphaAttendee.id, {
-        ignoreDeregistrationWindow: false,
-      })
-    ).resolves.toBeUndefined()
+    const attendeeWhilePoolIsFull = await core.attendanceService.getAttendeeById(dbClient, earlierEligibleAttendee.id)
 
-    const updatedAttendance = await core.attendanceService.getAttendanceByAttendeeId(dbClient, betaAttendee.id)
-    const betaAttendanceUpdated = updatedAttendance.attendees.find((attendee) => attendee.id === betaAttendee.id)
-    expect(betaAttendanceUpdated).toBeDefined()
-    expect(betaAttendanceUpdated?.registeredAt).toBeInstanceOf(Date)
+    expect(attendeeWhilePoolIsFull.registeredAt).toBeNull()
+
+    await core.attendanceService.deregisterAttendee(dbClient, registeredAttendee.id, {
+      ignoreDeregistrationWindow: false,
+    })
+
+    const firstPromotedAttendee = await core.attendanceService.getAttendeeById(dbClient, earlierEligibleAttendee.id)
+    const stillQueuedAttendee = await core.attendanceService.getAttendeeById(dbClient, laterEligibleAttendee.id)
+
+    expect(firstPromotedAttendee.registeredAt).toBeInstanceOf(Date)
+    expect(stillQueuedAttendee.registeredAt).toBeNull()
+    await expect(core.attendanceService.getAttendeeById(dbClient, registeredAttendee.id)).rejects.toThrow(NotFoundError)
+
+    await core.attendanceService.deregisterAttendee(dbClient, earlierEligibleAttendee.id, {
+      ignoreDeregistrationWindow: false,
+    })
+
+    const secondPromotedAttendee = await core.attendanceService.getAttendeeById(dbClient, laterEligibleAttendee.id)
+
+    expect(secondPromotedAttendee.registeredAt).toBeInstanceOf(Date)
+
+    await core.attendanceService.deregisterAttendee(dbClient, laterEligibleAttendee.id, {
+      ignoreDeregistrationWindow: false,
+    })
+
+    const remainingAttendee = await core.attendanceService.getAttendeeById(dbClient, delayedAttendee.id)
+
+    expect(remainingAttendee.registeredAt).toBeNull()
   })
 
   it("should not promote the next user in line if the deregistered user is queued", async () => {
@@ -1006,9 +1362,24 @@ describe("attendance integration tests", async () => {
     const attendee = await core.attendanceService.registerAttendee(dbClient, result)
     expect(attendee.registeredAt).not.toBeNull()
 
-    await expect(
-      core.attendanceService.registerAttendance(dbClient, attendee.id, getCurrentUTC())
-    ).resolves.toBeUndefined()
+    const attendedAt = getCurrentUTC()
+    await core.attendanceService.registerAttendance(dbClient, attendee.id, attendedAt)
+
+    const checkedInAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+    expect(checkedInAttendee.attendedAt).toEqual(attendedAt)
+
+    await core.attendanceService.registerAttendance(dbClient, attendee.id, addMinutes(attendedAt, 1))
+
+    const unchangedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+    expect(unchangedAttendee.attendedAt).toEqual(attendedAt)
+
+    await core.attendanceService.registerAttendance(dbClient, attendee.id, null)
+
+    const clearedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+    expect(clearedAttendee.attendedAt).toBeNull()
   })
 
   it("should fail if you attempt to registrer physical attendance for a non-registered user", async () => {
@@ -1017,7 +1388,7 @@ describe("attendance integration tests", async () => {
     )
   })
 
-  it("should build registration availability view without turnstile token", async () => {
+  it("should require a turnstile token unless explicitly overridden", async () => {
     const subject = randomUUID()
     auth0Client.users.get.mockResolvedValue(getMockAuth0UserResponse(subject))
 
@@ -1034,6 +1405,23 @@ describe("attendance integration tests", async () => {
 
     const userWithoutMembership = await core.userService.register(dbClient, subject)
     const user = await core.userService.createMembership(dbClient, userWithoutMembership.id, getMockMembership())
+
+    const rejectedAvailability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      {
+        immediateReservation: false,
+        immediatePayment: false,
+        ignoreRegistrationWindow: false,
+        overriddenAttendancePoolId: null,
+        ignoreRegisteredToParent: false,
+        overrideTurnstileCheck: false,
+      }
+    )
+
+    expect(rejectedAvailability).toMatchObject({ success: false, userCause: "INVALID_TURNSTILE_TOKEN" })
 
     const [punishment, result] = await Promise.all([
       core.personalMarkService.findPunishmentByUserId(dbClient, user.id),
