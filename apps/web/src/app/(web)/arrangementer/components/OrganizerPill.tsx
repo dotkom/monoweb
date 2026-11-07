@@ -11,21 +11,19 @@ export function OrganizerPill({ item }: { item: Group | Company }) {
   return (
     <Link
       href={href}
-      className="group/organizer-pill flex flex-row gap-2.5 items-center p-1.5 -mx-1.5 rounded-md transition-colors border border-transparent hover:border-gray-200 dark:hover:border-stone-700"
+      className="group/organizer-pill flex flex-row gap-2 items-center pl-1 pr-3.5 py-1 -ml-1 -mr-3.5 rounded-full transition-colors border border-transparent hover:bg-gray-50 hover:border-gray-300 dark:hover:bg-white/5 dark:hover:border-stone-700"
     >
       {item.imageUrl !== null && item.imageUrl !== "" && (
         <GroupLogo
           src={item.imageUrl}
           alt={displayName}
-          width={22}
-          height={22}
-          containerClassName="rounded-sm p-0.5 size-5.5"
+          width={32}
+          height={32}
+          containerClassName="rounded-full p-0.5 size-7"
         />
       )}
 
-      <Text className="text-sm font-medium text-muted-foreground group-hover/organizer-pill:text-foreground">
-        {displayName}
-      </Text>
+      <Text element="span">{displayName}</Text>
     </Link>
   )
 }

@@ -46,7 +46,8 @@ export function AttendanceCalendarButton({ event, attendance }: AttendanceCalend
   return (
     <AddToCalendarButton
       googleCalendarUrl={googleCalendarUrl}
-      googleCalendarAriaLabel="Legg påmelding i Google Kalender"
+      ariaLabel="Legg påmelding i kalender"
+      size="icon"
       icsBody={icsBody}
       icsFilename={icsFilename}
     />

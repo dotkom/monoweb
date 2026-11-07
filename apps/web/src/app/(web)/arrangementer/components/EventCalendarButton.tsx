@@ -28,9 +28,13 @@ export function EventCalendarButton({ event }: EventCalendarButtonProps) {
   return (
     <AddToCalendarButton
       googleCalendarUrl={googleCalendarUrl}
-      googleCalendarAriaLabel="Legg arrangement i Google Kalender"
+      ariaLabel="Legg arrangement i kalender"
       icsBody={icsBody}
       icsFilename={icsFilename}
+      size="default"
+      label="Kalender"
+      variant="secondary"
+      className="rounded-full bg-transparent text-base pl-2.5"
     />
   )
 }

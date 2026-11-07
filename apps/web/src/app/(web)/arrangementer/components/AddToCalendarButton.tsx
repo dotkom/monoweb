@@ -1,62 +1,65 @@
 "use client"
 
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@dotkomonline/ui"
-import { IconChevronDown, IconDownload } from "@tabler/icons-react"
+import { IconCalendarPlus, IconDownload } from "@tabler/icons-react"
 import Image from "next/image"
 import { downloadIcsFile, openIcsFile } from "./ics"
 
 interface AddToCalendarButtonProps {
   googleCalendarUrl: string
-  googleCalendarAriaLabel: string
+  ariaLabel: string
   icsBody: string
   icsFilename: string
+  size?: "default" | "icon" | "icon-lg"
+  label?: string
+  variant?: "ghost" | "secondary"
+  className?: string
 }
 
 export function AddToCalendarButton({
   googleCalendarUrl,
-  googleCalendarAriaLabel,
+  ariaLabel,
   icsBody,
   icsFilename,
+  size = "icon-lg",
+  label,
+  variant = "ghost",
+  className,
 }: AddToCalendarButtonProps) {
+  const iconClassName = size === "icon-lg" ? "size-6" : "size-5"
+
   return (
-    <div className="inline-flex">
-      <Button
-        element="a"
-        href={googleCalendarUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        variant="outline"
-        size="icon"
-        aria-label={googleCalendarAriaLabel}
-        className="rounded-r-none"
-      >
-        <Image src="/logo-google-calendar.svg" alt="Google Calendar" width={16} height={16} />
-      </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" aria-label="Flere kalendervalg" className="h-8 w-5 rounded-l-none border-l-0 px-0">
-            <IconChevronDown className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => {
-              openIcsFile(icsBody)
-            }}
-          >
-            <Image src="/logo-microsoft-outlook.svg" alt="Microsoft Outlook" width={16} height={16} />
-            Outlook og Apple
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              downloadIcsFile(icsBody, icsFilename)
-            }}
-          >
-            <IconDownload className="size-4" />
-            Last ned .ics
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant={variant} size={size} className={className} aria-label={ariaLabel}>
+          <IconCalendarPlus aria-hidden className={iconClassName} />
+          {label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem asChild>
+          <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">
+            <Image src="/logo-google-calendar.svg" alt="" width={16} height={16} />
+            Google Kalender
+          </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            openIcsFile(icsBody)
+          }}
+        >
+          <Image src="/logo-microsoft-outlook.svg" alt="Microsoft Outlook" width={16} height={16} />
+          Outlook og Apple
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            downloadIcsFile(icsBody, icsFilename)
+          }}
+        >
+          <IconDownload className="size-4" />
+          Last ned .ics
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
