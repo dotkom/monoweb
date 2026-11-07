@@ -49,7 +49,7 @@ export function AlertDialogContent({ size = "md", onOutsideClick, className, ...
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-popover p-5 text-popover-foreground shadow-overlay ring-1 ring-border/40 duration-200 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 sm:p-6",
+          "group/alert-dialog-content fixed top-1/2 left-1/2 z-50 grid w-[95dvw] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-popover p-5 text-popover-foreground shadow-overlay ring-1 ring-border/40 duration-200 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 sm:w-full sm:p-6",
           "data-[size=xs]:max-w-xs data-[size=sm]:max-w-sm data-[size=md]:max-w-md data-[size=lg]:max-w-lg data-[size=xl]:max-w-xl data-[size=2xl]:max-w-2xl",
           alertDialogSizeExtensionClasses.lg,
           className
