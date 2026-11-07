@@ -242,7 +242,13 @@ describe("missing payment penalties", () => {
 
     await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
 
-    expect(deregisterAttendee).toHaveBeenCalledWith(handle, attendee.id, { ignoreDeregistrationWindow: true })
+    expect(deregisterAttendee).toHaveBeenCalledWith(handle, attendee.id, {
+      ignoreDeregistrationWindow: true,
+      automaticDeregistrationReason: {
+        title: "Avmeldt på grunn av manglende betaling",
+        details: "Betalingen for arrangementet ble ikke gjennomført innen fristen.",
+      },
+    })
     expect(markService.create).not.toHaveBeenCalled()
     expect(personalMarkService.addToUser).not.toHaveBeenCalled()
   })

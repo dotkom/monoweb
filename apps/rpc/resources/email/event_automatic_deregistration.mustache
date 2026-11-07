@@ -1,0 +1,42 @@
+{{> event-image }}
+<tr>
+  <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Hei!</p>
+    <p style="margin: 0;">Du har blitt automatisk avmeldt {{ eventName }}.</p>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 16px 0 0;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tbody>
+        <tr>
+          <td class="mark-card text-primary" bgcolor="#fee2e2" style="padding: 16px; border-radius: 8px; background-color: #fee2e2; color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+            <p style="margin: 0;">{{ title }}</p>
+            {{# details }}
+            <div style="margin: 16px 0 0; font-size: 14px; line-height: 22px;">{{{ richText.details }}}</div>
+            {{/ details }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td style="padding: 24px 0 0;">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tbody>
+        <tr>
+          {{# buttons.event }}
+          {{> primary-button }}
+          {{/ buttons.event }}
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td class="text-secondary" style="padding: 24px 0 0; color: #4b5563; font-size: 14px; line-height: 22px; overflow-wrap: anywhere; word-wrap: break-word;">
+    <p style="margin: 0 0 16px;">Du kan melde deg på igjen på arrangementssiden hvis det er ledige plasser.</p>
+    <p style="margin: 0;">Har du spørsmål, kan du kontakte <a href="mailto:{{ organizerEmail }}" style="color: inherit; text-decoration: underline;">{{ organizerEmail }}</a>.</p>
+  </td>
+</tr>
