@@ -1005,7 +1005,7 @@ importers:
         version: 7.91.0(@types/react@19.2.18)(react@19.2.8)
       react-parallax-tilt:
         specifier: ^1.7.299
-        version: 1.7.349(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 1.7.350(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       shadcn:
         specifier: ^4.8.0
         version: 4.23.0
@@ -7652,8 +7652,8 @@ packages:
   react-merge-refs@2.1.1:
     resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
 
-  react-parallax-tilt@1.7.349:
-    resolution: {integrity: sha512-JIidDwXkBF+oMJmJfLecL+yE9glM6ZmReSJ+YrtkdYKQszAviyLabplJzo7ZmVTB26On4nupbKomyxuGiFPi+w==}
+  react-parallax-tilt@1.7.350:
+    resolution: {integrity: sha512-OGu9lOQMQ8q5S2FCyC778S8gDBPa72yplG24aLQ71HoBXhVYcc/D1QYXQ29nTpSfeVXFJ6qCnT0YyDd8NG3SmA==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -8736,8 +8736,8 @@ packages:
     resolution: {integrity: sha512-4Nsy8K5Tr6SPDH9jhKJOHf7ChDrc1zufZTVSF7x72hwuEXBqxqk9G6cK+K2NRUtB3iELRJqjXb4JPDMBjMTl2Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  watchpack@2.6.3:
-    resolution: {integrity: sha512-s3NZy0QpTY9qGqzc0wtz4qI28z3+5qKbbAec4MV4G9N3CfgZ9wgvQRr0cl2jh/tqkWG1NWHkmVMHZpCamev5Wg==}
+  watchpack@2.6.4:
+    resolution: {integrity: sha512-5H3Tce2GfzWbcr9VnSqyak2whFaONw4BdmI5BDnMXold4qSlCFd64XaMQESRh2vkDKmdUkv6rUo17UvZ9f9nXw==}
     engines: {node: '>=10.13.0'}
 
   web-namespaces@2.0.1:
@@ -16029,7 +16029,7 @@ snapshots:
 
   react-merge-refs@2.1.1: {}
 
-  react-parallax-tilt@1.7.349(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-parallax-tilt@1.7.350(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -17300,7 +17300,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  watchpack@2.6.3:
+  watchpack@2.6.4:
     dependencies:
       graceful-fs: 4.2.11
 
@@ -17331,7 +17331,7 @@ snapshots:
       minimizer-webpack-plugin: 5.14.0(lightningcss@1.30.2)(postcss@8.5.32)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
       schema-utils: 4.8.3(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
       tapable: 2.3.3
-      watchpack: 2.6.3
+      watchpack: 2.6.4
       webpack-sources: 3.7.0
     transitivePeerDependencies:
       - '@minify-html/node'
@@ -17368,7 +17368,7 @@ snapshots:
       minimizer-webpack-plugin: 5.14.0(postcss@8.5.32)(webpack@5.112.2(postcss@8.5.32))
       schema-utils: 4.8.3(webpack@5.112.2(postcss@8.5.32))
       tapable: 2.3.3
-      watchpack: 2.6.3
+      watchpack: 2.6.4
       webpack-sources: 3.7.0
     transitivePeerDependencies:
       - '@minify-html/node'
