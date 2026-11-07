@@ -33,9 +33,9 @@ export type CreateMockAttendanceOptions = {
 
 export const createMockUser = (overrides: Partial<User> = {}): User => ({
   id: MOCK_USER_ID,
-  name: "Jan Teigen",
-  email: "jan.teigen@teigen.no",
-  username: "janteigen",
+  name: "John Cena",
+  email: "cena@john.no",
+  username: "cena",
   imageUrl: null,
   createdAt: now,
   updatedAt: now,

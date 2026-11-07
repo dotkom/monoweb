@@ -609,6 +609,19 @@ export function buildRegistrationAvailabilityCompletionView(
   }
 }
 
+export function hasAttendeeCompletedSelections(
+  attendance: Pick<Attendance, "selections">,
+  attendee: Pick<Attendee, "selections">
+): boolean {
+  return attendance.selections.every((selection) => {
+    return attendee.selections.some((response) => {
+      const isValidOption = selection.options.some((option) => option.id === response.optionId)
+
+      return response.selectionId === selection.id && isValidOption
+    })
+  })
+}
+
 export const hasAttendeePaid = (
   attendee: Omit<AttendeePaymentProps, "paymentRefundedByUserId"> | null,
   attendancePrice: number | null,

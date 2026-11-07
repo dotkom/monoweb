@@ -291,32 +291,47 @@ export const useDeregisterForEventMutation = () => {
   )
 }
 
-export const useUpdateEventAttendanceMutation = () => {
+type UseUpdateEventAttendanceMutationOptions = {
+  isNotificationEnabled?: boolean
+}
+
+export const useUpdateEventAttendanceMutation = ({
+  isNotificationEnabled = true,
+}: UseUpdateEventAttendanceMutationOptions = {}) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const notification = useQueryNotification()
   return useMutation(
     trpc.event.attendance.registerAttendance.mutationOptions({
       onMutate: () => {
-        notification.loading({
-          title: "Oppdaterer oppmøte...",
-          message: "Brukerens oppmøte blir oppdatert.",
-        })
+        if (isNotificationEnabled) {
+          notification.loading({
+            title: "Oppdaterer oppmøte...",
+            message: "Brukerens oppmøte blir oppdatert.",
+          })
+        }
       },
-      onSuccess: async (_data) => {
-        notification.complete({
-          title: "Oppmøte oppdatert",
-          message: "Oppmøte er registrert",
-        })
+      onSuccess: async (_data, attendanceUpdate) => {
+        if (isNotificationEnabled) {
+          const isAttendanceCleared = attendanceUpdate.at === null
+          const successMessage = isAttendanceCleared ? "Oppmøte er fjernet" : "Oppmøte er registrert"
+
+          notification.complete({
+            title: "Oppmøte oppdatert",
+            message: successMessage,
+          })
+        }
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.getForAdmin.queryKey() })
       },
       onError: (err) => {
-        notification.fail({
-          title: "Feil oppsto",
-          message: `En feil oppsto under oppdatering av oppmøte: ${err.toString()}.`,
-          error: err,
-        })
+        if (isNotificationEnabled) {
+          notification.fail({
+            title: "Feil oppsto",
+            message: `En feil oppsto under oppdatering av oppmøte: ${err.toString()}.`,
+            error: err,
+          })
+        }
       },
     })
   )
