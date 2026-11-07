@@ -542,6 +542,12 @@ importers:
       '@trpc/tanstack-react-query':
         specifier: 11.8.1
         version: 11.8.1(@tanstack/react-query@5.105.3(@types/react@19.2.18)(react@19.2.8))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@7.0.2))(typescript@7.0.2))(@trpc/server@11.8.1(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)
+      '@zxing/browser':
+        specifier: ^0.1.5
+        version: 0.1.5(@zxing/library@0.21.3)
+      '@zxing/library':
+        specifier: ^0.21.3
+        version: 0.21.3
       axios:
         specifier: 1.21.0
         version: 1.21.0
@@ -605,9 +611,6 @@ importers:
       react-turnstile:
         specifier: ^1.1.5
         version: 1.1.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-zxing:
-        specifier: ^2.1.0
-        version: 2.2.0(react@19.2.8)
       recharts:
         specifier: ^3.1.0
         version: 3.10.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-is@16.13.1)(react@19.2.8)(redux@5.0.1)
@@ -4634,8 +4637,13 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zxing/library@0.20.0':
-    resolution: {integrity: sha512-6Ev6rcqVjMakZFIDvbUf0dtpPGeZMTfyxYg4HkVWioWeN7cRcnUWT3bU6sdohc82O1nPXcjq6WiGfXX2Pnit6A==}
+  '@zxing/browser@0.1.5':
+    resolution: {integrity: sha512-4Lmrn/il4+UNb87Gk8h1iWnhj39TASEHpd91CwwSJtY5u+wa0iH9qS0wNLAWbNVYXR66WmT5uiMhZ7oVTrKfxw==}
+    peerDependencies:
+      '@zxing/library': ^0.21.0
+
+  '@zxing/library@0.21.3':
+    resolution: {integrity: sha512-hZHqFe2JyH/ZxviJZosZjV+2s6EDSY0O24R+FQmlWZBZXP9IqMo7S3nb3+2LBWxodJQkSurdQGnqE7KXqrYgow==}
     engines: {node: '>= 10.4.0'}
 
   '@zxing/text-encoding@0.9.0':
@@ -7718,11 +7726,6 @@ packages:
     peerDependencies:
       react: '>= 16.13.1'
       react-dom: '>= 16.13.1'
-
-  react-zxing@2.2.0:
-    resolution: {integrity: sha512-DacgrWcIOp1u1pJ3moaHMlrqidFUl9pey4eKBfV+kl1lLPaVRT/fom3ZeqXnX/97lhf6s743tm2XiSoVZg78JQ==}
-    peerDependencies:
-      react: ^16.8.0  || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react@19.2.8:
     resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}
@@ -12579,7 +12582,13 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@zxing/library@0.20.0':
+  '@zxing/browser@0.1.5(@zxing/library@0.21.3)':
+    dependencies:
+      '@zxing/library': 0.21.3
+    optionalDependencies:
+      '@zxing/text-encoding': 0.9.0
+
+  '@zxing/library@0.21.3':
     dependencies:
       ts-custom-error: 3.3.1
     optionalDependencies:
@@ -16084,11 +16093,6 @@ snapshots:
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
-
-  react-zxing@2.2.0(react@19.2.8):
-    dependencies:
-      '@zxing/library': 0.20.0
-      react: 19.2.8
 
   react@19.2.8: {}
 
