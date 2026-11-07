@@ -190,7 +190,7 @@ export type CompanyGroupByOutputType = {
   description: string | null
   phone: string | null
   email: string | null
-  website: string
+  website: string | null
   location: string | null
   imageUrl: string | null
   createdAt: Date
@@ -225,7 +225,7 @@ export type CompanyWhereInput = {
   description?: Prisma.StringNullableFilter<"Company"> | string | null
   phone?: Prisma.StringNullableFilter<"Company"> | string | null
   email?: Prisma.StringNullableFilter<"Company"> | string | null
-  website?: Prisma.StringFilter<"Company"> | string
+  website?: Prisma.StringNullableFilter<"Company"> | string | null
   location?: Prisma.StringNullableFilter<"Company"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -241,7 +241,7 @@ export type CompanyOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
-  website?: Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -260,7 +260,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Company"> | string | null
   phone?: Prisma.StringNullableFilter<"Company"> | string | null
   email?: Prisma.StringNullableFilter<"Company"> | string | null
-  website?: Prisma.StringFilter<"Company"> | string
+  website?: Prisma.StringNullableFilter<"Company"> | string | null
   location?: Prisma.StringNullableFilter<"Company"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -276,7 +276,7 @@ export type CompanyOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
-  website?: Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -296,7 +296,7 @@ export type CompanyScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
-  website?: Prisma.StringWithAggregatesFilter<"Company"> | string
+  website?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
@@ -310,7 +310,7 @@ export type CompanyCreateInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -326,7 +326,7 @@ export type CompanyUncheckedCreateInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -342,7 +342,7 @@ export type CompanyUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,7 +358,7 @@ export type CompanyUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,7 +374,7 @@ export type CompanyCreateManyInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -388,7 +388,7 @@ export type CompanyUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -402,7 +402,7 @@ export type CompanyUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -491,7 +491,7 @@ export type CompanyCreateWithoutEventsInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -506,7 +506,7 @@ export type CompanyUncheckedCreateWithoutEventsInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -537,7 +537,7 @@ export type CompanyUpdateWithoutEventsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -552,7 +552,7 @@ export type CompanyUncheckedUpdateWithoutEventsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -567,7 +567,7 @@ export type CompanyCreateWithoutJobListingsInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -582,7 +582,7 @@ export type CompanyUncheckedCreateWithoutJobListingsInput = {
   description?: string | null
   phone?: string | null
   email?: string | null
-  website: string
+  website?: string | null
   location?: string | null
   imageUrl?: string | null
   createdAt?: Date | string
@@ -613,7 +613,7 @@ export type CompanyUpdateWithoutJobListingsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -628,7 +628,7 @@ export type CompanyUncheckedUpdateWithoutJobListingsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.StringFieldUpdateOperationsInput | string
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -757,7 +757,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     description: string | null
     phone: string | null
     email: string | null
-    website: string
+    website: string | null
     location: string | null
     imageUrl: string | null
     createdAt: Date

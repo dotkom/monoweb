@@ -48,11 +48,19 @@ export const CompanyTable = ({
     columnHelper.accessor("website", {
       id: "website",
       header: () => "Nettside",
-      cell: (info) => (
-        <TextLink href={info.getValue()} target="_blank" rel="noopener noreferrer">
-          {info.getValue()}
-        </TextLink>
-      ),
+      cell: (info) => {
+        const website = info.getValue()
+
+        if (website === null || website === "") {
+          return null
+        }
+
+        return (
+          <TextLink href={website} target="_blank" rel="noopener noreferrer">
+            {website}
+          </TextLink>
+        )
+      },
     }),
   ]
 
