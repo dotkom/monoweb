@@ -28,6 +28,7 @@ import {
   buildRegistrationAvailabilityCompletionView,
   getMissingAttendanceCompletionRequirements,
   getRegisteredAttendeeCount,
+  getRegistrationDeadline,
   isAttendable,
   isAttendeeChargedAndUnrefunded,
 } from "./attendance"
@@ -739,11 +740,27 @@ export function getAttendanceService(
       }
 
       let reservationActiveAt = getCurrentUTC()
+
       if (applicablePool.mergeDelayHours !== null) {
         reservationActiveAt = addHours(reservationActiveAt, applicablePool.mergeDelayHours)
       }
+
       if (punishment !== null) {
         reservationActiveAt = addHours(reservationActiveAt, punishment.delay)
+      }
+
+      const registrationDeadline = getRegistrationDeadline(
+        attendance,
+        applicablePool.mergeDelayHours,
+        punishment?.delay ?? null
+      )
+
+      if (eventCause === null && isPast(registrationDeadline)) {
+        if (!options.ignoreRegistrationWindow) {
+          eventCause = "TOO_LATE"
+        } else if (!bypassedChecks.includes("IGNORE_REGISTRATION_END")) {
+          bypassedChecks.push("IGNORE_REGISTRATION_END")
+        }
       }
 
       if (eventCause !== null) {
