@@ -34,6 +34,10 @@ export const createConfiguration = () =>
      * NOTE: Users of this bucket MUST prefix their keys accordingly as to not pollute the bucket root.
      */
     AWS_S3_BUCKET: config(process.env.AWS_S3_BUCKET),
+    AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
+      prd: "https://cdn.online.ntnu.no",
+      dev: "https://cdn.dev.online.ntnu.no",
+    }),
     DATABASE_URL: config(process.env.DATABASE_URL),
 
     STRIPE_SECRET_KEY: config(process.env.STRIPE_SECRET_KEY),
