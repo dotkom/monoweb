@@ -2,8 +2,9 @@
 
 import type { Attendance, AttendeeId } from "@dotkomonline/rpc/attendance"
 import { Button, cn, Text } from "@dotkomonline/ui"
-import { IconCameraRotate, IconQrcode, IconQrcodeOff } from "@tabler/icons-react"
-import { type FC, useMemo, useState } from "react"
+import { IconCameraRotate, IconQrcode, IconQrcodeOff, IconX } from "@tabler/icons-react"
+import { type FC, useEffect, useMemo, useState } from "react"
+import { createPortal } from "react-dom"
 import z from "zod"
 import { useUpdateEventAttendanceMutation } from "../../../mutations"
 import { QrCodeCheckInFeedback } from "./QrCodeCheckInFeedback"
@@ -19,10 +20,15 @@ type CameraFacingMode = "user" | "environment"
 
 export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) => {
   const attendanceMutation = useUpdateEventAttendanceMutation({ isNotificationEnabled: false })
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [selectedCameraFacingMode, setSelectedCameraFacingMode] = useState<CameraFacingMode | null>(null)
   const [actualCameraFacingMode, setActualCameraFacingMode] = useState<CameraFacingMode | null>(null)
   const [canSwitchCamera, setCanSwitchCamera] = useState(false)
+
+  useEffect(() => {
+    setPortalContainer(document.body)
+  }, [])
 
   const requestedCameraFacingMode = selectedCameraFacingMode ?? "user"
   const activeCameraFacingMode = actualCameraFacingMode ?? requestedCameraFacingMode
@@ -116,26 +122,27 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
     constraints: cameraConstraints,
   })
 
-  const scanner = (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
+  const scannerPreview = (
+    <div className="fixed right-4 top-[calc(4rem+env(safe-area-inset-top))] z-35 flex w-52 max-w-[calc(100%-2rem)] flex-col gap-1 rounded-xl border border-border bg-background p-2 shadow-xl md:right-10 md:top-24 md:w-72">
+      <div className="flex items-center justify-between gap-2">
+        <Text className="text-sm">Skann QR-koder</Text>
         <Button
           type="button"
-          variant="default"
-          disabled={disabled}
-          icon={isScannerOpen ? <IconQrcodeOff className="size-5" /> : <IconQrcode className="size-5" />}
+          variant="destructive"
+          size="icon-sm"
+          className="shrink-0"
+          aria-label="Lukk skanner"
           onClick={handleToggle}
         >
-          {isScannerOpen ? "Lukk skanner" : "Skann QR-koder"}
+          <IconX className="size-4" />
         </Button>
-        {isScannerOpen && <Text className="text-sm">Skann QR-koder</Text>}
       </div>
 
-      <div className="relative w-fit">
-        {isScannerOpen && !isVideoReady && (
+      <div className="relative w-full">
+        {!isVideoReady && (
           <div
             className={cn(
-              "flex size-[450px] flex-col items-center justify-center gap-2 rounded-sm bg-muted p-3",
+              "flex h-[min(10rem,25dvh)] w-full flex-col items-center justify-center gap-2 rounded-sm bg-muted p-3 md:h-[min(14rem,30dvh)]",
               isCameraEnabled && cameraError === null && "animate-pulse"
             )}
           >
@@ -156,7 +163,7 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
             ref={cameraReference}
             muted
             playsInline
-            className="size-[450px] rounded-sm object-contain"
+            className="h-[min(10rem,25dvh)] w-full rounded-sm object-cover md:h-[min(14rem,30dvh)]"
             style={{
               transform: isMirrored ? "scaleX(-1)" : undefined,
             }}
@@ -180,7 +187,19 @@ export const QrCodeScanner: FC<QrCodeScannerProps> = ({ attendance, disabled }) 
 
   return (
     <>
-      {scanner}
+      <Button
+        type="button"
+        variant="default"
+        className="w-fit min-h-12 md:min-h-0"
+        aria-expanded={isScannerOpen}
+        disabled={disabled}
+        icon={isScannerOpen ? <IconQrcodeOff className="size-5" /> : <IconQrcode className="size-5" />}
+        onClick={handleToggle}
+      >
+        {isScannerOpen ? "Lukk skanner" : "Skann QR-koder"}
+      </Button>
+
+      {isScannerOpen && portalContainer !== null && createPortal(scannerPreview, portalContainer)}
 
       {checkIn !== null && (
         <QrCodeCheckInFeedback
