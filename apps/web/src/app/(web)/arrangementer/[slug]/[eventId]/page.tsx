@@ -159,12 +159,12 @@ const EventContent = ({
           </div>
         )}
 
-        <section className="flex flex-col gap-0.5">
+        <section className="@container flex flex-col gap-0.5">
           <Title element="h2" className="sr-only">
             Oppmøte
           </Title>
 
-          <div className="grid min-w-0 grid-cols-1 gap-x-8 gap-y-3 min-[1150px]:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-4 @min-[24rem]:grid-cols-2">
             <TimeBox event={event} showAddToCalendar={attendance === null} />
             <LocationBox event={event} />
           </div>

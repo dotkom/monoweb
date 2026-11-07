@@ -25,34 +25,34 @@ export const TimeBox: FC<TimeBoxProps> = ({ event, showAddToCalendar = false }) 
     capitalizeFirstLetter(formatDate(date, showYear ? "dd.MM.yyyy" : "EEEE dd. MMMM", { locale: nb }))
 
   return (
-    <section className="flex w-full min-w-0 flex-row items-center gap-3 p-2 -mx-2 sm:gap-4">
+    <section className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2">
       <CalendarBox start={start} end={end} className="shrink-0 bg-background dark:border-stone-700" />
 
       {sameDay ? (
         <div className="flex min-w-0 flex-col">
-          <Text className="truncate">{longDate(start)}</Text>
-          <Text className="truncate">
+          <Text className="wrap-break-word">{longDate(start)}</Text>
+          <Text>
             kl. {formatDate(start, "HH:mm", { locale: nb })} - {formatDate(end, "HH:mm", { locale: nb })}
           </Text>
         </div>
       ) : (
-        <div className="flex min-w-0 flex-row items-center gap-x-2 sm:gap-x-4">
+        <div className="flex min-w-0 flex-row flex-wrap items-center gap-2">
           <div className="flex min-w-0 flex-col">
-            <Text className="truncate">{capitalizeFirstLetter(formatDate(start, "EEEE", { locale: nb }))}</Text>
-            <Text className="truncate">kl. {formatDate(start, "HH:mm", { locale: nb })}</Text>
+            <Text className="wrap-break-word">{capitalizeFirstLetter(formatDate(start, "EEEE", { locale: nb }))}</Text>
+            <Text>kl. {formatDate(start, "HH:mm", { locale: nb })}</Text>
           </div>
 
           <IconArrowRight className="size-5 shrink-0 text-muted-foreground sm:size-6" />
 
           <div className="flex min-w-0 flex-col">
-            <Text className="truncate">{capitalizeFirstLetter(formatDate(end, "EEEE", { locale: nb }))}</Text>
-            <Text className="truncate">kl. {formatDate(end, "HH:mm", { locale: nb })}</Text>
+            <Text className="wrap-break-word">{capitalizeFirstLetter(formatDate(end, "EEEE", { locale: nb }))}</Text>
+            <Text>kl. {formatDate(end, "HH:mm", { locale: nb })}</Text>
           </div>
         </div>
       )}
 
       {showAddToCalendar ? (
-        <div className="lg:ml-auto shrink-0">
+        <div className="col-start-2 justify-self-start">
           <EventCalendarButton event={event} />
         </div>
       ) : null}

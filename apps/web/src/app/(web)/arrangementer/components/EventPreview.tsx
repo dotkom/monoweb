@@ -247,8 +247,10 @@ function EventPreviewDetails({
           </div>
         )}
 
-        <TimeBox event={event} showAddToCalendar={attendance === null} />
-        <LocationBox event={event} />
+        <div className="grid min-w-0 grid-cols-2 items-start gap-4">
+          <TimeBox event={event} showAddToCalendar={attendance === null} />
+          <LocationBox event={event} />
+        </div>
 
         {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
