@@ -18,6 +18,7 @@ import { RedirectType, notFound, permanentRedirect } from "next/navigation"
 import { AttendanceCard } from "../../components/AttendanceCard/AttendanceCard"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import { EventDescription } from "../../components/EventDescription"
+import { EventDetailsFooter } from "../../components/EventDetailsFooter"
 import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
 import { LocationBox } from "../../components/TimeLocationBox/LocationBox"
@@ -148,8 +149,8 @@ const EventContent = ({
   user,
 }: EventContentProps) => {
   return (
-    <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_--spacing(112)] text-base">
-      <div className="min-w-0 flex flex-col gap-6">
+    <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_--spacing(112)] md:grid-rows-[auto_1fr] md:gap-y-6 text-base">
+      <div className="min-w-0 flex flex-col gap-6 md:col-start-1 md:row-start-1">
         {parentEvent && (
           <div className="flex flex-col gap-1 p-3 rounded-lg sm:rounded-xl border border-gray-200 dark:border-0 dark:bg-stone-800">
             <Title element="h4" size="sm" className="text-base">
@@ -187,20 +188,22 @@ const EventContent = ({
         {event.description && <EventDescription description={event.description} />}
       </div>
 
-      <div className="min-w-0 flex flex-col gap-8 sm:gap-4">
-        {attendance !== null && (
-          <>
-            <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
+      {attendance !== null && (
+        <div className="min-w-0 flex flex-col gap-8 sm:gap-4 md:col-start-2 md:row-span-2 md:row-start-1">
+          <div className="w-full border-t border-field-border md:hidden" />
 
-            <AttendanceCard
-              initialAttendance={attendance}
-              initialRegistrationAvailability={registrationAvailability}
-              parentEvent={parentEvent}
-              user={user}
-              event={event}
-            />
-          </>
-        )}
+          <AttendanceCard
+            initialAttendance={attendance}
+            initialRegistrationAvailability={registrationAvailability}
+            parentEvent={parentEvent}
+            user={user}
+            event={event}
+          />
+        </div>
+      )}
+
+      <div className="min-w-0 md:col-start-1 md:row-start-2">
+        <EventDetailsFooter event={event} />
       </div>
     </div>
   )
