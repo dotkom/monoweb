@@ -4,6 +4,7 @@ import { getAttendanceFixtures } from "./fixtures/attendance"
 import { getPoolFixtures } from "./fixtures/attendance-pool"
 import { getAttendeeFixtures } from "./fixtures/attendee"
 import { getCompanyFixtures } from "./fixtures/company"
+import { getCommitteeApplicationFixtures } from "./fixtures/committee-application"
 import {
   fixtureContestId,
   getContestFixture,
@@ -124,6 +125,29 @@ for (const group of groupInput) {
     })
   }
 }
+
+const committeeApplicationFixtures = getCommitteeApplicationFixtures(getUserFixtures())
+await db.$transaction(async (transaction) => {
+  const existingApplicationPeriod = await transaction.committeeApplicationPeriod.findUnique({
+    where: { id: committeeApplicationFixtures.applicationPeriod.id },
+  })
+
+  if (existingApplicationPeriod === null) {
+    await transaction.committeeApplicationPeriod.create({ data: committeeApplicationFixtures.applicationPeriod })
+    await transaction.committeeApplicationGroup.createMany({ data: committeeApplicationFixtures.groups })
+    await transaction.committeeApplication.createMany({ data: committeeApplicationFixtures.applications })
+    await transaction.committeeApplicationGroupSelection.createMany({
+      data: committeeApplicationFixtures.groupSelections,
+    })
+    await transaction.committeeApplicationAvailability.createMany({
+      data: committeeApplicationFixtures.availabilityBlocks,
+    })
+    await transaction.committeeApplicationInterviewBlock.createMany({
+      data: committeeApplicationFixtures.interviewBlocks,
+    })
+    await transaction.committeeApplicationInterview.createMany({ data: committeeApplicationFixtures.interviews })
+  }
+})
 
 const groupRoleIds = new Map(
   (await db.groupRole.findMany({ select: { id: true, groupId: true, type: true } })).map(
