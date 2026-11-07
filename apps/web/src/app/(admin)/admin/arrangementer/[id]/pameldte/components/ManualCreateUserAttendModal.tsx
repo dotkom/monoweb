@@ -97,7 +97,7 @@ export function ManualCreateUserAttendModal({
             {isUserLoading ? (
               <div className="size-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
             ) : (
-              user && <UserBox user={user} isMobile={isMobile} />
+              user !== undefined && <UserBox user={user} />
             )}
 
             <Form
