@@ -44,7 +44,7 @@ interface EventItemsProps {
 function EventItems({ eventsWithAttendance, displayMode, userId }: EventItemsProps) {
   if (displayMode === "cards") {
     return (
-      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 xs:gap-0.5 sm:gap-2 xs:grid-cols-2">
         {eventsWithAttendance.map(({ event, attendance }) => (
           <MemoizedEventCard
             key={event.id}
@@ -124,7 +124,7 @@ export function EventList({
 export const EventListSkeleton = ({ displayMode = "list" }: { displayMode?: EventListDisplayMode }) => {
   if (displayMode === "cards") {
     return (
-      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 md:grid-cols-2">
+      <div className="grid -mx-3.25 w-[calc(100%+2*(--spacing(3.25)))] min-w-0 grid-cols-1 gap-2 xs:gap-0.5 sm:gap-2 xs:grid-cols-2">
         <EventCardSkeleton />
         <EventCardSkeleton />
         <EventCardSkeleton />
