@@ -84,6 +84,7 @@ import type { Payment, PaymentService } from "../payment/payment-service"
 import type { TaskId } from "../task/task"
 import {
   type ChargeAttendeeTaskDefinition,
+  type FinalizeAttendeeRegistrationTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -247,8 +248,9 @@ export interface AttendanceService {
   updateAttendancePool(
     handle: DBHandle,
     attendancePoolId: AttendancePoolId,
-    data: AttendancePoolWrite
-  ): Promise<AttendancePool>
+    data: Partial<AttendancePoolWrite>,
+    fillAddedSeats?: boolean
+  ): Promise<{ pool: AttendancePool; registerChanges: RegisterChangeEvent[] }>
   getRegistrationAvailability(
     handle: DBHandle,
     attendanceId: AttendanceId,
@@ -269,9 +271,13 @@ export interface AttendanceService {
   ): Promise<Attendee>
   getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
-  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
   findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
+  executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
+  executeFinalizeAttendeeRegistrationTask(
+    handle: DBHandle,
+    task: InferTaskData<FinalizeAttendeeRegistrationTaskDefinition>
+  ): Promise<void>
 
   updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, priceNok: number | null): Promise<void>
@@ -395,23 +401,58 @@ export function getAttendanceService(
       organizerEmails.push("dotkom@online.ntnu.no")
     }
 
-    // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
-    // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      getReplyToAddresses(organizerEmails),
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du er påmeldt ${event.title}`),
-      emails.EVENT_ATTENDANCE,
-      {
-        deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
-        eventName: event.title,
-        eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-        eventImageUrl: event.imageUrl,
-      }
-    )
+    void emailService
+      .send(
+        DEFAULT_EMAIL_SOURCE,
+        getReplyToAddresses(organizerEmails),
+        [attendee.user.email],
+        [],
+        [],
+        formatEmailSubject(`Du er påmeldt ${event.title}`),
+        emails.EVENT_ATTENDANCE,
+        {
+          deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
+          eventName: event.title,
+          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+          eventImageUrl: event.imageUrl,
+        }
+      )
+      .catch((error: unknown) => {
+        logger.error("Failed to queue registration email for Attendee(ID=%s): %o", attendee.id, error)
+      })
+  }
+
+  async function finalizeAttendeeRegistration(
+    service: AttendanceService,
+    handle: DBHandle,
+    attendance: Attendance,
+    attendee: Attendee
+  ): Promise<void> {
+    const event = await eventService.getByAttendanceId(handle, attendance.id)
+    const missingRequirements = getMissingAttendanceCompletionRequirements(attendance, attendee)
+    const canStartPayment =
+      missingRequirements.includes("PAYMENT") && attendee.paymentId === null && attendee.paymentLink === null
+
+    if (canStartPayment) {
+      const completionDeadline = addHours(getCurrentUTC(), 24)
+      const payment = await service.startAttendeePayment(handle, attendee.id, completionDeadline)
+
+      attendee.completionDeadline = completionDeadline
+      attendee.paymentId = payment.id
+      attendee.paymentLink = payment.url
+
+      logger.info(
+        "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
+        attendee.id,
+        attendee.user.id,
+        completionDeadline.toUTCString(),
+        event.id,
+        payment.url
+      )
+    }
+
+    sendEventRegistrationEmail(event, attendance, attendee)
+    emitRegisterChange(eventEmitter, attendance, attendee, "updated")
   }
 
   return {
@@ -552,15 +593,16 @@ export function getAttendanceService(
       return await attendanceRepository.createAttendancePool(handle, attendanceId, taskId, data)
     },
 
-    async updateAttendancePool(handle, attendancePoolId, data) {
-      validateAttendancePoolWrite(data)
-
+    async updateAttendancePool(handle, attendancePoolId, changes, fillAddedSeats = false) {
       const attendance = await this.getAttendanceByPoolId(handle, attendancePoolId)
       const pool = attendance.pools.find((pool) => pool.id === attendancePoolId)
 
-      if (!pool) {
+      if (pool === undefined) {
         throw new NotFoundError(`AttendancePool(ID=${attendancePoolId}) not found`)
       }
+
+      const data = { ...pool, ...changes }
+      validateAttendancePoolWrite(data)
 
       // Validate that the updated pool would not overlap with any other existing pools
       const otherPools = attendance.pools.filter((pool) => pool.id !== attendancePoolId)
@@ -573,7 +615,90 @@ export function getAttendanceService(
       // Update any existing tasks related to the pool
       const taskId = await this.rescheduleMergeEventPoolsTask(handle, attendance.id, pool.taskId, mergeTime)
 
-      return await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
+      const updatedPool = await attendanceRepository.updateAttendancePoolById(handle, attendancePoolId, taskId, data)
+
+      // If the pool had capacity, setting it to unlimited (=0) will increase the capacity
+      const hasCapacityIncrease = pool.capacity > 0 && (data.capacity === 0 || data.capacity > pool.capacity)
+
+      if (!fillAddedSeats || !hasCapacityIncrease) {
+        return { pool: updatedPool, registerChanges: [] }
+      }
+
+      const eligibleQueue = getEligibleQueuedAttendees(attendance, pool.id).toSorted((firstAttendee, secondAttendee) =>
+        compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+      )
+
+      const availableSeatCount =
+        data.capacity === 0
+          ? eligibleQueue.length
+          : Math.max(0, data.capacity - getRegisteredAttendeeCount(attendance, pool.id))
+
+      const addedSeatCount =
+        data.capacity === 0
+          ? eligibleQueue.length
+          : Math.min(eligibleQueue.length, data.capacity - pool.capacity, availableSeatCount)
+
+      if (addedSeatCount === 0) {
+        return { pool: updatedPool, registerChanges: [] }
+      }
+
+      const registeredAt = getCurrentUTC()
+      const selectedAttendees = eligibleQueue.slice(0, addedSeatCount)
+      const selectedAttendeeIds = selectedAttendees.map((attendee) => attendee.id)
+
+      // Capacity, seat claims, and follow-up jobs commit together.
+      const promotedAttendeeIds = await attendanceRepository.registerAttendees(
+        handle,
+        selectedAttendeeIds,
+        registeredAt
+      )
+
+      if (promotedAttendeeIds.length === 0) {
+        return { pool: updatedPool, registerChanges: [] }
+      }
+
+      // Another request may have promoted or removed a selected attendee since the queue was read.
+      const promotedAttendeeIdSet = new Set(promotedAttendeeIds)
+      const promotedAttendees = selectedAttendees
+        .filter((attendee) => promotedAttendeeIdSet.has(attendee.id))
+        .map((attendee) => {
+          return { ...attendee, registeredAt }
+        })
+
+      await taskSchedulingService.scheduleManyAt(
+        handle,
+        tasks.FINALIZE_ATTENDEE_REGISTRATION,
+        promotedAttendees.map((attendee) => {
+          return {
+            attendanceId: attendance.id,
+            attendeeId: attendee.id,
+            registeredAt: new Date(registeredAt).toISOString(),
+          }
+        }),
+        registeredAt
+      )
+
+      let updatedAttendance = {
+        ...attendance,
+        pools: attendance.pools.map((existingPool) => {
+          return existingPool.id === pool.id ? updatedPool : existingPool
+        }),
+        attendees: attendance.attendees.map((attendee) => {
+          return promotedAttendeeIdSet.has(attendee.id) ? { ...attendee, registeredAt } : attendee
+        }),
+      }
+
+      if (promotedAttendeeIds.length !== selectedAttendeeIds.length) {
+        updatedAttendance = await this.getAttendanceById(handle, attendance.id)
+      }
+
+      const poolOccupancies = buildPoolOccupancies(updatedAttendance)
+      const registerChanges = promotedAttendees.map((attendee): RegisterChangeEvent => {
+        return { attendee, status: "updated", poolOccupancies }
+      })
+
+      // The caller publishes these only after committing the transaction.
+      return { pool: updatedPool, registerChanges }
     },
 
     async deleteAttendancePool(handle, attendancePoolId) {
@@ -923,17 +1048,33 @@ export function getAttendanceService(
       return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
     },
 
-    async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
+    async executeReserveAttendeeTask(handle, task) {
+      const { attendanceId } = task
       const attendance = await this.findAttendanceById(handle, attendanceId)
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance(ID=${attendanceId}) no longer exists`)
       }
 
-      const event = await eventService.getByAttendanceId(handle, attendance.id)
+      let attendee: Attendee | undefined
 
-      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
-      if (attendee === undefined) {
-        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendanceId})`)
+      if ("attendeeId" in task) {
+        attendee = attendance.attendees.find((existingAttendee) => existingAttendee.id === task.attendeeId)
+
+        if (attendee === undefined) {
+          throw new TaskSkippedError(
+            `Attendee(ID=${task.attendeeId}) no longer exists in Attendance(ID=${attendanceId})`
+          )
+        }
+      } else {
+        attendee = getEligibleQueuedAttendees(attendance, task.attendancePoolId)
+          .toSorted((firstAttendee, secondAttendee) =>
+            compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+          )
+          .at(0)
+
+        if (attendee === undefined) {
+          return
+        }
       }
 
       if (attendee.registeredAt !== null) {
@@ -964,37 +1105,26 @@ export function getAttendanceService(
       const data = AttendeeWriteSchema.parse(attendee)
       data.registeredAt = getCurrentUTC()
 
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
+      await attendanceRepository.updateAttendeeById(handle, attendee.id, data)
       attendee.registeredAt = data.registeredAt
 
-      const hasExistingPayment =
-        attendee.paymentLink !== null ||
-        attendee.paymentReservedAt !== null ||
-        attendee.paymentRefundedAt !== null ||
-        attendee.paymentChargedAt !== null
+      await finalizeAttendeeRegistration(this, handle, attendance, attendee)
+    },
 
-      if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
-        const completionDeadline = addHours(getCurrentUTC(), 24)
+    async executeFinalizeAttendeeRegistrationTask(handle, { attendanceId, attendeeId, registeredAt }) {
+      const attendance = await this.findAttendanceById(handle, attendanceId)
+      const attendee = attendance?.attendees.find((existingAttendee) => existingAttendee.id === attendeeId)
 
-        const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
-
-        attendee.completionDeadline = completionDeadline
-        attendee.paymentId = payment.id
-        attendee.paymentLink = payment.url
-
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has reserved by a task and been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
-          attendee.id,
-          attendee.user.id,
-          completionDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
+      // Skip follow-up work for canceled or replaced registrations.
+      if (
+        attendance === null ||
+        attendee === undefined ||
+        attendee.registeredAt?.getTime() !== new Date(registeredAt).getTime()
+      ) {
+        throw new TaskSkippedError(`Registration for Attendee(ID=${attendeeId}) no longer exists`)
       }
 
-      sendEventRegistrationEmail(event, attendance, attendee)
-
-      emitRegisterChange(eventEmitter, attendance, attendee, "updated")
+      await finalizeAttendeeRegistration(this, handle, attendance, attendee)
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -1870,6 +2000,15 @@ export function getAttendanceService(
       )
     },
   }
+}
+
+function getEligibleQueuedAttendees(attendance: Attendance, attendancePoolId: AttendancePoolId): Attendee[] {
+  return attendance.attendees.filter(
+    (attendee) =>
+      attendee.attendancePoolId === attendancePoolId &&
+      attendee.registeredAt === null &&
+      !isFuture(attendee.registrationEligibleAt)
+  )
 }
 
 function isSelectionEqual(left: AttendanceSelection, right: AttendanceSelection): boolean {

@@ -8,6 +8,7 @@ export const TaskTypeSchema = z.enum([
   "VERIFY_FEEDBACK_ANSWERED",
   "SEND_FEEDBACK_FORM_EMAILS",
   "VERIFY_ATTENDEE_ATTENDED",
+  "FINALIZE_ATTENDEE_REGISTRATION",
 ])
 
 export const TaskStatusSchema = z.enum(["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELED", "SKIPPED"])

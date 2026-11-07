@@ -89,33 +89,48 @@ const updatePoolProcedure = procedure
     z.object({
       id: AttendancePoolSchema.shape.id,
       input: AttendancePoolWriteSchema.partial(),
+      fillAddedSeats: z.boolean().default(false),
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const attendance = await ctx.attendanceService.getAttendanceByPoolId(ctx.handle, input.id)
-    const pool = attendance.pools.find((pool) => pool.id === input.id)
-    if (pool === undefined) {
-      throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
-    }
-
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendance.id)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
-
-    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
-
-    const updatedPool = await ctx.attendanceService.updateAttendancePool(ctx.handle, input.id, {
-      ...pool,
-      ...input.input,
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: "attendance.updatePool",
     })
 
-    ctx.setAuditTransactionName(
-      `Update AttendancePool(ID=${updatedPool.id},Title=${updatedPool.title}) for Event(ID=${event.id},Title=${event.title})`
-    )
+    const result = await transaction(async ({ handle, setAuditTransactionName }) => {
+      const attendance = await ctx.attendanceService.getAttendanceByPoolId(handle, input.id)
+      const pool = attendance.pools.find((pool) => pool.id === input.id)
+      if (pool === undefined) {
+        throw new NotFoundError(`AttendancePool(ID=${input.id}) not found`)
+      }
 
-    return updatedPool
+      const event = await ctx.eventService.getByAttendanceId(handle, attendance.id)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+      const result = await ctx.attendanceService.updateAttendancePool(
+        handle,
+        input.id,
+        input.input,
+        input.fillAddedSeats
+      )
+
+      setAuditTransactionName(
+        `Update AttendancePool(ID=${result.pool.id},Title=${result.pool.title}) for Event(ID=${event.id},Title=${event.title})`
+      )
+
+      return result
+    })
+
+    for (const registerChange of result.registerChanges) {
+      ctx.eventEmitter.emit("attendance:register-change", registerChange)
+    }
+
+    return result.pool
   })
 
 export type DeletePoolInput = inferProcedureInput<typeof deletePoolProcedure>

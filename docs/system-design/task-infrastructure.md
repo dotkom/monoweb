@@ -57,3 +57,17 @@ on the job outcome.
 
 ![Task Infrastructure on Local PostgreSQL](../attachments/postgres-task-system.png)
 
+## Bulk attendance registration
+
+When an organizer increases pool capacity and fills the added seats, the request claims eligible queued attendees in
+one database update and inserts their follow-up tasks in one batch. The capacity change, registrations, and tasks commit
+together. Registration SSE updates are published after commit and include the claimed seats in the pool occupancy.
+
+The bulk update sets `registeredAt` for attendees who are still queued and returns their IDs. Follow-up tasks and SSE
+messages use those IDs. The batch skips selected attendees who were already promoted or removed. SSE occupancy is
+refreshed when only some selected attendees are claimed. Queue eligibility dates are preserved, and seats claimed by
+the batch share a registration timestamp.
+
+`FINALIZE_ATTENDEE_REGISTRATION` tasks validate the attendee ID and registration timestamp, set up required payments
+through `startAttendeePayment`, and publish updated payment details. Payment completion deadlines start when setup runs.
+Confirmation emails are queued asynchronously through the email service, which delivers them through SES.
