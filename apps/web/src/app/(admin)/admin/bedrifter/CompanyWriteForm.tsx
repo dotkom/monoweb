@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form"
 
 const COMPANY_WRITE_FORM_DEFAULT_VALUES: Partial<CompanyWrite> = {
   imageUrl: null,
+  website: null,
 }
 
 interface CompanyWriteFormProps {
@@ -31,17 +32,29 @@ export const CompanyWriteForm = ({
 
   const form = useForm<CompanyWrite>({
     resolver: zodResolver(CompanyWriteSchema),
-    defaultValues,
+    defaultValues: {
+      ...COMPANY_WRITE_FORM_DEFAULT_VALUES,
+      ...defaultValues,
+    },
     disabled,
   })
 
+  const handleSubmit = (data: CompanyWrite) => {
+    const website = data.website?.trim() ?? ""
+
+    onSubmit({
+      ...data,
+      website: website === "" ? null : website,
+    })
+  }
+
   return (
-    <Form form={form} onSubmit={onSubmit}>
+    <Form form={form} onSubmit={handleSubmit}>
       <TextField control={form.control} name="name" label="Navn" placeholder="Bekk" required />
       <TextField control={form.control} name="slug" label="Slug" placeholder="bekk" required />
       <RichTextField control={form.control} name="description" label="Beskrivelse" required />
       <TextField control={form.control} name="email" label="Kontakt-e-post" placeholder="bekk@bekk.no" required />
-      <TextField control={form.control} name="website" label="Nettside" placeholder="https://bekk.no" required />
+      <TextField control={form.control} name="website" label="Nettside" placeholder="https://bekk.no" />
       <TextField control={form.control} name="phone" label="Kontakttelefon" placeholder="+47 123 45 678" />
       <TextField control={form.control} name="location" label="Lokasjon" placeholder="Oslo" required />
       <ImageUploadModalField

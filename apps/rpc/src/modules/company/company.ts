@@ -8,7 +8,7 @@ export const CompanySchema = z.object({
   description: z.string().nullable(),
   phone: z.string().nullable(),
   email: z.string().nullable(),
-  website: z.string(),
+  website: z.string().nullable(),
   location: z.string().nullable(),
   imageUrl: z.string().nullable(),
   createdAt: z.date(),

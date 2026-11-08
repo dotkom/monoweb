@@ -138,7 +138,7 @@ model Company {
   description String?
   phone       String?
   email       String?
-  website     String
+  website     String?
   location    String?
   imageUrl    String?  @map("image_url")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
