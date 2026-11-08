@@ -50,13 +50,19 @@ export const CompanyWriteForm = ({
 
   return (
     <Form form={form} onSubmit={handleSubmit}>
-      <TextField control={form.control} name="name" label="Navn" placeholder="Bekk" required />
-      <TextField control={form.control} name="slug" label="Slug" placeholder="bekk" required />
+      <TextField control={form.control} name="name" label="Navn" placeholder="Dotkompany" required />
+      <TextField control={form.control} name="slug" label="Slug" placeholder="dotkompany" required />
       <RichTextField control={form.control} name="description" label="Beskrivelse" required />
-      <TextField control={form.control} name="email" label="Kontakt-e-post" placeholder="bekk@bekk.no" required />
-      <TextField control={form.control} name="website" label="Nettside" placeholder="https://bekk.no" />
-      <TextField control={form.control} name="phone" label="Kontakttelefon" placeholder="+47 123 45 678" />
-      <TextField control={form.control} name="location" label="Lokasjon" placeholder="Oslo" required />
+      <TextField
+        control={form.control}
+        name="email"
+        label="Kontakt-e-post"
+        placeholder="dotkom@online.ntnu.no"
+        required
+      />
+      <TextField control={form.control} name="website" label="Nettside" placeholder="https://online.ntnu.no" />
+      <TextField control={form.control} name="phone" label="Kontakttelefon" placeholder="+47 999 69 999" />
+      <TextField control={form.control} name="location" label="Lokasjon" placeholder="Trondheim" required />
       <ImageUploadModalField
         control={form.control}
         name="imageUrl"
