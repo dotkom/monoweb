@@ -2,6 +2,7 @@ import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
 import { Text } from "@dotkomonline/ui"
 import { addHours, subHours } from "date-fns"
 import {
+  createMockPayment,
   createAttendanceWithPaymentCountdown,
   createMockAttendance,
   createMockAttendee,
@@ -127,7 +128,7 @@ export const AllStates = () => {
           const paymentAttendee = {
             ...attendee,
             completionDeadline: paymentState === "Overdue" ? subHours(now, 1) : addHours(now, 1),
-            paymentReservedAt: paymentState === "Paid" ? now : null,
+            payment: createMockPayment({ status: paymentState === "Paid" ? "AUTHORIZED" : "UNPAID" }),
           }
 
           return (

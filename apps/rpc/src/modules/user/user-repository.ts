@@ -33,6 +33,7 @@ export interface UserRepository {
    */
   register(handle: DBHandle, userId: UserId): Promise<User>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
+  reassignId(handle: DBHandle, fromUserId: UserId, toUserId: UserId): Promise<void>
   findById(handle: DBHandle, userId: UserId): Promise<User | null>
   findByUsername(handle: DBHandle, username: Username): Promise<User | null>
   findByWorkspaceUserIds(handle: DBHandle, workspaceUserIds: string[]): Promise<User[]>
@@ -94,6 +95,12 @@ export function getUserRepository(): UserRepository {
       const user = await this.findById(handle, row.id)
       invariant(user !== null, `User with id ${row.id} not found after update`)
       return user
+    },
+
+    async reassignId(handle, fromUserId, toUserId) {
+      // The audit trigger must attribute this update to the new ID, since the previous ID is about to disappear.
+      await handle.$executeRaw`SELECT set_config('app.current_user_id', ${toUserId}, true)`
+      await handle.$executeRaw`UPDATE ow_user SET id = ${toUserId} WHERE id = ${fromUserId}`
     },
 
     async findById(handle, userId) {

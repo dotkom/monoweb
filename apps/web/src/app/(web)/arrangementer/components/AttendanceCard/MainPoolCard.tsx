@@ -10,27 +10,22 @@ import {
   getAttendablePool,
   getAttendee,
   getAttendeeQueuePosition,
-  getAttendeePaymentStatus,
   getRegisteredAttendeeCount,
-  hasAttendeePaid,
 } from "@dotkomonline/rpc/attendance"
 import { type User, findActiveMembership } from "@dotkomonline/rpc/user"
 import { Stripes, Text, Title, Tooltip, TooltipContent, TooltipTrigger, cn } from "@dotkomonline/ui"
 import {
-  IconArrowForward,
   IconArrowUpRight,
   IconCheck,
   IconCircleDashed,
   IconCircleDashedCheck,
   IconClockCheck,
-  IconCoins,
   IconHourglassEmpty,
   IconPennantFilled,
   IconUserX,
   IconX,
 } from "@tabler/icons-react"
-import { addDays, formatDate, interval, isAfter, isWithinInterval, roundToNearestHours, subMinutes } from "date-fns"
-import { nb } from "date-fns/locale"
+import { interval, isAfter, isWithinInterval, subMinutes } from "date-fns"
 import Link from "next/link.js"
 import type { FC, ReactNode } from "react"
 import { hasRegistrationDelay } from "./hasRegistrationDelay"
@@ -40,10 +35,7 @@ import { AttendanceStatusGroup } from "./AttendanceStatusGroup"
 import { AttendanceStatusRow } from "./AttendanceStatusRow"
 import transitionStyles from "./AttendanceTransition.module.css"
 
-// Stripe's refund processing time is maximum 10 business days, we therefore
-// add 2 days to the processing time to account for weekends
-// See https://support.stripe.com/questions/where-is-my-customers-refund
-const MAX_REFUND_PROCESSING_DAYS = 12
+import { PaymentStatus } from "./PaymentStatus"
 
 interface MainPoolCardProps {
   attendance: AttendanceView
@@ -85,7 +77,8 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
 
   const hasMissingRequirements = (completion?.missingRequirements.length ?? 0) > 0
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
-  const canCompletePayment = paymentIsMissing && completion?.paymentLink != null
+  const canCompletePayment =
+    paymentIsMissing && completion?.payment?.canStartCheckout === true && completion.payment.checkoutUrl !== null
 
   const isWithinCompletionCountdown =
     completionCountdownInterval && hasMissingRequirements ? isWithinInterval(now, completionCountdownInterval) : false
@@ -179,8 +172,9 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
   const isRegistered = attendeeState === "REGISTERED"
   const isReserved = attendeeState === "RESERVED"
   const isQueued = attendeeState === "QUEUED"
-  const paymentState = attendee ? getAttendeePaymentStatus(attendee) : null
-  const showPaymentStatus = attendance.attendancePrice !== null && !(showCompletionPanel && paymentIsMissing)
+  const paymentState = attendee?.payment?.status ?? null
+  const hasPayment = attendee?.payment != null || attendance.attendancePrice !== null
+  const showPaymentStatus = hasPayment && !(showCompletionPanel && paymentIsMissing)
   const stripeColorA = cn(isQueued ? "bg-fuchsia-100 dark:bg-fuchsia-900/66" : "bg-yellow-100 dark:bg-[#614020]")
   const stripeColorB = cn(isQueued ? "bg-fuchsia-200/33 dark:bg-white/7" : "bg-yellow-200/40 dark:bg-amber-100/8")
 
@@ -273,7 +267,7 @@ export const MainPoolCard: FC<MainPoolCardProps> = ({
             paymentIsMissing={paymentIsMissing}
             hasAttachedActionBelow={hasAttachedActionBelow}
             isQueued={isQueued}
-            price={attendance.attendancePrice}
+            price={attendee?.payment == null ? attendance.attendancePrice : attendee.payment.amountOre / 100}
           />
         )}
       </AttendanceSection>
@@ -429,140 +423,6 @@ const AttendanceStatus = ({ attendance, attendee, isActionRequired }: Attendance
   const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
 
   return <QueueStatus queuePosition={queuePosition} isActionRequired={isActionRequired} />
-}
-
-interface PaymentStatusProps {
-  attendance: AttendanceView
-  attendee: Attendee | null
-  chargeScheduleDate?: Date | null
-  hideUnpaidStatus?: boolean
-}
-
-interface PriceStatusProps {
-  price: number
-  registered: boolean
-}
-
-const PriceStatus = ({ price, showPaymentTiming = false }: { price: number; showPaymentTiming?: boolean }) => {
-  return (
-    <AttendanceStatusRow icon={<IconCoins />}>
-      <Text>{price} kr</Text>
-      {showPaymentTiming && <Text className="text-xs">Du betaler når du får plass</Text>}
-    </AttendanceStatusRow>
-  )
-}
-
-const UnpaidStatus = ({ price, registered }: PriceStatusProps) => {
-  return (
-    <AttendanceStatusRow
-      icon={<IconX className="text-red-700 dark:text-red-200" />}
-      className={cn(
-        "w-fit pl-1 pr-2.25 -ml-1 -mr-2.25 rounded-sm",
-        registered && "bg-orange-200 dark:bg-red-900",
-        !registered && "bg-pink-200 dark:bg-pink-900"
-      )}
-    >
-      <Text>{price} kr ubetalt</Text>
-    </AttendanceStatusRow>
-  )
-}
-
-interface RefundedStatusProps {
-  price: number
-  refundedAt: Date
-}
-
-const RefundedStatus = ({ price, refundedAt }: RefundedStatusProps) => {
-  return (
-    <AttendanceStatusRow icon={<IconArrowForward />}>
-      <Text>Du er refundert {price} kr</Text>
-      <Text className="text-xs">
-        Pengene ankommer senest{" "}
-        {formatDate(roundToNearestHours(addDays(refundedAt, MAX_REFUND_PROCESSING_DAYS)), "dd. MMM 'kl.' HH", {
-          locale: nb,
-        })}
-      </Text>
-    </AttendanceStatusRow>
-  )
-}
-
-const PaidStatus = ({ price }: PriceStatusProps) => {
-  return (
-    <AttendanceStatusRow icon={<IconCheck className="text-green-700 dark:text-green-200" />}>
-      <Text>Du har betalt {price} kr</Text>
-    </AttendanceStatusRow>
-  )
-}
-
-interface ReservedPaymentStatusProps {
-  price: number
-  chargeScheduleDate?: Date | null
-}
-
-const ReservedPaymentStatus = ({ price, chargeScheduleDate }: ReservedPaymentStatusProps) => {
-  return (
-    <AttendanceStatusRow icon={<IconCheck className="text-green-700 dark:text-green-200" />}>
-      <Text>Du har reservert {price} kr</Text>
-
-      {chargeScheduleDate && (
-        <Text className="text-xs">
-          Du blir trukket rundt{" "}
-          {formatDate(roundToNearestHours(chargeScheduleDate), "dd. MMM 'kl.' HH", { locale: nb })}
-        </Text>
-      )}
-    </AttendanceStatusRow>
-  )
-}
-
-const PaymentStatus = ({ attendance, attendee, chargeScheduleDate, hideUnpaidStatus = false }: PaymentStatusProps) => {
-  const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice)
-  const price = attendance.attendancePrice
-
-  if (hasPaid === null || price === null) {
-    return null
-  }
-
-  if (!attendee) {
-    return <PriceStatus price={price} />
-  }
-
-  if ((attendee.registeredAt === null && !hasPaid) || price === 0) {
-    return <PriceStatus price={price} showPaymentTiming={attendee.registeredAt === null && price > 0} />
-  }
-
-  if (!hasPaid) {
-    if (hideUnpaidStatus) {
-      return null
-    }
-
-    if (attendee.paymentLink === null) {
-      return (
-        <AttendanceStatusRow icon={<IconCoins />}>
-          <Text>{price} kr ubetalt</Text>
-          <Text className="text-sm text-red-600 dark:text-red-400">Betalingslenken er ikke tilgjengelig.</Text>
-          <Text className="text-sm">Kontakt arrangøren for hjelp!</Text>
-        </AttendanceStatusRow>
-      )
-    }
-
-    return <UnpaidStatus price={price} registered={attendee.registeredAt !== null} />
-  }
-
-  const paymentStatus = getAttendeePaymentStatus(attendee)
-
-  if (paymentStatus === "refunded" && attendee.paymentRefundedAt !== null) {
-    return <RefundedStatus price={price} refundedAt={attendee.paymentRefundedAt} />
-  }
-
-  if (paymentStatus === "charged") {
-    return <PaidStatus price={price} registered={attendee.registeredAt !== null} />
-  }
-
-  if (paymentStatus === "reserved") {
-    return <ReservedPaymentStatus price={price} chargeScheduleDate={chargeScheduleDate} />
-  }
-
-  return null
 }
 
 interface CompletionCardProps {

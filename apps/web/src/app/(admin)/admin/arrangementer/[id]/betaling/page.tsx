@@ -1,14 +1,12 @@
 "use client"
 
+import { PaymentStatusBadge } from "../../components/PaymentStatusBadge"
+import { AttendeePaymentActions } from "./AttendeePaymentActions"
+
 import { FilterableDataTable } from "@admin/components/FilterableDataTable"
 import { TextField } from "@admin/components/forms/TextField"
-import {
-  type Attendee,
-  type AttendeePaymentStatus,
-  getAttendeePaymentStatus,
-  isAttendeeChargedAndUnrefunded,
-} from "@dotkomonline/rpc/attendance"
-import { Badge, type BadgeColor, Button, Title } from "@dotkomonline/ui"
+import type { Attendee } from "@dotkomonline/rpc/attendance"
+import { Button, Title } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconExternalLink } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
@@ -17,21 +15,8 @@ import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useEventContext } from "../provider"
-import {
-  useCreateAttendeePaymentAttendeeMutation,
-  useRefundAttendeeMutation,
-  useUpdateAttendancePaymentMutation,
-} from "../../mutations"
+import { useUpdateAttendancePaymentMutation } from "../../mutations"
 import { useEventEditPermission } from "../../use-event-edit-permission"
-
-const PAYMENT_STATUS_BADGE: Record<AttendeePaymentStatus, { color: BadgeColor; children: string }> = {
-  refunded: { color: "gray", children: "Refundert" },
-  charged: { color: "green", children: "Betalt" },
-  reserved: { color: "blue", children: "Reservert" },
-  cancelled: { color: "gray", children: "Kansellert" },
-  pending: { color: "red", children: "Ikke betalt" },
-  none: { color: "gray", children: "Ingen betaling" },
-}
 
 const STRIPE_MIN_PRICE = 3
 
@@ -56,12 +41,9 @@ export default function EventPaymentPage() {
     () => attendance?.attendees.filter((attendee) => attendee.registeredAt !== null) ?? [],
     [attendance]
   )
-  const hasPayment = Boolean(attendance?.attendancePrice)
+  const hasPayment = attendance?.attendancePrice != null && attendance.attendancePrice > 0
 
-  const refundAttendeeMutation = useRefundAttendeeMutation()
-  const createAttendeePaymentMutation = useCreateAttendeePaymentAttendeeMutation()
-
-  const savedPrice = attendance?.attendancePrice ? String(attendance.attendancePrice) : ""
+  const savedPrice = hasPayment ? String(attendance.attendancePrice) : ""
 
   const form = useForm<PriceFormValues>({
     defaultValues: { price: savedPrice },
@@ -74,14 +56,14 @@ export default function EventPaymentPage() {
   }, [form, savedPrice])
 
   const onSubmit = form.handleSubmit((values) => {
-    if (!attendance) {
+    if (attendance === null) {
       return
     }
     updateAttendancePayment.mutate({ id: attendance.id, price: Number(values.price) })
   })
 
   const removePayment = () => {
-    if (!attendance) {
+    if (attendance === null) {
       return
     }
     updateAttendancePayment.mutate({ id: attendance.id, price: null })
@@ -99,17 +81,16 @@ export default function EventPaymentPage() {
         header: "Betaling",
         cell: (info) => {
           const value = info.getValue()
-          const props = PAYMENT_STATUS_BADGE[getAttendeePaymentStatus(value)]
 
-          return <Badge color={props.color}>{props.children}</Badge>
+          return <PaymentStatusBadge payment={value.payment} />
         },
       }),
-      columnHelper.accessor((attendee) => attendee.paymentCheckoutUrl, {
+      columnHelper.accessor((attendee) => attendee.payment?.stripeDashboardUrl ?? null, {
         header: "Betalingslenke",
         cell: (info) => {
           const value = info.getValue()
 
-          if (!value) {
+          if (value === null) {
             return null
           }
 
@@ -126,48 +107,11 @@ export default function EventPaymentPage() {
         cell: (info) => {
           const attendee = info.getValue()
 
-          if (isAttendeeChargedAndUnrefunded(attendee)) {
-            return (
-              <Button
-                size="sm"
-                variant="default"
-                disabled={!canEdit}
-                onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}
-              >
-                Refunder
-              </Button>
-            )
-          }
-          if (attendee.paymentId === null || attendee.paymentRefundedAt) {
-            return (
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={!canEdit}
-                onClick={() =>
-                  createAttendeePaymentMutation.mutate({
-                    attendeeId: attendee.id,
-                  })
-                }
-              >
-                Ny betaling
-              </Button>
-            )
-          }
-          return (
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={!canEdit}
-              onClick={() => refundAttendeeMutation.mutate({ attendeeId: attendee.id })}
-            >
-              Avbryt betaling
-            </Button>
-          )
+          return <AttendeePaymentActions attendee={attendee} canEdit={canEdit} />
         },
       }),
     ],
-    [refundAttendeeMutation, createAttendeePaymentMutation, canEdit]
+    [canEdit]
   )
 
   const tableOptions = useMemo(

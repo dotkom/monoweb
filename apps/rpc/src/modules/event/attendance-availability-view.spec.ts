@@ -1,3 +1,5 @@
+import { mock } from "vitest-mock-extended"
+import type { PaymentView } from "../payment/payment"
 import { TZDate } from "@date-fns/tz"
 import { type Attendance, type Attendee, buildPoolOccupancies, getAttendeeQueuePosition } from "./attendance"
 import type { Punishment } from "../mark/mark"
@@ -53,16 +55,10 @@ const createAttendee = (overrides: Partial<Attendee> = {}): Attendee =>
     registrationPoolDelayHours: null,
     registrationMarkDelayHours: null,
     registrationEligibleAt: getCurrentUTC(),
-    paymentChargedAt: null,
-    paymentRefundedAt: null,
+
+    payment: null,
     completionDeadline: null,
-    paymentId: null,
-    paymentLink: null,
-    paymentChargeDeadline: null,
-    paymentReservedAt: null,
-    paymentRefundedByUserId: null,
     adminRegisteredByUserId: null,
-    paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
     user: {
@@ -281,7 +277,7 @@ describe("buildDeregistrationAvailabilityView", () => {
       completionDeadline: null,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
-      paymentLink: null,
+      payment: null,
     })
   })
 
@@ -290,7 +286,7 @@ describe("buildDeregistrationAvailabilityView", () => {
     const completionDeadline = addHours(getCurrentUTC(), 1)
     const attendee = createAttendee({
       completionDeadline,
-      paymentLink: "https://example.com/pay",
+      payment: mock<PaymentView>({ checkoutUrl: "https://example.com/pay", isRequirementSatisfied: false }),
     })
 
     const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)
@@ -300,7 +296,7 @@ describe("buildDeregistrationAvailabilityView", () => {
       completionDeadline,
       requirements: [{ requirement: "PAYMENT", completed: false }],
       missingRequirements: ["PAYMENT"],
-      paymentLink: "https://example.com/pay",
+      payment: attendee.payment,
     })
   })
 
@@ -318,8 +314,7 @@ describe("buildDeregistrationAvailabilityView", () => {
   it("blocks deregistration when payment has been charged", () => {
     const attendance = createAttendance()
     const attendee = createAttendee({
-      paymentChargedAt: getCurrentUTC(),
-      paymentRefundedAt: null,
+      payment: mock<PaymentView>({ status: "PAID", canRefund: true, isRequirementSatisfied: true }),
     })
 
     const view = buildDeregistrationAvailabilityView(userId, attendee, attendance, null)

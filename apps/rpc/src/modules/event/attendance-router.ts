@@ -196,40 +196,48 @@ const adminRegisterForEventProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+  .mutation(async ({ input, ctx, path }) => {
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
+    })
 
-    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
+      const event = await ctx.eventService.getByAttendanceId(handle, input.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    const result = await ctx.attendanceService.getRegistrationAvailability(
-      ctx.handle,
-      input.attendanceId,
-      null,
-      input.userId,
-      {
-        ignoreRegistrationWindow: true,
-        ignoreRegisteredToParent: input.options.ignoreRegisteredToParent,
-        immediateReservation: input.options.immediateReservation,
-        immediatePayment: input.options.immediatePayment,
-        overriddenAttendancePoolId: input.attendancePoolId,
-        overrideTurnstileCheck: input.options.overrideTurnstileCheck,
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+      const result = await ctx.attendanceService.getRegistrationAvailability(
+        handle,
+        input.attendanceId,
+        null,
+        input.userId,
+        {
+          ignoreRegistrationWindow: true,
+          ignoreRegisteredToParent: input.options.ignoreRegisteredToParent,
+          immediateReservation: input.options.immediateReservation,
+          immediatePayment: input.options.immediatePayment,
+          overriddenAttendancePoolId: input.attendancePoolId,
+          overrideTurnstileCheck: input.options.overrideTurnstileCheck,
+        }
+      )
+
+      if (!result.success) {
+        throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
       }
-    )
 
-    if (!result.success) {
-      throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
-    }
+      const attendee = await ctx.attendanceService.registerAttendee(handle, result, ctx.principal.subject)
 
-    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result, ctx.principal.subject)
+      setAuditTransactionName(
+        `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
+      )
 
-    ctx.setAuditTransactionName(
-      `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
-    )
+      return attendee
+    })
 
-    return attendee
+    return ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
   })
 
 export type UpdateAttendancePaymentInput = inferProcedureInput<typeof updateAttendancePaymentProcedure>
@@ -361,7 +369,7 @@ const registerForEventProcedure = procedure
       procedure: path,
     })
 
-    return transaction(async ({ handle, setAuditTransactionName }) => {
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
       const attendee = await ctx.attendanceService.registerAttendee(handle, result)
 
       setAuditTransactionName(
@@ -370,6 +378,8 @@ const registerForEventProcedure = procedure
 
       return attendee
     })
+
+    return ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
   })
 
 export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeProcedure>
@@ -455,24 +465,43 @@ export type StartAttendeePaymentOutput = inferProcedureOutput<typeof startAttend
 const startAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+  .mutation(async ({ input, ctx, path }) => {
+    const existingAttendee = await ctx.attendanceService.getAttendeeById(ctx.prisma, input.attendeeId)
+    const existingEvent = await ctx.eventService.getByAttendanceId(ctx.prisma, existingAttendee.attendanceId)
+    const hostingGroupIds = existingEvent.hostingGroups.map((group) => group.slug)
 
     await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.syncAttendeePayment(ctx.prisma, input.attendeeId)
 
-    const deadline = addHours(getCurrentUTC(), 24)
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
+    })
 
-    const payment = await ctx.attendanceService.startAttendeePayment(ctx.handle, input.attendeeId, deadline)
+    await transaction(async ({ handle, setAuditTransactionName }) => {
+      const attendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+      const event = await ctx.eventService.getByAttendanceId(handle, attendee.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    ctx.setAuditTransactionName(
-      `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
-    )
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
-    return payment
+      const deadline = addHours(getCurrentUTC(), 24)
+
+      await ctx.attendanceService.prepareAttendeePayment(handle, input.attendeeId, deadline)
+
+      setAuditTransactionName(
+        `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+      )
+    })
+
+    const attendee = await ctx.attendanceService.openAttendeeCheckout(ctx.prisma, input.attendeeId)
+
+    if (attendee.payment === null) {
+      throw new NotFoundError(`Attendee(ID=${attendee.id}) no longer has a payment`)
+    }
+
+    return attendee.payment
   })
 
 export type DeregisterForEventInput = inferProcedureInput<typeof deregisterForEventProcedure>
@@ -565,24 +594,35 @@ const adminUpdateAttendeeRegisteredProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const now = getCurrentUTC()
-    const currentAttendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const attendeeBeforeUpdate = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendeeBeforeUpdate.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
-
-    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
-
-    const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
-      registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
+  .mutation(async ({ input, ctx, path }) => {
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
     })
 
-    ctx.setAuditTransactionName(
-      `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
-    )
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
+      const now = getCurrentUTC()
+      const currentAttendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+      const event = await ctx.eventService.getByAttendanceId(handle, currentAttendee.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+      const attendee = await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, {
+        registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
+      })
+
+      setAuditTransactionName(
+        `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
+      )
+
+      return attendee
+    })
+
+    if (input.registered) {
+      return await ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
+    }
 
     return attendee
   })
@@ -758,6 +798,51 @@ const notifyAttendeesProcedure = procedure
     await ctx.attendanceService.notifyAttendees(ctx.prisma, event.attendanceId, input.message, input.title)
   })
 
+export type SyncAttendeePaymentInput = inferProcedureInput<typeof syncAttendeePaymentProcedure>
+export type SyncAttendeePaymentOutput = inferProcedureOutput<typeof syncAttendeePaymentProcedure>
+const syncAttendeePaymentProcedure = procedure
+  .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.syncAttendeePayment(ctx.handle, attendee.id)
+
+    ctx.setAuditTransactionName(
+      `Synchronize Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
+
+export type WaiveAttendeePaymentInput = inferProcedureInput<typeof waiveAttendeePaymentProcedure>
+export type WaiveAttendeePaymentOutput = inferProcedureOutput<typeof waiveAttendeePaymentProcedure>
+const waiveAttendeePaymentProcedure = procedure
+  .input(
+    z.object({
+      attendeeId: AttendeeSchema.shape.id,
+      reason: z.string().trim().min(1).max(1000).nullable().default(null),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.waiveAttendeePayment(ctx.handle, attendee.id, ctx.principal.subject, input.reason)
+
+    ctx.setAuditTransactionName(
+      `Waive Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
+
 export const attendanceRouter = t.router({
   createPool: createPoolProcedure,
   updatePool: updatePoolProcedure,
@@ -771,6 +856,8 @@ export const attendanceRouter = t.router({
   onRegisterChange: onRegisterChangeProcedure,
   onBulkRegisterChange: onBulkRegisterChangeProcedure,
   cancelAttendeePayment: cancelAttendeePaymentProcedure,
+  waiveAttendeePayment: waiveAttendeePaymentProcedure,
+  syncAttendeePayment: syncAttendeePaymentProcedure,
   startAttendeePayment: startAttendeePaymentProcedure,
   deregisterForEvent: deregisterForEventProcedure,
   adminDeregisterForEvent: adminDeregisterForEventProcedure,

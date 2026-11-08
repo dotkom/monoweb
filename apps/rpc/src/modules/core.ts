@@ -20,6 +20,7 @@ import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
 import { getEmailService, getEmptyEmailService } from "./email/email-service"
+import { getAttendancePaymentService } from "./event/attendance-payment-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
@@ -43,8 +44,9 @@ import { getNotificationRepository } from "./notification/notification-repositor
 import { getNotificationService } from "./notification/notification-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
-import { getPaymentProductsService } from "./payment/payment-products-service"
-import { getPaymentService } from "./payment/payment-service"
+import { getPaymentRepository } from "./payment/payment-repository"
+import { getPaymentLedgerService } from "./payment/payment-ledger-service"
+import { getPaymentWorkflowService } from "./payment/payment-workflow-service"
 import { getPaymentWebhookService } from "./payment/payment-webhook-service"
 import { getRecurringTaskRepository } from "./task/recurring-task-repository"
 import { getRecurringTaskService } from "./task/recurring-task-service"
@@ -182,6 +184,7 @@ export async function createServiceLayer(
   const companyRepository = getCompanyRepository()
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
+  const paymentRepository = getPaymentRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const notificationRepository = getNotificationRepository()
@@ -215,9 +218,14 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
-  const paymentService = getPaymentService(clients.stripe)
-  const paymentProductsService = getPaymentProductsService(clients.stripe)
-  const paymentWebhookService = getPaymentWebhookService(clients.stripe)
+  const paymentLedgerService = getPaymentLedgerService(
+    paymentRepository,
+    userRepository,
+    clients.stripe,
+    taskSchedulingService
+  )
+  const attendancePaymentService = getAttendancePaymentService(paymentRepository, paymentLedgerService)
+  const paymentWebhookService = getPaymentWebhookService(clients.stripe, configuration.STRIPE_WEBHOOK_SECRET)
   const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const feedbackFormService = getFeedbackFormService(
@@ -236,14 +244,18 @@ export async function createServiceLayer(
     userService,
     markService,
     personalMarkService,
-    paymentService,
-    paymentProductsService,
+    attendancePaymentService,
     eventService,
     feedbackFormService,
     feedbackFormAnswerService,
     configuration,
     emailService
   )
+  const paymentWorkflowService = getPaymentWorkflowService(paymentLedgerService, async (handle, payment) => {
+    if (payment.attendeeId !== null) {
+      await attendanceService.syncAttendeePayment(handle, payment.attendeeId)
+    }
+  })
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(
@@ -273,7 +285,10 @@ export async function createServiceLayer(
   const fadderukeService = getFadderukeService(fadderukeRepository)
   const userMergeService = getUserMergingService(
     userService,
+    userRepository,
     groupRepository,
+    paymentRepository,
+    attendanceRepository,
     attendanceService,
     clients.auth0Client,
     clients.webAuth0Client
@@ -285,6 +300,7 @@ export async function createServiceLayer(
     taskDiscoveryService,
     taskSchedulingService,
     attendanceService,
+    paymentWorkflowService,
     configuration
   )
 
@@ -317,6 +333,8 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    paymentLedgerService,
+    paymentWorkflowService,
     contestService,
     fadderukeService,
     notificationService,

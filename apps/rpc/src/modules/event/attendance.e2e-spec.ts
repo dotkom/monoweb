@@ -6,8 +6,10 @@ import { faker } from "@faker-js/faker"
 import type { ApiResponse, GetUsers200ResponseOneOfInner } from "auth0"
 import { addDays, addHours, addMilliseconds, addMinutes, isFuture, subHours } from "date-fns"
 import invariant from "tiny-invariant"
+import type Stripe from "stripe"
 import { describe, expect, it, vi } from "vitest"
-import { auth0Client, core, dbClient } from "../../../vitest-integration.setup"
+import { auth0Client, core, dbClient, stripe } from "../../../vitest-integration.setup"
+import { mock } from "vitest-mock-extended"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import { buildDeregistrationAvailabilityView, buildRegistrationAvailabilityView } from "./attendance-service"
 import { getMockEvent, getMockGroup } from "./event.e2e-spec"
@@ -883,6 +885,8 @@ describe("attendance integration tests", async () => {
     expect(attendee.registrationPoolDelayHours).toBe(24)
     expect(attendee.registrationEligibleAt.getTime()).toBe(addHours(attendee.createdAt, 24).getTime())
 
+    vi.useFakeTimers({ toFake: ["Date"] })
+
     try {
       vi.setSystemTime(attendee.registrationEligibleAt)
 
@@ -982,6 +986,118 @@ describe("attendance integration tests", async () => {
     ).resolves.toBeUndefined()
   })
 
+  it("creates payment on admin promotion and preserves payment history across queue moves", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext()
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+    invariant(availability.success)
+    const attendee = await core.attendanceService.registerAttendee(dbClient, availability)
+
+    await core.attendanceService.updateAttendeeById(dbClient, attendee.id, { registeredAt: null })
+    await core.attendanceService.updateAttendancePaymentPrice(dbClient, attendance.id, 100)
+
+    const promoted = await dbClient.$transaction(async (handle) => {
+      return await core.attendanceService.updateAttendeeById(handle, attendee.id, { registeredAt: getCurrentUTC() })
+    })
+
+    expect(promoted.payment?.amountOre).toBe(10000)
+    expect(promoted.completionDeadline).not.toBeNull()
+    const paymentId = promoted.payment?.id
+    invariant(paymentId !== undefined)
+
+    const queued = await dbClient.$transaction(async (handle) => {
+      return await core.attendanceService.updateAttendeeById(handle, attendee.id, { registeredAt: null })
+    })
+
+    expect(queued.completionDeadline).toBeNull()
+    expect(queued.payment?.status).toBe("CANCELLED")
+    expect(queued.payment?.id).toBe(paymentId)
+    const completionTask = await core.taskSchedulingService.findVerifyAttendanceCompletionTask(dbClient, attendee.id)
+    expect(completionTask?.status).not.toBe("PENDING")
+
+    const restored = await dbClient.$transaction(async (handle) => {
+      return await core.attendanceService.updateAttendeeById(handle, attendee.id, { registeredAt: getCurrentUTC() })
+    })
+    const payment = await core.paymentLedgerService.getById(dbClient, paymentId)
+
+    expect(restored.payment?.id).toBe(paymentId)
+    expect(restored.completionDeadline).not.toBeNull()
+    expect(payment.attempts.map((attempt) => attempt.status)).toEqual(["CREATED", "CANCELLED"])
+    expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
+  })
+
+  it("persists a paid registration with its original amount and a reusable checkout reference", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext()
+    await dbClient.attendance.update({
+      where: {
+        id: attendance.id,
+      },
+      data: {
+        attendancePrice: 150,
+      },
+    })
+    stripe.checkout.sessions.create.mockImplementation(async (parameters) => {
+      const attemptId = String(parameters?.metadata?.payment_attempt_id)
+      const committedAttempt = await dbClient.paymentAttempt.findUniqueOrThrow({
+        where: {
+          id: attemptId,
+        },
+        include: {
+          payment: true,
+        },
+      })
+
+      expect(committedAttempt.payment.attendeeId).not.toBeNull()
+      expect(committedAttempt.status).toBe("CREATED")
+
+      return mock<Stripe.Response<Stripe.Checkout.Session>>({
+        id: "registration-checkout",
+        url: "https://checkout.stripe.com/registration",
+        expires_at: 2000000000,
+      })
+    })
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+    invariant(availability.success)
+
+    const attendee = await dbClient.$transaction(async (handle) => {
+      return await core.attendanceService.registerAttendee(handle, availability)
+    })
+    await dbClient.attendance.update({
+      where: {
+        id: attendance.id,
+      },
+      data: {
+        attendancePrice: 200,
+      },
+    })
+    expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
+    expect(attendee.payment?.checkoutUrl).toBeNull()
+
+    const persistedAttendee = await core.attendanceService.openAttendeeCheckout(dbClient, attendee.id)
+
+    expect(persistedAttendee.payment?.amountOre).toBe(15000)
+    expect(persistedAttendee.payment?.status).toBe("UNPAID")
+    expect(persistedAttendee.payment?.checkoutUrl).toBe("https://checkout.stripe.com/registration")
+    expect(persistedAttendee.payment?.attemptId).toBeDefined()
+    expect(stripe.checkout.sessions.create).toHaveBeenCalledTimes(1)
+    const checkoutRequest = stripe.checkout.sessions.create.mock.calls[0][0]
+
+    expect(checkoutRequest?.adaptive_pricing?.enabled).toBe(false)
+    expect(checkoutRequest?.line_items?.[0].price_data?.currency).toBe("nok")
+    expect(checkoutRequest?.line_items?.[0].price_data?.unit_amount).toBe(15000)
+  })
+
   it("should prevent deregistration until a charged payment is refunded", async () => {
     const { attendance, user, options } = await createAttendanceRegistrationContext()
     const availability = await core.attendanceService.getRegistrationAvailability(
@@ -999,7 +1115,22 @@ describe("attendance integration tests", async () => {
         id: attendee.id,
       },
       data: {
-        paymentChargedAt: getCurrentUTC(),
+        payment: {
+          create: {
+            userId: user.id,
+            description: "Captured registration payment",
+            amountOre: 10000,
+            attempts: {
+              create: {
+                status: "CAPTURED",
+                capturedAmountOre: 10000,
+                captureMode: "AUTOMATIC",
+                attemptNumber: 1,
+                capturedAt: getCurrentUTC(),
+              },
+            },
+          },
+        },
       },
     })
 
@@ -1009,14 +1140,21 @@ describe("attendance integration tests", async () => {
 
     const chargedAttendee = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
 
-    expect(chargedAttendee.paymentChargedAt).toBeInstanceOf(Date)
+    expect(chargedAttendee.payment?.status).toBe("PAID")
 
-    await dbClient.attendee.update({
+    const capturedPayment = await dbClient.payment.findUniqueOrThrow({
       where: {
-        id: attendee.id,
+        attendeeId: attendee.id,
       },
+      include: {
+        attempts: true,
+      },
+    })
+    await dbClient.paymentRefund.create({
       data: {
-        paymentRefundedAt: getCurrentUTC(),
+        paymentAttemptId: capturedPayment.attempts[0].id,
+        amountOre: capturedPayment.amountOre,
+        status: "SUCCEEDED",
       },
     })
     await core.attendanceService.deregisterAttendee(dbClient, attendee.id, { ignoreDeregistrationWindow: false })

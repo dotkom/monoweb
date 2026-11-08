@@ -261,3 +261,18 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
+ * Model PaymentAttempt
+ * 
+ */
+export type PaymentAttempt = Prisma.PaymentAttemptModel
+/**
+ * Model PaymentRefund
+ * 
+ */
+export type PaymentRefund = Prisma.PaymentRefundModel
