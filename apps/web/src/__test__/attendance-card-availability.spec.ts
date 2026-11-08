@@ -1,6 +1,7 @@
 import { addMinutes, addSeconds, differenceInMilliseconds, hoursToMilliseconds, secondsToMilliseconds } from "date-fns"
 import { describe, expect, it } from "vitest"
 import {
+  createMockPayment,
   createMockAttendance,
   createMockAttendee,
   createMockRegistrationAvailability,
@@ -15,7 +16,7 @@ describe("attendance card availability", () => {
   const now = new Date("2026-10-13T12:00:00Z")
 
   it("waits for registration availability after the attendee is removed", () => {
-    const attendee = createMockAttendee({ paymentLink: "https://example.com/payment" })
+    const attendee = createMockAttendee({ payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }) })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
     const availability = createMockRegistrationAvailabilityForAttendee(attendance, attendee)
 
@@ -40,13 +41,13 @@ describe("attendance card availability", () => {
     const attendee = createMockAttendee({
       createdAt: now,
       completionDeadline: addMinutes(now, 1),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
     const availability = createMockRegistrationAvailabilityForAttendee(attendance, attendee)
     const result = getAttendanceCardRegistrationAvailability(
       attendance,
-      { ...attendee, paymentReservedAt: now },
+      createMockAttendee({ ...attendee, payment: createMockPayment({ status: "AUTHORIZED" }) }),
       availability,
       now
     )
@@ -114,7 +115,7 @@ describe("attendance card availability", () => {
     const availability = createMockRegistrationAvailabilityForAttendee(attendance, attendee)
     const result = getAttendanceCardRegistrationAvailability(
       attendance,
-      { ...attendee, paymentChargedAt: now },
+      createMockAttendee({ ...attendee, payment: createMockPayment({ status: "PAID" }) }),
       availability,
       now
     )

@@ -758,6 +758,47 @@ const notifyAttendeesProcedure = procedure
     await ctx.attendanceService.notifyAttendees(ctx.prisma, event.attendanceId, input.message, input.title)
   })
 
+export type SyncAttendeePaymentInput = inferProcedureInput<typeof syncAttendeePaymentProcedure>
+export type SyncAttendeePaymentOutput = inferProcedureOutput<typeof syncAttendeePaymentProcedure>
+const syncAttendeePaymentProcedure = procedure
+  .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.syncAttendeePayment(ctx.handle, attendee.id)
+
+    ctx.setAuditTransactionName(`Synchronize Payment for Attendee(ID=${attendee.id}) for Event(ID=${event.id})`)
+  })
+
+export type WaiveAttendeePaymentInput = inferProcedureInput<typeof waiveAttendeePaymentProcedure>
+export type WaiveAttendeePaymentOutput = inferProcedureOutput<typeof waiveAttendeePaymentProcedure>
+const waiveAttendeePaymentProcedure = procedure
+  .input(
+    z.object({
+      attendeeId: AttendeeSchema.shape.id,
+      reason: z.string().trim().min(1).max(1000).nullable().default(null),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.waiveAttendeePayment(ctx.handle, attendee.id, ctx.principal.subject, input.reason)
+
+    ctx.setAuditTransactionName(`Waive Payment for Attendee(ID=${attendee.id}) for Event(ID=${event.id})`)
+  })
+
 export const attendanceRouter = t.router({
   createPool: createPoolProcedure,
   updatePool: updatePoolProcedure,
@@ -771,6 +812,8 @@ export const attendanceRouter = t.router({
   onRegisterChange: onRegisterChangeProcedure,
   onBulkRegisterChange: onBulkRegisterChangeProcedure,
   cancelAttendeePayment: cancelAttendeePaymentProcedure,
+  waiveAttendeePayment: waiveAttendeePaymentProcedure,
+  syncAttendeePayment: syncAttendeePaymentProcedure,
   startAttendeePayment: startAttendeePaymentProcedure,
   deregisterForEvent: deregisterForEventProcedure,
   adminDeregisterForEvent: adminDeregisterForEventProcedure,

@@ -2,6 +2,7 @@ import { getStudyGrade } from "@dotkomonline/utils"
 import { addHours, compareAsc, hoursToMilliseconds, secondsToMilliseconds, subHours } from "date-fns"
 import { z } from "zod"
 import { PunishmentSchema } from "../mark/mark"
+import { PaymentViewSchema } from "../payment/payment"
 import { type User, type UserId, UserSchema, findActiveMembership } from "../user/user"
 
 /**
@@ -57,18 +58,11 @@ const AttendeeBaseSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   completionDeadline: z.date().nullable(),
-  paymentLink: z.string().nullable(),
-  paymentId: z.string().nullable(),
-  paymentReservedAt: z.date().nullable(),
-  paymentChargeDeadline: z.date().nullable(),
-  paymentChargedAt: z.date().nullable(),
-  paymentRefundedAt: z.date().nullable(),
-  paymentCheckoutUrl: z.string().nullable(),
+  payment: PaymentViewSchema.nullable(),
   attendanceId: z.string(),
   userId: z.string(),
   attendancePoolId: z.string(),
   adminRegisteredByUserId: z.string().nullable(),
-  paymentRefundedByUserId: z.string().nullable(),
 })
 
 export type AttendeeId = Attendee["id"]
@@ -122,7 +116,9 @@ export const AttendeeWriteSchema = AttendeeSchema.pick({
   registrationPoolDelayHours: true,
   registrationMarkDelayHours: true,
   selections: true,
-  /** The attending user's grade at time of registration. */
+  /**
+   * The attending user's grade at time of registration.
+   */
   userGrade: true,
 })
 
@@ -134,18 +130,6 @@ export function getAttendeeRegistrationEligibleAt(
 
   return addHours(attendee.createdAt, poolDelayHours + markDelayHours)
 }
-
-export type AttendeePaymentWrite = z.infer<typeof AttendeePaymentWriteSchema>
-export const AttendeePaymentWriteSchema = AttendeeSchema.pick({
-  paymentChargedAt: true,
-  paymentId: true,
-  paymentChargeDeadline: true,
-  paymentLink: true,
-  paymentReservedAt: true,
-  paymentRefundedAt: true,
-  paymentRefundedByUserId: true,
-  paymentCheckoutUrl: true,
-})
 
 // The 96-hour limit is arbitrary
 export const MAX_MERGE_DELAY_HOURS = 96
@@ -310,7 +294,7 @@ export const RegistrationAvailabilityCompletionViewSchema = z.object({
   completionDeadline: z.date().nullable(),
   requirements: z.array(AttendanceCompletionRequirementStateSchema),
   missingRequirements: z.array(AttendanceCompletionRequirementSchema),
-  paymentLink: z.string().nullable(),
+  payment: PaymentViewSchema.nullable(),
 })
 export type RegistrationAvailabilityCompletionView = z.infer<typeof RegistrationAvailabilityCompletionViewSchema>
 
@@ -506,11 +490,6 @@ export const getAttendeeQueuePosition = (attendance: AttendanceView, user: User 
   return attendeeIndex + 1
 }
 
-type AttendeePaymentProps = Pick<
-  Attendee,
-  "paymentChargedAt" | "paymentRefundedAt" | "paymentReservedAt" | "completionDeadline" | "paymentRefundedByUserId"
->
-
 export function getApplicableAttendanceCompletionRequirements(
   attendance: Pick<Attendance, "attendancePrice">,
   attendee: Pick<Attendee, "registeredAt"> | null
@@ -528,7 +507,7 @@ export function getApplicableAttendanceCompletionRequirements(
 
 export function isAttendanceCompletionRequirementCompleted(
   requirement: AttendanceCompletionRequirement,
-  attendee: Attendee | null,
+  attendee: Pick<Attendee, "payment"> | null,
   attendancePrice: number | null
 ): boolean {
   if (attendee === null) {
@@ -544,7 +523,7 @@ export function isAttendanceCompletionRequirementCompleted(
 
 export function getMissingAttendanceCompletionRequirements(
   attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Attendee | null
+  attendee: Pick<Attendee, "registeredAt" | "payment"> | null
 ): AttendanceCompletionRequirement[] {
   return getApplicableAttendanceCompletionRequirements(attendance, attendee).filter(
     (requirement) => !isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice)
@@ -572,13 +551,13 @@ export function getAttendeeState(
 
 export function attendeeHasPendingCompletionDeadline(
   attendance: Pick<Attendance, "attendancePrice">,
-  attendee: Pick<Attendee, "completionDeadline" | "registeredAt"> | null
+  attendee: Pick<Attendee, "completionDeadline" | "registeredAt" | "payment"> | null
 ): boolean {
   if (attendee === null || attendee.registeredAt === null || attendee.completionDeadline === null) {
     return false
   }
 
-  return getMissingAttendanceCompletionRequirements(attendance, attendee as Attendee).length > 0
+  return getMissingAttendanceCompletionRequirements(attendance, attendee).length > 0
 }
 
 export function buildRegistrationAvailabilityCompletionView(
@@ -605,7 +584,7 @@ export function buildRegistrationAvailabilityCompletionView(
       completed: isAttendanceCompletionRequirementCompleted(requirement, attendee, attendance.attendancePrice),
     })),
     missingRequirements: getMissingAttendanceCompletionRequirements(attendance, attendee),
-    paymentLink: attendee.registeredAt !== null ? attendee.paymentLink : null,
+    payment: attendee.registeredAt !== null ? attendee.payment : null,
   }
 }
 
@@ -623,7 +602,7 @@ export function hasAttendeeCompletedSelections(
 }
 
 export const hasAttendeePaid = (
-  attendee: Omit<AttendeePaymentProps, "paymentRefundedByUserId"> | null,
+  attendee: Pick<Attendee, "payment"> | null,
   attendancePrice: number | null,
   options?: { excludePaymentReservation?: boolean }
 ): boolean | null => {
@@ -635,40 +614,25 @@ export const hasAttendeePaid = (
     return false
   }
 
-  const hasBeenRefunded = attendee.paymentRefundedAt !== null
-  const hasBeenCharged = attendee.paymentChargedAt !== null
-  const hasReserved = options?.excludePaymentReservation ? false : attendee.paymentReservedAt !== null
-  const hasDeadline = attendee.completionDeadline !== null
+  const payment = attendee.payment
 
-  return hasBeenCharged || hasReserved || (hasBeenRefunded && !hasDeadline)
+  if (payment === null) {
+    return false
+  }
+
+  if (options?.excludePaymentReservation === true && payment.status === "AUTHORIZED") {
+    return false
+  }
+
+  return payment.isRequirementSatisfied
 }
 
-export const isAttendeeChargedAndUnrefunded = (
-  attendee: Pick<Attendee, "paymentChargedAt" | "paymentRefundedAt">
-): boolean => attendee.paymentChargedAt !== null && attendee.paymentRefundedAt === null
+export const isAttendeeChargedAndUnrefunded = (attendee: Pick<Attendee, "payment">): boolean => {
+  const payment = attendee.payment
 
-export type AttendeePaymentStatus = "none" | "pending" | "reserved" | "charged" | "refunded" | "cancelled"
-
-export const getAttendeePaymentStatus = (attendee: AttendeePaymentProps): AttendeePaymentStatus => {
-  if (attendee.paymentRefundedAt !== null) {
-    return "refunded"
+  if (payment === null) {
+    return false
   }
 
-  if (attendee.paymentChargedAt !== null) {
-    return "charged"
-  }
-
-  if (attendee.paymentReservedAt !== null) {
-    return "reserved"
-  }
-
-  if (attendee.paymentRefundedByUserId !== null) {
-    return "cancelled"
-  }
-
-  if (attendee.completionDeadline !== null) {
-    return "pending"
-  }
-
-  return "none"
+  return payment.canRefund || payment.status === "REFUND_PENDING"
 }

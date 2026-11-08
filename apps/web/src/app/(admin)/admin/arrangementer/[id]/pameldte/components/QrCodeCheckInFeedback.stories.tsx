@@ -1,7 +1,11 @@
 import type { Attendance, Attendee } from "@dotkomonline/rpc/attendance"
 import { Button } from "@dotkomonline/ui"
 import { useEffect, useState } from "react"
-import { createMockAttendance, createMockAttendee } from "../../../../../../../../.ladle/fixtures/attendance"
+import {
+  createMockPayment,
+  createMockAttendance,
+  createMockAttendee,
+} from "../../../../../../../../.ladle/fixtures/attendance"
 import { QrCodeCheckInFeedback } from "./QrCodeCheckInFeedback"
 import type { QrCodeCheckIn, QrCodeCheckInStatus } from "./qr-code-check-in"
 import { useQrCodeCheckIn } from "./use-qr-code-check-in"
@@ -78,7 +82,10 @@ const scenarios: { label: string; props: PreviewProps }[] = [
   { label: "I køen", props: { attendeeOverrides: { registeredAt: null } } },
   {
     label: "Ikke fullført valg",
-    props: { attendanceOverrides: { selections }, attendeeOverrides: { paymentChargedAt: new Date() } },
+    props: {
+      attendanceOverrides: { selections },
+      attendeeOverrides: { payment: createMockPayment({ status: "PAID" }) },
+    },
   },
   {
     label: "Fullført valg",

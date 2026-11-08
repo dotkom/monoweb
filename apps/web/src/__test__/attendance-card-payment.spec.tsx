@@ -1,8 +1,10 @@
+import type { PaymentView } from "@dotkomonline/rpc/payment"
 import { addMinutes, subMinutes } from "date-fns"
 import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
+  createMockPayment,
   createMockAttendance,
   createMockAttendee,
   createMockEvent,
@@ -73,21 +75,37 @@ describe("attendance card payment actions", () => {
     "delayed",
     "delay-expired",
     "unpaid",
+    "processing",
+    "refund-pending",
+    "waived",
+    "partially-refunded",
   ])("renders the payment link from the current attendee when availability is stale (%s)", (state) => {
     const attendee = createMockAttendee({
       completionDeadline: addMinutes(new Date(), 1),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const initialAttendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
     const availability = createMockRegistrationAvailabilityForAttendee(initialAttendance, attendee)
-    const updatedAttendee = {
+    const paymentStatusByState: Record<string, PaymentView["status"]> = {
+      reserved: "AUTHORIZED",
+      charged: "PAID",
+      processing: "PROCESSING",
+      "refund-pending": "REFUND_PENDING",
+      waived: "WAIVED",
+      "partially-refunded": "PARTIALLY_REFUNDED",
+    }
+    const paymentStatus = paymentStatusByState[state] ?? "UNPAID"
+    const updatedAttendee = createMockAttendee({
       ...attendee,
       createdAt: subMinutes(new Date(), 2),
       registeredAt: ["queued", "delayed", "delay-expired"].includes(state) ? null : new Date(),
       registrationEligibleAt: state === "delayed" ? addMinutes(new Date(), 1) : subMinutes(new Date(), 1),
-      paymentReservedAt: state === "reserved" ? new Date() : null,
-      paymentChargedAt: state === "charged" ? new Date() : null,
-    }
+      payment: createMockPayment({
+        status: paymentStatus,
+        // A stale URL must not override the payment state's available actions.
+        checkoutUrl: "https://example.com/payment",
+      }),
+    })
     mocks.attendanceApi.mockReturnValue({
       attendance: { ...initialAttendance, attendees: state === "deregistered" ? [] : [updatedAttendee] },
       registrationAvailability: availability,
@@ -113,10 +131,10 @@ describe("attendance card payment actions", () => {
 
     if (state === "unpaid") {
       expect(markup).toContain("Gå til betaling")
-      expect(markup).toContain(attendee.paymentLink)
+      expect(markup).toContain(attendee.payment?.checkoutUrl)
     } else {
       expect(markup).not.toContain("Gå til betaling")
-      expect(markup).not.toContain(attendee.paymentLink)
+      expect(markup).not.toContain(attendee.payment?.checkoutUrl)
     }
   })
 })

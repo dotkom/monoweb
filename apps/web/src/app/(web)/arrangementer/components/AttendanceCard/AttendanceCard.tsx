@@ -154,8 +154,8 @@ export const AttendanceCard = ({
   const [deregisterModalOpen, setDeregisterModalOpen] = useState(false)
 
   const paymentIsMissing = completion?.missingRequirements.includes("PAYMENT") ?? false
-  const paymentLink = completion?.paymentLink ?? null
-  const showPaymentLink = paymentIsMissing && paymentLink !== null
+  const paymentLink = completion?.payment?.checkoutUrl ?? null
+  const showPaymentLink = paymentIsMissing && completion?.payment?.canStartCheckout === true && paymentLink !== null
 
   const registerForAttendance = () => {
     const token = turnstileToken ?? backgroundVerification?.takeToken() ?? null

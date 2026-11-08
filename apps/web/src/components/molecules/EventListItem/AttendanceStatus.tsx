@@ -86,7 +86,8 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
     completion?.completionDeadline != null && isAfter(currentTime, completion.completionDeadline)
 
   const showCompletionCountdown =
-    completion?.paymentLink != null &&
+    completion?.payment?.canStartCheckout === true &&
+    completion.payment.checkoutUrl !== null &&
     hasPendingCompletionDeadline &&
     (isWithinCompletionCountdown || completionDeadlineHasPassed)
 

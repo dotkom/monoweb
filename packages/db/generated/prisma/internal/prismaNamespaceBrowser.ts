@@ -94,7 +94,10 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  Payment: 'Payment',
+  PaymentAttempt: 'PaymentAttempt',
+  PaymentRefund: 'PaymentRefund'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -266,17 +269,9 @@ export const AttendeeScalarFieldEnum = {
   registrationMarkDelayHours: 'registrationMarkDelayHours',
   attendedAt: 'attendedAt',
   completionDeadline: 'completionDeadline',
-  paymentLink: 'paymentLink',
-  paymentId: 'paymentId',
-  paymentReservedAt: 'paymentReservedAt',
-  paymentChargeDeadline: 'paymentChargeDeadline',
-  paymentChargedAt: 'paymentChargedAt',
-  paymentRefundedAt: 'paymentRefundedAt',
-  paymentCheckoutUrl: 'paymentCheckoutUrl',
   attendanceId: 'attendanceId',
   userId: 'userId',
   attendancePoolId: 'attendancePoolId',
-  paymentRefundedByUserId: 'paymentRefundedByUserId',
   adminRegisteredByUserId: 'adminRegisteredByUserId'
 } as const
 
@@ -714,6 +709,59 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  amountOre: 'amountOre',
+  waivedAt: 'waivedAt',
+  waiverReason: 'waiverReason',
+  userId: 'userId',
+  waivedByUserId: 'waivedByUserId',
+  attendeeId: 'attendeeId',
+  eventId: 'eventId'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const PaymentAttemptScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status',
+  captureMode: 'captureMode',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  checkoutUrl: 'checkoutUrl',
+  checkoutExpiresAt: 'checkoutExpiresAt',
+  captureScheduledAt: 'captureScheduledAt',
+  authorizationExpiresAt: 'authorizationExpiresAt',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  lastSyncedAt: 'lastSyncedAt',
+  paymentId: 'paymentId'
+} as const
+
+export type PaymentAttemptScalarFieldEnum = (typeof PaymentAttemptScalarFieldEnum)[keyof typeof PaymentAttemptScalarFieldEnum]
+
+
+export const PaymentRefundScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  stripeRefundId: 'stripeRefundId',
+  amountOre: 'amountOre',
+  status: 'status',
+  reason: 'reason',
+  paymentAttemptId: 'paymentAttemptId',
+  requestedByUserId: 'requestedByUserId'
+} as const
+
+export type PaymentRefundScalarFieldEnum = (typeof PaymentRefundScalarFieldEnum)[keyof typeof PaymentRefundScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -402,7 +402,7 @@ export const useUpdateAttendanceMutation = () => {
   )
 }
 
-export const useRefundAttendeeMutation = () => {
+export const useCancelAttendeePaymentMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
@@ -422,7 +422,47 @@ export const useRefundAttendeeMutation = () => {
   )
 }
 
-export const useCreateAttendeePaymentAttendeeMutation = () => {
+export const useWaiveAttendeePaymentMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.waiveAttendeePayment.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendanceForAdmin.queryKey({}) })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getForAdmin.queryKey() })
+      },
+    })
+  )
+}
+
+export const useSyncAttendeePaymentMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { fail, loading, complete } = useQueryGenericMutationNotification({
+    method: "update",
+  })
+
+  return useMutation(
+    trpc.event.attendance.syncAttendeePayment.mutationOptions({
+      onError: fail,
+      onMutate: loading,
+      onSuccess: async () => {
+        complete()
+        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendanceForAdmin.queryKey({}) })
+        await queryClient.invalidateQueries({ queryKey: trpc.event.getForAdmin.queryKey() })
+      },
+    })
+  )
+}
+
+export const useStartAttendeePaymentMutation = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const { fail, loading, complete } = useQueryGenericMutationNotification({
@@ -435,9 +475,6 @@ export const useCreateAttendeePaymentAttendeeMutation = () => {
       onMutate: loading,
       onSuccess: async () => {
         complete()
-
-        await queryClient.invalidateQueries({ queryKey: trpc.event.getForAdmin.queryKey() })
-        await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendanceForAdmin.queryKey() })
 
         await queryClient.invalidateQueries({ queryKey: trpc.event.getForAdmin.queryKey() })
         await queryClient.invalidateQueries({ queryKey: trpc.event.attendance.getAttendanceForAdmin.queryKey() })

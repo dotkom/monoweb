@@ -55,13 +55,23 @@ export function getLocalTaskExecutor(
       span.setAttribute("rpc.system", "trpc")
 
       try {
+        const definition = getTaskDefinition(task.type)
+        const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
+
+        // This happens in Stripe, so we don't want to hold a transaction open for an API call.
+        if (task.type === tasks.CHARGE_ATTENDEE.type) {
+          await attendanceService.executeChargeAttendeeTask(
+            client,
+            payload as InferTaskData<ChargeAttendeeTaskDefinition>
+          )
+
+          return
+        }
+
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
         await client.$transaction(async (handle) => {
-          const definition = getTaskDefinition(task.type)
-          const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
-
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
@@ -79,12 +89,6 @@ export function getLocalTaskExecutor(
               return await attendanceService.executeVerifyAttendanceCompletionTask(
                 handle,
                 payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
-              )
-
-            case tasks.CHARGE_ATTENDEE.type:
-              return await attendanceService.executeChargeAttendeeTask(
-                handle,
-                payload as InferTaskData<ChargeAttendeeTaskDefinition>
               )
 
             case tasks.VERIFY_FEEDBACK_ANSWERED.type:

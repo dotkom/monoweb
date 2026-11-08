@@ -1,28 +1,12 @@
+import { PaymentStatusBadge } from "../../../components/PaymentStatusBadge"
 import { FilterableDataTable, arrayOrEqualsFilter, dateSort } from "@admin/components/FilterableDataTable"
-import type {
-  Attendance,
-  AttendancePool,
-  Attendee,
-  AttendeePaymentStatus,
-  AttendeeSelectionResponse,
-} from "@dotkomonline/rpc/attendance"
-import { getAttendeePaymentStatus } from "@dotkomonline/rpc/attendance"
+import type { Attendance, AttendancePool, Attendee, AttendeeSelectionResponse } from "@dotkomonline/rpc/attendance"
 import type { FeedbackFormAnswer } from "@dotkomonline/rpc/feedback-form"
-import {
-  Badge,
-  Button,
-  Checkbox,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Text,
-  TextLink,
-  type BadgeColor,
-} from "@dotkomonline/ui"
+import { Badge, Button, Checkbox, Popover, PopoverContent, PopoverTrigger, Text, TextLink } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react"
 import { createColumnHelper, getCoreRowModel } from "@tanstack/react-table"
-import { formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore } from "date-fns"
+import { compareAsc, formatDate, formatDistanceStrict, formatDistanceToNowStrict, isBefore } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useMemo, useState } from "react"
 import { ManualDeleteUserAttendModal } from "./ManualDeleteUserAttendModal"
@@ -79,9 +63,8 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
     return (attendance?.pools ?? []).reduce<Record<string, Record<string, number>>>((acc, pool) => {
       const queue = attendees
         .filter((attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt === null)
-        .sort(
-          (firstAttendee, secondAttendee) =>
-            firstAttendee.registrationEligibleAt.getTime() - secondAttendee.registrationEligibleAt.getTime()
+        .sort((firstAttendee, secondAttendee) =>
+          compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
         )
 
       acc[pool.id] = queue.reduce<Record<string, number>>((map, attendee, idx) => {
@@ -96,26 +79,30 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
   const sortedAttendees = useMemo(() => {
     const poolOrder = new Map((attendance?.pools ?? []).map((pool, index) => [pool.id, index]))
 
-    return attendees.toSorted((a, b) => {
-      const poolDiff = (poolOrder.get(a.attendancePoolId) ?? 0) - (poolOrder.get(b.attendancePoolId) ?? 0)
-      if (poolDiff !== 0) {
-        return poolDiff
+    return attendees.toSorted((firstAttendee, secondAttendee) => {
+      const poolDifference =
+        (poolOrder.get(firstAttendee.attendancePoolId) ?? 0) - (poolOrder.get(secondAttendee.attendancePoolId) ?? 0)
+
+      if (poolDifference !== 0) {
+        return poolDifference
       }
 
-      const aSpot = queues[a.attendancePoolId]?.[a.id] ?? null
-      const bSpot = queues[b.attendancePoolId]?.[b.id] ?? null
+      const firstQueuePosition = queues[firstAttendee.attendancePoolId]?.[firstAttendee.id] ?? null
+      const secondQueuePosition = queues[secondAttendee.attendancePoolId]?.[secondAttendee.id] ?? null
 
-      if (aSpot === null && bSpot === null) {
-        return a.registrationEligibleAt.getTime() - b.registrationEligibleAt.getTime()
+      if (firstQueuePosition === null && secondQueuePosition === null) {
+        return compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
       }
-      if (aSpot === null) {
+
+      if (firstQueuePosition === null) {
         return -1
       }
-      if (bSpot === null) {
+
+      if (secondQueuePosition === null) {
         return 1
       }
 
-      return aSpot - bSpot
+      return firstQueuePosition - secondQueuePosition
     })
   }, [attendees, attendance?.pools, queues])
 
@@ -224,17 +211,7 @@ export const AttendeesTable = ({ attendees, attendance, feedbackAnswers, canEdit
             return null
           }
 
-          const paymentStatusBadge: Record<AttendeePaymentStatus, { color: BadgeColor; children: string }> = {
-            refunded: { color: "gray", children: "Refundert" },
-            charged: { color: "green", children: "Betalt" },
-            reserved: { color: "blue", children: "Reservert" },
-            cancelled: { color: "gray", children: "Kansellert" },
-            pending: { color: "red", children: "Ikke betalt" },
-            none: { color: "red", children: "Ikke betalt" },
-          }
-
-          const badge = paymentStatusBadge[getAttendeePaymentStatus(attendee)]
-          return <Badge color={badge.color}>{badge.children}</Badge>
+          return <PaymentStatusBadge payment={attendee.payment} />
         },
       }),
       columnHelper.accessor((attendee) => attendee, {

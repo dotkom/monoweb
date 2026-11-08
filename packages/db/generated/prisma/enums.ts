@@ -262,3 +262,36 @@ export const ContestResultOrder = {
 } as const
 
 export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]
+
+
+export const PaymentAttemptStatus = {
+  CREATED: 'CREATED',
+  CHECKOUT_OPEN: 'CHECKOUT_OPEN',
+  PROCESSING: 'PROCESSING',
+  AUTHORIZED: 'AUTHORIZED',
+  CAPTURED: 'CAPTURED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED',
+  FAILED: 'FAILED'
+} as const
+
+export type PaymentAttemptStatus = (typeof PaymentAttemptStatus)[keyof typeof PaymentAttemptStatus]
+
+
+export const PaymentCaptureMode = {
+  AUTOMATIC: 'AUTOMATIC',
+  MANUAL: 'MANUAL'
+} as const
+
+export type PaymentCaptureMode = (typeof PaymentCaptureMode)[keyof typeof PaymentCaptureMode]
+
+
+export const PaymentRefundStatus = {
+  REQUESTED: 'REQUESTED',
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PaymentRefundStatus = (typeof PaymentRefundStatus)[keyof typeof PaymentRefundStatus]

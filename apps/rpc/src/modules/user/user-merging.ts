@@ -1,4 +1,5 @@
-import { isAttendeeChargedAndUnrefunded } from "../event/attendance"
+import type { PaymentRepository } from "../payment/payment-repository"
+import type { AttendanceRepository } from "../event/attendance-repository"
 import type { User, Membership } from "./user"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { GroupRepository } from "../group/group-repository"
@@ -7,6 +8,8 @@ import { simplifyGroupMemberships } from "../group/group-service"
 import { z } from "zod"
 
 interface MergeUsersDependencies {
+  paymentRepository: PaymentRepository
+  attendanceRepository: AttendanceRepository
   groupRepository: GroupRepository
   attendanceService: AttendanceService
 }
@@ -129,66 +132,114 @@ const CUSTOM_SCALAR_MERGERS = {
 /**
  * Has-many relations to reassign from consumed to survivor.
  *
- * If a User relation maps to multiple FK columns (e.g. attendee has userId and paymentRefundedByUserId),
+ * If a User relation maps to multiple FK columns (e.g. payment has userId and waivedByUserId),
  * add one entry per FK column, using the corresponding User relation name as the key.
  */
 const REASSIGN_RELATION_HANDLERS = {
-  adminRegistered: async (handle: DBHandle, consumedUserId: string, survivorUserId: string) => {
+  adminRegistered: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    consumedUserId: string,
+    survivorUserId: string
+  ) => {
     await handle.attendee.updateMany({
       where: { adminRegisteredByUserId: consumedUserId },
       data: { adminRegisteredByUserId: survivorUserId },
     })
   },
-  attendeesRefunded: async (handle: DBHandle, fromId: string, toId: string) => {
-    await handle.attendee.updateMany({
-      where: { paymentRefundedByUserId: fromId },
-      data: { paymentRefundedByUserId: toId },
-    })
+  payments: async (
+    handle: DBHandle,
+    dependencies: MergeUsersDependencies,
+    consumedUserId: string,
+    survivorUserId: string
+  ) => {
+    await dependencies.paymentRepository.reassignPayments(handle, consumedUserId, survivorUserId)
   },
-  givenMarks: async (handle: DBHandle, fromId: string, toId: string) => {
+  paymentsWaived: async (
+    handle: DBHandle,
+    dependencies: MergeUsersDependencies,
+    consumedUserId: string,
+    survivorUserId: string
+  ) => {
+    await dependencies.paymentRepository.reassignWaivers(handle, consumedUserId, survivorUserId)
+  },
+  paymentRefundsRequested: async (
+    handle: DBHandle,
+    dependencies: MergeUsersDependencies,
+    consumedUserId: string,
+    survivorUserId: string
+  ) => {
+    await dependencies.paymentRepository.reassignRefundRequests(handle, consumedUserId, survivorUserId)
+  },
+  givenMarks: async (handle: DBHandle, _dependencies: MergeUsersDependencies, fromId: string, toId: string) => {
     await handle.personalMark.updateMany({
       where: { givenById: fromId },
       data: { givenById: toId },
     })
   },
-  auditLogs: async (handle: DBHandle, fromId: string, toId: string) => {
+  auditLogs: async (handle: DBHandle, _dependencies: MergeUsersDependencies, fromId: string, toId: string) => {
     await handle.auditLog.updateMany({
       where: { userId: fromId },
       data: { userId: toId },
     })
   },
-  deregisterReasons: async (handle: DBHandle, fromId: string, toId: string) => {
+  deregisterReasons: async (handle: DBHandle, _dependencies: MergeUsersDependencies, fromId: string, toId: string) => {
     await handle.deregisterReason.updateMany({
       where: { userId: fromId },
       data: { userId: toId },
     })
   },
-  notificationsReceived: async (handle: DBHandle, fromId: string, toId: string) => {
+  notificationsReceived: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    fromId: string,
+    toId: string
+  ) => {
     await handle.notificationRecipient.updateMany({
       where: { userId: fromId },
       data: { userId: toId },
     })
   },
-  notificationsCreated: async (handle: DBHandle, fromId: string, toId: string) => {
+  notificationsCreated: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    fromId: string,
+    toId: string
+  ) => {
     await handle.notification.updateMany({
       where: { createdById: fromId },
       data: { createdById: toId },
     })
   },
-  updatedEventPriorities: async (handle: DBHandle, fromId: string, toId: string) => {
+  updatedEventPriorities: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    fromId: string,
+    toId: string
+  ) => {
     await handle.eventFeaturedPriority.updateMany({
       where: { lastUpdatedByUserId: fromId },
       data: { lastUpdatedByUserId: toId },
     })
   },
 
-  notificationsUpdated: async (handle: DBHandle, fromId: string, toId: string) => {
+  notificationsUpdated: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    fromId: string,
+    toId: string
+  ) => {
     await handle.notification.updateMany({
       where: { lastUpdatedById: fromId },
       data: { lastUpdatedById: toId },
     })
   },
-} satisfies Partial<Record<AllUserKeys, (handle: DBHandle, fromId: string, toId: string) => Promise<void>>>
+} satisfies Partial<
+  Record<
+    AllUserKeys,
+    (handle: DBHandle, _dependencies: MergeUsersDependencies, fromId: string, toId: string) => Promise<void>
+  >
+>
 
 /**
  * Relations with custom merge logic (deduplication or conflict resolution against unique/PK constraints).
@@ -280,17 +331,7 @@ const CUSTOM_RELATION_MERGERS = {
       select: { attendanceId: true },
     })
 
-    const consumedAttendees = await handle.attendee.findMany({
-      where: {
-        userId: consumed.id,
-      },
-      select: {
-        id: true,
-        attendanceId: true,
-        paymentChargedAt: true,
-        paymentRefundedAt: true,
-      },
-    })
+    const consumedAttendees = await dependencies.attendanceRepository.findAttendeePaymentsByUserId(handle, consumed.id)
 
     const survivorAttendanceIds = new Set(survivorAttendees.map((attendee) => attendee.attendanceId))
 
@@ -305,7 +346,7 @@ const CUSTOM_RELATION_MERGERS = {
     for (const attendee of conflictingConsumedAttendees) {
       // `deregisterAttendee` blocks when the attendee has been charged without being refunded. We refund the attendee
       // so we can properly deregister them.
-      if (isAttendeeChargedAndUnrefunded(attendee)) {
+      if (attendee.payment?.canRefund === true) {
         await dependencies.attendanceService.cancelAttendeePayment(handle, attendee.id, survivor.id)
       }
 
@@ -431,7 +472,7 @@ const _assertNoExtraFields: ExtraInClassification extends never ? true : ExtraIn
  */
 export const mergeUsers = async (
   handle: DBHandle,
-  deps: MergeUsersDependencies,
+  dependencies: MergeUsersDependencies,
   survivorUser: User,
   consumedUser: User
 ): Promise<void> => {
@@ -463,12 +504,12 @@ export const mergeUsers = async (
 
   // REASSIGN ALL RELATIONS TO SURVIVOR
   for (const handler of Object.values(REASSIGN_RELATION_HANDLERS)) {
-    await handler(handle, consumedUser.id, survivorUser.id)
+    await handler(handle, dependencies, consumedUser.id, survivorUser.id)
   }
 
   // CUSTOM RELATION MERGES
   for (const merge of Object.values(CUSTOM_RELATION_MERGERS)) {
-    await merge(handle, deps, survivorUser, consumedUser)
+    await merge(handle, dependencies, survivorUser, consumedUser)
   }
 
   // DELETE ORPHANED ONE-TO-ONE RELATIONS

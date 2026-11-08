@@ -20,6 +20,7 @@ import React, { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
+  createMockPayment,
   createMockAttendanceSummary,
   createMockAttendance,
   createMockAttendee,
@@ -191,7 +192,7 @@ describe("event list subscription", () => {
       registeredAt: null,
       registrationEligibleAt: new Date("2026-01-02"),
       completionDeadline: new Date("2026-02-01"),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const initialAttendance = createMockAttendance({ attendees: [ownAttendee] })
     const queryKey = attendanceCardQueryOptions(queryOptions, firstEvent.attendance.id).queryKey
