@@ -34,6 +34,7 @@ interface ReadMoreProps {
   readLessText?: string
   /** Clamp the content, but never render the expand/collapse button */
   hideToggleButton?: boolean
+  stickyToggle?: boolean
   className?: string
   toggleButtonClassName?: string
 }
@@ -44,6 +45,7 @@ export function ReadMore({
   readMoreText = "Vis mer",
   readLessText = "Vis mindre",
   hideToggleButton = false,
+  stickyToggle = true,
   className,
   toggleButtonClassName,
 }: ReadMoreProps) {
@@ -52,7 +54,7 @@ export function ReadMore({
   const [collapsedMaxHeight, setCollapsedMaxHeight] = useState(maxLines ? DEFAULT_LINE_HEIGHT_PX * maxLines : 0)
   const [expandedMaxHeight, setExpandedMaxHeight] = useState(0)
   const [collapseScroll, setCollapseScroll] = useState<{
-    previousContainerHeight: number
+    previousContentHeight: number
     scrollContainer: HTMLElement | null
   } | null>(null)
 
@@ -105,28 +107,34 @@ export function ReadMore({
   }, [children, maxLines])
 
   useLayoutEffect(() => {
-    if (isExpanded || collapseScroll === null) {
+    const container = containerRef.current
+
+    if (isExpanded || collapseScroll === null || container === null) {
       return
     }
 
-    const { previousContainerHeight, scrollContainer } = collapseScroll
-    const heightDifference = previousContainerHeight - collapsedMaxHeight
+    const { previousContentHeight, scrollContainer } = collapseScroll
+    const viewportTop = scrollContainer?.getBoundingClientRect().top ?? 0
+    const distanceToContentStart = viewportTop - container.getBoundingClientRect().top
+    const heightDifference = previousContentHeight - collapsedMaxHeight
+    const scrollDistance = Math.min(heightDifference, distanceToContentStart)
 
-    if (heightDifference > 0) {
+    if (scrollDistance > 0) {
       const scrollTarget = scrollContainer ?? window
 
-      scrollTarget.scrollBy({ top: -heightDifference })
+      scrollTarget.scrollBy({ top: -scrollDistance })
     }
 
     setCollapseScroll(null)
   }, [collapseScroll, collapsedMaxHeight, isExpanded])
 
   const handleToggleExpandCollapse = () => {
+    const contentElement = contentElementRef.current
     const container = containerRef.current
 
-    if (isExpanded && container !== null) {
+    if (isExpanded && contentElement !== null && container !== null) {
       setCollapseScroll({
-        previousContainerHeight: container.getBoundingClientRect().height,
+        previousContentHeight: contentElement.getBoundingClientRect().height,
         scrollContainer: findVerticalScrollContainer(container),
       })
     }
@@ -159,20 +167,27 @@ export function ReadMore({
   return (
     <div ref={containerRef}>
       {content}
-      <div className="mt-3 flex justify-center">
-        <Button
-          aria-expanded={isExpanded}
-          className={toggleButtonClassName}
-          iconRight={
-            <IconChevronDown className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
-          }
-          onClick={handleToggleExpandCollapse}
-          size="lg"
-          type="button"
-          variant="outline"
-        >
-          {isExpanded ? readLessText : readMoreText}
-        </Button>
+      <div
+        className={cn(
+          "flex justify-center",
+          isExpanded ? "mt-3" : "mt-1",
+          isExpanded && stickyToggle && "pointer-events-none sticky bottom-3 z-10"
+        )}
+      >
+        <div className="rounded-full bg-background">
+          <Button
+            aria-expanded={isExpanded}
+            iconRight={
+              <IconChevronDown className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
+            }
+            onClick={handleToggleExpandCollapse}
+            type="button"
+            variant="outline"
+            className={cn("pointer-events-auto rounded-full", toggleButtonClassName)}
+          >
+            {isExpanded ? readLessText : readMoreText}
+          </Button>
+        </div>
       </div>
     </div>
   )
