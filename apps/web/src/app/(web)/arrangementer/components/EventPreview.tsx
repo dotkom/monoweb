@@ -13,7 +13,6 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  ReadMore,
   ScrollArea,
   Text,
   Title,
@@ -263,14 +262,9 @@ function EventPreviewDetails({
         </section>
       </div>
 
-      {showDescription &&
-        (showAttendanceCard ? (
-          <ReadMore maxLines={8}>
-            <EventDescription description={event.description} />
-          </ReadMore>
-        ) : (
-          <EventDescription description={event.description} />
-        ))}
+      {showDescription && (
+        <EventDescription description={event.description} collapse={showAttendanceCard ? "all" : undefined} />
+      )}
 
       {showAttendanceCard && (
         <div className="w-112 max-w-full self-center">
