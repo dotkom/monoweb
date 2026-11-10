@@ -4,6 +4,7 @@ import type { Event } from "@dotkomonline/rpc/event"
 import { Button } from "@dotkomonline/ui"
 import { IconEditFilled } from "@tabler/icons-react"
 import { EventCalendarButton } from "./EventCalendarButton"
+import { EventFollowButton } from "./EventFollowButton"
 import { OrganizerList } from "./OrganizerList"
 
 interface EventSubheaderProps {
@@ -22,6 +23,8 @@ export function EventSubheader({ event, isCalendarButtonVisible, showAdminLink }
 
       <div className="flex shrink-0 items-center gap-2">
         {isCalendarButtonVisible && <EventCalendarButton event={event} />}
+
+        <EventFollowButton />
 
         {showAdminLink && (
           <Button
