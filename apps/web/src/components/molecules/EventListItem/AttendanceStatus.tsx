@@ -33,6 +33,7 @@ interface EventListItemAttendanceStatusProps {
   eventEndInPast: boolean
   size?: "default" | "sm" | "lg"
   classNames?: AttendanceStatusClassNames
+  hideLock?: boolean
 }
 
 export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
@@ -41,6 +42,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   eventEndInPast,
   size = "default",
   classNames,
+  hideLock = false,
 }) => {
   const now = getCurrentUTC()
   const attendanceStatus = getAttendanceStatus(attendance, now)
@@ -54,6 +56,7 @@ export const AttendanceStatus: FC<EventListItemAttendanceStatusProps> = ({
   const capacity = getAttendanceCapacity(attendance)
 
   const showLock =
+    !hideLock &&
     !eventEndInPast &&
     (isRegistered || isQueued ? !isFuture(attendance.deregisterDeadline) : attendanceStatus === "CLOSED")
 
