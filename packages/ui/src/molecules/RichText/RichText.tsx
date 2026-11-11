@@ -13,6 +13,7 @@ interface RichTextProps {
   readMoreText?: string
   readLessText?: string
   hideToggleButton?: boolean
+  stickyToggle?: boolean
   toggleButtonClassName?: string
 }
 
@@ -23,6 +24,7 @@ export function RichText({
   readMoreText = "Vis mer",
   readLessText = "Vis mindre",
   hideToggleButton = false,
+  stickyToggle,
   toggleButtonClassName,
 }: RichTextProps) {
   const sanitizedHTML = wrapOverflowingElements(DOMPurify.sanitize(content))
@@ -48,6 +50,7 @@ export function RichText({
       readMoreText={readMoreText}
       readLessText={readLessText}
       hideToggleButton={hideToggleButton}
+      stickyToggle={stickyToggle}
       toggleButtonClassName={toggleButtonClassName}
     >
       {RichTextContent}
