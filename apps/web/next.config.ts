@@ -1,8 +1,8 @@
-import { withSentryConfig } from "@sentry/nextjs/config"
 import type { NextConfig } from "next"
 
 const config: NextConfig = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: true,
   env: {
     NEXT_PUBLIC_LOGIN_ROUTE: "/api/auth/authorize",
     NEXT_PUBLIC_PROFILE_ROUTE: "/api/auth/session",
@@ -39,31 +39,11 @@ const config: NextConfig = {
   },
 
   // This is to help with version mismatches for `import-in-the-middle` and `require-in-the-middle` in OTEL packages
-  transpilePackages: [
-    "import-in-the-middle",
-    "require-in-the-middle",
-    "@opentelemetry/instrumentation",
-    "@sentry/node",
-    "@sentry/node-core",
-  ],
+  transpilePackages: ["import-in-the-middle", "require-in-the-middle", "@opentelemetry/instrumentation"],
 
   // Explicitly ensure the transpiled packages are not treated as external.
   // zod must be external because zod v4 has internal ESM circular imports that bundlers cannot linearize safely.
   serverExternalPackages: ["zod"],
 }
 
-export default withSentryConfig(config, {
-  org: "dotkom",
-  project: "monoweb-web",
-  sentryUrl: "https://sentry.io/",
-  tunnelRoute: "/pulse",
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  widenClientFileUpload: true,
-  sourcemaps: {
-    deleteSourcemapsAfterUpload: true,
-  },
-  _experimental: {
-    turbopackReactComponentAnnotation: { enabled: true },
-    turbopackApplicationKey: "monoweb-web",
-  },
-})
+export default config

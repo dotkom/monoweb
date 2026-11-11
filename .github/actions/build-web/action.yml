@@ -41,14 +41,14 @@ runs:
           NEXT_PUBLIC_HOME_URL=${{ env.NEXT_PUBLIC_HOME_URL }}
           RPC_HOST=${{ env.RPC_HOST }}
           NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ env.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
-          SENTRY_DSN=${{ env.SENTRY_DSN }}
-          SENTRY_RELEASE=git-${{ inputs.git-hash }}-${{ inputs.environment }}
           DOPPLER_ENVIRONMENT=${{ env.DOPPLER_ENVIRONMENT }}
+          NEXT_PUBLIC_DASH0_ENDPOINT=${{ env.NEXT_PUBLIC_DASH0_ENDPOINT }}
+          NEXT_PUBLIC_DASH0_AUTH_TOKEN=${{ env.NEXT_PUBLIC_DASH0_AUTH_TOKEN }}
+          NEXT_PUBLIC_DASH0_DATASET=${{ env.NEXT_PUBLIC_DASH0_DATASET }}
         build-secret-envs: |
           AUTH0_CLIENT_SECRET=AUTH0_CLIENT_SECRET
           AUTH_SECRET=AUTH_SECRET
           SIGNING_KEY=SIGNING_KEY
-          SENTRY_AUTH_TOKEN=SENTRY_AUTH_TOKEN
         push: ${{ inputs.deploy }}
     - uses: ./.github/actions/internal/aws-ecs-deploy
       if: ${{ inputs.deploy == 'true' }}

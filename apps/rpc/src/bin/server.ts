@@ -2,7 +2,6 @@ import "../instrumentation"
 import { getLogger } from "@dotkomonline/logger"
 import { HTTP_REQUEST_SOURCE_HEADER, readHttpRequestSourceFromHeaders } from "@dotkomonline/utils"
 import fastifyCors from "@fastify/cors"
-import { captureException } from "@sentry/node"
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import fastify from "fastify"
@@ -119,7 +118,6 @@ await server.register(rawBody, {
 server.setErrorHandler((error) => {
   logger.error(error)
   console.error(error)
-  captureException(error)
 })
 server.register(fastifyCors, {
   origin: allowedOrigins,
@@ -132,6 +130,8 @@ server.register(fastifyCors, {
     "X-CSRF-Token",
     HTTP_REQUEST_SOURCE_HEADER,
     "Origin",
+    "traceparent",
+    "tracestate",
   ],
   credentials: true,
 })
