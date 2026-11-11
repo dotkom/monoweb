@@ -2,7 +2,6 @@ import type { DBClient, Prisma, PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
-import { captureException } from "@sentry/node"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
 import type { Configuration } from "../../configuration"
@@ -129,7 +128,6 @@ export function getLocalTaskExecutor(
         if (error instanceof Error) {
           span.setStatus({ code: SpanStatusCode.ERROR })
           span.recordException(error)
-          captureException(error)
         }
 
         await taskService.setTaskExecutionStatus(client, task.id, "FAILED", "RUNNING")

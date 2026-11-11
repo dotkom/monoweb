@@ -307,9 +307,6 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.10.0
         version: 1.10.0
-      '@sentry/node':
-        specifier: ^10.52.0
-        version: 10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))
       '@trpc/server':
         specifier: 11.8.1
         version: 11.8.1(typescript@7.0.2)
@@ -431,6 +428,9 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.821.0
         version: 3.1162.0
+      '@dash0/sdk-web':
+        specifier: ^0.32.0
+        version: 0.32.0
       '@date-fns/tz':
         specifier: ^1.2.0
         version: 1.5.0
@@ -482,9 +482,6 @@ importers:
       '@radix-ui/react-scroll-area':
         specifier: ^1.2.10
         version: 1.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@sentry/nextjs':
-        specifier: ^10.52.0
-        version: 10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))(next@16.4.5(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
       '@splinetool/react-spline':
         specifier: ^4.0.0
         version: 4.1.0(@splinetool/runtime@1.12.98)(next@16.4.5(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1538,6 +1535,10 @@ packages:
 
   '@dabh/diagnostics@2.0.9':
     resolution: {integrity: sha512-R6siwR65Hm+3yfgP7o8DKhNvputQAwfoz9zTc3kyDudnomj2/BcLmD+uGQQPICjuFUp8ounPBU+jmKsocwVVAg==}
+
+  '@dash0/sdk-web@0.32.0':
+    resolution: {integrity: sha512-JFZRi/xujy3QGBwMIr0sGdP+0WKPLCLOO0WL9J77Ipfw9kDx9HTy+szhkTiyVCgrw+Tak5jy2YfYxWZkqtfQoQ==}
+    engines: {node: '>=18'}
 
   '@date-fns/tz@1.5.0':
     resolution: {integrity: sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg==}
@@ -8757,6 +8758,9 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
+  web-vitals@5.3.0:
+    resolution: {integrity: sha512-q6LWsLatGYZp5VGBIOvbTj6JBV2nOmC8KvWztXBmwJcfFAzhwKwbOxhUH306XY3CcaZDUlSmSuNPBsCn0bFu+g==}
+
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -9533,6 +9537,10 @@ snapshots:
       '@so-ric/colorspace': 1.1.6
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@dash0/sdk-web@0.32.0':
+    dependencies:
+      web-vitals: 5.3.0
 
   '@date-fns/tz@1.5.0': {}
 
@@ -10595,14 +10603,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0)':
-    dependencies:
-      '@opentelemetry/api': 1.10.0
-      '@opentelemetry/core': 2.12.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/resources': 2.12.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/sdk-trace': 2.12.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/semantic-conventions': 1.45.0
-
   '@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1)':
     dependencies:
       '@opentelemetry/api': 1.9.1
@@ -11373,22 +11373,6 @@ snapshots:
       '@sentry/replay': 10.78.0
       '@sentry/replay-canvas': 10.78.0
 
-  '@sentry/bundler-plugins@10.78.0(rollup@4.67.2)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))':
-    dependencies:
-      '@babel/core': 7.29.7
-      '@sentry/cli': 2.58.6
-      '@sentry/core': 10.78.0
-      dotenv: 17.4.2
-      find-up: 5.0.0
-      glob: 13.0.6
-      magic-string: 0.30.21
-    optionalDependencies:
-      rollup: 4.67.2
-      webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-
   '@sentry/bundler-plugins@10.78.0(rollup@4.67.2)(webpack@5.112.2(postcss@8.5.32))':
     dependencies:
       '@babel/core': 7.29.7
@@ -11459,32 +11443,6 @@ snapshots:
     dependencies:
       '@sentry/core': 10.78.0
 
-  '@sentry/nextjs@10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))(next@16.4.5(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@rollup/plugin-commonjs': 28.0.1(rollup@4.67.2)
-      '@sentry/browser-utils': 10.78.0
-      '@sentry/bundler-plugins': 10.78.0(rollup@4.67.2)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      '@sentry/conventions': 0.16.0
-      '@sentry/core': 10.78.0
-      '@sentry/node': 10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))
-      '@sentry/opentelemetry': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))
-      '@sentry/react': 10.78.0(react@19.2.8)
-      '@sentry/server-utils': 10.78.0
-      '@sentry/vercel-edge': 10.78.0
-      '@sentry/webpack-plugin': 5.4.1(rollup@4.67.2)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      next: 16.4.5(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      rollup: 4.67.2
-      stacktrace-parser: 0.1.11
-    transitivePeerDependencies:
-      - '@opentelemetry/core'
-      - '@opentelemetry/exporter-trace-otlp-http'
-      - '@opentelemetry/sdk-trace-base'
-      - encoding
-      - react
-      - supports-color
-      - webpack
-
   '@sentry/nextjs@10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))(next@16.4.5(@opentelemetry/api@1.9.1)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(webpack@5.112.2(postcss@8.5.32))':
     dependencies:
       '@opentelemetry/api': 1.9.1
@@ -11511,20 +11469,7 @@ snapshots:
       - supports-color
       - webpack
 
-  '@sentry/node-core@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))':
-    dependencies:
-      '@sentry/conventions': 0.16.0
-      '@sentry/core': 10.78.0
-      '@sentry/opentelemetry': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))
-      import-in-the-middle: 3.5.3
-    optionalDependencies:
-      '@opentelemetry/api': 1.9.1
-      '@opentelemetry/core': 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/exporter-trace-otlp-http': 0.217.0(@opentelemetry/api@1.10.0)
-      '@opentelemetry/instrumentation': 0.220.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.9.1)
-
-  '@sentry/node-core@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))':
+  '@sentry/node-core@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))':
     dependencies:
       '@sentry/conventions': 0.16.0
       '@sentry/core': 10.78.0
@@ -11533,8 +11478,9 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/core': 3.1.1(@opentelemetry/api@1.10.0)
+      '@opentelemetry/exporter-trace-otlp-http': 0.217.0(@opentelemetry/api@1.10.0)
       '@opentelemetry/instrumentation': 0.220.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.10.0)
+      '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.9.1)
 
   '@sentry/node-core@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.9.1))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))':
     dependencies:
@@ -11548,22 +11494,6 @@ snapshots:
       '@opentelemetry/instrumentation': 0.220.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.9.1)
 
-  '@sentry/node@10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@opentelemetry/instrumentation': 0.220.0(@opentelemetry/api@1.9.1)
-      '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.9.1)
-      '@sentry/conventions': 0.16.0
-      '@sentry/core': 10.78.0
-      '@sentry/node-core': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))
-      '@sentry/opentelemetry': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))
-      '@sentry/server-utils': 10.78.0
-      import-in-the-middle: 3.5.3
-    transitivePeerDependencies:
-      - '@opentelemetry/core'
-      - '@opentelemetry/exporter-trace-otlp-http'
-      - supports-color
-
   '@sentry/node@10.78.0(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))':
     dependencies:
       '@opentelemetry/api': 1.9.1
@@ -11571,8 +11501,8 @@ snapshots:
       '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.9.1)
       '@sentry/conventions': 0.16.0
       '@sentry/core': 10.78.0
-      '@sentry/node-core': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))
-      '@sentry/opentelemetry': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))
+      '@sentry/node-core': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/exporter-trace-otlp-http@0.217.0(@opentelemetry/api@1.10.0))(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))
+      '@sentry/opentelemetry': 10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))
       '@sentry/server-utils': 10.78.0
       import-in-the-middle: 3.5.3
     transitivePeerDependencies:
@@ -11597,14 +11527,6 @@ snapshots:
       - supports-color
 
   '@sentry/opentelemetry@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.10.0))':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@opentelemetry/core': 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/sdk-trace-base': 2.12.0(@opentelemetry/api@1.10.0)
-      '@sentry/conventions': 0.16.0
-      '@sentry/core': 10.78.0
-
-  '@sentry/opentelemetry@10.78.0(@opentelemetry/api@1.9.1)(@opentelemetry/core@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/sdk-trace-base@2.12.0(@opentelemetry/api@1.9.1))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/core': 3.1.1(@opentelemetry/api@1.10.0)
@@ -11646,15 +11568,6 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@sentry/core': 10.78.0
-
-  '@sentry/webpack-plugin@5.4.1(rollup@4.67.2)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))':
-    dependencies:
-      '@sentry/bundler-plugins': 10.78.0(rollup@4.67.2)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
-    transitivePeerDependencies:
-      - encoding
-      - rollup
-      - supports-color
 
   '@sentry/webpack-plugin@5.4.1(rollup@4.67.2)(webpack@5.112.2(postcss@8.5.32))':
     dependencies:
@@ -15188,16 +15101,6 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  minimizer-webpack-plugin@5.14.0(lightningcss@1.30.2)(postcss@8.5.32)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32)):
-    dependencies:
-      jest-worker: 27.5.1
-      schema-utils: 4.8.3(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      terser: 5.51.2
-      webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
-    optionalDependencies:
-      lightningcss: 1.30.2
-      postcss: 8.5.32
-
   minimizer-webpack-plugin@5.14.0(postcss@8.5.32)(webpack@5.112.2(postcss@8.5.32)):
     dependencies:
       jest-worker: 27.5.1
@@ -16378,15 +16281,6 @@ snapshots:
 
   scheduler@0.27.0: {}
 
-  schema-utils@4.8.3(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32)):
-    dependencies:
-      '@types/json-schema': 7.0.15
-      ajv: 8.20.0
-      ajv-formats: 3.0.1(ajv@8.20.0)
-      ajv-keywords: 5.1.0(ajv@8.20.0)
-    optionalDependencies:
-      webpack: 5.112.2(lightningcss@1.30.2)(postcss@8.5.32)
-
   schema-utils@4.8.3(webpack@5.112.2(postcss@8.5.32)):
     dependencies:
       '@types/json-schema': 7.0.15
@@ -17302,48 +17196,13 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
+  web-vitals@5.3.0: {}
+
   webidl-conversions@3.0.1: {}
 
   webidl-conversions@8.0.1: {}
 
   webpack-sources@3.7.0: {}
-
-  webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32):
-    dependencies:
-      '@types/estree': 1.0.10
-      '@types/json-schema': 7.0.15
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      browserslist: 4.29.5
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.26.1
-      es-module-lexer: 2.3.2
-      events: 3.3.0
-      graceful-fs: 4.2.11
-      mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.14.0(lightningcss@1.30.2)(postcss@8.5.32)(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      schema-utils: 4.8.3(webpack@5.112.2(lightningcss@1.30.2)(postcss@8.5.32))
-      tapable: 2.3.3
-      watchpack: 2.6.4
-      webpack-sources: 3.7.0
-    transitivePeerDependencies:
-      - '@minify-html/node'
-      - '@napi-rs/image'
-      - '@swc/core'
-      - '@swc/css'
-      - '@swc/html'
-      - clean-css
-      - cssnano
-      - csso
-      - esbuild
-      - html-minifier-terser
-      - imagemin
-      - lightningcss
-      - postcss
-      - sharp
-      - svgo
-      - uglify-js
 
   webpack@5.112.2(postcss@8.5.32):
     dependencies:

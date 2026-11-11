@@ -3,7 +3,6 @@ import { HTTP_REQUEST_SOURCE_ATTRIBUTE } from "@dotkomonline/utils"
 import type { GroupId, GroupRoleType } from "./modules/group/group"
 import type { UserId } from "./modules/user/user"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
-import { captureException } from "@sentry/node"
 import { TRPCError, type TRPC_ERROR_CODE_KEY, initTRPC } from "@trpc/server"
 import type { MiddlewareResult } from "@trpc/server/unstable-core-do-not-import"
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns"
@@ -142,8 +141,7 @@ function withTracing(exportSpanOnError: boolean) {
             })
           }
 
-          // NOTE: We do not bother reporting authentication or authorization errors to sentry, as they are a client
-          // fault.
+          // NOTE: We do not record authentication or authorization errors as exceptions, as they are a client fault.
           const isClientError = error.code === "FORBIDDEN" || error.code === "UNAUTHORIZED"
 
           if (isClientError) {
@@ -166,8 +164,6 @@ function withTracing(exportSpanOnError: boolean) {
               traceId,
               error
             )
-
-            captureException(error)
           }
 
           return {

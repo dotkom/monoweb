@@ -15,10 +15,11 @@ ARG NEXT_PUBLIC_HOME_URL
 ARG RPC_HOST
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
-ARG SENTRY_DSN
-ARG SENTRY_RELEASE
-
 ARG DOPPLER_ENVIRONMENT
+
+ARG NEXT_PUBLIC_DASH0_ENDPOINT
+ARG NEXT_PUBLIC_DASH0_AUTH_TOKEN
+ARG NEXT_PUBLIC_DASH0_DATASET
 
 # Step 1: Build the Next.js application along with the necessary build variables.
 FROM base AS builder
@@ -38,19 +39,17 @@ ENV NEXT_PUBLIC_RPC_HOST=${NEXT_PUBLIC_RPC_HOST}
 ENV NEXT_PUBLIC_HOME_URL=${NEXT_PUBLIC_HOME_URL}
 ENV RPC_HOST=${RPC_HOST}
 
-# The following are public build-time variables that instrument and configure Sentry
-ENV SENTRY_DSN=${SENTRY_DSN}
-ENV NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
-ENV SENTRY_RELEASE=${SENTRY_RELEASE}
-ENV NEXT_PUBLIC_SENTRY_RELEASE=${SENTRY_RELEASE}
 ENV DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
 ENV NEXT_PUBLIC_DOPPLER_ENVIRONMENT=${DOPPLER_ENVIRONMENT}
+
+ENV NEXT_PUBLIC_DASH0_ENDPOINT=${NEXT_PUBLIC_DASH0_ENDPOINT}
+ENV NEXT_PUBLIC_DASH0_AUTH_TOKEN=${NEXT_PUBLIC_DASH0_AUTH_TOKEN}
+ENV NEXT_PUBLIC_DASH0_DATASET=${NEXT_PUBLIC_DASH0_DATASET}
 
 # Credentials are only available to this command and are not stored in image metadata or layers.
 RUN --mount=type=secret,id=AUTH0_CLIENT_SECRET,env=AUTH0_CLIENT_SECRET,required=true \
     --mount=type=secret,id=AUTH_SECRET,env=AUTH_SECRET,required=true \
     --mount=type=secret,id=SIGNING_KEY,env=SIGNING_KEY,required=true \
-    --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
     pnpm run --filter @dotkomonline/web build
 
 # Step 2: Only install the necessary dependencies for the production build of this application.
@@ -78,10 +77,6 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
-
-# Embed the Sentry release ID into the container.
-ARG SENTRY_RELEASE
-ENV SENTRY_RELEASE=${SENTRY_RELEASE}
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs

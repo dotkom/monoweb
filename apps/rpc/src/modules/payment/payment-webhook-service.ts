@@ -1,5 +1,7 @@
-import { logger } from "@sentry/node"
+import { getLogger } from "@dotkomonline/logger"
 import type Stripe from "stripe"
+
+const logger = getLogger("payment-webhook-service")
 
 interface PaymentWebhookService {
   registerWebhook: (webhookUrl: string, identifier: string) => Promise<void>

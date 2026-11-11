@@ -1,6 +1,6 @@
 "use client"
 
-import * as Sentry from "@sentry/nextjs"
+import { reportError } from "@dash0/sdk-web"
 import { useEffect } from "react"
 import { Title, Text } from "@dotkomonline/ui"
 import PlausibleProvider from "next-plausible"
@@ -21,7 +21,7 @@ export type GlobalErrorProps = {
 
 export default function GlobalError({ error }: GlobalErrorProps) {
   useEffect(() => {
-    Sentry.captureException(error)
+    reportError(error)
   }, [error])
 
   return (
