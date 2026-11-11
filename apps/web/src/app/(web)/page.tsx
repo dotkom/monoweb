@@ -101,7 +101,6 @@ export default async function App() {
     }
 
     const start = new TZDate(event.start, "Europe/Oslo")
-    const end = new TZDate(event.end, "Europe/Oslo")
     const eventHref = createEventPageUrl(event.id, event.title)
 
     return [
@@ -109,10 +108,6 @@ export default async function App() {
         title: event.title,
         dateLabel: format(start, "d. MMMM yyyy", { locale: nb }),
         dateTime: event.start.toISOString(),
-        schedule: format(start, "EEEE d. MMMM", { locale: nb }),
-        time: `kl. ${format(start, "HH:mm")} - ${format(end, "HH:mm")}`,
-        month: format(start, "MMM", { locale: nb }).toLocaleUpperCase("nb-NO"),
-        day: format(start, "dd"),
         location: event.locationTitle ?? "Sted ikke oppgitt",
         eventType: event.type,
         imageUrl: event.imageUrl ?? undefined,

@@ -30,7 +30,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
           className="w-full rounded-lg h-fit min-h-16 text-base font-medium bg-gray-200 hover:bg-gray-100 dark:bg-stone-700 dark:hover:bg-stone-600"
         >
           <IconTicket className="size-[1.25em]" />
-          Vis billett
+          Vis QR-kode
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
@@ -41,7 +41,7 @@ export const TicketButton = ({ attendee }: TicketButtonProps) => {
         <div className="flex flex-row w-full items-center justify-between">
           <AlertDialogTitle asChild>
             <Title element="h1" size="lg">
-              Din billett
+              Din QR-kode
             </Title>
           </AlertDialogTitle>
           <AlertDialogCancel className="p-2">
