@@ -5,6 +5,14 @@ import { type ReactNode, useLayoutEffect, useRef, useState } from "react"
 import { Button } from "../../atoms/Button/Button"
 import { cn } from "../../utils"
 
+// This component is black magic and I have no idea what is going on, but it works surprisingly well
+
+// ReadMore shows a preview of long content with a toggle to expand or collapse it. When it closes, we scroll manually
+// as the content shrinks, to keep the closing from feeling abrupt, and disorienting the user.
+
+// There is a lot of computation going on here, but it's mostly just element height and stuff. It should be cheap, even
+// though it looks expensive.
+
 const DEFAULT_LINE_HEIGHT_PX = 28
 
 function findVerticalScrollContainer(element: HTMLElement) {
@@ -16,6 +24,7 @@ function findVerticalScrollContainer(element: HTMLElement) {
     const canOverflow = overflowY === "auto" || overflowY === "scroll"
     const isOverflowing = ancestor.scrollHeight > ancestor.clientHeight
 
+    // We check the actual height because a wrapper that only scrolls horizontally can still have `overflow-y: auto`
     if (canOverflow && isOverflowing) {
       return ancestor
     }
@@ -56,10 +65,13 @@ export function ReadMore({
   const [collapseScroll, setCollapseScroll] = useState<{
     previousContentHeight: number
     scrollContainer: HTMLElement | null
+    previousScrollTop: number
+    scrollDistance: number
   } | null>(null)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const contentElementRef = useRef<HTMLDivElement>(null)
+  const toggleRowRef = useRef<HTMLDivElement>(null)
 
   const measureHeights = () => {
     const contentElement = contentElementRef.current
@@ -107,36 +119,93 @@ export function ReadMore({
   }, [children, maxLines])
 
   useLayoutEffect(() => {
-    const container = containerRef.current
+    const contentElement = contentElementRef.current
 
-    if (isExpanded || collapseScroll === null || container === null) {
+    if (isExpanded || collapseScroll === null || contentElement === null) {
       return
     }
 
-    const { previousContentHeight, scrollContainer } = collapseScroll
-    const viewportTop = scrollContainer?.getBoundingClientRect().top ?? 0
-    const distanceToContentStart = viewportTop - container.getBoundingClientRect().top
-    const heightDifference = previousContentHeight - collapsedMaxHeight
-    const scrollDistance = Math.min(heightDifference, distanceToContentStart)
+    const { previousContentHeight, scrollContainer, previousScrollTop, scrollDistance } = collapseScroll
+    const scrollTarget = scrollContainer ?? window
+    const totalHeightChange = previousContentHeight - collapsedMaxHeight
+    const heightTransition = contentElement
+      .getAnimations()
+      .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "max-height")
 
-    if (scrollDistance > 0) {
-      const scrollTarget = scrollContainer ?? window
+    const syncScroll = () => {
+      if (scrollDistance <= 0 || totalHeightChange <= 0) {
+        return
+      }
 
-      scrollTarget.scrollBy({ top: -scrollDistance })
+      const currentScrollTop = scrollContainer?.scrollTop ?? window.scrollY
+
+      // We use the height the browser has rendered to work out how far the close has progressed. This makes scrolling
+      // follow the same easing as the height transition, even if we only need to scroll part of the height removed
+      const heightChange = previousContentHeight - contentElement.getBoundingClientRect().height
+      const progress = Math.max(0, Math.min(1, heightChange / totalHeightChange))
+      const nextScrollTop = previousScrollTop - scrollDistance * progress
+
+      if (progress > 0 && Math.abs(nextScrollTop - currentScrollTop) > 0.5) {
+        scrollTarget.scrollTo({ top: nextScrollTop, behavior: "instant" })
+      }
     }
 
-    setCollapseScroll(null)
+    syncScroll()
+
+    // With reduced motion the height changes immediately, so the first scroll update is enough
+    if (heightTransition === undefined) {
+      setCollapseScroll(null)
+
+      return
+    }
+
+    const observer = new ResizeObserver(syncScroll)
+    observer.observe(contentElement)
+
+    let isActive = true
+
+    const finishCollapse = () => {
+      if (isActive) {
+        syncScroll()
+        setCollapseScroll(null)
+      }
+    }
+
+    void heightTransition.finished.then(finishCollapse, finishCollapse)
+
+    return () => {
+      isActive = false
+      observer.disconnect()
+    }
   }, [collapseScroll, collapsedMaxHeight, isExpanded])
 
   const handleToggleExpandCollapse = () => {
-    const contentElement = contentElementRef.current
     const container = containerRef.current
+    const contentElement = contentElementRef.current
+    const toggleRow = toggleRowRef.current
 
-    if (isExpanded && contentElement !== null && container !== null) {
+    if (isExpanded && container !== null && contentElement !== null && toggleRow !== null) {
+      // We find the scroll container before closing, since the shorter content may no longer overflow the drawer
+      const scrollContainer = findVerticalScrollContainer(container)
+
+      const viewportTop = scrollContainer?.getBoundingClientRect().top ?? 0
+      const contentBounds = contentElement.getBoundingClientRect()
+      const collapsedContentBottom = contentBounds.top + collapsedMaxHeight
+
+      const distanceToToggle = toggleRow.getBoundingClientRect().top - collapsedContentBottom
+      const distanceToContentStart = viewportTop - contentBounds.top
+
+      // We scroll just enough to keep the toggle in view, and stop at the start of the description
+      const scrollDistance = Math.max(0, Math.min(distanceToToggle, distanceToContentStart))
+
       setCollapseScroll({
-        previousContentHeight: contentElement.getBoundingClientRect().height,
-        scrollContainer: findVerticalScrollContainer(container),
+        previousContentHeight: contentBounds.height,
+        scrollContainer,
+        previousScrollTop: scrollContainer?.scrollTop ?? window.scrollY,
+        scrollDistance,
       })
+    } else {
+      setCollapseScroll(null)
     }
 
     setIsExpanded((previous) => !previous)
@@ -146,7 +215,8 @@ export function ReadMore({
     <div
       ref={contentElementRef}
       className={cn(
-        "overflow-hidden transition-[max-height] duration-200 ease-out motion-reduce:transition-none",
+        "overflow-hidden transition-[max-height] ease-out motion-reduce:transition-none",
+        isExpanded ? "duration-200" : "duration-300",
         className
       )}
       style={{
@@ -164,14 +234,18 @@ export function ReadMore({
     return content
   }
 
+  // We keep the toggle sticky through the close so it doesn't jump to the end while the content is still shrinking
+  const isToggleSticky = stickyToggle && (isExpanded || collapseScroll !== null)
+
   return (
     <div ref={containerRef}>
       {content}
       <div
+        ref={toggleRowRef}
         className={cn(
-          "flex justify-center",
-          isExpanded ? "mt-3" : "mt-1",
-          isExpanded && stickyToggle && "pointer-events-none sticky bottom-3 z-10"
+          "flex justify-center transition-[margin-top] ease-out motion-reduce:transition-none",
+          isExpanded ? "mt-3 duration-200" : "mt-1 duration-300",
+          isToggleSticky && "pointer-events-none sticky bottom-3 z-10"
         )}
       >
         <div className="rounded-full bg-background">
