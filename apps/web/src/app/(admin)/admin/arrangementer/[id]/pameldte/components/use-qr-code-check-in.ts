@@ -29,7 +29,8 @@ export function useQrCodeCheckIn({ attendance, onUpdateAttendance }: UseQrCodeCh
         ttlResolution: 0,
       })
   )
-  const lastRecentScanToastAtReference = useRef<Date | null>(null)
+
+  const lastScanToastAtReference = useRef<Date | null>(null)
 
   const updateCheckIn = (nextCheckIn: QrCodeCheckIn | null) => {
     activeCheckInReference.current = nextCheckIn
@@ -43,6 +44,10 @@ export function useQrCodeCheckIn({ attendance, onUpdateAttendance }: UseQrCodeCh
       await onUpdateAttendance(attendee.id, getCurrentUTC())
 
       recentScans.set(attendee.id, true)
+
+      // Give the result a full cooldown before a repeated camera scan can show a notice
+      lastScanToastAtReference.current = new Date()
+
       showAutomaticCheckInToast(attendeeName, () => onUpdateAttendance(attendee.id, null))
     } catch {
       recentScans.delete(attendee.id)
@@ -86,7 +91,8 @@ export function useQrCodeCheckIn({ attendance, onUpdateAttendance }: UseQrCodeCh
 
     if (remainingMilliseconds > 0) {
       const now = new Date()
-      const lastToastAt = lastRecentScanToastAtReference.current
+
+      const lastToastAt = lastScanToastAtReference.current
       const canShowToast =
         lastToastAt === null || differenceInMilliseconds(now, lastToastAt) >= RECENT_SCAN_COOLDOWN_MILLISECONDS
 
@@ -98,7 +104,8 @@ export function useQrCodeCheckIn({ attendance, onUpdateAttendance }: UseQrCodeCh
           locale: nb,
         })
 
-        lastRecentScanToastAtReference.current = now
+        lastScanToastAtReference.current = now
+
         toast.add({
           type: "info",
           title: "QR-koden er nylig skannet",
@@ -115,6 +122,7 @@ export function useQrCodeCheckIn({ attendance, onUpdateAttendance }: UseQrCodeCh
     const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
     const attendedAt = attendee?.attendedAt ?? null
     const eligibility = getCheckInEligibility(attendance, attendee)
+
     const initialCheckIn: QrCodeCheckIn = {
       attendeeId,
       isAutomaticCheckIn: eligibility.canAutomaticallyCheckIn,
