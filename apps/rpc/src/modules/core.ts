@@ -3,13 +3,14 @@ import { S3Client } from "@aws-sdk/client-s3"
 import { SESClient } from "@aws-sdk/client-ses"
 import { SQSClient } from "@aws-sdk/client-sqs"
 import { createPrisma } from "@dotkomonline/db"
-import { ManagementClient } from "auth0"
 import { admin, type admin_directory_v1 } from "@googleapis/admin"
+import { ManagementClient } from "auth0"
 import { JWT } from "googleapis-common"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, isAmazonSesEmailFeatureEnabled, isGoogleWorkspaceFeatureEnabled } from "../configuration"
 import { IllegalStateError } from "../error"
+import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -19,11 +20,15 @@ import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getContestRepository } from "./contest/contest-repository"
+import { getContestService } from "./contest/contest-service"
 import { getEmailService, getEmptyEmailService } from "./email/email-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
+import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
+import { getFadderukeService } from "./fadderuke/fadderuke-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
 import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
 import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
@@ -41,6 +46,8 @@ import { getNotificationRecipientQueryRepository } from "./notification/notifica
 import { getNotificationRecipientResolver } from "./notification/notification-recipient-resolver"
 import { getNotificationRepository } from "./notification/notification-repository"
 import { getNotificationService } from "./notification/notification-service"
+import { getNotificationSettingsRepository } from "./notification/notification-settings-repository"
+import { getNotificationSettingsService } from "./notification/notification-settings-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
 import { getPaymentProductsService } from "./payment/payment-products-service"
@@ -54,15 +61,10 @@ import { getTaskRepository } from "./task/task-repository"
 import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getMembershipService } from "./user/membership-service"
-import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
+import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-import { Auth0JwtService } from "../lib/auth0-jwt"
-import { getContestRepository } from "./contest/contest-repository"
-import { getContestService } from "./contest/contest-service"
-import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
-import { getFadderukeService } from "./fadderuke/fadderuke-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -185,6 +187,7 @@ export async function createServiceLayer(
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const notificationRepository = getNotificationRepository()
+  const notificationSettingsRepository = getNotificationSettingsRepository()
   const notificationRecipientQueryRepository = getNotificationRecipientQueryRepository()
   const offlineRepository = getOfflineRepository()
   const auditLogRepository = getAuditLogRepository()
@@ -253,7 +256,11 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
-  const notificationRecipientResolver = getNotificationRecipientResolver(notificationRecipientQueryRepository)
+  const notificationSettingsService = getNotificationSettingsService(notificationSettingsRepository)
+  const notificationRecipientResolver = getNotificationRecipientResolver(
+    notificationRecipientQueryRepository,
+    notificationSettingsService
+  )
   const notificationService = getNotificationService(
     notificationRepository,
     notificationRecipientResolver,
@@ -267,7 +274,8 @@ export async function createServiceLayer(
     },
     eventEmitter,
     emailService,
-    configuration.WEB_PUBLIC_ORIGIN
+    configuration.WEB_PUBLIC_ORIGIN,
+    notificationSettingsService
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
@@ -320,6 +328,7 @@ export async function createServiceLayer(
     contestService,
     fadderukeService,
     notificationService,
+    notificationSettingsService,
     recurringTaskService,
     workspaceService,
 

@@ -103,10 +103,10 @@ export type PersonalMark = Prisma.PersonalMarkModel
  */
 export type PrivacyPermissions = Prisma.PrivacyPermissionsModel
 /**
- * Model NotificationPermissions
+ * Model NotificationSettings
  * 
  */
-export type NotificationPermissions = Prisma.NotificationPermissionsModel
+export type NotificationSettings = Prisma.NotificationSettingsModel
 /**
  * Model EventHostingGroup
  * 

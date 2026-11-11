@@ -22,7 +22,7 @@ function makeUser(overrides: Partial<User> = {}): User {
     flags: [],
     workspaceUserId: null,
     privacyPermissionsId: null,
-    notificationPermissionsId: null,
+    notificationSettingsId: null,
     memberships: [],
     createdAt: new Date(),
     updatedAt: new Date(),

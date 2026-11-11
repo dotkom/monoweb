@@ -1,42 +1,35 @@
-import type { NotificationPermissionsWrite } from "../user/user"
-import type { NotificationType } from "./notification"
+import { z } from "zod"
+import {
+  DEFAULT_NOTIFICATION_DELIVERY,
+  NotificationDeliverySchema,
+  type NotificationDeliverySettings,
+  NotificationTypeSchema,
+  REQUIRED_NOTIFICATION_TYPES,
+} from "./notification"
 
-export type NotificationPermissionField = keyof Pick<
-  NotificationPermissionsWrite,
-  "applications" | "newArticles" | "standardNotifications" | "groupMessages" | "markRulesUpdates" | "registrationStart"
->
+const StoredNotificationDeliverySettingsSchema = z.partialRecord(
+  NotificationTypeSchema,
+  NotificationDeliverySchema.partial()
+)
 
-const ALWAYS = "ALWAYS"
+export function resolveNotificationDeliverySettings(
+  permissions: { deliverySettings?: unknown } | null
+): NotificationDeliverySettings {
+  const settings: NotificationDeliverySettings = { ...DEFAULT_NOTIFICATION_DELIVERY }
+  const storedSettings = StoredNotificationDeliverySettingsSchema.parse(permissions?.deliverySettings ?? {})
 
-const PREFERENCE_FIELD_BY_NOTIFICATION_TYPE = {
-  BROADCAST: "standardNotifications",
-  BROADCAST_IMPORTANT: ALWAYS,
-  EVENT_REMINDER: "standardNotifications",
-  EVENT_UPDATE: "standardNotifications",
-  ATTENDANCE_REGISTRATION: ALWAYS,
-  ATTENDANCE_DEREGISTRATION: ALWAYS,
-  ATTENDANCE_REGISTRATION_FROM_QUEUE: ALWAYS,
-  ATTENDANCE_QUEUE_UPDATE: ALWAYS,
-  ATTENDANCE_COMPLETION_FAILED: ALWAYS,
-  JOB_LISTING_REMINDER: "applications",
-  NEW_ARTICLE: "newArticles",
-  NEW_EVENT: "standardNotifications",
-  NEW_FEEDBACK_FORM: ALWAYS,
-  NEW_INTEREST_GROUP: "groupMessages",
-  NEW_JOB_LISTING: "applications",
-  NEW_MARK: ALWAYS,
-  NEW_OFFLINE: "standardNotifications",
-} as const satisfies Record<NotificationType, NotificationPermissionField | typeof ALWAYS>
+  for (const notificationType of NotificationTypeSchema.options) {
+    const delivery = {
+      ...DEFAULT_NOTIFICATION_DELIVERY[notificationType],
+      ...storedSettings[notificationType],
+    }
 
-/**
- * Return the user preference field that gates this notification type, or null if it cannot be opted out of.
- */
-export function getNotificationPermissionField(notificationType: NotificationType): NotificationPermissionField | null {
-  const permissionField = PREFERENCE_FIELD_BY_NOTIFICATION_TYPE[notificationType]
+    if (REQUIRED_NOTIFICATION_TYPES.includes(notificationType)) {
+      delivery.isEnabled = true
+    }
 
-  if (permissionField === ALWAYS) {
-    return null
+    settings[notificationType] = delivery
   }
 
-  return permissionField
+  return settings
 }

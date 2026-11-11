@@ -47,7 +47,7 @@ export const createMockUser = (overrides: Partial<User> = {}): User => ({
   flags: [],
   workspaceUserId: null,
   privacyPermissionsId: null,
-  notificationPermissionsId: null,
+  notificationSettingsId: null,
   memberships: [
     {
       id: "00000000-0000-4000-8000-000000000050",
