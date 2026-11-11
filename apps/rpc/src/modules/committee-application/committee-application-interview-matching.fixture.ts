@@ -49,7 +49,7 @@ export function createInterviewMatchingFixture(): InterviewMatchingFixture {
 
     for (const dayIndex of interviewDays) {
       const day = addDays(weekStartsAt, dayIndex, dateContext)
-      const startHour = faker.helpers.arrayElement([8, 10, 12, 13])
+      const startHour = faker.helpers.arrayElement([9, 10, 12, 13])
       const startsAt = addHours(day, startHour)
 
       for (const room of rooms) {
@@ -83,7 +83,7 @@ export function createInterviewMatchingFixture(): InterviewMatchingFixture {
 
     for (const dayIndex of availableDays) {
       const day = addDays(weekStartsAt, dayIndex, dateContext)
-      const startHour = faker.number.int({ min: 8, max: 12 })
+      const startHour = faker.number.int({ min: 9, max: 12 })
       input.availabilityBlocks.push({
         applicationId: id,
         startsAt: addHours(day, startHour),
