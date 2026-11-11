@@ -31,7 +31,7 @@ export const CURRENCY_VALUES = [
 ] as const
 
 // Hidden but functional values
-export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET", "BIRTHS_IN_US", "PARACETAMOL",])
+export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET", "BIRTHS_IN_US", "PARACETAMOL"])
 
 export type CurrenciesType = z.infer<typeof Currencies>
 
@@ -77,7 +77,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "67":
       return "67" // 67
     case "RP":
-      return `${((value / 201.93) * 2540)} RP` // A 2540RP gift card costs 201.93kr
+      return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
     case "OW_BUCKS":
       return `${(value * Math.random() * 5).toFixed(2)} OW bucks` // OW bucks is a really volatile currency
     case "PIZZA_BUDGET":
@@ -91,7 +91,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "NETFLIX_SUBSCRIPTIONS":
       return `${(value / 119).toFixed(2)} måneder med Netflix` // A month of netflix starts at 119kr
     case "CHRISTMAS_STARS":
-      return `${(value / 19.90).toFixed(2)} julestjerner` // A Clas Ohlson julestjerne costs 19.90kr
+      return `${(value / 19.9).toFixed(2)} julestjerner` // A Clas Ohlson julestjerne costs 19.90kr
     default:
       return `${value.toFixed(2)} kr`
   }
