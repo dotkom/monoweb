@@ -105,7 +105,7 @@ vi.mock("./TimeLocationBox/TimeBox", () => ({
 
 vi.mock("./TimeLocationBox/LocationBox", () => ({ LocationBox: () => <div data-section="location">Location</div> }))
 
-vi.mock("./OrganizerPill", () => ({ OrganizerPill: () => <div data-section="organizer">Organizer</div> }))
+vi.mock("./OrganizerList", () => ({ OrganizerList: () => <div data-section="organizer">Organizer</div> }))
 
 vi.mock("./EventCalendarButton", () => ({
   EventCalendarButton: () => <button type="button">Legg til i kalender</button>,

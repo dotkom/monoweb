@@ -59,6 +59,7 @@ export * from "./molecules/Toast/Toast"
 export * from "./molecules/Command/Command"
 
 export * from "./components/button-group"
+export * from "./components/collapsible-item-list"
 export * from "./components/toggle-group"
 
 export * from "./utils"
