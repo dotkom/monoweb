@@ -180,7 +180,7 @@ const EventContent = ({
 
         {event.description && (
           <div className="mt-2">
-            <EventDescription description={event.description} />
+            <EventDescription description={event.description} collapse={attendance !== null ? "mobile" : undefined} />
           </div>
         )}
       </div>
