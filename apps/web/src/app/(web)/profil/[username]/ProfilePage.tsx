@@ -47,11 +47,13 @@ import {
   IconGenderBigender,
   IconLock,
   IconMail,
+  IconMedal,
   IconPhone,
   IconPointFilled,
   IconQuestionMark,
   IconSettings,
   IconUser,
+  IconWheelchair,
 } from "@tabler/icons-react"
 import { useQueries } from "@tanstack/react-query"
 import { differenceInMilliseconds, formatDate, formatDistanceToNowStrict, isPast } from "date-fns"
@@ -63,6 +65,7 @@ import { ProfileImageUploadInput } from "../profile-image-upload/ProfileImageUpl
 import { useUploadProfileImage } from "../profile-image-upload/use-upload-profile-image"
 import SkeletonProfilePage from "./loading"
 import { useIsAdminQuery } from "./queries"
+import Image from "next/image"
 
 const UserProp = (props: { label: string; value: string | number | null; icon: ElementType }) => {
   const Icon = props.icon
@@ -505,6 +508,23 @@ export function ProfilePage() {
           </div>
         </div>
       )}
+
+      <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
+        <Title>Achievements</Title>
+
+        <div className="grid grid-cols-1 md:grid-cols-8 gap-3">
+          <div className="flex flex-col items-center rounded-t-[64px] rounded-b-[16px] bg-brand w-[128px] overflow-hidden isolate">
+            <div className="bg-gold-mid w-full h-[128px] flex items-center justify-center rounded-full">
+              <IconWheelchair className="size-20" />
+            </div>
+            <Text className="py-3 px-2 text-center text-sm wrap-break-word">Arrangementkriger</Text>
+            <div className="flex w-full mt-auto bg-stone-800 rounded-t-[16px] py-3 px-3 gap-2 items-center justify-center">
+              <IconMedal className="size-4 shrink-0" />
+              <Text className="text-[10px] leading-tight">Vært på 5 arrangementer</Text>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
         <Title>Arrangementer</Title>
