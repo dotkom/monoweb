@@ -1,5 +1,4 @@
-import { type Context, SpanStatusCode } from "@opentelemetry/api"
-import { logs } from "@opentelemetry/api-logs"
+import { type Context, SpanStatusCode, logs } from "@opentelemetry/api"
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-proto"
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-proto"
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto"
@@ -10,7 +9,7 @@ import { type Resource, detectResources, resourceFromAttributes } from "@opentel
 import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs"
 import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics"
 import { NodeSDK } from "@opentelemetry/sdk-node"
-import { BatchSpanProcessor, type ReadableSpan, type Span, type SpanProcessor } from "@opentelemetry/sdk-trace-node"
+import { BatchSpanProcessor, type ReadableSpan, type Span, type SpanProcessor } from "@opentelemetry/sdk-trace"
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions"
 import { OpenTelemetryTransportV3 } from "@opentelemetry/winston-transport"
 import { PrismaInstrumentation } from "@prisma/instrumentation"
@@ -71,12 +70,12 @@ export function getResource(serviceName: string, version = "0.1.0"): Resource {
  * in the browser.
  */
 export function startOpenTelemetry(resource: Resource) {
-  const logRecordProcessor = new BatchLogRecordProcessor(new OTLPLogExporter())
+  const logRecordProcessor = new BatchLogRecordProcessor({ exporter: new OTLPLogExporter() })
   const loggerProvider = new LoggerProvider({ resource, processors: [logRecordProcessor] })
   const telemetry = new NodeSDK({
     resource,
-    metricReader: new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() }),
-    spanProcessors: [new ExportOnErrorSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter()))],
+    metricReaders: [new PeriodicExportingMetricReader({ exporter: new OTLPMetricExporter() })],
+    spanProcessors: [new ExportOnErrorSpanProcessor(new BatchSpanProcessor({ exporter: new OTLPTraceExporter() }))],
     logRecordProcessors: [logRecordProcessor],
     instrumentations: [new WinstonInstrumentation(), new PrismaInstrumentation()],
   })
