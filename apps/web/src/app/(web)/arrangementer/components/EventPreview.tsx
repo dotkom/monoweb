@@ -28,7 +28,7 @@ import { AttendanceCard } from "./AttendanceCard/AttendanceCard"
 import { EventDescription } from "./EventDescription"
 import { EventDetailsFooter } from "./EventDetailsFooter"
 import { EventHeader, SkeletonEventHeader } from "./EventHeader"
-import { OrganizerPill } from "./OrganizerPill"
+import { EventSubheader } from "./EventSubheader"
 import { LocationBox } from "./TimeLocationBox/LocationBox"
 import { TimeBox } from "./TimeLocationBox/TimeBox"
 import { EventTurnstileProvider } from "./EventTurnstileProvider"
@@ -235,38 +235,33 @@ function EventPreviewDetails({
   const showDescription = event.description !== ""
 
   return (
-    <div className="flex w-full min-w-0 max-w-full flex-col gap-6 mb-17">
-      <EventHeader event={event} smallTitle showAdminLink={isOrganizer === true || isAdmin === true} />
-
-      <section aria-label="Arrangementsinformasjon" className="flex flex-col gap-4">
-        {parent !== null && (
-          <div className="rounded-xl border border-field-border p-3">
-            <Title element="h2" size="sm">
-              Arrangementet er en del av
-            </Title>
-            <EventListItem event={parent.event} attendance={parent.attendance} userId={dbUser?.id} />
-          </div>
-        )}
-
-        <div className="grid min-w-0 grid-cols-2 items-start gap-4">
-          <TimeBox event={event} showAddToCalendar={attendance === null} />
-          <LocationBox event={event} />
+    <div className="flex w-full min-w-0 max-w-full flex-col gap-8 mb-17">
+      <div className="flex min-w-0 flex-col gap-8">
+        <div className="flex min-w-0 flex-col gap-4">
+          <EventHeader event={event} smallTitle />
+          <EventSubheader
+            event={event}
+            isCalendarButtonVisible={attendance === null}
+            showAdminLink={isOrganizer === true || isAdmin === true}
+          />
         </div>
 
-        {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            {event.hostingGroups.map((group) => (
-              <OrganizerPill key={group.slug} item={group} />
-            ))}
+        <section aria-label="Arrangementsinformasjon" className="flex flex-col gap-4">
+          {parent !== null && (
+            <div className="rounded-xl border border-field-border p-3">
+              <Title element="h2" size="sm">
+                Arrangementet er en del av
+              </Title>
+              <EventListItem event={parent.event} attendance={parent.attendance} userId={dbUser?.id} />
+            </div>
+          )}
 
-            {event.companies.map((company) => (
-              <OrganizerPill key={company.id} item={company} />
-            ))}
+          <div className="grid min-w-0 grid-cols-2 items-start gap-4">
+            <TimeBox event={event} />
+            <LocationBox event={event} />
           </div>
-        ) : (
-          <Text className="text-muted-foreground">Ingen arrangører</Text>
-        )}
-      </section>
+        </section>
+      </div>
 
       {showDescription &&
         (showAttendanceCard ? (

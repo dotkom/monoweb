@@ -107,6 +107,10 @@ vi.mock("./TimeLocationBox/LocationBox", () => ({ LocationBox: () => <div data-s
 
 vi.mock("./OrganizerPill", () => ({ OrganizerPill: () => <div data-section="organizer">Organizer</div> }))
 
+vi.mock("./EventCalendarButton", () => ({
+  EventCalendarButton: () => <button type="button">Legg til i kalender</button>,
+}))
+
 vi.mock("./EventDescription", () => ({ EventDescription: () => <div data-section="description">Description</div> }))
 vi.mock("@/components/PenaltyRules/PenaltyRules", () => ({ PenaltyRules: () => <div>Prikkeregler detaljer</div> }))
 
@@ -252,7 +256,7 @@ describe("desktop event preview", () => {
     expect(dialog?.className).not.toContain("data-[swipe-direction=right]:inset-y-0")
     expect(
       Array.from(dialog?.querySelectorAll("[data-section]") ?? [], (section) => section.getAttribute("data-section"))
-    ).toEqual(["header", "time", "location", "organizer", "description", "attendance"])
+    ).toEqual(["header", "organizer", "time", "location", "description", "attendance"])
     expect(mocks.attendance).toHaveBeenCalledWith(
       expect.objectContaining({ initialAttendance: { id: "attendance-one" }, deferTurnstile: true })
     )
@@ -270,7 +274,11 @@ describe("desktop event preview", () => {
     await act(async () => link.click())
     expect(document.querySelector('[data-section="attendance"]')).toBeNull()
     expect(document.querySelector('[data-section="description"]')).not.toBeNull()
-    expect(mocks.time).toHaveBeenCalledWith(expect.objectContaining({ showAddToCalendar: true }))
+    const calendarButton = Array.from(document.querySelectorAll("button")).find(
+      (button) => button.textContent === "Legg til i kalender"
+    )
+
+    expect(calendarButton).toBeDefined()
   })
 
   it("starts the entrance transition each time the preview opens", async () => {

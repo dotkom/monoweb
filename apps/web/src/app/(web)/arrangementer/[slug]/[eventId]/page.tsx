@@ -5,7 +5,7 @@ import { server } from "@/utils/trpc/server"
 import type { AttendanceView } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
 import type { User } from "@dotkomonline/rpc/user"
-import { Tabs, TabsContent, TabsList, TabsTrigger, Text, Title } from "@dotkomonline/ui"
+import { Tabs, TabsContent, TabsList, TabsTrigger, Title } from "@dotkomonline/ui"
 import {
   createAbsoluteEventPageUrl,
   createEventPageUrl,
@@ -23,7 +23,7 @@ import { EventHeader } from "../../components/EventHeader"
 import { EventList } from "../../components/EventList"
 import { LocationBox } from "../../components/TimeLocationBox/LocationBox"
 import { TimeBox } from "../../components/TimeLocationBox/TimeBox"
-import { OrganizerPill } from "../../components/OrganizerPill"
+import { EventSubheader } from "../../components/EventSubheader"
 
 type RegistrationAvailability = AttendanceRouter.GetRegistrationAvailabilityOutput
 
@@ -83,7 +83,14 @@ const EventWithAttendancePage = async ({ params }: { params: Promise<EventPagePa
 
   return (
     <div className="flex flex-col gap-8">
-      <EventHeader event={event} showAdminLink={isOrganizer || isAdmin} />
+      <div className="flex min-w-0 flex-col gap-4">
+        <EventHeader event={event} />
+        <EventSubheader
+          event={event}
+          isCalendarButtonVisible={attendance === null}
+          showAdminLink={isOrganizer || isAdmin}
+        />
+      </div>
 
       {publicChildEvents.length > 0 ? (
         <Tabs defaultValue="description">
@@ -165,27 +172,17 @@ const EventContent = ({
             Oppmøte
           </Title>
 
-          <div className="grid min-w-0 grid-cols-1 items-start gap-4 @min-[24rem]:grid-cols-2">
-            <TimeBox event={event} showAddToCalendar={attendance === null} />
+          <div className="grid min-w-0 grid-cols-1 items-start gap-3 @min-[24rem]:grid-cols-2">
+            <TimeBox event={event} />
             <LocationBox event={event} />
           </div>
         </section>
 
-        {event.hostingGroups.length > 0 || event.companies.length > 0 ? (
-          <div className="flex flex-row gap-6 items-center">
-            {event.hostingGroups.map((group) => (
-              <OrganizerPill key={group.slug} item={group} />
-            ))}
-
-            {event.companies.map((company) => (
-              <OrganizerPill key={company.id} item={company} />
-            ))}
+        {event.description && (
+          <div className="mt-2">
+            <EventDescription description={event.description} />
           </div>
-        ) : (
-          <Text className="text-gray-900 dark:text-stone-400">Ingen arrangører</Text>
         )}
-
-        {event.description && <EventDescription description={event.description} />}
       </div>
 
       {attendance !== null && (

@@ -48,10 +48,7 @@ export const LocationBox: FC<LocationBoxProps> = ({ event }) => {
     </>
   )
 
-  const boxClassName = cn(
-    "flex min-w-0 flex-row items-center gap-3 rounded-xl",
-    isLocationLinkPresent && "group/location-box"
-  )
+  const boxClassName = cn("flex min-w-0 flex-row items-center gap-3", isLocationLinkPresent && "group/location-box")
 
   if (isLocationLinkPresent) {
     return (

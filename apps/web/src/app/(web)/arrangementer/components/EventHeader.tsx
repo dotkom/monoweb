@@ -1,24 +1,20 @@
 "use client"
 
 import { PlaceHolderImage } from "@/components/atoms/PlaceHolderImage"
-import { env } from "@/env"
 import type { Event } from "@dotkomonline/rpc/event"
-import { Button, Text, Tilt, Title, cn } from "@dotkomonline/ui"
-import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2, IconEdit } from "@tabler/icons-react"
-import { Link } from "@/components/link"
+import { Button, Tilt, Title, cn } from "@dotkomonline/ui"
+import { IconArrowsDiagonal, IconArrowsDiagonalMinimize2 } from "@tabler/icons-react"
 import type { FC } from "react"
 import { useState } from "react"
 
 interface Props {
   event: Event
-  showAdminLink: boolean
   smallTitle?: boolean
 }
 
-export const EventHeader: FC<Props> = ({ event, showAdminLink, smallTitle = false }) => {
+export const EventHeader: FC<Props> = ({ event, smallTitle = false }) => {
   const [showFullImage, setShowFullImage] = useState(true)
   const [hasCorrectAspectRatio, setHasCorrectAspectRatio] = useState<boolean | null>(null)
-  const adminUrl = new URL(`/admin/arrangementer/${event.id}`, env.NEXT_PUBLIC_ORIGIN).toString()
 
   return (
     <section className="flex flex-col gap-8">
@@ -87,20 +83,6 @@ export const EventHeader: FC<Props> = ({ event, showAdminLink, smallTitle = fals
         >
           {event.title}
         </Title>
-        {showAdminLink && (
-          <Button
-            element={Link}
-            href={adminUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="secondary"
-            title="Rediger arrangement"
-            className="text-stone-500 dark:text-stone-500 max-md:w-fit md:size-8"
-          >
-            <IconEdit className="size-[1.25em] md:size-6" />
-            <Text className="md:hidden">Rediger</Text>
-          </Button>
-        )}
       </div>
     </section>
   )
