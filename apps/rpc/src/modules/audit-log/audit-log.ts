@@ -24,6 +24,7 @@ export const AuditLogTable = z.enum([
   "mark",
   "membership",
   "notification_permissions",
+  "notification_settings",
   "offline",
   "ow_user",
   "personal_mark",

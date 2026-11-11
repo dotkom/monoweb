@@ -59,7 +59,9 @@ export const NotificationLinkSchema = z.discriminatedUnion("type", [
 
 export type NotificationLink = z.infer<typeof NotificationLinkSchema>
 
-/** Creation context only; it is not stored separately from the immutable payload. */
+/**
+ * Creation context only; it is not stored separately from the immutable payload.
+ */
 export const NotificationSourceSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("GLOBAL") }),
   ...NotificationResourceLinkSchema.options,
@@ -189,22 +191,34 @@ export type NotificationRecipientSelection = z.infer<typeof NotificationRecipien
 export const ResolvedNotificationRecipientSchema = z.object({
   userId: z.string(),
   sourceLabels: z.array(z.string()).min(1),
-  /** Zero-based indexes into the selection's rules, in matching order. */
+  /**
+   * Zero-based indexes into the selection's rules, in matching order.
+   */
   sourceRuleIndexes: z.array(z.number().int().nonnegative()).min(1),
 })
 
 export type ResolvedNotificationRecipient = z.infer<typeof ResolvedNotificationRecipientSchema>
 
 export const NotificationRecipientResolutionSchema = z.object({
-  /** Users who will receive the notification, after exclusions and preferences. */
+  /**
+   * Users who will receive the notification, after exclusions and preferences.
+   */
   recipients: z.array(ResolvedNotificationRecipientSchema),
-  /** Number of (rule, user) matches before de-duplication. */
+  /**
+   * Number of (rule, user) matches before de-duplication.
+   */
   matchCount: z.number().int().nonnegative(),
-  /** Users matched by more than one rule. */
+  /**
+   * Users matched by more than one rule.
+   */
   duplicateCount: z.number().int().nonnegative(),
-  /** Users removed by `excludedUserIds`. */
+  /**
+   * Users removed by `excludedUserIds`.
+   */
   excludedCount: z.number().int().nonnegative(),
-  /** Users removed because they have opted out of this notification type. */
+  /**
+   * Users removed because they have opted out of this notification type.
+   */
   optedOutCount: z.number().int().nonnegative(),
 })
 
@@ -261,10 +275,14 @@ export const NotificationSchema = z.object({
   content: z.string(),
   type: NotificationTypeSchema,
   link: NotificationLinkSchema,
-  /** The group the notification is sent on behalf of. Null for system notifications. */
+  /**
+   * The group the notification is sent on behalf of. Null for system notifications.
+   */
   actorGroupId: z.string().nullable(),
   actorGroup: GroupSchema.nullable(),
-  /** The user who triggered the notification, for auditing. Null for system-generated notifications. */
+  /**
+   * The user who triggered the notification, for auditing. Null for system-generated notifications.
+   */
   createdById: z.string().nullable(),
   lastUpdatedById: z.string().nullable(),
   taskId: z.string().nullable(),
@@ -325,7 +343,9 @@ export const NotificationFilterQuerySchema = z
   .object({
     byType: NotificationTypeSchema.array(),
     byActorGroupId: z.string().array(),
-    /** All notifications pointing to a specific entity, e.g. every notification about one event. */
+    /**
+     * All notifications pointing to a specific entity, e.g. every notification about one event.
+     */
     byLink: NotificationLinkSchema,
     bySearchTerm: z.string().optional(),
   })
@@ -380,12 +400,12 @@ export const UserNotificationSchema = z.object({
 export type UserNotification = z.infer<typeof UserNotificationSchema>
 
 export const NOTIFICATION_TYPE_LABELS = {
-  BROADCAST: "Generell varsling",
-  BROADCAST_IMPORTANT: "Viktig varsling",
+  BROADCAST: "Generell melding",
+  BROADCAST_IMPORTANT: "Viktig melding",
   EVENT_REMINDER: "Påminnelse om arrangement",
   EVENT_UPDATE: "Oppdatering om arrangement",
   ATTENDANCE_REGISTRATION: "Påmelding til arrangement",
-  ATTENDANCE_DEREGISTRATION: "Avmelding fra arrangement",
+  ATTENDANCE_DEREGISTRATION: "Avmeldt av arrangør",
   ATTENDANCE_REGISTRATION_FROM_QUEUE: "Påmeldt fra køen",
   ATTENDANCE_QUEUE_UPDATE: "Oppdatering om køen",
   ATTENDANCE_COMPLETION_FAILED: "Påmelding ikke fullført",
@@ -417,3 +437,132 @@ export const NOTIFICATION_LINK_TYPE_LABELS = {
 export function getNotificationLinkTypeLabel(linkType: NotificationLink["type"]): string {
   return NOTIFICATION_LINK_TYPE_LABELS[linkType]
 }
+
+export const NotificationRecipientEmailSchema = z.object({
+  userId: z.string(),
+  email: z.string(),
+})
+
+export type NotificationRecipientEmail = z.infer<typeof NotificationRecipientEmailSchema>
+
+export const NotificationDeliverySchema = z.object({
+  isEnabled: z.boolean(),
+  isPushEnabled: z.boolean(),
+  isEmailEnabled: z.boolean(),
+})
+export type NotificationDelivery = z.infer<typeof NotificationDeliverySchema>
+
+export const REQUIRED_NOTIFICATION_TYPES: readonly NotificationType[] = [
+  "BROADCAST_IMPORTANT",
+  "ATTENDANCE_DEREGISTRATION",
+  "ATTENDANCE_REGISTRATION_FROM_QUEUE",
+  "ATTENDANCE_COMPLETION_FAILED",
+  "NEW_MARK",
+  "NEW_FEEDBACK_FORM",
+]
+
+export const DEFAULT_NOTIFICATION_DELIVERY = {
+  BROADCAST: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  BROADCAST_IMPORTANT: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  EVENT_REMINDER: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  EVENT_UPDATE: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  ATTENDANCE_REGISTRATION: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  ATTENDANCE_DEREGISTRATION: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  ATTENDANCE_REGISTRATION_FROM_QUEUE: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  ATTENDANCE_QUEUE_UPDATE: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  ATTENDANCE_COMPLETION_FAILED: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  JOB_LISTING_REMINDER: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  NEW_ARTICLE: {
+    isEnabled: true,
+    isPushEnabled: false,
+    isEmailEnabled: false,
+  },
+  NEW_EVENT: {
+    isEnabled: true,
+    isPushEnabled: false,
+    isEmailEnabled: false,
+  },
+  NEW_INTEREST_GROUP: {
+    isEnabled: false,
+    isPushEnabled: false,
+    isEmailEnabled: false,
+  },
+  NEW_JOB_LISTING: {
+    isEnabled: false,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  NEW_OFFLINE: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: false,
+  },
+  NEW_MARK: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+  NEW_FEEDBACK_FORM: {
+    isEnabled: true,
+    isPushEnabled: true,
+    isEmailEnabled: true,
+  },
+} as const satisfies Record<NotificationType, NotificationDelivery>
+
+export const NotificationDeliverySettingsSchema = z
+  .record(NotificationTypeSchema, NotificationDeliverySchema)
+  .superRefine((settings, context) => {
+    for (const notificationType of REQUIRED_NOTIFICATION_TYPES) {
+      const delivery = settings[notificationType]
+
+      if (!delivery.isEnabled) {
+        context.addIssue({
+          code: "custom",
+          path: [notificationType, "isEnabled"],
+          message: "Denne varslingen må være tilgjengelig på nettsiden.",
+        })
+      }
+    }
+  })
+
+export type NotificationDeliverySettings = z.infer<typeof NotificationDeliverySettingsSchema>

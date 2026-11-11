@@ -401,7 +401,7 @@ export const ModelName = {
   MarkGroup: 'MarkGroup',
   PersonalMark: 'PersonalMark',
   PrivacyPermissions: 'PrivacyPermissions',
-  NotificationPermissions: 'NotificationPermissions',
+  NotificationSettings: 'NotificationSettings',
   EventHostingGroup: 'EventHostingGroup',
   JobListing: 'JobListing',
   JobListingLocation: 'JobListingLocation',
@@ -443,7 +443,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventFeaturedPriority" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventFeaturedPriority" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationSettings" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1705,77 +1705,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    NotificationPermissions: {
-      payload: Prisma.$NotificationPermissionsPayload<ExtArgs>
-      fields: Prisma.NotificationPermissionsFieldRefs
+    NotificationSettings: {
+      payload: Prisma.$NotificationSettingsPayload<ExtArgs>
+      fields: Prisma.NotificationSettingsFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.NotificationPermissionsFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload> | null
+          args: Prisma.NotificationSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.NotificationPermissionsFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         findFirst: {
-          args: Prisma.NotificationPermissionsFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload> | null
+          args: Prisma.NotificationSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.NotificationPermissionsFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         findMany: {
-          args: Prisma.NotificationPermissionsFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>[]
+          args: Prisma.NotificationSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>[]
         }
         create: {
-          args: Prisma.NotificationPermissionsCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         createMany: {
-          args: Prisma.NotificationPermissionsCreateManyArgs<ExtArgs>
+          args: Prisma.NotificationSettingsCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.NotificationPermissionsCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>[]
+          args: Prisma.NotificationSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>[]
         }
         delete: {
-          args: Prisma.NotificationPermissionsDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         update: {
-          args: Prisma.NotificationPermissionsUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         deleteMany: {
-          args: Prisma.NotificationPermissionsDeleteManyArgs<ExtArgs>
+          args: Prisma.NotificationSettingsDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.NotificationPermissionsUpdateManyArgs<ExtArgs>
+          args: Prisma.NotificationSettingsUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.NotificationPermissionsUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>[]
+          args: Prisma.NotificationSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>[]
         }
         upsert: {
-          args: Prisma.NotificationPermissionsUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPermissionsPayload>
+          args: Prisma.NotificationSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationSettingsPayload>
         }
         aggregate: {
-          args: Prisma.NotificationPermissionsAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationPermissions>
+          args: Prisma.NotificationSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationSettings>
         }
         groupBy: {
-          args: Prisma.NotificationPermissionsGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NotificationPermissionsGroupByOutputType>[]
+          args: Prisma.NotificationSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationSettingsGroupByOutputType>[]
         }
         count: {
-          args: Prisma.NotificationPermissionsCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NotificationPermissionsCountAggregateOutputType> | number
+          args: Prisma.NotificationSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationSettingsCountAggregateOutputType> | number
         }
       }
     }
@@ -3782,7 +3782,7 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   privacyPermissionsId: 'privacyPermissionsId',
-  notificationPermissionsId: 'notificationPermissionsId'
+  notificationSettingsId: 'notificationSettingsId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4010,22 +4010,15 @@ export const PrivacyPermissionsScalarFieldEnum = {
 export type PrivacyPermissionsScalarFieldEnum = (typeof PrivacyPermissionsScalarFieldEnum)[keyof typeof PrivacyPermissionsScalarFieldEnum]
 
 
-export const NotificationPermissionsScalarFieldEnum = {
+export const NotificationSettingsScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  applications: 'applications',
-  newArticles: 'newArticles',
-  standardNotifications: 'standardNotifications',
-  groupMessages: 'groupMessages',
-  markRulesUpdates: 'markRulesUpdates',
-  receipts: 'receipts',
-  registrationByAdministrator: 'registrationByAdministrator',
-  registrationStart: 'registrationStart',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deliverySettings: 'deliverySettings',
+  userId: 'userId'
 } as const
 
-export type NotificationPermissionsScalarFieldEnum = (typeof NotificationPermissionsScalarFieldEnum)[keyof typeof NotificationPermissionsScalarFieldEnum]
+export type NotificationSettingsScalarFieldEnum = (typeof NotificationSettingsScalarFieldEnum)[keyof typeof NotificationSettingsScalarFieldEnum]
 
 
 export const EventHostingGroupScalarFieldEnum = {
@@ -4928,7 +4921,7 @@ export type GlobalOmitConfig = {
   markGroup?: Prisma.MarkGroupOmit
   personalMark?: Prisma.PersonalMarkOmit
   privacyPermissions?: Prisma.PrivacyPermissionsOmit
-  notificationPermissions?: Prisma.NotificationPermissionsOmit
+  notificationSettings?: Prisma.NotificationSettingsOmit
   eventHostingGroup?: Prisma.EventHostingGroupOmit
   jobListing?: Prisma.JobListingOmit
   jobListingLocation?: Prisma.JobListingLocationOmit

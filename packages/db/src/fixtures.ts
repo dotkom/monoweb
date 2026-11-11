@@ -24,7 +24,7 @@ import { getJobListingFixtures, getJobListingLocationFixtures } from "./fixtures
 import { getMarkFixtures, getMarkGroupFixtures } from "./fixtures/mark"
 import { getMembershipFixtures } from "./fixtures/membership"
 import { getNotificationFixtures } from "./fixtures/notification"
-import { getNotificationPermissionsFixtures } from "./fixtures/notification-permissions"
+import { getNotificationSettingsFixtures } from "./fixtures/notification-settings"
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getPrivacyPermissionsFixtures } from "./fixtures/privacy-permissions"
@@ -71,15 +71,15 @@ for (const permission of getPrivacyPermissionsFixtures()) {
   })
 }
 
-for (const permission of getNotificationPermissionsFixtures()) {
-  const row = await db.notificationPermissions.upsert({
+for (const permission of getNotificationSettingsFixtures()) {
+  const row = await db.notificationSettings.upsert({
     where: { userId: permission.userId },
     create: permission,
     update: {},
   })
   await db.user.update({
     where: { id: permission.userId },
-    data: { notificationPermissionsId: row.id },
+    data: { notificationSettingsId: row.id },
   })
 }
 

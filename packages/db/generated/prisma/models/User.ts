@@ -39,7 +39,7 @@ export type UserMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   privacyPermissionsId: string | null
-  notificationPermissionsId: string | null
+  notificationSettingsId: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -57,7 +57,7 @@ export type UserMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   privacyPermissionsId: string | null
-  notificationPermissionsId: string | null
+  notificationSettingsId: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -75,7 +75,7 @@ export type UserCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   privacyPermissionsId: number
-  notificationPermissionsId: number
+  notificationSettingsId: number
   _all: number
 }
 
@@ -95,7 +95,7 @@ export type UserMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
-  notificationPermissionsId?: true
+  notificationSettingsId?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -113,7 +113,7 @@ export type UserMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
-  notificationPermissionsId?: true
+  notificationSettingsId?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -131,7 +131,7 @@ export type UserCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   privacyPermissionsId?: true
-  notificationPermissionsId?: true
+  notificationSettingsId?: true
   _all?: true
 }
 
@@ -222,7 +222,7 @@ export type UserGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   privacyPermissionsId: string | null
-  notificationPermissionsId: string | null
+  notificationSettingsId: string | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -261,9 +261,9 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
-  notificationPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
+  notificationSettingsId?: Prisma.StringNullableFilter<"User"> | string | null
   privacyPermissions?: Prisma.XOR<Prisma.PrivacyPermissionsNullableScalarRelationFilter, Prisma.PrivacyPermissionsWhereInput> | null
-  notificationPermissions?: Prisma.XOR<Prisma.NotificationPermissionsNullableScalarRelationFilter, Prisma.NotificationPermissionsWhereInput> | null
+  notificationSettings?: Prisma.XOR<Prisma.NotificationSettingsNullableScalarRelationFilter, Prisma.NotificationSettingsWhereInput> | null
   attendee?: Prisma.AttendeeListRelationFilter
   personalMark?: Prisma.PersonalMarkListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
@@ -297,9 +297,9 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
-  notificationPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
+  notificationSettingsId?: Prisma.SortOrderInput | Prisma.SortOrder
   privacyPermissions?: Prisma.PrivacyPermissionsOrderByWithRelationInput
-  notificationPermissions?: Prisma.NotificationPermissionsOrderByWithRelationInput
+  notificationSettings?: Prisma.NotificationSettingsOrderByWithRelationInput
   attendee?: Prisma.AttendeeOrderByRelationAggregateInput
   personalMark?: Prisma.PersonalMarkOrderByRelationAggregateInput
   groupMemberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
@@ -323,7 +323,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   username?: string
   workspaceUserId?: string
   privacyPermissionsId?: string
-  notificationPermissionsId?: string
+  notificationSettingsId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -338,7 +338,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissions?: Prisma.XOR<Prisma.PrivacyPermissionsNullableScalarRelationFilter, Prisma.PrivacyPermissionsWhereInput> | null
-  notificationPermissions?: Prisma.XOR<Prisma.NotificationPermissionsNullableScalarRelationFilter, Prisma.NotificationPermissionsWhereInput> | null
+  notificationSettings?: Prisma.XOR<Prisma.NotificationSettingsNullableScalarRelationFilter, Prisma.NotificationSettingsWhereInput> | null
   attendee?: Prisma.AttendeeListRelationFilter
   personalMark?: Prisma.PersonalMarkListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
@@ -355,7 +355,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   userFlagLinks?: Prisma.UserFlagLinkListRelationFilter
   adminRegistered?: Prisma.AttendeeListRelationFilter
   updatedEventPriorities?: Prisma.EventFeaturedPriorityListRelationFilter
-}, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationPermissionsId">
+}, "id" | "username" | "workspaceUserId" | "privacyPermissionsId" | "notificationSettingsId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -372,7 +372,7 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
-  notificationPermissionsId?: Prisma.SortOrderInput | Prisma.SortOrder
+  notificationSettingsId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -396,7 +396,7 @@ export type UserScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  notificationPermissionsId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  notificationSettingsId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -414,9 +414,9 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -450,9 +450,9 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -486,9 +486,9 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -522,9 +522,9 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -558,7 +558,7 @@ export type UserCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -576,7 +576,7 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -594,7 +594,7 @@ export type UserUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserScalarRelationFilter = {
@@ -617,7 +617,7 @@ export type UserCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
-  notificationPermissionsId?: Prisma.SortOrder
+  notificationSettingsId?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -635,7 +635,7 @@ export type UserMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
-  notificationPermissionsId?: Prisma.SortOrder
+  notificationSettingsId?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -653,7 +653,7 @@ export type UserMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   privacyPermissionsId?: Prisma.SortOrder
-  notificationPermissionsId?: Prisma.SortOrder
+  notificationSettingsId?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -813,18 +813,18 @@ export type UserUpdateOneRequiredWithoutPrivacyPermissionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPrivacyPermissionsInput, Prisma.UserUpdateWithoutPrivacyPermissionsInput>, Prisma.UserUncheckedUpdateWithoutPrivacyPermissionsInput>
 }
 
-export type UserCreateNestedOneWithoutNotificationPermissionsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationPermissionsInput, Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationPermissionsInput
+export type UserCreateNestedOneWithoutNotificationSettingsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationSettingsInput, Prisma.UserUncheckedCreateWithoutNotificationSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationSettingsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutNotificationPermissionsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationPermissionsInput, Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationPermissionsInput
-  upsert?: Prisma.UserUpsertWithoutNotificationPermissionsInput
+export type UserUpdateOneRequiredWithoutNotificationSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationSettingsInput, Prisma.UserUncheckedCreateWithoutNotificationSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationSettingsInput
+  upsert?: Prisma.UserUpsertWithoutNotificationSettingsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationPermissionsInput, Prisma.UserUpdateWithoutNotificationPermissionsInput>, Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationSettingsInput, Prisma.UserUpdateWithoutNotificationSettingsInput>, Prisma.UserUncheckedUpdateWithoutNotificationSettingsInput>
 }
 
 export type UserCreateNestedOneWithoutAuditLogsInput = {
@@ -986,9 +986,9 @@ export type UserCreateWithoutMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -1021,9 +1021,9 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1072,9 +1072,9 @@ export type UserUpdateWithoutMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -1107,9 +1107,9 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1142,9 +1142,9 @@ export type UserCreateWithoutGroupMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -1177,9 +1177,9 @@ export type UserUncheckedCreateWithoutGroupMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1228,9 +1228,9 @@ export type UserUpdateWithoutGroupMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -1263,9 +1263,9 @@ export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1298,9 +1298,9 @@ export type UserCreateWithoutAttendeeInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -1333,9 +1333,9 @@ export type UserUncheckedCreateWithoutAttendeeInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1373,9 +1373,9 @@ export type UserCreateWithoutAttendeesRefundedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -1408,9 +1408,9 @@ export type UserUncheckedCreateWithoutAttendeesRefundedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1448,9 +1448,9 @@ export type UserCreateWithoutAdminRegisteredInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -1483,9 +1483,9 @@ export type UserUncheckedCreateWithoutAdminRegisteredInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1534,9 +1534,9 @@ export type UserUpdateWithoutAttendeeInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -1569,9 +1569,9 @@ export type UserUncheckedUpdateWithoutAttendeeInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1615,9 +1615,9 @@ export type UserUpdateWithoutAttendeesRefundedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -1650,9 +1650,9 @@ export type UserUncheckedUpdateWithoutAttendeesRefundedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1696,9 +1696,9 @@ export type UserUpdateWithoutAdminRegisteredInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -1731,9 +1731,9 @@ export type UserUncheckedUpdateWithoutAdminRegisteredInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1766,9 +1766,9 @@ export type UserCreateWithoutUpdatedEventPrioritiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -1801,9 +1801,9 @@ export type UserUncheckedCreateWithoutUpdatedEventPrioritiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1852,9 +1852,9 @@ export type UserUpdateWithoutUpdatedEventPrioritiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -1887,9 +1887,9 @@ export type UserUncheckedUpdateWithoutUpdatedEventPrioritiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1922,9 +1922,9 @@ export type UserCreateWithoutPersonalMarkInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -1957,9 +1957,9 @@ export type UserUncheckedCreateWithoutPersonalMarkInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1997,9 +1997,9 @@ export type UserCreateWithoutGivenMarksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -2032,9 +2032,9 @@ export type UserUncheckedCreateWithoutGivenMarksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -2083,9 +2083,9 @@ export type UserUpdateWithoutPersonalMarkInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -2118,9 +2118,9 @@ export type UserUncheckedUpdateWithoutPersonalMarkInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -2164,9 +2164,9 @@ export type UserUpdateWithoutGivenMarksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -2199,9 +2199,9 @@ export type UserUncheckedUpdateWithoutGivenMarksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -2234,8 +2234,8 @@ export type UserCreateWithoutPrivacyPermissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettingsId?: string | null
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -2269,8 +2269,8 @@ export type UserUncheckedCreateWithoutPrivacyPermissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettingsId?: string | null
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -2320,8 +2320,8 @@ export type UserUpdateWithoutPrivacyPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -2355,8 +2355,8 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -2375,7 +2375,7 @@ export type UserUncheckedUpdateWithoutPrivacyPermissionsInput = {
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutLastUpdatedByNestedInput
 }
 
-export type UserCreateWithoutNotificationPermissionsInput = {
+export type UserCreateWithoutNotificationSettingsInput = {
   id: string
   username: string
   name?: string | null
@@ -2390,7 +2390,7 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
@@ -2410,7 +2410,7 @@ export type UserCreateWithoutNotificationPermissionsInput = {
   updatedEventPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutLastUpdatedByInput
 }
 
-export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
+export type UserUncheckedCreateWithoutNotificationSettingsInput = {
   id: string
   username: string
   name?: string | null
@@ -2425,7 +2425,7 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
@@ -2445,23 +2445,23 @@ export type UserUncheckedCreateWithoutNotificationPermissionsInput = {
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutLastUpdatedByInput
 }
 
-export type UserCreateOrConnectWithoutNotificationPermissionsInput = {
+export type UserCreateOrConnectWithoutNotificationSettingsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationPermissionsInput, Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationSettingsInput, Prisma.UserUncheckedCreateWithoutNotificationSettingsInput>
 }
 
-export type UserUpsertWithoutNotificationPermissionsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutNotificationPermissionsInput, Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationPermissionsInput, Prisma.UserUncheckedCreateWithoutNotificationPermissionsInput>
+export type UserUpsertWithoutNotificationSettingsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNotificationSettingsInput, Prisma.UserUncheckedUpdateWithoutNotificationSettingsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotificationSettingsInput, Prisma.UserUncheckedCreateWithoutNotificationSettingsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutNotificationPermissionsInput = {
+export type UserUpdateToOneWithWhereWithoutNotificationSettingsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutNotificationPermissionsInput, Prisma.UserUncheckedUpdateWithoutNotificationPermissionsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNotificationSettingsInput, Prisma.UserUncheckedUpdateWithoutNotificationSettingsInput>
 }
 
-export type UserUpdateWithoutNotificationPermissionsInput = {
+export type UserUpdateWithoutNotificationSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2476,7 +2476,7 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
@@ -2496,7 +2496,7 @@ export type UserUpdateWithoutNotificationPermissionsInput = {
   updatedEventPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutLastUpdatedByNestedInput
 }
 
-export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
+export type UserUncheckedUpdateWithoutNotificationSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2511,7 +2511,7 @@ export type UserUncheckedUpdateWithoutNotificationPermissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
@@ -2546,9 +2546,9 @@ export type UserCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -2581,9 +2581,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -2632,9 +2632,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -2667,9 +2667,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -2702,9 +2702,9 @@ export type UserCreateWithoutDeregisterReasonsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -2737,9 +2737,9 @@ export type UserUncheckedCreateWithoutDeregisterReasonsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -2788,9 +2788,9 @@ export type UserUpdateWithoutDeregisterReasonsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -2823,9 +2823,9 @@ export type UserUncheckedUpdateWithoutDeregisterReasonsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -2858,9 +2858,9 @@ export type UserCreateWithoutNotificationsReceivedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -2893,9 +2893,9 @@ export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -2944,9 +2944,9 @@ export type UserUpdateWithoutNotificationsReceivedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -2979,9 +2979,9 @@ export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3014,9 +3014,9 @@ export type UserCreateWithoutNotificationsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -3049,9 +3049,9 @@ export type UserUncheckedCreateWithoutNotificationsCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -3089,9 +3089,9 @@ export type UserCreateWithoutNotificationsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -3124,9 +3124,9 @@ export type UserUncheckedCreateWithoutNotificationsUpdatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -3175,9 +3175,9 @@ export type UserUpdateWithoutNotificationsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -3210,9 +3210,9 @@ export type UserUncheckedUpdateWithoutNotificationsCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3256,9 +3256,9 @@ export type UserUpdateWithoutNotificationsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -3291,9 +3291,9 @@ export type UserUncheckedUpdateWithoutNotificationsUpdatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3326,9 +3326,9 @@ export type UserCreateWithoutContestantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -3361,9 +3361,9 @@ export type UserUncheckedCreateWithoutContestantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -3412,9 +3412,9 @@ export type UserUpdateWithoutContestantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -3447,9 +3447,9 @@ export type UserUncheckedUpdateWithoutContestantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3482,9 +3482,9 @@ export type UserCreateWithoutContestTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -3517,9 +3517,9 @@ export type UserUncheckedCreateWithoutContestTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -3576,7 +3576,7 @@ export type UserScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   privacyPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
-  notificationPermissionsId?: Prisma.StringNullableFilter<"User"> | string | null
+  notificationSettingsId?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
 export type UserCreateWithoutUserFlagLinksInput = {
@@ -3594,9 +3594,9 @@ export type UserCreateWithoutUserFlagLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutUserInput
@@ -3629,9 +3629,9 @@ export type UserUncheckedCreateWithoutUserFlagLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   privacyPermissionsId?: string | null
-  notificationPermissionsId?: string | null
+  notificationSettingsId?: string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedCreateNestedOneWithoutUserInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedCreateNestedOneWithoutUserInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedCreateNestedOneWithoutUserInput
   attendee?: Prisma.AttendeeUncheckedCreateNestedManyWithoutUserInput
   personalMark?: Prisma.PersonalMarkUncheckedCreateNestedManyWithoutUserInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutUserInput
@@ -3680,9 +3680,9 @@ export type UserUpdateWithoutUserFlagLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -3715,9 +3715,9 @@ export type UserUncheckedUpdateWithoutUserFlagLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3750,9 +3750,9 @@ export type UserUpdateWithoutContestTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutUserNestedInput
@@ -3785,9 +3785,9 @@ export type UserUncheckedUpdateWithoutContestTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   privacyPermissions?: Prisma.PrivacyPermissionsUncheckedUpdateOneWithoutUserNestedInput
-  notificationPermissions?: Prisma.NotificationPermissionsUncheckedUpdateOneWithoutUserNestedInput
+  notificationSettings?: Prisma.NotificationSettingsUncheckedUpdateOneWithoutUserNestedInput
   attendee?: Prisma.AttendeeUncheckedUpdateManyWithoutUserNestedInput
   personalMark?: Prisma.PersonalMarkUncheckedUpdateManyWithoutUserNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -3820,7 +3820,7 @@ export type UserUncheckedUpdateManyWithoutContestTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   privacyPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notificationPermissionsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationSettingsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -4004,9 +4004,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
-  notificationPermissionsId?: boolean
+  notificationSettingsId?: boolean
   privacyPermissions?: boolean | Prisma.User$privacyPermissionsArgs<ExtArgs>
-  notificationPermissions?: boolean | Prisma.User$notificationPermissionsArgs<ExtArgs>
+  notificationSettings?: boolean | Prisma.User$notificationSettingsArgs<ExtArgs>
   attendee?: boolean | Prisma.User$attendeeArgs<ExtArgs>
   personalMark?: boolean | Prisma.User$personalMarkArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.User$groupMembershipsArgs<ExtArgs>
@@ -4041,7 +4041,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
-  notificationPermissionsId?: boolean
+  notificationSettingsId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -4059,7 +4059,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
-  notificationPermissionsId?: boolean
+  notificationSettingsId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -4077,13 +4077,13 @@ export type UserSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   privacyPermissionsId?: boolean
-  notificationPermissionsId?: boolean
+  notificationSettingsId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "workspaceUserId" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationPermissionsId", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "name" | "email" | "imageUrl" | "biography" | "phone" | "gender" | "dietaryRestrictions" | "ntnuUsername" | "workspaceUserId" | "createdAt" | "updatedAt" | "privacyPermissionsId" | "notificationSettingsId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   privacyPermissions?: boolean | Prisma.User$privacyPermissionsArgs<ExtArgs>
-  notificationPermissions?: boolean | Prisma.User$notificationPermissionsArgs<ExtArgs>
+  notificationSettings?: boolean | Prisma.User$notificationSettingsArgs<ExtArgs>
   attendee?: boolean | Prisma.User$attendeeArgs<ExtArgs>
   personalMark?: boolean | Prisma.User$personalMarkArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.User$groupMembershipsArgs<ExtArgs>
@@ -4109,7 +4109,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     privacyPermissions: Prisma.$PrivacyPermissionsPayload<ExtArgs> | null
-    notificationPermissions: Prisma.$NotificationPermissionsPayload<ExtArgs> | null
+    notificationSettings: Prisma.$NotificationSettingsPayload<ExtArgs> | null
     attendee: Prisma.$AttendeePayload<ExtArgs>[]
     personalMark: Prisma.$PersonalMarkPayload<ExtArgs>[]
     groupMemberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
@@ -4148,7 +4148,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdAt: Date
     updatedAt: Date
     privacyPermissionsId: string | null
-    notificationPermissionsId: string | null
+    notificationSettingsId: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -4544,7 +4544,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   privacyPermissions<T extends Prisma.User$privacyPermissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$privacyPermissionsArgs<ExtArgs>>): Prisma.Prisma__PrivacyPermissionsClient<runtime.Types.Result.GetResult<Prisma.$PrivacyPermissionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  notificationPermissions<T extends Prisma.User$notificationPermissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationPermissionsArgs<ExtArgs>>): Prisma.Prisma__NotificationPermissionsClient<runtime.Types.Result.GetResult<Prisma.$NotificationPermissionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  notificationSettings<T extends Prisma.User$notificationSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationSettingsArgs<ExtArgs>>): Prisma.Prisma__NotificationSettingsClient<runtime.Types.Result.GetResult<Prisma.$NotificationSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attendee<T extends Prisma.User$attendeeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$attendeeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   personalMark<T extends Prisma.User$personalMarkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$personalMarkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalMarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groupMemberships<T extends Prisma.User$groupMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$groupMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4604,7 +4604,7 @@ export interface UserFieldRefs {
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly privacyPermissionsId: Prisma.FieldRef<"User", 'String'>
-  readonly notificationPermissionsId: Prisma.FieldRef<"User", 'String'>
+  readonly notificationSettingsId: Prisma.FieldRef<"User", 'String'>
 }
     
 
@@ -5026,22 +5026,22 @@ export type User$privacyPermissionsArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
- * User.notificationPermissions
+ * User.notificationSettings
  */
-export type User$notificationPermissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$notificationSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the NotificationPermissions
+   * Select specific fields to fetch from the NotificationSettings
    */
-  select?: Prisma.NotificationPermissionsSelect<ExtArgs> | null
+  select?: Prisma.NotificationSettingsSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the NotificationPermissions
+   * Omit specific fields from the NotificationSettings
    */
-  omit?: Prisma.NotificationPermissionsOmit<ExtArgs> | null
+  omit?: Prisma.NotificationSettingsOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.NotificationPermissionsInclude<ExtArgs> | null
-  where?: Prisma.NotificationPermissionsWhereInput
+  include?: Prisma.NotificationSettingsInclude<ExtArgs> | null
+  where?: Prisma.NotificationSettingsWhereInput
 }
 
 /**

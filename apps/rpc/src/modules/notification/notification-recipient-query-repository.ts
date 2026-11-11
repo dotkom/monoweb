@@ -1,6 +1,6 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import type { AttendanceId } from "../event/attendance"
-import { getGroupDisplayName, type GroupId } from "../group/group"
+import { type GroupId, getGroupDisplayName } from "../group/group"
 import type { UserId } from "../user/user"
 import type {
   NotificationRecipientAttendanceSelectionOption,
@@ -9,7 +9,6 @@ import type {
   NotificationRecipientPaymentStatus,
   NotificationRecipientReservationStatus,
 } from "./notification"
-import type { NotificationPermissionField } from "./notification-preferences"
 
 export interface GroupMemberUserIds {
   groupName: string
@@ -54,11 +53,6 @@ export interface NotificationRecipientQueryRepository {
     options: FindAttendeeUserIdsOptions
   ): Promise<AttendeeUserIds | null>
   filterExistingUserIds(handle: DBHandle, userIds: UserId[]): Promise<UserId[]>
-  filterUserIdsByPreference(
-    handle: DBHandle,
-    userIds: UserId[],
-    permissionField: NotificationPermissionField
-  ): Promise<UserId[]>
   findUserSummaries(
     handle: DBHandle,
     userIds: UserId[],
@@ -353,27 +347,6 @@ export function getNotificationRecipientQueryRepository(): NotificationRecipient
           id: {
             in: userIds,
           },
-        },
-        select: {
-          id: true,
-        },
-      })
-
-      return rows.map((row) => row.id)
-    },
-
-    async filterUserIdsByPreference(handle, userIds, permissionField) {
-      if (userIds.length === 0) {
-        return []
-      }
-
-      // Users with no NotificationPermissions row are treated as opted in, which matches the column defaults.
-      const rows = await handle.user.findMany({
-        where: {
-          id: {
-            in: userIds,
-          },
-          OR: [{ notificationPermissions: null }, { notificationPermissions: { [permissionField]: true } }],
         },
         select: {
           id: true,

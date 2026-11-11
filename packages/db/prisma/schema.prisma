@@ -105,10 +105,10 @@ model User {
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  privacyPermissionsId      String?                  @unique @map("privacy_permissions_id")
-  privacyPermissions        PrivacyPermissions?
-  notificationPermissionsId String?                  @unique @map("notification_permissions_id")
-  notificationPermissions   NotificationPermissions?
+  privacyPermissionsId   String?               @unique @map("privacy_permissions_id")
+  privacyPermissions     PrivacyPermissions?
+  notificationSettingsId String?               @unique @map("notification_settings_id")
+  notificationSettings   NotificationSettings?
 
   attendee               Attendee[]
   personalMark           PersonalMark[]
@@ -554,22 +554,16 @@ model PrivacyPermissions {
   @@map("privacy_permissions")
 }
 
-model NotificationPermissions {
-  id                          String   @id @default(uuid())
-  user                        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                      String   @unique @map("user_id")
-  applications                Boolean  @default(true)
-  newArticles                 Boolean  @default(true) @map("new_articles")
-  standardNotifications       Boolean  @default(true) @map("standard_notifications")
-  groupMessages               Boolean  @default(true) @map("group_messages")
-  markRulesUpdates            Boolean  @default(true) @map("mark_rules_updates")
-  receipts                    Boolean  @default(true)
-  registrationByAdministrator Boolean  @default(true) @map("registration_by_administrator")
-  registrationStart           Boolean  @default(true) @map("registration_start")
-  createdAt                   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt                   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+model NotificationSettings {
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deliverySettings Json     @default("{}") @map("delivery_settings")
 
-  @@map("notification_permissions")
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_settings")
 }
 
 model EventHostingGroup {

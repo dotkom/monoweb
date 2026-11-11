@@ -3,15 +3,15 @@ import type { Pageable } from "@dotkomonline/utils"
 import { NotFoundError } from "../../error"
 import type { UserId } from "../user/user"
 import type {
+  NotificationRecipientPreviewOptions,
   NotificationRecipientResolution,
   NotificationRecipientSelection,
-  NotificationRecipientPreviewOptions,
   NotificationRecipientSelectionPreview,
   NotificationRecipientSelectionRule,
   NotificationType,
 } from "./notification"
 import type { NotificationRecipientQueryRepository } from "./notification-recipient-query-repository"
-import { getNotificationPermissionField } from "./notification-preferences"
+import type { NotificationSettingsService } from "./notification-settings-service"
 
 export interface NotificationRecipientResolver {
   /**
@@ -67,7 +67,8 @@ function getEventAttendeesRuleLabel(
 }
 
 export function getNotificationRecipientResolver(
-  recipientQueryRepository: NotificationRecipientQueryRepository
+  recipientQueryRepository: NotificationRecipientQueryRepository,
+  notificationSettingsService: NotificationSettingsService
 ): NotificationRecipientResolver {
   async function matchRule(handle: DBHandle, rule: NotificationRecipientSelectionRule): Promise<RuleMatch> {
     switch (rule.type) {
@@ -153,18 +154,12 @@ export function getNotificationRecipientResolver(
       }
 
       const candidateUserIds = Array.from(sourcesByUserId.keys())
-      const permissionField = getNotificationPermissionField(notificationType)
-      let allowedUserIds = candidateUserIds
+      const settingsByUserId = await notificationSettingsService.findManyByUserIds(handle, candidateUserIds)
+      const allowedUserIds = candidateUserIds.filter((userId) => {
+        const settings = settingsByUserId.get(userId)
 
-      // Types mapped to ALWAYS in notification-preferences skip this filter. Missing permission rows are treated as
-      // opted in, matching the database defaults.
-      if (permissionField !== null) {
-        allowedUserIds = await recipientQueryRepository.filterUserIdsByPreference(
-          handle,
-          candidateUserIds,
-          permissionField
-        )
-      }
+        return settings?.[notificationType].isEnabled === true
+      })
 
       const optedOutCount = candidateUserIds.length - allowedUserIds.length
 

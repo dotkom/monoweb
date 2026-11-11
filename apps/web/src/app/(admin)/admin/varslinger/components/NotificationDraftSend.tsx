@@ -10,16 +10,13 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
   Button,
-  Checkbox,
-  Label,
   Text,
   Title,
 } from "@dotkomonline/ui"
-import { formatEmailSubject } from "@dotkomonline/utils"
 import { useId, useState } from "react"
 import { useNotificationDetailsContext } from "../[id]/provider"
 import { getActorGroupLabel } from "../[id]/utils"
-import { useSendNotificationDraftMutation, useSendNotificationEmailMutation } from "../mutations"
+import { useSendNotificationDraftMutation } from "../mutations"
 import { useRecipientSelectionPreview } from "../queries"
 
 export function NotificationDraftSend() {
@@ -27,15 +24,13 @@ export function NotificationDraftSend() {
   const authorization = useAuthorization()
   const canSend = canSendNotification(authorization, notification)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [sendEmail, setSendEmail] = useState(false)
   const sendDisabledReasonId = useId()
   const sendDraft = useSendNotificationDraftMutation()
-  const sendNotificationEmail = useSendNotificationEmailMutation()
 
   const recipientPreview = useRecipientSelectionPreview(notification.draftRecipientSelection, notification.type)
   const recipientCount = recipientPreview.preview?.recipientCount ?? 0
   const hasCompleteContent = hasCompleteNotificationMessage(notification)
-  const isSending = sendDraft.isPending || sendNotificationEmail.isPending
+  const isSending = sendDraft.isPending
 
   let sendDisabledReason: string | null = null
 
@@ -62,6 +57,7 @@ export function NotificationDraftSend() {
   }
 
   const canSendDraft = sendDisabledReason === null
+
   let recipientSummary = "Ingen mottakere valgt"
 
   if (notification.draftRecipientSelection !== null) {
@@ -79,25 +75,12 @@ export function NotificationDraftSend() {
       return
     }
 
-    let result: Awaited<ReturnType<typeof sendDraft.mutateAsync>>
-
     try {
-      result = await sendDraft.mutateAsync({ id: notification.id, expectedUpdatedAt: notification.updatedAt })
+      await sendDraft.mutateAsync({ id: notification.id, expectedUpdatedAt: notification.updatedAt })
+
+      setIsConfirmOpen(false)
     } catch {
       return
-    }
-
-    setIsConfirmOpen(false)
-
-    if (sendEmail && result.notification.sentAt !== null) {
-      try {
-        await sendNotificationEmail.mutateAsync({
-          id: result.notification.id,
-          expectedSentAt: result.notification.sentAt,
-        })
-      } catch {
-        return
-      }
     }
   }
 
@@ -154,20 +137,10 @@ export function NotificationDraftSend() {
             «{notification.title}» sendes til {recipientCount} mottakere.
           </AlertDialogDescription>
 
-          <div className="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1">
-            <Checkbox
-              id="send-draft-email"
-              checked={sendEmail}
-              onCheckedChange={(checked) => setSendEmail(checked === true)}
-              disabled={isSending}
-            />
-            <Label htmlFor="send-draft-email">Send også e-post til mottakere med e-postadresse</Label>
-            {sendEmail && (
-              <Text className="text-sm text-muted-foreground col-start-2">
-                Emne: {formatEmailSubject(notification.title)}
-              </Text>
-            )}
-          </div>
+          <Text className="text-sm text-muted-foreground">
+            Mottakernes varslingsinnstillinger bestemmer om varslingen leveres på nettsiden, som e-post eller begge
+            deler.
+          </Text>
 
           {sendDisabledReason !== null && <Text className="text-sm">{sendDisabledReason}</Text>}
 

@@ -60,6 +60,7 @@ export const auditLogTableMap = {
   job_listing_location: null,
   membership: null,
   notification_permissions: null,
+  notification_settings: null,
   privacy_permissions: null,
   mark_group: null,
   article_tag: null,

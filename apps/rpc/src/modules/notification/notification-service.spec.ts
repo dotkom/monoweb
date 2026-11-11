@@ -1,15 +1,16 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
-import type { EmailService } from "../email/email-service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { mock, mockDeep, mockReset } from "vitest-mock-extended"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
-import { NotificationDraftCreateSchema } from "./notification"
+import type { EmailService } from "../email/email-service"
 import type { NotificationLink, NotificationManagement, NotificationSource, NotificationType } from "./notification"
+import { DEFAULT_NOTIFICATION_DELIVERY, NotificationDraftCreateSchema, NotificationTypeSchema } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import type { NotificationRepository } from "./notification-repository"
+import { getNotificationService, NEW_NOTIFICATION_EVENT, type NotificationSendInput } from "./notification-service"
+import type { NotificationSettingsService } from "./notification-settings-service"
 import type { NotificationSourceServices } from "./notification-source-resolver"
-import { NEW_NOTIFICATION_EVENT, getNotificationService, type NotificationSendInput } from "./notification-service"
 
 describe("notification payload behavior", () => {
   const databaseHandle = mockDeep<DBHandle>()
@@ -18,13 +19,15 @@ describe("notification payload behavior", () => {
   const sourceServices = mockDeep<NotificationSourceServices>()
   const eventEmitter = new EventEmitter()
   const emailService = mockDeep<EmailService>()
+  const settingsService = mockDeep<NotificationSettingsService>()
   const service = getNotificationService(
     repository,
     recipientResolver,
     sourceServices,
     eventEmitter,
     emailService,
-    "https://example.com"
+    "https://example.com",
+    settingsService
   )
   const timestamp = new Date("2026-10-27T12:00:00Z")
   const notification: NotificationManagement = {
@@ -65,10 +68,18 @@ describe("notification payload behavior", () => {
   ] satisfies { source: Exclude<NotificationSource, { type: "GLOBAL" }>; notificationType: NotificationType }[]
 
   beforeEach(() => {
+    mockReset(databaseHandle)
+    mockReset(settingsService)
+    settingsService.findManyByUserIds.mockImplementation(async (_handle, userIds) => {
+      return new Map(userIds.map((userId) => [userId, { ...DEFAULT_NOTIFICATION_DELIVERY }]))
+    })
+    settingsService.getEnabledNotificationTypes.mockResolvedValue(NotificationTypeSchema.options)
     eventEmitter.removeAllListeners()
     mockReset(repository)
     mockReset(recipientResolver)
     mockReset(sourceServices)
+    mockReset(emailService)
+    repository.findRecipientEmails.mockResolvedValue([])
     repository.create.mockImplementation(async (_handle, data) => ({ ...notification, ...data }))
     repository.addRecipients.mockResolvedValue([])
     repository.findById.mockResolvedValue(notification)
@@ -367,5 +378,93 @@ describe("notification payload behavior", () => {
 
       expect(repository.update).toHaveBeenCalledWith(databaseHandle, notification.id, update)
     })
+  })
+
+  it.each(
+    [false, true].flatMap((isEnabled) => {
+      return [false, true].flatMap((isPushEnabled) => {
+        return [false, true].map((isEmailEnabled) => ({ isEnabled, isPushEnabled, isEmailEnabled }))
+      })
+    })
+  )("emits inbox updates whenever the notification type is enabled: %j", async (delivery) => {
+    settingsService.findManyByUserIds.mockResolvedValue(
+      new Map([["user-1", { ...DEFAULT_NOTIFICATION_DELIVERY, BROADCAST: delivery }]])
+    )
+    repository.addRecipients.mockResolvedValue([
+      { id: "recipient-1", userId: "user-1", notificationId: notification.id, readAt: null },
+    ])
+    const listener = vi.fn()
+    eventEmitter.on(NEW_NOTIFICATION_EVENT, listener)
+
+    await service.send(databaseHandle, { ...message, source: { type: "GLOBAL" } })
+
+    expect(listener).toHaveBeenCalledTimes(delivery.isEnabled ? 1 : 0)
+  })
+
+  it("only emails enabled recipients who opted into email, excluding invalid and duplicate addresses", async () => {
+    settingsService.findManyByUserIds.mockResolvedValue(
+      new Map([
+        [
+          "disabled",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { isEnabled: false, isPushEnabled: true, isEmailEnabled: true },
+          },
+        ],
+        [
+          "silent",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { isEnabled: true, isPushEnabled: false, isEmailEnabled: false },
+          },
+        ],
+        [
+          "email",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { isEnabled: true, isPushEnabled: false, isEmailEnabled: true },
+          },
+        ],
+        [
+          "push",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { isEnabled: true, isPushEnabled: true, isEmailEnabled: false },
+          },
+        ],
+        [
+          "email-and-push",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { isEnabled: true, isPushEnabled: true, isEmailEnabled: true },
+          },
+        ],
+      ])
+    )
+    repository.findRecipientEmails.mockResolvedValue([
+      { userId: "disabled", email: "disabled@example.com" },
+      { userId: "silent", email: "silent@example.com" },
+      { userId: "push", email: "push@example.com" },
+      { userId: "email", email: "email@example.com" },
+      { userId: "email-and-push", email: "email-and-push@example.com" },
+      { userId: "email", email: "email@example.com" },
+      { userId: "email-and-push", email: "invalid-email" },
+    ])
+
+    await service.sendEmail(databaseHandle, notification)
+
+    expect(emailService.send).toHaveBeenCalledOnce()
+    expect(emailService.send.mock.calls[0][4]).toEqual(["email@example.com", "email-and-push@example.com"])
+  })
+
+  it("passes web delivery types to both the inbox and unread-count queries", async () => {
+    const notificationTypes: NotificationType[] = ["BROADCAST", "NEW_MARK"]
+    settingsService.getEnabledNotificationTypes.mockResolvedValue(notificationTypes)
+
+    await service.findManyForUser(databaseHandle, "user-one", { take: 10 })
+    await service.countUnreadForUser(databaseHandle, "user-one")
+
+    expect(repository.findManyForUser).toHaveBeenCalledWith(databaseHandle, "user-one", { take: 10 }, notificationTypes)
+    expect(repository.countUnreadForUser).toHaveBeenCalledWith(databaseHandle, "user-one", notificationTypes)
   })
 })

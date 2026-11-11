@@ -131,17 +131,17 @@ describe("inbox persistence", () => {
     databaseHandle.notificationRecipient.findMany.mockResolvedValue([])
     databaseHandle.notificationRecipient.count.mockResolvedValue(0)
 
-    await repository.findManyForUser(databaseHandle, "user-one", { take: 10 })
-    await repository.countUnreadForUser(databaseHandle, "user-one")
+    await repository.findManyForUser(databaseHandle, "user-one", { take: 10 }, ["BROADCAST"])
+    await repository.countUnreadForUser(databaseHandle, "user-one", ["BROADCAST"])
 
     expect(databaseHandle.notificationRecipient.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { userId: "user-one", notification: { status: "SENT" } },
+        where: { userId: "user-one", notification: { status: "SENT", type: { in: ["BROADCAST"] } } },
         orderBy: [{ notification: { sentAt: "desc" } }, { id: "desc" }],
       })
     )
     expect(databaseHandle.notificationRecipient.count).toHaveBeenCalledWith({
-      where: { userId: "user-one", readAt: null, notification: { status: "SENT" } },
+      where: { userId: "user-one", readAt: null, notification: { status: "SENT", type: { in: ["BROADCAST"] } } },
     })
   })
 })

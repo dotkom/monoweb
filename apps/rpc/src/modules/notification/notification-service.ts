@@ -5,17 +5,16 @@ import {
   createAbsoluteNotificationPageUrl,
   formatEmailSubject,
   getCurrentUTC,
-  richTextToPlainText,
   type Pageable,
+  richTextToPlainText,
 } from "@dotkomonline/utils"
 import { z } from "zod"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
 import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
-import { getGroupDisplayName, type GroupId } from "../group/group"
+import { type GroupId, getGroupDisplayName } from "../group/group"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
-import { hasCompleteNotificationMessage, NotificationUpdateSchema } from "./notification"
 import type {
   Notification,
   NotificationDraftCreate,
@@ -24,19 +23,21 @@ import type {
   NotificationId,
   NotificationManagement,
   NotificationRecipient,
-  NotificationRecipientListItem,
   NotificationRecipientFilterQuery,
-  NotificationRecipientSelection,
+  NotificationRecipientListItem,
   NotificationRecipientPreviewOptions,
+  NotificationRecipientSelection,
   NotificationRecipientSelectionPreview,
   NotificationRecipientStats,
-  NotificationType,
   NotificationSource,
+  NotificationType,
   NotificationUpdate,
   UserNotification,
 } from "./notification"
+import { hasCompleteNotificationMessage, NotificationUpdateSchema } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import type { NotificationRepository } from "./notification-repository"
+import type { NotificationSettingsService } from "./notification-settings-service"
 import { getNotificationSourceResolver, type NotificationSourceServices } from "./notification-source-resolver"
 
 export interface NotificationSendInput {
@@ -122,6 +123,7 @@ export interface NotificationService {
   getRecipientStats(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipientStats>
 
   findManyForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
+  findForUser(handle: DBHandle, userId: UserId, notificationId: NotificationId): Promise<UserNotification | null>
   countUnreadForUser(handle: DBHandle, userId: UserId): Promise<number>
 
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
@@ -136,7 +138,8 @@ export function getNotificationService(
   sourceServices: NotificationSourceServices,
   eventEmitter: EventEmitter,
   emailService: EmailService,
-  webOrigin: string
+  webOrigin: string,
+  notificationSettingsService: NotificationSettingsService
 ): NotificationService {
   const logger = getLogger("notification-service")
 
@@ -162,13 +165,74 @@ export function getNotificationService(
     }
   }
 
+  async function sendNotificationEmail(
+    handle: DBHandle,
+    notification: NotificationManagement,
+    userIds?: UserId[]
+  ): Promise<void> {
+    const recipients = await notificationRepository.findRecipientEmails(handle, notification.id, userIds)
+    const recipientUserIds = recipients.map((recipient) => recipient.userId)
+    const settingsByUserId = await notificationSettingsService.findManyByUserIds(handle, recipientUserIds)
+    const recipientEmailAddresses = recipients
+      .filter((recipient) => {
+        const delivery = settingsByUserId.get(recipient.userId)?.[notification.type]
+
+        return delivery?.isEnabled === true && delivery.isEmailEnabled
+      })
+      .map((recipient) => recipient.email)
+    const validEmailAddresses = recipientEmailAddresses.filter((email) => z.email().safeParse(email).success)
+    const recipientEmails = [...new Set(validEmailAddresses)]
+
+    if (recipientEmails.length === 0) {
+      return
+    }
+
+    const group = notification.actorGroup
+    const groupEmail = group?.email ?? null
+    const sourceEmail =
+      groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_SOURCE
+    const senderName = group === null ? "Linjeforeningen Online" : getGroupDisplayName(group)
+    const notificationUrl = createAbsoluteNotificationPageUrl(webOrigin, notification.id)
+    const linkUrl = notification.link.type === "URL" ? notification.link.url : null
+
+    await emailService.send(
+      sourceEmail,
+      [sourceEmail],
+      [],
+      [],
+      recipientEmails,
+      formatEmailSubject(notification.title),
+      emails.NOTIFICATION,
+      {
+        title: notification.title,
+        message: notification.content,
+        senderName,
+        notificationUrl,
+        linkUrl,
+      },
+      group === null ? undefined : senderName
+    )
+  }
+
   async function deliverNotification(
     handle: DBHandle,
     notification: NotificationManagement,
     userIds: UserId[]
   ): Promise<number> {
     const recipients = await notificationRepository.addRecipients(handle, notification.id, userIds)
-    emitNewNotifications(recipients, toInboxNotification(notification))
+    const recipientUserIds = recipients.map((recipient) => recipient.userId)
+    const settingsByUserId = await notificationSettingsService.findManyByUserIds(handle, recipientUserIds)
+    const webRecipients = recipients.filter((recipient) => {
+      const delivery = settingsByUserId.get(recipient.userId)?.[notification.type]
+
+      return delivery?.isEnabled === true
+    })
+
+    emitNewNotifications(webRecipients, toInboxNotification(notification))
+
+    if (recipientUserIds.length > 0) {
+      await sendNotificationEmail(handle, notification, recipientUserIds)
+    }
 
     return recipients.length
   }
@@ -193,44 +257,6 @@ export function getNotificationService(
   }
 
   return {
-    async sendEmail(handle, notification) {
-      const recipientEmailAddresses = await notificationRepository.findRecipientEmails(handle, notification.id)
-
-      const recipientEmails = [
-        ...new Set(recipientEmailAddresses.filter((email) => z.email().safeParse(email).success)),
-      ]
-
-      if (recipientEmails.length === 0) {
-        return
-      }
-
-      const group = notification.actorGroup
-      const groupEmail = group?.email ?? null
-      const sourceEmail =
-        groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_SOURCE
-      const senderName = group === null ? "Linjeforeningen Online" : getGroupDisplayName(group)
-      const notificationUrl = createAbsoluteNotificationPageUrl(webOrigin, notification.id)
-      const linkUrl = notification.link.type === "URL" ? notification.link.url : null
-
-      await emailService.send(
-        sourceEmail,
-        [sourceEmail],
-        [],
-        [],
-        recipientEmails,
-        formatEmailSubject(notification.title),
-        emails.NOTIFICATION,
-        {
-          title: notification.title,
-          message: notification.content,
-          senderName,
-          notificationUrl,
-          linkUrl,
-        },
-        group === null ? undefined : senderName
-      )
-    },
-
     async createDraft(handle, input) {
       const { link, defaultRecipientSelection } = await sourceResolver.resolve(handle, input)
       const draftRecipientSelection = input.recipientSelection ?? defaultRecipientSelection
@@ -343,6 +369,10 @@ export function getNotificationService(
       return { notification, recipientCount }
     },
 
+    async sendEmail(handle, notification) {
+      await sendNotificationEmail(handle, notification)
+    },
+
     async previewRecipientSelection(handle, recipientSelection, notificationType, page, search, options) {
       return await recipientResolver.preview(handle, recipientSelection, notificationType, page, search, options)
     },
@@ -397,6 +427,7 @@ export function getNotificationService(
       if (notification.status !== "SENT") {
         throw new FailedPreconditionError("Send the draft before adding more recipients")
       }
+
       const recipientSelectionWithInitialExclusions = mergeRecipientSelectionExclusions(
         notification.initialRecipientSelection,
         recipientSelection
@@ -433,12 +464,20 @@ export function getNotificationService(
       return await notificationRepository.getRecipientStats(handle, notificationId)
     },
 
+    async findForUser(handle, userId, notificationId) {
+      return await notificationRepository.findForUser(handle, userId, notificationId)
+    },
+
     async findManyForUser(handle, userId, page) {
-      return await notificationRepository.findManyForUser(handle, userId, page)
+      const notificationTypes = await notificationSettingsService.getEnabledNotificationTypes(handle, userId)
+
+      return await notificationRepository.findManyForUser(handle, userId, page, notificationTypes)
     },
 
     async countUnreadForUser(handle, userId) {
-      return await notificationRepository.countUnreadForUser(handle, userId)
+      const notificationTypes = await notificationSettingsService.getEnabledNotificationTypes(handle, userId)
+
+      return await notificationRepository.countUnreadForUser(handle, userId, notificationTypes)
     },
 
     async markAsRead(handle, notificationId, userId) {

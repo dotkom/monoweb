@@ -68,7 +68,7 @@ export const ModelName = {
   MarkGroup: 'MarkGroup',
   PersonalMark: 'PersonalMark',
   PrivacyPermissions: 'PrivacyPermissions',
-  NotificationPermissions: 'NotificationPermissions',
+  NotificationSettings: 'NotificationSettings',
   EventHostingGroup: 'EventHostingGroup',
   JobListing: 'JobListing',
   JobListingLocation: 'JobListingLocation',
@@ -149,7 +149,7 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   privacyPermissionsId: 'privacyPermissionsId',
-  notificationPermissionsId: 'notificationPermissionsId'
+  notificationSettingsId: 'notificationSettingsId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -377,22 +377,15 @@ export const PrivacyPermissionsScalarFieldEnum = {
 export type PrivacyPermissionsScalarFieldEnum = (typeof PrivacyPermissionsScalarFieldEnum)[keyof typeof PrivacyPermissionsScalarFieldEnum]
 
 
-export const NotificationPermissionsScalarFieldEnum = {
+export const NotificationSettingsScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  applications: 'applications',
-  newArticles: 'newArticles',
-  standardNotifications: 'standardNotifications',
-  groupMessages: 'groupMessages',
-  markRulesUpdates: 'markRulesUpdates',
-  receipts: 'receipts',
-  registrationByAdministrator: 'registrationByAdministrator',
-  registrationStart: 'registrationStart',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deliverySettings: 'deliverySettings',
+  userId: 'userId'
 } as const
 
-export type NotificationPermissionsScalarFieldEnum = (typeof NotificationPermissionsScalarFieldEnum)[keyof typeof NotificationPermissionsScalarFieldEnum]
+export type NotificationSettingsScalarFieldEnum = (typeof NotificationSettingsScalarFieldEnum)[keyof typeof NotificationSettingsScalarFieldEnum]
 
 
 export const EventHostingGroupScalarFieldEnum = {

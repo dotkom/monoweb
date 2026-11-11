@@ -106,9 +106,9 @@ const BACKFILL_ONE_TO_ONE_RELATIONS = [
     deleteOrphan: (handle: DBHandle, id: string) => handle.privacyPermissions.delete({ where: { id } }),
   },
   {
-    fkField: "notificationPermissionsId" as const,
-    relationName: "notificationPermissions" as const,
-    deleteOrphan: (handle: DBHandle, id: string) => handle.notificationPermissions.delete({ where: { id } }),
+    fkField: "notificationSettingsId" as const,
+    relationName: "notificationSettings" as const,
+    deleteOrphan: (handle: DBHandle, id: string) => handle.notificationSettings.delete({ where: { id } }),
   },
 ] satisfies Array<{
   fkField: AllUserKeys
