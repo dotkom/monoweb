@@ -14,6 +14,7 @@ import { IconArrowRight } from "@tabler/icons-react"
 import { startOfDay } from "date-fns"
 import { Link } from "@/components/link"
 import { VelkomEkskomLeaderApplicationsNotice } from "src/components/notices/smaller-committee-applications-notice"
+import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
 
 export default async function App() {
   let events: Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>> = []
@@ -23,6 +24,13 @@ export default async function App() {
     })
   } catch (e) {
     console.error("Failed to fetch featured events", e)
+  }
+
+  let articles: Awaited<ReturnType<typeof server.article.all.query>> = []
+  try {
+    articles = await server.article.all.query({ take: 2 })
+  } catch (e) {
+    console.error("Failed to fetch articles", e)
   }
 
   let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
@@ -144,6 +152,28 @@ export default async function App() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <Title className="text-3xl font-semibold">Artikler</Title>
+
+        {articles.length > 0 ? (
+          <>
+            <div className="flex flex-col gap-4 md:hidden">
+              {articles.map((article) => (
+                <ArticleListItem key={article.id} article={article} orientation="vertical" />
+              ))}
+            </div>
+
+            <div className="hidden md:grid md:grid-cols-2 gap-6">
+              {articles.map((article) => (
+                <ArticleListItem key={article.id} article={article} orientation="horizontal" />
+              ))}
+            </div>
+          </>
+        ) : (
+          <Text className="text-gray-500 dark:text-stone-500">Det er ingen artikler å vise.</Text>
+        )}
       </div>
 
       <div className="flex flex-col gap-4">
