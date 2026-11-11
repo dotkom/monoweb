@@ -257,7 +257,10 @@ export function ReadMore({
             onClick={handleToggleExpandCollapse}
             type="button"
             variant="outline"
-            className={cn("pointer-events-auto rounded-full", toggleButtonClassName)}
+            className={cn(
+              "pointer-events-auto rounded-full max-md:h-10 max-md:px-3.5 max-md:text-base",
+              toggleButtonClassName
+            )}
           >
             {isExpanded ? readLessText : readMoreText}
           </Button>
