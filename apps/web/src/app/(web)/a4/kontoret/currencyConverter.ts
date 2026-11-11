@@ -9,6 +9,7 @@ export const CURRENCY_VALUES = [
   "OPUS_5.5_TOKENS",
   "FIFA_POINTS",
   "CS_KEYS",
+  "RP",
   "GTA_DOLLARS",
   "COPIES_OF_UNDERTALE",
   "PK",
@@ -21,12 +22,16 @@ export const CURRENCY_VALUES = [
   "ATB_MONTHLY_TICKETS",
   "OW_BUCKS",
   "ANIMALS",
+  "5090",
+  "KBO_KANELBOLLE",
+  "SESAM_KEBABS",
+  "NETFLIX_SUBSCRIPTIONS",
+  "CHRISTMAS_STARS",
   "67",
 ] as const
 
-// CURRENCY_VALUES are the currencies shown in the UI dropdown, in display order.
-// PIZZA_BUDGET is kept as a valid enum value for future use, but is not shown.
-export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET"])
+// Hidden but functional values
+export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET", "BIRTHS_IN_US", "PARACETAMOL",])
 
 export type CurrenciesType = z.infer<typeof Currencies>
 
@@ -67,14 +72,26 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(value / 60).toFixed(2)} pils på Circus` // A beer at circus costs 60kr
     case "ATB_MONTHLY_TICKETS":
       return `${(value / 265).toFixed(2)} ATB månedskort` // A 30-day ticket costs 265kr for a student
+    case "5090":
+      return `${(value / 89_990).toFixed(5)} 5090-er` // As of 11.11.2026, the cheapest rtx 5090 is 89990kr
     case "67":
       return "67" // 67
+    case "RP":
+      return `${((value / 201.93) * 2540)} RP` // A 2540RP gift card costs 201.93kr
     case "OW_BUCKS":
       return `${(value * Math.random() * 5).toFixed(2)} OW bucks` // OW bucks is a really volatile currency
     case "PIZZA_BUDGET":
       return `${value}/30000 av dotkoms gamle pizzabudsjett` // We used to get 30k a year for pizza :(
     case "ANIMALS":
       return `${(value / (179 / 11)).toFixed(4)} animals` // A CD of the album V costs 179kr, and there is 11 songs on the album
+    case "KBO_KANELBOLLE":
+      return `${(value / 26).toFixed(2)} kanelboller` // A kanelbolle costs 26kr on kanelbolleonsdag
+    case "SESAM_KEBABS":
+      return `${(value / 169).toFixed(2)} kebaber` // A Sesam kebab costs 169kr
+    case "NETFLIX_SUBSCRIPTIONS":
+      return `${(value / 119).toFixed(2)} måneder med Netflix` // A month of netflix starts at 119kr
+    case "CHRISTMAS_STARS":
+      return `${(value / 19.90).toFixed(2)} julestjerner` // A Clas Ohlson julestjerne costs 19.90kr
     default:
       return `${value.toFixed(2)} kr`
   }
@@ -124,6 +141,18 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "Andeler av dotkoms gamle pizzabudsjett"
     case "ANIMALS":
       return "Animals av Maroon 5"
+    case "5090":
+      return "RTX 5090er"
+    case "RP":
+      return "League of Legends RP"
+    case "KBO_KANELBOLLE":
+      return "Kanelboller på KBO"
+    case "SESAM_KEBABS":
+      return "Kebaber på Sesam"
+    case "NETFLIX_SUBSCRIPTIONS":
+      return "Måneder med Netflix"
+    case "CHRISTMAS_STARS":
+      return "Julestjerner fra Clas Ohlon"
     default:
       return "Ukjent valuta"
   }
