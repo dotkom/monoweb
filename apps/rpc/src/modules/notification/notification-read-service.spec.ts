@@ -3,7 +3,7 @@ import type { DBHandle } from "@dotkomonline/db"
 import type { EmailService } from "../email/email-service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { mockDeep, mockReset } from "vitest-mock-extended"
-import { getNotificationTypeConfiguration, type NotificationManagement } from "./notification"
+import type { NotificationManagement } from "./notification"
 import type { NotificationRepository } from "./notification-repository"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
 import { getNotificationService, NEW_NOTIFICATION_EVENT } from "./notification-service"
@@ -52,10 +52,6 @@ beforeEach(() => {
 })
 
 describe("default feedback notification behavior", () => {
-  it("uses ordinary automatic read behavior", () => {
-    expect(getNotificationTypeConfiguration("NEW_FEEDBACK_FORM").behavior).toBe("DEFAULT")
-  })
-
   it("marks feedback notifications as read without checking for an answer", async () => {
     repository.markAsRead.mockResolvedValue(true)
 

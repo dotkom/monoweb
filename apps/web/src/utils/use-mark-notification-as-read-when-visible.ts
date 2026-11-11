@@ -1,26 +1,21 @@
 "use client"
 
-import { getNotificationTypeConfiguration, type NotificationType } from "@dotkomonline/rpc/notification"
 import { useEffect, useRef } from "react"
 
 const MINIMUM_VISIBLE_RATIO_TO_MARK_AS_READ = 0.5
 
 export function useMarkNotificationAsReadWhenVisible<Element extends HTMLElement>({
   notificationId,
-  notificationType,
   readAt,
   onMarkAsRead,
 }: {
   notificationId?: string
-  notificationType?: NotificationType
   readAt?: Date | null
   onMarkAsRead?: () => void
 }) {
   const elementReference = useRef<Element>(null)
   const markAsReadReference = useRef(onMarkAsRead)
-  const behavior =
-    notificationType === undefined ? undefined : getNotificationTypeConfiguration(notificationType).behavior
-  const canAutomaticallyMarkAsRead = readAt === null && behavior === "DEFAULT" && onMarkAsRead !== undefined
+  const canAutomaticallyMarkAsRead = readAt === null && onMarkAsRead !== undefined
 
   useEffect(() => {
     markAsReadReference.current = onMarkAsRead

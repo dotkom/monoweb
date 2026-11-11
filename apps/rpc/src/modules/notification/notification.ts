@@ -23,46 +23,6 @@ export const NotificationTypeSchema = z.enum([
 
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
 
-export type NotificationColor = "blue" | "purple" | "green" | "red" | "gray" | "yellow"
-
-export const NotificationBehaviorSchema = z.enum([
-  /** Can be automatically marked as read when visible in the notification dropdown. */
-  "DEFAULT",
-  /** Requires the user to manually acknowledge the notification by marking it as read. */
-  "IMPORTANT",
-])
-
-export type NotificationBehavior = z.infer<typeof NotificationBehaviorSchema>
-
-export interface NotificationTypeConfiguration {
-  color: NotificationColor
-  behavior: NotificationBehavior
-}
-
-export const NOTIFICATION_TYPE_CONFIGURATION = {
-  BROADCAST: { color: "blue", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  BROADCAST_IMPORTANT: { color: "blue", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
-  EVENT_REMINDER: { color: "purple", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  EVENT_UPDATE: { color: "purple", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  ATTENDANCE_REGISTRATION: { color: "green", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  ATTENDANCE_DEREGISTRATION: { color: "red", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  ATTENDANCE_REGISTRATION_FROM_QUEUE: { color: "green", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  ATTENDANCE_QUEUE_UPDATE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  ATTENDANCE_COMPLETION_FAILED: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
-  JOB_LISTING_REMINDER: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_ARTICLE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_EVENT: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_INTEREST_GROUP: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_JOB_LISTING: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_OFFLINE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-  NEW_MARK: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
-  NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
-} as const satisfies Record<NotificationType, NotificationTypeConfiguration>
-
-export function getNotificationTypeConfiguration(notificationType: NotificationType): NotificationTypeConfiguration {
-  return NOTIFICATION_TYPE_CONFIGURATION[notificationType]
-}
-
 export const NotificationPayloadTypeSchema = z.enum([
   "NONE",
   "URL",
