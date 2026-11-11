@@ -377,7 +377,9 @@ export function RichTextInput({
         class: richTextSharedClasses,
       },
     },
-    onUpdate: (update) => onChange(update.editor.getHTML()),
+    onUpdate: ({ editor }) => {
+      onChange(editor.isEmpty ? "" : editor.getHTML())
+    },
   })
 
   useEffect(() => {
