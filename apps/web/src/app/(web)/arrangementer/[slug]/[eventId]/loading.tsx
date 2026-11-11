@@ -53,7 +53,7 @@ export default () => {
         </div>
 
         <div className="min-w-0 flex flex-col gap-8 sm:gap-4">
-          <div className="sm:hidden h-1 rounded-full w-full bg-gray-200 dark:bg-stone-700" />
+          <div className="w-full border-t border-field-border md:hidden" />
           <AttendanceCardSkeleton />
         </div>
       </div>

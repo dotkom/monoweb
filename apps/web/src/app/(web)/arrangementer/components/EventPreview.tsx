@@ -26,6 +26,7 @@ import Link from "next/link"
 import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from "react"
 import { AttendanceCard } from "./AttendanceCard/AttendanceCard"
 import { EventDescription } from "./EventDescription"
+import { EventDetailsFooter } from "./EventDetailsFooter"
 import { EventHeader, SkeletonEventHeader } from "./EventHeader"
 import { OrganizerPill } from "./OrganizerPill"
 import { LocationBox } from "./TimeLocationBox/LocationBox"
@@ -290,6 +291,8 @@ function EventPreviewDetails({
           />
         </div>
       )}
+
+      <EventDetailsFooter event={event} />
     </div>
   )
 }
