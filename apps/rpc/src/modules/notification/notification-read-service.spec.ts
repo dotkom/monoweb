@@ -1,12 +1,14 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
-import type { EmailService } from "../email/email-service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { mockDeep, mockReset } from "vitest-mock-extended"
+import type { EmailService } from "../email/email-service"
 import type { NotificationManagement } from "./notification"
-import type { NotificationRepository } from "./notification-repository"
+import { DEFAULT_NOTIFICATION_DELIVERY, NotificationTypeSchema } from "./notification"
 import type { NotificationRecipientResolver } from "./notification-recipient-resolver"
+import type { NotificationRepository } from "./notification-repository"
 import { getNotificationService, NEW_NOTIFICATION_EVENT } from "./notification-service"
+import type { NotificationSettingsService } from "./notification-settings-service"
 import type { NotificationSourceServices } from "./notification-source-resolver"
 
 const databaseHandle = mockDeep<DBHandle>()
@@ -15,13 +17,15 @@ const recipientResolver = mockDeep<NotificationRecipientResolver>()
 const eventEmitter = new EventEmitter()
 const sourceServices = mockDeep<NotificationSourceServices>()
 const emailService = mockDeep<EmailService>()
+const settingsService = mockDeep<NotificationSettingsService>()
 const service = getNotificationService(
   repository,
   recipientResolver,
   sourceServices,
   eventEmitter,
   emailService,
-  "https://example.com"
+  "https://example.com",
+  settingsService
 )
 const timestamp = new Date("2026-10-30T12:00:00Z")
 const notification: NotificationManagement = {
@@ -48,6 +52,12 @@ beforeEach(() => {
   mockReset(databaseHandle)
   mockReset(repository)
   mockReset(recipientResolver)
+  mockReset(settingsService)
+  settingsService.findManyByUserIds.mockImplementation(async (_handle, userIds) => {
+    return new Map(userIds.map((userId) => [userId, { ...DEFAULT_NOTIFICATION_DELIVERY }]))
+  })
+  settingsService.getEnabledNotificationTypes.mockResolvedValue(NotificationTypeSchema.options)
+  repository.findRecipientEmails.mockResolvedValue([])
   eventEmitter.removeAllListeners()
 })
 

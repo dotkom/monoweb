@@ -34,7 +34,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Vegetarianer",
       ntnuUsername: null,
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.berta,
@@ -48,7 +48,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: null,
       ntnuUsername: null,
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.carl,
@@ -62,7 +62,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Har dårlig reaksjon mot gluten",
       ntnuUsername: null,
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.dina,
@@ -76,7 +76,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: null,
       ntnuUsername: "dinadrag",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.eirik,
@@ -90,7 +90,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Laktoseintolerant",
       ntnuUsername: "eirelg",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.frida,
@@ -104,7 +104,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: null,
       ntnuUsername: null,
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.gunnar,
@@ -118,7 +118,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Nøtteallergi",
       ntnuUsername: "gungas",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.helle,
@@ -132,7 +132,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: null,
       ntnuUsername: "hellehummer",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.ivar,
@@ -146,7 +146,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Spiser ikke svin",
       ntnuUsername: null,
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.jenny,
@@ -160,7 +160,7 @@ export const getUserFixtures = () =>
       dietaryRestrictions: "Glutenfri",
       ntnuUsername: "jenjerv",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
     {
       id: fixtureUserId.kasper,
@@ -174,6 +174,6 @@ export const getUserFixtures = () =>
       dietaryRestrictions: null,
       ntnuUsername: "kaskrab",
       privacyPermissionsId: null,
-      notificationPermissionsId: null,
+      notificationSettingsId: null,
     },
   ] as const satisfies Prisma.UserCreateManyInput[]

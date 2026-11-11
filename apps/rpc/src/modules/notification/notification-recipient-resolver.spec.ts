@@ -2,12 +2,15 @@ import type { DBHandle } from "@dotkomonline/db"
 import { beforeEach, describe, expect, it } from "vitest"
 import { mock, mockReset } from "vitest-mock-extended"
 import type { NotificationRecipientSelection } from "./notification"
+import { DEFAULT_NOTIFICATION_DELIVERY } from "./notification"
 import type { NotificationRecipientQueryRepository } from "./notification-recipient-query-repository"
 import { getNotificationRecipientResolver } from "./notification-recipient-resolver"
+import type { NotificationSettingsService } from "./notification-settings-service"
 
 const databaseHandle = mock<DBHandle>()
 const repository = mock<NotificationRecipientQueryRepository>()
-const resolver = getNotificationRecipientResolver(repository)
+const settingsService = mock<NotificationSettingsService>()
+const resolver = getNotificationRecipientResolver(repository, settingsService)
 const selection: NotificationRecipientSelection = {
   rules: [
     { type: "GROUP_MEMBERS", groupSlug: "group-1", includeFormerMembers: false },
@@ -23,7 +26,10 @@ beforeEach(() => {
 
     return { groupName: "Same name", userIds }
   })
-  repository.filterUserIdsByPreference.mockImplementation(async (_handle, userIds) => userIds)
+  mockReset(settingsService)
+  settingsService.findManyByUserIds.mockImplementation(async (_handle, userIds) => {
+    return new Map(userIds.map((userId) => [userId, { ...DEFAULT_NOTIFICATION_DELIVERY }]))
+  })
 })
 
 describe("recipient source rule indexes", () => {
@@ -90,7 +96,18 @@ describe("recipient source rule indexes", () => {
   })
 
   it("preserves source indexes when exclusions and preferences remove recipients", async () => {
-    repository.filterUserIdsByPreference.mockResolvedValue(["user-1"])
+    settingsService.findManyByUserIds.mockResolvedValue(
+      new Map([
+        ["user-1", { ...DEFAULT_NOTIFICATION_DELIVERY }],
+        [
+          "user-3",
+          {
+            ...DEFAULT_NOTIFICATION_DELIVERY,
+            BROADCAST: { ...DEFAULT_NOTIFICATION_DELIVERY.BROADCAST, isEnabled: false },
+          },
+        ],
+      ])
+    )
 
     const result = await resolver.resolve(databaseHandle, { ...selection, excludedUserIds: ["user-2"] }, "BROADCAST")
 

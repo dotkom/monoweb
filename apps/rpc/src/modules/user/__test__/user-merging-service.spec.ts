@@ -36,7 +36,7 @@ function makeUser(overrides: Partial<User> = {}): User {
     ntnuUsername: null,
     flags: [],
     privacyPermissionsId: null,
-    notificationPermissionsId: null,
+    notificationSettingsId: null,
     ...overrides,
   }
 }

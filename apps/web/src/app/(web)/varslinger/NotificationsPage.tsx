@@ -1,19 +1,21 @@
 "use client"
 
-import { Link } from "@/components/link"
-import { NotificationPayload } from "@/components/Navbar/NotificationPayload"
-import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
-import { useMyNotifications } from "@/utils/use-my-notifications"
-import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
 import type { UserNotification } from "@dotkomonline/rpc/notification"
-import { Button, RichText, Text, Title, cn } from "@dotkomonline/ui"
+import { Button, cn, RichText, Text, Title } from "@dotkomonline/ui"
 import { createNotificationPageUrl, richTextToPlainText } from "@dotkomonline/utils"
 import { IconAlertTriangle, IconArrowLeft, IconBellOff, IconCheck, IconChecks } from "@tabler/icons-react"
+import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
 import { nb } from "date-fns/locale"
 import { useParams } from "next/navigation"
 import { useEffect, useRef } from "react"
+import { Link } from "@/components/link"
+import { NotificationPayload } from "@/components/Navbar/NotificationPayload"
+import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
+import { useTRPC } from "@/utils/trpc/client"
+import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
+import { useMyNotifications } from "@/utils/use-my-notifications"
 
 export function NotificationsPage() {
   const params = useParams<{ id?: string }>()
@@ -28,9 +30,16 @@ export function NotificationsPage() {
   } = useMyNotifications()
 
   const loaderElementReference = useRef<HTMLDivElement>(null)
-  const selectedUserNotification = userNotifications.find((userNotification) => {
+  const trpcClient = useTRPC()
+  const selectedNotificationQuery = useQuery(
+    trpcClient.notification.getMyNotification.queryOptions(selectedNotificationId ?? "", {
+      enabled: selectedNotificationId !== undefined && !notificationsQuery.isPending,
+    })
+  )
+  const inboxUserNotification = userNotifications.find((userNotification) => {
     return userNotification.notification.id === selectedNotificationId
   })
+  const selectedUserNotification = inboxUserNotification ?? selectedNotificationQuery.data ?? undefined
   const hasSelection = selectedNotificationId !== undefined
 
   useEffect(() => {
@@ -140,8 +149,8 @@ export function NotificationsPage() {
           <InboxNotificationDetail
             selectedNotificationId={selectedNotificationId}
             selectedUserNotification={selectedUserNotification}
-            isPending={notificationsQuery.isPending}
-            isError={notificationsQuery.isError}
+            isPending={hasSelection ? selectedNotificationQuery.isPending : notificationsQuery.isPending}
+            isError={hasSelection ? selectedNotificationQuery.isError : notificationsQuery.isError}
             hasNoNotifications={hasNoNotifications}
             onMarkAsRead={() => {
               if (selectedNotificationId !== undefined) {

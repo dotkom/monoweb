@@ -38,7 +38,7 @@ const attendee: Attendee = {
     createdAt: new Date(),
     updatedAt: new Date(),
     privacyPermissionsId: null,
-    notificationPermissionsId: null,
+    notificationSettingsId: null,
     memberships: [],
   },
 }

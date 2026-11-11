@@ -47,6 +47,8 @@ import { getNotificationRecipientQueryRepository } from "./notification/notifica
 import { getNotificationRecipientResolver } from "./notification/notification-recipient-resolver"
 import { getNotificationRepository } from "./notification/notification-repository"
 import { getNotificationService } from "./notification/notification-service"
+import { getNotificationSettingsRepository } from "./notification/notification-settings-repository"
+import { getNotificationSettingsService } from "./notification/notification-settings-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
 import { getPaymentRepository } from "./payment/payment-repository"
@@ -190,6 +192,7 @@ export async function createServiceLayer(
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const notificationRepository = getNotificationRepository()
+  const notificationSettingsRepository = getNotificationSettingsRepository()
   const notificationRecipientQueryRepository = getNotificationRecipientQueryRepository()
   const offlineRepository = getOfflineRepository()
   const auditLogRepository = getAuditLogRepository()
@@ -267,7 +270,11 @@ export async function createServiceLayer(
     clients.s3Client,
     configuration.AWS_S3_BUCKET
   )
-  const notificationRecipientResolver = getNotificationRecipientResolver(notificationRecipientQueryRepository)
+  const notificationSettingsService = getNotificationSettingsService(notificationSettingsRepository)
+  const notificationRecipientResolver = getNotificationRecipientResolver(
+    notificationRecipientQueryRepository,
+    notificationSettingsService
+  )
   const notificationService = getNotificationService(
     notificationRepository,
     notificationRecipientResolver,
@@ -281,7 +288,8 @@ export async function createServiceLayer(
     },
     eventEmitter,
     emailService,
-    configuration.WEB_PUBLIC_ORIGIN
+    configuration.WEB_PUBLIC_ORIGIN,
+    notificationSettingsService
   )
   const contestService = getContestService(contestRepository)
   const fadderukeService = getFadderukeService(fadderukeRepository)
@@ -350,6 +358,7 @@ export async function createServiceLayer(
     contestService,
     fadderukeService,
     notificationService,
+    notificationSettingsService,
     recurringTaskService,
     workspaceService,
     sidequestService,

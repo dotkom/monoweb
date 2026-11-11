@@ -1,4 +1,5 @@
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
+import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
@@ -19,6 +20,7 @@ import { canManageOfflines } from "../../permissions/offline-permissions"
 import { canAdminManageSidequests } from "../../permissions/sidequest-permissions"
 import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
+  NotificationDeliverySettingsSchema,
   NotificationDraftCreateSchema,
   NotificationFilterQuerySchema,
   NotificationManagementSchema,
@@ -195,6 +197,18 @@ const getMyNotificationsProcedure = procedureTraceErrorsOnly
     }
   })
 
+export type GetMyNotificationInput = inferProcedureInput<typeof getMyNotificationProcedure>
+export type GetMyNotificationOutput = inferProcedureOutput<typeof getMyNotificationProcedure>
+const getMyNotificationProcedure = procedure
+  .input(NotificationSchema.shape.id)
+  .output(UserNotificationSchema.nullable())
+  .use(withAuthentication())
+  .query(async ({ ctx, input }) => {
+    return await ctx.notificationService.findForUser(ctx.prisma, ctx.principal.subject, input)
+  })
+
+export type GetMyUnreadCountInput = inferProcedureInput<typeof getMyUnreadCountProcedure>
+export type GetMyUnreadCountOutput = inferProcedureOutput<typeof getMyUnreadCountProcedure>
 const getMyUnreadCountProcedure = procedureTraceErrorsOnly
   .output(z.number().int().nonnegative())
   .use(withAuthentication())
@@ -593,13 +607,41 @@ const removeRecipientsProcedure = procedure
     return { removedCount }
   })
 
+export type GetMyNotificationSettingsInput = inferProcedureInput<typeof getMySettingsProcedure>
+export type GetMyNotificationSettingsOutput = inferProcedureOutput<typeof getMySettingsProcedure>
+const getMySettingsProcedure = procedure
+  .output(NotificationDeliverySettingsSchema)
+  .use(withAuthentication())
+  .query(async ({ ctx }) => {
+    return await ctx.notificationSettingsService.getByUserId(ctx.prisma, ctx.principal.subject)
+  })
+
+export type UpdateMyNotificationSettingsInput = inferProcedureInput<typeof updateMySettingsProcedure>
+export type UpdateMyNotificationSettingsOutput = inferProcedureOutput<typeof updateMySettingsProcedure>
+const updateMySettingsProcedure = procedure
+  .input(NotificationDeliverySettingsSchema)
+  .output(NotificationDeliverySettingsSchema)
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ ctx, input }) => {
+    const settings = await ctx.notificationSettingsService.upsert(ctx.handle, ctx.principal.subject, input)
+
+    ctx.setAuditTransactionName(`Update notification settings for User(ID=${ctx.principal.subject})`)
+
+    return settings
+  })
+
 export const notificationRouter = t.router({
   // User
   getMyNotifications: getMyNotificationsProcedure,
+  getMyNotification: getMyNotificationProcedure,
   getMyUnreadCount: getMyUnreadCountProcedure,
   markAsRead: markAsReadProcedure,
   markAllAsRead: markAllAsReadProcedure,
   onNewNotification: onNewNotificationProcedure,
+  getMySettings: getMySettingsProcedure,
+  updateMySettings: updateMySettingsProcedure,
 
   // Management
   find: findNotificationProcedure,
