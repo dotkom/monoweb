@@ -143,6 +143,10 @@
     "./workspace-permissions": {
       "import": "./src/permissions/workspace-permissions.ts",
       "types": "./src/permissions/workspace-permissions.ts"
+    },
+    "./committee-application-permissions": {
+      "import": "./src/permissions/committee-application-permissions.ts",
+      "types": "./src/permissions/committee-application-permissions.ts"
     }
   },
   "scripts": {
