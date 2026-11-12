@@ -8,6 +8,7 @@ import { tasks } from "./task-definition"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
+  createMany(handle: DBHandle, type: TaskType, data: TaskWrite[]): Promise<void>
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState?: TaskStatus): Promise<Task | null>
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
@@ -33,6 +34,18 @@ export function getTaskRepository(): TaskRepository {
       })
 
       return parseOrReport(TaskSchema, task)
+    },
+
+    async createMany(handle, type, data) {
+      await handle.task.createMany({
+        data: data.map((task) => {
+          return {
+            ...task,
+            payload: task.payload ?? undefined,
+            type,
+          }
+        }),
+      })
     },
 
     async update(handle, taskId, data, oldStatus) {
