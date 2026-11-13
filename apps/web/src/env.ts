@@ -22,6 +22,10 @@ export const env = defineConfiguration({
   // https://auth0.github.io/nextjs-auth0/types/client.AccessTokenOptions.html#route
   NEXT_PUBLIC_ACCESS_TOKEN_ROUTE: config(process.env.NEXT_PUBLIC_ACCESS_TOKEN_ROUTE, "/api/auth/access-token"),
   NEXT_PUBLIC_HOME_URL: config(process.env.NEXT_PUBLIC_HOME_URL, "/"),
+  NEXT_PUBLIC_STRIPE_DASHBOARD_URL: config(process.env.NEXT_PUBLIC_STRIPE_DASHBOARD_URL, {
+    prd: "https://dashboard.stripe.com",
+    dev: "https://dashboard.stripe.com/test",
+  }),
   AWS_CLOUDFRONT_URL: config(process.env.AWS_CLOUDFRONT_URL, {
     prd: "https://cdn.online.ntnu.no",
     dev: "https://cdn.dev.online.ntnu.no",
