@@ -10,7 +10,8 @@ const PRISMA_BIN_PATH = `${PACKAGE_ROOT}/node_modules/.bin/prisma`
 const POSTGRES_IMAGE = "postgres:16-alpine"
 const DB_USERNAME = "owuser"
 const DB_PASSWORD = "owpassword"
-const DB_NAME = "test"
+// Separate concurrent test runs can select distinct databases and reusable containers.
+const DB_NAME = process.env.TEST_DATABASE_NAME ?? "test"
 
 async function getTestContainerDatabase() {
   const container = await new PostgreSqlContainer(POSTGRES_IMAGE)

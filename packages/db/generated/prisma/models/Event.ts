@@ -342,6 +342,7 @@ export type EventWhereInput = {
   hostingGroups?: Prisma.EventHostingGroupListRelationFilter
   deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
   featuredPriorities?: Prisma.EventFeaturedPriorityListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
@@ -375,6 +376,7 @@ export type EventOrderByWithRelationInput = {
   hostingGroups?: Prisma.EventHostingGroupOrderByRelationAggregateInput
   deregisterReasons?: Prisma.DeregisterReasonOrderByRelationAggregateInput
   featuredPriorities?: Prisma.EventFeaturedPriorityOrderByRelationAggregateInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
   attendance?: Prisma.AttendanceOrderByWithRelationInput
   parent?: Prisma.EventOrderByWithRelationInput
   children?: Prisma.EventOrderByRelationAggregateInput
@@ -411,6 +413,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   hostingGroups?: Prisma.EventHostingGroupListRelationFilter
   deregisterReasons?: Prisma.DeregisterReasonListRelationFilter
   featuredPriorities?: Prisma.EventFeaturedPriorityListRelationFilter
+  payments?: Prisma.PaymentListRelationFilter
   attendance?: Prisma.XOR<Prisma.AttendanceNullableScalarRelationFilter, Prisma.AttendanceWhereInput> | null
   parent?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
   children?: Prisma.EventListRelationFilter
@@ -495,6 +498,7 @@ export type EventCreateInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -528,6 +532,7 @@ export type EventUncheckedCreateInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -555,6 +560,7 @@ export type EventUpdateInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -588,6 +594,7 @@ export type EventUncheckedUpdateInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -994,6 +1001,22 @@ export type EventUpdateOneRequiredWithoutFadderukeNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutFadderukeInput, Prisma.EventUpdateWithoutFadderukeInput>, Prisma.EventUncheckedUpdateWithoutFadderukeInput>
 }
 
+export type EventCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutPaymentsInput, Prisma.EventUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.EventWhereUniqueInput
+}
+
+export type EventUpdateOneWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutPaymentsInput, Prisma.EventUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.EventUpsertWithoutPaymentsInput
+  disconnect?: Prisma.EventWhereInput | boolean
+  delete?: Prisma.EventWhereInput | boolean
+  connect?: Prisma.EventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutPaymentsInput, Prisma.EventUpdateWithoutPaymentsInput>, Prisma.EventUncheckedUpdateWithoutPaymentsInput>
+}
+
 export type EventCreateWithoutAttendanceInput = {
   id?: string
   createdAt?: Date | string
@@ -1018,6 +1041,7 @@ export type EventCreateWithoutAttendanceInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
@@ -1049,6 +1073,7 @@ export type EventUncheckedCreateWithoutAttendanceInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1128,6 +1153,7 @@ export type EventCreateWithoutChildrenInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
@@ -1160,6 +1186,7 @@ export type EventUncheckedCreateWithoutChildrenInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
 }
 
 export type EventCreateOrConnectWithoutChildrenInput = {
@@ -1191,6 +1218,7 @@ export type EventCreateWithoutParentInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
   contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
@@ -1222,6 +1250,7 @@ export type EventUncheckedCreateWithoutParentInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1270,6 +1299,7 @@ export type EventUpdateWithoutChildrenInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
@@ -1302,6 +1332,7 @@ export type EventUncheckedUpdateWithoutChildrenInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
 }
 
 export type EventUpsertWithWhereUniqueWithoutParentInput = {
@@ -1343,6 +1374,7 @@ export type EventCreateWithoutFeaturedPrioritiesInput = {
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -1375,6 +1407,7 @@ export type EventUncheckedCreateWithoutFeaturedPrioritiesInput = {
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1417,6 +1450,7 @@ export type EventUpdateWithoutFeaturedPrioritiesInput = {
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -1449,6 +1483,7 @@ export type EventUncheckedUpdateWithoutFeaturedPrioritiesInput = {
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -1475,6 +1510,7 @@ export type EventCreateWithoutCompaniesInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -1507,6 +1543,7 @@ export type EventUncheckedCreateWithoutCompaniesInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1549,6 +1586,7 @@ export type EventUpdateWithoutCompaniesInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -1581,6 +1619,7 @@ export type EventUncheckedUpdateWithoutCompaniesInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -1607,6 +1646,7 @@ export type EventCreateWithoutHostingGroupsInput = {
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -1639,6 +1679,7 @@ export type EventUncheckedCreateWithoutHostingGroupsInput = {
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1681,6 +1722,7 @@ export type EventUpdateWithoutHostingGroupsInput = {
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -1713,6 +1755,7 @@ export type EventUncheckedUpdateWithoutHostingGroupsInput = {
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -1739,6 +1782,7 @@ export type EventCreateWithoutFeedbackFormInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -1771,6 +1815,7 @@ export type EventUncheckedCreateWithoutFeedbackFormInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1813,6 +1858,7 @@ export type EventUpdateWithoutFeedbackFormInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -1845,6 +1891,7 @@ export type EventUncheckedUpdateWithoutFeedbackFormInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -1871,6 +1918,7 @@ export type EventCreateWithoutDeregisterReasonsInput = {
   companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -1903,6 +1951,7 @@ export type EventUncheckedCreateWithoutDeregisterReasonsInput = {
   companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -1945,6 +1994,7 @@ export type EventUpdateWithoutDeregisterReasonsInput = {
   companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -1977,6 +2027,7 @@ export type EventUncheckedUpdateWithoutDeregisterReasonsInput = {
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -2004,6 +2055,7 @@ export type EventCreateWithoutContestInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -2035,6 +2087,7 @@ export type EventUncheckedCreateWithoutContestInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -2087,6 +2140,7 @@ export type EventCreateWithoutFadderukeInput = {
   hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutEventInput
   attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
   parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
   children?: Prisma.EventCreateNestedManyWithoutParentInput
@@ -2119,6 +2173,7 @@ export type EventUncheckedCreateWithoutFadderukeInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutEventInput
   children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -2161,6 +2216,7 @@ export type EventUpdateWithoutFadderukeInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -2189,6 +2245,143 @@ export type EventUncheckedUpdateWithoutFadderukeInput = {
   contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
+  featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
+  children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
+}
+
+export type EventCreateWithoutPaymentsInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  markForMissedAttendance?: boolean
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonCreateNestedManyWithoutEventInput
+  featuredPriorities?: Prisma.EventFeaturedPriorityCreateNestedManyWithoutEventInput
+  attendance?: Prisma.AttendanceCreateNestedOneWithoutEventsInput
+  parent?: Prisma.EventCreateNestedOneWithoutChildrenInput
+  children?: Prisma.EventCreateNestedManyWithoutParentInput
+  contest?: Prisma.ContestCreateNestedOneWithoutEventsInput
+}
+
+export type EventUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  title: string
+  start: Date | string
+  end: Date | string
+  status: $Enums.EventStatus
+  description: string
+  shortDescription?: string | null
+  imageUrl?: string | null
+  locationTitle?: string | null
+  locationAddress?: string | null
+  locationLink?: string | null
+  markForMissedAttendance?: boolean
+  type: $Enums.EventType
+  visibility?: $Enums.EventVisibility
+  attendanceId?: string | null
+  parentId?: string | null
+  contestId?: string | null
+  metadataImportId?: number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedCreateNestedOneWithoutEventInput
+  fadderuke?: Prisma.FadderukeUncheckedCreateNestedOneWithoutEventInput
+  companies?: Prisma.EventCompanyUncheckedCreateNestedManyWithoutEventInput
+  hostingGroups?: Prisma.EventHostingGroupUncheckedCreateNestedManyWithoutEventInput
+  deregisterReasons?: Prisma.DeregisterReasonUncheckedCreateNestedManyWithoutEventInput
+  featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedCreateNestedManyWithoutEventInput
+  children?: Prisma.EventUncheckedCreateNestedManyWithoutParentInput
+}
+
+export type EventCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutPaymentsInput, Prisma.EventUncheckedCreateWithoutPaymentsInput>
+}
+
+export type EventUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.EventUpdateWithoutPaymentsInput, Prisma.EventUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutPaymentsInput, Prisma.EventUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.EventWhereInput
+}
+
+export type EventUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.EventWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutPaymentsInput, Prisma.EventUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type EventUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUpdateOneWithoutEventNestedInput
+  companies?: Prisma.EventCompanyUpdateManyWithoutEventNestedInput
+  hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
+  deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
+  featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
+  parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.EventUpdateManyWithoutParentNestedInput
+  contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
+}
+
+export type EventUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  start?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  end?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  markForMissedAttendance?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  type?: Prisma.EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
+  visibility?: Prisma.EnumEventVisibilityFieldUpdateOperationsInput | $Enums.EventVisibility
+  attendanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadataImportId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  feedbackForm?: Prisma.FeedbackFormUncheckedUpdateOneWithoutEventNestedInput
+  fadderuke?: Prisma.FadderukeUncheckedUpdateOneWithoutEventNestedInput
   companies?: Prisma.EventCompanyUncheckedUpdateManyWithoutEventNestedInput
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
@@ -2242,6 +2435,7 @@ export type EventUpdateWithoutAttendanceInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
@@ -2273,6 +2467,7 @@ export type EventUncheckedUpdateWithoutAttendanceInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -2344,6 +2539,7 @@ export type EventUpdateWithoutParentInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
   contest?: Prisma.ContestUpdateOneWithoutEventsNestedInput
@@ -2375,6 +2571,7 @@ export type EventUncheckedUpdateWithoutParentInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -2446,6 +2643,7 @@ export type EventUpdateWithoutContestInput = {
   hostingGroups?: Prisma.EventHostingGroupUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutEventNestedInput
   attendance?: Prisma.AttendanceUpdateOneWithoutEventsNestedInput
   parent?: Prisma.EventUpdateOneWithoutChildrenNestedInput
   children?: Prisma.EventUpdateManyWithoutParentNestedInput
@@ -2477,6 +2675,7 @@ export type EventUncheckedUpdateWithoutContestInput = {
   hostingGroups?: Prisma.EventHostingGroupUncheckedUpdateManyWithoutEventNestedInput
   deregisterReasons?: Prisma.DeregisterReasonUncheckedUpdateManyWithoutEventNestedInput
   featuredPriorities?: Prisma.EventFeaturedPriorityUncheckedUpdateManyWithoutEventNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutEventNestedInput
   children?: Prisma.EventUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -2512,6 +2711,7 @@ export type EventCountOutputType = {
   hostingGroups: number
   deregisterReasons: number
   featuredPriorities: number
+  payments: number
   children: number
 }
 
@@ -2520,6 +2720,7 @@ export type EventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   hostingGroups?: boolean | EventCountOutputTypeCountHostingGroupsArgs
   deregisterReasons?: boolean | EventCountOutputTypeCountDeregisterReasonsArgs
   featuredPriorities?: boolean | EventCountOutputTypeCountFeaturedPrioritiesArgs
+  payments?: boolean | EventCountOutputTypeCountPaymentsArgs
   children?: boolean | EventCountOutputTypeCountChildrenArgs
 }
 
@@ -2564,6 +2765,13 @@ export type EventCountOutputTypeCountFeaturedPrioritiesArgs<ExtArgs extends runt
 /**
  * EventCountOutputType without action
  */
+export type EventCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
+/**
+ * EventCountOutputType without action
+ */
 export type EventCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EventWhereInput
 }
@@ -2596,6 +2804,7 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
   deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   featuredPriorities?: boolean | Prisma.Event$featuredPrioritiesArgs<ExtArgs>
+  payments?: boolean | Prisma.Event$paymentsArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
@@ -2686,6 +2895,7 @@ export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   hostingGroups?: boolean | Prisma.Event$hostingGroupsArgs<ExtArgs>
   deregisterReasons?: boolean | Prisma.Event$deregisterReasonsArgs<ExtArgs>
   featuredPriorities?: boolean | Prisma.Event$featuredPrioritiesArgs<ExtArgs>
+  payments?: boolean | Prisma.Event$paymentsArgs<ExtArgs>
   attendance?: boolean | Prisma.Event$attendanceArgs<ExtArgs>
   parent?: boolean | Prisma.Event$parentArgs<ExtArgs>
   children?: boolean | Prisma.Event$childrenArgs<ExtArgs>
@@ -2712,6 +2922,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     hostingGroups: Prisma.$EventHostingGroupPayload<ExtArgs>[]
     deregisterReasons: Prisma.$DeregisterReasonPayload<ExtArgs>[]
     featuredPriorities: Prisma.$EventFeaturedPriorityPayload<ExtArgs>[]
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
     attendance: Prisma.$AttendancePayload<ExtArgs> | null
     parent: Prisma.$EventPayload<ExtArgs> | null
     children: Prisma.$EventPayload<ExtArgs>[]
@@ -3142,6 +3353,7 @@ export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Ty
   hostingGroups<T extends Prisma.Event$hostingGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$hostingGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventHostingGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deregisterReasons<T extends Prisma.Event$deregisterReasonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$deregisterReasonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeregisterReasonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   featuredPriorities<T extends Prisma.Event$featuredPrioritiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$featuredPrioritiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventFeaturedPriorityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.Event$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendance<T extends Prisma.Event$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$attendanceArgs<ExtArgs>>): Prisma.Prisma__AttendanceClient<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Event$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$parentArgs<ExtArgs>>): Prisma.Prisma__EventClient<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Event$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3736,6 +3948,30 @@ export type Event$featuredPrioritiesArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.EventFeaturedPriorityScalarFieldEnum | Prisma.EventFeaturedPriorityScalarFieldEnum[]
+}
+
+/**
+ * Event.payments
+ */
+export type Event$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
 }
 
 /**

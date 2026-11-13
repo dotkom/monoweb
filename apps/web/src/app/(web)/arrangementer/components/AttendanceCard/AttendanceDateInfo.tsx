@@ -1,4 +1,4 @@
-import { type AttendanceView, type Attendee, hasAttendeePaid } from "@dotkomonline/rpc/attendance"
+import type { AttendanceView, Attendee } from "@dotkomonline/rpc/attendance"
 import { Text, Timeline, TimelineContent, TimelineDot, TimelineItem, cn } from "@dotkomonline/ui"
 import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconBan, IconLockFilled, IconPennantFilled } from "@tabler/icons-react"
@@ -61,7 +61,7 @@ export const AttendanceDateInfo = ({
     ? min([deregisterDeadline, chargeScheduleDate])
     : deregisterDeadline
 
-  const hasPaid = hasAttendeePaid(attendee, attendance.attendancePrice) ?? false
+  const hasPaid = attendee?.payment?.isRequirementSatisfied ?? false
   const showDeregisterDeadlineNotice = hasPaid && !isEqual(actualDeregisterDeadline, deregisterDeadline)
 
   const nextDateBlock = getNextDateBlock(

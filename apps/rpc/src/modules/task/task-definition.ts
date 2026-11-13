@@ -62,6 +62,7 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendeeId: AttendeeSchema.shape.id,
+        paymentAttemptId: z.string(),
       }),
   }),
   VERIFY_FEEDBACK_ANSWERED: createTaskDefinition({

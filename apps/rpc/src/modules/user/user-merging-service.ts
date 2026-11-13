@@ -1,3 +1,5 @@
+import type { PaymentRepository } from "../payment/payment-repository"
+import type { AttendanceRepository } from "../event/attendance-repository"
 import type { DBHandle } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import type { User, UserId } from "./user"
@@ -5,6 +7,7 @@ import type { ManagementClient, PostIdentitiesRequest, PostIdentitiesRequestProv
 import type { AttendanceService } from "../event/attendance-service"
 import type { GroupRepository } from "../group/group-repository"
 import { mergeUsers } from "./user-merging"
+import type { UserRepository } from "./user-repository"
 import type { UserService } from "./user-service"
 import { IllegalStateError, NotFoundError } from "../../error"
 
@@ -105,7 +108,10 @@ function pickAuth0SecondaryUserId(
 
 export function getUserMergingService(
   userService: UserService,
+  userRepository: UserRepository,
   groupRepository: GroupRepository,
+  paymentRepository: PaymentRepository,
+  attendanceRepository: AttendanceRepository,
   attendanceService: AttendanceService,
   managementClient: ManagementClient,
   webManagementClient: ManagementClient
@@ -115,10 +121,7 @@ export function getUserMergingService(
   async function reassignUserId(handle: DBHandle, fromUserId: UserId, toUserId: UserId): Promise<void> {
     logger.info("Reassigning database User(ID=%s) to Auth0 primary User(ID=%s)", fromUserId, toUserId)
 
-    // The ow_user audit trigger inserts a row attributed to app.current_user_id. That setting is the
-    // logged-in subject, which this update is about to replace, so the insert would reference a missing user.
-    await handle.$executeRaw`SELECT set_config('app.current_user_id', ${toUserId}, true)`
-    await handle.$executeRaw`UPDATE ow_user SET id = ${toUserId} WHERE id = ${fromUserId}`
+    await userRepository.reassignId(handle, fromUserId, toUserId)
   }
 
   async function alignAuth0EmailWithDatabaseEmail(
@@ -168,7 +171,12 @@ export function getUserMergingService(
       const survivorUser = await userService.getById(handle, survivorUserId)
       const consumedUser = await userService.getById(handle, consumedUserId)
 
-      await mergeUsers(handle, { groupRepository, attendanceService }, survivorUser, consumedUser)
+      await mergeUsers(
+        handle,
+        { groupRepository, attendanceService, paymentRepository, attendanceRepository },
+        survivorUser,
+        consumedUser
+      )
 
       logger.info("Successfully merged consumed User(ID=%s) into survivor User(ID=%s)", consumedUserId, survivorUserId)
 
@@ -198,7 +206,12 @@ export function getUserMergingService(
       const dataSurvivorUser = await userService.getById(handle, dataSurvivorUserId)
       const consumedUser = await userService.getById(handle, consumedUserId)
 
-      await mergeUsers(handle, { groupRepository, attendanceService }, dataSurvivorUser, consumedUser)
+      await mergeUsers(
+        handle,
+        { groupRepository, attendanceService, paymentRepository, attendanceRepository },
+        dataSurvivorUser,
+        consumedUser
+      )
 
       const requiresReauthentication = dataSurvivorUserId !== auth0PrimaryUserId
 
@@ -214,13 +227,8 @@ export function getUserMergingService(
       const dataSurvivorEmail = dataSurvivorUser.email
 
       if (dataSurvivorEmail !== null && refreshedUser.email !== dataSurvivorEmail) {
-        await handle.user.update({
-          where: {
-            id: auth0PrimaryUserId,
-          },
-          data: {
-            email: dataSurvivorEmail,
-          },
+        await userRepository.update(handle, auth0PrimaryUserId, {
+          email: dataSurvivorEmail,
         })
 
         user = { ...refreshedUser, email: dataSurvivorEmail }

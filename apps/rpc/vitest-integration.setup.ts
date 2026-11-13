@@ -24,6 +24,7 @@ async function createServiceLayerForTesting() {
     AWS_REGION: "eu-north-1",
     ALLOWED_ORIGINS: "",
     STRIPE_SECRET_KEY: "fake-key",
+    WEB_PUBLIC_ORIGIN: "https://online.ntnu.no",
     googleWorkspace: {
       domain: "online.ntnu.no",
       serviceAccount: null,
@@ -63,7 +64,9 @@ export let dbClient: DBClient
 export let core: Awaited<ReturnType<typeof createServiceLayerForTesting>>
 
 afterAll(async () => {
-  if (dbClient !== undefined) await dbClient.$disconnect()
+  if (dbClient !== undefined) {
+    await dbClient.$disconnect()
+  }
 })
 
 beforeEach(async () => {

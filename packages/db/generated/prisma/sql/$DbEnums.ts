@@ -26,4 +26,7 @@ export interface $DbEnums {
   NotificationStatus: "DRAFT" | "SENT"
   contest_result_type: "SCORE" | "DURATION" | "WINNER"
   contest_result_order: "asc" | "desc"
+  payment_attempt_status: "CREATED" | "CHECKOUT_OPEN" | "PROCESSING" | "AUTHORIZED" | "CAPTURED" | "CANCELLED" | "EXPIRED" | "FAILED"
+  payment_capture_mode: "AUTOMATIC" | "MANUAL"
+  payment_refund_status: "REQUESTED" | "PENDING" | "SUCCEEDED" | "FAILED" | "CANCELLED"
 }

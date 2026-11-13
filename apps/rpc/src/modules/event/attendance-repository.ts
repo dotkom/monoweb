@@ -1,4 +1,4 @@
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBHandle, Prisma } from "@dotkomonline/db"
 import {
   type Attendance,
   type AttendanceId,
@@ -12,32 +12,54 @@ import {
   type AttendanceWrite,
   type Attendee,
   type AttendeeId,
-  type AttendeePaymentWrite,
   AttendeeSchema,
   type AttendeeWrite,
   getAttendeeRegistrationEligibleAt,
 } from "./attendance"
 import type { EventId } from "./event"
+import { buildPaymentView, type PaymentRecord } from "../payment/payment"
+import { paymentInclude } from "../payment/payment-repository"
 import type { TaskId } from "../task/task"
 import { type UserId, normalizeDbUser } from "../user/user"
 import invariant from "tiny-invariant"
 import { parseOrReport } from "../../invariant"
 import { compareAsc } from "date-fns"
 
-type WithUserFlagLinks = Pick<Attendee, "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours"> & {
+const attendeeInclude = {
+  payment: {
+    include: paymentInclude,
+  },
+  user: {
+    include: {
+      memberships: true,
+      userFlagLinks: {
+        include: {
+          userFlag: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.AttendeeInclude
+
+type AttendeeWithRelations = Pick<
+  Attendee,
+  "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours"
+> & {
+  payment: PaymentRecord | null
   user: Parameters<typeof normalizeDbUser>[0]
   [key: string]: unknown
 }
 
-function normalizeAttendee<T extends WithUserFlagLinks>(attendee: T) {
+function normalizeAttendee<T extends AttendeeWithRelations>(attendee: T) {
   return {
     ...attendee,
+    payment: attendee.payment === null ? null : buildPaymentView(attendee.payment),
     registrationEligibleAt: getAttendeeRegistrationEligibleAt(attendee),
     user: normalizeDbUser(attendee.user),
   }
 }
 
-function normalizeAttendance<T extends { attendees: WithUserFlagLinks[]; [key: string]: unknown }>(attendance: T) {
+function normalizeAttendance<T extends { attendees: AttendeeWithRelations[]; [key: string]: unknown }>(attendance: T) {
   return {
     ...attendance,
     attendees: attendance.attendees
@@ -74,18 +96,19 @@ export interface AttendanceRepository {
   ): Promise<Attendee>
   deleteAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   findAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee | null>
-  updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: AttendeeWrite): Promise<Attendee>
-  updateAttendeePaymentById(
+  findAttendeePaymentsByUserId(
     handle: DBHandle,
-    attendeeId: AttendeeId,
-    data: Partial<AttendeePaymentWrite>
-  ): Promise<Attendee>
+    userId: UserId
+  ): Promise<Pick<Attendee, "id" | "attendanceId" | "payment">[]>
+  updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: AttendeeWrite): Promise<Attendee>
   updateAttendeeCompletionDeadline(
     handle: DBHandle,
     attendeeId: AttendeeId,
     completionDeadline: Date | null
   ): Promise<Attendee>
-  /** Move all attendees from one of multiple old pools to a new pool. */
+  /**
+   * Move all attendees from one of multiple old pools to a new pool.
+   */
   updateAttendeeAttendancePoolIdByAttendancePoolIds(
     handle: DBHandle,
     fromPoolIds: AttendancePoolId[],
@@ -121,27 +144,19 @@ export function getAttendanceRepository(): AttendanceRepository {
 
       const attendance = await this.findAttendanceById(handle, row.id)
       invariant(attendance !== null, "Created attendance should not be null")
+
       return attendance
     },
 
     async findAttendanceById(handle, attendanceId) {
       const attendance = await handle.attendance.findUnique({
-        where: { id: attendanceId },
+        where: {
+          id: attendanceId,
+        },
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -149,7 +164,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
+      return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
     },
 
     async findAttendancesByIds(handle, attendanceIds) {
@@ -162,18 +177,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -196,26 +200,19 @@ export function getAttendanceRepository(): AttendanceRepository {
             select: {
               attendees: {
                 where: {
-                  registeredAt: { not: null },
+                  registeredAt: {
+                    not: null,
+                  },
                 },
               },
             },
           },
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
+            include: attendeeInclude,
+            where: {
+              userId,
             },
-            where: userId ? { userId } : undefined,
             take: 1,
             orderBy: {
               createdAt: "asc",
@@ -226,12 +223,11 @@ export function getAttendanceRepository(): AttendanceRepository {
 
       const attendanceSummaries = attendances.map((attendance) => {
         // We only need the attendee for the given user (if any)
-        const currentAttendee =
-          userId !== undefined && attendance.attendees.find((attendee) => attendee.userId === userId)
+        const currentAttendee = attendance.attendees.find((attendee) => attendee.userId === userId)
 
         return {
           ...attendance,
-          currentUserAttendee: currentAttendee ? normalizeAttendee(currentAttendee) : null,
+          currentUserAttendee: currentAttendee === undefined ? null : normalizeAttendee(currentAttendee),
           registeredAttendeeCount: attendance._count.attendees,
         }
       })
@@ -251,18 +247,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -270,7 +255,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
+      return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
     },
 
     async findAttendanceByAttendeeId(handle, attendeeId) {
@@ -285,18 +270,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -304,7 +278,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
+      return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
     },
 
     async findAttendanceByAttendeePaymentId(handle, attendeePaymentId) {
@@ -312,25 +286,18 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: {
           attendees: {
             some: {
-              paymentId: attendeePaymentId,
+              payment: {
+                is: {
+                  id: attendeePaymentId,
+                },
+              },
             },
           },
         },
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -338,7 +305,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
+      return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
     },
 
     async findAttendanceByEventId(handle, eventId) {
@@ -353,18 +320,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         include: {
           pools: true,
           attendees: {
-            include: {
-              user: {
-                include: {
-                  memberships: true,
-                  userFlagLinks: {
-                    include: {
-                      userFlag: true,
-                    },
-                  },
-                },
-              },
-            },
+            include: attendeeInclude,
             orderBy: {
               createdAt: "asc",
             },
@@ -372,7 +328,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         },
       })
 
-      return parseOrReport(AttendanceSchema.nullable(), attendance ? normalizeAttendance(attendance) : null)
+      return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
     },
 
     async updateAttendanceById(handle, attendanceId, data) {
@@ -410,7 +366,9 @@ export function getAttendanceRepository(): AttendanceRepository {
 
     async updateAttendancePaymentPrice(handle, attendanceId, priceNok) {
       const row = await handle.attendance.update({
-        where: { id: attendanceId },
+        where: {
+          id: attendanceId,
+        },
         data: {
           attendancePrice: priceNok,
         },
@@ -441,18 +399,7 @@ export function getAttendanceRepository(): AttendanceRepository {
             connect: { id: userId },
           },
         },
-        include: {
-          user: {
-            include: {
-              memberships: true,
-              userFlagLinks: {
-                include: {
-                  userFlag: true,
-                },
-              },
-            },
-          },
-        },
+        include: attendeeInclude,
       })
 
       return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
@@ -471,21 +418,36 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: {
           id: attendeeId,
         },
-        include: {
-          user: {
-            include: {
-              memberships: true,
-              userFlagLinks: {
-                include: {
-                  userFlag: true,
-                },
-              },
-            },
+        include: attendeeInclude,
+      })
+
+      return parseOrReport(AttendeeSchema.nullable(), attendee === null ? null : normalizeAttendee(attendee))
+    },
+
+    async findAttendeePaymentsByUserId(handle, userId) {
+      const attendees = await handle.attendee.findMany({
+        where: {
+          userId,
+        },
+        select: {
+          id: true,
+          attendanceId: true,
+          payment: {
+            include: paymentInclude,
           },
         },
       })
+      const schema = AttendeeSchema.pick({
+        id: true,
+        attendanceId: true,
+        payment: true,
+      }).array()
+      const attendeePayments = attendees.map((attendee) => ({
+        ...attendee,
+        payment: attendee.payment === null ? null : buildPaymentView(attendee.payment),
+      }))
 
-      return parseOrReport(AttendeeSchema.nullable(), attendee ? normalizeAttendee(attendee) : null)
+      return parseOrReport(schema, attendeePayments)
     },
 
     async updateAttendeeById(handle, attendeeId, data) {
@@ -494,41 +456,7 @@ export function getAttendanceRepository(): AttendanceRepository {
           id: attendeeId,
         },
         data,
-        include: {
-          user: {
-            include: {
-              memberships: true,
-              userFlagLinks: {
-                include: {
-                  userFlag: true,
-                },
-              },
-            },
-          },
-        },
-      })
-
-      return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
-    },
-
-    async updateAttendeePaymentById(handle, attendeeId, data) {
-      const attendee = await handle.attendee.update({
-        where: {
-          id: attendeeId,
-        },
-        data,
-        include: {
-          user: {
-            include: {
-              memberships: true,
-              userFlagLinks: {
-                include: {
-                  userFlag: true,
-                },
-              },
-            },
-          },
-        },
+        include: attendeeInclude,
       })
 
       return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
@@ -542,18 +470,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         data: {
           completionDeadline,
         },
-        include: {
-          user: {
-            include: {
-              memberships: true,
-              userFlagLinks: {
-                include: {
-                  userFlag: true,
-                },
-              },
-            },
-          },
-        },
+        include: attendeeInclude,
       })
 
       return parseOrReport(AttendeeSchema, normalizeAttendee(attendee))
@@ -616,12 +533,18 @@ export function getAttendanceRepository(): AttendanceRepository {
 
     async deleteAttendanceById(handle, attendanceId) {
       await handle.event.updateMany({
-        where: { attendanceId },
-        data: { attendanceId: null },
+        where: {
+          attendanceId,
+        },
+        data: {
+          attendanceId: null,
+        },
       })
 
       await handle.attendance.delete({
-        where: { id: attendanceId },
+        where: {
+          id: attendanceId,
+        },
       })
     },
   }

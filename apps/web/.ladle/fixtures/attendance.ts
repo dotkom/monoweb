@@ -1,3 +1,4 @@
+import type { PaymentView } from "@dotkomonline/rpc/payment"
 import type { AttendanceRouter } from "@dotkomonline/rpc"
 import {
   type Attendance,
@@ -62,6 +63,35 @@ export const createMockUser = (overrides: Partial<User> = {}): User => ({
   ...overrides,
 })
 
+export function createMockPayment(overrides: Partial<PaymentView> = {}): PaymentView {
+  const status = overrides.status ?? "UNPAID"
+  const isPaid = status === "PAID"
+  const isAuthorized = status === "AUTHORIZED"
+  const isRefunded = status === "REFUNDED"
+  const isWaived = status === "WAIVED"
+
+  return {
+    id: "mock-payment",
+    description: "Arrangement",
+    amountOre: 10000,
+    status,
+    isRequirementSatisfied: isPaid || isAuthorized || isWaived,
+    canStartCheckout: ["UNPAID", "CANCELLED", "EXPIRED", "FAILED", "REFUNDED"].includes(status),
+    canRefund: isPaid,
+    canCancel: isAuthorized || status === "UNPAID",
+    canWaive: !isWaived && status !== "PROCESSING",
+    checkoutUrl: status === "UNPAID" ? "https://example.com/payment" : null,
+    stripeDashboardUrl: null,
+    attemptId: "mock-attempt",
+    captureScheduledAt: null,
+    refundedAt: isRefunded ? now : null,
+    refundedAmountOre: isRefunded ? 10000 : 0,
+    paidAmountOre: isPaid ? 10000 : 0,
+    waivedAt: isWaived ? now : null,
+    ...overrides,
+  }
+}
+
 export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee => {
   const user = createMockUser()
 
@@ -77,16 +107,9 @@ export const createMockAttendee = (overrides: Partial<Attendee> = {}): Attendee 
     registrationPoolDelayHours: null,
     registrationMarkDelayHours: null,
     registrationEligibleAt: now,
-    paymentChargedAt: null,
-    paymentRefundedAt: null,
     completionDeadline: null,
-    paymentId: null,
-    paymentLink: null,
-    paymentChargeDeadline: null,
-    paymentReservedAt: null,
-    paymentRefundedByUserId: null,
+    payment: null,
     adminRegisteredByUserId: null,
-    paymentCheckoutUrl: null,
     userGrade: 1,
     selections: [],
     user,
@@ -238,7 +261,7 @@ export const createMockCompletionAvailability = (
       completionDeadline: null,
       requirements: [],
       missingRequirements: [],
-      paymentLink: null,
+      payment: null,
       ...overrides,
     }
   }
@@ -423,7 +446,7 @@ export const createAttendanceWithPaymentCountdown = (registered = true): Attenda
     user,
     registeredAt: registered ? createdAt : null,
     completionDeadline: addMinutes(now, 45),
-    paymentLink: "https://example.com/betaling",
+    payment: createMockPayment({ checkoutUrl: "https://example.com/betaling" }),
     createdAt,
     registrationEligibleAt: createdAt,
   })
@@ -445,7 +468,7 @@ export const createAttendanceWithReservedPayment = (): Attendance =>
       createdAt: subMinutes(now, 15),
       registrationEligibleAt: subMinutes(now, 15),
       completionDeadline: addMinutes(now, 45),
-      paymentLink: "https://example.com/betaling",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/betaling" }),
     },
   })
 
@@ -461,20 +484,24 @@ export const createAttendanceWithQueuedPayment = (): Attendance =>
       createdAt: subMinutes(now, 15),
       registrationEligibleAt: subMinutes(now, 10),
       completionDeadline: addMinutes(now, 45),
-      paymentLink: "https://example.com/betaling",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/betaling" }),
     },
   })
 
 type PaymentRecord = "charged" | "reserved" | "refunded"
+
+const PAYMENT_RECORD_STATUS = {
+  charged: "PAID",
+  reserved: "AUTHORIZED",
+  refunded: "REFUNDED",
+} as const satisfies Record<PaymentRecord, PaymentView["status"]>
 
 export const createAttendanceWithPaymentRecord = (record: PaymentRecord): Attendance => {
   const user = createMockUser()
   const attendee = createMockAttendee({
     user,
     registeredAt: new Date(),
-    paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
-    paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
-    paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+    payment: createMockPayment({ status: PAYMENT_RECORD_STATUS[record] }),
   })
 
   return createMockAttendance({
@@ -493,9 +520,7 @@ export const createAttendanceWithRegisteredPaymentRecord = (record: PaymentRecor
     viewerAttendee: {
       createdAt: subMinutes(now, 30),
       registrationEligibleAt: subMinutes(now, 30),
-      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
-      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
-      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+      payment: createMockPayment({ status: PAYMENT_RECORD_STATUS[record] }),
     },
   })
 
@@ -510,9 +535,7 @@ export const createAttendanceWithQueuedPaymentRecord = (record: PaymentRecord): 
     viewerAttendee: {
       createdAt: subMinutes(now, 30),
       registrationEligibleAt: subMinutes(now, 30),
-      paymentChargedAt: record === "charged" || record === "refunded" ? subHours(now, 2) : null,
-      paymentReservedAt: record === "reserved" ? subHours(now, 1) : null,
-      paymentRefundedAt: record === "refunded" ? subHours(now, 1) : null,
+      payment: createMockPayment({ status: PAYMENT_RECORD_STATUS[record] }),
     },
   })
 
@@ -532,7 +555,7 @@ export const createAttendanceWithServingPunishment = ({
       createdAt: subMinutes(now, 20),
       registrationEligibleAt: addHours(now, 4),
       completionDeadline: withPayment ? addMinutes(now, 45) : null,
-      paymentLink: withPayment ? "https://example.com/betaling" : null,
+      payment: withPayment ? createMockPayment() : null,
     },
   })
 

@@ -110,22 +110,24 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee               Attendee[]
-  personalMark           PersonalMark[]
-  groupMemberships       GroupMembership[]
-  memberships            Membership[]
-  givenMarks             PersonalMark[]          @relation("GivenBy")
-  attendeesRefunded      Attendee[]              @relation(name: "RefundedBy")
-  auditLogs              AuditLog[]
-  deregisterReasons      DeregisterReason[]
-  notificationsReceived  NotificationRecipient[]
-  notificationsCreated   Notification[]          @relation("created_by")
-  notificationsUpdated   Notification[]          @relation("last_updated_by")
-  contestants            Contestant[]
-  contestTeams           ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks          UserFlagLink[]
-  adminRegistered        Attendee[]              @relation("AdminRegisteredBy")
-  updatedEventPriorities EventFeaturedPriority[]
+  attendee                Attendee[]
+  personalMark            PersonalMark[]
+  groupMemberships        GroupMembership[]
+  memberships             Membership[]
+  givenMarks              PersonalMark[]          @relation("GivenBy")
+  auditLogs               AuditLog[]
+  deregisterReasons       DeregisterReason[]
+  notificationsReceived   NotificationRecipient[]
+  notificationsCreated    Notification[]          @relation("created_by")
+  notificationsUpdated    Notification[]          @relation("last_updated_by")
+  contestants             Contestant[]
+  contestTeams            ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks           UserFlagLink[]
+  adminRegistered         Attendee[]              @relation("AdminRegisteredBy")
+  updatedEventPriorities  EventFeaturedPriority[]
+  payments                Payment[]               @relation("PaymentUser")
+  paymentsWaived          Payment[]               @relation("PaymentWaivedBy")
+  paymentRefundsRequested PaymentRefund[]
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -383,29 +385,21 @@ model Attendee {
   /// To complete registration:
   /// - Complete payment
   completionDeadline         DateTime?           @map("completion_deadline")
-  paymentLink                String?             @map("payment_link")
-  paymentId                  String?             @map("payment_id")
-  paymentReservedAt          DateTime?           @map("payment_reserved_at")
-  paymentChargeDeadline      DateTime?           @map("payment_charge_deadline")
-  paymentChargedAt           DateTime?           @map("payment_charged_at")
-  paymentRefundedAt          DateTime?           @map("payment_refunded_at")
-  paymentCheckoutUrl         String?             @map("payment_checkout_url")
 
   attendanceId            String         @map("attendance_id")
   userId                  String         @map("user_id")
   attendancePoolId        String         @map("attendance_pool_id")
-  paymentRefundedByUserId String?        @map("payment_refunded_by_user_id")
   adminRegisteredByUserId String?        @map("admin_registered_by_user_id")
   attendance              Attendance     @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
   user                    User           @relation(fields: [userId], references: [id], onDelete: Restrict)
   attendancePool          AttendancePool @relation(fields: [attendancePoolId], references: [id], onDelete: Restrict)
-  paymentRefundedBy       User?          @relation(fields: [paymentRefundedByUserId], references: [id], name: "RefundedBy", onDelete: SetNull)
   adminRegisteredBy       User?          @relation(fields: [adminRegisteredByUserId], references: [id], name: "AdminRegisteredBy", onDelete: SetNull)
+
+  payment Payment?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@index([userId])
   @@index([attendancePoolId])
-  @@index([paymentRefundedByUserId])
   @@index([adminRegisteredByUserId])
   @@map("attendee")
 }
@@ -434,6 +428,7 @@ model Event {
   hostingGroups      EventHostingGroup[]
   deregisterReasons  DeregisterReason[]
   featuredPriorities EventFeaturedPriority[]
+  payments           Payment[]
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
@@ -1133,4 +1128,115 @@ model UserFlagLink {
   @@index([userId])
   @@index([userFlagId])
   @@map("user_flag_link")
+}
+
+enum PaymentAttemptStatus {
+  CREATED
+  CHECKOUT_OPEN
+  PROCESSING
+  AUTHORIZED
+  CAPTURED
+  CANCELLED
+  EXPIRED
+  FAILED
+
+  @@map("payment_attempt_status")
+}
+
+enum PaymentCaptureMode {
+  AUTOMATIC
+  MANUAL
+
+  @@map("payment_capture_mode")
+}
+
+enum PaymentRefundStatus {
+  REQUESTED
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+
+  @@map("payment_refund_status")
+}
+
+model Payment {
+  id           String    @id @default(uuid())
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Description of what is being paid for
+  description  String
+  /// Immutable amount in øre (NOK). 15000 means NOK150.00. Currency is hard-coded to NOK.
+  amountOre    Int       @map("amount_ore")
+  /// Non-null means the payment requirement is waived (the user doesn't have to pay for the payment).
+  // Waiving is commonly used for event organizers so they don't have to pay for their own seats.
+  waivedAt     DateTime? @map("waived_at") @db.Timestamptz(3)
+  waiverReason String?   @map("waiver_reason")
+
+  userId         String  @map("user_id")
+  waivedByUserId String? @map("waived_by_user_id")
+  user           User    @relation("PaymentUser", fields: [userId], references: [id], onDelete: Restrict)
+  waivedBy       User?   @relation("PaymentWaivedBy", fields: [waivedByUserId], references: [id], onDelete: SetNull)
+
+  // Context for event payments:
+  // If we have payments for other purposes in the future, they can omit this
+  attendeeId String?   @unique @map("attendee_id")
+  eventId    String?   @map("event_id")
+  attendee   Attendee? @relation(fields: [attendeeId], references: [id], onDelete: SetNull)
+  event      Event?    @relation(fields: [eventId], references: [id], onDelete: Restrict)
+
+  attempts PaymentAttempt[]
+
+  @@index([userId])
+  @@index([waivedByUserId])
+  @@index([eventId])
+  @@map("payment")
+}
+
+model PaymentAttempt {
+  id                      String               @id @default(uuid())
+  createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  status                  PaymentAttemptStatus @default(CREATED)
+  captureMode             PaymentCaptureMode   @map("capture_mode")
+  stripeCheckoutSessionId String?              @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId   String?              @unique @map("stripe_payment_intent_id")
+  checkoutUrl             String?              @map("checkout_url")
+  checkoutExpiresAt       DateTime?            @map("checkout_expires_at") @db.Timestamptz(3)
+  captureScheduledAt      DateTime?            @map("capture_scheduled_at") @db.Timestamptz(3)
+  authorizationExpiresAt  DateTime?            @map("authorization_expires_at") @db.Timestamptz(3)
+  authorizedAt            DateTime?            @map("authorized_at") @db.Timestamptz(3)
+  capturedAt              DateTime?            @map("captured_at") @db.Timestamptz(3)
+  lastSyncedAt            DateTime?            @map("last_synced_at") @db.Timestamptz(3)
+
+  paymentId String  @map("payment_id")
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  refunds PaymentRefund[]
+
+  @@index([paymentId, createdAt])
+  @@index([status, captureScheduledAt])
+  @@map("payment_attempt")
+}
+
+model PaymentRefund {
+  id             String              @id @default(uuid())
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  stripeRefundId String?             @unique @map("stripe_refund_id")
+  /// Amount to return in øre (NOK). 15000 means NOK150.00. Currency is hard-coded to NOK.
+  amountOre      Int                 @map("amount_ore")
+  status         PaymentRefundStatus @default(REQUESTED)
+  reason         String?
+
+  paymentAttemptId  String         @map("payment_attempt_id")
+  /// The user who requested the refund. Null when no requesting user is known (the refund was initiated in the Stripe
+  /// Dashboard), or if that user was deleted.
+  requestedByUserId String?        @map("requested_by_user_id")
+  paymentAttempt    PaymentAttempt @relation(fields: [paymentAttemptId], references: [id], onDelete: Restrict)
+  requestedBy       User?          @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([paymentAttemptId, createdAt])
+  @@index([requestedByUserId])
+  @@map("payment_refund")
 }

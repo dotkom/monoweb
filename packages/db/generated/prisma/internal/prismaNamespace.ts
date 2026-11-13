@@ -427,7 +427,10 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  Payment: 'Payment',
+  PaymentAttempt: 'PaymentAttempt',
+  PaymentRefund: 'PaymentRefund'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -443,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventFeaturedPriority" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink"
+    modelProps: "membership" | "user" | "company" | "group" | "groupMembership" | "groupMembershipRole" | "groupRole" | "attendance" | "attendancePool" | "attendee" | "event" | "eventFeaturedPriority" | "eventCompany" | "mark" | "markGroup" | "personalMark" | "privacyPermissions" | "notificationPermissions" | "eventHostingGroup" | "jobListing" | "jobListingLocation" | "offline" | "article" | "articleTag" | "articleTagLink" | "task" | "recurringTask" | "feedbackForm" | "feedbackQuestion" | "feedbackQuestionOption" | "feedbackQuestionAnswer" | "feedbackQuestionAnswerOptionLink" | "feedbackFormAnswer" | "auditTransaction" | "auditLog" | "deregisterReason" | "notificationRecipient" | "notification" | "contest" | "fadderuke" | "contestant" | "contestTeam" | "userFlag" | "userFlagLink" | "payment" | "paymentAttempt" | "paymentRefund"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3703,6 +3706,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Payment: {
+      payload: Prisma.$PaymentPayload<ExtArgs>
+      fields: Prisma.PaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        update: {
+          args: Prisma.PaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayment>
+        }
+        groupBy: {
+          args: Prisma.PaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentCountAggregateOutputType> | number
+        }
+      }
+    }
+    PaymentAttempt: {
+      payload: Prisma.$PaymentAttemptPayload<ExtArgs>
+      fields: Prisma.PaymentAttemptFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentAttemptFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentAttemptFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentAttemptFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentAttemptFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentAttemptFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentAttemptCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentAttemptCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentAttemptCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentAttemptDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        update: {
+          args: Prisma.PaymentAttemptUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentAttemptDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentAttemptUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentAttemptUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentAttemptUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentAttemptPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentAttemptAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePaymentAttempt>
+        }
+        groupBy: {
+          args: Prisma.PaymentAttemptGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentAttemptGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentAttemptCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentAttemptCountAggregateOutputType> | number
+        }
+      }
+    }
+    PaymentRefund: {
+      payload: Prisma.$PaymentRefundPayload<ExtArgs>
+      fields: Prisma.PaymentRefundFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentRefundFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentRefundFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentRefundFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentRefundFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentRefundFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentRefundCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentRefundCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentRefundCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentRefundDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        update: {
+          args: Prisma.PaymentRefundUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentRefundDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentRefundUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentRefundUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentRefundUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentRefundPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentRefundAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePaymentRefund>
+        }
+        groupBy: {
+          args: Prisma.PaymentRefundGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentRefundGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentRefundCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentRefundCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3899,17 +4124,9 @@ export const AttendeeScalarFieldEnum = {
   registrationMarkDelayHours: 'registrationMarkDelayHours',
   attendedAt: 'attendedAt',
   completionDeadline: 'completionDeadline',
-  paymentLink: 'paymentLink',
-  paymentId: 'paymentId',
-  paymentReservedAt: 'paymentReservedAt',
-  paymentChargeDeadline: 'paymentChargeDeadline',
-  paymentChargedAt: 'paymentChargedAt',
-  paymentRefundedAt: 'paymentRefundedAt',
-  paymentCheckoutUrl: 'paymentCheckoutUrl',
   attendanceId: 'attendanceId',
   userId: 'userId',
   attendancePoolId: 'attendancePoolId',
-  paymentRefundedByUserId: 'paymentRefundedByUserId',
   adminRegisteredByUserId: 'adminRegisteredByUserId'
 } as const
 
@@ -4347,6 +4564,59 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  amountOre: 'amountOre',
+  waivedAt: 'waivedAt',
+  waiverReason: 'waiverReason',
+  userId: 'userId',
+  waivedByUserId: 'waivedByUserId',
+  attendeeId: 'attendeeId',
+  eventId: 'eventId'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const PaymentAttemptScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status',
+  captureMode: 'captureMode',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  checkoutUrl: 'checkoutUrl',
+  checkoutExpiresAt: 'checkoutExpiresAt',
+  captureScheduledAt: 'captureScheduledAt',
+  authorizationExpiresAt: 'authorizationExpiresAt',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  lastSyncedAt: 'lastSyncedAt',
+  paymentId: 'paymentId'
+} as const
+
+export type PaymentAttemptScalarFieldEnum = (typeof PaymentAttemptScalarFieldEnum)[keyof typeof PaymentAttemptScalarFieldEnum]
+
+
+export const PaymentRefundScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  stripeRefundId: 'stripeRefundId',
+  amountOre: 'amountOre',
+  status: 'status',
+  reason: 'reason',
+  paymentAttemptId: 'paymentAttemptId',
+  requestedByUserId: 'requestedByUserId'
+} as const
+
+export type PaymentRefundScalarFieldEnum = (typeof PaymentRefundScalarFieldEnum)[keyof typeof PaymentRefundScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -4789,6 +5059,48 @@ export type ListEnumContestResultOrderFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'PaymentAttemptStatus'
+ */
+export type EnumPaymentAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentAttemptStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentAttemptStatus[]'
+ */
+export type ListEnumPaymentAttemptStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentAttemptStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentCaptureMode'
+ */
+export type EnumPaymentCaptureModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentCaptureMode'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentCaptureMode[]'
+ */
+export type ListEnumPaymentCaptureModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentCaptureMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentRefundStatus'
+ */
+export type EnumPaymentRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentRefundStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentRefundStatus[]'
+ */
+export type ListEnumPaymentRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentRefundStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4955,6 +5267,9 @@ export type GlobalOmitConfig = {
   contestTeam?: Prisma.ContestTeamOmit
   userFlag?: Prisma.UserFlagOmit
   userFlagLink?: Prisma.UserFlagLinkOmit
+  payment?: Prisma.PaymentOmit
+  paymentAttempt?: Prisma.PaymentAttemptOmit
+  paymentRefund?: Prisma.PaymentRefundOmit
 }
 
 /* Types for Logging */
