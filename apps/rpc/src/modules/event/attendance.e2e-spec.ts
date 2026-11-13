@@ -1010,6 +1010,9 @@ describe("attendance integration tests", async () => {
     )
     invariant(availability.success)
 
+    const productId = `event_${availability.event.id}`
+    stripe.products.retrieve.mockResolvedValue(mock<Stripe.Response<Stripe.Product>>({ id: productId }))
+
     const attendee = await dbClient.$transaction(async (handle) => {
       return await core.attendanceService.registerAttendee(handle, availability)
     })
@@ -1030,6 +1033,10 @@ describe("attendance integration tests", async () => {
     expect(stripe.checkout.sessions.create).toHaveBeenCalledTimes(1)
     const checkoutRequest = stripe.checkout.sessions.create.mock.calls[0][0]
 
+    expect(stripe.products.retrieve).toHaveBeenCalledExactlyOnceWith(productId)
+    expect(checkoutRequest?.line_items?.[0].price_data?.product).toBe(productId)
+    expect(checkoutRequest?.metadata?.event_id).toBe(availability.event.id)
+    expect(checkoutRequest?.payment_intent_data?.metadata?.event_id).toBe(availability.event.id)
     expect(checkoutRequest?.adaptive_pricing?.enabled).toBe(false)
     expect(checkoutRequest?.line_items?.[0].price_data?.currency).toBe("nok")
     expect(checkoutRequest?.line_items?.[0].price_data?.unit_amount).toBe(15000)

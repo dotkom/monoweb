@@ -54,5 +54,17 @@ from timestamps. A refund and a waiver are separate: a refund returns money, whi
 to pay. Public attendee summaries omit the payment view.
 
 The payment requirement snapshots the event description and amount when it is created. Later event price changes
-do not change existing requirements. Checkout uses that snapshot directly; it does not maintain separate event
-products and prices in Stripe. Its return URL is built from the configured web origin and event page.
+do not change existing requirements. Event checkouts share a Stripe product (`event_<eventId>`), created on the first
+checkout with the event title, description, and event page URL. The product retains that initial title; checkout prices
+come from each payment's saved amount rather than a shared Stripe price. Standalone payments use inline products.
+
+## Finding event payments in Stripe
+
+New Checkout Sessions and PaymentIntents include `event_id`, `event_title`, `event_url`, `attendee_id`, and `user_id`
+alongside the payment and attempt IDs. In Stripe Dashboard search, enter `metadata:event_id=<eventId>` and open the
+payment results. Check each payment's status: a manual-capture authorization reserves funds but has not charged them yet.
+You can bookmark that search for an event overview without filtering by amount or date. See
+[Stripe's Dashboard search documentation](https://docs.stripe.com/dashboard/search).
+
+Clicking a checkout item opens the shared event product, with its description and event URL. Existing checkout sessions,
+payments, and ad hoc products are not changed retroactively; create a new checkout to see the new product and metadata.

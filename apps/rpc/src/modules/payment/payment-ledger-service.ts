@@ -1,7 +1,7 @@
 import type { DBHandle } from "@dotkomonline/db"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { fromUnixTime, min, subHours } from "date-fns"
-import type Stripe from "stripe"
+import Stripe from "stripe"
 import { FailedPreconditionError, NotFoundError } from "../../error"
 import {
   buildPaymentView,
@@ -73,6 +73,34 @@ export function getPaymentLedgerService(
         createdAt: fromUnixTime(refund.created),
       })
     }
+  }
+
+  async function getEventProduct(eventId: string, name: string, url: string): Promise<Stripe.Product> {
+    const productId = `event_${eventId}`
+
+    try {
+      return await stripe.products.retrieve(productId)
+    } catch (error) {
+      if (!(error instanceof Stripe.errors.StripeInvalidRequestError) || error.code !== "resource_missing") {
+        throw error
+      }
+    }
+
+    return await stripe.products.create(
+      {
+        id: productId,
+        name,
+        description: `Påmelding til ${name}`,
+        url,
+        metadata: {
+          event_id: eventId,
+          event_url: url,
+        },
+      },
+      {
+        idempotencyKey: `event-product-${eventId}`,
+      }
+    )
   }
 
   return {
@@ -216,14 +244,39 @@ export function getPaymentLedgerService(
         })
       }
 
-      const metadata = {
+      const metadata: Record<string, string> = {
         payment_id: paymentId,
         payment_attempt_id: attempt.id,
+        user_id: payment.userId,
+      }
+
+      if (payment.attendeeId !== null) {
+        metadata.attendee_id = payment.attendeeId
+      }
+
+      const priceData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData = {
+        currency: "nok",
+        unit_amount: payment.amountOre,
+      }
+
+      if (payment.eventId !== null) {
+        const eventUrl = createAbsoluteEventPageUrl(new URL(input.returnUrl).origin, payment.eventId)
+        const product = await getEventProduct(payment.eventId, payment.description, eventUrl)
+        priceData.product = product.id
+        metadata.event_id = payment.eventId
+        // Stripe metadata values are limited to 500 characters. Keep the full title on the product itself.
+        metadata.event_title = payment.description.slice(0, 500)
+        metadata.event_url = eventUrl
+      } else {
+        priceData.product_data = {
+          name: payment.description,
+        }
       }
 
       const session = await stripe.checkout.sessions.create(
         {
           mode: "payment",
+          client_reference_id: payment.id,
           adaptive_pricing: {
             enabled: false,
           },
@@ -233,13 +286,7 @@ export function getPaymentLedgerService(
           line_items: [
             {
               quantity: 1,
-              price_data: {
-                currency: "nok",
-                unit_amount: payment.amountOre,
-                product_data: {
-                  name: payment.description,
-                },
-              },
+              price_data: priceData,
             },
           ],
           metadata,

@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { getUnixTime } from "date-fns"
-import type Stripe from "stripe"
+import Stripe from "stripe"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { mock, mockDeep } from "vitest-mock-extended"
 import { FailedPreconditionError } from "../../error"
@@ -188,6 +188,74 @@ describe("payment ledger service", () => {
     expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
   })
 
+  it.each([true, false])("uses a shared event product when it already exists: %s", async (hasProduct) => {
+    const { handle, stripe, ledger, payment, attempt, session } = createFixture()
+    payment.eventId = "event"
+    payment.attendeeId = "attendee"
+    attempt.status = "CREATED"
+    attempt.stripeCheckoutSessionId = null
+
+    const product = mock<Stripe.Response<Stripe.Product>>({ id: "event_event" })
+
+    if (hasProduct) {
+      stripe.products.retrieve.mockResolvedValue(product)
+    } else {
+      stripe.products.retrieve.mockRejectedValue(
+        new Stripe.errors.StripeInvalidRequestError({ message: "No such product", code: "resource_missing" })
+      )
+      stripe.products.create.mockResolvedValue(product)
+    }
+
+    stripe.checkout.sessions.create.mockResolvedValue(session)
+
+    await ledger.startCheckout(handle, payment.id, {
+      returnUrl: "https://online.ntnu.no/arrangementer/event-ticket/event",
+      customerEmail: "user@example.com",
+      captureMode: "MANUAL",
+      captureScheduledAt: attempt.captureScheduledAt,
+    })
+
+    expect(stripe.products.retrieve).toHaveBeenCalledExactlyOnceWith("event_event")
+
+    if (hasProduct) {
+      expect(stripe.products.create).not.toHaveBeenCalled()
+    } else {
+      expect(stripe.products.create).toHaveBeenCalledExactlyOnceWith(
+        {
+          id: "event_event",
+          name: "Event ticket",
+          description: "Påmelding til Event ticket",
+          url: "https://online.ntnu.no/arrangementer/arrangement/event",
+          metadata: {
+            event_id: "event",
+            event_url: "https://online.ntnu.no/arrangementer/arrangement/event",
+          },
+        },
+        { idempotencyKey: "event-product-event" }
+      )
+    }
+
+    const metadata = {
+      payment_id: "payment",
+      payment_attempt_id: "attempt",
+      user_id: "user",
+      attendee_id: "attendee",
+      event_id: "event",
+      event_title: "Event ticket",
+      event_url: "https://online.ntnu.no/arrangementer/arrangement/event",
+    }
+
+    expect(stripe.checkout.sessions.create).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        client_reference_id: "payment",
+        metadata,
+        payment_intent_data: expect.objectContaining({ metadata }),
+        line_items: [{ quantity: 1, price_data: { currency: "nok", unit_amount: 15000, product: "event_event" } }],
+      }),
+      { idempotencyKey: "payment-checkout-attempt" }
+    )
+  })
+
   it("cancels an attempt through the repository before it has a provider session", async () => {
     const { handle, paymentRepository, stripe, ledger, payment, attempt } = createFixture()
     attempt.status = "CREATED"
@@ -202,5 +270,27 @@ describe("payment ledger service", () => {
     expect(stripe.checkout.sessions.retrieve).not.toHaveBeenCalled()
     expect(stripe.checkout.sessions.expire).not.toHaveBeenCalled()
     expect(stripe.paymentIntents.cancel).not.toHaveBeenCalled()
+  })
+
+  it("does not create another product when the product lookup fails for reasons other than absence", async () => {
+    const { handle, stripe, ledger, payment, attempt } = createFixture()
+    payment.eventId = "event"
+    attempt.status = "CREATED"
+    attempt.stripeCheckoutSessionId = null
+
+    const error = new Error("Stripe unavailable")
+    stripe.products.retrieve.mockRejectedValue(error)
+
+    await expect(
+      ledger.startCheckout(handle, payment.id, {
+        returnUrl: "https://online.ntnu.no/arrangementer/event-ticket/event",
+        customerEmail: null,
+        captureMode: "MANUAL",
+        captureScheduledAt: attempt.captureScheduledAt,
+      })
+    ).rejects.toBe(error)
+
+    expect(stripe.products.create).not.toHaveBeenCalled()
+    expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
   })
 })
