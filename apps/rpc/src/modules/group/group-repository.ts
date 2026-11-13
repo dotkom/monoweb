@@ -1,6 +1,9 @@
 import type { DBHandle, GroupType, Prisma } from "@dotkomonline/db"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInMilliseconds } from "date-fns"
+import z from "zod"
+import { parseOrReport } from "../../invariant"
+import { type UserId, normalizeDbUser } from "../user/user"
 import {
   type Group,
   type GroupByMemberFilter,
@@ -19,9 +22,6 @@ import {
   GroupSchema,
   type GroupWrite,
 } from "./group"
-import { type UserId, normalizeDbUser } from "../user/user"
-import z from "zod"
-import { parseOrReport } from "../../invariant"
 
 const GROUP_TYPE_SORT_ORDER = {
   COMMITTEE: 0,
@@ -211,14 +211,19 @@ export function getGroupRepository(): GroupRepository {
     },
 
     async createGroupMembership(handle, groupMembershipData, groupRoleIds) {
+      const roleIds = Array.from(groupRoleIds)
       const membership = await handle.groupMembership.create({
         data: {
           ...groupMembershipData,
-          roles: {
-            createMany: {
-              data: Array.from(groupRoleIds).map((roleId) => ({ roleId })),
-            },
-          },
+          ...(roleIds.length > 0
+            ? {
+                roles: {
+                  createMany: {
+                    data: roleIds.map((roleId) => ({ roleId })),
+                  },
+                },
+              }
+            : {}),
         },
         include: {
           roles: {

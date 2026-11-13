@@ -75,7 +75,7 @@ describe("mergeUsers", () => {
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
     handle.userFlagLink.findMany.mockResolvedValue([])
-    handle.interestGroupEventRegistration.findMany.mockResolvedValue([])
+    handle.sidequestRegistration.findMany.mockResolvedValue([])
     deps = { groupRepository, attendanceService }
   })
 
@@ -390,19 +390,19 @@ describe("mergeUsers", () => {
     })
   })
 
-  describe("interest group event registration deduplication", () => {
-    it("reassigns consumed registrations when survivor has none of the same events", async () => {
+  describe("sidequest registration deduplication", () => {
+    it("reassigns consumed registrations when survivor has none of the same sidequests", async () => {
       const survivor = makeUser()
       const consumed = makeUser()
 
-      handle.interestGroupEventRegistration.findMany.mockResolvedValue([])
+      handle.sidequestRegistration.findMany.mockResolvedValue([])
 
       await mergeUsers(handle, deps, survivor, consumed)
 
-      expect(handle.interestGroupEventRegistration.deleteMany).toHaveBeenCalledWith({
-        where: { userId: consumed.id, interestGroupEventId: { in: [] } },
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [] } },
       })
-      expect(handle.interestGroupEventRegistration.updateMany).toHaveBeenCalledWith({
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })
@@ -411,18 +411,16 @@ describe("mergeUsers", () => {
     it("deletes the consumed user's registrations that the survivor also has", async () => {
       const survivor = makeUser()
       const consumed = makeUser()
-      const sharedEventId = "interest-group-event-shared"
+      const sharedSidequestId = "sidequest-shared"
 
-      handle.interestGroupEventRegistration.findMany.mockResolvedValue([
-        { interestGroupEventId: sharedEventId },
-      ] as never)
+      handle.sidequestRegistration.findMany.mockResolvedValue([{ sidequestId: sharedSidequestId }] as never)
 
       await mergeUsers(handle, deps, survivor, consumed)
 
-      expect(handle.interestGroupEventRegistration.deleteMany).toHaveBeenCalledWith({
-        where: { userId: consumed.id, interestGroupEventId: { in: [sharedEventId] } },
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [sharedSidequestId] } },
       })
-      expect(handle.interestGroupEventRegistration.updateMany).toHaveBeenCalledWith({
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })

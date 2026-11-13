@@ -28,7 +28,11 @@ import { getNotificationPermissionsFixtures } from "./fixtures/notification-perm
 import { getOfflineFixtures } from "./fixtures/offline"
 import { getPersonalMarkFixtures } from "./fixtures/personal-mark"
 import { getPrivacyPermissionsFixtures } from "./fixtures/privacy-permissions"
-import { getSidequestFixtures, getSidequestRegistrationFixtures } from "./fixtures/sidequest"
+import {
+  getSidequestFixtures,
+  getSidequestRegistrationFixtures,
+  getSidequestRequestFixtures,
+} from "./fixtures/sidequest"
 import { getUserFixtures } from "./fixtures/user"
 import { EXCEPTIONALLY_DISTINGUISHED_FLAG_NAME, getUserFlagLinkFixtures } from "./fixtures/user-flag-link"
 
@@ -149,6 +153,10 @@ const userIds = getUserFixtures().map((user) => user.id)
 await db.sidequest.createMany({
   data: getSidequestFixtures(),
   skipDuplicates: true,
+})
+
+await db.sidequestRequest.createMany({
+  data: getSidequestRequestFixtures(userIds),
 })
 await db.sidequestRegistration.createMany({
   data: getSidequestRegistrationFixtures(userIds),
