@@ -1,4 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import type { DBHandle } from "@dotkomonline/db"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
 import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
@@ -20,8 +21,10 @@ import {
   SidequestSummarySchema,
   SidequestSummaryWithRequestSchema,
   SidequestWriteSchema,
+  type SidequestSummary,
   type SidequestSummaryWithRequest,
 } from "./sidequest"
+import type { SidequestService } from "./sidequest-service"
 
 export type CreateSidequestInput = inferProcedureInput<typeof createSidequestProcedure>
 export type CreateSidequestOutput = inferProcedureOutput<typeof createSidequestProcedure>
@@ -37,7 +40,7 @@ const createSidequestProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const sidequest = await ctx.sidequestService.create(ctx.handle, input.sidequest)
+    const sidequest = await ctx.sidequestService.create(ctx.handle, input.sidequest, ctx.principal.subject)
     ctx.setAuditTransactionName(`Create Sidequest(ID=${sidequest.id},Title=${sidequest.title})`)
 
     return sidequest
@@ -58,7 +61,7 @@ const updateSidequestProcedure = procedure
   .use(withDatabaseTransaction())
   .use(withAuditLogEntry())
   .mutation(async ({ input, ctx }) => {
-    const sidequest = await ctx.sidequestService.update(ctx.handle, input.id, input.sidequest)
+    const sidequest = await ctx.sidequestService.update(ctx.handle, input.id, input.sidequest, ctx.principal.subject)
     ctx.setAuditTransactionName(`Update Sidequest(ID=${sidequest.id},Title=${sidequest.title})`)
 
     return sidequest
@@ -76,8 +79,8 @@ const findSidequestProcedure = procedure
       return null
     }
 
-    const isPublished = sidequest.status === SidequestStatusSchema.enum.PUBLISHED
-    if (!isPublished && !canSeeUnpublished(ctx)) {
+    const canAccess = await canAccessSidequest(ctx, sidequest)
+    if (!canAccess) {
       return null
     }
 
@@ -93,8 +96,8 @@ const getSidequestProcedure = procedure
   .query(async ({ input, ctx }) => {
     const sidequest = await ctx.sidequestService.getById(ctx.handle, input, ctx.principal !== null)
 
-    const isPublished = sidequest.status === SidequestStatusSchema.enum.PUBLISHED
-    if (!isPublished && !canSeeUnpublished(ctx)) {
+    const canAccess = await canAccessSidequest(ctx, sidequest)
+    if (!canAccess) {
       throw new NotFoundError(`Sidequest(ID=${input}) not found`)
     }
 
@@ -443,6 +446,8 @@ export const sidequestRouter = t.router({
 type SidequestAccess = {
   principal: Principal | null
   authorizationService: AuthorizationService
+  sidequestService: SidequestService
+  handle: DBHandle
 }
 
 function canSeeUnpublished(ctx: SidequestAccess) {
@@ -454,6 +459,40 @@ function canSeeUnpublished(ctx: SidequestAccess) {
     ctx.authorizationService.isAdministrator(ctx.principal.affiliations) ||
     ctx.authorizationService.hasAnyGroupAffiliation(ctx.principal.affiliations, [CommitteeGroupSlug.BACKLOG])
   )
+}
+
+async function canAccessSidequest(ctx: SidequestAccess, sidequest: SidequestSummary) {
+  if (sidequest.status === SidequestStatusSchema.enum.PUBLISHED) {
+    return true
+  }
+
+  if (canSeeUnpublished(ctx)) {
+    return true
+  }
+
+  if (sidequest.status === SidequestStatusSchema.enum.DELETED) {
+    return false
+  }
+
+  if (ctx.principal === null) {
+    return false
+  }
+
+  const roles = ctx.principal.affiliations.get(sidequest.interestGroupId)
+  if (roles?.has(GroupRoleTypeEnum.LEADER) === true) {
+    return true
+  }
+
+  const sidequestWithRequest = await ctx.sidequestService.findByIdWithRequest(ctx.handle, sidequest.id, false)
+  if (
+    sidequestWithRequest !== null &&
+    sidequestWithRequest.request !== null &&
+    sidequestWithRequest.request.requestedById === ctx.principal.subject
+  ) {
+    return true
+  }
+
+  return false
 }
 
 function stripReviewerIdentity(item: SidequestSummaryWithRequest) {
