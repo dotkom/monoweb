@@ -11,9 +11,10 @@ interface EventListItemDateAndTimeProps {
   start: Date
   end: Date
   compact?: boolean
+  stackAt?: "md" | false
 }
 
-export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, compact = false }) => {
+export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, compact = false, stackAt = "md" }) => {
   const withinAWeek = Math.abs(differenceInDays(start, new Date())) < 7
   const excludeYear = isSameYear(start, end) && isThisYear(start)
   const past = isPast(end)
@@ -67,7 +68,7 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
         {ongoing ? (
           <Text>Pågår nå</Text>
         ) : (
-          <div className="flex flex-col md:flex-row md:gap-1">
+          <div className={cn(stackAt === false ? "flex flex-row gap-1" : "flex flex-col md:flex-row md:gap-1")}>
             <Text>{startDateWithWeekday}</Text>
 
             {showTime && (
@@ -85,14 +86,14 @@ export const DateAndTime: FC<EventListItemDateAndTimeProps> = ({ start, end, com
     <div className={cn("flex flex-row items-center gap-2 text-xs md:text-sm", pastClassName)}>
       <IconCalendarEvent width={16} height={16} className={calendarIconClassName} />
 
-      <div className="flex flex-col md:flex-row md:gap-1">
+      <div className={cn(stackAt === false ? "flex flex-row gap-1" : "flex flex-col md:flex-row md:gap-1")}>
         <Text>{startDate}</Text>
         {showTime && <Text> kl. {startTime}</Text>}
       </div>
 
       <IconArrowRight width={16} height={16} className={arrowIconClassName} />
 
-      <div className="flex flex-col md:flex-row md:gap-1">
+      <div className={cn(stackAt === false ? "flex flex-row gap-1" : "flex flex-col md:flex-row md:gap-1")}>
         <Text>{endDate}</Text>
         {showTime && <Text>kl. {endTime}</Text>}
       </div>

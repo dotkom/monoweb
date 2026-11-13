@@ -74,4 +74,14 @@ describe("filterNavigationsUserHasAccessTo", () => {
   it("keeps audit log when the caller is an administrator", () => {
     expect(pageHrefs(principal({ dotkom: [GroupRoleTypeEnum.COSMETIC] }))).toContain("/admin/logg")
   })
+  
+  it("hides interest group events when canAccessInterestGroupEvents is false", () => {
+    expect(pageHrefs(auth({ canAccessInterestGroupEvents: () => false }))).not.toContain(
+      "/admin/interessegruppearrangementer"
+    )
+  })
+
+  it("hides audit log when canAccessAuditLog is false", () => {
+    expect(pageHrefs(auth({ canAccessAuditLog: () => false }))).not.toContain("/admin/logg")
+  })
 })

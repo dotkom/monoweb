@@ -1,6 +1,8 @@
+import { useTRPC } from "@/utils/trpc/client"
+import { useAuthenticatedUser } from "@/utils/use-authenticated-user"
 import {
-  BUG_REPORT_TITLE_MAX_LENGTH,
   BUG_REPORT_BODY_MAX_LENGTH,
+  BUG_REPORT_TITLE_MAX_LENGTH,
   type BugReportFormResult,
   BugReportFormSchema,
 } from "@dotkomonline/rpc/user"
@@ -10,8 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IconMail } from "@tabler/icons-react"
 import { useMutation } from "@tanstack/react-query"
 import { Controller, useForm } from "react-hook-form"
-import { useTRPC } from "src/utils/trpc/client"
-import { useAuthenticatedUser } from "src/utils/use-authenticated-user"
 import { useFullPathname } from "src/utils/use-full-pathname"
 import { BugReportEmailRequired } from "./BugReportEmailRequired"
 
