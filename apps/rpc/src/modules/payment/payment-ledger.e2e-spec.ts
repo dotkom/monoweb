@@ -117,7 +117,10 @@ describe("payment ledger persistence", () => {
     expect(checkout.attempts[0].id).toBe(attemptId)
     expect(checkout.attempts[0].status).toBe("CHECKOUT_OPEN")
     expect(stripe.checkout.sessions.create.mock.calls[1]).toEqual(stripe.checkout.sessions.create.mock.calls[0])
-    expect(stripe.checkout.sessions.create.mock.calls[0][0]?.metadata).toEqual({ payment_attempt_id: attemptId })
+    expect(stripe.checkout.sessions.create.mock.calls[0][0]?.metadata).toEqual({
+      payment_id: payment.id,
+      payment_attempt_id: attemptId,
+    })
     expect(stripe.checkout.sessions.create.mock.calls[0][1]?.idempotencyKey).toBe(`payment-checkout-${attemptId}`)
   })
 

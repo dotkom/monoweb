@@ -1,6 +1,6 @@
 import type { DBClient, DBHandle } from "@dotkomonline/db"
 import { getUnixTime } from "date-fns"
-import type Stripe from "stripe"
+import Stripe from "stripe"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { mock, mockDeep } from "vitest-mock-extended"
 import { FailedPreconditionError } from "../../error"
@@ -626,6 +626,100 @@ describe("payment ledger service", () => {
     expect(paymentRepository.upsertStripeRefund).not.toHaveBeenCalled()
   })
 
+  it.each(["attendee deletion", "user merge"])("preserves the Stripe checkout request after %s", async (change) => {
+    const { client, handle, ledger, stripe, payment, attempt, session } = createFixture()
+    payment.eventId = "event"
+    payment.attendeeId = "attendee"
+    attempt.status = "CREATED"
+    attempt.stripeCheckoutSessionId = null
+    stripe.products.retrieve.mockResolvedValue(mock({ id: "event_event" }))
+    stripe.checkout.sessions.create.mockRejectedValueOnce(new Error("Response lost")).mockResolvedValueOnce(session)
+
+    await expect(ledger.startCheckout(client, attempt.id)).rejects.toThrow("Response lost")
+
+    if (change === "attendee deletion") {
+      await ledger.cancel(handle, attempt.id)
+      payment.attendeeId = null
+    } else {
+      payment.userId = "merged-user"
+    }
+
+    await ledger.startCheckout(client, attempt.id)
+
+    expect(stripe.checkout.sessions.create).toHaveBeenCalledTimes(2)
+    expect(stripe.checkout.sessions.create.mock.calls[1]).toEqual(stripe.checkout.sessions.create.mock.calls[0])
+    expect(attempt.stripeCheckoutSessionId).toBe(session.id)
+
+    if (change === "attendee deletion") {
+      expect(stripe.checkout.sessions.expire).toHaveBeenCalledExactlyOnceWith(session.id)
+      expect(attempt.status).toBe("EXPIRED")
+    } else {
+      expect(stripe.checkout.sessions.expire).not.toHaveBeenCalled()
+      expect(attempt.status).toBe("CHECKOUT_OPEN")
+    }
+  })
+
+  it.each([true, false])("uses a shared event product when it already exists: %s", async (hasProduct) => {
+    const { client, stripe, ledger, payment, attempt, session } = createFixture()
+    payment.eventId = "event"
+    payment.attendeeId = "attendee"
+    attempt.status = "CREATED"
+    attempt.stripeCheckoutSessionId = null
+
+    const product = mock<Stripe.Response<Stripe.Product>>({ id: "event_event" })
+
+    if (hasProduct) {
+      stripe.products.retrieve.mockResolvedValue(product)
+    } else {
+      stripe.products.retrieve.mockRejectedValue(
+        new Stripe.errors.StripeInvalidRequestError({ message: "No such product", code: "resource_missing" })
+      )
+      stripe.products.create.mockResolvedValue(product)
+    }
+
+    stripe.checkout.sessions.create.mockResolvedValue(session)
+
+    await ledger.startCheckout(client, attempt.id)
+
+    expect(stripe.products.retrieve).toHaveBeenCalledExactlyOnceWith("event_event")
+
+    if (hasProduct) {
+      expect(stripe.products.create).not.toHaveBeenCalled()
+    } else {
+      expect(stripe.products.create).toHaveBeenCalledExactlyOnceWith(
+        {
+          id: "event_event",
+          name: "Event ticket",
+          description: "Påmelding til Event ticket",
+          url: "https://online.ntnu.no/arrangementer/arrangement/event",
+          metadata: {
+            event_id: "event",
+            event_url: "https://online.ntnu.no/arrangementer/arrangement/event",
+          },
+        },
+        { idempotencyKey: "event-product-event" }
+      )
+    }
+
+    const metadata = {
+      payment_id: "payment",
+      payment_attempt_id: "attempt",
+      event_id: "event",
+      event_title: "Event ticket",
+      event_url: "https://online.ntnu.no/arrangementer/arrangement/event",
+    }
+
+    expect(stripe.checkout.sessions.create).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        client_reference_id: "payment",
+        metadata,
+        payment_intent_data: expect.objectContaining({ metadata }),
+        line_items: [{ quantity: 1, price_data: { currency: "nok", unit_amount: 15000, product: "event_event" } }],
+      }),
+      { idempotencyKey: "payment-checkout-attempt" }
+    )
+  })
+
   it("cancels an attempt through the repository before it has a provider session", async () => {
     const { handle, paymentRepository, stripe, ledger, payment, attempt } = createFixture()
     attempt.status = "CREATED"
@@ -640,5 +734,20 @@ describe("payment ledger service", () => {
     expect(stripe.checkout.sessions.retrieve).not.toHaveBeenCalled()
     expect(stripe.checkout.sessions.expire).not.toHaveBeenCalled()
     expect(stripe.paymentIntents.cancel).not.toHaveBeenCalled()
+  })
+
+  it("does not create another product when the product lookup fails for reasons other than absence", async () => {
+    const { client, stripe, ledger, payment, attempt } = createFixture()
+    payment.eventId = "event"
+    attempt.status = "CREATED"
+    attempt.stripeCheckoutSessionId = null
+
+    const error = new Error("Stripe unavailable")
+    stripe.products.retrieve.mockRejectedValue(error)
+
+    await expect(ledger.startCheckout(client, attempt.id)).rejects.toBe(error)
+
+    expect(stripe.products.create).not.toHaveBeenCalled()
+    expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
   })
 })
