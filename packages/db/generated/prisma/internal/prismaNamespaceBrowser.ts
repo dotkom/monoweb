@@ -220,6 +220,7 @@ export const GroupRoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   type: 'type',
+  isDefault: 'isDefault',
   groupId: 'groupId'
 } as const
 
