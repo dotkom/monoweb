@@ -5,11 +5,13 @@ import Link from "next/link"
 
 interface OfflineCardProps {
   offline: Offline
+  showTitle?: boolean
+  className?: string
 }
 
-export const OfflineCard = ({ offline }: OfflineCardProps) => {
+export const OfflineCard = ({ offline, showTitle = true, className }: OfflineCardProps) => {
   return (
-    <div className="flex flex-col gap-3 text-wrap max-w-56">
+    <div className={cn("flex flex-col gap-3 text-wrap max-w-56", className)}>
       <Link href={offline.fileUrl}>
         <div className="perspective-[1000px] bg-gray-300 rounded-r-md">
           <div
@@ -29,7 +31,7 @@ export const OfflineCard = ({ offline }: OfflineCardProps) => {
         </div>
       </Link>
 
-      <Text className="text-gray-950 dark:text-white">{offline.title}</Text>
+      {showTitle === true && <Text className="text-gray-950 dark:text-white">{offline.title}</Text>}
     </div>
   )
 }
