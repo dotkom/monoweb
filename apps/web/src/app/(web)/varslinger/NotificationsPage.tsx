@@ -171,7 +171,6 @@ function InboxNotificationRow({
   )
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLAnchorElement>({
     notificationId: userNotification.notification.id,
-    notificationType: userNotification.notification.type,
     readAt: userNotification.readAt,
     onMarkAsRead,
   })
@@ -233,7 +232,6 @@ function InboxNotificationDetail({
 }) {
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLDivElement>({
     notificationId: selectedUserNotification?.notification.id,
-    notificationType: selectedUserNotification?.notification.type,
     readAt: selectedUserNotification?.readAt,
     onMarkAsRead,
   })
