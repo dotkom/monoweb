@@ -339,7 +339,7 @@ importers:
         version: 3.23.0
       jose:
         specifier: ^6.0.11
-        version: 6.2.15
+        version: 6.2.17
       lru-cache:
         specifier: ^11.1.0
         version: 11.5.3
@@ -571,7 +571,7 @@ importers:
         version: 3.23.0
       jose:
         specifier: ^6.0.11
-        version: 6.2.15
+        version: 6.2.17
       jsdom:
         specifier: 28.1.0
         version: 28.1.0
@@ -1066,7 +1066,7 @@ importers:
         version: 9.0.5
       jose:
         specifier: ^6.0.11
-        version: 6.2.15
+        version: 6.2.17
       slugify:
         specifier: ^1.6.6
         version: 1.6.9
@@ -6390,8 +6390,8 @@ packages:
   jose@4.15.9:
     resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
 
-  jose@6.2.15:
-    resolution: {integrity: sha512-qdF6ewcZARtef63fJ9AKKZPgxw+t7USH6HLXYcD4CrdmSvDp79rpJSPFEKc90QBeGS63u1KQtN2MZQHC0yDIzA==}
+  jose@6.2.17:
+    resolution: {integrity: sha512-wOuK9V1yujQFH5S0ZWmLcDZN7+IKh9bUCC2ZPCf2HDlol3WWHy+PPyNjEI75FXRLMp3vDKQcupP59xhVU95hcg==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -8983,7 +8983,7 @@ snapshots:
     dependencies:
       '@edge-runtime/cookies': 5.0.2
       '@panva/hkdf': 1.2.1
-      jose: 6.2.15
+      jose: 6.2.17
       next: 16.4.5(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       oauth4webapi: 3.8.8
       openid-client: 6.8.8
@@ -14323,7 +14323,7 @@ snapshots:
 
   jose@4.15.9: {}
 
-  jose@6.2.15: {}
+  jose@6.2.17: {}
 
   js-tokens@10.0.0: {}
 
@@ -15391,7 +15391,7 @@ snapshots:
 
   openid-client@6.8.8:
     dependencies:
-      jose: 6.2.15
+      jose: 6.2.17
       oauth4webapi: 3.8.8
 
   ora@8.2.0:
