@@ -57,7 +57,7 @@
     "@trpc/tanstack-react-query": "11.8.1",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
-    "axios": "1.21.0",
+    "axios": "1.21.1",
     "core-js": "^3.45.1",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
