@@ -11,6 +11,7 @@ import {
   setMinutes,
 } from "date-fns"
 import { useRef } from "react"
+import { IconX } from "@tabler/icons-react"
 import { cn } from "../../utils"
 import { Button } from "../Button/Button"
 import { Calendar } from "../Calendar/Calendar"
@@ -31,6 +32,7 @@ interface DateTimePickerProps {
   minuteStep?: 5 | 10 | 15 | 30 | 60
   timeInputClassName?: string
   disabled?: boolean
+  clearable?: boolean
   syncOffsetTo?: DateTimePickerSyncOffsetTo
 }
 
@@ -43,6 +45,7 @@ export const DateTimePicker = ({
   minuteStep,
   timeInputClassName,
   disabled,
+  clearable = false,
   syncOffsetTo,
 }: DateTimePickerProps) => {
   const defaultPlaceholder = withTime ? "Velg dato og tid" : "Velg dato"
@@ -67,17 +70,36 @@ export const DateTimePicker = ({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className={cn("justify-start font-normal tabular-nums enabled:active:scale-100", className)}
-        >
-          {value !== null
-            ? formatDate(value, withTime ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd")
-            : (placeholder ?? defaultPlaceholder)}
-        </Button>
-      </PopoverTrigger>
+      <div className="relative inline-flex">
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            disabled={disabled}
+            className={cn(
+              "w-full justify-start font-normal tabular-nums enabled:active:scale-100",
+              clearable && value !== null && "pr-10",
+              className
+            )}
+          >
+            {value !== null
+              ? formatDate(value, withTime ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd")
+              : (placeholder ?? defaultPlaceholder)}
+          </Button>
+        </PopoverTrigger>
+        {clearable && value !== null && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-1/2 right-1 -translate-y-1/2"
+            aria-label="Fjern dato"
+            disabled={disabled}
+            onClick={() => handleChange(null)}
+          >
+            <IconX className="size-4" />
+          </Button>
+        )}
+      </div>
       <PopoverContent className="w-fit" align="start">
         <Calendar
           mode="single"

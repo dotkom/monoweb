@@ -12,7 +12,7 @@ import {
   MembershipWriteSchema,
   type MembershipWrite,
 } from "@dotkomonline/rpc/user"
-import { Button, Text } from "@dotkomonline/ui"
+import { Button, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, Text } from "@dotkomonline/ui"
 import {
   getCurrentSemesterStart,
   getCurrentUTC,
@@ -207,40 +207,45 @@ function SemesterField({ control, disabled }: { control: Control<FormValues>; di
 
   return (
     <FieldShell id={id} label="Semester" description={description} error={error} required>
-      <div className="flex flex-col gap-2">
-        <input
+      <InputGroup>
+        <InputGroupInput
+          ref={field.ref}
+          name={field.name}
+          onBlur={field.onBlur}
+          aria-invalid={error !== undefined}
           id={id}
           type="number"
           min={1}
           max={10}
           disabled={combineFieldDisabled(disabled, field.disabled)}
-          className="w-full max-w-xs rounded-md border border-input bg-background px-3 py-2 text-sm"
           value={field.value !== null && field.value !== undefined ? field.value + 1 : ""}
           onChange={(event) => {
-            const raw = event.target.value
-            if (raw === "") {
+            const inputValue = event.target.value
+
+            if (inputValue === "") {
               field.onChange(null)
+
               return
             }
 
-            const zeroIndexed = Number(raw) - 1
-            field.onChange(zeroIndexed)
+            const zeroIndexedSemester = Number(inputValue) - 1
+
+            field.onChange(zeroIndexedSemester)
           }}
         />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="w-fit"
-          disabled={disabled}
-          icon={<IconX className="size-3.5" />}
-          onClick={() => {
-            field.onChange(null)
-          }}
-        >
-          Fjern verdi
-        </Button>
-      </div>
+        {field.value != null && (
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              size="icon-xs"
+              aria-label="Fjern semester"
+              disabled={combineFieldDisabled(disabled, field.disabled)}
+              onClick={() => field.onChange(null)}
+            >
+              <IconX className="size-3.5" />
+            </InputGroupButton>
+          </InputGroupAddon>
+        )}
+      </InputGroup>
     </FieldShell>
   )
 }
@@ -276,10 +281,10 @@ function MembershipDateField({
         description={semesterDescription}
         required={required}
         disabled={disabled}
+        clearable={clearable}
       />
       <div className="flex flex-wrap gap-2">
         <Button
-          variant="ghost"
           size="sm"
           disabled={disabled}
           icon={<IconArrowLeft className="size-3.5" />}
@@ -291,7 +296,6 @@ function MembershipDateField({
           Forrige semester
         </Button>
         <Button
-          variant="ghost"
           size="sm"
           disabled={disabled}
           icon={<IconArrowRight className="size-3.5" />}
@@ -302,20 +306,6 @@ function MembershipDateField({
         >
           Neste semester
         </Button>
-        {clearable && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={disabled}
-            icon={<IconX className="size-3.5" />}
-            onClick={() => {
-              setValue(name, null, { shouldDirty: true, shouldValidate: true })
-            }}
-          >
-            Fjern sluttdato
-          </Button>
-        )}
       </div>
     </div>
   )
