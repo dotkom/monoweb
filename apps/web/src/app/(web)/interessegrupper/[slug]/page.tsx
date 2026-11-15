@@ -18,9 +18,20 @@ const Page = async ({ params }: InterestGroupPageProps) => {
     return notFound()
   }
 
-  const [session, members] = await Promise.all([getServerSession(), server.group.getMembers.query(slug)])
+  const [session, members, comments] = await Promise.all([
+    getServerSession(),
+    server.group.getMembers.query(slug),
+    server.group.findManyInterestGroupComments.query(slug),
+  ])
 
-  return <InterestGroupPage interestGroup={group} userId={session?.sub} initialMembers={members} />
+  return (
+    <InterestGroupPage
+      interestGroup={group}
+      userId={session?.sub}
+      initialMembers={members}
+      initialComments={comments}
+    />
+  )
 }
 
 export async function generateMetadata({ params }: Pick<InterestGroupPageProps, "params">): Promise<Metadata> {
