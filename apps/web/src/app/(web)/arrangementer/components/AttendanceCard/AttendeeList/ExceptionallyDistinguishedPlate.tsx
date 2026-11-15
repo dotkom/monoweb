@@ -13,10 +13,11 @@ import { FlagNameSchema, type UserFlag } from "@dotkomonline/rpc/user"
 import { ogJoin } from "@dotkomonline/utils"
 import { Plate, type PlateProps } from "./Plate"
 import { formatExceptionallyDistinguishedCreatedAtYear } from "./exceptionallyDistinguished"
+import styles from "./PlateBackground.module.css"
 
 export function ExceptionallyDistinguishedPlate(props: PlateProps) {
   return (
-    <Plate {...props} className="group overflow-hidden rounded-full bg-[rgb(12_74_97)] dark:bg-[rgb(8_46_63)]">
+    <Plate {...props} className={cn("group overflow-hidden rounded-full", styles.background, styles.distinguished)}>
       <div className="pointer-events-none absolute inset-0 left-[calc(33%+var(--spacing)*8)] flex items-center justify-center opacity-[0.13] transition-opacity duration-300 group-hover:opacity-25">
         <div className="w-20 rotate-270">
           <ExceptionallyDistinguishedLeaf className="fill-white" />
@@ -24,8 +25,11 @@ export function ExceptionallyDistinguishedPlate(props: PlateProps) {
       </div>
 
       <Plate.IdentityArea className="p-1.75">
-        <Plate.Avatar fallbackClassName="bg-white/25 text-white" />
-        <Plate.AttendeeDetails nameClassName="font-medium text-orange-200" subtitleClassName="text-white" />
+        <Plate.Avatar
+          className="outline-2 outline-user-plate-exceptionally-distinguished-ring/50"
+          fallbackClassName="bg-gray-300 text-gray-700 dark:bg-white/25 dark:text-white"
+        />
+        <Plate.AttendeeDetails subtitleClassName="text-gray-700 dark:text-stone-300" />
       </Plate.IdentityArea>
       <Plate.AccessoryArea className="py-1.75 pr-1.75">
         <Plate.BigIcon />
@@ -73,7 +77,8 @@ export function getExceptionallyDistinguishedLargeIcon(flags: Pick<UserFlag, "aw
 }
 
 export function getExceptionallyDistinguishedSmallIcon(flags: Pick<UserFlag, "awardedAt" | "imageUrl">[]) {
-  const triggerClassName = "relative -my-1 size-5 overflow-hidden rounded-full bg-white p-px"
+  const triggerClassName =
+    "relative inline-flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-px leading-none"
   const imageUrl = flags[0]?.imageUrl
 
   const triggerContent = (
