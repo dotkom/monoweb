@@ -1223,7 +1223,7 @@ model PaymentAttempt {
   refunds PaymentRefund[]
 
   @@unique([paymentId, attemptNumber])
-  @@unique([paymentId], map: "payment_attempt_one_active", where: raw("status IN ('CREATED', 'CHECKOUT_OPEN', 'PROCESSING', 'AUTHORIZED')"))
+  @@unique([paymentId], map: "payment_attempt_one_active", where: raw("status = ANY (ARRAY['CREATED'::payment_attempt_status, 'CHECKOUT_OPEN'::payment_attempt_status, 'PROCESSING'::payment_attempt_status, 'AUTHORIZED'::payment_attempt_status])"))
   @@index([paymentId, createdAt])
   @@index([status, captureScheduledAt])
   @@map("payment_attempt")
@@ -1249,7 +1249,7 @@ model PaymentRefund {
   requestedBy       User?          @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
 
   @@unique([paymentAttemptId, refundNumber])
-  @@unique([paymentAttemptId], map: "payment_refund_one_pending", where: raw("status IN ('REQUESTED', 'PENDING')"))
+  @@unique([paymentAttemptId], map: "payment_refund_one_pending", where: raw("status = ANY (ARRAY['REQUESTED'::payment_refund_status, 'PENDING'::payment_refund_status])"))
   @@index([paymentAttemptId, createdAt])
   @@index([requestedByUserId])
   @@map("payment_refund")
