@@ -11,6 +11,13 @@
 Use the same Stripe test account for checkout creation and the webhook listener. Local development uses
 `STRIPE_WEBHOOK_IDENTIFIER=dev`, which skips hosted webhook configuration.
 
+Set `NEXT_PUBLIC_STRIPE_DASHBOARD_URL` in the `monoweb-web` Doppler project. Use the production account's Dashboard
+base URL in `prd` and your sandbox's base URL in your personal development config, including its account ID and `/test`
+(for example, `https://dashboard.stripe.com/acct_example/test`). The shared `dev` config uses Stripe's generic test
+Dashboard. Do not include `/search` or query parameters. The admin page uses this setting for product, payment, and event
+search links. Restart development through `pnpm dev` after changes; deployed builds must be rebuilt because this is a
+public Next.js build-time setting.
+
 ## Hosted webhooks
 
 Configure an existing Stripe webhook endpoint for `${STRIPE_WEBHOOK_HOST}/webhook/stripe` and store its signing secret
