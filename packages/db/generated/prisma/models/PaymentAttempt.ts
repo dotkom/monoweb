@@ -373,6 +373,7 @@ export type PaymentAttemptWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   stripeCheckoutSessionId?: string
   stripePaymentIntentId?: string
+  paymentId?: string
   paymentId_attemptNumber?: Prisma.PaymentAttemptPaymentIdAttemptNumberCompoundUniqueInput
   AND?: Prisma.PaymentAttemptWhereInput | Prisma.PaymentAttemptWhereInput[]
   OR?: Prisma.PaymentAttemptWhereInput[]
@@ -393,10 +394,9 @@ export type PaymentAttemptWhereUniqueInput = Prisma.AtLeast<{
   capturedAt?: Prisma.DateTimeNullableFilter<"PaymentAttempt"> | Date | string | null
   capturedAmountOre?: Prisma.IntFilter<"PaymentAttempt"> | number
   lastSyncedAt?: Prisma.DateTimeNullableFilter<"PaymentAttempt"> | Date | string | null
-  paymentId?: Prisma.StringFilter<"PaymentAttempt"> | string
   payment?: Prisma.XOR<Prisma.PaymentScalarRelationFilter, Prisma.PaymentWhereInput>
   refunds?: Prisma.PaymentRefundListRelationFilter
-}, "id" | "stripeCheckoutSessionId" | "stripePaymentIntentId" | "paymentId_attemptNumber">
+}, "id" | "stripeCheckoutSessionId" | "stripePaymentIntentId" | "paymentId_attemptNumber" | "paymentId">
 
 export type PaymentAttemptOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

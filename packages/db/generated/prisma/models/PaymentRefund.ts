@@ -282,6 +282,7 @@ export type PaymentRefundOrderByWithRelationInput = {
 export type PaymentRefundWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   stripeRefundId?: string
+  paymentAttemptId?: string
   paymentAttemptId_refundNumber?: Prisma.PaymentRefundPaymentAttemptIdRefundNumberCompoundUniqueInput
   AND?: Prisma.PaymentRefundWhereInput | Prisma.PaymentRefundWhereInput[]
   OR?: Prisma.PaymentRefundWhereInput[]
@@ -292,11 +293,10 @@ export type PaymentRefundWhereUniqueInput = Prisma.AtLeast<{
   amountOre?: Prisma.IntFilter<"PaymentRefund"> | number
   status?: Prisma.EnumPaymentRefundStatusFilter<"PaymentRefund"> | $Enums.PaymentRefundStatus
   reason?: Prisma.StringNullableFilter<"PaymentRefund"> | string | null
-  paymentAttemptId?: Prisma.StringFilter<"PaymentRefund"> | string
   requestedByUserId?: Prisma.StringNullableFilter<"PaymentRefund"> | string | null
   paymentAttempt?: Prisma.XOR<Prisma.PaymentAttemptScalarRelationFilter, Prisma.PaymentAttemptWhereInput>
   requestedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-}, "id" | "stripeRefundId" | "paymentAttemptId_refundNumber">
+}, "id" | "stripeRefundId" | "paymentAttemptId_refundNumber" | "paymentAttemptId">
 
 export type PaymentRefundOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
