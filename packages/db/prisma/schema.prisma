@@ -939,6 +939,7 @@ enum NotificationPayloadType {
   USER        @map("USER")
   OFFLINE     @map("OFFLINE")
   JOB_LISTING @map("JOB_LISTING")
+  SIDEQUEST   @map("SIDEQUEST")
   NONE        @map("NONE")
 }
 
@@ -977,6 +978,12 @@ enum NotificationType {
   NEW_MARK                           @map("NEW_MARK")
   /// A message about a new feedback form you have received.
   NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
+  /// A new sidequest has been published.
+  NEW_SIDEQUEST                      @map("NEW_SIDEQUEST")
+  /// A new sidequest request has been submitted.
+  NEW_SIDEQUEST_REQUEST              @map("NEW_SIDEQUEST_REQUEST")
+  /// A sidequest request has been reviewed.
+  SIDEQUEST_REQUEST_REVIEWED         @map("SIDEQUEST_REQUEST_REVIEWED")
 }
 
 enum NotificationStatus {

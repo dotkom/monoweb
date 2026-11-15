@@ -211,6 +211,7 @@ export const NotificationPayloadType = {
   USER: 'USER',
   OFFLINE: 'OFFLINE',
   JOB_LISTING: 'JOB_LISTING',
+  SIDEQUEST: 'SIDEQUEST',
   NONE: 'NONE'
 } as const
 
@@ -234,7 +235,10 @@ export const NotificationType = {
   NEW_JOB_LISTING: 'NEW_JOB_LISTING',
   NEW_OFFLINE: 'NEW_OFFLINE',
   NEW_MARK: 'NEW_MARK',
-  NEW_FEEDBACK_FORM: 'NEW_FEEDBACK_FORM'
+  NEW_FEEDBACK_FORM: 'NEW_FEEDBACK_FORM',
+  NEW_SIDEQUEST: 'NEW_SIDEQUEST',
+  NEW_SIDEQUEST_REQUEST: 'NEW_SIDEQUEST_REQUEST',
+  SIDEQUEST_REQUEST_REVIEWED: 'SIDEQUEST_REQUEST_REVIEWED'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
