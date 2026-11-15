@@ -14,6 +14,7 @@ import {
 } from "#lib/alert-dialog-classes"
 import { cn } from "#lib/utils"
 import { Button } from "#components/button"
+import { DialogBody } from "#components/dialog"
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
@@ -56,6 +57,10 @@ function AlertDialogContent({
       />
     </AlertDialogPortal>
   )
+}
+
+function AlertDialogBody({ ...props }: React.ComponentProps<"div">) {
+  return <DialogBody data-slot="alert-dialog-body" {...props} />
 }
 
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -115,6 +120,7 @@ function AlertDialogCancel({
 
 export {
   AlertDialog,
+  AlertDialogBody,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
