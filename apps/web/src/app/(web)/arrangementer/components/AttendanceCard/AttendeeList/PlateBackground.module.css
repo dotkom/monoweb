@@ -1,0 +1,168 @@
+@property --plate-fade-start {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 90%;
+}
+
+@property --plate-fade-middle {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 80%;
+}
+
+@property --plate-fade-shoulder {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 47.333%;
+}
+
+@property --plate-fade-end {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 10%;
+}
+
+.background {
+  --plate-fade-color: white;
+  --plate-fade-start: 90%;
+  --plate-fade-middle: 80%;
+  --plate-fade-shoulder: 47.333%;
+  --plate-fade-end: 10%;
+  --plate-fade-middle-position: 32%;
+  --plate-fade-shoulder-position: 68%;
+  --plate-fade-end-position: 100%;
+
+  transition:
+    --plate-fade-start 300ms ease,
+    --plate-fade-middle 300ms ease,
+    --plate-fade-shoulder 300ms ease,
+    --plate-fade-end 300ms ease;
+
+  /* Preblend each stop so the rounded edge is painted only once. */
+  background-image: linear-gradient(
+    to right,
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-start),
+        var(--plate-start)
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-middle),
+        var(--plate-middle)
+      )
+      var(--plate-fade-middle-position),
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-shoulder),
+        var(--plate-shoulder)
+      )
+      var(--plate-fade-shoulder-position),
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-end),
+        var(--plate-end)
+      )
+      var(--plate-fade-end-position)
+  );
+}
+
+.background:hover {
+  --plate-fade-start: 80%;
+  --plate-fade-middle: 60%;
+  --plate-fade-shoulder: 32%;
+  --plate-fade-end: 0%;
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / calc(100% - var(--plate-fade-start))) 0%,
+    rgb(0 0 0 / calc(100% - var(--plate-fade-middle)))
+      var(--plate-fade-middle-position),
+    rgb(0 0 0 / calc(100% - var(--plate-fade-shoulder)))
+      var(--plate-fade-shoulder-position),
+    rgb(0 0 0 / calc(100% - var(--plate-fade-end)))
+      var(--plate-fade-end-position)
+  );
+}
+
+.knight {
+  --plate-start: var(--color-user-plate-knight-fill);
+  --plate-middle: var(--color-user-plate-knight-fill);
+  --plate-shoulder: var(--color-user-plate-knight-fill);
+  --plate-end: var(--color-user-plate-knight-deep);
+}
+
+.distinguished {
+  --plate-start: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-middle: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-shoulder: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-end: var(--color-user-plate-exceptionally-distinguished-fill);
+}
+
+.verified {
+  --plate-fade-start: 97%;
+  --plate-fade-middle: 92%;
+  --plate-fade-shoulder: 65%;
+  --plate-fade-end: 20%;
+  --plate-fade-middle-position: 50%;
+  --plate-fade-shoulder-position: 80%;
+
+  --plate-start: var(--color-user-plate-verified-fill);
+  --plate-middle: var(--color-user-plate-verified-fill);
+  --plate-shoulder: var(--color-user-plate-verified-fill);
+  --plate-end: var(--color-user-plate-verified-fill);
+}
+
+.verified:hover {
+  --plate-fade-start: 92%;
+  --plate-fade-middle: 80%;
+  --plate-fade-shoulder: 50%;
+  --plate-fade-end: 10%;
+}
+
+[data-theme="dark"] .background,
+[class~="dark"] .background {
+  --plate-fade-color: var(--background);
+}
+
+[data-theme="dark"] .knight,
+[class~="dark"] .knight {
+  --plate-start: var(--color-user-plate-knight-dark-start);
+  --plate-middle: var(--color-user-plate-knight-dark-middle);
+}
+
+[data-theme="dark"] .distinguished,
+[class~="dark"] .distinguished {
+  --plate-start: var(--color-user-plate-exceptionally-distinguished-dark-start);
+  --plate-middle: var(
+    --color-user-plate-exceptionally-distinguished-dark-middle
+  );
+  --plate-shoulder: var(
+    --color-user-plate-exceptionally-distinguished-dark-shoulder
+  );
+  --plate-end: var(--color-user-plate-exceptionally-distinguished-fill);
+}
+
+@media (max-width: 639px) {
+  [data-theme="dark"] .distinguished,
+  [class~="dark"] .distinguished {
+    --plate-start: var(
+      --color-user-plate-exceptionally-distinguished-mobile-start
+    );
+    --plate-middle: var(
+      --color-user-plate-exceptionally-distinguished-mobile-middle
+    );
+    --plate-shoulder: var(
+      --color-user-plate-exceptionally-distinguished-mobile-shoulder
+    );
+    --plate-end: var(--color-user-plate-exceptionally-distinguished-mobile-end);
+  }
+}

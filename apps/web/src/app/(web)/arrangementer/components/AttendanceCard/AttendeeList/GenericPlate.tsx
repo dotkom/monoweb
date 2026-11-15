@@ -17,15 +17,10 @@ export function GenericPlate({ attendee, user, smallIcons, largeIcon, isCurrentU
     >
       <Plate.IdentityArea>
         <Plate.Avatar
-          className={cn(isCurrentUser && "outline-2 -outline-offset-1 outline-blue-500 dark:outline-sky-800")}
+          className={cn(isCurrentUser && "outline-2 outline-blue-500/50 dark:outline-sky-800")}
           fallbackClassName="bg-gray-300 dark:bg-stone-700"
         />
-        <Plate.AttendeeDetails
-          subtitleClassName={cn(
-            !isCurrentUser && "text-gray-900 dark:text-stone-300",
-            isCurrentUser && "text-black dark:text-white"
-          )}
-        />
+        <Plate.AttendeeDetails subtitleClassName={cn(!isCurrentUser && "text-muted-foreground")} />
       </Plate.IdentityArea>
       <Plate.AccessoryArea>
         <Plate.BigIcon />

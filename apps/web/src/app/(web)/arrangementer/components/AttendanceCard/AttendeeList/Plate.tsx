@@ -72,7 +72,7 @@ function PlateAvatar({ className, fallbackClassName }: PlateAvatarProps) {
   const { user } = usePlateContext()
 
   return (
-    <Avatar className={cn("size-10 shrink-0", className)}>
+    <Avatar className={cn("size-10 shrink-0 after:hidden", className)}>
       <AvatarImage src={user.imageUrl ?? undefined} />
       <AvatarFallback className={fallbackClassName}>
         <IconUser className="size-[1.25em]" />
@@ -82,6 +82,7 @@ function PlateAvatar({ className, fallbackClassName }: PlateAvatarProps) {
 }
 
 interface AttendeeDetailsProps {
+  className?: string
   nameClassName?: string
   subtitleClassName?: string
 }
@@ -89,12 +90,12 @@ interface AttendeeDetailsProps {
 function getSubtitleItem(user: PlateProps["user"], subtitleClassName?: string) {
   if (isKnight(user)) {
     return (
-      <>
-        <Text className={cn("min-w-0 truncate text-xs max-sm:hidden", subtitleClassName)}>
-          Ridder av det Indre Lager
+      <div className="@container/knight-title min-w-0 flex-1">
+        <Text className={cn("hidden truncate text-xs @min-[9.5rem]/knight-title:block", subtitleClassName)}>
+          Ridder av Det Indre Lager
         </Text>
-        <Text className={cn("min-w-0 truncate text-xs sm:hidden", subtitleClassName)}>Ridder</Text>
-      </>
+        <Text className={cn("truncate text-xs @min-[9.5rem]/knight-title:hidden", subtitleClassName)}>Ridder</Text>
+      </div>
     )
   }
 
@@ -109,28 +110,28 @@ function getSubtitleItem(user: PlateProps["user"], subtitleClassName?: string) {
   return <Text className={cn("min-w-0 truncate text-xs", subtitleClassName)}>Særskilt utmerket {awardedAtYear}</Text>
 }
 
-function AttendeeDetails({ nameClassName, subtitleClassName }: AttendeeDetailsProps) {
+function AttendeeDetails({ className, nameClassName, subtitleClassName }: AttendeeDetailsProps) {
   const { attendee, user, smallIcons } = usePlateContext()
 
   const hasGrade = attendee.userGrade !== null
   const subtitleItem = getSubtitleItem(user, subtitleClassName)
 
   return (
-    <div className="flex w-fit max-w-full min-w-0 shrink flex-col gap-0.5">
+    <div className={cn("flex w-fit max-w-full min-w-0 shrink flex-col gap-0.5", className)}>
       <div className="flex min-w-0 items-center gap-2">
         <Text className={cn("min-w-0 truncate text-sm", nameClassName)} title={user.name ?? undefined}>
           {user.name}
         </Text>
 
-        {smallIcons.length > 0 && <span className="pointer-events-auto flex items-center gap-2">{smallIcons}</span>}
+        {smallIcons.length > 0 && (
+          <span className="pointer-events-auto flex shrink-0 items-center gap-2">{smallIcons}</span>
+        )}
       </div>
 
       <div className="flex min-w-0 items-center gap-2">
-        {hasGrade && (
-          <Text className={cn("min-w-0 truncate text-xs", subtitleClassName)}>{attendee.userGrade}. klasse</Text>
-        )}
+        {hasGrade && <Text className={cn("shrink-0 text-xs", subtitleClassName)}>{attendee.userGrade}. klasse</Text>}
 
-        {hasGrade && subtitleItem !== null && <Text className={cn("text-xs", subtitleClassName)}>•</Text>}
+        {hasGrade && subtitleItem !== null && <Text className={cn("shrink-0 text-xs", subtitleClassName)}>•</Text>}
 
         {subtitleItem}
       </div>
