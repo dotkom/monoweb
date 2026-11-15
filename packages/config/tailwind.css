@@ -234,10 +234,10 @@
   --color-user-plate-exceptionally-distinguished-ring: #18759b;
   --color-user-plate-exceptionally-distinguished-dark-start: #24414b;
   --color-user-plate-exceptionally-distinguished-dark-middle: #194858;
-  --color-user-plate-exceptionally-distinguished-dark-shoulder: #124b61;
+  --color-user-plate-exceptionally-distinguished-dark-third-stop: #124b61;
   --color-user-plate-exceptionally-distinguished-mobile-start: #285461;
   --color-user-plate-exceptionally-distinguished-mobile-middle: #1c5d72;
-  --color-user-plate-exceptionally-distinguished-mobile-shoulder: #15657c;
+  --color-user-plate-exceptionally-distinguished-mobile-third-stop: #15657c;
   --color-user-plate-exceptionally-distinguished-mobile-end: #12627a;
 
   /* This is used in a CSS module, and wouldn't be emitted regularly */
