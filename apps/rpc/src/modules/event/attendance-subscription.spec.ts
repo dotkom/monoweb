@@ -19,14 +19,8 @@ const attendee: Attendee = {
   createdAt: new Date(),
   updatedAt: new Date(),
   completionDeadline: new Date(),
-  paymentLink: "https://example.com/private-payment",
-  paymentId: "private-payment-id",
-  paymentReservedAt: null,
-  paymentChargeDeadline: null,
-  paymentChargedAt: null,
-  paymentRefundedAt: null,
-  paymentCheckoutUrl: null,
-  paymentRefundedByUserId: null,
+  payment: null,
+
   adminRegisteredByUserId: "committee-user",
   user: {
     id: "user-one",
@@ -188,8 +182,7 @@ describe("bulk registration subscription", () => {
         ],
       },
     })
-    expect(summary).not.toHaveProperty("paymentLink")
-    expect(summary).not.toHaveProperty("paymentId")
+    expect(summary).not.toHaveProperty("payment")
     expect(summary).not.toHaveProperty("completionDeadline")
     expect(summary).not.toHaveProperty("selections")
     expect(summary.user).not.toHaveProperty("email")

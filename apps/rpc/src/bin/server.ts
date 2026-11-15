@@ -171,13 +171,14 @@ server.addHook("onRequest", async (request, reply) => {
   return reply
 })
 
-await server.listen({ port: 4444, host: "0.0.0.0" })
-
-// In dev we instead use stripe's mock webhooks, run with: `pnpm run receive-stripe-webhooks`
+// In development, forward Stripe test events with `pnpm stripe:listen`.
 if (configuration.STRIPE_WEBHOOK_IDENTIFIER !== "dev" && configuration.STRIPE_WEBHOOK_HOST !== null) {
   await serviceLayer.paymentWebhookService.registerWebhook(
     `${configuration.STRIPE_WEBHOOK_HOST}/webhook/stripe`,
     configuration.STRIPE_WEBHOOK_IDENTIFIER
   )
 }
+
+await server.listen({ port: 4444, host: "0.0.0.0" })
+
 logger.info("Started RPC server on http://0.0.0.0:4444")

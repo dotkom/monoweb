@@ -2,7 +2,6 @@ import {
   type Attendance,
   type Attendee,
   type AttendeeId,
-  getAttendeePaymentStatus,
   hasAttendeeCompletedSelections,
 } from "@dotkomonline/rpc/attendance"
 
@@ -29,8 +28,7 @@ export function isQrCodeCheckInPending(status: QrCodeCheckInStatus | undefined) 
 export function getCheckInEligibility(attendance: Attendance, attendee: Attendee | undefined) {
   const price = attendance.attendancePrice
   const isPaymentRequired = price !== null && price > 0
-  const paymentStatus = attendee === undefined ? null : getAttendeePaymentStatus(attendee)
-  const hasPaid = paymentStatus === "charged" || paymentStatus === "reserved"
+  const hasPaid = attendee?.payment?.isRequirementSatisfied ?? false
   const hasCompletedPayment = !isPaymentRequired || hasPaid
   const hasCompletedSelections = attendee !== undefined && hasAttendeeCompletedSelections(attendance, attendee)
 

@@ -22,6 +22,7 @@ export const createConfiguration = () =>
       dev: "dev",
     }),
     STRIPE_WEBHOOK_HOST: config(process.env.STRIPE_WEBHOOK_HOST, null),
+    STRIPE_WEBHOOK_SECRET: config(process.env.STRIPE_WEBHOOK_SECRET, null),
 
     TURNSTILE_SECRET_KEY: config(process.env.TURNSTILE_SECRET_KEY),
 

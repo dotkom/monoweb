@@ -81,7 +81,10 @@ describe("UserMergingService", () => {
 
     const userMergingService = getUserMergingService(
       userService,
+      userRepository,
       groupRepository,
+      mockDeep(),
+      mockDeep(),
       attendanceService,
       managementClient,
       webManagementClient
@@ -267,7 +270,7 @@ describe("UserMergingService", () => {
     const result = await userMergingService.mergeAndLinkIdentities(transactionHandle, feideUser.id, passwordUser.id)
 
     expect(mergeUsersMock).toHaveBeenCalledWith(transactionHandle, expect.anything(), feideUser, passwordUser)
-    expect(transactionHandle.$executeRaw).toHaveBeenCalledTimes(2)
+    expect(userRepository.reassignId).toHaveBeenCalledExactlyOnceWith(transactionHandle, feideUser.id, passwordUser.id)
     expect(managementClient.users.link).toHaveBeenCalledWith(
       { id: passwordUser.id },
       { provider: "oauth2", user_id: "feide-user" }
@@ -346,7 +349,7 @@ describe("UserMergingService", () => {
     const result = await userMergingService.mergeAndLinkIdentities(transactionHandle, passwordUser.id, feideUser.id)
 
     expect(mergeUsersMock).toHaveBeenCalledWith(transactionHandle, expect.anything(), passwordUser, feideUser)
-    expect(transactionHandle.$executeRaw).not.toHaveBeenCalled()
+    expect(userRepository.reassignId).not.toHaveBeenCalled()
     expect(managementClient.users.link).toHaveBeenCalledWith(
       { id: passwordUser.id },
       { provider: "oauth2", user_id: "feide-user" }

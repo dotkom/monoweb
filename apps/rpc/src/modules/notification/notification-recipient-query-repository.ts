@@ -84,10 +84,34 @@ export function buildGroupMembershipSelectionFilter(
 }
 
 const paidAttendeePaymentConditions: Prisma.AttendeeWhereInput[] = [
-  { paymentChargedAt: { not: null } },
-  { paymentReservedAt: { not: null } },
   {
-    AND: [{ paymentRefundedAt: { not: null } }, { completionDeadline: null }],
+    payment: {
+      is: {
+        waivedAt: {
+          not: null,
+        },
+      },
+    },
+  },
+  {
+    payment: {
+      is: {
+        attempts: {
+          some: {
+            status: {
+              in: ["AUTHORIZED", "CAPTURED"],
+            },
+            refunds: {
+              none: {
+                status: {
+                  in: ["REQUESTED", "PENDING", "SUCCEEDED"],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
 ]
 

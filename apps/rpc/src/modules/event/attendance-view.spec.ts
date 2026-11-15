@@ -23,14 +23,8 @@ const attendee: Attendee = {
   createdAt: timestamp,
   updatedAt: timestamp,
   completionDeadline: timestamp,
-  paymentLink: "https://example.com/private-payment",
-  paymentId: "private-payment-id",
-  paymentReservedAt: null,
-  paymentChargeDeadline: null,
-  paymentChargedAt: null,
-  paymentRefundedAt: null,
-  paymentCheckoutUrl: null,
-  paymentRefundedByUserId: null,
+  payment: null,
+
   adminRegisteredByUserId: "committee-user",
   user: {
     id: "user-one",
