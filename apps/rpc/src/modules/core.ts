@@ -1,6 +1,6 @@
 import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
-import { SESClient } from "@aws-sdk/client-ses"
+import { SESv2Client } from "@aws-sdk/client-sesv2"
 import { SQSClient } from "@aws-sdk/client-sqs"
 import { createPrisma } from "@dotkomonline/db"
 import { ManagementClient } from "auth0"
@@ -122,7 +122,7 @@ export function createThirdPartyClients(configuration: Configuration) {
   const webJwtService = new Auth0JwtService(configuration.AUTH0_ISSUER, [configuration.AUTH0_WEB_CLIENT_ID])
 
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
-  const sesClient = new SESClient({ region: configuration.AWS_REGION })
+  const sesClient = new SESv2Client({ region: configuration.AWS_REGION })
   const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
 
   const auth0Client = new ManagementClient({
