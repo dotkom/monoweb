@@ -2,6 +2,7 @@
 
 import {
   Checkbox,
+  cn,
   Field,
   FieldContent,
   FieldDescription,
@@ -62,19 +63,22 @@ export function CheckboxGroupField<
         {options.map((option) => {
           const optionId = `${fieldName}-${String(option.value)}`
           const checked = selected.includes(option.value)
+          const disabled = combineFieldDisabled(field.disabled, option.disabled)
 
           return (
             <Field key={String(option.value)} orientation="horizontal">
               <Checkbox
                 id={optionId}
-                disabled={combineFieldDisabled(field.disabled, option.disabled)}
+                disabled={disabled}
                 checked={checked}
                 onCheckedChange={() => {
                   toggleValue(option.value)
                 }}
               />
               <FieldContent>
-                <FieldLabel htmlFor={optionId}>{option.label}</FieldLabel>
+                <FieldLabel htmlFor={optionId} className={cn(disabled && "text-muted-foreground")}>
+                  {option.label}
+                </FieldLabel>
               </FieldContent>
             </Field>
           )
