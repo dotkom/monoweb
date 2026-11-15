@@ -50,6 +50,7 @@ import {
   isBefore,
   isFuture,
   isPast,
+  max,
   min,
   startOfYesterday,
 } from "date-fns"
@@ -1306,19 +1307,9 @@ export function getAttendanceService(
       // MasterCard allow a hold to be kept on an account for 7 days. To allow for leeway and clock tolerance, we set
       // the limit to 5 days.
       //
-      // If the deadline for the event is earlier than those 5 days, we use that, as its no longer allowed to be
-      // deregistered from a paid event after the deregistration deadline without consequences imposed by the
-      // organizing committee.
-      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline)])
-
-      if (!isImmediatePayment) {
-        await taskSchedulingService.scheduleAt(
-          handle,
-          tasks.CHARGE_ATTENDEE,
-          { attendeeId: attendee.id },
-          new TZDate(maximalChargeTime)
-        )
-      }
+      // Capture when deregistration closes or the hold limit is reached. The task is scheduled once checkout
+      // completes, so attendees can use their full completion window even when deregistration closes earlier.
+      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline, "UTC")])
 
       await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
         paymentId: payment.id,
@@ -1350,6 +1341,12 @@ export function getAttendanceService(
 
       if (payment.status === "PAID") {
         return
+      }
+
+      if (payment.status !== "RESERVED") {
+        throw new TaskSkippedError(
+          `Payment(ID=${attendee.paymentId}) has status ${payment.status} and has no reservation to capture`
+        )
       }
 
       try {
@@ -1473,6 +1470,21 @@ export function getAttendanceService(
       }
 
       await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+      if (payment.status !== "RESERVED") {
+        return
+      }
+
+      const chargeTask = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+      if (chargeTask?.status === "PENDING") {
+        return
+      }
+
+      const chargeDeadline = new TZDate(attendee.paymentChargeDeadline ?? attendance.deregisterDeadline, "UTC")
+      const scheduledChargeTime = max([now, chargeDeadline])
+
+      await taskSchedulingService.scheduleAt(handle, tasks.CHARGE_ATTENDEE, { attendeeId }, scheduledChargeTime)
     },
 
     async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
@@ -1544,12 +1556,7 @@ export function getAttendanceService(
           ignoreDeregistrationWindow: true,
         })
       } else {
-        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-          paymentReservedAt: getCurrentUTC(),
-          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-          paymentLink: null,
-        })
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        await this.syncAttendeePayment(handle, attendeeId)
       }
     },
 
