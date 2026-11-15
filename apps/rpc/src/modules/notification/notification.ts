@@ -19,6 +19,9 @@ export const NotificationTypeSchema = z.enum([
   "NEW_OFFLINE",
   "NEW_MARK",
   "NEW_FEEDBACK_FORM",
+  "NEW_SIDEQUEST",
+  "NEW_SIDEQUEST_REQUEST",
+  "SIDEQUEST_REQUEST_REVIEWED",
 ])
 
 export type NotificationType = z.infer<typeof NotificationTypeSchema>
@@ -57,6 +60,9 @@ export const NOTIFICATION_TYPE_CONFIGURATION = {
   NEW_OFFLINE: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
   NEW_MARK: { color: "red", behavior: NotificationBehaviorSchema.enum.IMPORTANT },
   NEW_FEEDBACK_FORM: { color: "yellow", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_SIDEQUEST: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  NEW_SIDEQUEST_REQUEST: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
+  SIDEQUEST_REQUEST_REVIEWED: { color: "gray", behavior: NotificationBehaviorSchema.enum.DEFAULT },
 } as const satisfies Record<NotificationType, NotificationTypeConfiguration>
 
 export function getNotificationTypeConfiguration(notificationType: NotificationType): NotificationTypeConfiguration {
@@ -72,6 +78,7 @@ export const NotificationPayloadTypeSchema = z.enum([
   "USER",
   "OFFLINE",
   "JOB_LISTING",
+  "SIDEQUEST",
 ])
 
 export type NotificationPayloadType = z.infer<typeof NotificationPayloadTypeSchema>
@@ -90,6 +97,7 @@ export const NotificationResourceLinkSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("USER"), userId: z.string() }),
   z.object({ type: z.literal("OFFLINE"), offlineId: z.string() }),
   z.object({ type: z.literal("JOB_LISTING"), jobListingId: z.string() }),
+  z.object({ type: z.literal("SIDEQUEST"), sidequestId: z.string() }),
 ])
 
 export const NotificationLinkSchema = z.discriminatedUnion("type", [
@@ -130,6 +138,8 @@ export function serializeNotificationLink(link: NotificationLink): NotificationL
       return { payloadType: "OFFLINE", payload: link.offlineId }
     case "JOB_LISTING":
       return { payloadType: "JOB_LISTING", payload: link.jobListingId }
+    case "SIDEQUEST":
+      return { payloadType: "SIDEQUEST", payload: link.sidequestId }
   }
 }
 
@@ -155,6 +165,8 @@ export function parseNotificationLink(columns: NotificationLinkColumns): Notific
       return { type: "OFFLINE", offlineId: payload }
     case "JOB_LISTING":
       return { type: "JOB_LISTING", jobListingId: payload }
+    case "SIDEQUEST":
+      return { type: "SIDEQUEST", sidequestId: payload }
   }
 }
 
@@ -437,6 +449,9 @@ export const NOTIFICATION_TYPE_LABELS = {
   NEW_JOB_LISTING: "Ny stillingsutlysning",
   NEW_MARK: "Ny prikk",
   NEW_OFFLINE: "Ny Offline-utgave",
+  NEW_SIDEQUEST: "Ny Sidequest",
+  NEW_SIDEQUEST_REQUEST: "Ny Sidequest-søknad",
+  SIDEQUEST_REQUEST_REVIEWED: "Sidequest-søknad vurdert",
 } as const satisfies Record<NotificationType, string>
 
 export function getNotificationTypeLabel(notificationType: NotificationType): string {
@@ -452,6 +467,7 @@ export const NOTIFICATION_LINK_TYPE_LABELS = {
   USER: "Bruker",
   OFFLINE: "Offline",
   JOB_LISTING: "Stillingsutlysning",
+  SIDEQUEST: "Sidequest",
 } as const satisfies Record<NotificationLink["type"], string>
 
 export function getNotificationLinkTypeLabel(linkType: NotificationLink["type"]): string {

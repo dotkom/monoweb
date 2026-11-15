@@ -197,6 +197,10 @@ export const createGroupPageUrl = (group: Pick<Group, "slug" | "type">): string 
   }
 }
 
+export const getInterestGroupAdminUrl = (slug: string): string => {
+  return `${createGroupPageUrl({ type: "INTEREST_GROUP", slug })}/admin`
+}
+
 export const getGroupTypeName = (type: GroupType | null | undefined): string => {
   if (type == null) {
     return "Ukjent"

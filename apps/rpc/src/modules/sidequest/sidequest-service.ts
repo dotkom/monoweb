@@ -3,9 +3,13 @@ import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import type { DBHandle } from "@dotkomonline/db"
 import type { Pageable } from "@dotkomonline/utils"
 import { createS3PresignedPost, getCurrentUTC, slugify } from "@dotkomonline/utils"
+import type { Configuration } from "../../configuration"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
-import { GroupTypeSchema, type GroupId } from "../group/group"
+import { CommitteeGroupSlug } from "../authorization-service"
+import { getGroupDisplayName, getInterestGroupAdminUrl, GroupTypeSchema, type GroupId } from "../group/group"
 import type { GroupService } from "../group/group-service"
+import { NotificationPayloadTypeSchema, NotificationTypeSchema } from "../notification/notification"
+import type { NotificationService } from "../notification/notification-service"
 import type { UserId } from "../user/user"
 import type {
   RequestedSidequestWrite,
@@ -21,10 +25,10 @@ import type {
   SidequestWrite,
 } from "./sidequest"
 import {
-  SIDEQUEST_IMAGE_MAX_SIZE_KIB,
-  SidequestStatusSchema,
   isSidequestDeregistrationOpen,
   isSidequestRegistrationOpen,
+  SIDEQUEST_IMAGE_MAX_SIZE_KIB,
+  SidequestStatusSchema,
 } from "./sidequest"
 import type { SidequestRepository } from "./sidequest-repository"
 
@@ -90,10 +94,12 @@ export function getSidequestService(
   sidequestRepository: SidequestRepository,
   groupService: GroupService,
   s3Client: S3Client,
-  s3BucketName: string
+  s3BucketName: string,
+  notificationService: NotificationService,
+  configuration: Configuration
 ): SidequestService {
   return {
-    async create(handle, data) {
+    async create(handle, data, actorUserId) {
       const interestGroup = await groupService.getBySlug(handle, data.interestGroupId)
       if (interestGroup.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
         throw new InvalidArgumentError(
@@ -103,10 +109,17 @@ export function getSidequestService(
 
       const capacity = data.capacity === 0 ? null : data.capacity
 
-      return await sidequestRepository.create(handle, { ...data, capacity })
+      const isBeingPublished = data.status === SidequestStatusSchema.enum.PUBLISHED
+      const created = await sidequestRepository.create(handle, { ...data, capacity })
+
+      if (isBeingPublished) {
+        await sendPublishedNotification(handle, created, actorUserId)
+      }
+
+      return created
     },
 
-    async update(handle, sidequestId, data) {
+    async update(handle, sidequestId, data, actorUserId) {
       const interestGroup =
         data.interestGroupId != null ? await groupService.getBySlug(handle, data.interestGroupId) : null
       if (interestGroup !== null && interestGroup.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
@@ -115,9 +128,19 @@ export function getSidequestService(
         )
       }
 
+      const previous = await this.getById(handle, sidequestId, false)
+      const isBeingPublished =
+        previous.status !== SidequestStatusSchema.enum.PUBLISHED && data.status === SidequestStatusSchema.enum.PUBLISHED
+
       const capacity = data.capacity === 0 ? null : data.capacity
 
-      return await sidequestRepository.update(handle, sidequestId, { ...data, capacity })
+      const updated = await sidequestRepository.update(handle, sidequestId, { ...data, capacity })
+
+      if (isBeingPublished) {
+        await sendPublishedNotification(handle, updated, actorUserId)
+      }
+
+      return updated
     },
 
     async findById(handle, sidequestId, includeUsers) {
@@ -211,7 +234,33 @@ export function getSidequestService(
         requestedById
       )
 
-      return await sidequestRepository.createRequest(handle, createdSidequest.id, requestedById, sidequestRequest)
+      const createdRequest = await sidequestRepository.createRequest(
+        handle,
+        createdSidequest.id,
+        requestedById,
+        sidequestRequest
+      )
+
+      const groupDisplayName = getGroupDisplayName(createdSidequest.interestGroup)
+
+      await notificationService.send(handle, {
+        source: { type: "GLOBAL" },
+        type: NotificationTypeSchema.enum.NEW_SIDEQUEST_REQUEST,
+        title: `Ny søknad: ${createdSidequest.title}`,
+        shortDescription: `${groupDisplayName} har søkt om å arrangere en Sidequest.`,
+        link: {
+          type: NotificationPayloadTypeSchema.enum.URL,
+          url: `${configuration.WEB_PUBLIC_ORIGIN}/admin/sidequests/${createdSidequest.id}`,
+        },
+        recipientSelection: {
+          rules: [{ type: "GROUP_MEMBERS", groupSlug: CommitteeGroupSlug.BACKLOG, includeFormerMembers: false }],
+          excludedUserIds: [],
+        },
+        actorGroupId: interestGroupId,
+        createdById: requestedById,
+      })
+
+      return createdRequest
     },
 
     async reviewRequest(handle, sidequestRequestId, reviewedById, review) {
@@ -220,18 +269,81 @@ export function getSidequestService(
         throw new NotFoundError(`SidequestRequest(ID=${sidequestRequestId}) not found`)
       }
 
+      const previous = await this.getById(handle, sidequestRequest.sidequestId, false)
+
       await sidequestRepository.update(handle, sidequestRequest.sidequestId, {
         status: review.status,
       })
 
-      const { status: _status, ...requestUpdate } = review
+      const { status, ...requestUpdate } = review
 
-      return await sidequestRepository.updateRequest(handle, sidequestRequestId, {
+      const updatedRequest = await sidequestRepository.updateRequest(handle, sidequestRequestId, {
         ...requestUpdate,
         approvedAmountNok: review.status === SidequestStatusSchema.enum.PUBLISHED ? review.approvedAmountNok : null,
         reviewedById,
         reviewedAt: getCurrentUTC(),
       })
+
+      const isApproved = review.status === SidequestStatusSchema.enum.PUBLISHED
+      const approvedAmountNok = review.status === SidequestStatusSchema.enum.PUBLISHED ? review.approvedAmountNok : null
+      const hasApprovedFunding = approvedAmountNok !== null && approvedAmountNok > 0
+
+      await notificationService.send(handle, {
+        source: { type: "GLOBAL" },
+        type: NotificationTypeSchema.enum.SIDEQUEST_REQUEST_REVIEWED,
+        title: isApproved
+          ? `Søknaden din er godkjent: ${updatedRequest.title}`
+          : `Søknaden din er avslått: ${updatedRequest.title}`,
+        shortDescription: isApproved
+          ? hasApprovedFunding
+            ? `"${updatedRequest.title}" er publisert. Husk å sende kvittering innen 2 uker.`
+            : `"${updatedRequest.title}" er publisert og synlig for medlemmer.`
+          : `Søknaden om å arrangere "${updatedRequest.title}" er avslått.`,
+        content: hasApprovedFunding
+          ? [
+              `<p>"${updatedRequest.title}" er publisert og synlig for medlemmer. Dere er innvilget ${approvedAmountNok} kr i støtte.</p>`,
+              '<p>Man må selv legge ut, og i etterkant sende inn kvittering på <a href="https://autobank.online.ntnu.no/">Autobank.online.ntnu.no</a> med informasjon om hvor mange som møtte opp. Kvitteringen må sendes innen 2 uker etter arrangementet. I feltet «Ansvarlig enhet» setter du Backlog, og ellers bare beskriv hva utlegget har gått til.</p>',
+            ].join("")
+          : undefined,
+        link: {
+          type: NotificationPayloadTypeSchema.enum.URL,
+          url: `${configuration.WEB_PUBLIC_ORIGIN}${getInterestGroupAdminUrl(updatedRequest.interestGroup.slug)}/soknader/${updatedRequest.id}`,
+        },
+        recipientSelection: {
+          rules: [{ type: "USERS", userIds: [sidequestRequest.requestedById] }],
+          excludedUserIds: [],
+        },
+        actorGroupId: CommitteeGroupSlug.BACKLOG,
+        createdById: reviewedById,
+      })
+
+      if (isApproved && previous.status !== SidequestStatusSchema.enum.PUBLISHED) {
+        await sendPublishedNotification(handle, updatedRequest, reviewedById, [sidequestRequest.requestedById])
+      }
+
+      return updatedRequest
     },
+  }
+
+  async function sendPublishedNotification(
+    handle: DBHandle,
+    sidequest: SidequestSummary,
+    createdById: UserId,
+    excludedUserIds: UserId[] = []
+  ) {
+    const displayName = getGroupDisplayName(sidequest.interestGroup)
+
+    await notificationService.send(handle, {
+      type: NotificationTypeSchema.enum.NEW_SIDEQUEST,
+      title: `Ny Sidequest: ${sidequest.title}`,
+      shortDescription: `${displayName} har publisert en ny Sidequest.`,
+      source: { type: "SIDEQUEST", sidequestId: sidequest.id },
+      recipientSelection: {
+        rules: [{ type: "GROUP_MEMBERS", groupSlug: sidequest.interestGroupId, includeFormerMembers: false }],
+        excludedUserIds,
+      },
+      actorGroupId: sidequest.interestGroupId,
+      createdById,
+    })
   }
 }
