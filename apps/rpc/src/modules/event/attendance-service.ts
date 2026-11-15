@@ -33,10 +33,13 @@ import {
 } from "./attendance"
 import {
   createAbsoluteEventPageUrl,
+  createCalendarEvent,
+  createIcsBody,
   createPoolName,
   formatEmailSubject,
   getCurrentUTC,
   getStudyGrade,
+  slugify,
 } from "@dotkomonline/utils"
 import {
   addDays,
@@ -66,7 +69,7 @@ import {
   TaskSkippedError,
 } from "../../error"
 import { validateTurnstileToken } from "../../turnstile"
-import type { EmailService } from "../email/email-service"
+import type { EmailAttachment, EmailService } from "../email/email-service"
 import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
@@ -421,6 +424,14 @@ export function getAttendanceService(
 
     const organizerEmails = getOrganizerEmails(event)
 
+    const calendarEvent = createCalendarEvent(event, configuration.WEB_PUBLIC_ORIGIN)
+    const calendarBody = createIcsBody(calendarEvent)
+    const calendarAttachment: EmailAttachment = {
+      filename: `${slugify(event.title)}.ics`,
+      contentType: "text/calendar; charset=utf-8",
+      rawContent: Buffer.from(calendarBody).toString("base64"),
+    }
+
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
     void emailService.send(
@@ -436,7 +447,9 @@ export function getAttendanceService(
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
-      }
+      },
+      undefined,
+      [calendarAttachment]
     )
   }
 
