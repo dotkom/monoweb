@@ -100,7 +100,7 @@ const AttendancePageDetail = ({ attendance }: AttendancePageDetailProps) => {
       <div>
         <Title className="text-xl">Påmeldingsgrupper</Title>
         <PoolBox attendance={attendance} canEdit={canEdit} />
-        <PoolsFormSection attendanceId={attendance.id} disabled={!canEdit} />
+        <PoolsFormSection attendance={attendance} disabled={!canEdit} />
       </div>
     </div>
   )
