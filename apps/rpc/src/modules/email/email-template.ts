@@ -14,6 +14,7 @@ export type EmailType =
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
   | "EVENT_ATTENDANCE"
+  | "EVENT_AUTOMATIC_DEREGISTRATION"
   | "EVENT_MESSAGE"
   | "RECEIVED_MARK"
   | "QUEUE_NOTIFICATION"
@@ -267,6 +268,29 @@ export const emails = {
           .transform((d) => formatDate(new TZDate(d, "Europe/Oslo"), "eeee dd. MMMM HH:mm", { locale: nb })),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
+  }),
+  EVENT_AUTOMATIC_DEREGISTRATION: createEmailTemplate({
+    type: "EVENT_AUTOMATIC_DEREGISTRATION",
+    layout: {
+      title: "Du har blitt avmeldt {{ eventName }}",
+      preheader: "Du har blitt automatisk avmeldt {{ eventName }}.",
+      footerReason: "Du mottar denne e-posten fordi du tidligere var påmeldt {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
+        title: z.string().min(1),
+        details: z.string().nullable(),
+        organizerEmail: z.email(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_automatic_deregistration.mustache"), "utf-8"),
+    getRichText: (data) => ({ details: data.details }),
   }),
   EVENT_MESSAGE: createEmailTemplate({
     type: "EVENT_MESSAGE",
