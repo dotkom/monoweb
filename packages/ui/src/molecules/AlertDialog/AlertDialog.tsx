@@ -46,13 +46,12 @@ export function AlertDialogTrigger({ asChild, children, ...props }: TriggerProps
 
 type AlertDialogContentProps = Omit<ComponentProps<typeof ShadcnAlertDialogContent>, "size"> & {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
-  onOutsideClick?: () => void
 }
 
-export function AlertDialogContent({ size = "md", onOutsideClick, className, ...props }: AlertDialogContentProps) {
+export function AlertDialogContent({ size = "md", className, ...props }: AlertDialogContentProps) {
   return (
     <AlertDialogPortal>
-      <AlertDialogOverlay forceRender={onOutsideClick !== undefined} onClick={onOutsideClick} />
+      <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
         data-size={size}

@@ -2,7 +2,7 @@
 
 import { UserSearch } from "@admin/brukere/components/UserSearch"
 import type { User } from "@dotkomonline/rpc/user"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 
 type AddIndividualContestantModalProps = {
@@ -21,24 +21,25 @@ export function AddIndividualContestantModal({
   onSubmit,
 }: AddIndividualContestantModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Legg til individ</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Legg til individ</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        <UserSearch
-          disabled={disabled}
-          excludeUserIds={excludeUserIds}
-          onSubmit={(user) => {
-            onSubmit(user)
-            onOpenChange(false)
-          }}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          <UserSearch
+            disabled={disabled}
+            excludeUserIds={excludeUserIds}
+            onSubmit={(user) => {
+              onSubmit(user)
+              onOpenChange(false)
+            }}
+          />
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

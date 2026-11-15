@@ -1,13 +1,14 @@
 "use client"
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogTitle,
+  DialogBody,
+  Dialog,
+  Button,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
 } from "@dotkomonline/ui"
 import { IconCancel, IconTrash } from "@tabler/icons-react"
 import type { ReactNode } from "react"
@@ -32,18 +33,18 @@ export function ConfirmDeleteModal({
   cancelLabel = "Nei",
 }: ConfirmDeleteModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <AlertDialogTitle>{title}</AlertDialogTitle>
-        {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
-        <AlertDialogFooter>
-          <AlertDialogCancel type="button" variant="secondary">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogTitle>{title}</DialogTitle>
+        <DialogBody>{description && <DialogDescription>{description}</DialogDescription>}</DialogBody>
+        <DialogFooter className="-mx-5 -mb-5 rounded-b-2xl p-5 sm:-mx-6 sm:-mb-6 sm:p-6">
+          <DialogClose type="button" variant="secondary">
             <IconCancel className="size-4" />
             {cancelLabel}
-          </AlertDialogCancel>
-          <AlertDialogAction
+          </DialogClose>
+          <Button
             type="button"
-            destructive
+            variant="destructive"
             onClick={() => {
               onConfirm()
               onOpenChange(false)
@@ -51,9 +52,9 @@ export function ConfirmDeleteModal({
           >
             <IconTrash className="size-4" />
             {confirmLabel}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

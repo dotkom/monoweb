@@ -1,7 +1,7 @@
 "use client"
 
 import type { UserId } from "@dotkomonline/rpc/user"
-import { AlertDialog, AlertDialogBody, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { Dialog, DialogBody, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { useCreateMembershipMutation } from "../../../mutations"
 import { MembershipWriteForm } from "./MembershipWriteForm"
@@ -16,16 +16,16 @@ export function CreateMembershipModal({ open, onOpenChange, userId }: CreateMemb
   const createMembership = useCreateMembershipMutation()
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
         <div className="flex shrink-0 flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Opprett medlemskap</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+          <DialogTitle>Opprett medlemskap</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
+          </DialogClose>
         </div>
 
-        <AlertDialogBody>
+        <DialogBody>
           {open && (
             <MembershipWriteForm
               onSubmit={(data) => {
@@ -37,8 +37,8 @@ export function CreateMembershipModal({ open, onOpenChange, userId }: CreateMemb
               }}
             />
           )}
-        </AlertDialogBody>
-      </AlertDialogContent>
-    </AlertDialog>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

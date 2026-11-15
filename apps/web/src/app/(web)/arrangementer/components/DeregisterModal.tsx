@@ -3,11 +3,13 @@
 import type { Attendee } from "@dotkomonline/rpc/attendance"
 import { DeregisterReasonTypeSchema, type Event, mapDeregisterReasonTypeToLabel } from "@dotkomonline/rpc/event"
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
   Button,
   Label,
   Select,
@@ -43,51 +45,56 @@ export const DeregisterModal = ({ open, setOpen, event, unregisterForAttendance,
   const hasCompanyOrganizer = event.companies.length > 0
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent size="lg" initialFocus={false} onOutsideClick={() => setOpen(false)}>
-        <div className="flex flex-row gap-4 justify-between">
-          <AlertDialogTitle asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent size="lg" initialFocus={false}>
+        <DialogHeader className="flex flex-row gap-4 justify-between">
+          <DialogTitle asChild>
             <Title element="h1" size="lg">
               Avmelding
             </Title>
-          </AlertDialogTitle>
-          <AlertDialogCancel>
+          </DialogTitle>
+          <DialogClose>
             <IconX className="size-[1.25em]" />
-          </AlertDialogCancel>
-        </div>
-        <div className="mb-4 flex flex-col gap-3">
-          <AlertDialogDescription>Er du sikker på at du vil melde deg av arrangementet?</AlertDialogDescription>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col gap-4">
+            <div className="mb-4 flex flex-col gap-3">
+              <DialogDescription>Er du sikker på at du vil melde deg av arrangementet?</DialogDescription>
 
-          {hasCompanyOrganizer && (
-            <div className="flex flex-col gap-3 rounded-lg border bg-yellow-50 border-yellow-200 dark:border-yellow-700 dark:bg-yellow-900/20 p-2 -mx-2">
-              <div className="flex flex-row gap-1 items-center">
-                <IconInfoCircle className="size-3.5 text-yellow-700 dark:text-yellow-500" />
-                <Text element="span" className="text-xs text-yellow-700 dark:text-yellow-500">
-                  Dette arrangementet er i samarbeid med en bedrift.
-                </Text>
-              </div>
+              {hasCompanyOrganizer && (
+                <div className="flex flex-col gap-3 rounded-lg border bg-yellow-50 border-yellow-200 dark:border-yellow-700 dark:bg-yellow-900/20 p-2 -mx-2">
+                  <div className="flex flex-row gap-1 items-center">
+                    <IconInfoCircle className="size-3.5 text-yellow-700 dark:text-yellow-500" />
+                    <Text element="span" className="text-xs text-yellow-700 dark:text-yellow-500">
+                      Dette arrangementet er i samarbeid med en bedrift.
+                    </Text>
+                  </div>
 
-              <Text element="span" className="text-sm">
-                Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
-                hovedinntektskildene til linjeforeningen.
-              </Text>
+                  <Text element="span" className="text-sm">
+                    Arrangementer med bedrifter er en viktig del av samarbeidet vårt med næringslivet, og utgjør en av
+                    hovedinntektskildene til linjeforeningen.
+                  </Text>
 
-              <Text element="span" className="text-sm">
-                Avmelding like før arrangementstart kan føre til at det blir vanskeligere å finne samarbeid i fremtiden.
-              </Text>
+                  <Text element="span" className="text-sm">
+                    Avmelding like før arrangementstart kan føre til at det blir vanskeligere å finne samarbeid i
+                    fremtiden.
+                  </Text>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <DeregisterForm
-          unregisterForAttendance={unregisterForAttendance}
-          setOpen={setOpen}
-          open={open}
-          attendee={attendee}
-          event={event}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
+            <DeregisterForm
+              unregisterForAttendance={unregisterForAttendance}
+              setOpen={setOpen}
+              open={open}
+              attendee={attendee}
+              event={event}
+            />
+          </div>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
 

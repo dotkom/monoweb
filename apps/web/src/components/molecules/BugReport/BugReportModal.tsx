@@ -1,9 +1,11 @@
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
   Title,
 } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
@@ -11,26 +13,28 @@ import { BugReportForm, type BugReportProps } from "./BugReportWriteForm"
 
 export const BugReportModal = ({ open, setOpen }: BugReportProps) => {
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent size="lg" className="p-0!" onOutsideClick={() => setOpen(false)}>
-        <div className="flex items-center justify-between px-4 pt-4 rounded-t-lg">
-          <AlertDialogTitle asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent size="lg" className="p-0!">
+        <DialogHeader className="flex-row flex items-center justify-between px-4 pt-4 rounded-t-lg">
+          <DialogTitle asChild>
             <Title element="h1" size="lg">
               Rapporter en feil
             </Title>
-          </AlertDialogTitle>
-          <AlertDialogCancel>
+          </DialogTitle>
+          <DialogClose>
             <IconX className="size-[1.25em]" />
-          </AlertDialogCancel>
-        </div>
-        <div className="flex flex-col gap-1 px-4 pb-4 rounded-lg min-h-[25dvh] max-h-[75dvh] overflow-y-auto">
-          <AlertDialogDescription className="text-wrap">
-            Har du oppdaget noe feil på nettsiden vår? Skriv en forklaring på hva som skjedde og hva du forventet.
-          </AlertDialogDescription>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          <div className="flex min-h-[25dvh] flex-col gap-1 rounded-lg px-4 pb-4">
+            <DialogDescription className="text-wrap">
+              Har du oppdaget noe feil på nettsiden vår? Skriv en forklaring på hva som skjedde og hva du forventet.
+            </DialogDescription>
 
-          <BugReportForm setOpen={setOpen} open={open} />
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
+            <BugReportForm setOpen={setOpen} open={open} />
+          </div>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

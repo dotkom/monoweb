@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { MarkWriteForm } from "./MarkWriteForm"
 import { useCreateMarkMutation } from "./mutations"
@@ -14,33 +14,34 @@ export function CreateSuspensionModal({ open, onOpenChange }: CreateSuspensionMo
   const create = useCreateMarkMutation()
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="lg" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Opprett ny suspensjon</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="lg">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Opprett ny suspensjon</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        {open && (
-          <MarkWriteForm
-            suspension
-            submitLabel="Gi suspensjon"
-            onSubmit={(mark) => {
-              create.mutate({
-                data: {
-                  ...mark,
-                  weight: 6,
-                  type: "MANUAL",
-                },
-                groupIds: mark.groupIds,
-              })
-              onOpenChange(false)
-            }}
-          />
-        )}
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && (
+            <MarkWriteForm
+              suspension
+              submitLabel="Gi suspensjon"
+              onSubmit={(mark) => {
+                create.mutate({
+                  data: {
+                    ...mark,
+                    weight: 6,
+                    type: "MANUAL",
+                  },
+                  groupIds: mark.groupIds,
+                })
+                onOpenChange(false)
+              }}
+            />
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
