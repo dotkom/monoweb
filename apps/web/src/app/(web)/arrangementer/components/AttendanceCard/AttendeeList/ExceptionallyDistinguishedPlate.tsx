@@ -26,10 +26,13 @@ export function ExceptionallyDistinguishedPlate(props: PlateProps) {
 
       <Plate.IdentityArea className="p-1.75">
         <Plate.Avatar
-          className="outline-2 outline-user-plate-exceptionally-distinguished-ring/50"
+          className="outline-2 outline-user-plate-exceptionally-distinguished-ring/50 drop-shadow-md"
           fallbackClassName="bg-gray-300 text-gray-700 dark:bg-white/25 dark:text-white"
         />
-        <Plate.AttendeeDetails subtitleClassName="text-gray-700 dark:text-stone-300" />
+        <Plate.AttendeeDetails
+          nameClassName={styles.textContrast}
+          subtitleClassName={cn("text-gray-700 dark:text-stone-300", styles.textContrast)}
+        />
       </Plate.IdentityArea>
       <Plate.AccessoryArea className="py-1.75 pr-1.75">
         <Plate.BigIcon />
