@@ -6,10 +6,12 @@ import { ReadOnlyNotice } from "@admin/components/ReadOnlyNotice"
 import { ConfirmDeleteModal } from "@admin/components/molecules/ConfirmDeleteModal/ConfirmDeleteModal"
 import { getGroupDisplayName, isGroupMembershipActive, sortGroupRolesByPriority } from "@dotkomonline/rpc/group"
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTitle,
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -178,33 +180,34 @@ export default function GroupMemberDetailsPage() {
 
       <GroupMembershipTable groupMember={groupMember} disabled={!canManageMembership} />
 
-      <AlertDialog open={isNewMembershipOpen} onOpenChange={setIsNewMembershipOpen}>
-        <AlertDialogContent size="md" onOutsideClick={() => setIsNewMembershipOpen(false)}>
-          <div className="flex flex-row items-center justify-between gap-4">
-            <AlertDialogTitle>
+      <Dialog open={isNewMembershipOpen} onOpenChange={setIsNewMembershipOpen}>
+        <DialogContent size="md">
+          <DialogHeader className="flex flex-row items-center justify-between gap-4">
+            <DialogTitle>
               {activeMemberships.length ? "Avslutt nåværende og lag nytt medlemskap" : "Legg til medlemskap"}
-            </AlertDialogTitle>
-            <AlertDialogCancel type="button">
+            </DialogTitle>
+            <DialogClose type="button">
               <IconX className="size-5" />
-            </AlertDialogCancel>
-          </div>
-
-          {isNewMembershipOpen && (
-            <GroupMemberWriteForm
-              groupId={group.slug}
-              disabled={!canManageMembership}
-              onSubmit={(data) => {
-                startMembership.mutate({
-                  userId: groupMember.id,
-                  groupId: group.slug,
-                  roleIds: data.roleIds,
-                })
-                setIsNewMembershipOpen(false)
-              }}
-            />
-          )}
-        </AlertDialogContent>
-      </AlertDialog>
+            </DialogClose>
+          </DialogHeader>
+          <DialogBody>
+            {isNewMembershipOpen && (
+              <GroupMemberWriteForm
+                groupId={group.slug}
+                disabled={!canManageMembership}
+                onSubmit={(data) => {
+                  startMembership.mutate({
+                    userId: groupMember.id,
+                    groupId: group.slug,
+                    roleIds: data.roleIds,
+                  })
+                  setIsNewMembershipOpen(false)
+                }}
+              />
+            )}
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDeleteModal
         open={isEndMembershipOpen}

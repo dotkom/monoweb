@@ -1,7 +1,7 @@
 "use client"
 
 import type { Attendance, AttendanceSelection } from "@dotkomonline/rpc/attendance"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { useUpdateAttendanceMutation } from "@admin/arrangementer/mutations"
 import { SelectionsForm, type SelectionsFormValues } from "./SelectionForm"
@@ -53,17 +53,18 @@ export function EditAttendanceSelectionsModal({
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Endre valg</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Endre valg</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        {open && <SelectionsForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />}
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && <SelectionsForm onSubmit={onSubmit} defaultAlternatives={defaultAlternatives} />}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

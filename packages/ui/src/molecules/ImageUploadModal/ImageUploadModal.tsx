@@ -6,12 +6,14 @@ import { Button } from "../../atoms/Button/Button"
 import { TextInput } from "../../atoms/Input/TextInput"
 import { Text } from "../../atoms/Typography/Text"
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogTitle,
-} from "../AlertDialog/AlertDialog"
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+} from "../Dialog/Dialog"
 import { type AspectRatio, ImageInput, type ImageInputHandle } from "../ImageInput/ImageInput"
 import type { ImageCropperShape } from "../ImageCropper/ImageCropper"
 
@@ -137,7 +139,7 @@ export function ImageUploadModal({
   }
 
   return (
-    <AlertDialog
+    <Dialog
       open={open}
       onOpenChange={handleOpenChange}
       onOpenChangeComplete={(nextOpen) => {
@@ -146,84 +148,82 @@ export function ImageUploadModal({
         }
       }}
     >
-      <AlertDialogContent
-        size="lg"
-        onOutsideClick={() => handleOpenChange(false)}
-        className="max-h-[90dvh] overflow-auto"
-      >
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Last opp bilde</AlertDialogTitle>
-          <AlertDialogCancel>
+      <DialogContent size="lg">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Last opp bilde</DialogTitle>
+          <DialogClose>
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col gap-4">
+            {withMetadata && (
+              <Text className="text-sm text-muted-foreground">
+                Dersom bildet blir plassert feil, kan du holde-og-dra bildet dit du ønsker det
+              </Text>
+            )}
 
-        {withMetadata && (
-          <Text className="text-sm text-muted-foreground">
-            Dersom bildet blir plassert feil, kan du holde-og-dra bildet dit du ønsker det
-          </Text>
-        )}
-
-        <div className="flex flex-col gap-4">
-          <ImageInput
-            ref={imageInputRef}
-            label="Bilde"
-            value={imageUrl}
-            onChange={setImageUrl}
-            onFileUpload={onFileUpload}
-            maxSizeKiB={maxSizeKiB}
-            aspectRatio={aspectRatio}
-            overlayAspectRatio={overlayAspectRatio}
-            cropLegend={cropLegend}
-            shape={shape}
-            acceptGif={acceptGif}
-            showGrid={showGrid}
-            hideSubmitButton
-            disabled={isSubmitting}
-            onCanCommitChange={setCanCommit}
-          />
-
-          {formError && <Text className="text-sm text-destructive">{formError}</Text>}
-
-          {withMetadata && (
             <div className="flex flex-col gap-4">
-              <TextInput
-                label="Alt-tekst"
-                description="Vises dersom bildet ikke kan lastes inn, og brukes av skjermlesere."
-                placeholder="Hytteoversikt for Åre"
-                required
-                value={alt}
-                onChange={(event) => setAlt(event.target.value)}
+              <ImageInput
+                ref={imageInputRef}
+                label="Bilde"
+                value={imageUrl}
+                onChange={setImageUrl}
+                onFileUpload={onFileUpload}
+                maxSizeKiB={maxSizeKiB}
+                aspectRatio={aspectRatio}
+                overlayAspectRatio={overlayAspectRatio}
+                cropLegend={cropLegend}
+                shape={shape}
+                acceptGif={acceptGif}
+                showGrid={showGrid}
+                hideSubmitButton
+                disabled={isSubmitting}
+                onCanCommitChange={setCanCommit}
               />
-              <TextInput
-                label="Bildetittel"
-                description="Vises når man holder musepekeren over bildet."
-                placeholder="Hytteoversikt for Åre"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-              />
-            </div>
-          )}
 
-          <AlertDialogFooter>
-            <AlertDialogCancel type="button" disabled={isSubmitting}>
-              Avbryt
-            </AlertDialogCancel>
-            <Button
-              onClick={handleSubmit}
-              variant="default"
-              disabled={isSubmitting || !canCommit}
-              icon={
-                isSubmitting ? (
-                  <IconLoader2 className="motion-safe:animate-spin motion-reduce:hidden" aria-hidden />
-                ) : undefined
-              }
-            >
-              {withMetadata ? "Last opp bilde" : "Lagre"}
-            </Button>
-          </AlertDialogFooter>
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
+              {formError && <Text className="text-sm text-destructive">{formError}</Text>}
+
+              {withMetadata && (
+                <div className="flex flex-col gap-4">
+                  <TextInput
+                    label="Alt-tekst"
+                    description="Vises dersom bildet ikke kan lastes inn, og brukes av skjermlesere."
+                    placeholder="Hytteoversikt for Åre"
+                    required
+                    value={alt}
+                    onChange={(event) => setAlt(event.target.value)}
+                  />
+                  <TextInput
+                    label="Bildetittel"
+                    description="Vises når man holder musepekeren over bildet."
+                    placeholder="Hytteoversikt for Åre"
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogBody>
+        <DialogFooter className="-mx-5 -mb-5 rounded-b-2xl p-5 sm:-mx-6 sm:-mb-6 sm:p-6">
+          <DialogClose type="button" disabled={isSubmitting}>
+            Avbryt
+          </DialogClose>
+          <Button
+            onClick={handleSubmit}
+            variant="default"
+            disabled={isSubmitting || !canCommit}
+            icon={
+              isSubmitting ? (
+                <IconLoader2 className="motion-safe:animate-spin motion-reduce:hidden" aria-hidden />
+              ) : undefined
+            }
+          >
+            {withMetadata ? "Last opp bilde" : "Lagre"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

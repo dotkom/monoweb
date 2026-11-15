@@ -2,13 +2,14 @@
 
 import type { AttendeeId } from "@dotkomonline/rpc/attendance"
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogTitle,
+  DialogBody,
+  Dialog,
+  Button,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
 } from "@dotkomonline/ui"
 import { useDeregisterForEventMutation } from "../../../mutations"
 
@@ -31,15 +32,17 @@ export function ManualDeleteUserAttendModal({
   const { mutate: deregisterAttendee } = useDeregisterForEventMutation()
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <AlertDialogTitle>Meld av {attendeeName}</AlertDialogTitle>
-        <AlertDialogDescription>Er du sikker på at du vil melde av brukeren?</AlertDialogDescription>
-        <AlertDialogFooter>
-          <AlertDialogCancel type="button" variant="secondary">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogTitle>Meld av {attendeeName}</DialogTitle>
+        <DialogBody>
+          <DialogDescription>Er du sikker på at du vil melde av brukeren?</DialogDescription>
+        </DialogBody>
+        <DialogFooter className="-mx-5 -mb-5 rounded-b-2xl p-5 sm:-mx-6 sm:-mb-6 sm:p-6">
+          <DialogClose type="button" variant="secondary">
             Avbryt
-          </AlertDialogCancel>
-          <AlertDialogAction
+          </DialogClose>
+          <Button
             type="button"
             variant="destructive"
             onClick={() => {
@@ -55,9 +58,9 @@ export function ManualDeleteUserAttendModal({
             }}
           >
             Meld av bruker
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
