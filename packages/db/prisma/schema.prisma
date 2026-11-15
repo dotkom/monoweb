@@ -2,7 +2,7 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 
-  previewFeatures = ["relationJoins", "typedSql"]
+  previewFeatures = ["relationJoins", "typedSql", "partialIndexes"]
 }
 
 datasource db {
@@ -1223,6 +1223,7 @@ model PaymentAttempt {
   refunds PaymentRefund[]
 
   @@unique([paymentId, attemptNumber])
+  @@unique([paymentId], map: "payment_attempt_one_active", where: raw("status IN ('CREATED', 'CHECKOUT_OPEN', 'PROCESSING', 'AUTHORIZED')"))
   @@index([paymentId, createdAt])
   @@index([status, captureScheduledAt])
   @@map("payment_attempt")
@@ -1248,6 +1249,7 @@ model PaymentRefund {
   requestedBy       User?          @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
 
   @@unique([paymentAttemptId, refundNumber])
+  @@unique([paymentAttemptId], map: "payment_refund_one_pending", where: raw("status IN ('REQUESTED', 'PENDING')"))
   @@index([paymentAttemptId, createdAt])
   @@index([requestedByUserId])
   @@map("payment_refund")
