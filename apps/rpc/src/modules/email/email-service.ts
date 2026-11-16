@@ -1,5 +1,5 @@
-import { SendEmailCommand } from "@aws-sdk/client-ses"
-import type { SESClient } from "@aws-sdk/client-ses"
+import { SendEmailCommand } from "@aws-sdk/client-sesv2"
+import type { SESv2Client } from "@aws-sdk/client-sesv2"
 import { DeleteMessageCommand, type Message, ReceiveMessageCommand } from "@aws-sdk/client-sqs"
 import { type SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import { getLogger } from "@dotkomonline/logger"
@@ -28,6 +28,16 @@ function formatSesSourceAddress(source: string, sourceName?: string): string {
   return DEFAULT_EMAIL_FROM
 }
 
+// https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_Attachment.html
+const EmailAttachmentSchema = z.object({
+  filename: z.string().min(1).max(255),
+  contentType: z.string().min(1).max(78),
+  rawContent: z.base64(),
+  contentDescription: z.string().max(1000).optional(),
+})
+
+export type EmailAttachment = z.infer<typeof EmailAttachmentSchema>
+
 const EmailMessageSchema = z.object({
   source: z.email(),
   sourceName: z
@@ -43,6 +53,7 @@ const EmailMessageSchema = z.object({
   subject: z.string(),
   type: z.custom<EmailType>(),
   data: z.any(),
+  attachments: EmailAttachmentSchema.array().default([]),
 })
 
 // In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
@@ -59,7 +70,8 @@ export interface EmailService {
     subject: string,
     definition: TDef,
     data: InferEmailData<TDef>,
-    sourceName?: string
+    sourceName?: string,
+    attachments?: EmailAttachment[]
   ): Promise<void>
   /**
    * Start the SQS Consumer for actually submitting emails to SES.
@@ -95,7 +107,7 @@ export function getEmptyEmailService(): EmailService {
 }
 
 export function getEmailService(
-  sesClient: SESClient,
+  sesClient: SESv2Client,
   sqsClient: SQSClient,
   configuration: ConfigurationWithAmazonSesEmail
 ): EmailService {
@@ -138,23 +150,32 @@ export function getEmailService(
         const html = await renderEmailTemplate(emailTemplate, payload.data.data)
 
         const sendEmailCommand = new SendEmailCommand({
-          Source: formatSesSourceAddress(payload.data.source, payload.data.sourceName),
+          FromEmailAddress: formatSesSourceAddress(payload.data.source, payload.data.sourceName),
           ReplyToAddresses: payload.data.replyTo,
           Destination: {
             ToAddresses: payload.data.to,
             CcAddresses: payload.data.cc,
             BccAddresses: payload.data.bcc,
           },
-          Message: {
-            Body: {
-              Html: {
-                Charset: "UTF-8",
-                Data: html,
+          Content: {
+            Simple: {
+              Body: {
+                Html: {
+                  Charset: "UTF-8",
+                  Data: html,
+                },
               },
-            },
-            Subject: {
-              Charset: "UTF-8",
-              Data: payload.data.subject,
+              Subject: {
+                Charset: "UTF-8",
+                Data: payload.data.subject,
+              },
+              Attachments: payload.data.attachments.map((attachment) => ({
+                FileName: attachment.filename,
+                ContentType: attachment.contentType,
+                RawContent: Buffer.from(attachment.rawContent, "base64"),
+                ContentDisposition: "ATTACHMENT",
+                ContentTransferEncoding: "BASE64",
+              })),
             },
           },
         })
@@ -194,7 +215,7 @@ export function getEmailService(
   }
 
   return {
-    async send(source, replyTo, to, cc, bcc, subject, definition, data, sourceName) {
+    async send(source, replyTo, to, cc, bcc, subject, definition, data, sourceName, attachments) {
       return await tracer.startActiveSpan("EmailService/QueueEmail", async (span) => {
         try {
           logger.info(
@@ -218,7 +239,7 @@ export function getEmailService(
           }
 
           // NOTE: These are not SEMCONV attributes. See https://opentelemetry.io/blog/2025/how-to-name-your-span-attributes/
-          span.addEvent("@aws-sdk/client-ses#SendEmailCommand", {
+          span.addEvent("@aws-sdk/client-sesv2#SendEmailCommand", {
             "email.source": source,
             "email.replyTo": replyTo,
             "email.to": to,
@@ -230,6 +251,7 @@ export function getEmailService(
           const message = EmailMessageSchema.parse({
             source,
             sourceName,
+            attachments,
             replyTo,
             to,
             cc,
