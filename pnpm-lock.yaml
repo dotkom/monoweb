@@ -1064,6 +1064,9 @@ importers:
       html-to-text:
         specifier: ^9.0.5
         version: 9.0.5
+      ical-generator:
+        specifier: 8.1.1
+        version: 8.1.1(@types/node@22.20.5)(dayjs@1.11.23)(luxon@3.7.2)
       jose:
         specifier: ^6.0.11
         version: 6.2.17

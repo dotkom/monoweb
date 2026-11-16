@@ -1,15 +1,11 @@
 import { createSecretKey } from "node:crypto"
-import {
-  CALENDAR_ISSUER,
-  createCalendar,
-  createCalendarEvent,
-  createCalendarFeedResponse,
-} from "@/app/api/calendar/ical"
+import { CALENDAR_ISSUER, createCalendar, createCalendarFeedResponse } from "@/app/api/calendar/ical"
 import { env } from "@/env"
 import { getRpcServiceAccessToken } from "@/lib/rpc-service-access-token"
 import { createServerClientWithAccessToken } from "@/utils/trpc/server"
 import { getLogger } from "@dotkomonline/logger"
 import type { EventWithAttendanceView } from "@dotkomonline/rpc/event"
+import { createCalendarEvent } from "@dotkomonline/utils"
 import { errors, jwtVerify } from "jose"
 import { NextResponse } from "next/server"
 
@@ -36,7 +32,7 @@ export async function createPersonalCalendarFeedResponse(key: string): Promise<N
     const calendar = createCalendar("Mine Online-arrangementer")
 
     for (const { event } of eventDetails) {
-      calendar.createEvent(createCalendarEvent(event))
+      calendar.createEvent(createCalendarEvent(event, env.NEXT_PUBLIC_ORIGIN))
     }
 
     return createCalendarFeedResponse(calendar.toString(), "private")

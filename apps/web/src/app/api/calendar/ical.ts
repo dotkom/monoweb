@@ -1,9 +1,6 @@
-import { createCalendarEvent } from "@/app/arrangementer/components/calendar-event"
 import { hoursToSeconds } from "date-fns"
 import ical, { ICalCalendarMethod } from "ical-generator"
 import { NextResponse } from "next/server"
-
-export { createCalendarEvent }
 
 const CALENDAR_PRODUCT_ID = {
   company: "online.ntnu.no",

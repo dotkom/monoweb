@@ -1,18 +1,4 @@
-import ical, { type ICalEventData } from "ical-generator"
-
-const CALENDAR_PRODUCT_ID = "online.ntnu.no"
 const ICS_MIME_TYPE = "text/calendar;charset=utf-8"
-
-export function createIcsBody(event: ICalEventData, calendarName?: string) {
-  const calendar = ical({
-    name: calendarName,
-    prodId: CALENDAR_PRODUCT_ID,
-  })
-
-  calendar.createEvent(event)
-
-  return calendar.toString()
-}
 
 function createIcsObjectUrl(icsBody: string) {
   const blob = new Blob([icsBody], { type: ICS_MIME_TYPE })

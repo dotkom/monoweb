@@ -3,11 +3,10 @@
 import { env } from "@/env"
 import type { Attendance } from "@dotkomonline/rpc/attendance"
 import type { Event } from "@dotkomonline/rpc/event"
-import { createAbsoluteEventPageUrl, slugify } from "@dotkomonline/utils"
+import { createAbsoluteEventPageUrl, createIcsBody, slugify } from "@dotkomonline/utils"
 import { addMinutes, isPast } from "date-fns"
 import { AddToCalendarButton } from "../AddToCalendarButton"
 import { createGoogleCalendarLink } from "../TimeLocationBox/utils"
-import { createIcsBody } from "../ics"
 
 interface AttendanceCalendarButtonProps {
   event: Event
