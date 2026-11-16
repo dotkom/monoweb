@@ -1720,14 +1720,14 @@ export function getAttendanceService(
       const errors: Error[] = []
 
       for (const event of eventsEndedYesterday) {
-        if (!event.attendanceId || !event.markForMissedAttendance) {
+        if (event.attendanceId === null || !event.markForMissedAttendance) {
           continue
         }
 
         try {
           const attendance = await this.getAttendanceById(handle, event.attendanceId)
           const attendeesNotAttended = attendance.attendees.filter(
-            (attendee) => attendee.registeredAt !== null && !attendee.attendedAt
+            (attendee) => attendee.registeredAt !== null && attendee.attendedAt === null
           )
 
           if (attendeesNotAttended.length === 0) {
@@ -1748,6 +1748,27 @@ export function getAttendanceService(
 
           await Promise.all(
             attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
+          )
+
+          const organizerEmails = [...new Set(getOrganizerEmails(event))]
+
+          const eventLink = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
+          const markLink = new URL(`/admin/prikker/${mark.id}`, configuration.WEB_PUBLIC_ORIGIN).toString()
+
+          await emailService.send(
+            DEFAULT_EMAIL_SOURCE,
+            [DEFAULT_EMAIL_SOURCE],
+            organizerEmails,
+            [],
+            [],
+            formatEmailSubject(`Automatiske prikker for manglende oppmøte på ${event.title}`),
+            emails.EVENT_MISSED_ATTENDANCE_MARKS,
+            {
+              eventName: event.title,
+              eventLink,
+              markLink,
+              affectedAttendeeCount: attendeesNotAttended.length,
+            }
           )
         } catch (e) {
           logger.error("Received error when attempting to create marks: %o", e)

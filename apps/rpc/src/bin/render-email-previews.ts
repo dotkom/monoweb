@@ -80,6 +80,12 @@ const sampleData = {
     ...eventData,
     message: "<p>Velkommen til bedriftspresentasjonen!</p><p>Vi møtes ved hovedinngangen klokken 17.00.</p>",
   },
+  EVENT_MISSED_ATTENDANCE_MARKS: {
+    eventName: eventData.eventName,
+    eventLink: eventData.eventLink,
+    markLink: "https://online.ntnu.no/admin/prikker/id",
+    affectedAttendeeCount: 2,
+  },
   RECEIVED_MARK: {
     title: "Manglende tilbakemelding",
     details: "Tilbakemeldingsskjemaet ble ikke besvart innen fristen.",
