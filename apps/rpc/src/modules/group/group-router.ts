@@ -185,18 +185,19 @@ const startMembershipProcedure = procedure
       input
     )
 
-    const groupMember = await ctx.groupService.startMembership(
+    const membership = await ctx.groupService.startMembership(
       ctx.handle,
       input.userId,
       input.groupId,
       new Set(input.roleIds)
     )
+    const user = await ctx.userService.getById(ctx.handle, input.userId)
 
     ctx.setAuditTransactionName(
-      `Start GroupMembership for User(ID=${groupMember.id},Name=${groupMember.name}) in Group(Slug=${input.groupId},Name=${group.name})`
+      `Start GroupMembership for User(ID=${user.id},Name=${user.name}) in Group(Slug=${input.groupId},Name=${group.name})`
     )
 
-    return groupMember
+    return membership
   })
 
 export type EndMembershipInput = inferProcedureInput<typeof endMembershipProcedure>
@@ -214,14 +215,14 @@ const endMembershipProcedure = procedure
       input
     )
 
-    const endedMemberships = await ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
+    const endedMembership = await ctx.groupService.endMembership(ctx.handle, input.userId, input.groupId)
     const user = await ctx.userService.getById(ctx.handle, input.userId)
 
     ctx.setAuditTransactionName(
-      `End GroupMemberships for User(ID=${user.id},Name=${user.name}) in Group(Slug=${input.groupId},Name=${group.name})`
+      `End GroupMembership for User(ID=${user.id},Name=${user.name}) in Group(Slug=${input.groupId},Name=${group.name})`
     )
 
-    return endedMemberships
+    return endedMembership
   })
 
 export type UpdateMembershipInput = inferProcedureInput<typeof updateMembershipProcedure>

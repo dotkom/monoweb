@@ -43,9 +43,10 @@ export interface GroupRepository {
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByUserId(handle: DBHandle, userId: UserId, filter?: GroupByMemberFilter): Promise<Group[]>
 
-  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
   findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
 
+  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
+  findActiveGroupMembership(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMembership | null>
   findManyGroupMemberships(
     handle: DBHandle,
     groupSlug: GroupId | null,
@@ -290,6 +291,32 @@ export function getGroupRepository(): GroupRepository {
             roles: membership?.roles.map((role) => role.role),
           })
         : null
+    },
+
+    async findActiveGroupMembership(handle, groupSlug, userId) {
+      const membership = await handle.groupMembership.findFirst({
+        where: {
+          groupId: groupSlug,
+          userId,
+          end: null,
+        },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      })
+
+      if (membership === null) {
+        return null
+      }
+
+      return parseOrReport(GroupMembershipSchema, {
+        ...membership,
+        roles: membership.roles.map(({ role }) => role),
+      })
     },
 
     async findGroupMembersByRoleType(handle, groupSlug, roleType) {

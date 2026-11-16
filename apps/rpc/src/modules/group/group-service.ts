@@ -67,8 +67,8 @@ export interface GroupService {
     userId: UserId,
     groupSlug: GroupId,
     groupRoleIds?: Set<GroupRoleId>
-  ): Promise<GroupMember>
-  endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
+  ): Promise<GroupMembership>
+  endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership | null>
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
@@ -284,27 +284,25 @@ export function getGroupService(
         resolvedGroupRoleIds = new Set([defaultRole.id])
       }
 
-      await groupRepository.createGroupMembership(handle, data, resolvedGroupRoleIds)
-      return await this.getMember(handle, groupSlug, userId)
+      return groupRepository.createGroupMembership(handle, data, resolvedGroupRoleIds)
     },
 
     async endMembership(handle, userId, groupSlug) {
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
-      const activeMemberships = memberships.filter(isGroupMembershipActive)
+      const membership = await groupRepository.findActiveGroupMembership(handle, groupSlug, userId)
 
-      const endMembershipPromises = activeMemberships.map((membership) =>
-        groupRepository.updateGroupMembership(
-          handle,
-          membership.id,
-          {
-            ...membership,
-            end: getCurrentUTC(),
-          },
-          new Set(membership.roles.map((role) => role.id))
-        )
-      )
+      if (membership === null) {
+        return null
+      }
 
-      return await Promise.all(endMembershipPromises)
+      const groupRoleIds = new Set(membership.roles.map((role) => role.id))
+      const membershipData: GroupMembershipWrite = {
+        userId: membership.userId,
+        groupId: membership.groupId,
+        start: membership.start,
+        end: getCurrentUTC(),
+      }
+
+      return groupRepository.updateGroupMembership(handle, membership.id, membershipData, groupRoleIds)
     },
 
     async updateMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds) {
