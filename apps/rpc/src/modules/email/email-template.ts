@@ -298,7 +298,8 @@ export const emails = {
     layout: {
       title: "Viktig informasjon om {{ eventName }}",
       preheader: "Du har fått en melding fra arrangørene av {{ eventName }}.",
-      footerReason: "Du mottar denne e-posten fordi du er påmeldt {{ eventName }}.",
+      footerReason:
+        "{{^ queuePosition }}Du mottar denne e-posten fordi du er påmeldt {{ eventName }}.{{/ queuePosition }}{{# queuePosition }}Du mottar denne e-posten fordi du står i kø til {{ eventName }}.{{/ queuePosition }}",
       showTimezone: true,
     },
     getButtons: (data) => ({
@@ -310,6 +311,7 @@ export const emails = {
         eventLink: z.url(),
         eventImageUrl: EventImageUrlSchema,
         message: z.string(),
+        queuePosition: z.int().positive().nullish(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
     getRichText: (data) => ({ message: data.message }),

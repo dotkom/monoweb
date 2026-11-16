@@ -79,6 +79,7 @@ const sampleData = {
   EVENT_MESSAGE: {
     ...eventData,
     message: "<p>Velkommen til bedriftspresentasjonen!</p><p>Vi møtes ved hovedinngangen klokken 17.00.</p>",
+    queuePosition: null,
   },
   EVENT_MISSED_ATTENDANCE_MARKS: {
     eventName: eventData.eventName,
@@ -151,6 +152,20 @@ for (const definition of Object.values(emails)) {
     label: definition.type,
   })
 }
+
+// Generate event message with queued position
+const queuedMessageData = emails.EVENT_MESSAGE.getSchema().parse({
+  ...sampleData.EVENT_MESSAGE,
+  queuePosition: 2,
+})
+const queuedMessageHtml = await renderEmailTemplate(emails.EVENT_MESSAGE, queuedMessageData)
+
+await writePreview("event_message_queued.html", queuedMessageHtml)
+
+previews.push({
+  filename: "event_message_queued.html",
+  label: "EVENT_MESSAGE (queued)",
+})
 
 // Generate both versions of the suspension email
 for (const isIndefiniteSuspension of [false, true]) {

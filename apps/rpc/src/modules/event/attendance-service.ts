@@ -25,6 +25,7 @@ import {
   type RegistrationWindowCause,
   buildPoolOccupancies,
   buildRegistrationAvailabilityCompletionView,
+  getAttendeeQueuePosition,
   getMissingAttendanceCompletionRequirements,
   getRegisteredAttendeeCount,
   getRegistrationDeadline,
@@ -1914,26 +1915,53 @@ export function getAttendanceService(
 
       const sourceName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
 
-      const attendeeEmails = attendance.attendees
-        .map((attendee) => attendee.user.email)
-        .filter((email): email is string => email !== null)
+      // We send the same email to all registered attendees, and then send a personalized email to all attendees in the
+      // queue with their position in the queue
+      const deliveries: { recipientEmails: string[]; queuePosition: number | null }[] = []
+      const registeredEmails: string[] = []
 
-      await emailService.send(
-        sourceEmail,
-        [sourceEmail],
-        [],
-        [],
-        attendeeEmails,
-        formatEmailSubject(title),
-        emails.EVENT_MESSAGE,
-        {
-          eventName: event.title,
-          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-          eventImageUrl: event.imageUrl,
-          message,
-        },
-        sourceName
-      )
+      for (const attendee of attendance.attendees) {
+        if (attendee.user.email === null) {
+          continue
+        }
+
+        if (attendee.registeredAt !== null) {
+          registeredEmails.push(attendee.user.email)
+
+          continue
+        }
+
+        const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
+
+        deliveries.push({ recipientEmails: [attendee.user.email], queuePosition })
+      }
+
+      // We add all the registered attendees into the same delivery, since they all receive the same message
+      if (registeredEmails.length > 0) {
+        deliveries.unshift({ recipientEmails: registeredEmails, queuePosition: null })
+      }
+
+      const sendPromises = deliveries.map((delivery) => {
+        return emailService.send(
+          sourceEmail,
+          [sourceEmail],
+          [],
+          [],
+          delivery.recipientEmails,
+          formatEmailSubject(title),
+          emails.EVENT_MESSAGE,
+          {
+            eventName: event.title,
+            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
+            message,
+            queuePosition: delivery.queuePosition,
+          },
+          sourceName
+        )
+      })
+
+      await Promise.all(sendPromises)
     },
   }
 }

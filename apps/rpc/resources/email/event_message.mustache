@@ -2,9 +2,37 @@
 <tr>
   <td class="text-primary" style="color: #000000; font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
     <p style="margin: 0 0 16px;">Hei!</p>
-    <p style="margin: 0;">Dette er en melding fra arrangørene av {{ eventName }}, som du er påmeldt hos Linjeforeningen Online.</p>
+    <p style="margin: 0;">Dette er en melding fra arrangørene av {{ eventName }}, som du {{^ queuePosition }}er påmeldt{{/ queuePosition }}{{# queuePosition }}står i kø til{{/ queuePosition }} hos Linjeforeningen Online.</p>
   </td>
 </tr>
+{{# queuePosition }}
+<tr>
+  <td style="padding: 24px 0 0;">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="table-layout: fixed;">
+      <tbody>
+        <tr>
+          <td class="card-queue" bgcolor="#e0e7ff" style="padding: 16px; background-color: #e0e7ff; border-radius: 8px;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+              <tbody>
+                <tr>
+                  <td width="24" valign="top" style="width: 24px; padding-right: 12px;">
+                    <img class="queue-icon-light" src="https://online.ntnu.no/email-icons/circle-dashed-check-indigo.png" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px; border: 0;" />
+                    <img class="queue-icon-dark" src="https://online.ntnu.no/email-icons/circle-dashed-check-indigo-light.png" alt="" width="24" height="24" style="display: none; width: 0; height: 0; max-height: 0; overflow: hidden; border: 0; mso-hide: all;" />
+                  </td>
+                  <td style="font-size: 16px; line-height: 25px; overflow-wrap: anywhere; word-wrap: break-word;">
+                    <p class="text-primary" style="margin: 0 0 4px; font-size: 16px; line-height: 24px;">Du er nummer {{ . }} i køen</p>
+                    <p class="text-secondary" style="margin: 8px 0 0; color: #4b5563; font-size: 14px; line-height: 22px;">Se arrangementssiden for oppdatert køplass.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+{{/ queuePosition }}
 <tr>
   <td style="padding: 24px 0 0;">
     <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="table-layout: fixed;">
