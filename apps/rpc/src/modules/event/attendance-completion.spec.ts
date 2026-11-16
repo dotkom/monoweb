@@ -211,7 +211,18 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
     completionDeadline: subMinutes(getCurrentUTC(), 1),
   })
   const attendance = createAttendance({ attendees: [attendee], deregisterDeadline })
-  const event = mock<Event>({ id: "test-event", title: "Test event", hostingGroups: [] })
+  const event = mock<Event>({
+    id: "test-event",
+    title: "Test event",
+    hostingGroups: [],
+    start: new Date("2026-12-01T16:00:00Z"),
+    end: new Date("2026-12-01T18:00:00Z"),
+    createdAt: new Date("2026-11-01T12:00:00Z"),
+    updatedAt: new Date("2026-11-01T12:00:00Z"),
+    description: "<p>Welcome!</p>",
+    locationAddress: "Gløshaugen",
+    locationLink: null,
+  })
 
   attendanceRepository.findAttendanceByAttendeeId.mockResolvedValue(attendance)
   attendanceRepository.findAttendanceById.mockResolvedValue(attendance)
