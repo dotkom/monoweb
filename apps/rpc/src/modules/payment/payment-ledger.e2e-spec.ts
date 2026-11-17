@@ -68,6 +68,33 @@ async function openCheckout(ledger: ReturnType<typeof getPaymentLedgerService>, 
 }
 
 describe("payment ledger persistence", () => {
+  it("preserves a capture saved while an older Stripe lookup was in flight", async () => {
+    const { ledger, payment } = await createPayment()
+    stripe.checkout.sessions.create.mockResolvedValue(mockSession())
+    const checkout = await openCheckout(ledger, payment.id)
+    const attemptId = checkout.attempts[0].id
+
+    stripe.checkout.sessions.retrieve.mockImplementationOnce(async () => {
+      await dbClient.paymentAttempt.update({
+        where: {
+          id: attemptId,
+        },
+        data: {
+          status: "CAPTURED",
+          capturedAmountOre: payment.amountOre,
+        },
+      })
+
+      return mockSession("open")
+    })
+
+    await expect(ledger.syncAttempt(dbClient, attemptId)).rejects.toMatchObject({ code: "P2025" })
+    const saved = await ledger.getById(dbClient, payment.id)
+
+    expect(saved.attempts[0].status).toBe("CAPTURED")
+    expect(saved.attempts[0].capturedAmountOre).toBe(payment.amountOre)
+  })
+
   it("rolls back checkout preparation without contacting Stripe or leaving a task", async () => {
     const { ledger, payment } = await createPayment()
 
