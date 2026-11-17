@@ -56,7 +56,7 @@ function setup(awards: ReturnType<typeof createAward>[]) {
   async function notification() {
     expect(emailService.send).toHaveBeenCalledOnce()
     const call = emailService.send.mock.calls[0]
-    const data = emails.RECEIVED_MARK.getSchema().parse(call[7])
+    const data = emails.RECEIVED_MARK.getSchema().parse(call[0].data)
     const html = await renderEmailTemplate(emails.RECEIVED_MARK, data)
     expect(html).toContain("Se prikkene dine")
     expect(html).toContain(`href="${mustache.escape("https://online.ntnu.no/profil")}"`)
@@ -67,7 +67,7 @@ function setup(awards: ReturnType<typeof createAward>[]) {
     expect(html.match(/bgcolor="#fee2e2"/g)).toHaveLength(1)
     expect(html).toContain('class="mark-card text-primary" bgcolor="#fee2e2"')
     expect(html).toContain(`<p style="margin: 0;">${data.title}</p>`)
-    return { subject: call[5], data, html }
+    return { subject: call[0].subject, data, html }
   }
 
   return { handle, service, markService, notification }

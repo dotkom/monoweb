@@ -11,7 +11,7 @@ import type { ConfigurationWithGoogleWorkspace } from "../../configuration"
 import { NotFoundError } from "../../error"
 import { CommitteeGroupSlug } from "../authorization-service"
 import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { emails } from "../email/email-template"
 import {
   findActiveGroupMembership,
   GroupRoleTypeEnum,
@@ -330,40 +330,34 @@ export function getWorkspaceService(
     if (twoFactorAuthentication.enforced) {
       invariant(twoFactorAuthentication.recoveryCode, "Expected a recovery code to be defined when 2FA is enforced")
 
-      await emailService.send(
-        DEFAULT_EMAIL_SOURCE,
-        [DOTKOM_LEADER_EMAIL],
-        [user.email],
-        [],
-        [],
-        formatEmailSubject("Opprettelse av komité-e-postadresse"),
-        emails.COMMITTEE_EMAIL_CREATED_2FA_ENFORCED,
-        {
+      await emailService.send({
+        replyTo: [DOTKOM_LEADER_EMAIL],
+        to: [user.email],
+        subject: formatEmailSubject("Opprettelse av komité-e-postadresse"),
+        definition: emails.COMMITTEE_EMAIL_CREATED_2FA_ENFORCED,
+        data: {
           firstName,
           email: committeeEmail,
           password,
           dotkomLeaderName,
           committeeLeaderName,
           recoveryCode: twoFactorAuthentication.recoveryCode,
-        }
-      )
+        },
+      })
     } else {
-      await emailService.send(
-        DEFAULT_EMAIL_SOURCE,
-        [DOTKOM_LEADER_EMAIL],
-        [user.email],
-        [],
-        [],
-        formatEmailSubject("Opprettelse av komité-e-postadresse"),
-        emails.COMMITTEE_EMAIL_CREATED,
-        {
+      await emailService.send({
+        replyTo: [DOTKOM_LEADER_EMAIL],
+        to: [user.email],
+        subject: formatEmailSubject("Opprettelse av komité-e-postadresse"),
+        definition: emails.COMMITTEE_EMAIL_CREATED,
+        data: {
           firstName,
           email: committeeEmail,
           password,
           dotkomLeaderName,
           committeeLeaderName,
-        }
-      )
+        },
+      })
     }
   }
 

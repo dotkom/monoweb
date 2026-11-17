@@ -8,6 +8,10 @@ import mustache from "mustache"
 import { z } from "zod"
 import { renderEmailRichText } from "./email-rich-text"
 
+export const DEFAULT_EMAIL_FROM_EMAIL_ADDRESS = "varslinger@online.ntnu.no"
+export const DEFAULT_EMAIL_FROM_NAME = "Linjeforeningen Online"
+export const DEFAULT_EMAIL_FROM = `${DEFAULT_EMAIL_FROM_NAME} <${DEFAULT_EMAIL_FROM_EMAIL_ADDRESS}>`
+
 export type EmailType =
   | "COMPANY_COLLABORATION_RECEIPT"
   | "COMPANY_COLLABORATION_NOTIFICATION"
@@ -101,15 +105,12 @@ export async function renderEmailTemplate<TData>(
   )
 }
 
-export const DEFAULT_EMAIL_SOURCE = "varslinger@online.ntnu.no"
-export const DEFAULT_EMAIL_FROM = `Linjeforeningen Online <${DEFAULT_EMAIL_SOURCE}>`
-
 export function getReplyToAddresses(addresses: string[]): string[] {
   if (addresses.length > 0) {
     return addresses
   }
 
-  return [DEFAULT_EMAIL_SOURCE]
+  return [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS]
 }
 
 const EventImageUrlSchema = z
