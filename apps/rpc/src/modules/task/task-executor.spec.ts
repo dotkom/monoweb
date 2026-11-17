@@ -1,5 +1,6 @@
-import { type DBClient, type DBHandle, Prisma } from "@dotkomonline/db"
+import { type DBClient, type DBHandle, Prisma, PrismaErrorCode } from "@dotkomonline/db"
 import { addMinutes } from "date-fns"
+import Stripe from "stripe"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import type { Configuration } from "../../configuration"
@@ -101,7 +102,10 @@ describe("task executor transaction boundaries", () => {
     { error: new Error("Stripe unavailable"), expectedStatus: "FAILED" },
     { error: new TaskSkippedError("Attempt was replaced"), expectedStatus: "SKIPPED" },
     {
-      error: new Prisma.PrismaClientKnownRequestError("Record not found", { code: "P2025", clientVersion: "test" }),
+      error: new Prisma.PrismaClientKnownRequestError("Record not found", {
+        code: PrismaErrorCode.RecordNotFound,
+        clientVersion: "test",
+      }),
       expectedStatus: "FAILED",
     },
   ])("records $expectedStatus when capture does not complete", async ({ error, expectedStatus }) => {
@@ -118,12 +122,42 @@ describe("task executor transaction boundaries", () => {
     expect(taskService.update).not.toHaveBeenCalled()
   })
 
-  it("reschedules a task that reports a concurrent modification", async () => {
+  it.each([
+    new ConcurrentModificationError("Pool changed"),
+    new Prisma.PrismaClientKnownRequestError("Transaction write conflict", {
+      code: PrismaErrorCode.WriteConflictOrDeadlock,
+      clientVersion: "test",
+    }),
+  ])("reschedules a pool merge that encounters %s", async (error) => {
     const { client, attendanceService, taskService, runTask } = createFixture(tasks.MERGE_ATTENDANCE_POOLS.type)
-    attendanceService.executeMergeEventPoolsTask.mockRejectedValue(new ConcurrentModificationError("Pool changed"))
+    attendanceService.executeMergeEventPoolsTask.mockRejectedValue(error)
 
     await runTask()
 
+    expect(taskService.update).toHaveBeenCalledExactlyOnceWith(
+      client,
+      "task",
+      {
+        status: "PENDING",
+        scheduledAt: addMinutes(new Date(), 1),
+        processedAt: null,
+      },
+      "RUNNING"
+    )
+    expect(taskService.setTaskExecutionStatus).toHaveBeenCalledExactlyOnceWith(client, "task", "RUNNING", "PENDING")
+  })
+
+  it("retries a completion check after a Stripe timeout without wrapping the check in a transaction", async () => {
+    const { client, attendanceService, taskService, payload, runTask } = createFixture(
+      tasks.VERIFY_ATTENDANCE_COMPLETION.type
+    )
+    const timeout = new Stripe.errors.StripeConnectionError({ message: "Request timed out" })
+    attendanceService.executeVerifyAttendanceCompletionTask.mockRejectedValue(timeout)
+
+    await runTask()
+
+    expect(client.$transaction).not.toHaveBeenCalled()
+    expect(attendanceService.executeVerifyAttendanceCompletionTask).toHaveBeenCalledExactlyOnceWith(client, payload)
     expect(taskService.update).toHaveBeenCalledExactlyOnceWith(
       client,
       "task",

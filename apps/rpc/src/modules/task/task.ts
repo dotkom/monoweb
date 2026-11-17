@@ -1,4 +1,7 @@
+import { Prisma, PrismaErrorCode } from "@dotkomonline/db"
 import { z } from "zod"
+import { ConcurrentModificationError, RetryableTaskError } from "../../error"
+import { Stripe } from "stripe"
 
 export const TaskTypeSchema = z.enum([
   "OPEN_PAYMENT_CHECKOUT",
@@ -62,3 +65,21 @@ export const RecurringTaskWriteSchema = RecurringTaskSchema.pick({
 })
 
 export type RecurringTaskWrite = z.infer<typeof RecurringTaskWriteSchema>
+
+export function isRetryableTaskError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return (
+      error.code === PrismaErrorCode.ConnectionPoolTimeout ||
+      error.code === PrismaErrorCode.TransactionApiError ||
+      error.code === PrismaErrorCode.WriteConflictOrDeadlock
+    )
+  }
+
+  return (
+    error instanceof ConcurrentModificationError ||
+    error instanceof RetryableTaskError ||
+    error instanceof Stripe.errors.StripeConnectionError ||
+    error instanceof Stripe.errors.StripeAPIError ||
+    error instanceof Stripe.errors.StripeRateLimitError
+  )
+}

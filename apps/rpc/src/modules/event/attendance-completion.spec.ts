@@ -5,7 +5,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { addHours, addMinutes, subMinutes } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
-import { TaskSkippedError } from "../../error"
+import { RetryableTaskError, TaskSkippedError } from "../../error"
 import { DEFAULT_MARK_DURATION, type Mark, type PersonalMark } from "../mark/mark"
 import type { PaymentView } from "../payment/payment"
 import type { Task } from "../task/task"
@@ -195,6 +195,8 @@ describe("attendance completion helpers", () => {
 function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentView["status"]) {
   const eventEmitter = new EventEmitter()
   const handle = mock<DBHandle>()
+  const client = mock<DBClient>()
+  client.$transaction.mockImplementation(async (operation) => operation(handle))
   const attendanceRepository = mock<Parameters<typeof getAttendanceService>[1]>()
   const taskSchedulingService = mock<Parameters<typeof getAttendanceService>[2]>()
   const markService = mock<Parameters<typeof getAttendanceService>[4]>()
@@ -224,6 +226,8 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
     locationLink: null,
   })
 
+  attendance.pools = [mock<AttendancePool>({ id: attendee.attendancePoolId, capacity: -1 })]
+  attendanceRepository.findAttendeeById.mockResolvedValue(attendee)
   attendanceRepository.findAttendanceByAttendeeId.mockResolvedValue(attendance)
   attendanceRepository.findAttendanceById.mockResolvedValue(attendance)
   attendanceRepository.updateAttendeeById.mockImplementation(async (_handle, _attendeeId, data) => {
@@ -244,7 +248,20 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
     attemptId: "attempt",
     captureScheduledAt: null,
   })
-  attendancePaymentService.syncPayment.mockResolvedValue(payment)
+  attendancePaymentService.syncPayment.mockImplementation(async () => {
+    attendee.payment = payment
+
+    return payment
+  })
+  attendancePaymentService.expireOpenCheckout.mockImplementation(async () => {
+    if (payment.isCheckoutPending) {
+      return false
+    }
+
+    payment.status = "EXPIRED"
+
+    return true
+  })
   attendancePaymentService.prepareCheckout.mockResolvedValue(
     mock<PaymentView>({
       status: "UNPAID",
@@ -277,6 +294,7 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
 
   return {
     eventEmitter,
+    client,
     handle,
     attendee,
     attendance,
@@ -325,11 +343,14 @@ describe("checkout recovery after registration", () => {
     fixture.attendancePaymentService.openCheckout.mockRejectedValue(new Error("Stripe unavailable"))
 
     await fixture.attendanceService.openAttendeeCheckout(mock<DBClient>(), fixture.attendee.id)
-    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.handle, {
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
       attendeeId: fixture.attendee.id,
     })
 
-    expect(fixture.attendancePaymentService.cancel).toHaveBeenCalledWith(fixture.handle, fixture.payment.id)
+    expect(fixture.attendancePaymentService.cancelUnopenedCheckout).toHaveBeenCalledWith(
+      fixture.handle,
+      fixture.payment.attemptId
+    )
     expect(fixture.attendanceRepository.deleteAttendeeById).toHaveBeenCalledWith(fixture.handle, fixture.attendee.id)
     expect(fixture.markService.create).not.toHaveBeenCalled()
     expect(fixture.personalMarkService.recordAssignment).not.toHaveBeenCalled()
@@ -401,7 +422,7 @@ describe("attendance payment deadlines", () => {
 
     vi.setSystemTime(addMinutes(deadline, 1))
 
-    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.handle, {
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
       attendeeId: fixture.attendee.id,
     })
 
@@ -657,6 +678,7 @@ describe("attendance payment deadlines", () => {
 
   it("schedules capture when the completion check discovers an authorization before the webhook does", async () => {
     const {
+      client,
       handle,
       attendee,
       attendanceService,
@@ -666,9 +688,9 @@ describe("attendance payment deadlines", () => {
       markService,
     } = createPaymentContext(new Date("2026-11-08T09:00:00Z"), "AUTHORIZED")
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
-    expect(attendancePaymentService.syncPayment).toHaveBeenCalledExactlyOnceWith(handle, "payment")
+    expect(attendancePaymentService.syncPayment).toHaveBeenCalledExactlyOnceWith(client, "payment")
     expect(attendanceRepository.updateAttendeeCompletionDeadline).toHaveBeenCalledExactlyOnceWith(
       handle,
       attendee.id,
@@ -803,28 +825,13 @@ describe("missing payment penalties", () => {
     "EXPIRED",
     "CANCELLED",
   ] as const)("assigns penalties for %s after the deregistration deadline", async (status) => {
-    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentContext(
+    const { client, handle, attendee, attendanceService, markService, personalMarkService } = createPaymentContext(
       subMinutes(getCurrentUTC(), 60),
       status
     )
 
-    const notifyAfterCommit = await attendanceService.executeVerifyAttendanceCompletionTask(handle, {
-      attendeeId: attendee.id,
-    })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
-    expect(personalMarkService.sendReceivedMarkEmail).not.toHaveBeenCalled()
-
-    const client = mock<DBClient>()
-    await notifyAfterCommit?.(client)
-
-    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
-      client,
-      expect.objectContaining({ markId: "suspension" })
-    )
-    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
-      client,
-      expect.objectContaining({ markId: "missing-payment-mark" })
-    )
     expect(markService.create).toHaveBeenCalledTimes(2)
     expect(markService.create).toHaveBeenNthCalledWith(
       1,
@@ -841,35 +848,34 @@ describe("missing payment penalties", () => {
     expect(personalMarkService.recordAssignment).toHaveBeenCalledTimes(2)
     expect(personalMarkService.recordAssignment).toHaveBeenCalledWith(handle, attendee.userId, "suspension")
     expect(personalMarkService.recordAssignment).toHaveBeenCalledWith(handle, attendee.userId, "missing-payment-mark")
+    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({ markId: "suspension" })
+    )
+    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({ markId: "missing-payment-mark" })
+    )
   })
 
   it("deregisters an unpaid attendee before the deregistration deadline without assigning penalties", async () => {
-    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentContext(
-      addHours(getCurrentUTC(), 1),
-      "UNPAID"
-    )
-    const deregisterAttendee = vi.spyOn(attendanceService, "deregisterAttendee").mockResolvedValue()
+    const { client, handle, attendee, attendanceService, attendanceRepository, markService, personalMarkService } =
+      createPaymentContext(addHours(getCurrentUTC(), 1), "UNPAID")
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
-    expect(deregisterAttendee).toHaveBeenCalledWith(handle, attendee.id, {
-      ignoreDeregistrationWindow: true,
-      automaticDeregistrationReason: {
-        title: "Påmeldingen ble ikke fullført",
-        details: "Betalingen ble ikke gjennomført innen fristen.",
-      },
-    })
+    expect(attendanceRepository.deleteAttendeeById).toHaveBeenCalledWith(handle, attendee.id)
     expect(markService.create).not.toHaveBeenCalled()
     expect(personalMarkService.recordAssignment).not.toHaveBeenCalled()
   })
 
   it("does not assign penalties when payment has succeeded", async () => {
-    const { handle, attendee, attendanceService, markService, personalMarkService } = createPaymentContext(
+    const { client, attendee, attendanceService, markService, personalMarkService } = createPaymentContext(
       subMinutes(getCurrentUTC(), 60),
       "PAID"
     )
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
     expect(markService.create).not.toHaveBeenCalled()
     expect(personalMarkService.recordAssignment).not.toHaveBeenCalled()
@@ -881,22 +887,174 @@ describe("payment reconciliation safeguards", () => {
     null,
     addHours(getCurrentUTC(), 1),
   ])("ignores a stale completion job with deadline %s", async (completionDeadline) => {
-    const { handle, attendee, attendanceService, attendancePaymentService, markService } = createPaymentContext(
-      subMinutes(getCurrentUTC(), 60),
-      "FAILED"
-    )
+    const { client, attendee, attendanceService, attendancePaymentService, markService, payment } =
+      createPaymentContext(subMinutes(getCurrentUTC(), 60), "FAILED")
     attendee.completionDeadline = completionDeadline
-    const deregisterAttendee = vi.spyOn(attendanceService, "deregisterAttendee").mockResolvedValue()
+    attendee.payment = payment
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
     expect(markService.create).not.toHaveBeenCalled()
-    expect(deregisterAttendee).not.toHaveBeenCalled()
+    expect(client.$transaction).not.toHaveBeenCalled()
     expect(attendancePaymentService.syncPayment).not.toHaveBeenCalled()
   })
 
+  it("keeps the seat when Stripe reports payment after the expiration request", async () => {
+    const fixture = createPaymentContext(addHours(getCurrentUTC(), 1), "UNPAID")
+    fixture.attendancePaymentService.expireOpenCheckout.mockImplementation(async () => {
+      fixture.attendancePaymentService.syncPayment.mockImplementationOnce(async () => {
+        const paid = { ...fixture.payment, status: "PAID" as const, isRequirementSatisfied: true }
+        fixture.attendee.payment = paid
+
+        return paid
+      })
+
+      return true
+    })
+
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+      attendeeId: fixture.attendee.id,
+    })
+
+    expect(fixture.attendancePaymentService.expireOpenCheckout).toHaveBeenCalledExactlyOnceWith(
+      fixture.client,
+      "attempt"
+    )
+    expect(fixture.attendanceRepository.updateAttendeeCompletionDeadline).toHaveBeenCalledExactlyOnceWith(
+      fixture.handle,
+      fixture.attendee.id,
+      null
+    )
+    expect(fixture.attendanceRepository.deleteAttendeeById).not.toHaveBeenCalled()
+    expect(fixture.markService.create).not.toHaveBeenCalled()
+  })
+
+  it("prepares a new checkout for a deadline extended during expiration", async () => {
+    const fixture = createPaymentContext(addHours(getCurrentUTC(), 1), "UNPAID")
+    const extendedDeadline = addHours(getCurrentUTC(), 2)
+    fixture.attendancePaymentService.expireOpenCheckout.mockImplementation(async () => {
+      fixture.attendee.completionDeadline = extendedDeadline
+      fixture.payment.status = "EXPIRED"
+      fixture.payment.canStartCheckout = true
+
+      return true
+    })
+
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+      attendeeId: fixture.attendee.id,
+    })
+
+    expect(fixture.attendancePaymentService.prepareCheckout).toHaveBeenCalledExactlyOnceWith(
+      fixture.handle,
+      expect.objectContaining({ attendee: fixture.attendee })
+    )
+    expect(fixture.attendee.completionDeadline).toEqual(extendedDeadline)
+    expect(fixture.attendanceRepository.deleteAttendeeById).not.toHaveBeenCalled()
+    expect(fixture.attendanceRepository.updateAttendeeCompletionDeadline).not.toHaveBeenCalled()
+  })
+
+  it("restores an extended reservation on retry after checkout expired and the transaction failed", async () => {
+    const fixture = createPaymentContext(addHours(getCurrentUTC(), 1), "UNPAID")
+    const extendedDeadline = addHours(getCurrentUTC(), 2)
+    const task = { attendeeId: fixture.attendee.id }
+    fixture.attendancePaymentService.expireOpenCheckout.mockImplementationOnce(async () => {
+      fixture.attendee.completionDeadline = extendedDeadline
+      fixture.payment.status = "EXPIRED"
+      fixture.payment.canStartCheckout = true
+
+      return true
+    })
+    fixture.client.$transaction.mockRejectedValueOnce(new Error("Transaction rolled back"))
+
+    await expect(fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, task)).rejects.toThrow(
+      "Transaction rolled back"
+    )
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, task)
+
+    expect(fixture.attendancePaymentService.prepareCheckout).toHaveBeenCalledOnce()
+    expect(fixture.attendancePaymentService.expireOpenCheckout).toHaveBeenCalledOnce()
+    expect(fixture.attendee.completionDeadline).toEqual(extendedDeadline)
+    expect(fixture.attendanceRepository.deleteAttendeeById).not.toHaveBeenCalled()
+  })
+
+  it("releases the seat when the payment deadline preceded deregistration but the worker ran late", async () => {
+    const fixture = createPaymentContext(subMinutes(getCurrentUTC(), 1), "UNPAID")
+    fixture.attendee.completionDeadline = subMinutes(getCurrentUTC(), 2)
+
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+      attendeeId: fixture.attendee.id,
+    })
+
+    expect(fixture.attendanceRepository.deleteAttendeeById).toHaveBeenCalledWith(fixture.handle, fixture.attendee.id)
+    expect(fixture.markService.create).not.toHaveBeenCalled()
+  })
+
+  it("sends no penalty emails when the database rejects the commit", async () => {
+    const fixture = createPaymentContext(subMinutes(getCurrentUTC(), 10), "FAILED")
+    const failure = new Error("Transaction could not commit")
+
+    fixture.client.$transaction.mockImplementation(async (operation) => {
+      await operation(fixture.handle)
+      throw failure
+    })
+
+    await expect(
+      fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+        attendeeId: fixture.attendee.id,
+      })
+    ).rejects.toThrow(failure)
+
+    expect(fixture.personalMarkService.recordAssignment).toHaveBeenCalledTimes(2)
+    expect(fixture.personalMarkService.sendReceivedMarkEmail).not.toHaveBeenCalled()
+  })
+
+  it("uses a concurrent waiver when applying the decision", async () => {
+    const fixture = createPaymentContext(subMinutes(getCurrentUTC(), 10), "FAILED")
+    fixture.client.$transaction.mockImplementation(async (operation) => {
+      const waived = { ...fixture.payment, status: "WAIVED" as const, isRequirementSatisfied: true }
+      fixture.attendanceRepository.findAttendanceByAttendeeId.mockResolvedValueOnce({
+        ...fixture.attendance,
+        attendees: [{ ...fixture.attendee, payment: waived }],
+      })
+
+      return await operation(fixture.handle)
+    })
+
+    await fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+      attendeeId: fixture.attendee.id,
+    })
+
+    expect(fixture.attendancePaymentService.syncPayment).toHaveBeenCalledExactlyOnceWith(
+      fixture.client,
+      fixture.payment.id
+    )
+    expect(fixture.attendanceRepository.updateAttendeeCompletionDeadline).toHaveBeenCalledExactlyOnceWith(
+      fixture.handle,
+      fixture.attendee.id,
+      null
+    )
+    expect(fixture.markService.create).not.toHaveBeenCalled()
+  })
+
+  it("retries a replacement payment attempt before applying marks", async () => {
+    const fixture = createPaymentContext(subMinutes(getCurrentUTC(), 10), "FAILED")
+    fixture.client.$transaction.mockImplementation(async (operation) => {
+      fixture.attendee.payment = { ...fixture.payment, attemptId: "replacement" }
+
+      return await operation(fixture.handle)
+    })
+
+    await expect(
+      fixture.attendanceService.executeVerifyAttendanceCompletionTask(fixture.client, {
+        attendeeId: fixture.attendee.id,
+      })
+    ).rejects.toThrow(RetryableTaskError)
+    expect(fixture.markService.create).not.toHaveBeenCalled()
+    expect(fixture.attendanceRepository.updateAttendeeCompletionDeadline).not.toHaveBeenCalled()
+  })
+
   it("does not schedule more penalties when a failed-payment webhook repeats after enforcement", async () => {
-    const { handle, attendee, attendanceService, attendanceRepository, taskSchedulingService, markService } =
+    const { client, handle, attendee, attendanceService, attendanceRepository, taskSchedulingService, markService } =
       createPaymentContext(subMinutes(getCurrentUTC(), 60), "FAILED")
     markService.create.mockResolvedValue(mock<Mark>({ id: "duplicate-penalty" }))
     attendanceRepository.updateAttendeeCompletionDeadline.mockImplementation(async (_handle, _attendeeId, deadline) => {
@@ -908,9 +1066,9 @@ describe("payment reconciliation safeguards", () => {
       mock<Task>({ id: "completion-task", status: "COMPLETED" })
     )
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
     await attendanceService.syncAttendeePayment(handle, attendee.id)
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
     expect(attendee.completionDeadline).toBeNull()
     expect(markService.create).toHaveBeenCalledTimes(2)
@@ -964,15 +1122,20 @@ describe("payment reconciliation safeguards", () => {
   })
 
   it("refreshes a cached authorization before deciding whether payment enforcement is needed", async () => {
-    const { handle, attendee, attendanceService, attendancePaymentService, markService } = createPaymentContext(
+    const { client, attendee, attendanceService, attendancePaymentService, markService } = createPaymentContext(
       subMinutes(getCurrentUTC(), 60),
       "CANCELLED"
     )
-    attendee.payment = mock<PaymentView>({ id: "payment", status: "AUTHORIZED", isRequirementSatisfied: true })
+    attendee.payment = mock<PaymentView>({
+      id: "payment",
+      attemptId: "attempt",
+      status: "AUTHORIZED",
+      isRequirementSatisfied: true,
+    })
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    await attendanceService.executeVerifyAttendanceCompletionTask(client, { attendeeId: attendee.id })
 
-    expect(attendancePaymentService.syncPayment).toHaveBeenCalledWith(handle, "payment")
+    expect(attendancePaymentService.syncPayment).toHaveBeenCalledExactlyOnceWith(client, "payment")
     expect(markService.create).toHaveBeenCalledTimes(2)
   })
 

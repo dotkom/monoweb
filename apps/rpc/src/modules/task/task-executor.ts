@@ -7,10 +7,10 @@ import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
 import type { Configuration } from "../../configuration"
-import { ConcurrentModificationError, IllegalStateError, TaskSkippedError } from "../../error"
+import { IllegalStateError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
-import type { Task } from "./task"
+import { isRetryableTaskError, type Task } from "./task"
 import {
   type ChargeAttendeeTaskDefinition,
   type OpenPaymentCheckoutTaskDefinition,
@@ -114,12 +114,10 @@ export function getLocalTaskExecutor(
           }
 
           case tasks.VERIFY_ATTENDANCE_COMPLETION.type: {
-            await client.$transaction(async (handle) => {
-              return await attendanceService.executeVerifyAttendanceCompletionTask(
-                handle,
-                payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
-              )
-            })
+            await attendanceService.executeVerifyAttendanceCompletionTask(
+              client,
+              payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
+            )
 
             return
           }
@@ -200,7 +198,7 @@ export function getLocalTaskExecutor(
           span.recordException(error)
         }
 
-        if (claimedAt !== null || error instanceof ConcurrentModificationError) {
+        if (claimedAt !== null || isRetryableTaskError(error)) {
           outcome = "retrying"
 
           const retry = {

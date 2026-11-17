@@ -24,6 +24,7 @@ export class AlreadyExistsError extends ApplicationError {}
 export class FailedPreconditionError extends ApplicationError {}
 export class ResourceExhaustedError extends ApplicationError {}
 export class ForbiddenError extends ApplicationError {}
+export class RetryableTaskError extends ApplicationError {}
 export class TaskSkippedError extends ApplicationError {}
 export class ConcurrentModificationError extends ApplicationError {}
 
