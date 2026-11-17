@@ -26,6 +26,7 @@ export interface PersonalMarkService {
   findPersonalMarksByMarkId(handle: DBHandle, markId: MarkId): Promise<PersonalMark[]>
   findMarksByUserId(handle: DBHandle, userId: UserId): Promise<Mark[]>
   findPersonalMarksByUserId(handle: DBHandle, userId: UserId): Promise<PersonalMark[]>
+  recordAssignment(handle: DBHandle, userId: UserId, markId: MarkId, givenByUserId?: UserId): Promise<PersonalMark>
   addToUser(handle: DBHandle, userId: UserId, markId: MarkId, givenByUserId?: UserId): Promise<PersonalMark>
   /**
    * Remove a personal mark from a user
@@ -90,9 +91,13 @@ export function getPersonalMarkService(
       return await personalMarkRepository.findMarksByUserId(handle, userId)
     },
 
+    async recordAssignment(handle, userId, markId, givenByUserId) {
+      return await personalMarkRepository.create(handle, userId, markId, givenByUserId)
+    },
+
     async addToUser(handle, userId, markId, givenByUserId) {
       const mark = await markService.getById(handle, markId)
-      const personalMark = await personalMarkRepository.create(handle, userId, mark.id, givenByUserId)
+      const personalMark = await this.recordAssignment(handle, userId, mark.id, givenByUserId)
 
       await this.sendReceivedMarkEmail(handle, personalMark)
 
