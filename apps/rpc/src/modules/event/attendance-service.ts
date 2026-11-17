@@ -474,6 +474,47 @@ export function getAttendanceService(
     })
   }
 
+  async function completePaymentRequirement(
+    handle: DBHandle,
+    attendance: Attendance,
+    attendeeId: AttendeeId,
+    payment: PaymentView
+  ) {
+    await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+    if (payment.status !== "AUTHORIZED") {
+      return
+    }
+
+    const chargeTask = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+    const paymentAttemptId = payment.attemptId
+
+    if (paymentAttemptId === null) {
+      throw new IllegalStateError(`Payment(ID=${payment.id}) is authorized without a payment attempt`)
+    }
+
+    const scheduledPayload = tasks.CHARGE_ATTENDEE.getSchema().safeParse(chargeTask?.payload)
+    const scheduledAttemptId = scheduledPayload.success ? scheduledPayload.data.paymentAttemptId : null
+    const chargeDeadline = new TZDate(payment.captureScheduledAt ?? attendance.deregisterDeadline, "UTC")
+    const scheduledChargeTime = max([getCurrentUTC(), chargeDeadline])
+
+    if (chargeTask?.status === "PENDING" && scheduledAttemptId === paymentAttemptId) {
+      if (chargeTask.scheduledAt == null || !isAfter(chargeTask.scheduledAt, scheduledChargeTime)) {
+        return
+      }
+
+      await taskSchedulingService.cancel(handle, chargeTask.id)
+    }
+
+    await taskSchedulingService.scheduleAt(
+      handle,
+      tasks.CHARGE_ATTENDEE,
+      { attendeeId, paymentAttemptId },
+      scheduledChargeTime
+    )
+  }
+
   return {
     async createAttendance(handle, data) {
       validateAttendanceWrite(data)
@@ -1452,39 +1493,7 @@ export function getAttendanceService(
         return
       }
 
-      await clearAttendeeCompletionDeadline(handle, attendeeId)
-
-      if (payment.status !== "AUTHORIZED") {
-        return
-      }
-
-      const chargeTask = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
-
-      const paymentAttemptId = payment.attemptId
-
-      if (paymentAttemptId === null) {
-        throw new IllegalStateError(`Payment(ID=${payment.id}) is authorized without a payment attempt`)
-      }
-
-      const scheduledPayload = tasks.CHARGE_ATTENDEE.getSchema().safeParse(chargeTask?.payload)
-      const scheduledAttemptId = scheduledPayload.success ? scheduledPayload.data.paymentAttemptId : null
-      const chargeDeadline = new TZDate(payment.captureScheduledAt ?? attendance.deregisterDeadline, "UTC")
-      const scheduledChargeTime = max([now, chargeDeadline])
-
-      if (chargeTask?.status === "PENDING" && scheduledAttemptId === paymentAttemptId) {
-        if (chargeTask.scheduledAt == null || !isAfter(chargeTask.scheduledAt, scheduledChargeTime)) {
-          return
-        }
-
-        await taskSchedulingService.cancel(handle, chargeTask.id)
-      }
-
-      await taskSchedulingService.scheduleAt(
-        handle,
-        tasks.CHARGE_ATTENDEE,
-        { attendeeId, paymentAttemptId },
-        scheduledChargeTime
-      )
+      await completePaymentRequirement(handle, attendance, attendeeId, payment)
     },
 
     async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
@@ -1509,8 +1518,13 @@ export function getAttendanceService(
       const synchronizedAttendee = { ...attendee, payment }
 
       if (getMissingAttendanceCompletionRequirements(attendance, synchronizedAttendee).length === 0) {
-        await this.syncAttendeePayment(handle, attendeeId)
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        if (payment?.isRequirementSatisfied === true) {
+          await completePaymentRequirement(handle, attendance, attendeeId, payment)
+        } else {
+          await clearAttendeeCompletionDeadline(handle, attendeeId)
+        }
+
+        await broadcastPaymentChange(handle, attendance, attendeeId)
 
         return
       }
@@ -1585,7 +1599,7 @@ export function getAttendanceService(
           },
         })
       } else {
-        await this.syncAttendeePayment(handle, attendeeId)
+        await broadcastPaymentChange(handle, attendance, attendeeId)
       }
     },
 
