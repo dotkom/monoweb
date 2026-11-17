@@ -55,7 +55,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "FIFA_POINTS":
       return `${((value / 279) * 2800).toFixed(2)} FIFA points` // 2800 FC points costs 279
     case "CS_KEYS":
-      return `${(value / 28).toFixed(2)} keys` // A CS key costs 28kr
+      return `${(value / 23.5).toFixed(2)} keys` // A CS key costs 23.50kr
     case "RP":
       return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
     case "GTA_DOLLARS":
@@ -151,7 +151,7 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
     case "FIFA_POINTS":
       return ["(pris / 279) * 2000", "2000 fifa points koster 279 kr"]
     case "CS_KEYS":
-      return ["pris / 28", "En key koster 28 kr"]
+      return ["pris / 23,50", "En key koster 23,50 kr"]
     case "RP":
       return ["(pris / 201,93) * 2540", "Et gavekort med 2540 RP koster 201,93 kr"]
     case "GTA_DOLLARS":
