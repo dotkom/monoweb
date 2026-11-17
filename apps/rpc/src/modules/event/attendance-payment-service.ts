@@ -28,6 +28,9 @@ export interface AttendancePaymentService {
    */
   syncPayment(handle: DBHandle, paymentId: string): Promise<PaymentView>
 
+  expireOpenCheckout(client: DBClient, attemptId: string): Promise<boolean>
+  cancelUnopenedCheckout(handle: DBHandle, attemptId: string): Promise<void>
+
   /**
    * Cancels the latest payment attempt. Does nothing if the payment has no payment attempts.
    */
@@ -101,6 +104,14 @@ export function getAttendancePaymentService(
       const updatedPayment = await paymentLedgerService.syncAttempt(handle, attempt.id)
 
       return buildPaymentView(updatedPayment)
+    },
+
+    async expireOpenCheckout(client, attemptId) {
+      return await paymentLedgerService.expireOpenCheckout(client, attemptId)
+    },
+
+    async cancelUnopenedCheckout(handle, attemptId) {
+      await paymentRepository.cancelUnopenedCheckout(handle, attemptId)
     },
 
     async cancel(handle, paymentId) {

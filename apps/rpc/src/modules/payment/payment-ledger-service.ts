@@ -53,6 +53,12 @@ export interface PaymentLedgerService {
   syncAttempt(handle: DBHandle, attemptId: string, identifiers?: PaymentAttemptIdentifiers): Promise<PaymentRecord>
 
   /**
+   * Returns true if this attempt had an open checkout session in the ledger.
+   * The attendee may have paid before Stripe processed the expiration request. Read the final status before releasing the seat.
+   */
+  expireOpenCheckout(client: DBClient, attemptId: string): Promise<boolean>
+
+  /**
    * Captures an authorized payment attempt in Stripe and saves the updated payment status.
    */
   capture(handle: DBHandle, attemptId: string): Promise<PaymentRecord>
@@ -431,6 +437,33 @@ export function getPaymentLedgerService(
       }
 
       return updatedPayment
+    },
+
+    async expireOpenCheckout(client, attemptId) {
+      const payment = await paymentRepository.findByAttemptId(client, attemptId)
+      const attempt = payment?.attempts[0]
+
+      if (attempt?.id !== attemptId || attempt.status !== "CHECKOUT_OPEN" || attempt.stripeCheckoutSessionId === null) {
+        return false
+      }
+
+      try {
+        await stripe.checkout.sessions.expire(attempt.stripeCheckoutSessionId)
+      } catch (error) {
+        if (!(error instanceof Stripe.errors.StripeInvalidRequestError)) {
+          throw error
+        }
+
+        // Stripe rejects expiration if the attendee has already paid or the session has expired.
+        // An open session means expiration failed and can still accept payment.
+        const session = await stripe.checkout.sessions.retrieve(attempt.stripeCheckoutSessionId)
+
+        if (session.status === "open") {
+          throw error
+        }
+      }
+
+      return true
     },
 
     async capture(handle, attemptId) {

@@ -1,6 +1,8 @@
 import type { DBClient, DBHandle } from "@dotkomonline/db"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
+import Stripe from "stripe"
+import { addMinutes } from "date-fns"
 import type { Configuration } from "../../configuration"
 import { TaskSkippedError } from "../../error"
 import type { PaymentWorkflowService } from "../payment/payment-workflow-service"
@@ -110,6 +112,30 @@ describe("task executor transaction boundaries", () => {
       [client, "task", "RUNNING", "PENDING"],
       [client, "task", expectedStatus, "RUNNING"],
     ])
+  })
+
+  it("retries a completion check after a Stripe timeout without wrapping the check in a transaction", async () => {
+    const { client, attendanceService, taskService, payload, runTask } = createFixture(
+      tasks.VERIFY_ATTENDANCE_COMPLETION.type
+    )
+    const timeout = new Stripe.errors.StripeConnectionError({ message: "Request timed out" })
+    attendanceService.executeVerifyAttendanceCompletionTask.mockRejectedValue(timeout)
+
+    await runTask()
+
+    expect(client.$transaction).not.toHaveBeenCalled()
+    expect(attendanceService.executeVerifyAttendanceCompletionTask).toHaveBeenCalledExactlyOnceWith(client, payload)
+    expect(taskService.update).toHaveBeenCalledExactlyOnceWith(
+      client,
+      "task",
+      {
+        status: "PENDING",
+        scheduledAt: addMinutes(new Date(), 1),
+        processedAt: null,
+      },
+      "RUNNING"
+    )
+    expect(taskService.setTaskExecutionStatus).toHaveBeenCalledExactlyOnceWith(client, "task", "RUNNING", "PENDING")
   })
 
   it("opens prepared checkouts outside a transaction through the payment workflow", async () => {

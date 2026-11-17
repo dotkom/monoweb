@@ -67,6 +67,7 @@ import {
   InvalidArgumentError,
   NotFoundError,
   ResourceExhaustedError,
+  RetryableTaskError,
   TaskSkippedError,
 } from "../../error"
 import { validateTurnstileToken } from "../../turnstile"
@@ -129,6 +130,20 @@ type EventRegistrationOptions = {
    */
   overrideTurnstileCheck: boolean
 }
+
+type CompletionCheck = {
+  attendeeId: AttendeeId
+  deadline: Date
+  paymentId: string | undefined
+  attemptId: string | null | undefined
+}
+
+type PreparedSeatRelease = {
+  hasRequestedCheckoutExpiration: boolean
+  promotionPayment: PaymentView | null
+}
+
+type CompletionNotification = (client: DBClient) => void | Promise<void>
 
 type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
@@ -303,9 +318,9 @@ export interface AttendanceService {
   syncAttendeePayment(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   createAttendeePaymentCharge(handle: DBHandle, attendeeId: AttendeeId): Promise<void>
   executeVerifyAttendanceCompletionTask(
-    handle: DBHandle,
+    client: DBClient,
     task: InferTaskData<VerifyAttendanceCompletionTaskDefinition>
-  ): Promise<((client: DBClient) => Promise<void>) | void>
+  ): Promise<void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
@@ -474,19 +489,14 @@ export function getAttendanceService(
     })
   }
 
-  async function preparePaymentWithDeadline(
-    handle: DBHandle,
-    attendance: Attendance,
-    attendee: Attendee,
-    completionDeadline: TZDate
-  ) {
-    const event = await eventService.getByAttendanceId(handle, attendance.id)
+  async function prepareSeatCheckout(handle: DBHandle, attendance: Attendance, attendee: Attendee, event: Event) {
     const isImmediatePayment = isPast(attendance.deregisterDeadline)
 
     // Capture before deregistration closes or the five-day hold limit, whichever comes first.
     const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline, "UTC")])
     const returnUrl = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
-    const payment = await attendancePaymentService.prepareCheckout(handle, {
+
+    return await attendancePaymentService.prepareCheckout(handle, {
       attendance,
       attendee,
       event,
@@ -495,6 +505,16 @@ export function getAttendanceService(
       captureMode: isImmediatePayment ? "AUTOMATIC" : "MANUAL",
       captureScheduledAt: isImmediatePayment ? null : maximalChargeTime,
     })
+  }
+
+  async function preparePaymentWithDeadline(
+    handle: DBHandle,
+    attendance: Attendance,
+    attendee: Attendee,
+    completionDeadline: TZDate
+  ) {
+    const event = await eventService.getByAttendanceId(handle, attendance.id)
+    const payment = await prepareSeatCheckout(handle, attendance, attendee, event)
 
     if (payment.isRequirementSatisfied) {
       await clearAttendeeCompletionDeadline(handle, attendee.id)
@@ -518,6 +538,57 @@ export function getAttendanceService(
     } else {
       updatedAttendee.payment = payment
     }
+  }
+
+  async function prepareSeatRelease(
+    client: DBClient,
+    attendeeId: AttendeeId,
+    deadline: Date,
+    synchronizedPayment: PaymentView | null
+  ): Promise<PreparedSeatRelease | null> {
+    if (
+      synchronizedPayment === null ||
+      synchronizedPayment.isRequirementSatisfied ||
+      !hasUnpaidAttempt(synchronizedPayment)
+    ) {
+      return null
+    }
+
+    const attendance = await attendanceRepository.findAttendanceByAttendeeId(client, attendeeId)
+    const attendee = attendance?.attendees.find((candidate) => candidate.id === attendeeId)
+
+    if (attendance === null || attendee?.completionDeadline?.getTime() !== deadline.getTime()) {
+      return null
+    }
+
+    const payment = attendee.payment
+
+    if (payment?.id !== synchronizedPayment.id || payment.attemptId !== synchronizedPayment.attemptId) {
+      throw new RetryableTaskError("Payment changed while checking attendance completion")
+    }
+
+    if (getCompletionAction(attendance, attendee) !== "release") {
+      return null
+    }
+
+    let hasRequestedCheckoutExpiration = false
+
+    if (payment.status === "UNPAID" && payment.attemptId !== null) {
+      hasRequestedCheckoutExpiration = await attendancePaymentService.expireOpenCheckout(client, payment.attemptId)
+
+      if (hasRequestedCheckoutExpiration) {
+        await attendancePaymentService.syncPayment(client, payment.id)
+      }
+    }
+
+    const nextAttendee = getPromotionQueue(attendance, attendee).at(0)
+    let promotionPayment: PaymentView | null = null
+
+    if (nextAttendee?.payment != null && attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
+      promotionPayment = await attendancePaymentService.syncPayment(client, nextAttendee.payment.id)
+    }
+
+    return { hasRequestedCheckoutExpiration, promotionPayment }
   }
 
   async function deregisterAttendeeAndPromoteNext(
@@ -655,6 +726,112 @@ export function getAttendanceService(
     )
 
     return [suspension, missingPayment]
+  }
+
+  async function applyAttendanceCompletion(
+    handle: DBHandle,
+    check: CompletionCheck,
+    release: PreparedSeatRelease | null
+  ): Promise<CompletionNotification | undefined> {
+    const { attendeeId, deadline, paymentId, attemptId } = check
+    const currentAttendance = await attendanceRepository.findAttendanceByAttendeeId(handle, attendeeId)
+    const current = currentAttendance?.attendees.find((candidate) => candidate.id === attendeeId)
+
+    if (currentAttendance === null || current == null || current.completionDeadline === null) {
+      return
+    }
+
+    const payment = current.payment
+
+    if (current.completionDeadline.getTime() !== deadline.getTime()) {
+      // If the deadline was extended while Stripe expired this checkout, the attendee still needs a usable payment link.
+      const hasExpiredCurrentCheckout =
+        release?.hasRequestedCheckoutExpiration === true &&
+        payment?.attemptId === attemptId &&
+        payment?.status === "EXPIRED"
+      const hasMissingPaymentRequirement = getMissingAttendanceCompletionRequirements(
+        currentAttendance,
+        current
+      ).includes("PAYMENT")
+
+      if (hasExpiredCurrentCheckout && hasMissingPaymentRequirement && isFuture(current.completionDeadline)) {
+        const event = await eventService.getByAttendanceId(handle, currentAttendance.id)
+        await prepareSeatCheckout(handle, currentAttendance, current, event)
+
+        return (client) => broadcastPaymentChange(client, currentAttendance, attendeeId)
+      }
+
+      return
+    }
+
+    if (payment?.id !== paymentId || payment?.attemptId !== attemptId) {
+      throw new RetryableTaskError("Payment changed before applying attendance completion")
+    }
+
+    const action = getCompletionAction(currentAttendance, current)
+
+    if (action === "complete") {
+      if (payment?.isRequirementSatisfied === true) {
+        await completePaymentRequirement(handle, currentAttendance, attendeeId, payment)
+      } else {
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+      }
+
+      return (client) => broadcastPaymentChange(client, currentAttendance, attendeeId)
+    }
+
+    if (action === "wait" || payment === null) {
+      return (client) => broadcastPaymentChange(client, currentAttendance, attendeeId)
+    }
+
+    const event = await eventService.getByAttendanceId(handle, currentAttendance.id)
+
+    if (action === "penalize") {
+      const marks = await assignMissingPaymentMarks(handle, currentAttendance, current, event)
+
+      return async (client) => {
+        await Promise.all(marks.map((mark) => personalMarkService.sendReceivedMarkEmail(client, mark)))
+      }
+    }
+
+    if (payment.status === "UNPAID" && payment.attemptId !== null) {
+      if (!payment.isCheckoutPending) {
+        throw new RetryableTaskError("Checkout must be closed before releasing the seat")
+      }
+
+      await attendancePaymentService.cancelUnopenedCheckout(handle, payment.attemptId)
+    }
+
+    const options: EventDeregistrationOptions = {
+      ignoreDeregistrationWindow: true,
+    }
+
+    if (!payment.isCheckoutPending) {
+      options.automaticDeregistrationReason = {
+        title: "Påmeldingen ble ikke fullført",
+        details: "Betalingen ble ikke gjennomført innen fristen.",
+      }
+    }
+
+    return await deregisterAttendeeAndPromoteNext(
+      handle,
+      currentAttendance,
+      current,
+      event,
+      options,
+      async (candidate) => {
+        const payment = candidate.payment
+
+        if (
+          payment !== null &&
+          (payment.id !== release?.promotionPayment?.id || payment.attemptId !== release.promotionPayment.attemptId)
+        ) {
+          throw new RetryableTaskError("The next attendee's payment must be reconciled before promotion")
+        }
+
+        return payment
+      }
+    )
   }
 
   return {
@@ -1562,77 +1739,40 @@ export function getAttendanceService(
       await completePaymentRequirement(handle, attendance, attendeeId, payment)
     },
 
-    async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
-      const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
-      if (attendance === null) {
-        throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
+    async executeVerifyAttendanceCompletionTask(client, { attendeeId }) {
+      const initialAttendee = await attendanceRepository.findAttendeeById(client, attendeeId)
+
+      if (initialAttendee === null) {
+        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists`)
       }
 
-      const event = await eventService.getByAttendanceId(handle, attendance.id)
-      const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
+      const deadline = initialAttendee.completionDeadline
 
-      if (attendee === undefined) {
-        throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
-      }
-
-      if (attendee.completionDeadline === null || isAfter(attendee.completionDeadline, getCurrentUTC())) {
+      if (deadline === null || isFuture(deadline)) {
         return
       }
 
-      const payment =
-        attendee.payment === null ? null : await attendancePaymentService.syncPayment(handle, attendee.payment.id)
-      const synchronizedAttendee = { ...attendee, payment }
+      const paymentId = initialAttendee.payment?.id
+      const attemptId = initialAttendee.payment?.attemptId
 
-      if (getMissingAttendanceCompletionRequirements(attendance, synchronizedAttendee).length === 0) {
-        if (payment?.isRequirementSatisfied === true) {
-          await completePaymentRequirement(handle, attendance, attendeeId, payment)
-        } else {
-          await clearAttendeeCompletionDeadline(handle, attendeeId)
+      const synchronizedPayment =
+        paymentId === undefined ? null : await attendancePaymentService.syncPayment(client, paymentId)
+
+      if (synchronizedPayment?.id !== paymentId || synchronizedPayment?.attemptId !== attemptId) {
+        throw new RetryableTaskError("Payment changed during reconciliation")
+      }
+
+      const check = { attendeeId, deadline, paymentId, attemptId }
+      const release = await prepareSeatRelease(client, attendeeId, deadline, synchronizedPayment)
+
+      const notifyAfterCommit = await client.$transaction(
+        (handle) => applyAttendanceCompletion(handle, check, release),
+        {
+          isolationLevel: "Serializable",
         }
+      )
 
-        await broadcastPaymentChange(handle, attendance, attendeeId)
-
-        return
-      }
-
-      if (payment === null) {
-        return
-      }
-
-      // The reservation timeout bounds checkout outages, but an unavailable checkout is not a missed payment.
-      if (payment.isCheckoutPending === true) {
-        await this.deregisterAttendee(handle, attendeeId, {
-          ignoreDeregistrationWindow: true,
-        })
-
-        return
-      }
-
-      const hasUnpaidAttempt =
-        payment.status === "UNPAID" ||
-        payment.status === "CANCELLED" ||
-        payment.status === "EXPIRED" ||
-        payment.status === "FAILED"
-
-      // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
-      if (hasUnpaidAttempt && isPast(attendance.deregisterDeadline)) {
-        const marks = await assignMissingPaymentMarks(handle, attendance, attendee, event)
-
-        return async (client) => {
-          await Promise.all(marks.map((mark) => personalMarkService.sendReceivedMarkEmail(client, mark)))
-        }
-      } else if (hasUnpaidAttempt) {
-        await this.deregisterAttendee(handle, attendeeId, {
-          // TODO: Maybe this should be false?
-          ignoreDeregistrationWindow: true,
-          automaticDeregistrationReason: {
-            title: "Påmeldingen ble ikke fullført",
-            details: "Betalingen ble ikke gjennomført innen fristen.",
-          },
-        })
-      } else {
-        await broadcastPaymentChange(handle, attendance, attendeeId)
-      }
+      await notifyAfterCommit?.(client)
     },
 
     async executeVerifyFeedbackAnsweredTask(handle, { feedbackFormId }) {
@@ -1992,6 +2132,37 @@ export function getAttendanceService(
       await Promise.all(sendPromises)
     },
   }
+}
+
+function hasUnpaidAttempt(payment: PaymentView): boolean {
+  return (
+    payment.status === "UNPAID" ||
+    payment.status === "CANCELLED" ||
+    payment.status === "EXPIRED" ||
+    payment.status === "FAILED"
+  )
+}
+
+function getCompletionAction(attendance: Attendance, attendee: Attendee): "complete" | "wait" | "release" | "penalize" {
+  if (getMissingAttendanceCompletionRequirements(attendance, attendee).length === 0) {
+    return "complete"
+  }
+
+  const payment = attendee.payment
+
+  if (payment === null) {
+    return "wait"
+  }
+
+  if (!hasUnpaidAttempt(payment)) {
+    return "wait"
+  }
+
+  if (payment.isCheckoutPending || !isPast(attendance.deregisterDeadline)) {
+    return "release"
+  }
+
+  return "penalize"
 }
 
 function getPromotionQueue(attendance: Attendance, attendee: Attendee): Attendee[] {
