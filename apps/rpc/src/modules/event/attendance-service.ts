@@ -1479,8 +1479,9 @@ export function getAttendanceService(
         if (hasFailedAttempt && attendee.completionDeadline !== null) {
           const completionTask = await taskSchedulingService.findVerifyAttendanceCompletionTask(handle, attendeeId)
 
-          // A delayed payment can fail after the original completion check finished while it was processing.
-          if (completionTask?.status === "COMPLETED") {
+          // The worker may already have read PROCESSING when Stripe reports the failure.
+          // Schedule another check even if the worker has not yet marked the first one complete.
+          if (completionTask?.status === "RUNNING" || completionTask?.status === "COMPLETED") {
             await taskSchedulingService.scheduleAt(
               handle,
               tasks.VERIFY_ATTENDANCE_COMPLETION,
