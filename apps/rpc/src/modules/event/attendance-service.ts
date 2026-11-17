@@ -305,7 +305,7 @@ export interface AttendanceService {
   executeVerifyAttendanceCompletionTask(
     handle: DBHandle,
     task: InferTaskData<VerifyAttendanceCompletionTaskDefinition>
-  ): Promise<void>
+  ): Promise<((client: DBClient) => Promise<void>) | void>
   executeVerifyFeedbackAnsweredTask(
     handle: DBHandle,
     task: InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
@@ -613,6 +613,48 @@ export function getAttendanceService(
       { attendeeId, paymentAttemptId },
       scheduledChargeTime
     )
+  }
+
+  async function assignMissingPaymentMarks(handle: DBHandle, attendance: Attendance, attendee: Attendee, event: Event) {
+    const suspensionMark = await markService.create(
+      handle,
+      {
+        details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
+        duration: INDEFINITE_SUSPENSION_DURATION,
+        title: "Suspensjon for manglende betaling",
+        type: "MISSING_PAYMENT",
+        weight: SUSPENSION_MARK_WEIGHT,
+      },
+      event.hostingGroups.map((group) => group.slug)
+    )
+
+    const suspension = await personalMarkService.recordAssignment(handle, attendee.userId, suspensionMark.id)
+
+    const missingPaymentMark = await markService.create(
+      handle,
+      {
+        details: `Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
+        duration: DEFAULT_MARK_DURATION,
+        title: `Manglende betaling for ${event.title}`,
+        type: "MISSING_PAYMENT",
+        weight: 1,
+      },
+      event.hostingGroups.map((group) => group.slug)
+    )
+
+    const missingPayment = await personalMarkService.recordAssignment(handle, attendee.userId, missingPaymentMark.id)
+
+    await clearAttendeeCompletionDeadline(handle, attendee.id)
+
+    logger.info(
+      "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
+      attendee.userId,
+      event.id,
+      event.title,
+      attendance.deregisterDeadline
+    )
+
+    return [suspension, missingPayment]
   }
 
   return {
@@ -1574,45 +1616,11 @@ export function getAttendanceService(
 
       // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
       if (hasUnpaidAttempt && isPast(attendance.deregisterDeadline)) {
-        const mark = await markService.create(
-          handle,
-          {
-            details: `Suspensjon for å ikke betale for arrangement ${event.title}`,
-            // We do not have a method for indefinite duration yet.
-            duration: INDEFINITE_SUSPENSION_DURATION,
-            title: "Suspensjon for manglende betaling",
-            type: "MISSING_PAYMENT",
-            // Immediate suspension
-            weight: SUSPENSION_MARK_WEIGHT,
-          },
-          event.hostingGroups.map((group) => group.slug)
-        )
+        const marks = await assignMissingPaymentMarks(handle, attendance, attendee, event)
 
-        await personalMarkService.addToUser(handle, attendee.userId, mark.id)
-
-        const missingPaymentMark = await markService.create(
-          handle,
-          {
-            details: `Betalingsfristen for arrangement ${event.title} ble ikke overholdt`,
-            duration: DEFAULT_MARK_DURATION,
-            title: `Manglende betaling for ${event.title}`,
-            type: "MISSING_PAYMENT",
-            weight: 1,
-          },
-          event.hostingGroups.map((group) => group.slug)
-        )
-
-        await personalMarkService.addToUser(handle, attendee.userId, missingPaymentMark.id)
-
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
-
-        logger.info(
-          "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
-          attendee.userId,
-          event.id,
-          event.title,
-          attendance.deregisterDeadline
-        )
+        return async (client) => {
+          await Promise.all(marks.map((mark) => personalMarkService.sendReceivedMarkEmail(client, mark)))
+        }
       } else if (hasUnpaidAttempt) {
         await this.deregisterAttendee(handle, attendeeId, {
           // TODO: Maybe this should be false?
