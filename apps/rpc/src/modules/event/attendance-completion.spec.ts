@@ -287,6 +287,30 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
   }
 }
 
+describe("seat promotion notifications", () => {
+  it("does not announce a seat release when reserving the next attendee fails", async () => {
+    const fixture = createPaymentContext(addHours(getCurrentUTC(), 24), "UNPAID")
+    fixture.attendee.payment = null
+    const queued = createAttendee({ id: "00000000-0000-4000-8000-000000000031", registeredAt: null })
+    fixture.attendance.attendees.push(queued)
+    fixture.attendance.pools = [mock<AttendancePool>({ id: queued.attendancePoolId, capacity: 1 })]
+
+    const broadcast = vi.fn()
+    fixture.eventEmitter.on("attendance:register-change", broadcast)
+    const failure = new Error("Could not reserve the seat")
+    fixture.attendanceRepository.updateAttendeeById.mockRejectedValue(failure)
+
+    await expect(
+      fixture.attendanceService.deregisterAttendee(fixture.handle, fixture.attendee.id, {
+        ignoreDeregistrationWindow: false,
+      })
+    ).rejects.toThrow(failure)
+
+    expect(fixture.attendanceRepository.deleteAttendeeById).toHaveBeenCalledWith(fixture.handle, fixture.attendee.id)
+    expect(broadcast).not.toHaveBeenCalled()
+  })
+})
+
 describe("checkout recovery after registration", () => {
   it("releases an overdue reservation without penalties when checkout never became available", async () => {
     const fixture = createPaymentContext(subMinutes(getCurrentUTC(), 10), "UNPAID")
