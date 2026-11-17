@@ -12,6 +12,7 @@ export const CURRENCY_VALUES = [
   "CS_KEYS",
   "RP",
   "GTA_DOLLARS",
+  "EDDIES",
   "COPIES_OF_UNDERTALE",
   "PK",
   "STORSTIPEND",
@@ -59,6 +60,36 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
     case "GTA_DOLLARS":
       return `$${((value / 39) * 200_000).toFixed(2)}` // a $200000 shark card costs 39kr
+    case "EDDIES":
+      /* Math is somewhat convoluted, stick with me
+
+        The caclulation is based off of the fact that the TTRPG Cyberpunk 2020 (second installment of the series)
+        takes place in 2020, and we can use an item of known value in the TTRPG, and compare to the price in Cyberpunk 2077
+        to get the €$ infation in that timespan
+
+        1. Adjust for 2020 inflation (multiply by 1 / 1.23, source: Norges Bank)
+        2. Convert the 2020 NOK value to USD (convertion rate at the time) (multiply by 0.1, source: Google graph for nok usd in 2020)
+        3. As the TTRPG encompasses different regions with different currencies,
+           there is a convertion rate for USD to Eurodollars, which is 2$ per 1€$
+           (source: p. 23 of the "Home of the Brave" Cyberpunk source book: 
+           "The purchasing power of the Eurodollar is approximately twice the purchasing power of the U.S. dollar."),
+           which we use to get the amount of 2020 eddies the kiosk item is worth (multiply by 2)
+        4. Use the value of the Militech Crusher shotgun
+           (as it seems the be the only fucking non-iconic gun that appears in any TTRPG game and the video game),
+           as a price anchor to calculate 2020->2077 in-universe inflation. The gun (tier 1*) costs [450 €$] in Cyberpunk 2020,
+           which increases to a whopping [7700 €$]**, giving an inflation of [[1711.11%]] between 2020 and 2077
+           * Tier 1 was chosen as the TTRPG does not have weapon tiers, and it felt the most fitting as you can buy it
+             right after creating a fresh character. In addition, a tier 5 crusher costs about [[160,000]] €$, which would
+             equate to an inflation rate of [[35 555.55%]], which seemed like too much
+           ** The 7700 number was guesstimated. After visiting EVERY arms dealer on a fresh save file, not a
+              SINGLE one sold a crusher, but I had one in my inventory, which sold for [770 €$], and comparing the
+              sale prices of other weapons in my inventory and the purchace prices of weapons they DID have available,
+              I found that buying a wepons costs about [10 times] what you get when you sell the same weapon in game
+        5. Multiply the value we got from step 3 with the inflation rate from step 4 (171.11) to find the value of the item in 2077 Eurodollars
+        6. Cry yourself to sleep because you spent this much time researching USD->Eurodollar exchange rates, weapons overlaps between the 
+           TTRPGs and videogame, and searching for a vendor who would sell a crusher (apparently an impossible task), and it is currently 5:30AM
+      */
+      return `${(value * (1 / 1.23) * 0.1 * 2 * 171.11).toFixed(2)} €$`
     case "COPIES_OF_UNDERTALE":
       return `${(value / 70).toFixed(2)} kopier av Undertale` // Undertale costs 70kr
     case "PK":
@@ -124,6 +155,11 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
       return ["(pris / 201,93) * 2540", "Et gavekort med 2540 RP koster 201,93 kr"]
     case "GTA_DOLLARS":
       return ["(pris / 39) * 200 000", "Et gavekort med 200 000 dollat koster 39 kr"]
+    case "EDDIES":
+      return [
+        "(((pris * (1 / 1,23)) / 10) * 2) * 171,11",
+        "Pris inflasjonsjustert for 2020 (1 kr da er verdt 1,23 kr nå), konvertert til USD (0.1), konvertert til Eurodollars (2$ = 1€$), inflasjonsjustert fra 2020 til 2077 med salgsverdien av et kjent objekt (i dette tilfellet, en Militech Crusher) i Cyberpunk 2020 (tabletop RPG) og Cyberpunk 2077 (videospill)",
+      ]
     case "COPIES_OF_UNDERTALE":
       return ["pris / 70", "Undertale koster 70 kr"]
     case "PK":
@@ -195,6 +231,8 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "League of Legends RP"
     case "GTA_DOLLARS":
       return "GTA Online dollar"
+    case "EDDIES":
+      return "Cyberpunk 2077 Eurodollars"
     case "COPIES_OF_UNDERTALE":
       return "Undertale kopier"
     case "PK":
