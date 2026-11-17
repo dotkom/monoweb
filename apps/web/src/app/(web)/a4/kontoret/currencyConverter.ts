@@ -1,6 +1,7 @@
 import { yearsToDays } from "date-fns"
 import { z } from "zod"
 
+// If updating the enum, remember to add logic in the three functions in this file
 export const CURRENCY_VALUES = [
   "NOK",
   "V_BUCKS",
@@ -27,11 +28,13 @@ export const CURRENCY_VALUES = [
   "SESAM_KEBABS",
   "NETFLIX_SUBSCRIPTIONS",
   "CHRISTMAS_STARS",
+  "BIRTHS_IN_US",
+  "PARACETAMOL",
   "67",
 ] as const
 
-// Hidden but functional values
-export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET", "BIRTHS_IN_US", "PARACETAMOL"])
+// Values added here are functional if logic is added and the cookie is manually set to it's value
+export const Currencies = z.enum([...CURRENCY_VALUES, "PIZZA_BUDGET"])
 
 export type CurrenciesType = z.infer<typeof Currencies>
 
@@ -52,6 +55,8 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${((value / 279) * 2800).toFixed(2)} FIFA points` // 2800 FC points costs 279
     case "CS_KEYS":
       return `${(value / 28).toFixed(2)} keys` // A CS key costs 28kr
+    case "RP":
+      return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
     case "GTA_DOLLARS":
       return `$${((value / 39) * 200_000).toFixed(2)}` // a $200000 shark card costs 39kr
     case "COPIES_OF_UNDERTALE":
@@ -72,18 +77,12 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(value / 60).toFixed(2)} pils på Circus` // A beer at circus costs 60kr
     case "ATB_MONTHLY_TICKETS":
       return `${(value / 265).toFixed(2)} ATB månedskort` // A 30-day ticket costs 265kr for a student
-    case "5090":
-      return `${(value / 89_990).toFixed(5)} 5090-er` // As of 11.11.2026, the cheapest rtx 5090 is 89990kr
-    case "67":
-      return "67" // 67
-    case "RP":
-      return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
     case "OW_BUCKS":
       return `${(value * Math.random() * 5).toFixed(2)} OW bucks` // OW bucks is a really volatile currency
-    case "PIZZA_BUDGET":
-      return `${value}/30000 av dotkoms gamle pizzabudsjett` // We used to get 30k a year for pizza :(
     case "ANIMALS":
       return `${(value / (179 / 11)).toFixed(4)} animals` // A CD of the album V costs 179kr, and there is 11 songs on the album
+    case "5090":
+      return `${(value / 89_990).toFixed(5)} 5090-er` // As of 11.11.2026, the cheapest rtx 5090 is 89990kr
     case "KBO_KANELBOLLE":
       return `${(value / 26).toFixed(2)} kanelboller` // A kanelbolle costs 26kr on kanelbolleonsdag
     case "SESAM_KEBABS":
@@ -92,8 +91,87 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(value / 119).toFixed(2)} måneder med Netflix` // A month of netflix starts at 119kr
     case "CHRISTMAS_STARS":
       return `${(value / 19.9).toFixed(2)} julestjerner` // A Clas Ohlson julestjerne costs 19.90kr
+    case "BIRTHS_IN_US":
+      return `${((value * 0.11) / 20416).toFixed(6)} fødsler` // A birth in the US costs 20416 USD on average
+    case "PARACETAMOL":
+      return `${(value / ((59.9 / 20) * 2)).toFixed(2)} gram` // A box of 20 500mg tablets of paracetamol costs 59,90 kr
+    case "67":
+      return "67" // 67
+    case "PIZZA_BUDGET":
+      return `${value}/30000 av dotkoms gamle pizzabudsjett` // We used to get 30k a year for pizza :(
     default:
       return `${value.toFixed(2)} kr`
+  }
+}
+
+export const explainCurrencyCalculation = (currency: CurrenciesType) => {
+  switch (currency) {
+    case "NOK":
+      return ["pris * 1", "Du vet hva en krone er"]
+    case "V_BUCKS":
+      return ["(pris / 89) * 800", "800 v-bucks koster 89 kr"]
+    case "ROBUX":
+      return ["(pris / 42) * 240", "240 robux koster 42 kr"]
+    case "COC_GEMS":
+      return ["(pris / 59) * 80", "80 gems koster 59 kr"]
+    case "OPUS_5.5_TOKENS":
+      return ["(pris / 5 USD i kr) * 1 million", "1 million tokes koster 5 dollar"]
+    case "FIFA_POINTS":
+      return ["(pris / 279) * 2000", "2000 fifa points koster 279 kr"]
+    case "CS_KEYS":
+      return ["pris / 28", "En key koster 28 kr"]
+    case "RP":
+      return ["(pris / 201,93) * 2540", "Et gavekort med 2540 RP koster 201,93 kr"]
+    case "GTA_DOLLARS":
+      return ["(pris / 39) * 200 000", "Et gavekort med 200 000 dollat koster 39 kr"]
+    case "COPIES_OF_UNDERTALE":
+      return ["pris / 70", "Undertale koster 70 kr"]
+    case "PK":
+      return ["pris / 10,33", "En PK koster 10,33 kr i kiosken"]
+    case "STORSTIPEND":
+      return ["pris / 30 976", "I 26/27 skoleåret var storstipend på 30 976 kr"]
+    case "DAYS_OF_SAMF_MEMBERSHIP":
+      return ["(pris / 1100) * antall dager i 3 år", "Et treårs medlemskap på Studentersamfundet koster 1100 kr"]
+    case "DAYS_OF_APPLECARE_PLUS":
+      return ["(pris / 1059) * 365", 'Applecare+ på en 13" MacBook pro koster 1059 kr i året']
+    case "HOURS_OF_OW_UPTIME":
+      return [
+        "(pris / 310 USD i kr) * antall timer i en måned",
+        "OW koster ca. 310 dollar i måneden å vedlikeholde i AWS kostnader",
+      ]
+    case "HOURS_OF_ELECTRICITY":
+      return [
+        "pris / nåværende spotpris",
+        'Vi henter spotprisen live i regionen NO3 fra <a href="https://www.hvakosterstrommen.no/strompris-api" target="_blank">hvakosterstrommen.no</a>',
+      ]
+    case "BEERS_AT_CIRCUS":
+      return ["pris / 60", "En øl på Circus koster 90 kr"]
+    case "ATB_MONTHLY_TICKETS":
+      return ["pris / 265", "Et månedskort koster 265 kr for studenter"]
+    case "OW_BUCKS":
+      return ["pris * et tilfeldig tall mellom 0 og 5", "OW bucks er desverre en veldig volatil valuta"]
+    case "ANIMALS":
+      return ["pris / (179 / 11)", 'Albumet "V" som "Animals" finnes på har 11 sanger, og koster 179 kr']
+    case "5090":
+      return ["pris / 89 990", "De billigeste 5090ene koster 89 990 kr"]
+    case "KBO_KANELBOLLE":
+      return ["pris / 26", "En kanelbolla koster 26 kr på kanelbolleonsdag"]
+    case "SESAM_KEBABS":
+      return ["pris / 169", "En vanlig kebabrull koster 169 kr på sesam"]
+    case "NETFLIX_SUBSCRIPTIONS":
+      return ["pris / 119", "En måned med netflix koster 119 kr"]
+    case "CHRISTMAS_STARS":
+      return ["pris / 19,90", "En julestjerne på Clas Ohlson koster 19,90 kr"]
+    case "BIRTHS_IN_US":
+      return ["pris / 20 416 USD i kr", "Gjennomsnittsprisen på å føde et barn i USA er 20 416 dollar"]
+    case "PARACETAMOL":
+      return ["pris / ((59,90 / 20) / 0,5)", "En pakke 20 tabletter 500mg Paracet koster 59,90 kr"]
+    case "67":
+      return ["67", "67"]
+    case "PIZZA_BUDGET":
+      return ["pris / 30 000", "Dotkom pleide å få 30 000 kr i året for bruk på mat på arbeidskvelder"]
+    default:
+      return ["", ""]
   }
 }
 
@@ -113,6 +191,8 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "FIFA points"
     case "CS_KEYS":
       return "CS2 case keys"
+    case "RP":
+      return "League of Legends RP"
     case "GTA_DOLLARS":
       return "GTA Online dollar"
     case "COPIES_OF_UNDERTALE":
@@ -133,18 +213,12 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "Øl på Circus"
     case "ATB_MONTHLY_TICKETS":
       return "ATB månedskort"
-    case "67":
-      return "67" // 67
     case "OW_BUCKS":
       return "OW Bucks"
-    case "PIZZA_BUDGET":
-      return "Andeler av dotkoms gamle pizzabudsjett"
     case "ANIMALS":
       return "Animals av Maroon 5"
     case "5090":
       return "RTX 5090er"
-    case "RP":
-      return "League of Legends RP"
     case "KBO_KANELBOLLE":
       return "Kanelboller på KBO"
     case "SESAM_KEBABS":
@@ -152,7 +226,15 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
     case "NETFLIX_SUBSCRIPTIONS":
       return "Måneder med Netflix"
     case "CHRISTMAS_STARS":
-      return "Julestjerner fra Clas Ohlon"
+      return "Julestjerner fra Clas Ohlson"
+    case "BIRTHS_IN_US":
+      return "Fødsler i USA"
+    case "PARACETAMOL":
+      return "Gram Paracet"
+    case "67":
+      return "67" // 67
+    case "PIZZA_BUDGET":
+      return "Andeler av dotkoms gamle pizzabudsjett"
     default:
       return "Ukjent valuta"
   }
