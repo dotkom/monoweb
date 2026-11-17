@@ -8,25 +8,8 @@ import z from "zod"
 import type { ConfigurationWithAmazonSesEmail } from "../../configuration"
 import { IllegalStateError } from "../../error"
 import { InvalidArgumentError } from "../../error"
-import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_SOURCE, emails, renderEmailTemplate } from "./email-template"
+import { DEFAULT_EMAIL_FROM, DEFAULT_EMAIL_FROM_EMAIL_ADDRESS, emails, renderEmailTemplate } from "./email-template"
 import type { EmailTemplate, EmailType, InferEmailData } from "./email-template"
-
-function formatSesSourceAddress(source: string, sourceName?: string): string {
-  if (sourceName !== undefined) {
-    // Ten Unicode code points fit within RFC 2047's 75-character encoded-word limit,
-    // including four-byte UTF-8 characters. Encoding also handles punctuation in names.
-    const nameParts = sourceName.match(/.{1,10}/gu) ?? []
-    const encodedName = nameParts.map((part) => `=?UTF-8?B?${Buffer.from(part).toString("base64")}?=`).join(" ")
-
-    return `${encodedName} <${source}>`
-  }
-
-  if (source !== DEFAULT_EMAIL_SOURCE) {
-    return source
-  }
-
-  return DEFAULT_EMAIL_FROM
-}
 
 // https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_Attachment.html
 const EmailAttachmentSchema = z.object({
@@ -39,8 +22,8 @@ const EmailAttachmentSchema = z.object({
 export type EmailAttachment = z.infer<typeof EmailAttachmentSchema>
 
 const EmailMessageSchema = z.object({
-  source: z.email(),
-  sourceName: z
+  fromEmailAddress: z.email(),
+  fromName: z
     .string()
     .trim()
     .min(1)
@@ -59,26 +42,60 @@ const EmailMessageSchema = z.object({
 // In order to keep email sizes relatively small, and to prevent spam detection we batch the emails with 25 BCC recipients at a time
 const EMAIL_RECIPIENT_BATCH_SIZE = 25
 
+// biome-ignore lint/suspicious/noExplicitAny: used for type inference only
+interface EmailSendOptions<TDef extends EmailTemplate<any, any>> {
+  /**
+   * The email address of the sender.
+   */
+  fromEmailAddress?: string
+  /**
+   * The name of the sender.
+   */
+  fromName?: string
+  /**
+   * The email addresses of the reply-to recipients.
+   */
+  replyTo?: string[]
+  /**
+   * The email addresses of the to recipients.
+   */
+  to?: string[]
+  /**
+   * The email addresses of the cc recipients.
+   */
+  cc?: string[]
+  /**
+   * The email addresses of the bcc recipients.
+   */
+  bcc?: string[]
+  /**
+   * The subject of the email.
+   */
+  subject: string
+  /**
+   * The definition of the email template.
+   */
+  definition: TDef
+  /**
+   * The data of the email template.
+   */
+  data: InferEmailData<TDef>
+  /**
+   * The attachments of the email.
+   */
+  attachments?: EmailAttachment[]
+}
+
 export interface EmailService {
-  // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
-  send<TDef extends EmailTemplate<any, any>>(
-    source: string,
-    replyTo: string[],
-    to: string[],
-    cc: string[],
-    bcc: string[],
-    subject: string,
-    definition: TDef,
-    data: InferEmailData<TDef>,
-    sourceName?: string,
-    attachments?: EmailAttachment[]
-  ): Promise<void>
   /**
    * Start the SQS Consumer for actually submitting emails to SES.
    *
    * NOTE: This function does not need a stop function, it can simply listen to a provided signal.
    */
   startWorker(signal: AbortSignal): void
+
+  // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
+  send<TDef extends EmailTemplate<any, any>>(options: EmailSendOptions<TDef>): Promise<void>
 }
 
 export function getEmptyEmailService(): EmailService {
@@ -88,10 +105,20 @@ export function getEmptyEmailService(): EmailService {
     "EmailService constructed with no-op implementations for email sending. This means that email will not be sent to recipients."
   )
   return {
-    async send(source, replyTo, to, cc, bcc, subject, definition, _) {
+    async send({
+      fromEmailAddress = DEFAULT_EMAIL_FROM_EMAIL_ADDRESS,
+      fromName,
+      replyTo = [],
+      to = [],
+      cc = [],
+      bcc = [],
+      subject,
+      definition,
+    }) {
       logger.warn(
-        "Discarding Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) because EmptyEmailService is being used",
-        source,
+        "Discarding Email(FromEmailAddress=%s, FromName=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) because EmptyEmailService is being used",
+        fromEmailAddress,
+        fromName ?? "<no name>",
         replyTo,
         to,
         cc,
@@ -150,7 +177,7 @@ export function getEmailService(
         const html = await renderEmailTemplate(emailTemplate, payload.data.data)
 
         const sendEmailCommand = new SendEmailCommand({
-          FromEmailAddress: formatSesSourceAddress(payload.data.source, payload.data.sourceName),
+          FromEmailAddress: formatSesFromEmailAddress(payload.data.fromEmailAddress, payload.data.fromName),
           ReplyToAddresses: payload.data.replyTo,
           Destination: {
             ToAddresses: payload.data.to,
@@ -180,8 +207,9 @@ export function getEmailService(
           },
         })
         logger.info(
-          "Sending Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
-          payload.data.source,
+          "Sending Email(FromEmailAddress=%s, FromName=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s)",
+          payload.data.fromEmailAddress,
+          payload.data.fromName ?? "<no name>",
           payload.data.replyTo,
           payload.data.to,
           payload.data.cc,
@@ -215,12 +243,28 @@ export function getEmailService(
   }
 
   return {
-    async send(source, replyTo, to, cc, bcc, subject, definition, data, sourceName, attachments) {
+    async send({
+      fromEmailAddress = DEFAULT_EMAIL_FROM_EMAIL_ADDRESS,
+      replyTo = [],
+      to = [],
+      cc = [],
+      bcc = [],
+      subject,
+      definition,
+      data,
+      fromName,
+      attachments,
+    }) {
       return await tracer.startActiveSpan("EmailService/QueueEmail", async (span) => {
         try {
+          if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
+            throw new InvalidArgumentError("At least one email recipient is required.")
+          }
+
           logger.info(
-            "Posting Email(From=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) to SQS Queue",
-            source,
+            "Posting Email(FromEmailAddress=%s, FromName=%s, ReplyTo=%o, To=%o, Cc=%o, Bcc=%o, Subject=%s, TemplateType=%s) to SQS Queue",
+            fromEmailAddress,
+            fromName ?? "<no name>",
             replyTo,
             to,
             cc,
@@ -240,7 +284,7 @@ export function getEmailService(
 
           // NOTE: These are not SEMCONV attributes. See https://opentelemetry.io/blog/2025/how-to-name-your-span-attributes/
           span.addEvent("@aws-sdk/client-sesv2#SendEmailCommand", {
-            "email.source": source,
+            "email.source": fromEmailAddress,
             "email.replyTo": replyTo,
             "email.to": to,
             "email.cc": cc,
@@ -249,8 +293,8 @@ export function getEmailService(
           })
 
           const message = EmailMessageSchema.parse({
-            source,
-            sourceName,
+            fromEmailAddress,
+            fromName,
             attachments,
             replyTo,
             to,
@@ -359,4 +403,21 @@ export function getEmailService(
       })
     },
   }
+}
+
+function formatSesFromEmailAddress(fromEmailAddress: string, fromName?: string): string {
+  if (fromName !== undefined) {
+    // Ten Unicode code points fit within RFC 2047's 75-character encoded-word limit,
+    // including four-byte UTF-8 characters. Encoding also handles punctuation in names.
+    const nameParts = fromName.match(/.{1,10}/gu) ?? []
+    const encodedName = nameParts.map((part) => `=?UTF-8?B?${Buffer.from(part).toString("base64")}?=`).join(" ")
+
+    return `${encodedName} <${fromEmailAddress}>`
+  }
+
+  if (fromEmailAddress !== DEFAULT_EMAIL_FROM_EMAIL_ADDRESS) {
+    return fromEmailAddress
+  }
+
+  return DEFAULT_EMAIL_FROM
 }

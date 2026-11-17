@@ -71,7 +71,7 @@ import {
 } from "../../error"
 import { validateTurnstileToken } from "../../turnstile"
 import type { EmailAttachment, EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
+import { DEFAULT_EMAIL_FROM_EMAIL_ADDRESS, emails, getReplyToAddresses } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import { getGroupDisplayName } from "../group/group"
@@ -389,21 +389,18 @@ export function getAttendanceService(
       return
     }
 
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      [DEFAULT_EMAIL_SOURCE],
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du har rykket frem i køen til ${event.title}`),
-      emails.QUEUE_NOTIFICATION,
-      {
+    void emailService.send({
+      replyTo: [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS],
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du har rykket frem i køen til ${event.title}`),
+      definition: emails.QUEUE_NOTIFICATION,
+      data: {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
         position,
-      }
-    )
+      },
+    })
   }
 
   function getOrganizerEmails(event: Event): string[] {
@@ -435,23 +432,19 @@ export function getAttendanceService(
 
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      getReplyToAddresses(organizerEmails),
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du er påmeldt ${event.title}`),
-      emails.EVENT_ATTENDANCE,
-      {
+    void emailService.send({
+      replyTo: getReplyToAddresses(organizerEmails),
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du er påmeldt ${event.title}`),
+      definition: emails.EVENT_ATTENDANCE,
+      data: {
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
       },
-      undefined,
-      [calendarAttachment]
-    )
+      attachments: [calendarAttachment],
+    })
   }
 
   function sendEventAutomaticDeregistrationEmail(
@@ -465,23 +458,20 @@ export function getAttendanceService(
 
     const organizerEmails = getOrganizerEmails(event)
 
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      getReplyToAddresses(organizerEmails),
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du har blitt avmeldt ${event.title}`),
-      emails.EVENT_AUTOMATIC_DEREGISTRATION,
-      {
+    void emailService.send({
+      replyTo: getReplyToAddresses(organizerEmails),
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du har blitt avmeldt ${event.title}`),
+      definition: emails.EVENT_AUTOMATIC_DEREGISTRATION,
+      data: {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
         title: reason.title,
         details: reason.details,
-        organizerEmail: organizerEmails[0] ?? DEFAULT_EMAIL_SOURCE,
-      }
-    )
+        organizerEmail: organizerEmails[0] ?? DEFAULT_EMAIL_FROM_EMAIL_ADDRESS,
+      },
+    })
   }
 
   return {
@@ -1700,15 +1690,12 @@ export function getAttendanceService(
           hostingGroupEmail
         )
 
-        await emailService.send(
-          hostingGroupEmail,
-          [],
-          [],
-          [],
+        await emailService.send({
+          fromEmailAddress: hostingGroupEmail,
           bcc,
-          formatEmailSubject(`Tilbakemelding på ${event.title}`),
-          emails.FEEDBACK_FORM_LINK,
-          {
+          subject: formatEmailSubject(`Tilbakemelding på ${event.title}`),
+          definition: emails.FEEDBACK_FORM_LINK,
+          data: {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
             eventImageUrl: event.imageUrl,
@@ -1716,8 +1703,8 @@ export function getAttendanceService(
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
             organizerEmail: hostingGroupEmail,
-          }
-        )
+          },
+        })
       })
 
       await Promise.all(promises)
@@ -1769,21 +1756,18 @@ export function getAttendanceService(
           const eventLink = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
           const markLink = new URL(`/admin/prikker/${mark.id}`, configuration.WEB_PUBLIC_ORIGIN).toString()
 
-          await emailService.send(
-            DEFAULT_EMAIL_SOURCE,
-            [DEFAULT_EMAIL_SOURCE],
-            organizerEmails,
-            [],
-            [],
-            formatEmailSubject(`Automatiske prikker for manglende oppmøte på ${event.title}`),
-            emails.EVENT_MISSED_ATTENDANCE_MARKS,
-            {
+          await emailService.send({
+            replyTo: [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS],
+            to: organizerEmails,
+            subject: formatEmailSubject(`Automatiske prikker for manglende oppmøte på ${event.title}`),
+            definition: emails.EVENT_MISSED_ATTENDANCE_MARKS,
+            data: {
               eventName: event.title,
               eventLink,
               markLink,
               affectedAttendeeCount: attendeesNotAttended.length,
-            }
-          )
+            },
+          })
         } catch (e) {
           logger.error("Received error when attempting to create marks: %o", e)
           if (e instanceof Error) {
@@ -1904,16 +1888,16 @@ export function getAttendanceService(
           "Notification email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
           event.id,
           event.title,
-          DEFAULT_EMAIL_SOURCE
+          DEFAULT_EMAIL_FROM_EMAIL_ADDRESS
         )
       }
 
-      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_SOURCE
+      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_FROM_EMAIL_ADDRESS
       const senderGroup = event.hostingGroups.find(
         (group) => group.email === sourceEmail && (group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE")
       )
 
-      const sourceName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
+      const fromName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
 
       // We send the same email to all registered attendees, and then send a personalized email to all attendees in the
       // queue with their position in the queue
@@ -1942,23 +1926,21 @@ export function getAttendanceService(
       }
 
       const sendPromises = deliveries.map((delivery) => {
-        return emailService.send(
-          sourceEmail,
-          [sourceEmail],
-          [],
-          [],
-          delivery.recipientEmails,
-          formatEmailSubject(title),
-          emails.EVENT_MESSAGE,
-          {
+        return emailService.send({
+          fromEmailAddress: sourceEmail,
+          replyTo: [sourceEmail],
+          bcc: delivery.recipientEmails,
+          subject: formatEmailSubject(title),
+          definition: emails.EVENT_MESSAGE,
+          data: {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
             eventImageUrl: event.imageUrl,
             message,
             queuePosition: delivery.queuePosition,
           },
-          sourceName
-        )
+          fromName,
+        })
       })
 
       await Promise.all(sendPromises)
