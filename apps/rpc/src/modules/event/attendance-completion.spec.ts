@@ -629,13 +629,24 @@ describe("attendance payment deadlines", () => {
   })
 
   it("schedules capture when the completion check discovers an authorization before the webhook does", async () => {
-    const { handle, attendee, attendanceService, taskSchedulingService, markService } = createPaymentContext(
-      new Date("2026-11-08T09:00:00Z"),
-      "AUTHORIZED"
-    )
+    const {
+      handle,
+      attendee,
+      attendanceService,
+      attendancePaymentService,
+      attendanceRepository,
+      taskSchedulingService,
+      markService,
+    } = createPaymentContext(new Date("2026-11-08T09:00:00Z"), "AUTHORIZED")
 
     await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
 
+    expect(attendancePaymentService.syncPayment).toHaveBeenCalledExactlyOnceWith(handle, "payment")
+    expect(attendanceRepository.updateAttendeeCompletionDeadline).toHaveBeenCalledExactlyOnceWith(
+      handle,
+      attendee.id,
+      null
+    )
     expect(taskSchedulingService.scheduleAt).toHaveBeenCalledExactlyOnceWith(
       handle,
       tasks.CHARGE_ATTENDEE,
