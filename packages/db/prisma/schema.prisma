@@ -230,6 +230,7 @@ model GroupMembership {
 
   roles GroupMembershipRole[]
 
+  @@unique([groupId, userId], map: "group_membership_one_active", where: raw("\"end\" IS NULL"))
   @@index([groupId])
   @@index([userId])
   @@map("group_membership")

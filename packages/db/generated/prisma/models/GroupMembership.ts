@@ -218,6 +218,7 @@ export type GroupMembershipOrderByWithRelationInput = {
 
 export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  groupId_userId?: Prisma.GroupMembershipGroupIdUserIdCompoundUniqueInput
   AND?: Prisma.GroupMembershipWhereInput | Prisma.GroupMembershipWhereInput[]
   OR?: Prisma.GroupMembershipWhereInput[]
   NOT?: Prisma.GroupMembershipWhereInput | Prisma.GroupMembershipWhereInput[]
@@ -230,7 +231,7 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   roles?: Prisma.GroupMembershipRoleListRelationFilter
-}, "id">
+}, "id" | "groupId_userId">
 
 export type GroupMembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -338,6 +339,11 @@ export type GroupMembershipListRelationFilter = {
 
 export type GroupMembershipOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type GroupMembershipGroupIdUserIdCompoundUniqueInput = {
+  groupId: string
+  userId: string
 }
 
 export type GroupMembershipCountOrderByAggregateInput = {
