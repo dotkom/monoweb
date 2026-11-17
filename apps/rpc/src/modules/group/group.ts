@@ -185,7 +185,7 @@ export const getGroupPreferredDisplayNameLabel = (preferredDisplayName: GroupPre
   }
 }
 
-export const createGroupPageUrl = (group: Group): string => {
+export const createGroupPageUrl = (group: Pick<Group, "slug" | "type">): string => {
   switch (group.type) {
     case "COMMITTEE":
     case "NODE_COMMITTEE":
@@ -332,6 +332,14 @@ export const areGroupRolesEqual = (rolesA: GroupMembership["roles"], rolesB: Gro
   const typesB = new Set(rolesB.map((role) => role.id))
 
   return typesA.symmetricDifference(typesB).size === 0
+}
+
+export function hasNonDefaultGroupRole(membership: GroupMembership): boolean {
+  return membership.roles.some((role) => role.isDefault === false)
+}
+
+export function canEndInterestGroupMembership(activeMembership: GroupMembership): boolean {
+  return !hasNonDefaultGroupRole(activeMembership)
 }
 
 export function hasGroupMembershipRoleType(membership: GroupMembership, type: GroupRoleType): boolean {

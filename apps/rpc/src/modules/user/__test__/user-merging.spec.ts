@@ -398,7 +398,7 @@ describe("mergeUsers", () => {
   })
 
   describe("sidequest registration deduplication", () => {
-    it("reassigns consumed registrations when survivor has none of the same events", async () => {
+    it("reassigns consumed registrations when survivor has none of the same sidequests", async () => {
       const survivor = makeUser()
       const consumed = makeUser()
 

@@ -19,6 +19,10 @@ export const fixtureSidequestId = {
   vodkaByMarek: "a1b2c3d4-e5f6-4789-a012-111111111401",
   faxeRituale: "a1b2c3d4-e5f6-4789-a012-111111111501",
   mineLineBuild: "a1b2c3d4-e5f6-4789-a012-111111111601",
+  xSportRafting: "a1b2c3d4-e5f6-4789-a012-111111111102",
+  racinglineSpa: "a1b2c3d4-e5f6-4789-a012-111111111202",
+  julLucia: "a1b2c3d4-e5f6-4789-a012-111111111302",
+  mineLineSpeedrun: "a1b2c3d4-e5f6-4789-a012-111111111602",
 } as const
 
 export type FixtureSidequestKey = keyof typeof fixtureSidequestId
@@ -143,6 +147,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("xSportRafting"),
       createdAt: subDays(now, 4),
       updatedAt: subDays(now, 1),
       title: "Rafting på Driva",
@@ -245,6 +250,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("racinglineSpa"),
       createdAt: subDays(now, 3),
       updatedAt: subDays(now, 3),
       title: "Nattlig Spa-Francorchamps watch party",
@@ -341,6 +347,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("julLucia"),
       createdAt: subDays(now, 2),
       updatedAt: subDays(now, 2),
       title: "Lucia-tog gjennom A4",
@@ -628,6 +635,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("mineLineSpeedrun"),
       createdAt: subDays(now, 1),
       updatedAt: subDays(now, 1),
       title: "Speedrun-kveld: any%",
@@ -847,3 +855,167 @@ export const getSidequestRegistrationFixtures = (userIds: string[]) =>
       createdAt: registeredAt,
     } satisfies Prisma.SidequestRegistrationCreateManyInput
   })
+
+type SidequestRequestFixture = {
+  sidequestId: string
+  requestedByUserIndex: number
+  reviewedByUserIndex: number | null
+  description: string
+  requestedAmountNok: number
+  expectedAttendeeCount: number | null
+  approvedAmountNok: number | null
+  reviewNote: string | null
+  createdDaysAgo: number
+  reviewedDaysAgo: number | null
+}
+
+const sidequestRequestFixtures: SidequestRequestFixture[] = [
+  {
+    sidequestId: sidequestId("xSportSurf"),
+    requestedByUserIndex: 3,
+    reviewedByUserIndex: 1,
+    description: "Transport, hytte og utstyrsleie for surfetur til Stadlandet.",
+    requestedAmountNok: 15000,
+    expectedAttendeeCount: 16,
+    approvedAmountNok: 12000,
+    reviewNote: "Godkjent med noe redusert ramme. Prioriter transport og overnatting.",
+    createdDaysAgo: 14,
+    reviewedDaysAgo: 10,
+  },
+  {
+    sidequestId: sidequestId("xSportRafting"),
+    requestedByUserIndex: 3,
+    reviewedByUserIndex: null,
+    description: "Guidet rafting på Driva. Inkluderer utstyr og transport fra Trondheim.",
+    requestedAmountNok: 8000,
+    expectedAttendeeCount: 15,
+    approvedAmountNok: null,
+    reviewNote: null,
+    createdDaysAgo: 4,
+    reviewedDaysAgo: null,
+  },
+  {
+    sidequestId: sidequestId("racinglineMonaco"),
+    requestedByUserIndex: 2,
+    reviewedByUserIndex: 1,
+    description: "Snacks, drikke og premier til tippekamp under Monaco GP.",
+    requestedAmountNok: 2000,
+    expectedAttendeeCount: 20,
+    approvedAmountNok: 2000,
+    reviewNote: "Godkjent som søkt.",
+    createdDaysAgo: 14,
+    reviewedDaysAgo: 7,
+  },
+  {
+    sidequestId: sidequestId("racinglineSpa"),
+    requestedByUserIndex: 2,
+    reviewedByUserIndex: 1,
+    description: "Nattlig watch party med snacks. Trenger tilgang til kontoret etter midnatt.",
+    requestedAmountNok: 1500,
+    expectedAttendeeCount: 12,
+    approvedAmountNok: null,
+    reviewNote: "Avslått. For sent på natten for kontoret, og vi vil ikke sette presedens for nattlige arrangementer.",
+    createdDaysAgo: 3,
+    reviewedDaysAgo: 2,
+  },
+  {
+    sidequestId: sidequestId("julGlogg"),
+    requestedByUserIndex: 5,
+    reviewedByUserIndex: 1,
+    description: "Gløgg, pepperkaker og premier til julequiz.",
+    requestedAmountNok: 1500,
+    expectedAttendeeCount: 25,
+    approvedAmountNok: 1500,
+    reviewNote: "Godkjent. Koselig og lavterskel.",
+    createdDaysAgo: 8,
+    reviewedDaysAgo: 5,
+  },
+  {
+    sidequestId: sidequestId("julLucia"),
+    requestedByUserIndex: 5,
+    reviewedByUserIndex: null,
+    description: "Lussekatter og stearinlys til Lucia-tog gjennom A4.",
+    requestedAmountNok: 2500,
+    expectedAttendeeCount: 40,
+    approvedAmountNok: null,
+    reviewNote: null,
+    createdDaysAgo: 2,
+    reviewedDaysAgo: null,
+  },
+  {
+    sidequestId: sidequestId("vodkaByMarek"),
+    requestedByUserIndex: 6,
+    reviewedByUserIndex: 1,
+    description: "Ved og engangsgrill til kveld i Bymarka. Drikke tar folk selv.",
+    requestedAmountNok: 800,
+    expectedAttendeeCount: 18,
+    approvedAmountNok: 500,
+    reviewNote: "Godkjent med redusert beløp. Bruk offentlig grillplass.",
+    createdDaysAgo: 6,
+    reviewedDaysAgo: 4,
+  },
+  {
+    sidequestId: sidequestId("faxeRituale"),
+    requestedByUserIndex: 7,
+    reviewedByUserIndex: 1,
+    description: "Faxe og tilbehør til ordenens rituale.",
+    requestedAmountNok: 3000,
+    expectedAttendeeCount: 22,
+    approvedAmountNok: 3000,
+    reviewNote: "Godkjent. Husk aldersgrense og rydding.",
+    createdDaysAgo: 9,
+    reviewedDaysAgo: 6,
+  },
+  {
+    sidequestId: sidequestId("mineLineBuild"),
+    requestedByUserIndex: 0,
+    reviewedByUserIndex: 1,
+    description: "Pizza til build night på Discord og kontoret.",
+    requestedAmountNok: 1000,
+    expectedAttendeeCount: 14,
+    approvedAmountNok: 1000,
+    reviewNote: "Godkjent.",
+    createdDaysAgo: 5,
+    reviewedDaysAgo: 3,
+  },
+  {
+    sidequestId: sidequestId("mineLineSpeedrun"),
+    requestedByUserIndex: 0,
+    reviewedByUserIndex: null,
+    description: "Premier og snacks til speedrun-kveld.",
+    requestedAmountNok: 500,
+    expectedAttendeeCount: 10,
+    approvedAmountNok: null,
+    reviewNote: null,
+    createdDaysAgo: 1,
+    reviewedDaysAgo: null,
+  },
+]
+
+export const getSidequestRequestFixtures = (userIds: string[]) => {
+  const requests: Prisma.SidequestRequestCreateManyInput[] = []
+
+  for (const fixture of sidequestRequestFixtures) {
+    const requestedById = userIds[fixture.requestedByUserIndex]
+    if (requestedById === undefined) {
+      continue
+    }
+
+    const reviewedById = fixture.reviewedByUserIndex === null ? null : (userIds[fixture.reviewedByUserIndex] ?? null)
+
+    requests.push({
+      sidequestId: fixture.sidequestId,
+      requestedById,
+      reviewedById,
+      description: fixture.description,
+      requestedAmountNok: fixture.requestedAmountNok,
+      expectedAttendeeCount: fixture.expectedAttendeeCount,
+      approvedAmountNok: fixture.approvedAmountNok,
+      reviewNote: fixture.reviewNote,
+      createdAt: subDays(now, fixture.createdDaysAgo),
+      reviewedAt: fixture.reviewedDaysAgo === null ? null : subDays(now, fixture.reviewedDaysAgo),
+    })
+  }
+
+  return requests
+}
