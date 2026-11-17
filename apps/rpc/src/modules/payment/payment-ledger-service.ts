@@ -13,6 +13,7 @@ import {
   type CheckoutInput,
   type CreatePaymentInput,
   type PaymentAttemptIdentifiers,
+  type PaymentAttemptUpdate,
   type PaymentRecord,
   type PaymentAttempt,
 } from "./payment"
@@ -73,13 +74,8 @@ export function getPaymentLedgerService(
   stripe: Stripe,
   taskSchedulingService: TaskSchedulingService
 ): PaymentLedgerService {
-  async function syncRefunds(handle: DBHandle, attemptId: string, paymentIntentId: string): Promise<void> {
-    const refunds = stripe.refunds.list({
-      payment_intent: paymentIntentId,
-      limit: 100,
-    })
-
-    for await (const refund of refunds) {
+  async function saveRefunds(handle: DBHandle, attemptId: string, refunds: Stripe.Refund[]): Promise<void> {
+    for (const refund of refunds) {
       const status = getStripeRefundStatus(refund)
       const refundNumber = Number(refund.metadata?.refund_number)
       const localRefund =
@@ -226,7 +222,7 @@ export function getPaymentLedgerService(
           ? min([attempt.captureScheduledAt ?? now, authorizationCaptureDeadline])
           : attempt.captureScheduledAt
 
-      await paymentRepository.updateAttempt(handle, attemptId, {
+      const update: PaymentAttemptUpdate = {
         status,
         stripeCheckoutSessionId: stripeCheckoutSessionId ?? null,
         capturedAmountOre: paymentIntent?.amount_received ?? attempt.capturedAmountOre,
@@ -238,10 +234,35 @@ export function getPaymentLedgerService(
         captureScheduledAt,
         capturedAt: status === "CAPTURED" ? (attempt.capturedAt ?? now) : attempt.capturedAt,
         lastSyncedAt: now,
-      })
+      }
+
+      const expectedAttempt = {
+        updatedAt: attempt.updatedAt,
+        status: attempt.status,
+      }
+
+      const refunds: Stripe.Refund[] = []
 
       if (paymentIntentId !== null) {
-        await syncRefunds(handle, attemptId, paymentIntentId)
+        const pages = stripe.refunds.list({
+          payment_intent: paymentIntentId,
+          limit: 100,
+        })
+
+        for await (const refund of pages) {
+          refunds.push(refund)
+        }
+      }
+
+      async function saveReconciliation(database: DBHandle) {
+        await paymentRepository.updateAttempt(database, attemptId, update, expectedAttempt)
+        await saveRefunds(database, attemptId, refunds)
+      }
+
+      if (refunds.length > 0) {
+        await handle.$transaction((handle) => saveReconciliation(handle))
+      } else {
+        await saveReconciliation(handle)
       }
 
       return await this.getById(handle, attempt.paymentId)

@@ -7,7 +7,7 @@ import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
 import type { Configuration } from "../../configuration"
-import { IllegalStateError, TaskSkippedError } from "../../error"
+import { ConcurrentModificationError, IllegalStateError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
 import type { Task } from "./task"
@@ -168,14 +168,20 @@ export function getLocalTaskExecutor(
           span.recordException(error)
         }
 
-        if (claimedAt !== null) {
+        if (claimedAt !== null || error instanceof ConcurrentModificationError) {
           outcome = "retrying"
 
-          await taskService.finishCheckoutTask(client, task.id, claimedAt, {
-            status: "PENDING",
+          const retry = {
+            status: "PENDING" as const,
             scheduledAt: addMinutes(getCurrentUTC(), 1),
             processedAt: null,
-          })
+          }
+
+          if (claimedAt !== null) {
+            await taskService.finishCheckoutTask(client, task.id, claimedAt, retry)
+          } else {
+            await taskService.update(client, task.id, retry, "RUNNING")
+          }
 
           return
         }

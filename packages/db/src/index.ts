@@ -12,3 +12,4 @@ export const createPrisma = (databaseUrl: string) => {
 
 export * as sql from "../generated/prisma/sql"
 export * from "../generated/prisma/client"
+export * from "./errors"

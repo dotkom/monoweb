@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs"
 import { describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import { core, dbClient, stripe } from "../../../vitest-integration.setup"
+import { ConcurrentModificationError } from "../../error"
 import { buildPaymentView } from "./payment"
 import { getPaymentRepository, paymentInclude } from "./payment-repository"
 import { getUserRepository } from "../user/user-repository"
@@ -68,6 +69,33 @@ async function openCheckout(ledger: ReturnType<typeof getPaymentLedgerService>, 
 }
 
 describe("payment ledger persistence", () => {
+  it("preserves a capture saved while an older Stripe lookup was in flight", async () => {
+    const { ledger, payment } = await createPayment()
+    stripe.checkout.sessions.create.mockResolvedValue(mockSession())
+    const checkout = await openCheckout(ledger, payment.id)
+    const attemptId = checkout.attempts[0].id
+
+    stripe.checkout.sessions.retrieve.mockImplementationOnce(async () => {
+      await dbClient.paymentAttempt.update({
+        where: {
+          id: attemptId,
+        },
+        data: {
+          status: "CAPTURED",
+          capturedAmountOre: payment.amountOre,
+        },
+      })
+
+      return mockSession("open")
+    })
+
+    await expect(ledger.syncAttempt(dbClient, attemptId)).rejects.toThrow(ConcurrentModificationError)
+    const saved = await ledger.getById(dbClient, payment.id)
+
+    expect(saved.attempts[0].status).toBe("CAPTURED")
+    expect(saved.attempts[0].capturedAmountOre).toBe(payment.amountOre)
+  })
+
   it("rolls back checkout preparation without contacting Stripe or leaving a task", async () => {
     const { ledger, payment } = await createPayment()
 
