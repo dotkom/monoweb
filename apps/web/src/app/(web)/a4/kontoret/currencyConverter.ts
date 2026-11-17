@@ -73,7 +73,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
            there is a convertion rate for USD to Eurodollars, which is 2$ per 1€$
            (source: p. 23 of the "Home of the Brave" Cyberpunk source book: 
            "The purchasing power of the Eurodollar is approximately twice the purchasing power of the U.S. dollar."),
-           which we use to get the amount of 2020 eddies the kiosk item is worth (multiply by 2)
+           which we use to get the amount of 2020 eddies the kiosk item is worth (divide by 2)
         4. Use the value of the Militech Crusher shotgun
            (as it seems the be the only fucking non-iconic gun that appears in any TTRPG game and the video game),
            as a price anchor to calculate 2020->2077 in-universe inflation. The gun (tier 1*) costs [450 €$] in Cyberpunk 2020,
@@ -85,11 +85,12 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
               SINGLE one sold a crusher, but I had one in my inventory, which sold for [770 €$], and comparing the
               sale prices of other weapons in my inventory and the purchace prices of weapons they DID have available,
               I found that buying a wepons costs about [10 times] what you get when you sell the same weapon in game
-        5. Multiply the value we got from step 3 with the inflation rate from step 4 (171.11) to find the value of the item in 2077 Eurodollars
+        5. Multiply the value we got from step 3 with the inflation rate from step 4 (17.11) to find the value of the item in 2077 Eurodollars
         6. Cry yourself to sleep because you spent this much time researching USD->Eurodollar exchange rates, weapons overlaps between the 
            TTRPGs and videogame, and searching for a vendor who would sell a crusher (apparently an impossible task), and it is currently 5:30AM
+        7. Wake up, realize your math is very off and fix it, then shed a single tear
       */
-      return `${(value * (1 / 1.23) * 0.1 * 2 * 171.11).toFixed(2)} €$`
+      return `${(((value * (1 / 1.23) * 0.1) / 2) * 17.11).toFixed(2)} €$`
     case "COPIES_OF_UNDERTALE":
       return `${(value / 70).toFixed(2)} kopier av Undertale` // Undertale costs 70kr
     case "PK":
@@ -157,8 +158,8 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
       return ["(pris / 39) * 200 000", "Et gavekort med 200 000 dollat koster 39 kr"]
     case "EDDIES":
       return [
-        "(((pris * (1 / 1,23)) / 10) * 2) * 171,11",
-        "Pris inflasjonsjustert for 2020 (1 kr da er verdt 1,23 kr nå), konvertert til USD (0.1), konvertert til Eurodollars (2$ = 1€$), inflasjonsjustert fra 2020 til 2077 med salgsverdien av et kjent objekt (i dette tilfellet, en Militech Crusher) i Cyberpunk 2020 (tabletop RPG) og Cyberpunk 2077 (videospill)",
+        "((((pris * (1 / 1,23)) / 10) / 2) * 17,11",
+        "Pris inflasjonsjustert for 2020 (1 kr da er verdt 1,23 kr nå), konvertert til USD (0.1), konvertert til Eurodollars (2$ = 1€$), inflasjonsjustert fra 2020 til 2077 med salgsverdien av et kjent objekt (i dette tilfellet, en Militech Crusher) i Cyberpunk 2020 (tabletop RPG) og Cyberpunk 2077 (videospill), som gir 1711,11% inflasjon",
       ]
     case "COPIES_OF_UNDERTALE":
       return ["pris / 70", "Undertale koster 70 kr"]
