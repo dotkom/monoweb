@@ -252,3 +252,18 @@ export type PaymentAttempt = Prisma.PaymentAttemptModel
  * 
  */
 export type PaymentRefund = Prisma.PaymentRefundModel
+/**
+ * Model Sidequest
+ * 
+ */
+export type Sidequest = Prisma.SidequestModel
+/**
+ * Model SidequestRegistration
+ * 
+ */
+export type SidequestRegistration = Prisma.SidequestRegistrationModel
+/**
+ * Model SidequestRequest
+ * 
+ */
+export type SidequestRequest = Prisma.SidequestRequestModel

@@ -1,11 +1,11 @@
-import type { PaymentRepository } from "../payment/payment-repository"
-import type { AttendanceRepository } from "../event/attendance-repository"
-import type { User, Membership } from "./user"
 import type { DBHandle, Prisma } from "@dotkomonline/db"
-import type { GroupRepository } from "../group/group-repository"
-import type { AttendanceService } from "../event/attendance-service"
-import { simplifyGroupMemberships } from "../group/group-service"
 import { z } from "zod"
+import type { AttendanceRepository } from "../event/attendance-repository"
+import type { AttendanceService } from "../event/attendance-service"
+import type { GroupRepository } from "../group/group-repository"
+import { simplifyGroupMemberships } from "../group/group-service"
+import type { PaymentRepository } from "../payment/payment-repository"
+import type { Membership, User } from "./user"
 
 interface MergeUsersDependencies {
   paymentRepository: PaymentRepository
@@ -234,6 +234,25 @@ const REASSIGN_RELATION_HANDLERS = {
       data: { lastUpdatedById: toId },
     })
   },
+
+  sidequestRequests: async (handle: DBHandle, _dependencies: MergeUsersDependencies, fromId: string, toId: string) => {
+    await handle.sidequestRequest.updateMany({
+      where: { requestedById: fromId },
+      data: { requestedById: toId },
+    })
+  },
+
+  sidequestRequestsReviewed: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    fromId: string,
+    toId: string
+  ) => {
+    await handle.sidequestRequest.updateMany({
+      where: { reviewedById: fromId },
+      data: { reviewedById: toId },
+    })
+  },
 } satisfies Partial<
   Record<
     AllUserKeys,
@@ -409,6 +428,33 @@ const CUSTOM_RELATION_MERGERS = {
         },
       })
     }
+  },
+
+  // Handling unique constraint errors on (userId, sidequestId).
+  sidequestRegistrations: async (
+    handle: DBHandle,
+    _dependencies: MergeUsersDependencies,
+    survivor: User,
+    consumed: User
+  ) => {
+    const survivorRegistrations = await handle.sidequestRegistration.findMany({
+      where: { userId: survivor.id },
+      select: { sidequestId: true },
+    })
+
+    const survivorSidequestIds = new Set(survivorRegistrations.map((registration) => registration.sidequestId))
+
+    await handle.sidequestRegistration.deleteMany({
+      where: {
+        userId: consumed.id,
+        sidequestId: { in: [...survivorSidequestIds] },
+      },
+    })
+
+    await handle.sidequestRegistration.updateMany({
+      where: { userId: consumed.id },
+      data: { userId: survivor.id },
+    })
   },
 
   // Handling FK constraint errors on personal marks.
