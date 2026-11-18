@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@dotkomonline/ui"
+import { Button, cn } from "@dotkomonline/ui"
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
 import { type FC, type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 
@@ -81,14 +81,15 @@ const ScrollButton: FC<ScrollButtonProps> = ({ direction, visible, onClick }) =>
   const Icon = direction === "left" ? IconChevronLeft : IconChevronRight
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       aria-label={direction === "left" ? "Scroll til venstre" : "Scroll til høyre"}
       tabIndex={visible ? 0 : -1}
       className={cn(
         // Centered on the cards; -mt-1 compensates for the scroll row's bottom padding (pb-2)
-        "hidden md:flex absolute top-1/2 -mt-1 -translate-y-1/2 z-10 items-center justify-center size-12 rounded-full",
+        "hidden md:flex absolute top-1/2 -mt-1 -translate-y-1/2 z-10 size-12 rounded-full",
         "bg-white dark:bg-stone-800 shadow-lg ring-1 ring-gray-300 dark:ring-stone-600",
         "hover:bg-gray-100 hover:scale-105 dark:hover:bg-stone-700 transition-all cursor-pointer",
         direction === "left" ? "-left-5" : "-right-5",
@@ -96,6 +97,6 @@ const ScrollButton: FC<ScrollButtonProps> = ({ direction, visible, onClick }) =>
       )}
     >
       <Icon className="size-6" stroke={2.5} />
-    </button>
+    </Button>
   )
 }

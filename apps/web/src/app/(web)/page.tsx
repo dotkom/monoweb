@@ -1,6 +1,4 @@
-import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
-import type { EventCardProps } from "@/components/molecules/EventListItem/EventCard"
-import { EventImage } from "@/components/molecules/EventListItem/EventImage"
+import { EventCard, type EventCardProps } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { OnlineHeroVisual } from "@/components/molecules/OnlineHero/OnlineHeroVisual"
@@ -15,11 +13,10 @@ import { TZDate } from "@date-fns/tz"
 import type { EventRouter } from "@dotkomonline/rpc"
 import { attendeeHasPendingCompletionDeadline, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import type { Offline } from "@dotkomonline/rpc/offline"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
-import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { IconArrowRight, IconCalendarDollar, IconCalendarEvent, IconMapPin } from "@tabler/icons-react"
-import { formatDate, formatDistanceToNowStrict, isAfter, isFuture, isPast, startOfDay } from "date-fns"
+import { getCurrentUTC } from "@dotkomonline/utils"
+import { IconArrowRight, IconCalendarDollar, IconCalendarEvent } from "@tabler/icons-react"
+import { formatDistanceToNowStrict, isAfter, isFuture, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import { Link } from "@/components/link"
 
@@ -95,71 +92,40 @@ const SeeAllButton = ({ label, href = "/arrangementer" }: { label: string; href?
 )
 
 export default async function App() {
-  let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
   const cookieStore = await cookies()
   const isIdentityLinkSuccessVisible =
     cookieStore.get(IDENTITY_LINK_STATUS_COOKIE)?.value === IDENTITY_LINK_STATUS_VALUE
 
-  if (!isIdentityLinkSuccessVisible) {
-    try {
-      user = await server.user.findMe.query()
-    } catch (error) {
-      console.error("Failed to fetch user", error)
-    }
-  }
+  const user = isIdentityLinkSuccessVisible ? null : await server.user.findMe.query()
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
 
   let userEvents: UserEvent[] = []
 
   if (user !== null) {
-    try {
-      userEvents = (
-        await server.event.allSummariesByAttendingUserId.query({
-          id: user.id,
-          take: USER_EVENT_LIMIT,
-          filter: {
-            orderBy: "asc",
-            byEndDate: {
-              min: startOfToday,
-              max: null,
-            },
-          },
-        })
-      ).items
-    } catch (error) {
-      console.error("Failed to fetch user attending events", error)
-    }
-  }
-
-  let featuredEvents: EventRouter.FindFeaturedEventsOutput = []
-
-  try {
-    featuredEvents = await server.event.findFeaturedEvents.query({
-      // With exactly one user event, one extra featured event is shown next to it as a suggestion
-      limit: FEATURED_EVENT_COUNT + (userEvents.length === 1 ? 1 : 0),
-      // Don't repeat events that are already shown under "Dine arrangementer"
-      excludeAttendedByUser: user !== null,
+    const { items } = await server.event.allSummariesByAttendingUserId.query({
+      id: user.id,
+      take: USER_EVENT_LIMIT,
+      filter: {
+        orderBy: "asc",
+        byEndDate: {
+          min: startOfToday,
+          max: null,
+        },
+      },
     })
-  } catch (error) {
-    console.error("Failed to fetch featured events", error)
+    userEvents = items
   }
 
-  let articles: Awaited<ReturnType<typeof server.article.all.query>> = []
+  const featuredEvents = await server.event.findFeaturedEvents.query({
+    // With exactly one user event, one extra featured event is shown next to it as a suggestion
+    limit: FEATURED_EVENT_COUNT + (userEvents.length === 1 ? 1 : 0),
+    // Don't repeat events that are already shown under "Dine arrangementer"
+    excludeAttendedByUser: user !== null,
+  })
 
-  try {
-    articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
-  } catch (error) {
-    console.error("Failed to fetch articles", error)
-  }
-
-  let featuredOffline: Offline | undefined
-
-  try {
-    featuredOffline = (await server.offline.all.query())[0]
-  } catch (error) {
-    console.error("Failed to fetch offlines", error)
-  }
+  const articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
+  const featuredOffline = await server.offline.findFeatured.query()
 
   const firstName = user?.name?.split(" ")[0]
 
@@ -224,7 +190,7 @@ export default async function App() {
         <FeaturedEvents events={remainingFeaturedEvents} />
       </div>
 
-      {featuredOffline !== undefined && <FrontPageOfflineShowcase offline={featuredOffline} />}
+      {featuredOffline !== null && <FrontPageOfflineShowcase offline={featuredOffline} />}
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
@@ -298,16 +264,29 @@ function UserEvents({
       <HorizontalScroller>
         {events.map(({ event, attendance }) => (
           <div key={event.id} className={cardClassName}>
-            <UserEventCard event={event} attendance={attendance} userId={userId} />
+            <EventCard
+              event={event}
+              attendance={attendance}
+              userId={userId}
+              variant="personal"
+              className="bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
+              header={<UserEventLabel event={event} attendance={attendance} userId={userId} />}
+            />
           </div>
         ))}
         {suggestedEvent !== undefined && (
           <div className={cardClassName}>
-            <UserEventCard
+            <EventCard
               event={suggestedEvent.event}
               attendance={suggestedEvent.attendance}
               userId={userId}
-              isSuggestion
+              variant="personal"
+              className="border-2 border-dashed border-blue-200 hover:border-blue-300 hover:bg-white/60 dark:border-stone-700 dark:hover:border-stone-600 dark:hover:bg-stone-800/50"
+              header={
+                <Text className="w-fit rounded-lg bg-blue-100 px-3 py-1.5 text-base font-semibold text-blue-950 dark:bg-brand/30 dark:text-white">
+                  Kanskje noe for deg?
+                </Text>
+              }
             />
           </div>
         )}
@@ -340,7 +319,7 @@ function FeaturedEvents({ events }: { events: EventRouter.FindFeaturedEventsOutp
               // Three cards per view on desktop: (100% - 2 gaps of 1.5rem) / 3
               className="shrink-0 w-[85vw] max-w-[24rem] md:max-w-none md:w-[calc((100%-3rem)/3)] snap-start"
             >
-              <FeaturedEventCard event={event} />
+              <EventCard event={event} attendance={null} variant="featured" />
             </div>
           ))}
         </HorizontalScroller>
@@ -351,21 +330,15 @@ function FeaturedEvents({ events }: { events: EventRouter.FindFeaturedEventsOutp
   )
 }
 
-function UserEventCard({
-  event,
-  attendance,
-  userId,
-  isSuggestion = false,
-}: EventCardProps & { isSuggestion?: boolean }) {
+function UserEventLabel({ event, attendance, userId }: Pick<EventCardProps, "event" | "attendance" | "userId">) {
   const attendee = getAttendee(attendance, userId ?? null)
   const paymentDeadline =
     attendance != null && attendeeHasPendingCompletionDeadline(attendance, attendee)
       ? attendee?.completionDeadline
       : null
 
-  const label = isSuggestion
-    ? "Kanskje noe for deg?"
-    : paymentDeadline != null
+  const label =
+    paymentDeadline != null
       ? isFuture(paymentDeadline)
         ? `Betal innen ${formatDistanceToNowStrict(paymentDeadline, { locale: nb })}`
         : "Betalingsfristen er ute"
@@ -373,102 +346,20 @@ function UserEventCard({
         ? `Om ${formatDistanceToNowStrict(event.start, { locale: nb })}`
         : "Pågår nå"
 
-  // The suggestion label has no icon
-  const LabelIcon = isSuggestion ? null : paymentDeadline != null ? IconCalendarDollar : IconCalendarEvent
+  const LabelIcon = paymentDeadline != null ? IconCalendarDollar : IconCalendarEvent
 
   return (
-    <Link
-      href={createEventPageUrl(event.id, event.title)}
+    <div
       className={cn(
-        "group flex flex-col gap-3 p-2 rounded-2xl min-w-0 h-full transition-colors",
-        isSuggestion
-          ? // Dashed outline: "not yours yet", as opposed to the filled cards for events you're attending
-            "border-2 border-dashed border-blue-200 hover:border-blue-300 hover:bg-white/60 dark:border-stone-700 dark:hover:border-stone-600 dark:hover:bg-stone-800/50"
-          : "bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
+        "flex items-center gap-2 px-3 py-1.5 rounded-lg w-fit",
+        paymentDeadline != null
+          ? "bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200"
+          : "bg-blue-50 dark:bg-stone-900"
       )}
     >
-      <div
-        className={cn(
-          "flex items-center gap-2 px-3 py-1.5 rounded-lg w-fit",
-          isSuggestion
-            ? "bg-blue-100 text-blue-950 dark:bg-brand/30 dark:text-white"
-            : paymentDeadline != null
-              ? "bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200"
-              : "bg-blue-50 dark:bg-stone-900"
-        )}
-      >
-        {LabelIcon !== null && <LabelIcon className="size-5 shrink-0" />}
-        <Text className="text-base font-semibold">{label}</Text>
-      </div>
-
-      <div className="flex flex-col gap-2 min-w-0">
-        <EventImage
-          imageUrl={event.imageUrl}
-          alt={event.title}
-          start={event.start}
-          end={event.end}
-          eventType={event.type}
-          className="w-full min-w-0"
-          imageClassName="aspect-video w-full"
-          showBadge={false}
-        />
-
-        <div className="flex flex-col gap-2 px-1 pb-1 min-w-0">
-          <Title element="h3" size="lg" className="text-xl font-medium line-clamp-2 wrap-break-word">
-            {event.title}
-          </Title>
-
-          <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 min-w-0">
-            {attendance != null && (
-              <AttendanceStatus
-                attendance={attendance}
-                attendee={attendee}
-                eventEndInPast={isPast(event.end)}
-                hideLock
-              />
-            )}
-
-            {event.locationTitle != null && event.locationTitle !== "" && (
-              <div className="flex flex-row items-center gap-2 min-w-0">
-                <IconMapPin className="size-4 shrink-0 dark:text-stone-400" />
-                <Text className="text-sm line-clamp-1 dark:text-stone-400">{event.locationTitle}</Text>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function FeaturedEventCard({ event }: { event: EventCardProps["event"] }) {
-  return (
-    <Link
-      href={createEventPageUrl(event.id, event.title)}
-      className={cn(
-        "group flex flex-col gap-2 p-2 h-full rounded-2xl transition-colors",
-        "bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
-      )}
-    >
-      <EventImage
-        imageUrl={event.imageUrl}
-        alt={event.title}
-        start={event.start}
-        end={event.end}
-        eventType={event.type}
-        className="w-full min-w-0"
-        imageClassName="aspect-video w-full"
-        showBadge={false}
-      />
-      <div className="flex flex-col px-1 pb-1">
-        <Title element="h3" size="lg" className="text-xl font-medium line-clamp-2 wrap-break-word">
-          {event.title}
-        </Title>
-        <Text className="text-sm text-gray-600 dark:text-stone-400">
-          {formatDate(event.start, "EEEE d. MMMM", { locale: nb })}
-        </Text>
-      </div>
-    </Link>
+      <LabelIcon className="size-5 shrink-0" />
+      <Text className="text-base font-semibold">{label}</Text>
+    </div>
   )
 }
 
