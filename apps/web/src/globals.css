@@ -3,6 +3,7 @@
 @import url("./palettes/halloween.css");
 
 :root {
+  --front-page-blue: oklch(90.5% 0.045 255);
   --logo-foreground: rgb(11 83 116);
   --logo-accent: rgb(250 183 89);
 }
@@ -17,4 +18,30 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/*
+ * Frontpage-farger, blue gradient bakgrunn i light mode og mørk gradient i dark mode.
+ */
+html:not([data-theme="dark"]):not([data-palette="halloween"])
+body:has([data-front-page]) {
+  background-color: var(--color-blue-50);
+  background-image: linear-gradient(
+    to bottom,
+    oklch(99.6% 0.002 248) 0,
+    oklch(97.5% 0.01 248) 45%,
+    oklch(89% 0.04 248) 100%
+  );
+}
+
+html[data-theme="dark"]:not([data-palette="halloween"])
+  body:has([data-front-page]) {
+  background-color: #000;
+  background-image: linear-gradient(
+    to bottom,
+    var(--background) 0,
+    var(--background) 20%,
+    oklch(24% 0.012 235) 55%,
+    oklch(31% 0.03 235) 100%
+  );
 }

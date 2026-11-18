@@ -51,6 +51,12 @@ const getOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async 
   return ctx.offlineService.getById(ctx.prisma, input)
 })
 
+const findFeaturedOfflineProcedure = procedure.output(OfflineSchema.nullable()).query(async ({ ctx }) => {
+  const mostRecentOffline = await ctx.offlineService.findMany(ctx.prisma, { take: 1 })
+
+  return mostRecentOffline.at(0) ?? null
+})
+
 const createOfflineFileUploadProcedure = procedure
   .input(
     z.object({
@@ -83,6 +89,7 @@ export const offlineRouter = t.router({
   all: allOfflineProcedure,
   find: findOfflineProcedure,
   get: getOfflineProcedure,
+  findFeatured: findFeaturedOfflineProcedure,
   createFileUpload: createOfflineFileUploadProcedure,
   createImageUpload: createOfflineImageUploadProcedure,
 })

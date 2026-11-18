@@ -5,7 +5,7 @@ import { Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl } from "@dotkomonline/utils"
 import { IconMapPin } from "@tabler/icons-react"
 import { isPast } from "date-fns"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 import { AttendanceStatus } from "./AttendanceStatus"
 import { EventImage } from "./EventImage"
 import { EventPrice } from "./EventPrice"
@@ -16,9 +16,10 @@ export interface EventCardProps {
   attendance: AttendanceView | AttendanceSummary | null
   userId?: UserId | null
   className?: string
+  header?: ReactNode
 }
 
-export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, className }) => {
+export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, className, header }) => {
   const { id, title, type, imageUrl, locationTitle } = event
   const attendee = getAttendee(attendance, userId ?? null)
   const eventHasEnded = isPast(event.end)
@@ -34,6 +35,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
         className
       )}
     >
+      {header}
       <EventImage
         imageUrl={imageUrl}
         alt={title}
@@ -60,7 +62,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
         </Title>
 
         <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 w-full min-w-0">
-          {locationTitle && (
+          {locationTitle != null && locationTitle !== "" && (
             <div className="flex flex-row items-center gap-2 min-w-0">
               <IconMapPin className="size-4 shrink-0 dark:text-stone-400" />
               <Text
@@ -74,7 +76,7 @@ export const EventCard: FC<EventCardProps> = ({ event, attendance, userId, class
             </div>
           )}
 
-          {attendance && (
+          {attendance != null && (
             <>
               <AttendanceStatus attendance={attendance} attendee={attendee} eventEndInPast={eventHasEnded} size="md" />
 
