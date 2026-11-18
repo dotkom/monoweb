@@ -1,13 +1,15 @@
+import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
+import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
+import { FrontPageOfflineShowcase } from "@/components/frontpage/FrontPageOfflineShowcase"
+import { Link } from "@/components/link"
 import { EventCard, type EventCardProps } from "@/components/molecules/EventListItem/EventCard"
 import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { HorizontalScroller } from "@/components/molecules/HorizontalScroller"
 import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
 import { OnlineHeroVisual } from "@/components/molecules/OnlineHero/OnlineHeroVisual"
-import { HorizontalScroller } from "@/components/molecules/HorizontalScroller"
-import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
 import { AuthNotice } from "@/components/notices/auth-notice"
 import { IdentityLinkSuccessNotice } from "@/components/notices/identity-link-success-notice"
 import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/link-identity-cookies"
-import { cookies } from "next/headers"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
 import type { EventRouter } from "@dotkomonline/rpc"
@@ -18,27 +20,9 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarDollar, IconCalendarEvent } from "@tabler/icons-react"
 import { formatDistanceToNowStrict, isAfter, isFuture, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
-import { Link } from "@/components/link"
-import { EventCard, type EventCardProps } from "@/components/molecules/EventListItem/EventCard"
-import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
-import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
-import { OnlineHeroVisual } from "@/components/molecules/OnlineHero/OnlineHeroVisual"
-import { HorizontalScroller } from "@/components/molecules/HorizontalScroller"
-import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
-import { AuthNotice } from "@/components/notices/auth-notice"
-import { IdentityLinkSuccessNotice } from "@/components/notices/identity-link-success-notice"
-import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/link-identity-cookies"
 import { cookies } from "next/headers"
-import { server } from "@/utils/trpc/server"
-import { TZDate } from "@date-fns/tz"
-import type { EventRouter } from "@dotkomonline/rpc"
-import { attendeeHasPendingCompletionDeadline, getAttendee } from "@dotkomonline/rpc/attendance"
-import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { CLOUD_ROWS } from "src/components/frontpage/FrontPageClouds"
 import { VelkomEkskomLeaderApplicationsNotice } from "src/components/notices/smaller-committee-applications-notice"
-import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
-import { FrontPageOfflineShowcase } from "@/components/Frontpage/FrontPageOfflineShowcase"
-import { CLOUD_ROWS } from "src/components/Frontpage/FrontPageClouds"
 
 const FEATURED_EVENT_COUNT = 9
 // Mobile scrolls through more articles; desktop shows the first two side by side
@@ -125,7 +109,6 @@ export default async function App() {
           <ScrollingClouds
             key={top}
             className={cn(top, hideInDarkMode && "dark:hidden")}
-            F
             imageClassName={width}
             duration={duration}
             delay={delay}
