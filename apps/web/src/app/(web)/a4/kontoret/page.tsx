@@ -1,23 +1,12 @@
-import { Title, Text } from "@dotkomonline/ui"
+import { cookies } from "next/headers"
+import { KontoretPage } from "./components/KontoretPage"
+import { CURRENCY_COOKIE_NAME, parseCurrencyCookie } from "./currencyCookie"
 
-const KioskPage = async () => {
-  return (
-    <div className="flex flex-col gap-2">
-      <Title element="h1" size="xl">
-        Kiosken
-      </Title>
+const Kontoret = async () => {
+  const cookieStore = await cookies()
+  const initialCurrency = parseCurrencyCookie(cookieStore.get(CURRENCY_COOKIE_NAME)?.value)
 
-      <Text className="text-gray-600 dark:text-stone-300">
-        Her kan du kjøpe snacks, mat, drikke og diverse online-merch (som f.eks. klistremerker) når det trengs for lange
-        arbeidsøkter, skippertak og liknende.
-      </Text>
-
-      <Title element="h2" size="lg">
-        Remaining stock:
-      </Title>
-      <Text>Kommer når jeg har lest docsa</Text>
-    </div>
-  )
+  return <KontoretPage initialCurrency={initialCurrency} />
 }
 
-export default KioskPage
+export default Kontoret

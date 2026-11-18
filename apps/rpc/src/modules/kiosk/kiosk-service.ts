@@ -124,18 +124,20 @@ const stockKey = (productUuid: string, variantUuid: string) => `${productUuid}:$
 export function aggregateProductsWithStock(products: ProductsReturn, stock: StockReturn): ProductStock[] {
   const stockByVariant = new Map(stock.map((entry) => [stockKey(entry.productUuid, entry.variantUuid), entry]))
 
-  return products.map((product) => ({
-    id: product.uuid,
-    name: product.name,
-    category: product.category,
-    presentation: product.presentation ?? null,
-    price: product.variants[0]?.price ?? null,
-    vatPercentage: Number(product.vatPercentage),
-    balance: product.variants.reduce(
-      (total, variant) => total + Number(stockByVariant.get(stockKey(product.uuid, variant.uuid))?.balance ?? 0),
-      0
-    ),
-  }))
+  return products
+    .map((product) => ({
+      id: product.uuid,
+      name: product.name,
+      category: product.category,
+      presentation: product.presentation ?? null,
+      price: product.variants[0]?.price ?? null,
+      vatPercentage: Number(product.vatPercentage),
+      balance: product.variants.reduce(
+        (total, variant) => total + Number(stockByVariant.get(stockKey(product.uuid, variant.uuid))?.balance ?? 0),
+        0
+      ),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "nb-NO"))
 }
 
 export interface KioskService {
