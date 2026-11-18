@@ -1,5 +1,11 @@
 import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-fns"
-import type { ProductsReturn, ProductStock, StockReturn } from "./kiosk"
+import {
+  ProductsReturnSchema,
+  StockReturnSchema,
+  type ProductsReturn,
+  type ProductStock,
+  type StockReturn,
+} from "./kiosk"
 import { InternalServerError } from "../../error"
 import { getLogger } from "@dotkomonline/logger"
 import type { Configuration } from "../../configuration"
@@ -77,7 +83,7 @@ const fetchAccessToken = async (zettleClientId: string | null, zettleSecretKey: 
 
   const tokenResponse = z.object({
     access_token: z.string(),
-    expires_in: z.number()
+    expires_in: z.number(),
   })
 
   const data = tokenResponse.parse(await res.json())
@@ -97,7 +103,7 @@ const getProducts = async (token: string, orgId: string | null): Promise<Product
     throw new InternalServerError("Product fetch failed")
   }
 
-  const data = await res.json()
+  const data = ProductsReturnSchema.parse(await res.json())
 
   return data
 }
@@ -114,7 +120,7 @@ const getStock = async (token: string, inventoryId: string | null): Promise<Stoc
     throw new InternalServerError("Stock fetch failed")
   }
 
-  const data = await res.json()
+  const data = StockReturnSchema.parse(await res.json())
 
   return data
 }
