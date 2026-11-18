@@ -125,7 +125,7 @@ export default async function App() {
   })
 
   const articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
-  const [featuredOffline] = await server.offline.all.query()
+  const featuredOffline = await server.offline.findFeatured.query()
 
   const firstName = user?.name?.split(" ")[0]
 
@@ -190,7 +190,7 @@ export default async function App() {
         <FeaturedEvents events={remainingFeaturedEvents} />
       </div>
 
-      {featuredOffline !== undefined && <FrontPageOfflineShowcase offline={featuredOffline} />}
+      {featuredOffline !== null && <FrontPageOfflineShowcase offline={featuredOffline} />}
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
