@@ -79,7 +79,7 @@ const seeAllColors = cn(
   "dark:bg-brand dark:hover:bg-brand/75 dark:text-white dark:hover:text-white"
 )
 
-const SeAlleButton = ({ label, href = "/arrangementer" }: { label: string; href?: string }) => (
+const SeeAllButton = ({ label, href = "/arrangementer" }: { label: string; href?: string }) => (
   <Button
     element={Link}
     href={href}
@@ -229,7 +229,7 @@ export default async function App() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <Title className="text-3xl font-semibold">Artikler</Title>
-          {articles.length > 0 && <SeAlleButton label="Se alle artikler" href="/artikler" />}
+          {articles.length > 0 && <SeeAllButton label="Se alle artikler" href="/artikler" />}
         </div>
 
         {articles.length > 0 ? (
@@ -321,7 +321,7 @@ function NoUserEvents() {
     <div className="flex flex-col gap-4">
       <Title className="text-xl font-semibold">Dine arrangementer</Title>
       <EmptyState text="Du er ikke påmeldt noen kommende arrangementer.">
-        <SeAlleButton label="Finn noe å bli med på" />
+        <SeeAllButton label="Finn noe å bli med på" />
       </EmptyState>
     </div>
   )
