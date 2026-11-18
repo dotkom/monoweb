@@ -97,7 +97,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "COPIES_OF_GTA_VI":
       return `${(value / 899).toFixed(3)} kopier av GTA VI` // GTA VI costs 899 kr
     case "PK":
-      return `${(value / 10.33).toFixed(2)} PK-er` // A PK costs 10,33kr in the kiosk
+      return `${(value / 10.22).toFixed(2)} PK-er` // A PK costs 10,22kr in the kiosk
     case "STORSTIPEND":
       return `${(value / 30_976).toFixed(6)} storstipend` // Storstipend v27 will be 30976kr
     case "DAYS_OF_SAMF_MEMBERSHIP":
@@ -169,7 +169,7 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
     case "COPIES_OF_GTA_VI":
       return ["pris / 899", "GTA VI koster 899 kr"]
     case "PK":
-      return ["pris / 10,33", "En PK koster 10,33 kr i kiosken"]
+      return ["pris / 10,22", "En PK koster 10,22 kr i kiosken"]
     case "STORSTIPEND":
       return ["pris / 30 976", "I 26/27 skoleåret var storstipend på 30 976 kr"]
     case "DAYS_OF_SAMF_MEMBERSHIP":
