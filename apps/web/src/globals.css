@@ -3,6 +3,7 @@
 @import url("./palettes/halloween.css");
 
 :root {
+  --front-page-blue: oklch(90.5% 0.045 255);
   --logo-foreground: rgb(11 83 116);
   --logo-accent: rgb(250 183 89);
 }
@@ -22,7 +23,6 @@
 /*
  * Frontpage-farger, blue gradient bakgrunn i light mode og mørk gradient i dark mode.
  */
-
 html:not([data-theme="dark"]):not([data-palette="halloween"])
 body:has([data-front-page]) {
   background-color: var(--color-blue-50);
@@ -35,7 +35,7 @@ body:has([data-front-page]) {
 }
 
 html[data-theme="dark"]:not([data-palette="halloween"])
-body:has([data-front-page]) {
+  body:has([data-front-page]) {
   background-color: #000;
   background-image: linear-gradient(
     to bottom,
@@ -46,10 +46,18 @@ body:has([data-front-page]) {
   );
 }
 
-html:not([data-theme="dark"]):not([data-palette="halloween"]) body:has(
-    [data-front-page]
-  )
-  [data-navbar-pill] {
-  background-color: oklch(90.5% 0.045 255 / 0.85);
-  border-color: var(--color-blue-200);
+/*
+ * Blue navbar
+ */
+html:not([data-theme="dark"]):not([data-palette="halloween"])
+[data-navbar-pill] {
+  background-color: color-mix(
+    in oklch,
+    var(--front-page-blue) 60%,
+    transparent
+  );
+  border-color: rgb(255 255 255 / 0.6);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    0 4px 24px rgb(15 40 80 / 0.08);
 }

@@ -18,7 +18,7 @@ export const FrontPageOfflineShowcase = ({ offline }: Props) => (
 
 /** Mobile layout: title and year, the cover, and a link to earlier issues */
 const MobileOfflineShowcase = ({ offline }: Props) => (
-  <div className="md:hidden flex flex-col items-center gap-4 p-6 mx-4 mb-16 bg-indigo-100 dark:bg-neutral-800 rounded-2xl">
+  <div className="md:hidden flex flex-col items-center gap-4 p-6 mx-4 mb-16 bg-(--front-page-blue) dark:bg-neutral-800 rounded-2xl">
     <div className="self-stretch min-w-0 flex flex-col gap-2">
       <Title className="text-2xl font-semibold">{offline.title}</Title>
       <Title className="text-lg font-bold">{getYear(offline.publishedAt)}</Title>
@@ -36,7 +36,7 @@ const MobileOfflineShowcase = ({ offline }: Props) => (
 
 const DesktopOfflineShowcase = ({ offline }: Props) => {
   return (
-    <div className="hidden md:flex flex-row items-center justify-between gap-12 p-10 rounded-2xl bg-indigo-100 dark:bg-neutral-800">
+    <div className="hidden md:flex flex-row items-center justify-between gap-12 p-10 rounded-2xl bg-(--front-page-blue) dark:bg-neutral-800">
       <div className="flex flex-col gap-3 min-w-0 max-w-xl">
         <Text className="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-stone-300">
           Nyeste utgave av Offline · {getYear(offline.publishedAt)}

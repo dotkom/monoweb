@@ -17,7 +17,7 @@ import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { Offline } from "@dotkomonline/rpc/offline"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
-import { IconArrowRight, IconCalendarDollar, IconCalendarEvent, IconMapPin, IconSparkles } from "@tabler/icons-react"
+import { IconArrowRight, IconCalendarDollar, IconCalendarEvent, IconMapPin } from "@tabler/icons-react"
 import { formatDate, formatDistanceToNowStrict, isAfter, isFuture, isPast, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import { Link } from "@/components/link"
@@ -373,7 +373,8 @@ function UserEventCard({
         ? `Om ${formatDistanceToNowStrict(event.start, { locale: nb })}`
         : "Pågår nå"
 
-  const LabelIcon = isSuggestion ? IconSparkles : paymentDeadline != null ? IconCalendarDollar : IconCalendarEvent
+  // The suggestion label has no icon
+  const LabelIcon = isSuggestion ? null : paymentDeadline != null ? IconCalendarDollar : IconCalendarEvent
 
   return (
     <Link
@@ -396,7 +397,7 @@ function UserEventCard({
               : "bg-blue-50 dark:bg-stone-900"
         )}
       >
-        <LabelIcon className="size-5 shrink-0" />
+        {LabelIcon !== null && <LabelIcon className="size-5 shrink-0" />}
         <Text className="text-base font-semibold">{label}</Text>
       </div>
 
