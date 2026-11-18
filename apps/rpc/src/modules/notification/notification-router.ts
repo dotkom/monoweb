@@ -17,6 +17,7 @@ import {
   canTargetSpecificUsers,
 } from "../../permissions/notification-permissions"
 import { canManageOfflines } from "../../permissions/offline-permissions"
+import { canAdminManageSidequests } from "../../permissions/sidequest-permissions"
 import { type TRPCContext, procedure, procedureTraceErrorsOnly, t } from "../../trpc"
 import {
   NotificationDraftCreateSchema,
@@ -97,6 +98,15 @@ async function authorizeNotificationSource(context: AuthenticatedContext, source
     case "JOB_LISTING": {
       await context.addAuthorizationGuard(
         permitIf((principal) => canManageJobListings(principal)),
+        source
+      )
+
+      return
+    }
+
+    case "SIDEQUEST": {
+      await context.addAuthorizationGuard(
+        permitIf((principal) => canAdminManageSidequests(principal)),
         source
       )
 
