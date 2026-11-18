@@ -6,7 +6,7 @@ import type { CurrenciesType } from "../currencyConverter"
 import { setCurrencyCookie } from "../currencyCookie"
 import { useStockQuery } from "../queries"
 import { CurrencySelect } from "./CurrencySelect"
-import { StockList } from "./StockList"
+import { StockList, StockListSkeleton } from "./StockList"
 
 type KontoretClientProps = {
   initialCurrency: CurrenciesType
@@ -41,7 +41,7 @@ export const KontoretPage = ({ initialCurrency }: KontoretClientProps) => {
         <CurrencySelect value={currency} onChange={handleCurrencyChange} />
       </div>
       {isLoading ? (
-        <Text>Laster inn lagerstatus ...</Text>
+        <StockListSkeleton />
       ) : stock === undefined || stock.length === 0 ? (
         <Text>Fant ingen produkter.</Text>
       ) : (
