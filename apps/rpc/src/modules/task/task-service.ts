@@ -2,7 +2,7 @@ import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { subMinutes } from "date-fns"
-import type { ClaimedTask, Task, TaskId, TaskStatus, TaskWrite } from "./task"
+import type { ClaimedTask, Task, TaskId, TaskStatus, TaskType, TaskWrite } from "./task"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
@@ -19,7 +19,7 @@ export type TaskService = {
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
   setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  claimNextTask(handle: DBHandle): Promise<ClaimedTask | null>
+  claimNextTask(handle: DBHandle, taskTypes?: readonly TaskType[]): Promise<ClaimedTask | null>
 
   /**
    * Parse and validate the payload for a given task, given its specification.
@@ -85,11 +85,11 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       return await taskRepository.findById(handle, taskId)
     },
 
-    async claimNextTask(handle) {
+    async claimNextTask(handle, taskTypes) {
       const claimedAt = getCurrentUTC()
       const checkoutLeaseExpiredBefore = subMinutes(claimedAt, CHECKOUT_LEASE_MINUTES)
 
-      return await taskRepository.claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore)
+      return await taskRepository.claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore, taskTypes)
     },
 
     parse(taskDefinition, payload) {

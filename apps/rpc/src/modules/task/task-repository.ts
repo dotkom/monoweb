@@ -27,7 +27,12 @@ export interface TaskRepository {
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   findMany(handle: DBHandle): Promise<Task[]>
-  claimNextTask(handle: DBHandle, claimedAt: Date, checkoutLeaseExpiredBefore: Date): Promise<ClaimedTask | null>
+  claimNextTask(
+    handle: DBHandle,
+    claimedAt: Date,
+    checkoutLeaseExpiredBefore: Date,
+    taskTypes?: readonly TaskType[]
+  ): Promise<ClaimedTask | null>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyAttendanceCompletionTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
@@ -100,8 +105,12 @@ export function getTaskRepository(): TaskRepository {
       return parseOrReport(TaskSchema.array(), tasks)
     },
 
-    async claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore) {
-      const supportedTypes = TaskTypeSchema.options.map((type) => Prisma.sql`${type}::task_type`)
+    async claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore, taskTypes = TaskTypeSchema.options) {
+      if (taskTypes.length === 0) {
+        return null
+      }
+
+      const supportedTypes = taskTypes.map((type) => Prisma.sql`${type}::task_type`)
       const [task] = await handle.$queryRaw<unknown[]>`
         WITH next_task AS (
           SELECT id FROM task
