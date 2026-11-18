@@ -12,7 +12,7 @@ interface Props {
 
 export const FrontPageOfflineShowcase = ({ offline }: Props) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center mb-16 xl:mx-30 gap-y-4 gap-x-6 p-6 bg-blue-100 dark:bg-neutral-600 dark:text-muted-foreground rounded-2xl md:p-8 mx-4 md:mx-8">
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center mb-16 xl:mx-10 gap-y-4 gap-x-6 p-6 bg-blue-100 dark:bg-neutral-600 dark:text-muted-foreground rounded-2xl md:p-8 mx-4 md:mx-8">
       {/*Teksten til venstre*/}
       <div className="min-w-0 md:col-start-1 md:row-start-1 md:self-end flex flex-col gap-2 max-w-xl">
         <Text className="hidden text-2xl lg:block md:block">Nyeste utgaven av Offline</Text>
