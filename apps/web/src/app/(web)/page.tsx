@@ -19,50 +19,26 @@ import { IconArrowRight, IconCalendarDollar, IconCalendarEvent } from "@tabler/i
 import { formatDistanceToNowStrict, isAfter, isFuture, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import { Link } from "@/components/link"
-
+import { EventCard, type EventCardProps } from "@/components/molecules/EventListItem/EventCard"
+import { EventListItem } from "@/components/molecules/EventListItem/EventListItem"
+import { OnlineHero } from "@/components/molecules/OnlineHero/OnlineHero"
+import { OnlineHeroVisual } from "@/components/molecules/OnlineHero/OnlineHeroVisual"
+import { HorizontalScroller } from "@/components/molecules/HorizontalScroller"
+import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
+import { AuthNotice } from "@/components/notices/auth-notice"
+import { IdentityLinkSuccessNotice } from "@/components/notices/identity-link-success-notice"
+import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/link-identity-cookies"
+import { cookies } from "next/headers"
+import { server } from "@/utils/trpc/server"
+import { TZDate } from "@date-fns/tz"
+import type { EventRouter } from "@dotkomonline/rpc"
+import { attendeeHasPendingCompletionDeadline, getAttendee } from "@dotkomonline/rpc/attendance"
+import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
+import { getCurrentUTC } from "@dotkomonline/utils"
 import { VelkomEkskomLeaderApplicationsNotice } from "src/components/notices/smaller-committee-applications-notice"
 import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
-import { FrontPageOfflineShowcase } from "@/components/frontPageOfflineShowcase"
-
-type UserEvent = Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"][number]
-
-// Rows of clouds spread down the page. Different widths and speeds give a bit of depth.
-// In dark mode only the bottom rows are shown, so the night sky has fewer clouds, low down.
-const CLOUD_ROWS = [
-  { top: "top-0", width: "w-[max(180vw,120rem)]", duration: "200s", delay: "0s", opacity: 1, hideAtNight: true },
-  {
-    top: "top-[20%]",
-    width: "w-[max(220vw,140rem)]",
-    duration: "260s",
-    delay: "-130s",
-    opacity: 0.8,
-    hideAtNight: true,
-  },
-  {
-    top: "top-[40%]",
-    width: "w-[max(200vw,130rem)]",
-    duration: "230s",
-    delay: "-60s",
-    opacity: 0.9,
-    hideAtNight: true,
-  },
-  {
-    top: "top-[60%]",
-    width: "w-[max(240vw,150rem)]",
-    duration: "280s",
-    delay: "-200s",
-    opacity: 0.75,
-    hideAtNight: false,
-  },
-  {
-    top: "top-[80%]",
-    width: "w-[max(190vw,125rem)]",
-    duration: "210s",
-    delay: "-90s",
-    opacity: 0.85,
-    hideAtNight: false,
-  },
-] as const
+import { FrontPageOfflineShowcase } from "@/components/Frontpage/FrontPageOfflineShowcase"
+import { CLOUD_ROWS } from "src/components/Frontpage/FrontPageClouds"
 
 const FEATURED_EVENT_COUNT = 9
 // Mobile scrolls through more articles; desktop shows the first two side by side
@@ -100,7 +76,7 @@ export default async function App() {
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
 
-  let userEvents: UserEvent[] = []
+  let userEvents: EventWithAttendanceSummary[] = []
 
   if (user !== null) {
     const { items } = await server.event.allSummariesByAttendingUserId.query({
@@ -124,7 +100,9 @@ export default async function App() {
     excludeAttendedByUser: user !== null,
   })
 
-  const articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
+  const articles = await server.article.all.query({
+    take: MOBILE_ARTICLE_COUNT,
+  })
   const featuredOffline = await server.offline.findFeatured.query()
 
   const firstName = user?.name?.split(" ")[0]
@@ -143,10 +121,11 @@ export default async function App() {
         aria-hidden
         className="absolute -top-28 -bottom-24 left-1/2 w-screen -translate-x-1/2 -z-10 overflow-hidden halloween:hidden"
       >
-        {CLOUD_ROWS.map(({ top, width, duration, delay, opacity, hideAtNight }) => (
+        {CLOUD_ROWS.map(({ top, width, duration, delay, opacity, hideInDarkMode }) => (
           <ScrollingClouds
             key={top}
-            className={cn(top, hideAtNight && "dark:hidden")}
+            className={cn(top, hideInDarkMode && "dark:hidden")}
+            F
             imageClassName={width}
             duration={duration}
             delay={delay}
@@ -200,7 +179,6 @@ export default async function App() {
 
         {articles.length > 0 ? (
           <>
-            {/* Mobil */}
             <div className="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
               {articles.map((article) => (
                 <div key={article.id} className="shrink-0 w-[85vw] max-w-[24rem] snap-start">
@@ -209,7 +187,6 @@ export default async function App() {
               ))}
             </div>
 
-            {/* Desktop */}
             <div className="hidden md:grid md:grid-cols-2 gap-6">
               {articles.slice(0, DESKTOP_ARTICLE_COUNT).map((article) => (
                 <ArticleListItem key={article.id} article={article} orientation="horizontal" />
@@ -250,7 +227,7 @@ function UserEvents({
   suggestedEvent,
   userId,
 }: {
-  events: UserEvent[]
+  events: EventWithAttendanceSummary[]
   suggestedEvent?: EventRouter.FindFeaturedEventsOutput[number]
   userId: string
 }) {
@@ -313,13 +290,17 @@ function FeaturedEvents({ events }: { events: EventRouter.FindFeaturedEventsOutp
 
       {events.length > 0 ? (
         <HorizontalScroller>
-          {events.map(({ event }) => (
+          {events.map(({ event, attendance }) => (
             <div
               key={event.id}
               // Three cards per view on desktop: (100% - 2 gaps of 1.5rem) / 3
               className="shrink-0 w-[85vw] max-w-[24rem] md:max-w-none md:w-[calc((100%-3rem)/3)] snap-start"
             >
-              <EventCard event={event} attendance={null} variant="featured" />
+              <EventCard
+                event={event}
+                attendance={attendance}
+                className="bg-white dark:bg-stone-800/50 hover:bg-gray-50 dark:hover:bg-stone-800"
+              />
             </div>
           ))}
         </HorizontalScroller>

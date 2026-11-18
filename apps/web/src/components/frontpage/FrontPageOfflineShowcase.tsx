@@ -3,7 +3,7 @@ import type { Offline } from "@dotkomonline/rpc/offline"
 import { IconArrowRight } from "@tabler/icons-react"
 import { getYear } from "date-fns"
 import { Link } from "@/components/link"
-import { OfflineCard } from "./molecules/OfflineCard"
+import { OfflineCard } from "../molecules/OfflineCard"
 
 interface Props {
   offline: Offline
@@ -28,7 +28,7 @@ const MobileOfflineShowcase = ({ offline }: Props) => (
       <OfflineCard offline={offline} showTitle={false} />
     </div>
 
-    <Button variant="default"  size="lg" element={Link} href="/offline">
+    <Button variant="default" size="lg" element={Link} href="/offline">
       Les tidligere utgaver
     </Button>
   </div>
