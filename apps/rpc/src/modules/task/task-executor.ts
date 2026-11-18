@@ -1,8 +1,7 @@
-import { type DBClient, Prisma, PrismaErrorCode } from "@dotkomonline/db"
+import { type DBClient, Prisma, type PrismaClient, PrismaErrorCode } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
-import PQueue from "p-queue"
 import Stripe from "stripe"
 import type { Configuration } from "../../configuration"
 import { ConcurrentModificationError, IllegalStateError, TaskSkippedError } from "../../error"
@@ -47,9 +46,6 @@ export function getLocalTaskExecutor(
 ): TaskExecutor {
   const logger = getLogger("task-executor")
   const tracer = trace.getTracer("@dotkomonline/rpc/task-executor")
-  // Limited to one to avoid race conditions due to sloppy code in the service layer :^)
-  const queue = new PQueue({ concurrency: 1 })
-
   logger.warn("TaskExecutor started with local (postgres) backend")
 
   async function executeTask(client: DBClient, task: ClaimedTask) {
@@ -151,63 +147,64 @@ export function getLocalTaskExecutor(
     })
   }
 
-  return {
-    startWorker(client, signal) {
-      let timeout: ReturnType<typeof setTimeout> | null = null
+  async function drainTasks(client: PrismaClient, signal: AbortSignal) {
+    while (!signal.aborted) {
+      const task = await taskDiscoveryService.claimNextTask()
 
-      queue.start()
-      signal.addEventListener("abort", () => {
-        if (queue.pending !== 0) {
-          logger.warn("Worker aborted with %s tasks pending in queue", queue.pending)
-        }
-      })
-
-      async function work() {
-        await tracer.startActiveSpan("TaskExecutor/DiscoverTasks", { root: true }, async (span) => {
-          try {
-            logger.debug("TaskExecutor discovering and scheduling recurring tasks")
-            const recurringTasks = await taskDiscoveryService.querySchedulableRecurringTasks()
-            const now = getCurrentUTC()
-
-            for (const recurringTask of recurringTasks) {
-              const type = getTaskDefinition(recurringTask.type)
-
-              logger.debug(`TaskExecutor scheduling task ${type} from recurring task ${recurringTask.id}`)
-              await taskSchedulingService.scheduleAt(client, type, recurringTask.payload, now, recurringTask.id)
-              await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
-            }
-
-            if (queue.pending === 0 && !signal.aborted) {
-              const task = await taskDiscoveryService.claimNextTask()
-
-              if (task !== null) {
-                void queue
-                  .add(() => processTask(client, task))
-                  .catch((error: unknown) => {
-                    logger.error("Failed to finish task with ID=%s: %o", task.id, error)
-                  })
-              }
-            }
-          } catch (error) {
-            logger.error("Task discovery failed: %o", error)
-          } finally {
-            if (!signal.aborted) {
-              timeout = setTimeout(work, configuration.tasks.workerInterval)
-            }
-
-            span.end()
-          }
-        })
+      if (task === null) {
+        return
       }
 
-      logger.info("Starting TaskExecutor Worker with interval of %d milliseconds", configuration.tasks.workerInterval)
+      await processTask(client, task)
+    }
+  }
 
-      timeout = setTimeout(work, configuration.tasks.workerInterval)
-      signal.addEventListener("abort", () => {
-        if (timeout !== null) {
-          clearTimeout(timeout)
+  // Each poller has at most one operation in flight. Once idle, it waits before reading the database again.
+  function startPolling(signal: AbortSignal, operation: () => Promise<void>) {
+    if (signal.aborted) {
+      return
+    }
+
+    async function poll() {
+      try {
+        await operation()
+      } catch (error) {
+        logger.error("Task worker poll failed: %o", error)
+      } finally {
+        if (!signal.aborted) {
+          timer = setTimeout(() => poll(), configuration.tasks.workerInterval)
         }
-      })
+      }
+    }
+
+    let timer = setTimeout(() => poll(), configuration.tasks.workerInterval)
+    signal.addEventListener("abort", () => clearTimeout(timer), { once: true })
+  }
+
+  async function scheduleRecurringTasks(client: PrismaClient) {
+    await tracer.startActiveSpan("TaskExecutor/DiscoverTasks", { root: true }, async (span) => {
+      try {
+        logger.debug("TaskExecutor discovering and scheduling recurring tasks")
+        const recurringTasks = await taskDiscoveryService.querySchedulableRecurringTasks()
+        const now = getCurrentUTC()
+
+        for (const recurringTask of recurringTasks) {
+          const type = getTaskDefinition(recurringTask.type)
+
+          logger.debug(`TaskExecutor scheduling task ${type} from recurring task ${recurringTask.id}`)
+          await taskSchedulingService.scheduleAt(client, type, recurringTask.payload, now, recurringTask.id)
+          await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
+        }
+      } finally {
+        span.end()
+      }
+    })
+  }
+
+  return {
+    startWorker(client, signal) {
+      startPolling(signal, () => drainTasks(client, signal))
+      startPolling(signal, () => scheduleRecurringTasks(client))
     },
   }
 }
