@@ -24,6 +24,13 @@ export const TaskSchema = z.object({
   recurringTaskId: z.string().nullable(),
 })
 
+export const ClaimedTaskSchema = TaskSchema.extend({
+  status: z.literal("RUNNING"),
+  processedAt: z.date(),
+})
+
+export type ClaimedTask = z.infer<typeof ClaimedTaskSchema>
+
 export const RecurringTaskSchema = z.object({
   id: z.string(),
   type: TaskTypeSchema,

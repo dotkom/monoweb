@@ -11,7 +11,7 @@ import type { Configuration } from "../../configuration"
 import { IllegalStateError, RetryableTaskError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
-import type { Task } from "./task"
+import type { ClaimedTask } from "./task"
 import {
   type ChargeAttendeeTaskDefinition,
   type OpenPaymentCheckoutTaskDefinition,
@@ -47,25 +47,12 @@ export function getLocalTaskExecutor(
 
   logger.warn("TaskExecutor started with local (postgres) backend")
 
-  async function processTask(client: PrismaClient, task: Task): Promise<void> {
+  async function processTask(client: PrismaClient, task: ClaimedTask): Promise<void> {
     let outcome: "completed" | "failed" | "skipped" | "retrying" = "completed"
 
-    // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
-    // as running regardless of whether the child transaction commits or rollbacks.
-    const isCheckoutTask = task.type === tasks.OPEN_PAYMENT_CHECKOUT.type
-    const claimedAt = isCheckoutTask ? await taskService.claimCheckoutTask(client, task) : null
-
-    if (isCheckoutTask && claimedAt === null) {
-      return
-    }
-
-    if (!isCheckoutTask) {
-      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
-    }
-
     async function finishExecution(status: "COMPLETED" | "SKIPPED" | "FAILED") {
-      if (claimedAt !== null) {
-        await taskService.finishCheckoutTask(client, task.id, claimedAt, {
+      if (task.type === tasks.OPEN_PAYMENT_CHECKOUT.type) {
+        await taskService.finishCheckoutTask(client, task.id, task.processedAt, {
           status,
           processedAt: getCurrentUTC(),
         })
@@ -172,10 +159,10 @@ export function getLocalTaskExecutor(
           span.recordException(error)
         }
 
-        if (claimedAt !== null) {
+        if (task.type === tasks.OPEN_PAYMENT_CHECKOUT.type) {
           outcome = "retrying"
 
-          await taskService.finishCheckoutTask(client, task.id, claimedAt, {
+          await taskService.finishCheckoutTask(client, task.id, task.processedAt, {
             status: "PENDING",
             scheduledAt: addMinutes(getCurrentUTC(), 1),
             processedAt: null,
@@ -237,13 +224,6 @@ export function getLocalTaskExecutor(
       async function work() {
         await tracer.startActiveSpan("TaskExecutor/DiscoverTasks", { root: true }, async (span) => {
           try {
-            // Queue the next recursive call as long as the abort controller hasn't been aborted.
-            function enqueueWork() {
-              if (!signal.aborted) {
-                interval = setTimeout(work, configuration.tasks.workerInterval)
-              }
-            }
-
             logger.debug("TaskExecutor discovering and scheduling recurring tasks")
             const recurringTasks = await taskDiscoveryService.querySchedulableRecurringTasks()
             const now = getCurrentUTC()
@@ -256,13 +236,24 @@ export function getLocalTaskExecutor(
               await recurringTaskService.scheduleNextRun(client, recurringTask.id, now)
             }
 
-            const task = await taskDiscoveryService.queryNextTask()
-            if (task !== null) {
-              queue.add(() => processTask(client, task))
+            if (queue.pending === 0 && !signal.aborted) {
+              const task = await taskDiscoveryService.claimNextTask()
+
+              if (task !== null) {
+                void queue
+                  .add(() => processTask(client, task))
+                  .catch((error: unknown) => {
+                    logger.error("Failed to finish task with ID=%s: %o", task.id, error)
+                  })
+              }
+            }
+          } catch (error) {
+            logger.error("Task discovery failed: %o", error)
+          } finally {
+            if (!signal.aborted) {
+              interval = setTimeout(work, configuration.tasks.workerInterval)
             }
 
-            enqueueWork()
-          } finally {
             span.end()
           }
         })
