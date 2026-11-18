@@ -15,7 +15,6 @@ import { TZDate } from "@date-fns/tz"
 import type { EventRouter } from "@dotkomonline/rpc"
 import { attendeeHasPendingCompletionDeadline, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
-import type { Offline } from "@dotkomonline/rpc/offline"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { createEventPageUrl, getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarDollar, IconCalendarEvent, IconMapPin } from "@tabler/icons-react"
@@ -95,71 +94,40 @@ const SeAlleButton = ({ label, href = "/arrangementer" }: { label: string; href?
 )
 
 export default async function App() {
-  let user: Awaited<ReturnType<typeof server.user.findMe.query>> = null
   const cookieStore = await cookies()
   const isIdentityLinkSuccessVisible =
     cookieStore.get(IDENTITY_LINK_STATUS_COOKIE)?.value === IDENTITY_LINK_STATUS_VALUE
 
-  if (!isIdentityLinkSuccessVisible) {
-    try {
-      user = await server.user.findMe.query()
-    } catch (error) {
-      console.error("Failed to fetch user", error)
-    }
-  }
+  const user = isIdentityLinkSuccessVisible ? null : await server.user.findMe.query()
 
   const startOfToday = startOfDay(new TZDate(getCurrentUTC(), "Europe/Oslo"))
 
   let userEvents: UserEvent[] = []
 
   if (user !== null) {
-    try {
-      userEvents = (
-        await server.event.allSummariesByAttendingUserId.query({
-          id: user.id,
-          take: USER_EVENT_LIMIT,
-          filter: {
-            orderBy: "asc",
-            byEndDate: {
-              min: startOfToday,
-              max: null,
-            },
-          },
-        })
-      ).items
-    } catch (error) {
-      console.error("Failed to fetch user attending events", error)
-    }
-  }
-
-  let featuredEvents: EventRouter.FindFeaturedEventsOutput = []
-
-  try {
-    featuredEvents = await server.event.findFeaturedEvents.query({
-      // With exactly one user event, one extra featured event is shown next to it as a suggestion
-      limit: FEATURED_EVENT_COUNT + (userEvents.length === 1 ? 1 : 0),
-      // Don't repeat events that are already shown under "Dine arrangementer"
-      excludeAttendedByUser: user !== null,
+    const { items } = await server.event.allSummariesByAttendingUserId.query({
+      id: user.id,
+      take: USER_EVENT_LIMIT,
+      filter: {
+        orderBy: "asc",
+        byEndDate: {
+          min: startOfToday,
+          max: null,
+        },
+      },
     })
-  } catch (error) {
-    console.error("Failed to fetch featured events", error)
+    userEvents = items
   }
 
-  let articles: Awaited<ReturnType<typeof server.article.all.query>> = []
+  const featuredEvents = await server.event.findFeaturedEvents.query({
+    // With exactly one user event, one extra featured event is shown next to it as a suggestion
+    limit: FEATURED_EVENT_COUNT + (userEvents.length === 1 ? 1 : 0),
+    // Don't repeat events that are already shown under "Dine arrangementer"
+    excludeAttendedByUser: user !== null,
+  })
 
-  try {
-    articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
-  } catch (error) {
-    console.error("Failed to fetch articles", error)
-  }
-
-  let featuredOffline: Offline | undefined
-
-  try {
-    featuredOffline = (await server.offline.all.query())[0]
-  } catch (error) {
-    console.error("Failed to fetch offlines", error)
-  }
+  const articles = await server.article.all.query({ take: MOBILE_ARTICLE_COUNT })
+  const [featuredOffline] = await server.offline.all.query()
 
   const firstName = user?.name?.split(" ")[0]
 
