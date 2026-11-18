@@ -6,16 +6,27 @@ type ScrollingCloudsProps = {
   imageClassName?: string
   duration?: `${number}s`
   delay?: `${number}s`
+  style?: CSSProperties
 }
 
-export function ScrollingClouds({ className, imageClassName, duration = "180s", delay = "0s" }: ScrollingCloudsProps) {
+export function ScrollingClouds({
+  className,
+  imageClassName,
+  duration = "180s",
+  delay = "0s",
+  style: containerStyle,
+}: ScrollingCloudsProps) {
   const style = {
     "--left-to-right-duration": duration,
     animationDelay: delay,
   } as CSSProperties
 
   return (
-    <div aria-hidden className={cn("pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden", className)}>
+    <div
+      aria-hidden
+      className={cn("pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden", className)}
+      style={containerStyle}
+    >
       <div className="flex w-max animate-left-to-right dark:hidden" style={style}>
         <CloudImage src="/fadderuke-2026-background-clouds.svg" className={imageClassName} />
         <CloudImage src="/fadderuke-2026-background-clouds.svg" className={imageClassName} />

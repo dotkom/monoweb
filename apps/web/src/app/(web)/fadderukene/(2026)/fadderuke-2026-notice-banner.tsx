@@ -7,7 +7,7 @@ import { addMonths } from "date-fns"
 import Image from "next/image"
 import { Link } from "@/components/link"
 import { useEffect, useState } from "react"
-import { ScrollingClouds } from "./clouds"
+import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
 
 const COOKIE_NAME = "Fadderuke2026BannerHidden"
 const OLD_LOCAL_STORAGE_KEY = "fadderuke-2026-banner-hidden"

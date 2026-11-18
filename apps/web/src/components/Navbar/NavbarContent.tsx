@@ -202,6 +202,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
       <div className={cn("navbar-shell flex items-stretch gap-2", showLoginButton && "lg:gap-1.5")}>
         <div
           ref={navbarPillRef}
+          data-navbar-pill
           className={cn(
             "min-w-0 w-full grow h-(--navbar-height)",
             "bg-gray-100/80 dark:bg-stone-800/90 border border-gray-200 dark:border-stone-700/30",
@@ -252,6 +253,7 @@ export const NavbarContent: FC<Props> = ({ initialAuthState }) => {
         )}
 
         <div
+          data-navbar-pill
           className={cn(
             "lg:hidden size-(--navbar-height) shrink-0",
             "flex items-center justify-center rounded-full",
