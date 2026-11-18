@@ -254,11 +254,11 @@ export function ProfilePage() {
     isUser && isAdmin ? (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon-xl" aria-label="Innstillinger for profil">
+          <Button variant="secondary" size="icon-lg" aria-label="Innstillinger for profil">
             <IconSettings />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="start">
           <DropdownMenuItem asChild>
             <Link href="/innstillinger/profil" className="flex flex-row items-center gap-2">
               <IconEdit className="size-5 shrink-0" />
@@ -318,30 +318,12 @@ export function ProfilePage() {
           <div className="flex flex-row gap-2">
             <div className="flex flex-col gap-1 min-w-0 grow ">
               <div className="flex flex-row flex-wrap w-full justify-between items-start gap-2 pt-2">
-                <Title element="h1" className="font-semibold text-xl md:text-2xl wrap-break-word min-w-0">
-                  {user.name}
-                </Title>
-                {(isUser || isAdmin) && (
-                  <div className="hidden lg:flex flex-row flex-wrap gap-2 items-center shrink-0">
-                    {isUser && (
-                      <Button element={Link} href="/innstillinger/profil" icon={<IconEdit width={20} height={20} />}>
-                        Rediger profil
-                      </Button>
-                    )}
-                    {isAdmin && (
-                      <Button
-                        element={Link}
-                        href={adminUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        variant="secondary"
-                        icon={<IconExternalLink width={20} height={20} />}
-                      >
-                        Administrer bruker
-                      </Button>
-                    )}
-                  </div>
-                )}
+                <div className="flex gap-3">
+                  <Title element="h1" className="font-semibold text-xl md:text-2xl wrap-break-word min-w-0">
+                    {user.name}
+                  </Title>
+                  {settingsButton}
+                </div>
               </div>
 
               <div className="flex flex-row flex-wrap items-center text-sm gap-x-2 gap-y-1">
@@ -373,8 +355,6 @@ export function ProfilePage() {
                 )}
               </div>
             </div>
-
-            {settingsButton && <div className="lg:hidden shrink-0">{settingsButton}</div>}
           </div>
 
           {isCompiled && (
@@ -396,10 +376,21 @@ export function ProfilePage() {
             )}
           </div>
         </div>
+        <div className="flex p-2 border border-gray-200 dark:border-stone-700 rounded-xl hidden md:flex">
+          <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
+          <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
+          <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
+        </div>
+      </div>
+
+      <div className="flex p-2 border border-gray-200 dark:border-stone-700 rounded-xl md:hidden justify-center">
+        <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
+        <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
+        <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={100} height={100} />
       </div>
 
       {isUser && (
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)] gap-6 p-4 border border-gray-200 dark:border-stone-700 rounded-xl">
           <div className="flex flex-col gap-3 min-w-0">
             <Title>Din bruker</Title>
             <div className="grid sm:grid-cols-[auto_1fr] md:grid-cols-1 lg:grid-cols-[auto_1fr] items-start gap-1 sm:gap-3 md:gap-1 lg:gap-3 text-sm sm:text-base">
@@ -419,6 +410,24 @@ export function ProfilePage() {
             <Title>Medlemskap</Title>
 
             <MembershipDisplay activeMembership={activeMembership} name={user.name} />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Title>Achievements</Title>
+            <div className="grid grid-cols-6 grid-rows-2">
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+              <img src="https://cdn.online.ntnu.no/user/flag/exceptionally-distinguished.svg" width={50} height={50} />
+            </div>
           </div>
 
           {marks && marks.length > 0 && (
@@ -509,7 +518,7 @@ export function ProfilePage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
+      {/*<div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
         <Title>Achievements</Title>
 
         <div className="grid grid-cols-1 md:grid-cols-8 gap-3">
@@ -524,7 +533,7 @@ export function ProfilePage() {
             </div>
           </div>
         </div>
-      </div>
+      </div>*/}
 
       <div className="flex flex-col gap-3 md:p-4 md:border md:border-gray-200 md:dark:border-stone-700 md:rounded-xl">
         <Title>Arrangementer</Title>
