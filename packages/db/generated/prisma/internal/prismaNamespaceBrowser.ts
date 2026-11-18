@@ -58,6 +58,7 @@ export const ModelName = {
   GroupMembership: 'GroupMembership',
   GroupMembershipRole: 'GroupMembershipRole',
   GroupRole: 'GroupRole',
+  InterestGroupComment: 'InterestGroupComment',
   Attendance: 'Attendance',
   AttendancePool: 'AttendancePool',
   Attendee: 'Attendee',
@@ -94,7 +95,13 @@ export const ModelName = {
   Contestant: 'Contestant',
   ContestTeam: 'ContestTeam',
   UserFlag: 'UserFlag',
-  UserFlagLink: 'UserFlagLink'
+  UserFlagLink: 'UserFlagLink',
+  Payment: 'Payment',
+  PaymentAttempt: 'PaymentAttempt',
+  PaymentRefund: 'PaymentRefund',
+  Sidequest: 'Sidequest',
+  SidequestRegistration: 'SidequestRegistration',
+  SidequestRequest: 'SidequestRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -220,10 +227,23 @@ export const GroupRoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   type: 'type',
+  isDefault: 'isDefault',
   groupId: 'groupId'
 } as const
 
 export type GroupRoleScalarFieldEnum = (typeof GroupRoleScalarFieldEnum)[keyof typeof GroupRoleScalarFieldEnum]
+
+
+export const InterestGroupCommentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  body: 'body',
+  authorId: 'authorId',
+  interestGroupId: 'interestGroupId',
+  parentId: 'parentId'
+} as const
+
+export type InterestGroupCommentScalarFieldEnum = (typeof InterestGroupCommentScalarFieldEnum)[keyof typeof InterestGroupCommentScalarFieldEnum]
 
 
 export const AttendanceScalarFieldEnum = {
@@ -266,17 +286,9 @@ export const AttendeeScalarFieldEnum = {
   registrationMarkDelayHours: 'registrationMarkDelayHours',
   attendedAt: 'attendedAt',
   completionDeadline: 'completionDeadline',
-  paymentLink: 'paymentLink',
-  paymentId: 'paymentId',
-  paymentReservedAt: 'paymentReservedAt',
-  paymentChargeDeadline: 'paymentChargeDeadline',
-  paymentChargedAt: 'paymentChargedAt',
-  paymentRefundedAt: 'paymentRefundedAt',
-  paymentCheckoutUrl: 'paymentCheckoutUrl',
   attendanceId: 'attendanceId',
   userId: 'userId',
   attendancePoolId: 'attendancePoolId',
-  paymentRefundedByUserId: 'paymentRefundedByUserId',
   adminRegisteredByUserId: 'adminRegisteredByUserId'
 } as const
 
@@ -714,6 +726,115 @@ export const UserFlagLinkScalarFieldEnum = {
 } as const
 
 export type UserFlagLinkScalarFieldEnum = (typeof UserFlagLinkScalarFieldEnum)[keyof typeof UserFlagLinkScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  amountOre: 'amountOre',
+  waivedAt: 'waivedAt',
+  waiverReason: 'waiverReason',
+  userId: 'userId',
+  waivedByUserId: 'waivedByUserId',
+  attendeeId: 'attendeeId',
+  eventId: 'eventId'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const PaymentAttemptScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  attemptNumber: 'attemptNumber',
+  status: 'status',
+  captureMode: 'captureMode',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  checkoutReturnUrl: 'checkoutReturnUrl',
+  checkoutCustomerEmail: 'checkoutCustomerEmail',
+  checkoutRequestedAt: 'checkoutRequestedAt',
+  checkoutUrl: 'checkoutUrl',
+  checkoutExpiresAt: 'checkoutExpiresAt',
+  captureScheduledAt: 'captureScheduledAt',
+  authorizationExpiresAt: 'authorizationExpiresAt',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  capturedAmountOre: 'capturedAmountOre',
+  lastSyncedAt: 'lastSyncedAt',
+  paymentId: 'paymentId'
+} as const
+
+export type PaymentAttemptScalarFieldEnum = (typeof PaymentAttemptScalarFieldEnum)[keyof typeof PaymentAttemptScalarFieldEnum]
+
+
+export const PaymentRefundScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  refundNumber: 'refundNumber',
+  stripeRefundId: 'stripeRefundId',
+  amountOre: 'amountOre',
+  status: 'status',
+  reason: 'reason',
+  paymentAttemptId: 'paymentAttemptId',
+  requestedByUserId: 'requestedByUserId'
+} as const
+
+export type PaymentRefundScalarFieldEnum = (typeof PaymentRefundScalarFieldEnum)[keyof typeof PaymentRefundScalarFieldEnum]
+
+
+export const SidequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  title: 'title',
+  description: 'description',
+  start: 'start',
+  end: 'end',
+  registerEnd: 'registerEnd',
+  deregisterDeadline: 'deregisterDeadline',
+  imageUrl: 'imageUrl',
+  locationTitle: 'locationTitle',
+  locationAddress: 'locationAddress',
+  locationLink: 'locationLink',
+  capacity: 'capacity',
+  status: 'status',
+  interestGroupId: 'interestGroupId'
+} as const
+
+export type SidequestScalarFieldEnum = (typeof SidequestScalarFieldEnum)[keyof typeof SidequestScalarFieldEnum]
+
+
+export const SidequestRegistrationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sidequestId: 'sidequestId'
+} as const
+
+export type SidequestRegistrationScalarFieldEnum = (typeof SidequestRegistrationScalarFieldEnum)[keyof typeof SidequestRegistrationScalarFieldEnum]
+
+
+export const SidequestRequestScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  requestedAmountNok: 'requestedAmountNok',
+  expectedAttendeeCount: 'expectedAttendeeCount',
+  approvedAmountNok: 'approvedAmountNok',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  sidequestId: 'sidequestId',
+  requestedById: 'requestedById',
+  reviewedById: 'reviewedById'
+} as const
+
+export type SidequestRequestScalarFieldEnum = (typeof SidequestRequestScalarFieldEnum)[keyof typeof SidequestRequestScalarFieldEnum]
 
 
 export const SortOrder = {

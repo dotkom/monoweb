@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 export const TaskTypeSchema = z.enum([
+  "OPEN_PAYMENT_CHECKOUT",
   "RESERVE_ATTENDEE",
   "CHARGE_ATTENDEE",
   "MERGE_ATTENDANCE_POOLS",

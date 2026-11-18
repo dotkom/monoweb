@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz"
-import type { DBHandle } from "@dotkomonline/db"
+import type { DBClient, DBHandle } from "@dotkomonline/db"
 import { type Logger, getLogger } from "@dotkomonline/logger"
 import {
   type Attendance,
@@ -13,7 +13,6 @@ import {
   AttendanceWriteSchema,
   type Attendee,
   type AttendeeId,
-  type AttendeePaymentWrite,
   type AttendeeWrite,
   AttendeeWriteSchema,
   DEREGISTER_GRACE_PERIOD_CLOCK_SKEW_MS,
@@ -26,6 +25,7 @@ import {
   type RegistrationWindowCause,
   buildPoolOccupancies,
   buildRegistrationAvailabilityCompletionView,
+  getAttendeeQueuePosition,
   getMissingAttendanceCompletionRequirements,
   getRegisteredAttendeeCount,
   getRegistrationDeadline,
@@ -34,11 +34,13 @@ import {
 } from "./attendance"
 import {
   createAbsoluteEventPageUrl,
+  createCalendarEvent,
+  createIcsBody,
   createPoolName,
   formatEmailSubject,
   getCurrentUTC,
   getStudyGrade,
-  ogJoin,
+  slugify,
 } from "@dotkomonline/utils"
 import {
   addDays,
@@ -47,9 +49,11 @@ import {
   compareAsc,
   differenceInHours,
   endOfYesterday,
+  isAfter,
   isBefore,
   isFuture,
   isPast,
+  max,
   min,
   startOfYesterday,
 } from "date-fns"
@@ -66,8 +70,8 @@ import {
   TaskSkippedError,
 } from "../../error"
 import { validateTurnstileToken } from "../../turnstile"
-import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
+import type { EmailAttachment, EmailService } from "../email/email-service"
+import { DEFAULT_EMAIL_FROM_EMAIL_ADDRESS, emails, getReplyToAddresses } from "../email/email-template"
 import type { FeedbackFormAnswerService } from "../feedback-form/feedback-form-answer-service"
 import type { FeedbackFormService } from "../feedback-form/feedback-form-service"
 import { getGroupDisplayName } from "../group/group"
@@ -79,8 +83,8 @@ import {
 } from "../mark/mark"
 import type { MarkService } from "../mark/mark-service"
 import type { PersonalMarkService } from "../mark/personal-mark-service"
-import type { PaymentProductsService } from "../payment/payment-products-service"
-import type { Payment, PaymentService } from "../payment/payment-service"
+import type { PaymentView } from "../payment/payment"
+import type { AttendancePaymentService } from "./attendance-payment-service"
 import type { TaskId } from "../task/task"
 import {
   type ChargeAttendeeTaskDefinition,
@@ -128,6 +132,10 @@ type EventRegistrationOptions = {
 
 type EventDeregistrationOptions = {
   ignoreDeregistrationWindow: boolean
+  automaticDeregistrationReason?: {
+    title: string
+    details: string | null
+  }
 }
 
 export type { RegistrationRejectionCause, RegistrationUserCause, RegistrationWindowCause } from "./attendance"
@@ -268,17 +276,26 @@ export interface AttendanceService {
     adminRegisteredByUserId?: UserId | null
   ): Promise<Attendee>
   getAttendeeById(handle: DBHandle, attendeeId: AttendeeId): Promise<Attendee>
+  /**
+   * Updates attendee details and handles payment creation or cancellation when registration changes.
+   */
   updateAttendeeById(handle: DBHandle, attendeeId: AttendeeId, data: Partial<AttendeeWrite>): Promise<Attendee>
   executeReserveAttendeeTask(handle: DBHandle, task: InferTaskData<ReserveAttendeeTaskDefinition>): Promise<void>
   deregisterAttendee(handle: DBHandle, attendeeId: AttendeeId, options: EventDeregistrationOptions): Promise<void>
   findChargeAttendeeScheduleDate(handle: DBHandle, attendeeId: AttendeeId): Promise<Date | null>
 
-  updateAttendancePaymentProduct(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendancePaymentPrice(handle: DBHandle, attendanceId: AttendanceId, priceNok: number | null): Promise<void>
   deleteAttendancePayment(handle: DBHandle, attendance: Attendance): Promise<void>
   executeChargeAttendeeTask(handle: DBHandle, task: InferTaskData<ChargeAttendeeTaskDefinition>): Promise<void>
-  startAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, completionDeadline: TZDate): Promise<Payment>
+  openAttendeeCheckout(client: DBClient, attendeeId: AttendeeId): Promise<Attendee>
+  prepareAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, completionDeadline: TZDate): Promise<PaymentView>
   cancelAttendeePayment(handle: DBHandle, attendeeId: AttendeeId, refundedByUserId: UserId): Promise<void>
+  waiveAttendeePayment(
+    handle: DBHandle,
+    attendeeId: AttendeeId,
+    waivedByUserId: UserId,
+    reason: string | null
+  ): Promise<void>
   /**
    * Sync the payment status of an attendee with the status of the payment in the payment service.
    * This used if payments are altered manually in the payment service's own dashboard.
@@ -321,8 +338,7 @@ export function getAttendanceService(
   userService: UserService,
   markService: MarkService,
   personalMarkService: PersonalMarkService,
-  paymentService: PaymentService,
-  paymentProductsService: PaymentProductsService,
+  attendancePaymentService: AttendancePaymentService,
   eventService: EventService,
   feedbackFormService: FeedbackFormService,
   feedbackAnswerService: FeedbackFormAnswerService,
@@ -360,33 +376,34 @@ export function getAttendanceService(
     await attendanceRepository.updateAttendeeCompletionDeadline(handle, attendeeId, null)
   }
 
+  async function broadcastPaymentChange(handle: DBHandle, attendance: Attendance, attendeeId: AttendeeId) {
+    const attendee = await attendanceRepository.findAttendeeById(handle, attendeeId)
+
+    if (attendee != null) {
+      emitRegisterChange(eventEmitter, attendance, attendee, "updated")
+    }
+  }
+
   function sendQueueNotificationEmail(event: Event, position: number, attendee: Attendee) {
     if (attendee.user.email === null) {
       return
     }
 
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      [DEFAULT_EMAIL_SOURCE],
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du har rykket frem i køen til ${event.title}`),
-      emails.QUEUE_NOTIFICATION,
-      {
+    void emailService.send({
+      replyTo: [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS],
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du har rykket frem i køen til ${event.title}`),
+      definition: emails.QUEUE_NOTIFICATION,
+      data: {
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
         position,
-      }
-    )
+      },
+    })
   }
 
-  function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
-    if (attendee.user.email === null) {
-      return
-    }
-
+  function getOrganizerEmails(event: Event): string[] {
     const organizerEmails = event.hostingGroups
       .map((group) => group.email)
       .filter((email): email is string => email !== null && z.email().safeParse(email).success)
@@ -395,23 +412,66 @@ export function getAttendanceService(
       organizerEmails.push("dotkom@online.ntnu.no")
     }
 
+    return organizerEmails
+  }
+
+  function sendEventRegistrationEmail(event: Event, attendance: Attendance, attendee: Attendee) {
+    if (attendee.user.email === null) {
+      return
+    }
+
+    const organizerEmails = getOrganizerEmails(event)
+
+    const calendarEvent = createCalendarEvent(event, configuration.WEB_PUBLIC_ORIGIN)
+    const calendarBody = createIcsBody(calendarEvent)
+    const calendarAttachment: EmailAttachment = {
+      filename: `${slugify(event.title)}.ics`,
+      contentType: "text/calendar; charset=utf-8",
+      rawContent: Buffer.from(calendarBody).toString("base64"),
+    }
+
     // NOTE: We do not await here, because we don't want to delay the response to the user for sending the email.
     // AWS SES can be slow to fulfill, and this is an asynchronous operation anyway.
-    void emailService.send(
-      DEFAULT_EMAIL_SOURCE,
-      getReplyToAddresses(organizerEmails),
-      [attendee.user.email],
-      [],
-      [],
-      formatEmailSubject(`Du er påmeldt ${event.title}`),
-      emails.EVENT_ATTENDANCE,
-      {
+    void emailService.send({
+      replyTo: getReplyToAddresses(organizerEmails),
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du er påmeldt ${event.title}`),
+      definition: emails.EVENT_ATTENDANCE,
+      data: {
         deregistrationDeadline: attendance.deregisterDeadline.toISOString(),
         eventName: event.title,
         eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
         eventImageUrl: event.imageUrl,
-      }
-    )
+      },
+      attachments: [calendarAttachment],
+    })
+  }
+
+  function sendEventAutomaticDeregistrationEmail(
+    event: Event,
+    attendee: Attendee,
+    reason: { title: string; details: string | null }
+  ) {
+    if (attendee.user.email === null) {
+      return
+    }
+
+    const organizerEmails = getOrganizerEmails(event)
+
+    void emailService.send({
+      replyTo: getReplyToAddresses(organizerEmails),
+      to: [attendee.user.email],
+      subject: formatEmailSubject(`Du har blitt avmeldt ${event.title}`),
+      definition: emails.EVENT_AUTOMATIC_DEREGISTRATION,
+      data: {
+        eventName: event.title,
+        eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+        eventImageUrl: event.imageUrl,
+        title: reason.title,
+        details: reason.details,
+        organizerEmail: organizerEmails[0] ?? DEFAULT_EMAIL_FROM_EMAIL_ADDRESS,
+      },
+    })
   }
 
   return {
@@ -855,19 +915,18 @@ export function getAttendanceService(
             ? addHours(getCurrentUTC(), 1)
             : addHours(getCurrentUTC(), 24)
 
-          const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
+          const payment = await this.prepareAttendeePayment(handle, attendee.id, completionDeadline)
 
           attendee.completionDeadline = completionDeadline
-          attendee.paymentId = payment.id
-          attendee.paymentLink = payment.url
+          attendee.payment = payment
 
           logger.info(
-            "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
+            "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) with Payment(ID=%s)",
             attendee.id,
             attendee.user.id,
             completionDeadline.toUTCString(),
             event.id,
-            payment.url
+            payment.id
           )
         }
 
@@ -920,7 +979,44 @@ export function getAttendanceService(
       } satisfies AttendeeWrite)
       validateAttendeeWrite(input)
 
-      return await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+      const isMovingToQueue = attendee.registeredAt !== null && input.registeredAt === null
+
+      if (isMovingToQueue) {
+        if (attendee.payment !== null) {
+          await attendancePaymentService.cancel(handle, attendee.payment.id)
+        }
+
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        const chargeTask = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+        if (chargeTask?.status === "PENDING") {
+          await taskSchedulingService.cancel(handle, chargeTask.id)
+        }
+      }
+
+      const isReserving = data.registeredAt != null
+      const needsPayment = attendee.registeredAt === null || attendee.payment === null
+      const isPaidAttendance = attendance.attendancePrice !== null && attendance.attendancePrice > 0
+      const updatedAttendee = await attendanceRepository.updateAttendeeById(handle, attendeeId, input)
+
+      if (isReserving && needsPayment && isPaidAttendance) {
+        const payment =
+          attendee.payment === null ? null : await attendancePaymentService.syncPayment(handle, attendee.payment.id)
+
+        if (payment === null || (!payment.isRequirementSatisfied && payment.canStartCheckout)) {
+          const deadline = addHours(getCurrentUTC(), 24)
+          updatedAttendee.payment = await this.prepareAttendeePayment(handle, attendeeId, deadline)
+          updatedAttendee.completionDeadline = deadline
+        } else {
+          updatedAttendee.payment = payment
+        }
+      }
+
+      if (data.registeredAt !== undefined) {
+        emitRegisterChange(eventEmitter, attendance, updatedAttendee, "updated")
+      }
+
+      return updatedAttendee
     },
 
     async executeReserveAttendeeTask(handle, { attendanceId, attendeeId }) {
@@ -964,37 +1060,9 @@ export function getAttendanceService(
       const data = AttendeeWriteSchema.parse(attendee)
       data.registeredAt = getCurrentUTC()
 
-      await attendanceRepository.updateAttendeeById(handle, attendeeId, data)
-      attendee.registeredAt = data.registeredAt
+      const updatedAttendee = await this.updateAttendeeById(handle, attendeeId, data)
 
-      const hasExistingPayment =
-        attendee.paymentLink !== null ||
-        attendee.paymentReservedAt !== null ||
-        attendee.paymentRefundedAt !== null ||
-        attendee.paymentChargedAt !== null
-
-      if (attendance.attendancePrice !== null && attendance.attendancePrice > 0 && !hasExistingPayment) {
-        const completionDeadline = addHours(getCurrentUTC(), 24)
-
-        const payment = await this.startAttendeePayment(handle, attendee.id, completionDeadline)
-
-        attendee.completionDeadline = completionDeadline
-        attendee.paymentId = payment.id
-        attendee.paymentLink = payment.url
-
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has reserved by a task and been given until %s UTC to complete attendance for Event(ID=%s) at link %s",
-          attendee.id,
-          attendee.user.id,
-          completionDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
-      }
-
-      sendEventRegistrationEmail(event, attendance, attendee)
-
-      emitRegisterChange(eventEmitter, attendance, attendee, "updated")
+      sendEventRegistrationEmail(event, attendance, updatedAttendee)
     },
 
     async deregisterAttendee(handle, attendeeId, options) {
@@ -1022,8 +1090,8 @@ export function getAttendanceService(
         )
       }
 
-      if (attendee.paymentId !== null) {
-        await paymentService.cancel(attendee.paymentId)
+      if (attendee.payment !== null) {
+        await attendancePaymentService.cancel(handle, attendee.payment.id)
       }
 
       await attendanceRepository.deleteAttendeeById(handle, attendeeId)
@@ -1039,6 +1107,10 @@ export function getAttendanceService(
         event.title,
         options
       )
+
+      if (options.automaticDeregistrationReason !== undefined) {
+        sendEventAutomaticDeregistrationEmail(event, attendee, options.automaticDeregistrationReason)
+      }
 
       const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
       invariant(pool !== undefined)
@@ -1078,55 +1150,11 @@ export function getAttendanceService(
         return
       }
 
-      // If this event is paid, the new attendee must also receive payment information.
-      if (
-        firstQueuedAdjacentAttendee.paymentId === null &&
-        attendance.attendancePrice !== null &&
-        attendance.attendancePrice !== 0
-      ) {
-        const completionDeadline = addHours(getCurrentUTC(), 24)
-        const payment = await this.startAttendeePayment(handle, firstQueuedAdjacentAttendee.id, completionDeadline)
-        firstQueuedAdjacentAttendee.completionDeadline = completionDeadline
-        firstQueuedAdjacentAttendee.paymentId = payment.id
-        firstQueuedAdjacentAttendee.paymentLink = payment.url
-        logger.info(
-          "Attendee(ID=%s,UserID=%s) has been given until %s UTC to complete attendance for Event(ID=%s) at link %s after reciving spot due to another user deregistering",
-          firstQueuedAdjacentAttendee.id,
-          firstQueuedAdjacentAttendee.user.id,
-          completionDeadline.toUTCString(),
-          event.id,
-          payment.url
-        )
-      }
+      const promotedAttendee = await this.updateAttendeeById(handle, firstQueuedAdjacentAttendee.id, {
+        registeredAt: getCurrentUTC(),
+      })
 
-      const registeredAt = getCurrentUTC()
-      await attendanceRepository.updateAttendeeById(
-        handle,
-        firstQueuedAdjacentAttendee.id,
-        AttendeeWriteSchema.parse({
-          ...firstQueuedAdjacentAttendee,
-          registeredAt,
-        })
-      )
-
-      logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has been reserved for Event(ID=%s) named %s because User(ID=%s) was deregistered",
-        firstQueuedAdjacentAttendee.id,
-        firstQueuedAdjacentAttendee.user.id,
-        firstQueuedAdjacentAttendee.user.name || "<missing name>",
-        event.id,
-        event.title,
-        attendee.user.id
-      )
-
-      sendEventRegistrationEmail(event, attendance, firstQueuedAdjacentAttendee)
-
-      const promotedAttendee = {
-        ...firstQueuedAdjacentAttendee,
-        registeredAt,
-      }
-
-      emitRegisterChange(eventEmitter, { ...attendance, attendees: remainingAttendees }, promotedAttendee, "updated")
+      sendEventRegistrationEmail(event, attendance, promotedAttendee)
 
       for (const [index, queueAttendee] of sortedQueue.slice(1, 4).entries()) {
         sendQueueNotificationEmail(event, index + 1, queueAttendee)
@@ -1136,13 +1164,13 @@ export function getAttendanceService(
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
       const attendee = await this.getAttendeeById(handle, attendeeId)
 
-      if (!attendee.paymentId) {
+      if (attendee.payment === null) {
         return null
       }
 
       const job = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
 
-      if (!job) {
+      if (job === null) {
         return null
       }
 
@@ -1151,13 +1179,21 @@ export function getAttendanceService(
 
     async deleteAttendancePayment(handle, attendance: Attendance) {
       for (const attendee of attendance.attendees) {
-        if (!attendee.paymentId) {
+        if (attendee.payment === null) {
           continue
         }
 
-        const payment = await paymentService.getById(attendee.paymentId)
+        const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
 
-        if (payment.status === "CANCELLED" || payment.status === "UNPAID") {
+        if (
+          !payment.canCancel &&
+          (payment.status === "CANCELLED" ||
+            payment.status === "EXPIRED" ||
+            payment.status === "FAILED" ||
+            payment.status === "UNPAID" ||
+            payment.status === "REFUNDED" ||
+            payment.status === "WAIVED")
+        ) {
           continue
         }
 
@@ -1167,6 +1203,10 @@ export function getAttendanceService(
       }
 
       const updatedAttendance = await attendanceRepository.updateAttendancePaymentPrice(handle, attendance.id, null)
+
+      for (const attendee of updatedAttendance.attendees) {
+        await clearAttendeeCompletionDeadline(handle, attendee.id)
+      }
 
       // TODO: N+1 Query
       const promises = updatedAttendance.attendees.map(async (attendee) => {
@@ -1206,130 +1246,94 @@ export function getAttendanceService(
       }
 
       const attendance = await this.getAttendanceById(handle, attendanceId)
-      const isExistingProduct = attendance.attendancePrice !== null
+
+      if (priceNok === null || priceNok === 0) {
+        await this.deleteAttendancePayment(handle, attendance)
+      }
 
       await attendanceRepository.updateAttendancePaymentPrice(handle, attendanceId, priceNok)
-
-      // If we have set a price in the past, we just update it, otherwise we need to make a new Stripe product.
-      if (isExistingProduct) {
-        // TODO: Is this switch really needed? Maybe it should delete the product if the price is null?
-        if (priceNok !== null) {
-          await paymentProductsService.updatePrice(attendanceId, priceNok)
-        }
-      } else {
-        await this.updateAttendancePaymentProduct(handle, attendanceId)
-      }
     },
 
-    async updateAttendancePaymentProduct(handle, attendanceId) {
-      const attendance = await this.getAttendanceById(handle, attendanceId)
-
-      if (!attendance.attendancePrice) {
-        return
-      }
-
-      const event = await eventService.getByAttendanceId(handle, attendance.id)
-
-      const url = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
-      const groupsText = ogJoin(event.hostingGroups.map((group) => getGroupDisplayName(group)))
-
-      await paymentProductsService.createOrUpdate(attendance.id, {
-        description:
-          event.hostingGroups.length > 0 ? `Arrangert av ${groupsText}` : "Arrangert av Online linjeforening",
-        name: event.title,
-        imageUrl: event.imageUrl,
-        metadata: {
-          group: event.hostingGroups.map((group) => group.slug).join(", "),
-        },
-        price: attendance.attendancePrice,
-        url,
-      })
-    },
-
-    async executeChargeAttendeeTask(handle, { attendeeId }) {
+    async executeChargeAttendeeTask(handle, { attendeeId, paymentAttemptId }) {
       const attendance = await this.findAttendanceByAttendeeId(handle, attendeeId)
+
       if (attendance === null) {
         throw new TaskSkippedError(`Attendance for Attendee(ID=${attendeeId}) no longer exists`)
       }
 
-      const attendee = attendance.attendees.find((a) => a.id === attendeeId)
-      if (!attendee) {
+      const attendee = attendance.attendees.find((candidate) => candidate.id === attendeeId)
+
+      if (attendee === undefined) {
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
       logger.info("Executing Stripe charge for Attendee(ID=%s) of Attendance(ID=%s)", attendee.id, attendance.id)
 
+      if (attendee.payment?.attemptId !== paymentAttemptId) {
+        throw new TaskSkippedError(`PaymentAttempt(ID=${paymentAttemptId}) is no longer the attendee's current attempt`)
+      }
+
       await this.createAttendeePaymentCharge(handle, attendee.id)
     },
 
-    async startAttendeePayment(handle, attendeeId, completionDeadline): Promise<Payment> {
+    async openAttendeeCheckout(client, attendeeId) {
+      const attendee = await this.getAttendeeById(client, attendeeId)
+
+      if (attendee.payment === null) {
+        return attendee
+      }
+
+      try {
+        attendee.payment = await attendancePaymentService.openCheckout(client, attendee.payment.id)
+        await this.syncAttendeePayment(client, attendeeId)
+
+        return await this.getAttendeeById(client, attendeeId)
+      } catch (error) {
+        // The persisted checkout task retries without rolling back the user's reservation.
+        logger.error("Could not open checkout for Attendee(ID=%s); the checkout task will retry: %o", attendeeId, error)
+      }
+
+      return attendee
+    },
+
+    async prepareAttendeePayment(handle, attendeeId, completionDeadline): Promise<PaymentView> {
       const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
 
-      if (!attendance.attendancePrice) {
+      if (attendance.attendancePrice === null || attendance.attendancePrice <= 0) {
         throw new Error("Tried to create a payment for an attendance without a price")
       }
 
       const attendee = attendance.attendees.find((attendee) => attendee.id === attendeeId)
 
-      if (!attendee) {
+      if (attendee === undefined) {
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      if (attendee.paymentId) {
-        const existingPayment = await paymentService.getById(attendee.paymentId)
-
-        if (existingPayment.status !== "CANCELLED" && existingPayment.status !== "REFUNDED") {
-          throw new IllegalStateError(
-            `Tried to create new payment for Attendee(ID=${attendeeId}) but existing Payment(ID=${existingPayment.id} is still active`
-          )
-        }
+      if (attendee.registeredAt === null) {
+        throw new FailedPreconditionError("Cannot create a payment for an attendee who is still in the queue")
       }
 
       const event = await eventService.getByAttendanceId(handle, attendance.id)
-
       const isImmediatePayment = isPast(attendance.deregisterDeadline)
-      const payment = await paymentService.create(
-        attendance.id,
-        attendee.user,
-        {
-          attendee_id: attendeeId,
-          event_id: event.id,
-          attendance_id: attendance.id,
-          user_id: attendee.user.id,
-        },
-        isImmediatePayment ? "CHARGE" : "RESERVE"
-      )
 
-      await startAttendeeCompletionDeadline(handle, attendeeId, completionDeadline)
-
-      // We attempt to put a "hold" on the user's credit card for as long as possible. From experience, Visa and
-      // MasterCard allow a hold to be kept on an account for 7 days. To allow for leeway and clock tolerance, we set
-      // the limit to 5 days.
-      //
-      // If the deadline for the event is earlier than those 5 days, we use that, as its no longer allowed to be
-      // deregistered from a paid event after the deregistration deadline without consequences imposed by the
-      // organizing committee.
-      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline)])
-
-      if (!isImmediatePayment) {
-        await taskSchedulingService.scheduleAt(
-          handle,
-          tasks.CHARGE_ATTENDEE,
-          { attendeeId: attendee.id },
-          new TZDate(maximalChargeTime)
-        )
-      }
-
-      await attendanceRepository.updateAttendeePaymentById(handle, attendee.id, {
-        paymentId: payment.id,
-        paymentLink: payment.url,
-        paymentRefundedAt: null,
-        paymentRefundedByUserId: null,
-        paymentChargedAt: null,
-        paymentReservedAt: null,
-        paymentChargeDeadline: isImmediatePayment ? null : maximalChargeTime,
-        paymentCheckoutUrl: null,
+      // Capture before deregistration closes or the five-day hold limit, whichever comes first.
+      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline, "UTC")])
+      const returnUrl = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
+      const payment = await attendancePaymentService.prepareCheckout(handle, {
+        attendance,
+        attendee,
+        event,
+        returnUrl,
+        customerEmail: attendee.user.email,
+        captureMode: isImmediatePayment ? "AUTOMATIC" : "MANUAL",
+        captureScheduledAt: isImmediatePayment ? null : maximalChargeTime,
       })
+
+      if (payment.isRequirementSatisfied) {
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+      } else {
+        await startAttendeeCompletionDeadline(handle, attendeeId, completionDeadline)
+      }
 
       return payment
     },
@@ -1342,33 +1346,24 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      if (!attendee.paymentId) {
+      if (attendee.payment === null) {
         return
       }
 
-      const payment = await paymentService.getById(attendee.paymentId)
+      const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
 
       if (payment.status === "PAID") {
         return
       }
 
-      try {
-        await paymentService.charge(attendee.paymentId)
-        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-          paymentChargedAt: getCurrentUTC(),
-        })
-      } catch (e) {
-        if (e instanceof ResourceExhaustedError) {
-          logger.info(`Attendee ${attendee.id} has already been charged`)
-
-          await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-            paymentChargedAt: getCurrentUTC(),
-          })
-        } else {
-          logger.error("Failed to charge Attendee(ID=%s): %o", attendee.id, e)
-          throw e
-        }
+      if (payment.status !== "AUTHORIZED") {
+        throw new TaskSkippedError(
+          `Payment(ID=${attendee.payment.id}) has status ${payment.status} and has no reservation to capture`
+        )
       }
+
+      await attendancePaymentService.capture(handle, attendee.payment.id)
+      await broadcastPaymentChange(handle, attendance, attendeeId)
     },
 
     async cancelAttendeePayment(handle, attendeeId, refundedByUserId: UserId) {
@@ -1379,32 +1374,39 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      if (!attendee.paymentId) {
+      if (attendee.payment === null) {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has no payment to cancel`)
       }
 
-      const payment = await paymentService.getById(attendee.paymentId)
+      const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
 
-      if (payment.status === "PAID") {
-        await paymentService.refund(attendee.paymentId)
-      } else if (payment.status === "RESERVED" || payment.status === "UNPAID") {
-        await paymentService.cancel(attendee.paymentId)
+      if (payment.canRefund) {
+        await attendancePaymentService.refund(handle, attendee.payment.id, refundedByUserId)
+      } else if (payment.canCancel) {
+        await attendancePaymentService.cancel(handle, attendee.payment.id)
       } else if (payment.status === "REFUNDED") {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has already been refunded`)
       } else {
         throw new FailedPreconditionError(`Attendee(ID=${attendeeId}) has not paid`)
       }
 
-      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-        paymentChargedAt: null,
-        paymentId: null,
-        paymentLink: null,
-        paymentReservedAt: null,
-        paymentRefundedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-        paymentRefundedByUserId: refundedByUserId,
-      })
-
       await clearAttendeeCompletionDeadline(handle, attendeeId)
+      await broadcastPaymentChange(handle, attendance, attendeeId)
+    },
+
+    async waiveAttendeePayment(handle, attendeeId, waivedByUserId, reason) {
+      const attendee = await this.getAttendeeById(handle, attendeeId)
+
+      if (attendee.payment === null) {
+        throw new FailedPreconditionError("Attendee has no payment requirement to waive")
+      }
+
+      await attendancePaymentService.waive(handle, attendee.payment.id, waivedByUserId, reason)
+      await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+      const attendance = await this.getAttendanceByAttendeeId(handle, attendeeId)
+
+      await broadcastPaymentChange(handle, attendance, attendeeId)
     },
 
     async syncAttendeePayment(handle, attendeeId) {
@@ -1420,59 +1422,69 @@ export function getAttendanceService(
         throw new NotFoundError(`Attendee(ID=${attendeeId}) not found in Attendance(ID=${attendance.id})`)
       }
 
-      if (!attendee.paymentId) {
+      if (attendee.payment === null) {
         return
       }
 
-      const payment = await paymentService.getById(attendee.paymentId)
+      const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
       const now = getCurrentUTC()
-      let updatedPayment: Partial<AttendeePaymentWrite> = {
-        paymentCheckoutUrl: payment.checkoutUrl,
-      }
 
-      if (payment.status === "PAID") {
-        updatedPayment = {
-          ...updatedPayment,
-          paymentReservedAt: attendee.paymentReservedAt ? attendee.paymentReservedAt : now,
-          paymentChargedAt: attendee.paymentChargedAt ? attendee.paymentChargedAt : now,
-        }
-      } else if (payment.status === "RESERVED") {
-        updatedPayment = {
-          ...updatedPayment,
-          paymentReservedAt: attendee.paymentReservedAt ? attendee.paymentReservedAt : now,
-        }
-      } else if (payment.status === "REFUNDED") {
-        updatedPayment = {
-          ...updatedPayment,
-          paymentRefundedAt: now,
-          // This is set to null for now when the payment is refunded manually from the Stripe dashboard,
-          // Optional TODO: Create a user for the Stripe dashboard
-          paymentRefundedByUserId: attendee.paymentRefundedByUserId ?? null,
-        }
-      } else if (payment.status === "CANCELLED" || payment.status === "UNPAID") {
-        updatedPayment = {
-          ...updatedPayment,
-          paymentReservedAt: null,
-          paymentChargedAt: null,
-          paymentId: null,
-          paymentLink: null,
-          paymentCheckoutUrl: payment.status === "UNPAID" ? null : payment.checkoutUrl,
-        }
-      } else {
-        throw new FailedPreconditionError(`Payment(ID=${attendee.paymentId}) has an unknown status: ${payment.status}`)
-      }
-      await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, updatedPayment)
+      await broadcastPaymentChange(handle, attendance, attendeeId)
 
-      if (payment.status === "UNPAID") {
-        return
-      }
+      if (!payment.isRequirementSatisfied) {
+        const hasFailedAttempt =
+          payment.status === "FAILED" || payment.status === "EXPIRED" || payment.status === "CANCELLED"
 
-      if (payment.status === "CANCELLED") {
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        if (hasFailedAttempt && attendee.completionDeadline !== null) {
+          const completionTask = await taskSchedulingService.findVerifyAttendanceCompletionTask(handle, attendeeId)
+
+          // A delayed payment can fail after the original completion check finished while it was processing.
+          if (completionTask?.status === "COMPLETED") {
+            await taskSchedulingService.scheduleAt(
+              handle,
+              tasks.VERIFY_ATTENDANCE_COMPLETION,
+              { attendeeId },
+              new TZDate(max([now, attendee.completionDeadline]), "UTC")
+            )
+          }
+        }
+
         return
       }
 
       await clearAttendeeCompletionDeadline(handle, attendeeId)
+
+      if (payment.status !== "AUTHORIZED") {
+        return
+      }
+
+      const chargeTask = await taskSchedulingService.findChargeAttendeeTask(handle, attendeeId)
+
+      const paymentAttemptId = payment.attemptId
+
+      if (paymentAttemptId === null) {
+        throw new IllegalStateError(`Payment(ID=${payment.id}) is authorized without a payment attempt`)
+      }
+
+      const scheduledPayload = tasks.CHARGE_ATTENDEE.getSchema().safeParse(chargeTask?.payload)
+      const scheduledAttemptId = scheduledPayload.success ? scheduledPayload.data.paymentAttemptId : null
+      const chargeDeadline = new TZDate(payment.captureScheduledAt ?? attendance.deregisterDeadline, "UTC")
+      const scheduledChargeTime = max([now, chargeDeadline])
+
+      if (chargeTask?.status === "PENDING" && scheduledAttemptId === paymentAttemptId) {
+        if (chargeTask.scheduledAt == null || !isAfter(chargeTask.scheduledAt, scheduledChargeTime)) {
+          return
+        }
+
+        await taskSchedulingService.cancel(handle, chargeTask.id)
+      }
+
+      await taskSchedulingService.scheduleAt(
+        handle,
+        tasks.CHARGE_ATTENDEE,
+        { attendeeId, paymentAttemptId },
+        scheduledChargeTime
+      )
     },
 
     async executeVerifyAttendanceCompletionTask(handle, { attendeeId }) {
@@ -1488,19 +1500,42 @@ export function getAttendanceService(
         throw new TaskSkippedError(`Attendee(ID=${attendeeId}) no longer exists in Attendance(ID=${attendance.id})`)
       }
 
-      if (getMissingAttendanceCompletionRequirements(attendance, attendee).length === 0) {
+      if (attendee.completionDeadline === null || isAfter(attendee.completionDeadline, getCurrentUTC())) {
+        return
+      }
+
+      const payment =
+        attendee.payment === null ? null : await attendancePaymentService.syncPayment(handle, attendee.payment.id)
+      const synchronizedAttendee = { ...attendee, payment }
+
+      if (getMissingAttendanceCompletionRequirements(attendance, synchronizedAttendee).length === 0) {
+        await this.syncAttendeePayment(handle, attendeeId)
         await clearAttendeeCompletionDeadline(handle, attendeeId)
+
         return
       }
 
-      if (attendee.paymentId === null || attendee.paymentReservedAt) {
+      if (payment === null) {
         return
       }
 
-      const payment = await paymentService.getById(attendee.paymentId)
+      // The reservation timeout bounds checkout outages, but an unavailable checkout is not a missed payment.
+      if (payment.isCheckoutPending === true) {
+        await this.deregisterAttendee(handle, attendeeId, {
+          ignoreDeregistrationWindow: true,
+        })
+
+        return
+      }
+
+      const hasUnpaidAttempt =
+        payment.status === "UNPAID" ||
+        payment.status === "CANCELLED" ||
+        payment.status === "EXPIRED" ||
+        payment.status === "FAILED"
 
       // Based on whether the deadline has passed, we either kick them off the event, or suspend them indefinitely
-      if (payment.status === "UNPAID" && isPast(attendance.deregisterDeadline)) {
+      if (hasUnpaidAttempt && isPast(attendance.deregisterDeadline)) {
         const mark = await markService.create(
           handle,
           {
@@ -1531,6 +1566,8 @@ export function getAttendanceService(
 
         await personalMarkService.addToUser(handle, attendee.userId, missingPaymentMark.id)
 
+        await clearAttendeeCompletionDeadline(handle, attendeeId)
+
         logger.info(
           "Suspended User(ID=%s) for missing payment for Event(ID=%s,Title=%s) with deregister deadline %s",
           attendee.userId,
@@ -1538,18 +1575,17 @@ export function getAttendanceService(
           event.title,
           attendance.deregisterDeadline
         )
-      } else if (payment.status === "UNPAID" || payment.status === "CANCELLED") {
+      } else if (hasUnpaidAttempt) {
         await this.deregisterAttendee(handle, attendeeId, {
           // TODO: Maybe this should be false?
           ignoreDeregistrationWindow: true,
+          automaticDeregistrationReason: {
+            title: "Påmeldingen ble ikke fullført",
+            details: "Betalingen ble ikke gjennomført innen fristen.",
+          },
         })
       } else {
-        await attendanceRepository.updateAttendeePaymentById(handle, attendeeId, {
-          paymentReservedAt: getCurrentUTC(),
-          paymentChargedAt: payment.status === "PAID" ? getCurrentUTC() : null,
-          paymentLink: null,
-        })
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        await this.syncAttendeePayment(handle, attendeeId)
       }
     },
 
@@ -1654,15 +1690,12 @@ export function getAttendanceService(
           hostingGroupEmail
         )
 
-        await emailService.send(
-          hostingGroupEmail,
-          [],
-          [],
-          [],
+        await emailService.send({
+          fromEmailAddress: hostingGroupEmail,
           bcc,
-          formatEmailSubject(`Tilbakemelding på ${event.title}`),
-          emails.FEEDBACK_FORM_LINK,
-          {
+          subject: formatEmailSubject(`Tilbakemelding på ${event.title}`),
+          definition: emails.FEEDBACK_FORM_LINK,
+          data: {
             eventName: event.title,
             eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
             eventImageUrl: event.imageUrl,
@@ -1670,8 +1703,8 @@ export function getAttendanceService(
             eventStart: event.start.toISOString(),
             feedbackDeadline: feedbackForm.answerDeadline.toISOString(),
             organizerEmail: hostingGroupEmail,
-          }
-        )
+          },
+        })
       })
 
       await Promise.all(promises)
@@ -1688,14 +1721,14 @@ export function getAttendanceService(
       const errors: Error[] = []
 
       for (const event of eventsEndedYesterday) {
-        if (!event.attendanceId || !event.markForMissedAttendance) {
+        if (event.attendanceId === null || !event.markForMissedAttendance) {
           continue
         }
 
         try {
           const attendance = await this.getAttendanceById(handle, event.attendanceId)
           const attendeesNotAttended = attendance.attendees.filter(
-            (attendee) => attendee.registeredAt !== null && !attendee.attendedAt
+            (attendee) => attendee.registeredAt !== null && attendee.attendedAt === null
           )
 
           if (attendeesNotAttended.length === 0) {
@@ -1717,6 +1750,24 @@ export function getAttendanceService(
           await Promise.all(
             attendeesNotAttended.map((attendee) => personalMarkService.addToUser(handle, attendee.user.id, mark.id))
           )
+
+          const organizerEmails = [...new Set(getOrganizerEmails(event))]
+
+          const eventLink = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
+          const markLink = new URL(`/admin/prikker/${mark.id}`, configuration.WEB_PUBLIC_ORIGIN).toString()
+
+          await emailService.send({
+            replyTo: [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS],
+            to: organizerEmails,
+            subject: formatEmailSubject(`Automatiske prikker for manglende oppmøte på ${event.title}`),
+            definition: emails.EVENT_MISSED_ATTENDANCE_MARKS,
+            data: {
+              eventName: event.title,
+              eventLink,
+              markLink,
+              affectedAttendeeCount: attendeesNotAttended.length,
+            },
+          })
         } catch (e) {
           logger.error("Received error when attempting to create marks: %o", e)
           if (e instanceof Error) {
@@ -1837,37 +1888,62 @@ export function getAttendanceService(
           "Notification email sent for Event(ID=%s, Name=%s) did not have sufficient organizer email so %s was used.",
           event.id,
           event.title,
-          DEFAULT_EMAIL_SOURCE
+          DEFAULT_EMAIL_FROM_EMAIL_ADDRESS
         )
       }
 
-      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_SOURCE
+      const sourceEmail = hostingGroupEmail ?? DEFAULT_EMAIL_FROM_EMAIL_ADDRESS
       const senderGroup = event.hostingGroups.find(
         (group) => group.email === sourceEmail && (group.type === "COMMITTEE" || group.type === "NODE_COMMITTEE")
       )
 
-      const sourceName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
+      const fromName = senderGroup === undefined ? undefined : getGroupDisplayName(senderGroup)
 
-      const attendeeEmails = attendance.attendees
-        .map((attendee) => attendee.user.email)
-        .filter((email): email is string => email !== null)
+      // We send the same email to all registered attendees, and then send a personalized email to all attendees in the
+      // queue with their position in the queue
+      const deliveries: { recipientEmails: string[]; queuePosition: number | null }[] = []
+      const registeredEmails: string[] = []
 
-      await emailService.send(
-        sourceEmail,
-        [sourceEmail],
-        [],
-        [],
-        attendeeEmails,
-        formatEmailSubject(title),
-        emails.EVENT_MESSAGE,
-        {
-          eventName: event.title,
-          eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
-          eventImageUrl: event.imageUrl,
-          message,
-        },
-        sourceName
-      )
+      for (const attendee of attendance.attendees) {
+        if (attendee.user.email === null) {
+          continue
+        }
+
+        if (attendee.registeredAt !== null) {
+          registeredEmails.push(attendee.user.email)
+
+          continue
+        }
+
+        const queuePosition = getAttendeeQueuePosition(attendance, attendee.user)
+
+        deliveries.push({ recipientEmails: [attendee.user.email], queuePosition })
+      }
+
+      // We add all the registered attendees into the same delivery, since they all receive the same message
+      if (registeredEmails.length > 0) {
+        deliveries.unshift({ recipientEmails: registeredEmails, queuePosition: null })
+      }
+
+      const sendPromises = deliveries.map((delivery) => {
+        return emailService.send({
+          fromEmailAddress: sourceEmail,
+          replyTo: [sourceEmail],
+          bcc: delivery.recipientEmails,
+          subject: formatEmailSubject(title),
+          definition: emails.EVENT_MESSAGE,
+          data: {
+            eventName: event.title,
+            eventLink: createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title),
+            eventImageUrl: event.imageUrl,
+            message,
+            queuePosition: delivery.queuePosition,
+          },
+          fromName,
+        })
+      })
+
+      await Promise.all(sendPromises)
     },
   }
 }

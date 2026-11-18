@@ -2,7 +2,7 @@
 
 import type { Group } from "@dotkomonline/rpc/group"
 import type { UserId } from "@dotkomonline/rpc/user"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { useStartGroupMembershipMutation } from "@admin/grupper/mutations"
 import { GroupMemberWriteForm } from "./GroupMemberWriteForm"
@@ -19,30 +19,31 @@ export function CreateGroupMemberModal({ open, onOpenChange, group, userId, disa
   const startMembership = useStartGroupMembershipMutation()
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Legg til bruker</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Legg til bruker</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        {open && userId && (
-          <GroupMemberWriteForm
-            groupId={group.slug}
-            onSubmit={(data) => {
-              startMembership.mutate({
-                userId,
-                groupId: group.slug,
-                roleIds: data.roleIds,
-              })
-              onOpenChange(false)
-            }}
-            disabled={disabled}
-          />
-        )}
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && userId && (
+            <GroupMemberWriteForm
+              groupId={group.slug}
+              onSubmit={(data) => {
+                startMembership.mutate({
+                  userId,
+                  groupId: group.slug,
+                  roleIds: data.roleIds,
+                })
+                onOpenChange(false)
+              }}
+              disabled={disabled}
+            />
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

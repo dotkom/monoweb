@@ -1,3 +1,5 @@
+import { getPaymentRepository } from "../../payment/payment-repository"
+import { getAttendanceRepository } from "../../event/attendance-repository"
 import { randomUUID } from "node:crypto"
 import type { DBHandle } from "@dotkomonline/db"
 import { GenderSchema, type Membership, type User, type UserFlag } from "../user"
@@ -61,7 +63,7 @@ describe("mergeUsers", () => {
   let handle: ReturnType<typeof mockDeep<DBHandle>>
   let groupRepository: ReturnType<typeof mockDeep<GroupRepository>>
   let attendanceService: ReturnType<typeof mockDeep<AttendanceService>>
-  let deps: { groupRepository: GroupRepository; attendanceService: AttendanceService }
+  let deps: Parameters<typeof mergeUsers>[1]
 
   beforeEach(() => {
     handle = mockDeep<DBHandle>()
@@ -75,7 +77,13 @@ describe("mergeUsers", () => {
     handle.contestant.findMany.mockResolvedValue([])
     handle.contestTeam.findMany.mockResolvedValue([])
     handle.userFlagLink.findMany.mockResolvedValue([])
-    deps = { groupRepository, attendanceService }
+    handle.sidequestRegistration.findMany.mockResolvedValue([])
+    deps = {
+      groupRepository,
+      attendanceService,
+      paymentRepository: getPaymentRepository(),
+      attendanceRepository: getAttendanceRepository(),
+    }
   })
 
   describe("scalar backfill", () => {
@@ -290,7 +298,7 @@ describe("mergeUsers", () => {
         async ({ where }) =>
           (where?.userId === survivor.id
             ? []
-            : [{ id: consumedAttendeeId, attendanceId: "attendance-only-on-consumed" }]) as never
+            : [{ id: consumedAttendeeId, payment: null, attendanceId: "attendance-only-on-consumed" }]) as never
       )
 
       await mergeUsers(handle, deps, survivor, consumed)
@@ -312,7 +320,7 @@ describe("mergeUsers", () => {
         async ({ where }) =>
           (where?.userId === survivor.id
             ? [{ attendanceId: sharedAttendanceId }]
-            : [{ id: consumedAttendeeId, attendanceId: sharedAttendanceId }]) as never
+            : [{ id: consumedAttendeeId, payment: null, attendanceId: sharedAttendanceId }]) as never
       )
 
       await mergeUsers(handle, deps, survivor, consumed)
@@ -337,8 +345,8 @@ describe("mergeUsers", () => {
           (where?.userId === survivor.id
             ? [{ attendanceId: sharedAttendanceId }]
             : [
-                { id: conflictingAttendeeId, attendanceId: sharedAttendanceId },
-                { id: standaloneAttendeeId, attendanceId: "attendance-only-on-consumed" },
+                { id: conflictingAttendeeId, payment: null, attendanceId: sharedAttendanceId },
+                { id: standaloneAttendeeId, payment: null, attendanceId: "attendance-only-on-consumed" },
               ]) as never
       )
 
@@ -383,6 +391,43 @@ describe("mergeUsers", () => {
         where: { userId: consumed.id, markId: { in: [sharedMarkId] } },
       })
       expect(handle.personalMark.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+  })
+
+  describe("sidequest registration deduplication", () => {
+    it("reassigns consumed registrations when survivor has none of the same sidequests", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+
+      handle.sidequestRegistration.findMany.mockResolvedValue([])
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [] } },
+      })
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id },
+        data: { userId: survivor.id },
+      })
+    })
+
+    it("deletes the consumed user's registrations that the survivor also has", async () => {
+      const survivor = makeUser()
+      const consumed = makeUser()
+      const sharedSidequestId = "sidequest-shared"
+
+      handle.sidequestRegistration.findMany.mockResolvedValue([{ sidequestId: sharedSidequestId }] as never)
+
+      await mergeUsers(handle, deps, survivor, consumed)
+
+      expect(handle.sidequestRegistration.deleteMany).toHaveBeenCalledWith({
+        where: { userId: consumed.id, sidequestId: { in: [sharedSidequestId] } },
+      })
+      expect(handle.sidequestRegistration.updateMany).toHaveBeenCalledWith({
         where: { userId: consumed.id },
         data: { userId: survivor.id },
       })

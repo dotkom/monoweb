@@ -1,18 +1,17 @@
 "use client"
 
+import { env } from "@/env"
 import type { Event } from "@dotkomonline/rpc/event"
-import { slugify } from "@dotkomonline/utils"
+import { createCalendarEvent, createIcsBody, slugify } from "@dotkomonline/utils"
 import { AddToCalendarButton } from "./AddToCalendarButton"
-import { createCalendarEvent } from "./calendar-event"
 import { createGoogleCalendarLink } from "./TimeLocationBox/utils"
-import { createIcsBody } from "./ics"
 
 interface EventCalendarButtonProps {
   event: Event
 }
 
 export function EventCalendarButton({ event }: EventCalendarButtonProps) {
-  const calendarEvent = createCalendarEvent(event)
+  const calendarEvent = createCalendarEvent(event, env.NEXT_PUBLIC_ORIGIN)
 
   const googleCalendarUrl = createGoogleCalendarLink({
     title: calendarEvent.summary,

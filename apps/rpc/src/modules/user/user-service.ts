@@ -53,7 +53,7 @@ import {
   Auth0ProviderSchema,
   type BugReportFormResult,
 } from "./user"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { emails } from "../email/email-template"
 import type { EmailService } from "../email/email-service"
 
 export interface UserService {
@@ -1063,23 +1063,20 @@ export function getUserService(
         )
       }
 
-      await emailService.send(
-        DEFAULT_EMAIL_SOURCE,
-        [user.email, "dotkom@online.ntnu.no"],
-        [user.email, "dotkom@online.ntnu.no"],
-        [],
-        [],
-        formatEmailSubject("Takk for at du meldte fra!"),
-        emails.BUG_REPORT,
-        {
+      await emailService.send({
+        replyTo: [user.email, "dotkom@online.ntnu.no"],
+        to: [user.email, "dotkom@online.ntnu.no"],
+        subject: formatEmailSubject("Takk for at du meldte fra!"),
+        definition: emails.BUG_REPORT,
+        data: {
           title: data.title,
           firstName: user.name?.trim().split(/\s+/)[0] ?? null,
           name: user.name,
           profileUrl: createAbsoluteUserProfileUrl(webOrigin, user.username),
           body: data.body,
           userAgent: data.userAgent,
-        }
-      )
+        },
+      })
     },
   }
 }

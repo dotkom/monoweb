@@ -1,8 +1,9 @@
 import type { DBClient, Prisma, PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
+import { addMinutes } from "date-fns"
+import type { PaymentWorkflowService } from "../payment/payment-workflow-service"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
-import { captureException } from "@sentry/node"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
 import type { Configuration } from "../../configuration"
@@ -12,6 +13,7 @@ import type { RecurringTaskService } from "./recurring-task-service"
 import type { Task } from "./task"
 import {
   type ChargeAttendeeTaskDefinition,
+  type OpenPaymentCheckoutTaskDefinition,
   type InferTaskData,
   type MergeAttendancePoolsTaskDefinition,
   type ReserveAttendeeTaskDefinition,
@@ -34,6 +36,7 @@ export function getLocalTaskExecutor(
   taskDiscoveryService: TaskDiscoveryService,
   taskSchedulingService: TaskSchedulingService,
   attendanceService: AttendanceService,
+  paymentWorkflowService: PaymentWorkflowService,
   configuration: Configuration
 ): TaskExecutor {
   const logger = getLogger("task-executor")
@@ -44,24 +47,64 @@ export function getLocalTaskExecutor(
   logger.warn("TaskExecutor started with local (postgres) backend")
 
   async function processTask(client: PrismaClient, task: Task): Promise<void> {
-    let outcome: "completed" | "failed" | "skipped" = "completed"
+    let outcome: "completed" | "failed" | "skipped" | "retrying" = "completed"
 
     // Log the job execution's start. This is run against the client itself, so that we guarantee that the job is marked
     // as running regardless of whether the child transaction commits or rollbacks.
-    await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
+    const isCheckoutTask = task.type === tasks.OPEN_PAYMENT_CHECKOUT.type
+    const claimedAt = isCheckoutTask ? await taskService.claimCheckoutTask(client, task) : null
+
+    if (isCheckoutTask && claimedAt === null) {
+      return
+    }
+
+    if (!isCheckoutTask) {
+      await taskService.setTaskExecutionStatus(client, task.id, "RUNNING", "PENDING")
+    }
+
+    async function finishExecution(status: "COMPLETED" | "SKIPPED" | "FAILED") {
+      if (claimedAt !== null) {
+        await taskService.finishCheckoutTask(client, task.id, claimedAt, {
+          status,
+          processedAt: getCurrentUTC(),
+        })
+
+        return
+      }
+
+      await taskService.setTaskExecutionStatus(client, task.id, status, "RUNNING")
+    }
 
     return await tracer.startActiveSpan(`TaskExecutor/${task.type}`, { root: true }, async (span) => {
       span.setAttribute("rpc.service", "@dotkomonline/rpc")
       span.setAttribute("rpc.system", "trpc")
 
       try {
+        const definition = getTaskDefinition(task.type)
+        const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
+
+        // This happens in Stripe, so we don't want to hold a transaction open for an API call.
+        if (task.type === tasks.OPEN_PAYMENT_CHECKOUT.type) {
+          const { paymentAttemptId } = payload as InferTaskData<OpenPaymentCheckoutTaskDefinition>
+          await paymentWorkflowService.openCheckout(client, paymentAttemptId)
+
+          return
+        }
+
+        // This happens in Stripe, so we don't want to hold a transaction open for an API call.
+        if (task.type === tasks.CHARGE_ATTENDEE.type) {
+          await attendanceService.executeChargeAttendeeTask(
+            client,
+            payload as InferTaskData<ChargeAttendeeTaskDefinition>
+          )
+
+          return
+        }
+
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
         await client.$transaction(async (handle) => {
-          const definition = getTaskDefinition(task.type)
-          const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
-
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
@@ -79,12 +122,6 @@ export function getLocalTaskExecutor(
               return await attendanceService.executeVerifyAttendanceCompletionTask(
                 handle,
                 payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
-              )
-
-            case tasks.CHARGE_ATTENDEE.type:
-              return await attendanceService.executeChargeAttendeeTask(
-                handle,
-                payload as InferTaskData<ChargeAttendeeTaskDefinition>
               )
 
             case tasks.VERIFY_FEEDBACK_ANSWERED.type:
@@ -114,7 +151,7 @@ export function getLocalTaskExecutor(
           outcome = "skipped"
 
           logger.warn("Job with ID=%s skipped with reason: %o", task.id, error)
-          await taskService.setTaskExecutionStatus(client, task.id, "SKIPPED", "RUNNING")
+          await finishExecution("SKIPPED")
           span.setStatus({ code: SpanStatusCode.OK })
 
           return
@@ -129,15 +166,26 @@ export function getLocalTaskExecutor(
         if (error instanceof Error) {
           span.setStatus({ code: SpanStatusCode.ERROR })
           span.recordException(error)
-          captureException(error)
         }
 
-        await taskService.setTaskExecutionStatus(client, task.id, "FAILED", "RUNNING")
+        if (claimedAt !== null) {
+          outcome = "retrying"
+
+          await taskService.finishCheckoutTask(client, task.id, claimedAt, {
+            status: "PENDING",
+            scheduledAt: addMinutes(getCurrentUTC(), 1),
+            processedAt: null,
+          })
+
+          return
+        }
+
+        await finishExecution("FAILED")
       } finally {
         // If nothing failed, we mark the job as completed. The reason this is in a finally block is to ensure that
         // regardless of whether the job execution was successful or not, we always update the job status.
         if (outcome === "completed") {
-          await taskService.setTaskExecutionStatus(client, task.id, "COMPLETED", "RUNNING")
+          await finishExecution("COMPLETED")
           logger.info("Job with ID=%s completed successfully", task.id)
           span.setStatus({ code: SpanStatusCode.OK })
         }

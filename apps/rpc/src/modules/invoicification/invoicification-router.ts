@@ -1,5 +1,4 @@
 import { formatEmailSubject } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
 import { emails } from "../email/email-template"
@@ -32,21 +31,16 @@ const InvoiceFormSchema = z.object({
   comment: z.string().default("Ingen kommentar"),
 })
 
-export type SubmitInvoiceInput = inferProcedureInput<typeof submitInvoiceProcedure>
-export type SubmitInvoiceOutput = inferProcedureOutput<typeof submitInvoiceProcedure>
-
 const submitInvoiceProcedure = procedure.input(InvoiceFormSchema).mutation(async ({ input, ctx }) => {
   const BEDKOM_EMAIL = "bedkom@online.ntnu.no"
 
-  await ctx.emailService.send(
-    BEDKOM_EMAIL,
-    [BEDKOM_EMAIL],
-    [BEDKOM_EMAIL],
-    [],
-    [],
-    formatEmailSubject(`[Faktura] ${input.companyName}`),
-    emails.COMPANY_INVOICE_NOTIFICATION,
-    {
+  await ctx.emailService.send({
+    fromEmailAddress: BEDKOM_EMAIL,
+    replyTo: [BEDKOM_EMAIL],
+    to: [BEDKOM_EMAIL],
+    subject: formatEmailSubject(`[Faktura] ${input.companyName}`),
+    definition: emails.COMPANY_INVOICE_NOTIFICATION,
+    data: {
       companyName: input.companyName,
       organizationNumber: input.organizationNumber,
       contactName: input.contactName,
@@ -57,8 +51,8 @@ const submitInvoiceProcedure = procedure.input(InvoiceFormSchema).mutation(async
       preferredPurchaseOrderNumber: input.preferredPurchaseOrderNumber ?? null,
       preferredDueDateLength: input.preferredDueDateLength,
       comment: input.comment ?? null,
-    }
-  )
+    },
+  })
 
   return { success: true }
 })

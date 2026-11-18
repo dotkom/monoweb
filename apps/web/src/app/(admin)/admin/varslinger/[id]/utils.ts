@@ -79,6 +79,7 @@ export function getNotificationLinkActionLabel(linkType: NotificationLink["type"
     USER: "Se bruker",
     OFFLINE: "Se Offline",
     JOB_LISTING: "Se stillingsannonse",
+    SIDEQUEST: "Se Sidequest",
   } satisfies Record<NotificationLink["type"], string>
 
   return labels[linkType]

@@ -17,7 +17,16 @@ import {
 } from "@dotkomonline/rpc/attendance"
 import type { Event, EventId } from "@dotkomonline/rpc/event"
 import type { User, UserId } from "@dotkomonline/rpc/user"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle, Button, Text } from "@dotkomonline/ui"
+import {
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  Button,
+  Text,
+} from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconAlertTriangle, IconX } from "@tabler/icons-react"
 import { isAfter } from "date-fns"
@@ -83,92 +92,95 @@ export function ManualCreateUserAttendModal({
   })
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="lg" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Admin-påmeld bruker</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="lg">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Admin-påmeld bruker</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        {open && (
-          <div className="flex w-full flex-col gap-4 overflow-x-auto">
-            {isUserLoading ? (
-              <div className="size-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-            ) : (
-              user !== undefined && <UserBox user={user} />
-            )}
-
-            <Form
-              form={form}
-              onSubmit={(values) => {
-                try {
-                  createAttendee({
-                    attendanceId,
-                    userId,
-                    attendancePoolId: values.poolId,
-                    options: {
-                      ignoreRegisteredToParent: values.ignoreRegisteredToParent,
-                      immediateReservation: values.immediateReservation,
-                      immediatePayment: isImmediatePayment(values.completionDeadlineHours ?? "24"),
-                    },
-                  })
-                  onOpenChange(false)
-                } catch (e) {
-                  notifyFail({
-                    title: "Oops!",
-                    message: (e as Error).message,
-                  })
-                }
-              }}
-            >
-              <PoolIdFields attendance={attendance} isMobile={isMobile} control={form.control} />
-
-              {parentEventWithAttendance != null && (
-                <>
-                  <ParentEventRegistrationStatus
-                    parentEvent={parentEventWithAttendance.event}
-                    parentAttendance={parentEventWithAttendance.attendance}
-                    userId={userId}
-                  />
-                  <CheckboxField
-                    control={form.control}
-                    name="ignoreRegisteredToParent"
-                    label="Ignorer påmelding til forelderarrangement"
-                    description="Tillat påmelding selv om brukeren ikke er påmeldt forelderarrangementet."
-                  />
-                </>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && (
+            <div className="flex w-full flex-col gap-4 overflow-x-auto">
+              {isUserLoading ? (
+                <div className="size-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+              ) : (
+                user !== undefined && <UserBox user={user} />
               )}
 
-              <CheckboxField
-                control={form.control}
-                name="immediateReservation"
-                label="Tving påmeldtstatus"
-                description="Gir reservert plass med en gang. Uten dette kan brukeren havne i kø hvis gruppen er full, har utsettelse, eller brukeren har prikker."
-              />
+              <Form
+                form={form}
+                onSubmit={(values) => {
+                  try {
+                    createAttendee({
+                      attendanceId,
+                      userId,
+                      attendancePoolId: values.poolId,
+                      options: {
+                        ignoreRegisteredToParent: values.ignoreRegisteredToParent,
+                        immediateReservation: values.immediateReservation,
+                        immediatePayment: isImmediatePayment(values.completionDeadlineHours ?? "24"),
+                      },
+                    })
+                    onOpenChange(false)
+                  } catch (e) {
+                    notifyFail({
+                      title: "Oops!",
+                      message: (e as Error).message,
+                    })
+                  }
+                }}
+              >
+                <PoolIdFields attendance={attendance} isMobile={isMobile} control={form.control} />
 
-              {attendance !== undefined && attendance.attendancePrice !== null && attendance.attendancePrice !== 0 && (
-                <SegmentedControlField
+                {parentEventWithAttendance != null && (
+                  <>
+                    <ParentEventRegistrationStatus
+                      parentEvent={parentEventWithAttendance.event}
+                      parentAttendance={parentEventWithAttendance.attendance}
+                      userId={userId}
+                    />
+                    <CheckboxField
+                      control={form.control}
+                      name="ignoreRegisteredToParent"
+                      label="Ignorer påmelding til forelderarrangement"
+                      description="Tillat påmelding selv om brukeren ikke er påmeldt forelderarrangementet."
+                    />
+                  </>
+                )}
+
+                <CheckboxField
                   control={form.control}
-                  name="completionDeadlineHours"
-                  label="Fullføringsfrist"
-                  options={[
-                    { value: "1", label: "1 time" },
-                    { value: "24", label: "24 timer" },
-                  ]}
-                  fullWidth={isMobile}
+                  name="immediateReservation"
+                  label="Tving påmeldtstatus"
+                  description="Gir reservert plass med en gang. Uten dette kan brukeren havne i kø hvis gruppen er full, har utsettelse, eller brukeren har prikker."
                 />
-              )}
 
-              <Button type="submit" variant="default" className="w-fit">
-                Meld på bruker
-              </Button>
-            </Form>
-          </div>
-        )}
-      </AlertDialogContent>
-    </AlertDialog>
+                {attendance !== undefined &&
+                  attendance.attendancePrice !== null &&
+                  attendance.attendancePrice !== 0 && (
+                    <SegmentedControlField
+                      control={form.control}
+                      name="completionDeadlineHours"
+                      label="Fullføringsfrist"
+                      options={[
+                        { value: "1", label: "1 time" },
+                        { value: "24", label: "24 timer" },
+                      ]}
+                      fullWidth={isMobile}
+                    />
+                  )}
+
+                <Button type="submit" variant="default" className="w-fit">
+                  Meld på bruker
+                </Button>
+              </Form>
+            </div>
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
 

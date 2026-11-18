@@ -25,6 +25,7 @@ export type ChargeAttendeeTaskDefinition = typeof tasks.CHARGE_ATTENDEE
 export type VerifyFeedbackAnsweredTaskDefinition = typeof tasks.VERIFY_FEEDBACK_ANSWERED
 export type SendFeedbackFormEmailsTaskDefinition = typeof tasks.SEND_FEEDBACK_FORM_EMAILS
 export type VerifyAttendeeAttendedTaskDefinition = typeof tasks.VERIFY_ATTENDEE_ATTENDED
+export type OpenPaymentCheckoutTaskDefinition = typeof tasks.OPEN_PAYMENT_CHECKOUT
 export type AnyTaskDefinition =
   | ReserveAttendeeTaskDefinition
   | MergeAttendancePoolsTaskDefinition
@@ -33,6 +34,7 @@ export type AnyTaskDefinition =
   | VerifyFeedbackAnsweredTaskDefinition
   | SendFeedbackFormEmailsTaskDefinition
   | VerifyAttendeeAttendedTaskDefinition
+  | OpenPaymentCheckoutTaskDefinition
 
 export const tasks = {
   RESERVE_ATTENDEE: createTaskDefinition({
@@ -62,6 +64,7 @@ export const tasks = {
     getSchema: () =>
       z.object({
         attendeeId: AttendeeSchema.shape.id,
+        paymentAttemptId: z.string(),
       }),
   }),
   VERIFY_FEEDBACK_ANSWERED: createTaskDefinition({
@@ -78,6 +81,10 @@ export const tasks = {
   VERIFY_ATTENDEE_ATTENDED: createTaskDefinition({
     type: "VERIFY_ATTENDEE_ATTENDED",
     getSchema: () => z.object({}),
+  }),
+  OPEN_PAYMENT_CHECKOUT: createTaskDefinition({
+    type: "OPEN_PAYMENT_CHECKOUT",
+    getSchema: () => z.object({ paymentAttemptId: z.string() }),
   }),
   // biome-ignore lint/suspicious/noExplicitAny: used for type inference only
 } satisfies Record<TaskType, TaskDefinition<any, any>>

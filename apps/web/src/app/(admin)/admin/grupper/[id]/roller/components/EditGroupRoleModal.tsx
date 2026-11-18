@@ -1,7 +1,7 @@
 "use client"
 
 import type { GroupRole } from "@dotkomonline/rpc/group"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { useUpdateGroupRoleMutation } from "@admin/grupper/mutations"
 import { GroupRoleWriteForm } from "./GroupRoleWriteForm"
@@ -17,32 +17,33 @@ export function EditGroupRoleModal({ open, onOpenChange, role, disabled }: EditG
   const update = useUpdateGroupRoleMutation()
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>Endre rolle</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>Endre rolle</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-
-        {open && role && (
-          <GroupRoleWriteForm
-            defaultValues={role}
-            onSubmit={(data) => {
-              update.mutate({
-                id: role.id,
-                role: {
-                  ...data,
-                  groupId: role.groupId,
-                },
-              })
-              onOpenChange(false)
-            }}
-            disabled={disabled}
-          />
-        )}
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && role && (
+            <GroupRoleWriteForm
+              defaultValues={role}
+              onSubmit={(data) => {
+                update.mutate({
+                  id: role.id,
+                  role: {
+                    ...data,
+                    groupId: role.groupId,
+                  },
+                })
+                onOpenChange(false)
+              }}
+              disabled={disabled}
+            />
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

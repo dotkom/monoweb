@@ -2,7 +2,12 @@ import { addMinutes, addSeconds, subMinutes } from "date-fns"
 import React, { type PropsWithChildren } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createMockAttendance, createMockAttendee, createMockUser } from "../../.ladle/fixtures/attendance"
+import {
+  createMockPayment,
+  createMockAttendance,
+  createMockAttendee,
+  createMockUser,
+} from "../../.ladle/fixtures/attendance"
 
 vi.mock("@dotkomonline/ui", () => ({
   Text: "p",
@@ -21,7 +26,7 @@ vi.mock("@/components/RollingNumber", () => ({
 import { MainPoolCard } from "@/app/arrangementer/components/AttendanceCard/MainPoolCard"
 import { AttendanceStatus } from "@/components/molecules/EventListItem/AttendanceStatus"
 import { patchAttendanceFromRegisterChange } from "@/app/arrangementer/components/AttendanceCard/patchAttendanceFromRegisterChange"
-import { buildRegistrationAvailabilityCompletionView, getAttendeePaymentStatus } from "@dotkomonline/rpc/attendance"
+import { buildRegistrationAvailabilityCompletionView } from "@dotkomonline/rpc/attendance"
 
 beforeEach(() => {
   vi.stubGlobal("React", React)
@@ -49,7 +54,10 @@ describe("attendance deregistration lock", () => {
     null,
     new Date(),
   ])("still locks attendees with a seat after the deregistration deadline (payment reserved: %s)", (paymentReservedAt) => {
-    const attendee = createMockAttendee({ registeredAt: new Date(), paymentReservedAt })
+    const attendee = createMockAttendee({
+      registeredAt: new Date(),
+      payment: createMockPayment({ status: paymentReservedAt === null ? "UNPAID" : "AUTHORIZED" }),
+    })
     const attendance = createMockAttendance({ status: "CLOSED", attendancePrice: 100, attendees: [attendee] })
 
     const markup = renderToStaticMarkup(
@@ -67,7 +75,7 @@ describe("event payment countdown", () => {
       registeredAt: null,
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addSeconds(new Date(), expired ? -30 : 60),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
@@ -95,7 +103,7 @@ describe("event payment countdown", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addMinutes(new Date(), 1),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
     const updatedAttendance = patchAttendanceFromRegisterChange(attendance, { status: "deregistered", attendee })
@@ -114,7 +122,7 @@ describe("event payment countdown", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addSeconds(new Date(), expired ? -30 : 60),
-      paymentLink: null,
+      payment: null,
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
@@ -143,7 +151,7 @@ describe("event payment countdown", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addMinutes(new Date(), 1),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
@@ -173,8 +181,7 @@ describe("event payment countdown", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addMinutes(new Date(), 1),
-      paymentReservedAt: new Date(),
-      paymentLink,
+      payment: createMockPayment({ status: "AUTHORIZED", checkoutUrl: paymentLink }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
 
@@ -204,15 +211,18 @@ describe("event payment countdown", () => {
     const attendee = createMockAttendee({
       createdAt: subMinutes(new Date(), 1),
       completionDeadline: addMinutes(new Date(), 1),
-      paymentLink: "https://example.com/payment",
+      payment: createMockPayment({ checkoutUrl: "https://example.com/payment" }),
     })
     const attendance = createMockAttendance({ attendancePrice: 100, attendees: [attendee] })
-    const updatedAttendee = { ...attendee, paymentReservedAt: new Date(), paymentLink: null }
+    const updatedAttendee = createMockAttendee({
+      ...attendee,
+      payment: createMockPayment({ status: "AUTHORIZED" }),
+    })
 
     const updatedAttendance = patchAttendanceFromRegisterChange(attendance, { status, attendee: updatedAttendee })
 
     expect(updatedAttendance?.attendees).toEqual([updatedAttendee])
-    expect(getAttendeePaymentStatus(updatedAttendee)).toBe("reserved")
+    expect(updatedAttendee.payment?.status).toBe("AUTHORIZED")
 
     const markup = renderToStaticMarkup(
       <MainPoolCard attendance={updatedAttendance ?? attendance} user={createMockUser()} authorizeUrl="/login" />

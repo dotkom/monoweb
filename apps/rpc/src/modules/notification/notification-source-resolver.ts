@@ -140,6 +140,20 @@ export function getNotificationSourceResolver(services: NotificationSourceServic
             defaultRecipientSelection: null,
           }
         }
+
+        case "SIDEQUEST": {
+          const sidequest = await handle.sidequest.findUniqueOrThrow({
+            where: { id: source.sidequestId },
+          })
+
+          return {
+            link: {
+              type: "SIDEQUEST",
+              sidequestId: sidequest.id,
+            },
+            defaultRecipientSelection: null,
+          }
+        }
       }
     },
   }

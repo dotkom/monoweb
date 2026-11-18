@@ -72,6 +72,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -108,6 +109,7 @@
   from {
     transform: translateX(-50%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -128,9 +130,11 @@
   .animate-left-to-right {
     animation: none;
   }
+
   .animate-stripes {
     animation: none;
   }
+
   .stripes-mask {
     will-change: auto;
   }
@@ -166,6 +170,7 @@
     0% {
       background-position: 0 0;
     }
+
     100% {
       background-position: 0 10px;
     }
@@ -176,6 +181,7 @@
     100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.85;
     }
@@ -191,6 +197,7 @@
     from {
       transform: perspective(400px) rotateY(0deg);
     }
+
     to {
       transform: perspective(400px) rotateY(360deg);
     }
@@ -201,15 +208,40 @@
       transform: perspective(400px) rotateY(0deg) scale(0.8);
       opacity: 0;
     }
+
     50% {
       transform: perspective(400px) rotateY(180deg) scale(1.1);
       opacity: 1;
     }
+
     100% {
       transform: perspective(400px) rotateY(360deg) scale(1);
       opacity: 1;
     }
   }
+}
+
+/* Static means Tailwind will always emit these values, even if they are not used in the code */
+@theme static {
+  /* This is used in a CSS module, and wouldn't be emitted regularly */
+  --color-user-plate-knight-fill: #0060a3;
+  --color-user-plate-knight-deep: #0d1f4f;
+  --color-user-plate-knight-dark-start: #253344;
+  --color-user-plate-knight-dark-middle: #0f4d7c;
+
+  /* This is used in a CSS module, and wouldn't be emitted regularly */
+  --color-user-plate-exceptionally-distinguished-fill: #0c4a61;
+  --color-user-plate-exceptionally-distinguished-ring: #18759b;
+  --color-user-plate-exceptionally-distinguished-dark-start: #24414b;
+  --color-user-plate-exceptionally-distinguished-dark-middle: #194858;
+  --color-user-plate-exceptionally-distinguished-dark-third-stop: #124b61;
+  --color-user-plate-exceptionally-distinguished-mobile-start: #285461;
+  --color-user-plate-exceptionally-distinguished-mobile-middle: #1c5d72;
+  --color-user-plate-exceptionally-distinguished-mobile-third-stop: #15657c;
+  --color-user-plate-exceptionally-distinguished-mobile-end: #12627a;
+
+  /* This is used in a CSS module, and wouldn't be emitted regularly */
+  --color-user-plate-verified-fill: #eab308;
 }
 
 @layer components {

@@ -18,12 +18,12 @@ import type { Metadata } from "next"
 import PlausibleProvider from "next-plausible"
 import { ThemeProvider } from "next-themes"
 import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import type { PropsWithChildren } from "react"
 import "@/globals.css"
+import { Dash0Identify } from "@/components/Dash0Identify"
 import { ApplicationShell } from "./ApplicationShell"
 import { QueryProvider } from "./QueryProvider"
-import { headers } from "next/headers"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -88,6 +88,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       >
         <PlausibleProvider domain="online.ntnu.no">
           <Auth0Provider user={auth0User}>
+            <Dash0Identify />
             <QueryProvider>
               <ThemeProvider defaultTheme="system" enableSystem attribute="data-theme">
                 <AuthorizationProvider subject={session.user.sub} affiliations={affiliations} groups={groups}>

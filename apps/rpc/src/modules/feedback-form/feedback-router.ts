@@ -1,4 +1,3 @@
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
@@ -21,8 +20,6 @@ import {
   FeedbackQuestionsWriteSchema,
 } from "./feedback-form"
 
-export type GetFeedbackEligibilityInput = inferProcedureInput<typeof getFeedbackEligibilityProcedure>
-export type GetFeedbackEligibilityOutput = inferProcedureOutput<typeof getFeedbackEligibilityProcedure>
 const getFeedbackEligibilityProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
@@ -30,8 +27,6 @@ const getFeedbackEligibilityProcedure = procedure
     return ctx.feedbackFormService.getFeedbackEligibility(ctx.prisma, input, ctx.principal.subject)
   })
 
-export type GetFeedbackFormStaffPreviewInput = inferProcedureInput<typeof getFeedbackFormStaffPreviewProcedure>
-export type GetFeedbackFormStaffPreviewOutput = inferProcedureOutput<typeof getFeedbackFormStaffPreviewProcedure>
 const getFeedbackFormStaffPreviewProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
@@ -51,8 +46,6 @@ const getFeedbackFormStaffPreviewProcedure = procedure
     }
   })
 
-export type CreateFormInput = inferProcedureInput<typeof createFormProcedure>
-export type CreateFormOutput = inferProcedureOutput<typeof createFormProcedure>
 const createFormProcedure = procedure
   .input(
     z.object({
@@ -81,8 +74,6 @@ const createFormProcedure = procedure
     return createdFeedbackForm
   })
 
-export type CreateFormCopyInput = inferProcedureInput<typeof createFormCopyProcedure>
-export type CreateFormCopyOutput = inferProcedureOutput<typeof createFormCopyProcedure>
 const createFormCopyProcedure = procedure
   .input(
     z.object({
@@ -116,8 +107,6 @@ const createFormCopyProcedure = procedure
     return createdFeedbackForm
   })
 
-export type UpdateFormInput = inferProcedureInput<typeof updateFormProcedure>
-export type UpdateFormOutput = inferProcedureOutput<typeof updateFormProcedure>
 const updateFormProcedure = procedure
   .input(
     z.object({
@@ -153,8 +142,6 @@ const updateFormProcedure = procedure
     return updatedFeedbackForm
   })
 
-export type DeleteFormInput = inferProcedureInput<typeof deleteFormProcedure>
-export type DeleteFormOutput = inferProcedureOutput<typeof deleteFormProcedure>
 const deleteFormProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
@@ -177,32 +164,22 @@ const deleteFormProcedure = procedure
     )
   })
 
-export type GetFormByIdInput = inferProcedureInput<typeof getFormByIdProcedure>
-export type GetFormByIdOutput = inferProcedureOutput<typeof getFormByIdProcedure>
 const getFormByIdProcedure = procedure
   .input(FeedbackFormIdSchema)
   .query(async ({ input, ctx }) => ctx.feedbackFormService.getById(ctx.prisma, input))
 
-export type FindFormByEventIdInput = inferProcedureInput<typeof findFormByEventIdProcedure>
-export type FindFormByEventIdOutput = inferProcedureOutput<typeof findFormByEventIdProcedure>
 const findFormByEventIdProcedure = procedure
   .input(EventSchema.shape.id)
   .query(async ({ input, ctx }) => ctx.feedbackFormService.findByEventId(ctx.prisma, input))
 
-export type GetFormByEventIdInput = inferProcedureInput<typeof getFormByEventIdProcedure>
-export type GetFormByEventIdOutput = inferProcedureOutput<typeof getFormByEventIdProcedure>
 const getFormByEventIdProcedure = procedure
   .input(EventSchema.shape.id)
   .query(async ({ input, ctx }) => ctx.feedbackFormService.getByEventId(ctx.prisma, input))
 
-export type GetPublicFormInput = inferProcedureInput<typeof getPublicFormProcedure>
-export type GetPublicFormOutput = inferProcedureOutput<typeof getPublicFormProcedure>
 const getPublicFormProcedure = procedure
   .input(FeedbackPublicResultsTokenSchema)
   .query(async ({ input, ctx }) => ctx.feedbackFormService.getPublicForm(ctx.prisma, input))
 
-export type GetPublicResultsTokenInput = inferProcedureInput<typeof getPublicResultsTokenProcedure>
-export type GetPublicResultsTokenOutput = inferProcedureOutput<typeof getPublicResultsTokenProcedure>
 const getPublicResultsTokenProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
@@ -219,8 +196,6 @@ const getPublicResultsTokenProcedure = procedure
     return ctx.feedbackFormService.getPublicResultsToken(ctx.prisma, input)
   })
 
-export type CreateAnswerInput = inferProcedureInput<typeof createAnswerProcedure>
-export type CreateAnswerOutput = inferProcedureOutput<typeof createAnswerProcedure>
 const createAnswerProcedure = procedure
   .input(
     z.object({
@@ -263,8 +238,6 @@ const createAnswerProcedure = procedure
     return createdAnswer
   })
 
-export type FindAnswerByAttendeeInput = inferProcedureInput<typeof findAnswerByAttendeeProcedure>
-export type FindAnswerByAttendeeOutput = inferProcedureOutput<typeof findAnswerByAttendeeProcedure>
 const findAnswerByAttendeeProcedure = procedure
   .input(
     z.object({
@@ -286,8 +259,6 @@ const findAnswerByAttendeeProcedure = procedure
     return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.prisma, input.formId, input.attendeeId)
   })
 
-export type FindOwnAnswerByAttendeeInput = inferProcedureInput<typeof findOwnAnswerByAttendeeProcedure>
-export type FindOwnAnswerByAttendeeOutput = inferProcedureOutput<typeof findOwnAnswerByAttendeeProcedure>
 const findOwnAnswerByAttendeeProcedure = procedure
   .input(
     z.object({
@@ -307,8 +278,6 @@ const findOwnAnswerByAttendeeProcedure = procedure
     return ctx.feedbackFormAnswerService.findAnswerByAttendee(ctx.prisma, input.formId, input.attendeeId)
   })
 
-export type GetAllAnswersInput = inferProcedureInput<typeof getAllAnswersProcedure>
-export type GetAllAnswersOutput = inferProcedureOutput<typeof getAllAnswersProcedure>
 const getAllAnswersProcedure = procedure
   .input(FeedbackFormIdSchema)
   .use(withAuthentication())
@@ -325,14 +294,10 @@ const getAllAnswersProcedure = procedure
     return ctx.feedbackFormAnswerService.findManyByFeedbackFormId(ctx.prisma, input)
   })
 
-export type GetPublicAnswersInput = inferProcedureInput<typeof getPublicAnswersProcedure>
-export type GetPublicAnswersOutput = inferProcedureOutput<typeof getPublicAnswersProcedure>
 const getPublicAnswersProcedure = procedure
   .input(FeedbackPublicResultsTokenSchema)
   .query(async ({ input, ctx }) => ctx.feedbackFormAnswerService.findManyByPublicResultsToken(ctx.prisma, input))
 
-export type DeleteQuestionAnswerInput = inferProcedureInput<typeof deleteQuestionAnswerProcedure>
-export type DeleteQuestionAnswerOutput = inferProcedureOutput<typeof deleteQuestionAnswerProcedure>
 const deleteQuestionAnswerProcedure = procedure
   .input(FeedbackQuestionAnswerSchema.shape.id)
   .use(withAuthentication())

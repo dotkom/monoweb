@@ -1,15 +1,16 @@
-import EventEmitter from "node:events"
 import { S3Client } from "@aws-sdk/client-s3"
-import { SESClient } from "@aws-sdk/client-ses"
+import { SESv2Client } from "@aws-sdk/client-sesv2"
 import { SQSClient } from "@aws-sdk/client-sqs"
 import { createPrisma } from "@dotkomonline/db"
-import { ManagementClient } from "auth0"
 import { admin, type admin_directory_v1 } from "@googleapis/admin"
+import { ManagementClient } from "auth0"
 import { JWT } from "googleapis-common"
+import EventEmitter from "node:events"
 import Stripe from "stripe"
 import z from "zod"
 import { type Configuration, isAmazonSesEmailFeatureEnabled, isGoogleWorkspaceFeatureEnabled } from "../configuration"
 import { IllegalStateError } from "../error"
+import { Auth0JwtService } from "../lib/auth0-jwt"
 import { getArticleRepository } from "./article/article-repository"
 import { getArticleService } from "./article/article-service"
 import { getArticleTagLinkRepository } from "./article/article-tag-link-repository"
@@ -19,11 +20,16 @@ import { getAuditLogService } from "./audit-log/audit-log-service"
 import { getAuthorizationService } from "./authorization-service"
 import { getCompanyRepository } from "./company/company-repository"
 import { getCompanyService } from "./company/company-service"
+import { getContestRepository } from "./contest/contest-repository"
+import { getContestService } from "./contest/contest-service"
 import { getEmailService, getEmptyEmailService } from "./email/email-service"
+import { getAttendancePaymentService } from "./event/attendance-payment-service"
 import { getAttendanceRepository } from "./event/attendance-repository"
 import { getAttendanceService } from "./event/attendance-service"
 import { getEventRepository } from "./event/event-repository"
 import { getEventService } from "./event/event-service"
+import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
+import { getFadderukeService } from "./fadderuke/fadderuke-service"
 import { getFeedbackFormAnswerRepository } from "./feedback-form/feedback-form-answer-repository"
 import { getFeedbackFormAnswerService } from "./feedback-form/feedback-form-answer-service"
 import { getFeedbackFormRepository } from "./feedback-form/feedback-form-repository"
@@ -43,9 +49,12 @@ import { getNotificationRepository } from "./notification/notification-repositor
 import { getNotificationService } from "./notification/notification-service"
 import { getOfflineRepository } from "./offline/offline-repository"
 import { getOfflineService } from "./offline/offline-service"
-import { getPaymentProductsService } from "./payment/payment-products-service"
-import { getPaymentService } from "./payment/payment-service"
+import { getPaymentRepository } from "./payment/payment-repository"
+import { getPaymentLedgerService } from "./payment/payment-ledger-service"
+import { getPaymentWorkflowService } from "./payment/payment-workflow-service"
 import { getPaymentWebhookService } from "./payment/payment-webhook-service"
+import { getSidequestRepository } from "./sidequest/sidequest-repository"
+import { getSidequestService } from "./sidequest/sidequest-service"
 import { getRecurringTaskRepository } from "./task/recurring-task-repository"
 import { getRecurringTaskService } from "./task/recurring-task-service"
 import { getLocalTaskDiscoveryService } from "./task/task-discovery-service"
@@ -54,15 +63,10 @@ import { getTaskRepository } from "./task/task-repository"
 import { getLocalTaskSchedulingService } from "./task/task-scheduling-service"
 import { getTaskService } from "./task/task-service"
 import { getMembershipService } from "./user/membership-service"
-import { getUserRepository } from "./user/user-repository"
 import { getUserMergingService } from "./user/user-merging-service"
+import { getUserRepository } from "./user/user-repository"
 import { getUserService } from "./user/user-service"
 import { getWorkspaceService } from "./workspace-sync/workspace-service"
-import { Auth0JwtService } from "../lib/auth0-jwt"
-import { getContestRepository } from "./contest/contest-repository"
-import { getContestService } from "./contest/contest-service"
-import { getFadderukeRepository } from "./fadderuke/fadderuke-repository"
-import { getFadderukeService } from "./fadderuke/fadderuke-service"
 
 export type ServiceLayer = Awaited<ReturnType<typeof createServiceLayer>>
 
@@ -120,7 +124,7 @@ export function createThirdPartyClients(configuration: Configuration) {
   const webJwtService = new Auth0JwtService(configuration.AUTH0_ISSUER, [configuration.AUTH0_WEB_CLIENT_ID])
 
   const s3Client = new S3Client({ region: configuration.AWS_REGION })
-  const sesClient = new SESClient({ region: configuration.AWS_REGION })
+  const sesClient = new SESv2Client({ region: configuration.AWS_REGION })
   const sqsClient = new SQSClient({ region: configuration.AWS_REGION })
 
   const auth0Client = new ManagementClient({
@@ -182,6 +186,7 @@ export async function createServiceLayer(
   const companyRepository = getCompanyRepository()
   const userRepository = getUserRepository()
   const attendanceRepository = getAttendanceRepository()
+  const paymentRepository = getPaymentRepository()
   const markRepository = getMarkRepository()
   const personalMarkRepository = getPersonalMarkRepository()
   const notificationRepository = getNotificationRepository()
@@ -215,9 +220,14 @@ export async function createServiceLayer(
   const jobListingService = getJobListingService(jobListingRepository)
   const markService = getMarkService(markRepository)
   const personalMarkService = getPersonalMarkService(personalMarkRepository, markService, userService, emailService)
-  const paymentService = getPaymentService(clients.stripe)
-  const paymentProductsService = getPaymentProductsService(clients.stripe)
-  const paymentWebhookService = getPaymentWebhookService(clients.stripe)
+  const paymentLedgerService = getPaymentLedgerService(
+    paymentRepository,
+    userRepository,
+    clients.stripe,
+    taskSchedulingService
+  )
+  const attendancePaymentService = getAttendancePaymentService(paymentRepository, paymentLedgerService)
+  const paymentWebhookService = getPaymentWebhookService(clients.stripe, configuration.STRIPE_WEBHOOK_SECRET)
   const auditLogService = getAuditLogService(auditLogRepository)
   const eventService = getEventService(eventRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const feedbackFormService = getFeedbackFormService(
@@ -236,14 +246,18 @@ export async function createServiceLayer(
     userService,
     markService,
     personalMarkService,
-    paymentService,
-    paymentProductsService,
+    attendancePaymentService,
     eventService,
     feedbackFormService,
     feedbackFormAnswerService,
     configuration,
     emailService
   )
+  const paymentWorkflowService = getPaymentWorkflowService(paymentLedgerService, async (handle, payment) => {
+    if (payment.attendeeId !== null) {
+      await attendanceService.syncAttendeePayment(handle, payment.attendeeId)
+    }
+  })
   const companyService = getCompanyService(companyRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const offlineService = getOfflineService(offlineRepository, clients.s3Client, configuration.AWS_S3_BUCKET)
   const articleService = getArticleService(
@@ -273,10 +287,23 @@ export async function createServiceLayer(
   const fadderukeService = getFadderukeService(fadderukeRepository)
   const userMergeService = getUserMergingService(
     userService,
+    userRepository,
     groupRepository,
+    paymentRepository,
+    attendanceRepository,
     attendanceService,
     clients.auth0Client,
     clients.webAuth0Client
+  )
+
+  const sidequestRepository = getSidequestRepository()
+  const sidequestService = getSidequestService(
+    sidequestRepository,
+    groupService,
+    clients.s3Client,
+    configuration.AWS_S3_BUCKET,
+    notificationService,
+    configuration
   )
 
   const taskExecutor = getLocalTaskExecutor(
@@ -285,6 +312,7 @@ export async function createServiceLayer(
     taskDiscoveryService,
     taskSchedulingService,
     attendanceService,
+    paymentWorkflowService,
     configuration
   )
 
@@ -317,11 +345,14 @@ export async function createServiceLayer(
     feedbackFormAnswerService,
     authorizationService,
     paymentWebhookService,
+    paymentLedgerService,
+    paymentWorkflowService,
     contestService,
     fadderukeService,
     notificationService,
     recurringTaskService,
     workspaceService,
+    sidequestService,
 
     rpcJwtService: clients.rpcJwtService,
     webJwtService: clients.webJwtService,

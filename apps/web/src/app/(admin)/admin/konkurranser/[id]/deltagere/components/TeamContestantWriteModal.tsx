@@ -2,11 +2,13 @@
 
 import { UserCombobox, type UserMemberOption } from "@admin/brukere/components/UserCombobox"
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogTitle,
+  DialogBody,
+  DialogHeader,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
   Button,
   TextInput,
 } from "@dotkomonline/ui"
@@ -87,46 +89,46 @@ export function TeamContestantWriteModal({
   const canSubmit = !disabled && teamName.trim() !== "" && (!requireMembers || teamMembers.length > 0) && !isPending
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="md" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex flex-row items-center justify-between gap-4">
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col gap-4">
+            <TextInput
+              label="Lagnavn"
+              placeholder="Skriv inn lagnavn..."
+              value={teamName}
+              onChange={(event) => {
+                setTeamName(event.target.value)
+              }}
+              required
+              disabled={disabled}
+            />
 
-        <div className="flex flex-col gap-4">
-          <TextInput
-            label="Lagnavn"
-            placeholder="Skriv inn lagnavn..."
-            value={teamName}
-            onChange={(event) => {
-              setTeamName(event.target.value)
-            }}
-            required
-            disabled={disabled}
-          />
-
-          <UserCombobox
-            excludeUserIds={pickerExcludeIds}
-            label="Medlemmer"
-            onChange={setTeamMembers}
-            placeholder="Søk etter medlemmer…"
-            value={teamMembers}
-            disabled={disabled}
-          />
-
-          <AlertDialogFooter>
-            <AlertDialogCancel type="button" disabled={isPending}>
-              Avbryt
-            </AlertDialogCancel>
-            <Button type="button" variant="default" disabled={!canSubmit} onClick={handleSubmit}>
-              {submitLabel}
-            </Button>
-          </AlertDialogFooter>
-        </div>
-      </AlertDialogContent>
-    </AlertDialog>
+            <UserCombobox
+              excludeUserIds={pickerExcludeIds}
+              label="Medlemmer"
+              onChange={setTeamMembers}
+              placeholder="Søk etter medlemmer…"
+              value={teamMembers}
+              disabled={disabled}
+            />
+          </div>
+        </DialogBody>
+        <DialogFooter className="-mx-5 -mb-5 rounded-b-2xl p-5 sm:-mx-6 sm:-mb-6 sm:p-6">
+          <DialogClose type="button" disabled={isPending}>
+            Avbryt
+          </DialogClose>
+          <Button type="button" variant="default" disabled={!canSubmit} onClick={handleSubmit}>
+            {submitLabel}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

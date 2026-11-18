@@ -1,7 +1,7 @@
 "use client"
 
 import type { NotificationManagement } from "@dotkomonline/rpc/notification"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTitle } from "@dotkomonline/ui"
+import { DialogBody, DialogHeader, Dialog, DialogClose, DialogContent, DialogTitle } from "@dotkomonline/ui"
 import { IconX } from "@tabler/icons-react"
 import { EditNotificationForm } from "./EditNotificationForm"
 
@@ -15,22 +15,18 @@ export function EditNotificationModal({
   notification: NotificationManagement
 }) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent size="lg" onOutsideClick={() => onOpenChange(false)}>
-        <div className="flex items-start justify-between gap-3">
-          <AlertDialogTitle>Rediger varsling</AlertDialogTitle>
-          <AlertDialogCancel type="button">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="lg">
+        <DialogHeader className="flex-row flex items-start justify-between gap-3">
+          <DialogTitle>Rediger varsling</DialogTitle>
+          <DialogClose type="button">
             <IconX className="size-5" />
-          </AlertDialogCancel>
-        </div>
-        {open && (
-          <EditNotificationForm
-            notification={notification}
-            onSuccess={() => onOpenChange(false)}
-            className="max-h-[70vh] overflow-y-auto"
-          />
-        )}
-      </AlertDialogContent>
-    </AlertDialog>
+          </DialogClose>
+        </DialogHeader>
+        <DialogBody>
+          {open && <EditNotificationForm notification={notification} onSuccess={() => onOpenChange(false)} />}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }

@@ -16,7 +16,7 @@ import { formatEmailSubject, getPunishmentExpiryDate } from "@dotkomonline/utils
 import { isPast } from "date-fns"
 import { NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails, getReplyToAddresses } from "../email/email-template"
+import { emails, getReplyToAddresses } from "../email/email-template"
 import { getGroupDisplayName } from "../group/group"
 import type { UserService } from "../user/user-service"
 import type { MarkService } from "./mark-service"
@@ -177,15 +177,12 @@ export function getPersonalMarkService(
           ? null
           : getPunishmentExpiryDate(personalMark.createdAt, mark.duration).toISOString()
 
-      await emailService.send(
-        DEFAULT_EMAIL_SOURCE,
-        getReplyToAddresses(organizerEmails),
-        [user.email],
-        [],
-        [],
-        formatEmailSubject(isSuspension ? "Du har blitt suspendert" : `Du har fått ${markCountLabel}`),
-        emails.RECEIVED_MARK,
-        {
+      await emailService.send({
+        replyTo: getReplyToAddresses(organizerEmails),
+        to: [user.email],
+        subject: formatEmailSubject(isSuspension ? "Du har blitt suspendert" : `Du har fått ${markCountLabel}`),
+        definition: emails.RECEIVED_MARK,
+        data: {
           title: mark.title,
           details: mark.details,
           markCountLabel,
@@ -194,8 +191,8 @@ export function getPersonalMarkService(
           isSuspension,
           isSuspended: totalMarkWeight >= SUSPENSION_MARK_WEIGHT,
           endsAt,
-        }
-      )
+        },
+      })
     },
   }
 }

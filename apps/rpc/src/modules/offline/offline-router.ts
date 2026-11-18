@@ -1,5 +1,4 @@
 import { PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { canManageOfflines } from "../../permissions/offline-permissions"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
@@ -7,8 +6,6 @@ import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseT
 import { procedure, t } from "../../trpc"
 import { OfflineSchema, OfflineWriteSchema } from "./offline"
 
-export type CreateOfflineInput = inferProcedureInput<typeof createOfflineProcedure>
-export type CreateOfflineOutput = inferProcedureOutput<typeof createOfflineProcedure>
 const createOfflineProcedure = procedure
   .input(OfflineWriteSchema)
   .use(withAuthentication())
@@ -23,8 +20,6 @@ const createOfflineProcedure = procedure
     return createdOffline
   })
 
-export type EditOfflineInput = inferProcedureInput<typeof editOfflineProcedure>
-export type EditOfflineOutput = inferProcedureOutput<typeof editOfflineProcedure>
 const editOfflineProcedure = procedure
   .input(
     z.object({
@@ -44,20 +39,14 @@ const editOfflineProcedure = procedure
     return updatedOffline
   })
 
-export type AllOfflineInput = inferProcedureInput<typeof allOfflineProcedure>
-export type AllOfflineOutput = inferProcedureOutput<typeof allOfflineProcedure>
 const allOfflineProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
   return ctx.offlineService.findMany(ctx.prisma, input)
 })
 
-export type FindOfflineInput = inferProcedureInput<typeof findOfflineProcedure>
-export type FindOfflineOutput = inferProcedureOutput<typeof findOfflineProcedure>
 const findOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
   return ctx.offlineService.findById(ctx.prisma, input)
 })
 
-export type GetOfflineInput = inferProcedureInput<typeof getOfflineProcedure>
-export type GetOfflineOutput = inferProcedureOutput<typeof getOfflineProcedure>
 const getOfflineProcedure = procedure.input(OfflineSchema.shape.id).query(async ({ input, ctx }) => {
   return ctx.offlineService.getById(ctx.prisma, input)
 })
@@ -68,8 +57,6 @@ const findFeaturedOfflineProcedure = procedure.output(OfflineSchema.nullable()).
   return mostRecentOffline.at(0) ?? null
 })
 
-export type CreateOfflineFileUploadInput = inferProcedureInput<typeof createOfflineFileUploadProcedure>
-export type CreateOfflineFileUploadOutput = inferProcedureOutput<typeof createOfflineFileUploadProcedure>
 const createOfflineFileUploadProcedure = procedure
   .input(
     z.object({
@@ -83,8 +70,6 @@ const createOfflineFileUploadProcedure = procedure
     return ctx.offlineService.createFileUpload(ctx.prisma, input.filename, input.contentType, ctx.principal.subject)
   })
 
-export type CreateOfflineImageUploadInput = inferProcedureInput<typeof createOfflineImageUploadProcedure>
-export type CreateOfflineImageUploadOutput = inferProcedureOutput<typeof createOfflineImageUploadProcedure>
 const createOfflineImageUploadProcedure = procedure
   .input(
     z.object({

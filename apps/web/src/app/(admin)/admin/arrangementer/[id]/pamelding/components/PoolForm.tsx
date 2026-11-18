@@ -8,7 +8,7 @@ import { MAX_MERGE_DELAY_HOURS } from "@dotkomonline/rpc/attendance"
 import { createPoolName } from "@dotkomonline/utils"
 import { Button, TextInput } from "@dotkomonline/ui"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { IconX } from "@tabler/icons-react"
+import { IconRestore } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo, useState } from "react"
 import { type Control, Controller, type UseFormSetValue, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
@@ -22,14 +22,14 @@ const yearEntries = [
 ]
 
 export function getAvailablePoolYears(disabledYears: number[]) {
-  return yearEntries.map((entry) => entry.key).filter((year) => !disabledYears.includes(year))
+  return yearEntries.map((entry) => entry.key).filter((year) => disabledYears.includes(year) === false)
 }
 
 export const PoolFormSchema = z
   .object({
     yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
     capacity: z.int().min(0),
-    title: z.string().min(1),
+    title: z.string().trim().min(1, "Oppgi et navn på påmeldingsgruppen."),
     mergeDelayHours: z.preprocess((val) => {
       if (typeof val === "number") {
         const num = Number(val)
@@ -82,32 +82,35 @@ export interface PoolFormProps {
   defaultValues: PoolFormValues
   mode: "create" | "update"
   minCapacity?: number
+  isPending?: boolean
 }
 
 export const PoolForm: FC<PoolFormProps> = (props) => {
+  const defaultGeneratedTitle = createPoolName(props.defaultValues.yearCriteria)
+  const defaultTitle = props.defaultValues.title === "" ? defaultGeneratedTitle : props.defaultValues.title
+  const [isTitleAutomatic, setIsTitleAutomatic] = useState(defaultTitle === defaultGeneratedTitle)
+
   const form = useForm<PoolFormInput, unknown, PoolFormValues>({
     resolver: zodResolver(PoolFormSchema),
     mode: "onBlur",
     defaultValues: {
       ...props.defaultValues,
-      title: props.defaultValues.title || createPoolName(props.defaultValues.yearCriteria),
+      title: defaultTitle,
     },
   })
 
   const yearCriteria = form.watch("yearCriteria")
   const generatedTitle = createPoolName(yearCriteria ?? [])
-  const defaultTitle = form.formState.defaultValues?.title
-  const isDefaultGeneratedTitle = defaultTitle === createPoolName(props.defaultValues.yearCriteria ?? [])
-  const isTitleDirty = Boolean(form.formState.dirtyFields.title)
+  const title = useWatch({ control: form.control, name: "title" })
+  const canResetTitle = generatedTitle !== "" && title !== generatedTitle
 
   useEffect(() => {
-    if (!yearCriteria || !isDefaultGeneratedTitle || isTitleDirty) {
+    if (yearCriteria.length === 0 || !isTitleAutomatic) {
       return
     }
 
     form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
-    form.trigger("title")
-  }, [yearCriteria, generatedTitle, isDefaultGeneratedTitle, isTitleDirty, form])
+  }, [yearCriteria, generatedTitle, isTitleAutomatic, form])
 
   const yearOptions = useMemo(
     () =>
@@ -120,73 +123,90 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
   )
 
   const onSubmit = form.handleSubmit((values) => {
-    form.resetField("yearCriteria")
     try {
       props.onSubmit(values)
-    } catch (e) {
+    } catch (error) {
       notifyFail({
         title: "Oops!",
-        message: (e as Error).message,
+        message: (error as Error).message,
       })
     }
   })
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <CheckboxGroupField
-        control={form.control}
-        name="yearCriteria"
-        label="Klassetrinn"
-        required
-        options={yearOptions}
-      />
+    <form noValidate onSubmit={onSubmit}>
+      <fieldset disabled={props.isPending} className="flex min-w-0 flex-col gap-5">
+        <CheckboxGroupField
+          control={form.control}
+          name="yearCriteria"
+          label="Klassetrinn"
+          required
+          options={yearOptions}
+        />
 
-      <div className="flex flex-col gap-1">
-        <TextField control={form.control} name="title" label="Tittel" required />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="w-fit"
-          icon={<IconX className="size-4" />}
-          onClick={() => {
-            form.resetField("title", { defaultValue: defaultTitle })
-            form.setValue("title", generatedTitle, { shouldDirty: false, shouldTouch: false })
+        <div className="flex flex-col gap-1">
+          <TextField
+            control={form.control}
+            name="title"
+            label="Navn"
+            required
+            onChange={(event) => {
+              setIsTitleAutomatic(false)
+              form.setValue("title", event.target.value, { shouldDirty: true })
+            }}
+          />
+          {canResetTitle && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-fit"
+              icon={<IconRestore className="size-4" />}
+              onClick={() => {
+                setIsTitleAutomatic(true)
+                form.setValue("title", generatedTitle, { shouldDirty: true, shouldValidate: true })
+              }}
+            >
+              Bruk foreslått navn
+            </Button>
+          )}
+        </div>
+
+        <CapacityField control={form.control} setValue={form.setValue} min={props.minCapacity ?? 0} />
+
+        <TextField
+          control={form.control}
+          name="mergeDelayHours"
+          label="Utsettelse i timer"
+          description={
+            <>
+              Antall timer gruppen må vente i kø før den slås sammen med de andre gruppene og får tildelt plasser.
+              Utsettelse krever ubegrenset kapasitet. La feltet stå tomt for ingen utsettelse.
+            </>
+          }
+          placeholder="Ingen utsettelse"
+          type="number"
+          onChange={(event) => {
+            const next = event.target.valueAsNumber
+            form.setValue("mergeDelayHours", Number.isNaN(next) ? null : next, {
+              shouldValidate: true,
+            })
           }}
-        >
-          Tilbakestill tittel
-        </Button>
-      </div>
+        />
 
-      <CapacityField control={form.control} setValue={form.setValue} min={props.minCapacity ?? 0} />
-
-      <TextField
-        control={form.control}
-        name="mergeDelayHours"
-        label="Utsettelse i timer"
-        description={
-          <>
-            Hvor mange timer brukere i gruppen skal stå i kø før de blir påmeldt.
-            <br />
-            Påmeldingsgruppen vil slå seg sammen med andre påmeldingsgrupper etter utsettelsestiden har gått ut. Dette
-            gir andre muligheten til å melde seg på før den som meldte seg på får en plass.
-            <br />
-            Kapasiteten må være ubegrenset dersom gruppen har utsettelse.
-          </>
-        }
-        placeholder="Ingen utsettelse"
-        type="number"
-        onChange={(event) => {
-          const next = event.target.valueAsNumber
-          form.setValue("mergeDelayHours", Number.isNaN(next) ? null : next, {
-            shouldValidate: true,
-          })
-        }}
-      />
-
-      <Button type="submit" variant="default" className="w-fit">
-        {props.mode === "create" ? "Opprett påmeldingsgruppe" : "Endre påmeldingsgruppe"}
-      </Button>
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={props.onClose}>
+            Avbryt
+          </Button>
+          <Button type="submit" variant="default" disabled={props.isPending}>
+            {props.isPending
+              ? "Oppretter…"
+              : props.mode === "create"
+                ? "Opprett påmeldingsgruppe"
+                : "Endre påmeldingsgruppe"}
+          </Button>
+        </div>
+      </fieldset>
     </form>
   )
 }
@@ -226,14 +246,7 @@ function CapacityField({
             label="Kapasitet"
             required
             error={error}
-            description={
-              <>
-                Antall som kan melde seg på før de automatisk settes i kø. Du kan ha flere påmeldte enn kapasitet dersom
-                du admin-påmelder dem.
-                <br />
-                Kapasitet må være ubegrenset når gruppen har utsettelse.
-              </>
-            }
+            description="Antall plasser før nye påmeldinger settes i kø. La feltet stå tomt for ubegrenset kapasitet."
           >
             <TextInput
               id="capacity"

@@ -1,5 +1,4 @@
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { permitIf } from "../../authorization"
 import { withAuthentication, withAuthorization } from "../../middlewares"
@@ -7,8 +6,6 @@ import { canAccessAuditLog } from "../../permissions/audit-log-permissions"
 import { procedure, t } from "../../trpc"
 import { AuditActivitySchema, AuditLogFilterQuerySchema, AuditLogSchema } from "./audit-log"
 
-export type FindAuditLogsInput = inferProcedureInput<typeof findAuditLogsProcedure>
-export type FindAuditLogsOutput = inferProcedureOutput<typeof findAuditLogsProcedure>
 const findAuditLogsProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
@@ -32,8 +29,6 @@ const findAuditLogsProcedure = procedure
     }
   })
 
-export type AllAuditLogsInput = inferProcedureInput<typeof allAuditLogsProcedure>
-export type AllAuditLogsOutput = inferProcedureOutput<typeof allAuditLogsProcedure>
 const allAuditLogsProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
@@ -42,8 +37,6 @@ const allAuditLogsProcedure = procedure
     return ctx.auditLogService.findMany(ctx.prisma, {}, input)
   })
 
-export type GetAuditLogByIdInput = inferProcedureInput<typeof getAuditLogByIdProcedure>
-export type GetAuditLogByIdOutput = inferProcedureOutput<typeof getAuditLogByIdProcedure>
 const getAuditLogByIdProcedure = procedure
   .input(AuditLogSchema.shape.id)
   .use(withAuthentication())
@@ -52,8 +45,6 @@ const getAuditLogByIdProcedure = procedure
     return ctx.auditLogService.getById(ctx.prisma, input)
   })
 
-export type GetAuditLogsByUserIdInput = inferProcedureInput<typeof getAuditLogsByUserIdProcedure>
-export type GetAuditLogsByUserIdOutput = inferProcedureOutput<typeof getAuditLogsByUserIdProcedure>
 const getAuditLogsByUserIdProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
@@ -62,8 +53,6 @@ const getAuditLogsByUserIdProcedure = procedure
     return ctx.auditLogService.findManyByUserId(ctx.prisma, ctx.principal.subject, input)
   })
 
-export type FindAuditActivitiesInput = inferProcedureInput<typeof findAuditActivitiesProcedure>
-export type FindAuditActivitiesOutput = inferProcedureOutput<typeof findAuditActivitiesProcedure>
 const findAuditActivitiesProcedure = procedure
   .input(
     z.object({

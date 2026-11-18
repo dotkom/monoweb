@@ -8,11 +8,17 @@ import { tasks } from "./task-definition"
 
 export interface TaskRepository {
   create(handle: DBHandle, type: TaskType, data: TaskWrite): Promise<Task>
-  update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState?: TaskStatus): Promise<Task | null>
+  update(
+    handle: DBHandle,
+    taskId: TaskId,
+    data: Partial<TaskWrite>,
+    oldState?: TaskStatus,
+    processedAt?: Date | null
+  ): Promise<Task | null>
   delete(handle: DBHandle, taskId: TaskId): Promise<void>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
   findMany(handle: DBHandle): Promise<Task[]>
-  findNextPendingTask(handle: DBHandle): Promise<Task | null>
+  findNextPendingTask(handle: DBHandle, checkoutLeaseExpiredBefore: Date): Promise<Task | null>
 
   findReserveAttendeeTask(handle: DBHandle, attendeeId: AttendeeId, attendanceId: AttendanceId): Promise<Task | null>
   findVerifyAttendanceCompletionTask(handle: DBHandle, attendeeId: AttendeeId): Promise<Task | null>
@@ -35,12 +41,13 @@ export function getTaskRepository(): TaskRepository {
       return parseOrReport(TaskSchema, task)
     },
 
-    async update(handle, taskId, data, oldStatus) {
+    async update(handle, taskId, data, oldStatus, processedAt) {
       try {
         const task = await handle.task.update({
           where: {
             id: taskId,
-            status: oldStatus ? { equals: oldStatus } : undefined,
+            status: oldStatus,
+            processedAt,
           },
           data: {
             ...data,
@@ -84,11 +91,24 @@ export function getTaskRepository(): TaskRepository {
       return parseOrReport(TaskSchema.array(), tasks)
     },
 
-    async findNextPendingTask(handle) {
+    async findNextPendingTask(handle, checkoutLeaseExpiredBefore) {
       const task = await handle.task.findFirst({
         where: {
-          scheduledAt: { lte: new Date() },
-          status: "PENDING",
+          OR: [
+            {
+              scheduledAt: {
+                lte: new Date(),
+              },
+              status: "PENDING",
+            },
+            {
+              type: tasks.OPEN_PAYMENT_CHECKOUT.type,
+              status: "RUNNING",
+              processedAt: {
+                lte: checkoutLeaseExpiredBefore,
+              },
+            },
+          ],
         },
         orderBy: {
           scheduledAt: "asc",

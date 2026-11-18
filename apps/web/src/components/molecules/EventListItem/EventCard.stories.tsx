@@ -3,6 +3,7 @@ import { Text } from "@dotkomonline/ui"
 import { addDays, addMinutes, subMinutes } from "date-fns"
 import { Fragment } from "react"
 import {
+  createMockPayment,
   createMockAttendanceSummary,
   createMockAttendee,
   createMockEvent,
@@ -51,7 +52,11 @@ export const Default = () => {
 
 export const Examples = () => {
   const user = createMockUser()
-  const registeredAttendee = createMockAttendee({ user, registeredAt: new Date(), paymentReservedAt: new Date() })
+  const registeredAttendee = createMockAttendee({
+    user,
+    registeredAt: new Date(),
+    payment: createMockPayment({ status: "AUTHORIZED" }),
+  })
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
@@ -269,12 +274,19 @@ export const AllStates = () => {
                   : createMockAttendee({
                       registeredAt: column === "In queue" ? null : now,
                       createdAt: subMinutes(now, 5),
-                      paymentReservedAt: column === "Registered" && isPaidEvent ? now : null,
+
                       completionDeadline: isReserved
                         ? addMinutes(now, row.label === "Completion deadline passed" ? -1 : 10)
                         : null,
-                      paymentLink:
-                        isReserved && row.label !== "Payment link unavailable" ? "https://example.com/payment" : null,
+                      payment: isPaidEvent
+                        ? createMockPayment({
+                            status: column === "Registered" ? "AUTHORIZED" : "UNPAID",
+                            checkoutUrl:
+                              isReserved && row.label !== "Payment link unavailable"
+                                ? "https://example.com/payment"
+                                : null,
+                          })
+                        : null,
                     })
 
               return (

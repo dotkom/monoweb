@@ -22,6 +22,7 @@ import { ThemeProvider } from "next-themes"
 import { cookies } from "next/headers"
 import type { PropsWithChildren } from "react"
 import "../../globals.css"
+import { Dash0Identify } from "@/components/Dash0Identify"
 
 setDateFnsDefaultOptions({ locale: nb })
 
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       >
         <PlausibleProvider domain="online.ntnu.no" trackOutboundLinks>
           <Auth0Provider user={auth0User}>
+            <Dash0Identify />
             <QueryProvider>
               <ThemeProvider
                 defaultTheme={palette === "halloween" ? "dark" : "system"}

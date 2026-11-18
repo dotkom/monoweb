@@ -1,6 +1,7 @@
-import { createCalendar, createCalendarEvent, createCalendarFeedResponse } from "@/app/api/calendar/ical"
+import { createCalendar, createCalendarFeedResponse } from "@/app/api/calendar/ical"
+import { env } from "@/env"
 import { server } from "@/utils/trpc/server"
-import { getCurrentUTC } from "@dotkomonline/utils"
+import { createCalendarEvent, getCurrentUTC } from "@dotkomonline/utils"
 import { subMonths } from "date-fns"
 import type { NextRequest, NextResponse } from "next/server"
 
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const calendar = createCalendar("Linjeforeningen Onlines arrangementer")
 
   for (const { event } of events) {
-    calendar.createEvent(createCalendarEvent(event))
+    calendar.createEvent(createCalendarEvent(event, env.NEXT_PUBLIC_ORIGIN))
   }
 
   return createCalendarFeedResponse(calendar.toString(), "public")

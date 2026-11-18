@@ -1,0 +1,208 @@
+/*
+ * The gradient has four stops: start, middle, third-stop, and end, from left to right.
+ */
+@property --plate-fade-strength-start {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 90%;
+}
+
+@property --plate-fade-strength-middle {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 80%;
+}
+
+@property --plate-fade-strength-third-stop {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 47.333%;
+}
+
+@property --plate-fade-strength-end {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 10%;
+}
+
+.background {
+  container-type: inline-size;
+  container-name: user-plate;
+
+  /* The page color mixed with the plate palette to make it fade into its surroundings. */
+  --plate-fade-color: white;
+  /* Page-color share at the left edge: 90% page color leaves 10% of the plate color. */
+  --plate-fade-strength-start: 90%;
+  /* Page-color share at the second stop. Lower values make the plate more colorful. */
+  --plate-fade-strength-middle: 80%;
+  /* Page-color share at the third stop, between the middle and the right edge. */
+  --plate-fade-strength-third-stop: 47.333%;
+  /* Page-color share at the right edge. At 0%, only the plate color remains. */
+  --plate-fade-strength-end: 10%;
+  /* Horizontal location of the second stop, measured from the left edge. */
+  --plate-fade-middle-position: 32%;
+  /* Horizontal location of the third stop. Moving it left reveals stronger color sooner. */
+  --plate-fade-third-stop-position: 68%;
+  /* Horizontal location of the final stop. 100% keeps it at the right edge. */
+  --plate-fade-end-position: 100%;
+
+  transition:
+    --plate-fade-strength-start 300ms ease,
+    --plate-fade-strength-middle 300ms ease,
+    --plate-fade-strength-third-stop 300ms ease,
+    --plate-fade-strength-end 300ms ease;
+
+  /* Preblend each stop so the rounded edge is painted only once. */
+  background-image: linear-gradient(
+    to right,
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-strength-start),
+        var(--plate-start)
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-strength-middle),
+        var(--plate-middle)
+      )
+      var(--plate-fade-middle-position),
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-strength-third-stop),
+        var(--plate-third-stop)
+      )
+      var(--plate-fade-third-stop-position),
+    color-mix(
+        in srgb,
+        var(--plate-fade-color) var(--plate-fade-strength-end),
+        var(--plate-end)
+      )
+      var(--plate-fade-end-position)
+  );
+}
+
+.background:hover {
+  /* Mix in less page color on hover without moving the gradient stops. */
+  --plate-fade-strength-start: 80%;
+  --plate-fade-strength-middle: 60%;
+  --plate-fade-strength-third-stop: 32%;
+  --plate-fade-strength-end: 0%;
+}
+
+@container user-plate (max-width: 28rem) {
+  .textContrast {
+    text-shadow:
+      0 0 4px rgb(255 255 255 / 75%),
+      0 0 8px rgb(255 255 255 / 33%);
+  }
+
+  [data-theme="dark"] .textContrast,
+  [class~="dark"] .textContrast {
+    text-shadow: none;
+  }
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  /* Invert the page-color shares so the pattern becomes clearer alongside the plate color. */
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / calc(100% - var(--plate-fade-strength-start))) 0%,
+    rgb(0 0 0 / calc(100% - var(--plate-fade-strength-middle)))
+      var(--plate-fade-middle-position),
+    rgb(0 0 0 / calc(100% - var(--plate-fade-strength-third-stop)))
+      var(--plate-fade-third-stop-position),
+    rgb(0 0 0 / calc(100% - var(--plate-fade-strength-end)))
+      var(--plate-fade-end-position)
+  );
+}
+
+.knight {
+  /* Bring Knight's color in slightly earlier than the default fade. */
+  --plate-fade-middle-position: 29%;
+  --plate-fade-third-stop-position: 56%;
+
+  /* Unmixed palette colors at the left edge, second stop, third stop, and right edge. */
+  --plate-start: var(--color-user-plate-knight-fill);
+  --plate-middle: var(--color-user-plate-knight-fill);
+  --plate-third-stop: var(--color-user-plate-knight-fill);
+  --plate-end: var(--color-user-plate-knight-deep);
+}
+
+.distinguished {
+  /* Use the same base color at all four stops; the fade supplies the variation. */
+  --plate-start: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-middle: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-third-stop: var(--color-user-plate-exceptionally-distinguished-fill);
+  --plate-end: var(--color-user-plate-exceptionally-distinguished-fill);
+}
+
+.verified {
+  /* Keep most of the gold near the right edge so this plate is less prominent. */
+  --plate-fade-strength-start: 97%;
+  --plate-fade-strength-middle: 92%;
+  --plate-fade-strength-third-stop: 65%;
+  --plate-fade-strength-end: 20%;
+  --plate-fade-middle-position: 50%;
+  --plate-fade-third-stop-position: 80%;
+
+  --plate-start: var(--color-user-plate-verified-fill);
+  --plate-middle: var(--color-user-plate-verified-fill);
+  --plate-third-stop: var(--color-user-plate-verified-fill);
+  --plate-end: var(--color-user-plate-verified-fill);
+}
+
+.verified:hover {
+  /* Reveal more gold while keeping it subtler than Knight and Særskilt utmerket. */
+  --plate-fade-strength-start: 92%;
+  --plate-fade-strength-middle: 80%;
+  --plate-fade-strength-third-stop: 50%;
+  --plate-fade-strength-end: 10%;
+}
+
+[data-theme="dark"] .background,
+[class~="dark"] .background {
+  /* Blend into the dark page background instead of white. */
+  --plate-fade-color: var(--background);
+}
+
+[data-theme="dark"] .knight,
+[class~="dark"] .knight {
+  --plate-start: var(--color-user-plate-knight-dark-start);
+  --plate-middle: var(--color-user-plate-knight-dark-middle);
+}
+
+[data-theme="dark"] .distinguished,
+[class~="dark"] .distinguished {
+  --plate-start: var(--color-user-plate-exceptionally-distinguished-dark-start);
+  --plate-middle: var(
+    --color-user-plate-exceptionally-distinguished-dark-middle
+  );
+  --plate-third-stop: var(
+    --color-user-plate-exceptionally-distinguished-dark-third-stop
+  );
+  --plate-end: var(--color-user-plate-exceptionally-distinguished-fill);
+}
+
+@media (max-width: 639px) {
+  /* Lift the teal on smaller dark-mode plates, where the darker palette is less visible. */
+  [data-theme="dark"] .distinguished,
+  [class~="dark"] .distinguished {
+    --plate-start: var(
+      --color-user-plate-exceptionally-distinguished-mobile-start
+    );
+    --plate-middle: var(
+      --color-user-plate-exceptionally-distinguished-mobile-middle
+    );
+    --plate-third-stop: var(
+      --color-user-plate-exceptionally-distinguished-mobile-third-stop
+    );
+    --plate-end: var(--color-user-plate-exceptionally-distinguished-mobile-end);
+  }
+}

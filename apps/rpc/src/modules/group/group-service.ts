@@ -6,7 +6,7 @@ import { areIntervalsOverlapping, compareDesc, isAfter, isEqual } from "date-fns
 import { maxTime } from "date-fns/constants"
 import crypto from "node:crypto"
 import invariant from "tiny-invariant"
-import { FailedPreconditionError, IllegalStateError, NotFoundError } from "../../error"
+import { FailedPreconditionError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { UserId } from "../user/user"
 import type { UserService } from "../user/user-service"
 import {
@@ -23,9 +23,16 @@ import {
   type GroupRoleWrite,
   type GroupType,
   type GroupWrite,
+  type InterestGroupComment,
+  type InterestGroupCommentId,
+  type InterestGroupCommentWrite,
+  DEFAULT_GROUP_ROLE_TEMPLATE,
   GROUP_IMAGE_MAX_SIZE_KIB,
   GroupRoleTypeEnum,
+  GroupTypeSchema,
   areGroupRolesEqual,
+  canEndInterestGroupMembership,
+  findActiveGroupMembershipIn,
   getDefaultGroupMemberRoles,
   isGroupMembershipActive,
 } from "./group"
@@ -65,9 +72,17 @@ export interface GroupService {
     handle: DBHandle,
     userId: UserId,
     groupSlug: GroupId,
-    groupRoleIds: Set<GroupRoleId>
-  ): Promise<GroupMember>
-  endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership[]>
+    groupRoleIds?: Set<GroupRoleId>
+  ): Promise<GroupMembership>
+  endMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership | null>
+  /**
+   * End an interest group membership that has no non-default roles,
+   * to prevent an interest group from becoming leaderless
+   *
+   * @throws {InvalidArgumentError} if the group is not an interest group
+   * @throws {FailedPreconditionError} if an active membership has a non-default role
+   */
+  endInterestGroupMembership(handle: DBHandle, userId: UserId, groupSlug: GroupId): Promise<GroupMembership | null>
   /**
    * Attempts to update a membership if it doesn't overlap with existing memberships
    *
@@ -81,10 +96,6 @@ export interface GroupService {
     groupRoleIds: Set<GroupRoleId>
   ): Promise<GroupMembership>
   deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void>
-  createManyGroupMemberships(
-    handle: DBHandle,
-    groupMembershipData: (GroupMembershipWrite & { roleIds: Set<GroupRoleId> })[]
-  ): Promise<GroupMembership[]>
   /**
    * Reduces the array of memberships to its simplest form, removing overlapping memberships and merging memberships
    * which could be merged.
@@ -94,8 +105,21 @@ export interface GroupService {
   createRole(handle: DBHandle, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   updateRole(handle: DBHandle, groupRoleId: GroupRoleId, groupRoleData: GroupRoleWrite): Promise<GroupRole>
   deleteRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
+  getOrCreateDefaultGroupRole(handle: DBHandle, groupSlug: GroupId): Promise<GroupRole>
 
   createFileUpload(filename: string, contentType: string, createdByUserId: UserId): Promise<PresignedPost>
+
+  createInterestGroupComment(
+    handle: DBHandle,
+    interestGroupId: GroupId,
+    data: InterestGroupCommentWrite,
+    authorId: UserId
+  ): Promise<InterestGroupComment>
+  findManyInterestGroupComments(handle: DBHandle, interestGroupId: GroupId): Promise<InterestGroupComment[]>
+  findInterestGroupCommentById(
+    handle: DBHandle,
+    commentId: InterestGroupCommentId
+  ): Promise<InterestGroupComment | null>
 }
 
 export function getGroupService(
@@ -280,27 +304,49 @@ export function getGroupService(
         end: null,
       }
 
-      await groupRepository.createGroupMembership(handle, data, groupRoleIds)
-      return await this.getMember(handle, groupSlug, userId)
+      let resolvedGroupRoleIds = groupRoleIds
+      if (resolvedGroupRoleIds === undefined || resolvedGroupRoleIds.size === 0) {
+        const defaultRole = await this.getOrCreateDefaultGroupRole(handle, groupSlug)
+        resolvedGroupRoleIds = new Set([defaultRole.id])
+      }
+
+      return groupRepository.createGroupMembership(handle, data, resolvedGroupRoleIds)
     },
 
     async endMembership(handle, userId, groupSlug) {
-      const memberships = await groupRepository.findManyGroupMemberships(handle, groupSlug, userId)
-      const activeMemberships = memberships.filter(isGroupMembershipActive)
+      const membership = await groupRepository.findActiveGroupMembership(handle, groupSlug, userId)
 
-      const endMembershipPromises = activeMemberships.map((membership) =>
-        groupRepository.updateGroupMembership(
-          handle,
-          membership.id,
-          {
-            ...membership,
-            end: getCurrentUTC(),
-          },
-          new Set(membership.roles.map((role) => role.id))
+      if (membership === null) {
+        return null
+      }
+
+      const groupRoleIds = new Set(membership.roles.map((role) => role.id))
+      const membershipData: GroupMembershipWrite = {
+        userId: membership.userId,
+        groupId: membership.groupId,
+        start: membership.start,
+        end: getCurrentUTC(),
+      }
+
+      return groupRepository.updateGroupMembership(handle, membership.id, membershipData, groupRoleIds)
+    },
+
+    async endInterestGroupMembership(handle, userId, groupSlug) {
+      const group = await this.getBySlug(handle, groupSlug)
+      if (group.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
+        throw new InvalidArgumentError(`Group(Slug=${groupSlug}) is not an interest group`)
+      }
+
+      const memberships = await this.allMembershipsByUserId(handle, userId)
+      const activeMembership = findActiveGroupMembershipIn(memberships, groupSlug)
+      if (activeMembership !== null && !canEndInterestGroupMembership(activeMembership)) {
+        const user = await userService.getById(handle, userId)
+        throw new FailedPreconditionError(
+          `User(ID=${user.id},Name=${user.name}) cannot end GroupMembership in Group(Slug=${groupSlug}) because they have a non-default GroupRole`
         )
-      )
+      }
 
-      return await Promise.all(endMembershipPromises)
+      return this.endMembership(handle, userId, groupSlug)
     },
 
     async updateMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds) {
@@ -333,10 +379,30 @@ export function getGroupService(
         }
       }
 
-      return await groupRepository.updateGroupMembership(handle, groupMembershipId, groupMembershipData, groupRoleIds)
+      const group = await this.getByGroupMembershipId(handle, groupMembershipId)
+      let resolvedGroupRoleIds = groupRoleIds
+      if (resolvedGroupRoleIds.size === 0) {
+        const defaultRole = await this.getOrCreateDefaultGroupRole(handle, group.slug)
+        resolvedGroupRoleIds = new Set([defaultRole.id])
+      }
+
+      return await groupRepository.updateGroupMembership(
+        handle,
+        groupMembershipId,
+        groupMembershipData,
+        resolvedGroupRoleIds
+      )
     },
 
     async createRole(handle, groupRoleData) {
+      const group = await this.getBySlug(handle, groupRoleData.groupId)
+      const currentDefaultRole = group.roles.find((role) => role.isDefault === true)
+      if (currentDefaultRole !== undefined && groupRoleData.isDefault === true) {
+        await groupRepository.updateGroupRole(handle, currentDefaultRole.id, {
+          isDefault: false,
+        })
+      }
+
       const result = await groupRepository.createGroupRoles(handle, [groupRoleData])
       const role = result.at(0)
       invariant(role !== undefined, "Role should exist after creation")
@@ -345,10 +411,46 @@ export function getGroupService(
     },
 
     async updateRole(handle, groupRoleId, groupRoleData) {
+      const group = await this.getByGroupRoleId(handle, groupRoleId)
+      const role = group.roles.find((role) => role.id === groupRoleId)
+      const currentDefaultRole = group.roles.find((role) => role.isDefault === true)
+
+      if (role === undefined) {
+        throw new NotFoundError(`GroupRole(ID=${groupRoleId}) not found`)
+      }
+
+      const wasPreviouslyDefault = role.isDefault === true
+      const isNowDefault = groupRoleData.isDefault === true
+
+      if (wasPreviouslyDefault && !isNowDefault) {
+        throw new FailedPreconditionError(
+          `Cannot set GroupRole(ID=${groupRoleId}) as non-default because it is the default role for Group(Slug=${group.slug})`
+        )
+      }
+
+      if (
+        !wasPreviouslyDefault &&
+        isNowDefault &&
+        currentDefaultRole !== undefined &&
+        currentDefaultRole.id !== groupRoleId
+      ) {
+        await groupRepository.updateGroupRole(handle, currentDefaultRole.id, {
+          isDefault: false,
+        })
+      }
+
       return await groupRepository.updateGroupRole(handle, groupRoleId, groupRoleData)
     },
 
     async deleteRole(handle, groupRoleId) {
+      const group = await this.getByGroupRoleId(handle, groupRoleId)
+      const role = group.roles.find((role) => role.id === groupRoleId)
+      if (role?.isDefault === true) {
+        throw new FailedPreconditionError(
+          `Cannot delete GroupRole(ID=${groupRoleId}) because it is the default role for Group(Slug=${group.slug})`
+        )
+      }
+
       return await groupRepository.deleteGroupRole(handle, groupRoleId)
     },
 
@@ -370,21 +472,51 @@ export function getGroupService(
       return results
     },
 
-    async createManyGroupMemberships(
-      handle: DBHandle,
-      groupMembershipData: (GroupMembershipWrite & {
-        roleIds: Set<GroupRoleId>
-      })[]
-    ): Promise<GroupMembership[]> {
-      const operations = groupMembershipData.map(({ roleIds, ...membershipData }) =>
-        groupRepository.createGroupMembership(handle, membershipData, roleIds)
-      )
-
-      return await Promise.all(operations)
-    },
-
     async deleteManyGroupMemberships(handle: DBHandle, groupMembershipIds: GroupMembershipId[]): Promise<void> {
       return groupRepository.deleteGroupMemberships(handle, groupMembershipIds)
+    },
+
+    async getOrCreateDefaultGroupRole(handle: DBHandle, groupSlug: GroupId): Promise<GroupRole> {
+      const group = await this.getBySlug(handle, groupSlug)
+      const existingDefault = group.roles.find((role) => role.isDefault === true)
+
+      if (existingDefault !== undefined && existingDefault.type === DEFAULT_GROUP_ROLE_TEMPLATE.type) {
+        return existingDefault
+      }
+
+      // Prefer an exact template match, then any COSMETIC role, then a role that only
+      // shares the template name (which we normalize to COSMETIC so it is safe as default)
+      const exactMatch = group.roles.find(
+        (role) => role.type === DEFAULT_GROUP_ROLE_TEMPLATE.type && role.name === DEFAULT_GROUP_ROLE_TEMPLATE.name
+      )
+      const cosmeticMatch = group.roles.find((role) => role.type === DEFAULT_GROUP_ROLE_TEMPLATE.type)
+      const nameMatch = group.roles.find((role) => role.name === DEFAULT_GROUP_ROLE_TEMPLATE.name)
+      const candidate = exactMatch ?? cosmeticMatch ?? nameMatch
+
+      if (candidate !== undefined) {
+        if (existingDefault !== undefined && existingDefault.id !== candidate.id) {
+          await groupRepository.updateGroupRole(handle, existingDefault.id, {
+            isDefault: false,
+          })
+        }
+
+        return await groupRepository.updateGroupRole(handle, candidate.id, {
+          isDefault: true,
+          type: DEFAULT_GROUP_ROLE_TEMPLATE.type,
+        })
+      }
+
+      if (existingDefault !== undefined) {
+        await groupRepository.updateGroupRole(handle, existingDefault.id, {
+          isDefault: false,
+        })
+      }
+
+      return await this.createRole(handle, {
+        ...DEFAULT_GROUP_ROLE_TEMPLATE,
+        groupId: groupSlug,
+        isDefault: true,
+      })
     },
 
     async createFileUpload(filename, contentType, createdByUserId) {
@@ -398,6 +530,47 @@ export function getGroupService(
         contentType,
         createdByUserId,
       })
+    },
+
+    async createInterestGroupComment(handle, interestGroupId, data, authorId) {
+      const group = await this.getBySlug(handle, interestGroupId)
+      if (group.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
+        throw new InvalidArgumentError(`Group(Slug=${interestGroupId}) is not an interest group`)
+      }
+
+      if (data.parentId != null) {
+        const parentComment = await this.findInterestGroupCommentById(handle, data.parentId)
+        if (parentComment === null) {
+          throw new NotFoundError(`InterestGroupComment(ID=${data.parentId}) not found`)
+        }
+
+        if (parentComment.interestGroupId !== interestGroupId) {
+          throw new InvalidArgumentError(
+            `InterestGroupComment(ID=${parentComment.id}) does not belong to Group(Slug=${interestGroupId})`
+          )
+        }
+
+        if (parentComment.parentId !== null) {
+          throw new FailedPreconditionError(
+            `InterestGroupComment cannot be created with parent InterestGroupComment(ID=${parentComment.id}), as it already has a parent.`
+          )
+        }
+      }
+
+      return groupRepository.createInterestGroupComment(handle, interestGroupId, data, authorId)
+    },
+
+    async findManyInterestGroupComments(handle, interestGroupId) {
+      const group = await this.getBySlug(handle, interestGroupId)
+      if (group.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
+        throw new InvalidArgumentError(`Group(Slug=${interestGroupId}) is not an interest group`)
+      }
+
+      return groupRepository.findManyInterestGroupComments(handle, interestGroupId)
+    },
+
+    async findInterestGroupCommentById(handle, commentId) {
+      return groupRepository.findInterestGroupCommentById(handle, commentId)
     },
   }
 }

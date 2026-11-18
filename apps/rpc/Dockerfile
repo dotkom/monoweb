@@ -20,10 +20,6 @@ EXPOSE 3000
 
 ENV NODE_ENV=production
 
-# Embed the Sentry release ID into the container.
-ARG SENTRY_RELEASE
-ENV SENTRY_RELEASE=${SENTRY_RELEASE}
-
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 rpc
 USER rpc

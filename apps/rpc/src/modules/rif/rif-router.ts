@@ -1,5 +1,4 @@
 import { formatEmailSubject } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
 import { emails } from "../email/email-template"
@@ -20,9 +19,6 @@ const InterestFormSchema = z.object({
   comment: z.string().default("Ingen kommentar"),
 })
 
-export type SubmitInterestInput = inferProcedureInput<typeof submitInterestProcedure>
-export type SubmitInterestOutput = inferProcedureOutput<typeof submitInterestProcedure>
-
 const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(async ({ input, ctx }) => {
   const BEDKOM_EMAIL = "bedkom@online.ntnu.no"
 
@@ -34,15 +30,13 @@ const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(asy
 
   // Send notification email to bedkom with the submission details.
   // This allows bedkom to see and respond to interest submissions quickly.
-  await ctx.emailService.send(
-    BEDKOM_EMAIL,
-    [input.contactEmail], // Reply-to company contact for easy response
-    [BEDKOM_EMAIL],
-    [],
-    [],
-    formatEmailSubject(`[Interesse] ${input.companyName}`),
-    emails.COMPANY_COLLABORATION_NOTIFICATION,
-    {
+  await ctx.emailService.send({
+    fromEmailAddress: BEDKOM_EMAIL,
+    replyTo: [input.contactEmail], // Reply-to company contact for easy response
+    to: [BEDKOM_EMAIL],
+    subject: formatEmailSubject(`[Interesse] ${input.companyName}`),
+    definition: emails.COMPANY_COLLABORATION_NOTIFICATION,
+    data: {
       companyName: input.companyName,
       contactName: input.contactName,
       contactEmail: input.contactEmail,
@@ -55,20 +49,18 @@ const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(asy
       requestsCollaborationEvent: input.requestsCollaborationEvent,
       requestsFemalesInTechEvent: input.requestsFemalesInTechEvent,
       comment: input.comment,
-    }
-  )
+    },
+  })
 
   // Send confirmation/receipt email to the company contact.
   // This provides them with a copy of their submission for their records.
-  await ctx.emailService.send(
-    BEDKOM_EMAIL,
-    [BEDKOM_EMAIL], // Reply-to bedkom for follow-up questions
-    [input.contactEmail],
-    [],
-    [],
-    formatEmailSubject("Takk for interessen!"),
-    emails.COMPANY_COLLABORATION_RECEIPT,
-    {
+  await ctx.emailService.send({
+    fromEmailAddress: BEDKOM_EMAIL,
+    replyTo: [BEDKOM_EMAIL], // Reply-to bedkom for follow-up questions
+    to: [input.contactEmail],
+    subject: formatEmailSubject("Takk for interessen!"),
+    definition: emails.COMPANY_COLLABORATION_RECEIPT,
+    data: {
       companyName: input.companyName,
       contactName: input.contactName,
       contactEmail: input.contactEmail,
@@ -81,8 +73,8 @@ const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(asy
       requestsCollaborationEvent: input.requestsCollaborationEvent,
       requestsFemalesInTechEvent: input.requestsFemalesInTechEvent,
       comment: input.comment,
-    }
-  )
+    },
+  })
 
   return { success: true }
 })

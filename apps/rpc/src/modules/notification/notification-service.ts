@@ -11,7 +11,7 @@ import {
 import { z } from "zod"
 import { FailedPreconditionError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { EmailService } from "../email/email-service"
-import { DEFAULT_EMAIL_SOURCE, emails } from "../email/email-template"
+import { DEFAULT_EMAIL_FROM_EMAIL_ADDRESS, emails } from "../email/email-template"
 import { getGroupDisplayName, type GroupId } from "../group/group"
 import type { TaskId } from "../task/task"
 import type { UserId } from "../user/user"
@@ -207,28 +207,26 @@ export function getNotificationService(
       const group = notification.actorGroup
       const groupEmail = group?.email ?? null
       const sourceEmail =
-        groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_SOURCE
+        groupEmail !== null && z.email().safeParse(groupEmail).success ? groupEmail : DEFAULT_EMAIL_FROM_EMAIL_ADDRESS
       const senderName = group === null ? "Linjeforeningen Online" : getGroupDisplayName(group)
       const notificationUrl = createAbsoluteNotificationPageUrl(webOrigin, notification.id)
       const linkUrl = notification.link.type === "URL" ? notification.link.url : null
 
-      await emailService.send(
-        sourceEmail,
-        [sourceEmail],
-        [],
-        [],
-        recipientEmails,
-        formatEmailSubject(notification.title),
-        emails.NOTIFICATION,
-        {
+      await emailService.send({
+        fromEmailAddress: sourceEmail,
+        replyTo: [sourceEmail],
+        bcc: recipientEmails,
+        subject: formatEmailSubject(notification.title),
+        definition: emails.NOTIFICATION,
+        data: {
           title: notification.title,
           message: notification.content,
           senderName,
           notificationUrl,
           linkUrl,
         },
-        group === null ? undefined : senderName
-      )
+        fromName: group === null ? undefined : senderName,
+      })
     },
 
     async createDraft(handle, input) {

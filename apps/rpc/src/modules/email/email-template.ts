@@ -8,13 +8,19 @@ import mustache from "mustache"
 import { z } from "zod"
 import { renderEmailRichText } from "./email-rich-text"
 
+export const DEFAULT_EMAIL_FROM_EMAIL_ADDRESS = "varslinger@online.ntnu.no"
+export const DEFAULT_EMAIL_FROM_NAME = "Linjeforeningen Online"
+export const DEFAULT_EMAIL_FROM = `${DEFAULT_EMAIL_FROM_NAME} <${DEFAULT_EMAIL_FROM_EMAIL_ADDRESS}>`
+
 export type EmailType =
   | "COMPANY_COLLABORATION_RECEIPT"
   | "COMPANY_COLLABORATION_NOTIFICATION"
   | "COMPANY_INVOICE_NOTIFICATION"
   | "FEEDBACK_FORM_LINK"
   | "EVENT_ATTENDANCE"
+  | "EVENT_AUTOMATIC_DEREGISTRATION"
   | "EVENT_MESSAGE"
+  | "EVENT_MISSED_ATTENDANCE_MARKS"
   | "RECEIVED_MARK"
   | "QUEUE_NOTIFICATION"
   | "COMMITTEE_EMAIL_CREATED"
@@ -99,15 +105,12 @@ export async function renderEmailTemplate<TData>(
   )
 }
 
-export const DEFAULT_EMAIL_SOURCE = "varslinger@online.ntnu.no"
-export const DEFAULT_EMAIL_FROM = `Linjeforeningen Online <${DEFAULT_EMAIL_SOURCE}>`
-
 export function getReplyToAddresses(addresses: string[]): string[] {
   if (addresses.length > 0) {
     return addresses
   }
 
-  return [DEFAULT_EMAIL_SOURCE]
+  return [DEFAULT_EMAIL_FROM_EMAIL_ADDRESS]
 }
 
 const EventImageUrlSchema = z
@@ -268,12 +271,36 @@ export const emails = {
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_attendance.mustache"), "utf-8"),
   }),
+  EVENT_AUTOMATIC_DEREGISTRATION: createEmailTemplate({
+    type: "EVENT_AUTOMATIC_DEREGISTRATION",
+    layout: {
+      title: "Du har blitt avmeldt {{ eventName }}",
+      preheader: "Du har blitt automatisk avmeldt {{ eventName }}.",
+      footerReason: "Du mottar denne e-posten fordi du tidligere var påmeldt {{ eventName }}.",
+      showTimezone: true,
+    },
+    getButtons: (data) => ({
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.url(),
+        eventImageUrl: EventImageUrlSchema,
+        title: z.string().min(1),
+        details: z.string().nullable(),
+        organizerEmail: z.email(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_automatic_deregistration.mustache"), "utf-8"),
+    getRichText: (data) => ({ details: data.details }),
+  }),
   EVENT_MESSAGE: createEmailTemplate({
     type: "EVENT_MESSAGE",
     layout: {
       title: "Viktig informasjon om {{ eventName }}",
       preheader: "Du har fått en melding fra arrangørene av {{ eventName }}.",
-      footerReason: "Du mottar denne e-posten fordi du er påmeldt {{ eventName }}.",
+      footerReason:
+        "{{^ queuePosition }}Du mottar denne e-posten fordi du er påmeldt {{ eventName }}.{{/ queuePosition }}{{# queuePosition }}Du mottar denne e-posten fordi du står i kø til {{ eventName }}.{{/ queuePosition }}",
       showTimezone: true,
     },
     getButtons: (data) => ({
@@ -285,9 +312,30 @@ export const emails = {
         eventLink: z.url(),
         eventImageUrl: EventImageUrlSchema,
         message: z.string(),
+        queuePosition: z.int().positive().nullish(),
       }),
     getTemplate: async () => fsp.readFile(path.join(templates, "event_message.mustache"), "utf-8"),
     getRichText: (data) => ({ message: data.message }),
+  }),
+  EVENT_MISSED_ATTENDANCE_MARKS: createEmailTemplate({
+    type: "EVENT_MISSED_ATTENDANCE_MARKS",
+    layout: {
+      title: "Automatiske prikker for {{ eventName }}",
+      preheader: "Vi har gitt prikker for manglende oppmøte på vegne av arrangørene.",
+      footerReason: "Du mottar denne e-posten fordi gruppen din er arrangør av {{ eventName }}.",
+    },
+    getButtons: (data) => ({
+      mark: { href: data.markLink, label: "Se prikkene" },
+      event: { href: data.eventLink, label: "Se arrangementet" },
+    }),
+    getSchema: () =>
+      z.object({
+        eventName: z.string(),
+        eventLink: z.url(),
+        markLink: z.url(),
+        affectedAttendeeCount: z.number().int().positive(),
+      }),
+    getTemplate: async () => fsp.readFile(path.join(templates, "event_missed_attendance_marks.mustache"), "utf-8"),
   }),
   RECEIVED_MARK: createEmailTemplate({
     type: "RECEIVED_MARK",

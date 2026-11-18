@@ -41,6 +41,12 @@ export const auditLogTableMap = {
     label: "Fadderukene",
     path: "/admin/fadderukene",
   },
+  sidequest: {
+    label: "Sidequest",
+    path: "/admin/sidequests",
+  },
+  sidequest_request: null,
+  sidequest_registration: null,
   contestant: null,
   contest_team: null,
   attendance_pool: null,

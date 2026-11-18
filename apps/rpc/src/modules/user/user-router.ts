@@ -1,6 +1,6 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import type { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { InvalidArgumentError, UnauthorizedError } from "../../error"
@@ -23,8 +23,6 @@ import {
   UserWriteSchema,
 } from "./user"
 
-export type AllUsersInput = inferProcedureInput<typeof allUsersProcedure>
-export type AllUsersOutput = inferProcedureOutput<typeof allUsersProcedure>
 const allUsersProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: UserFilterQuerySchema.optional() }))
   .use(withAuthentication())
@@ -38,8 +36,6 @@ const allUsersProcedure = procedure
     }
   })
 
-export type GetUserInput = inferProcedureInput<typeof getUserProcedure>
-export type GetUserOutput = inferProcedureOutput<typeof getUserProcedure>
 const getUserProcedure = procedure
   .input(UserSchema.shape.id)
   .use(withAuthentication())
@@ -47,8 +43,6 @@ const getUserProcedure = procedure
     return ctx.userService.getById(ctx.prisma, input)
   })
 
-export type GetUserByUsernameInput = inferProcedureInput<typeof getUserByUsernameProcedure>
-export type GetUserByUsernameOutput = inferProcedureOutput<typeof getUserByUsernameProcedure>
 const getUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
   .use(withAuthentication())
@@ -56,8 +50,6 @@ const getUserByUsernameProcedure = procedure
     return ctx.userService.getByUsername(ctx.prisma, input)
   })
 
-export type FindUserByUsernameInput = inferProcedureInput<typeof findUserByUsernameProcedure>
-export type FindUserByUsernameOutput = inferProcedureOutput<typeof findUserByUsernameProcedure>
 const findUserByUsernameProcedure = procedure
   .input(UserSchema.shape.username)
   .use(withAuthentication())
@@ -65,8 +57,6 @@ const findUserByUsernameProcedure = procedure
     return ctx.userService.findByUsername(ctx.prisma, input)
   })
 
-export type CreateUserFileUploadInput = inferProcedureInput<typeof createUserFileUploadProcedure>
-export type CreateUserFileUploadOutput = inferProcedureOutput<typeof createUserFileUploadProcedure>
 const createUserFileUploadProcedure = procedure
   .input(
     z.object({
@@ -94,8 +84,6 @@ const createUserFileUploadProcedure = procedure
     )
   })
 
-export type RegisterUserInput = inferProcedureInput<typeof registerUserProcedure>
-export type RegisterUserOutput = inferProcedureOutput<typeof registerUserProcedure>
 // NOTE: This procedure has no audit log entries, because the procedure is anonymous.
 const registerUserProcedure = procedure
   .input(UserSchema.shape.id)
@@ -104,8 +92,6 @@ const registerUserProcedure = procedure
     return ctx.userService.register(ctx.handle, input)
   })
 
-export type CreateUserMembershipInput = inferProcedureInput<typeof createUserMembershipProcedure>
-export type CreateUserMembershipOutput = inferProcedureOutput<typeof createUserMembershipProcedure>
 const createUserMembershipProcedure = procedure
   .input(
     z.object({
@@ -125,8 +111,6 @@ const createUserMembershipProcedure = procedure
     return user
   })
 
-export type UpdateUserMembershipInput = inferProcedureInput<typeof updateUserMembershipProcedure>
-export type UpdateUserMembershipOutput = inferProcedureOutput<typeof updateUserMembershipProcedure>
 const updateUserMembershipProcedure = procedure
   .input(
     z.object({
@@ -146,8 +130,6 @@ const updateUserMembershipProcedure = procedure
     return user
   })
 
-export type DeleteUserMembershipInput = inferProcedureInput<typeof deleteUserMembershipProcedure>
-export type DeleteUserMembershipOutput = inferProcedureOutput<typeof deleteUserMembershipProcedure>
 const deleteUserMembershipProcedure = procedure
   .input(
     z.object({
@@ -166,14 +148,11 @@ const deleteUserMembershipProcedure = procedure
     return user
   })
 
-export type GetMeInput = inferProcedureInput<typeof getMeProcedure>
 export type GetMeOutput = inferProcedureOutput<typeof getMeProcedure>
 const getMeProcedure = procedure.use(withAuthentication()).query(async ({ ctx }) => {
   return ctx.userService.getById(ctx.prisma, ctx.principal.subject)
 })
 
-export type FindMeInput = inferProcedureInput<typeof findMeProcedure>
-export type FindMeOutput = inferProcedureOutput<typeof findMeProcedure>
 const findMeProcedure = procedure.query(async ({ ctx }) => {
   if (!ctx?.principal?.subject) {
     return null
@@ -182,8 +161,6 @@ const findMeProcedure = procedure.query(async ({ ctx }) => {
   return ctx.userService.findById(ctx.prisma, ctx.principal.subject)
 })
 
-export type UpdateUserInput = inferProcedureInput<typeof updateUserProcedure>
-export type UpdateUserOutput = inferProcedureOutput<typeof updateUserProcedure>
 const updateUserProcedure = procedure
   .input(
     z.object({
@@ -211,8 +188,6 @@ const updateUserProcedure = procedure
     return user
   })
 
-export type RequestEmailChangeInput = inferProcedureInput<typeof requestEmailChangeProcedure>
-export type RequestEmailChangeOutput = inferProcedureOutput<typeof requestEmailChangeProcedure>
 const requestEmailChangeProcedure = procedure
   .input(z.object({ newEmail: z.email() }))
   .use(withAuthentication())
@@ -227,8 +202,6 @@ const requestEmailChangeProcedure = procedure
     return result
   })
 
-export type SyncEmailFromAuth0Input = inferProcedureInput<typeof syncEmailFromAuth0Procedure>
-export type SyncEmailFromAuth0Output = inferProcedureOutput<typeof syncEmailFromAuth0Procedure>
 const syncEmailFromAuth0Procedure = procedure
   .use(withAuthentication())
   .use(withDatabaseTransaction())
@@ -242,8 +215,6 @@ const syncEmailFromAuth0Procedure = procedure
     return result
   })
 
-export type IsStaffInput = inferProcedureInput<typeof isStaffProcedure>
-export type IsStaffOutput = inferProcedureOutput<typeof isStaffProcedure>
 const isStaffProcedure = procedure.query(async ({ ctx }) => {
   const principal = ctx.principal
   if (principal === null) {
@@ -253,8 +224,6 @@ const isStaffProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isCommitteeMember(principal.affiliations)
 })
 
-export type IsAdminInput = inferProcedureInput<typeof isAdminProcedure>
-export type IsAdminOutput = inferProcedureOutput<typeof isAdminProcedure>
 const isAdminProcedure = procedure.query(async ({ ctx }) => {
   const principal = ctx.principal
   if (principal === null) {
@@ -264,8 +233,6 @@ const isAdminProcedure = procedure.query(async ({ ctx }) => {
   return ctx.authorizationService.isAdministrator(principal.affiliations)
 })
 
-export type GetAuthorizationInput = inferProcedureInput<typeof getAuthorizationProcedure>
-export type GetAuthorizationOutput = inferProcedureOutput<typeof getAuthorizationProcedure>
 const getAuthorizationProcedure = procedure
   .output(
     z.object({
@@ -298,8 +265,6 @@ const getAuthorizationProcedure = procedure
     }
   })
 
-export type ConfirmIdentityLinkInput = inferProcedureInput<typeof confirmIdentityLinkProcedure>
-export type ConfirmIdentityLinkOutput = inferProcedureOutput<typeof confirmIdentityLinkProcedure>
 const confirmIdentityLinkProcedure = procedure
   .input(
     z.object({
@@ -341,8 +306,6 @@ const confirmIdentityLinkProcedure = procedure
 
 // IMPORTANT: It does not make sense to link Auth0 identities WITHOUT merging the database users, as the user will be
 // orphaned and will not be accessible by authentication.
-export type MergeUsersInput = inferProcedureInput<typeof mergeUsersProcedure>
-export type MergeUsersOutput = inferProcedureOutput<typeof mergeUsersProcedure>
 const mergeUsersProcedure = procedure
   .input(
     z
@@ -397,7 +360,6 @@ const mergeUsersProcedure = procedure
     return user
   })
 
-export type HasDuplicateUserOutput = inferProcedureOutput<typeof hasDuplicateUserProcedure>
 const hasDuplicateUserProcedure = procedure
   .output(z.string().nullable())
   .use(withAuthentication())
@@ -405,8 +367,6 @@ const hasDuplicateUserProcedure = procedure
     return ctx.userService.hasDuplicateUser(ctx.prisma, ctx.principal.subject)
   })
 
-export type GetAuth0ConnectionsInput = inferProcedureInput<typeof getAuth0ConnectionsProcedure>
-export type GetAuth0ConnectionsOutput = inferProcedureOutput<typeof getAuth0ConnectionsProcedure>
 const getAuth0ConnectionsProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }).optional())
   .use(withAuthentication())
@@ -424,8 +384,6 @@ const getAuth0ConnectionsProcedure = procedure
     return response
   })
 
-export type SendBugReportEmailInput = inferProcedureInput<typeof sendBugReportEmailProcedure>
-export type SendBugReportEmailOutput = inferProcedureOutput<typeof sendBugReportEmailProcedure>
 const sendBugReportEmailProcedure = procedure
   .input(BugReportFormSchema)
   .use(withAuthentication())

@@ -1,6 +1,6 @@
 import { TZDate } from "@date-fns/tz"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import type { inferProcedureOutput } from "@trpc/server"
 import { TRPCError } from "@trpc/server"
 import { addHours, addMilliseconds, isPast } from "date-fns"
 import { on } from "node:events"
@@ -55,8 +55,6 @@ async function authorizeManageEventAttendance<TRuleInput>(
   )
 }
 
-export type CreatePoolInput = inferProcedureInput<typeof createPoolProcedure>
-export type CreatePoolOutput = inferProcedureOutput<typeof createPoolProcedure>
 const createPoolProcedure = procedure
   .input(
     z.object({
@@ -82,8 +80,6 @@ const createPoolProcedure = procedure
     return createdPool
   })
 
-export type UpdatePoolInput = inferProcedureInput<typeof updatePoolProcedure>
-export type UpdatePoolOutput = inferProcedureOutput<typeof updatePoolProcedure>
 const updatePoolProcedure = procedure
   .input(
     z.object({
@@ -118,8 +114,6 @@ const updatePoolProcedure = procedure
     return updatedPool
   })
 
-export type DeletePoolInput = inferProcedureInput<typeof deletePoolProcedure>
-export type DeletePoolOutput = inferProcedureOutput<typeof deletePoolProcedure>
 const deletePoolProcedure = procedure
   .input(
     z.object({
@@ -148,8 +142,6 @@ const deletePoolProcedure = procedure
     )
   })
 
-export type DeleteAttendanceInput = inferProcedureInput<typeof deleteAttendanceProcedure>
-export type DeleteAttendanceOutput = inferProcedureOutput<typeof deleteAttendanceProcedure>
 const deleteAttendanceProcedure = procedure
   .input(
     z.object({
@@ -177,8 +169,6 @@ const ADMIN_REGISTER_DEFAULT_OPTIONS = {
   overrideTurnstileCheck: true,
 } as const
 
-export type AdminRegisterForEventInput = inferProcedureInput<typeof adminRegisterForEventProcedure>
-export type AdminRegisterForEventOutput = inferProcedureOutput<typeof adminRegisterForEventProcedure>
 const adminRegisterForEventProcedure = procedure
   .input(
     z.object({
@@ -196,44 +186,50 @@ const adminRegisterForEventProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, input.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+  .mutation(async ({ input, ctx, path }) => {
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
+    })
 
-    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
+      const event = await ctx.eventService.getByAttendanceId(handle, input.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    const result = await ctx.attendanceService.getRegistrationAvailability(
-      ctx.handle,
-      input.attendanceId,
-      null,
-      input.userId,
-      {
-        ignoreRegistrationWindow: true,
-        ignoreRegisteredToParent: input.options.ignoreRegisteredToParent,
-        immediateReservation: input.options.immediateReservation,
-        immediatePayment: input.options.immediatePayment,
-        overriddenAttendancePoolId: input.attendancePoolId,
-        overrideTurnstileCheck: input.options.overrideTurnstileCheck,
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+      const result = await ctx.attendanceService.getRegistrationAvailability(
+        handle,
+        input.attendanceId,
+        null,
+        input.userId,
+        {
+          ignoreRegistrationWindow: true,
+          ignoreRegisteredToParent: input.options.ignoreRegisteredToParent,
+          immediateReservation: input.options.immediateReservation,
+          immediatePayment: input.options.immediatePayment,
+          overriddenAttendancePoolId: input.attendancePoolId,
+          overrideTurnstileCheck: input.options.overrideTurnstileCheck,
+        }
+      )
+
+      if (!result.success) {
+        throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
       }
-    )
 
-    if (!result.success) {
-      throw new FailedPreconditionError(`Failed to register: ${getRegistrationAvailabilityFailureCause(result)}`)
-    }
+      const attendee = await ctx.attendanceService.registerAttendee(handle, result, ctx.principal.subject)
 
-    const attendee = await ctx.attendanceService.registerAttendee(ctx.handle, result, ctx.principal.subject)
+      setAuditTransactionName(
+        `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
+      )
 
-    ctx.setAuditTransactionName(
-      `Admin register Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${result.event.id},Title=${result.event.title})`
-    )
+      return attendee
+    })
 
-    return attendee
+    return ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
   })
 
-export type UpdateAttendancePaymentInput = inferProcedureInput<typeof updateAttendancePaymentProcedure>
-export type UpdateAttendancePaymentOutput = inferProcedureOutput<typeof updateAttendancePaymentProcedure>
 const updateAttendancePaymentProcedure = procedure
   .input(
     z.object({
@@ -258,8 +254,6 @@ const updateAttendancePaymentProcedure = procedure
     )
   })
 
-export type GetSelectionsResultsInput = inferProcedureInput<typeof getSelectionsResultsProcedure>
-export type GetSelectionsResultsOutput = inferProcedureOutput<typeof getSelectionsResultsProcedure>
 const getSelectionsResultsProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .use(withAuthentication())
@@ -288,7 +282,6 @@ const getSelectionsResultsProcedure = procedure
     })
   })
 
-export type GetRegistrationAvailabilityInput = inferProcedureInput<typeof getRegistrationAvailabilityProcedure>
 export type GetRegistrationAvailabilityOutput = inferProcedureOutput<typeof getRegistrationAvailabilityProcedure>
 const getRegistrationAvailabilityProcedure = procedure
   .input(
@@ -328,8 +321,6 @@ const getRegistrationAvailabilityProcedure = procedure
     )
   })
 
-export type RegisterForEventInput = inferProcedureInput<typeof registerForEventProcedure>
-export type RegisterForEventOutput = inferProcedureOutput<typeof registerForEventProcedure>
 const registerForEventProcedure = procedure
   .input(z.object({ attendanceId: AttendanceSchema.shape.id, turnstileToken: z.string() }))
   .use(withAuthentication())
@@ -361,7 +352,7 @@ const registerForEventProcedure = procedure
       procedure: path,
     })
 
-    return transaction(async ({ handle, setAuditTransactionName }) => {
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
       const attendee = await ctx.attendanceService.registerAttendee(handle, result)
 
       setAuditTransactionName(
@@ -370,10 +361,10 @@ const registerForEventProcedure = procedure
 
       return attendee
     })
+
+    return ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
   })
 
-export type OnRegisterChangeInput = inferProcedureInput<typeof onRegisterChangeProcedure>
-export type OnRegisterChangeOutput = inferProcedureOutput<typeof onRegisterChangeProcedure>
 const onRegisterChangeProcedure = procedureTraceErrorsOnly
   .input(z.object({ attendanceId: AttendanceSchema.shape.id }))
   .subscription(async function* ({ input, ctx, signal }) {
@@ -388,8 +379,6 @@ const onRegisterChangeProcedure = procedureTraceErrorsOnly
     }
   })
 
-export type OnBulkRegisterChangeInput = inferProcedureInput<typeof onBulkRegisterChangeProcedure>
-export type OnBulkRegisterChangeOutput = inferProcedureOutput<typeof onBulkRegisterChangeProcedure>
 const onBulkRegisterChangeProcedure = procedureTraceErrorsOnly
   .input(z.object({ eventIds: EventSchema.shape.id.array().min(1) }))
   .subscription(async function* ({ input, ctx, signal }) {
@@ -429,8 +418,6 @@ const onBulkRegisterChangeProcedure = procedureTraceErrorsOnly
     }
   })
 
-export type CancelAttendeePaymentInput = inferProcedureInput<typeof cancelAttendeePaymentProcedure>
-export type CancelAttendeePaymentOutput = inferProcedureOutput<typeof cancelAttendeePaymentProcedure>
 const cancelAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
@@ -450,33 +437,48 @@ const cancelAttendeePaymentProcedure = procedure
     )
   })
 
-export type StartAttendeePaymentInput = inferProcedureInput<typeof startAttendeePaymentProcedure>
-export type StartAttendeePaymentOutput = inferProcedureOutput<typeof startAttendeePaymentProcedure>
 const startAttendeePaymentProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+  .mutation(async ({ input, ctx, path }) => {
+    const existingAttendee = await ctx.attendanceService.getAttendeeById(ctx.prisma, input.attendeeId)
+    const existingEvent = await ctx.eventService.getByAttendanceId(ctx.prisma, existingAttendee.attendanceId)
+    const hostingGroupIds = existingEvent.hostingGroups.map((group) => group.slug)
 
     await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.syncAttendeePayment(ctx.prisma, input.attendeeId)
 
-    const deadline = addHours(getCurrentUTC(), 24)
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
+    })
 
-    const payment = await ctx.attendanceService.startAttendeePayment(ctx.handle, input.attendeeId, deadline)
+    await transaction(async ({ handle, setAuditTransactionName }) => {
+      const attendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+      const event = await ctx.eventService.getByAttendanceId(handle, attendee.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
 
-    ctx.setAuditTransactionName(
-      `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
-    )
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
 
-    return payment
+      const deadline = addHours(getCurrentUTC(), 24)
+
+      await ctx.attendanceService.prepareAttendeePayment(handle, input.attendeeId, deadline)
+
+      setAuditTransactionName(
+        `Start Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+      )
+    })
+
+    const attendee = await ctx.attendanceService.openAttendeeCheckout(ctx.prisma, input.attendeeId)
+
+    if (attendee.payment === null) {
+      throw new NotFoundError(`Attendee(ID=${attendee.id}) no longer has a payment`)
+    }
+
+    return attendee.payment
   })
 
-export type DeregisterForEventInput = inferProcedureInput<typeof deregisterForEventProcedure>
-export type DeregisterForEventOutput = inferProcedureOutput<typeof deregisterForEventProcedure>
 const deregisterForEventProcedure = procedure
   .input(
     z.object({
@@ -527,8 +529,6 @@ const deregisterForEventProcedure = procedure
     )
   })
 
-export type AdminDeregisterForEventInput = inferProcedureInput<typeof adminDeregisterForEventProcedure>
-export type AdminDeregisterForEventOutput = inferProcedureOutput<typeof adminDeregisterForEventProcedure>
 const adminDeregisterForEventProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .use(withAuthentication())
@@ -555,8 +555,6 @@ const adminDeregisterForEventProcedure = procedure
     )
   })
 
-export type AdminUpdateAttendeeRegisteredInput = inferProcedureInput<typeof adminUpdateAttendeeRegisteredProcedure>
-export type AdminUpdateAttendeeRegisteredOutput = inferProcedureOutput<typeof adminUpdateAttendeeRegisteredProcedure>
 const adminUpdateAttendeeRegisteredProcedure = procedure
   .input(
     z.object({
@@ -565,30 +563,39 @@ const adminUpdateAttendeeRegisteredProcedure = procedure
     })
   )
   .use(withAuthentication())
-  .use(withDatabaseTransaction())
-  .use(withAuditLogEntry())
-  .mutation(async ({ input, ctx }) => {
-    const now = getCurrentUTC()
-    const currentAttendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const attendeeBeforeUpdate = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
-    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendeeBeforeUpdate.attendanceId)
-    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
-
-    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
-
-    const attendee = await ctx.attendanceService.updateAttendeeById(ctx.handle, input.attendeeId, {
-      registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
+  .mutation(async ({ input, ctx, path }) => {
+    const transaction = createAuditedDatabaseTransaction({
+      prisma: ctx.prisma,
+      principal: ctx.principal,
+      procedure: path,
     })
 
-    ctx.setAuditTransactionName(
-      `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
-    )
+    const attendee = await transaction(async ({ handle, setAuditTransactionName }) => {
+      const now = getCurrentUTC()
+      const currentAttendee = await ctx.attendanceService.getAttendeeById(handle, input.attendeeId)
+      const event = await ctx.eventService.getByAttendanceId(handle, currentAttendee.attendanceId)
+      const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+      await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+
+      const attendee = await ctx.attendanceService.updateAttendeeById(handle, input.attendeeId, {
+        registeredAt: input.registered ? (currentAttendee.registeredAt ?? now) : null,
+      })
+
+      setAuditTransactionName(
+        `Admin update Attendee(ID=${attendee.id},Name=${attendee.user.name}) registered to ${input.registered} for Event(ID=${event.id},Title=${event.title})`
+      )
+
+      return attendee
+    })
+
+    if (input.registered) {
+      return await ctx.attendanceService.openAttendeeCheckout(ctx.prisma, attendee.id)
+    }
 
     return attendee
   })
 
-export type RegisterAttendanceInput = inferProcedureInput<typeof registerAttendanceProcedure>
-export type RegisterAttendanceOutput = inferProcedureOutput<typeof registerAttendanceProcedure>
 const registerAttendanceProcedure = procedure
   .input(
     z.object({
@@ -618,8 +625,6 @@ const registerAttendanceProcedure = procedure
     ctx.setAuditTransactionName(auditTransactionName)
   })
 
-export type UpdateSelectionResponsesInput = inferProcedureInput<typeof updateSelectionResponsesProcedure>
-export type UpdateSelectionResponsesOutput = inferProcedureOutput<typeof updateSelectionResponsesProcedure>
 const updateSelectionResponsesProcedure = procedure
   .input(
     z.object({
@@ -655,8 +660,6 @@ const updateSelectionResponsesProcedure = procedure
     return updatedAttendee
   })
 
-export type GetAttendanceInput = inferProcedureInput<typeof getAttendanceProcedure>
-export type GetAttendanceOutput = inferProcedureOutput<typeof getAttendanceProcedure>
 const getAttendanceProcedure = procedure
   .input(z.object({ id: AttendanceSchema.shape.id }))
   .output(AttendanceViewSchema)
@@ -682,8 +685,6 @@ const getAttendanceForAdminProcedure = procedure
     return attendance
   })
 
-export type UpdateAttendanceInput = inferProcedureInput<typeof updateAttendanceProcedure>
-export type UpdateAttendanceOutput = inferProcedureOutput<typeof updateAttendanceProcedure>
 const updateAttendanceProcedure = procedure
   .input(
     z.object({
@@ -708,8 +709,6 @@ const updateAttendanceProcedure = procedure
     return updatedAttendance
   })
 
-export type FindChargeAttendeeScheduleDateInput = inferProcedureInput<typeof findChargeAttendeeScheduleDateProcedure>
-export type FindChargeAttendeeScheduleDateOutput = inferProcedureOutput<typeof findChargeAttendeeScheduleDateProcedure>
 const findChargeAttendeeScheduleDateProcedure = procedure
   .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
   .output(z.date().nullable())
@@ -727,8 +726,6 @@ const findChargeAttendeeScheduleDateProcedure = procedure
     return await ctx.attendanceService.findChargeAttendeeScheduleDate(ctx.prisma, attendee.id)
   })
 
-export type NotifyAttendeesInput = inferProcedureInput<typeof notifyAttendeesProcedure>
-export type NotifyAttendeesOutput = inferProcedureOutput<typeof notifyAttendeesProcedure>
 const notifyAttendeesProcedure = procedure
   .input(
     z.object({
@@ -758,6 +755,47 @@ const notifyAttendeesProcedure = procedure
     await ctx.attendanceService.notifyAttendees(ctx.prisma, event.attendanceId, input.message, input.title)
   })
 
+const syncAttendeePaymentProcedure = procedure
+  .input(z.object({ attendeeId: AttendeeSchema.shape.id }))
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.syncAttendeePayment(ctx.handle, attendee.id)
+
+    ctx.setAuditTransactionName(
+      `Synchronize Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
+
+const waiveAttendeePaymentProcedure = procedure
+  .input(
+    z.object({
+      attendeeId: AttendeeSchema.shape.id,
+      reason: z.string().trim().min(1).max(1000).nullable().default(null),
+    })
+  )
+  .use(withAuthentication())
+  .use(withDatabaseTransaction())
+  .use(withAuditLogEntry())
+  .mutation(async ({ input, ctx }) => {
+    const attendee = await ctx.attendanceService.getAttendeeById(ctx.handle, input.attendeeId)
+    const event = await ctx.eventService.getByAttendanceId(ctx.handle, attendee.attendanceId)
+    const hostingGroupIds = event.hostingGroups.map((group) => group.slug)
+
+    await authorizeManageEventAttendance(ctx, hostingGroupIds, input)
+    await ctx.attendanceService.waiveAttendeePayment(ctx.handle, attendee.id, ctx.principal.subject, input.reason)
+
+    ctx.setAuditTransactionName(
+      `Waive Payment for Attendee(ID=${attendee.id},Name=${attendee.user.name}) for Event(ID=${event.id},Title=${event.title})`
+    )
+  })
+
 export const attendanceRouter = t.router({
   createPool: createPoolProcedure,
   updatePool: updatePoolProcedure,
@@ -771,6 +809,8 @@ export const attendanceRouter = t.router({
   onRegisterChange: onRegisterChangeProcedure,
   onBulkRegisterChange: onBulkRegisterChangeProcedure,
   cancelAttendeePayment: cancelAttendeePaymentProcedure,
+  waiveAttendeePayment: waiveAttendeePaymentProcedure,
+  syncAttendeePayment: syncAttendeePaymentProcedure,
   startAttendeePayment: startAttendeePaymentProcedure,
   deregisterForEvent: deregisterForEventProcedure,
   adminDeregisterForEvent: adminDeregisterForEventProcedure,

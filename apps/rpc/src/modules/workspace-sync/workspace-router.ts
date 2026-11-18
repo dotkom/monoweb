@@ -1,4 +1,3 @@
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import invariant from "tiny-invariant"
 import z from "zod"
 import { permitIf } from "../../authorization"
@@ -30,8 +29,6 @@ function hasCustomKey(customKey: string | undefined): boolean {
   return customKey != null && customKey !== ""
 }
 
-export type CreateWorkspaceUserInput = inferProcedureInput<typeof createWorkspaceUserProcedure>
-export type CreateWorkspaceUserOutput = inferProcedureOutput<typeof createWorkspaceUserProcedure>
 const createWorkspaceUserProcedure = procedure
   .input(
     z.object({
@@ -68,8 +65,6 @@ const createWorkspaceUserProcedure = procedure
     return createdWorkspaceUser
   })
 
-export type FindWorkspaceUserInput = inferProcedureInput<typeof findWorkspaceUserProcedure>
-export type FindWorkspaceUserOutput = inferProcedureOutput<typeof findWorkspaceUserProcedure>
 const findWorkspaceUserProcedure = procedure
   .input(
     z.object({
@@ -91,8 +86,6 @@ const findWorkspaceUserProcedure = procedure
     return await workspaceService.findWorkspaceUser(ctx.prisma, input.userId, input.customKey)
   })
 
-export type LinkWorkspaceUserInput = inferProcedureInput<typeof linkWorkspaceUserProcedure>
-export type LinkWorkspaceUserOutput = inferProcedureOutput<typeof linkWorkspaceUserProcedure>
 const linkWorkspaceUserProcedure = procedure
   .input(
     z.object({
@@ -119,8 +112,6 @@ const linkWorkspaceUserProcedure = procedure
     return updatedUser
   })
 
-export type LinkWorkspaceGroupInput = inferProcedureInput<typeof linkWorkspaceGroupProcedure>
-export type LinkWorkspaceGroupOutput = inferProcedureOutput<typeof linkWorkspaceGroupProcedure>
 const linkWorkspaceGroupProcedure = procedure
   .input(
     z.object({
@@ -147,8 +138,6 @@ const linkWorkspaceGroupProcedure = procedure
     return updatedGroup
   })
 
-export type ResetWorkspaceUserPasswordInput = inferProcedureInput<typeof resetWorkspaceUserPasswordProcedure>
-export type ResetWorkspaceUserPasswordOutput = inferProcedureOutput<typeof resetWorkspaceUserPasswordProcedure>
 const resetWorkspaceUserPasswordProcedure = procedure
   .input(
     z.object({
@@ -180,8 +169,6 @@ const resetWorkspaceUserPasswordProcedure = procedure
     return resetWorkspaceUser
   })
 
-export type CreateWorkspaceGroupInput = inferProcedureInput<typeof createWorkspaceGroupProcedure>
-export type CreateWorkspaceGroupOutput = inferProcedureOutput<typeof createWorkspaceGroupProcedure>
 const createWorkspaceGroupProcedure = procedure
   .input(
     z.object({
@@ -206,8 +193,6 @@ const createWorkspaceGroupProcedure = procedure
     return createdWorkspaceGroup
   })
 
-export type FindWorkspaceGroupInput = inferProcedureInput<typeof findWorkspaceGroupProcedure>
-export type FindWorkspaceGroupOutput = inferProcedureOutput<typeof findWorkspaceGroupProcedure>
 const findWorkspaceGroupProcedure = procedure
   .input(
     z.object({
@@ -229,8 +214,6 @@ const findWorkspaceGroupProcedure = procedure
     return await workspaceService.findWorkspaceGroup(ctx.prisma, input.groupSlug, input.customKey)
   })
 
-export type SynchronizeWorkspaceGroupInput = inferProcedureInput<typeof synchronizeWorkspaceGroupProcedure>
-export type SynchronizeWorkspaceGroupOutput = inferProcedureOutput<typeof synchronizeWorkspaceGroupProcedure>
 const synchronizeWorkspaceGroupProcedure = procedure
   .input(
     z.object({
@@ -254,8 +237,6 @@ const synchronizeWorkspaceGroupProcedure = procedure
     return result
   })
 
-export type GetMembersForWorkspaceGroupInput = inferProcedureInput<typeof getMembersForWorkspaceGroupProcedure>
-export type GetMembersForWorkspaceGroupOutput = inferProcedureOutput<typeof getMembersForWorkspaceGroupProcedure>
 const getMembersForWorkspaceGroupProcedure = procedure
   .input(
     z.object({
@@ -272,8 +253,6 @@ const getMembersForWorkspaceGroupProcedure = procedure
     return await workspaceService.getMembersForGroup(ctx.prisma, input.groupSlug)
   })
 
-export type GetGroupsForWorkspaceUserInput = inferProcedureInput<typeof getGroupsForUserWorkspaceProcedure>
-export type GetGroupsForWorkspaceUserOutput = inferProcedureOutput<typeof getGroupsForUserWorkspaceProcedure>
 const getGroupsForUserWorkspaceProcedure = procedure
   .input(
     z.object({

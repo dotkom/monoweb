@@ -2,7 +2,7 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 
-  previewFeatures = ["relationJoins", "typedSql"]
+  previewFeatures = ["relationJoins", "typedSql", "partialIndexes"]
 }
 
 datasource db {
@@ -110,22 +110,28 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee               Attendee[]
-  personalMark           PersonalMark[]
-  groupMemberships       GroupMembership[]
-  memberships            Membership[]
-  givenMarks             PersonalMark[]          @relation("GivenBy")
-  attendeesRefunded      Attendee[]              @relation(name: "RefundedBy")
-  auditLogs              AuditLog[]
-  deregisterReasons      DeregisterReason[]
-  notificationsReceived  NotificationRecipient[]
-  notificationsCreated   Notification[]          @relation("created_by")
-  notificationsUpdated   Notification[]          @relation("last_updated_by")
-  contestants            Contestant[]
-  contestTeams           ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks          UserFlagLink[]
-  adminRegistered        Attendee[]              @relation("AdminRegisteredBy")
-  updatedEventPriorities EventFeaturedPriority[]
+  attendee                  Attendee[]
+  personalMark              PersonalMark[]
+  groupMemberships          GroupMembership[]
+  memberships               Membership[]
+  givenMarks                PersonalMark[]          @relation("GivenBy")
+  auditLogs                 AuditLog[]
+  deregisterReasons         DeregisterReason[]
+  notificationsReceived     NotificationRecipient[]
+  notificationsCreated      Notification[]          @relation("created_by")
+  notificationsUpdated      Notification[]          @relation("last_updated_by")
+  contestants               Contestant[]
+  contestTeams              ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks             UserFlagLink[]
+  adminRegistered           Attendee[]              @relation("AdminRegisteredBy")
+  updatedEventPriorities    EventFeaturedPriority[]
+  payments                  Payment[]               @relation("PaymentUser")
+  paymentsWaived            Payment[]               @relation("PaymentWaivedBy")
+  paymentRefundsRequested   PaymentRefund[]
+  sidequestRegistrations    SidequestRegistration[]
+  sidequestRequests         SidequestRequest[]
+  sidequestRequestsReviewed SidequestRequest[]      @relation("SidequestRequestReviewer")
+  interestGroupComments     InterestGroupComment[]
 
   /// prisma-lint-ignore-model model-name-mapping-snake-case
   @@map("ow_user")
@@ -205,11 +211,13 @@ model Group {
   type                 GroupType
 
   events        EventHostingGroup[]
-  contests      Contest[]           @relation("ContestOrganizerGroups")
+  sidequests    Sidequest[]
+  contests      Contest[]              @relation("ContestOrganizerGroups")
   memberships   GroupMembership[]
   marks         MarkGroup[]
   roles         GroupRole[]
   notifications Notification[]
+  comments      InterestGroupComment[]
 
   @@map("group")
 }
@@ -228,6 +236,7 @@ model GroupMembership {
 
   roles GroupMembershipRole[]
 
+  @@unique([groupId, userId], map: "group_membership_one_active", where: raw("\"end\" IS NULL"))
   @@index([groupId])
   @@index([userId])
   @@map("group_membership")
@@ -269,9 +278,10 @@ enum GroupRoleType {
 }
 
 model GroupRole {
-  id   String        @id @default(uuid())
-  name String
-  type GroupRoleType @default(COSMETIC)
+  id        String        @id @default(uuid())
+  name      String
+  type      GroupRoleType @default(COSMETIC)
+  isDefault Boolean       @default(false) @map("is_default")
 
   groupId String @map("group_id")
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)
@@ -279,7 +289,28 @@ model GroupRole {
   groupMembershipRoles GroupMembershipRole[]
 
   @@unique([groupId, name])
+  @@unique([groupId], where: raw("is_default = true"))
   @@map("group_role")
+}
+
+model InterestGroupComment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  body      String
+
+  authorId        String @map("author_id")
+  interestGroupId String @map("interest_group_id")
+  author          User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  interestGroup   Group  @relation(fields: [interestGroupId], references: [slug], onDelete: Cascade)
+
+  parentId String?                @map("parent_id")
+  parent   InterestGroupComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  InterestGroupComment[] @relation("CommentReplies")
+
+  @@index([authorId])
+  @@index([interestGroupId])
+  @@index([parentId])
+  @@map("interest_group_comment")
 }
 
 enum EventStatus {
@@ -383,29 +414,21 @@ model Attendee {
   /// To complete registration:
   /// - Complete payment
   completionDeadline         DateTime?           @map("completion_deadline")
-  paymentLink                String?             @map("payment_link")
-  paymentId                  String?             @map("payment_id")
-  paymentReservedAt          DateTime?           @map("payment_reserved_at")
-  paymentChargeDeadline      DateTime?           @map("payment_charge_deadline")
-  paymentChargedAt           DateTime?           @map("payment_charged_at")
-  paymentRefundedAt          DateTime?           @map("payment_refunded_at")
-  paymentCheckoutUrl         String?             @map("payment_checkout_url")
 
   attendanceId            String         @map("attendance_id")
   userId                  String         @map("user_id")
   attendancePoolId        String         @map("attendance_pool_id")
-  paymentRefundedByUserId String?        @map("payment_refunded_by_user_id")
   adminRegisteredByUserId String?        @map("admin_registered_by_user_id")
   attendance              Attendance     @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
   user                    User           @relation(fields: [userId], references: [id], onDelete: Restrict)
   attendancePool          AttendancePool @relation(fields: [attendancePoolId], references: [id], onDelete: Restrict)
-  paymentRefundedBy       User?          @relation(fields: [paymentRefundedByUserId], references: [id], name: "RefundedBy", onDelete: SetNull)
   adminRegisteredBy       User?          @relation(fields: [adminRegisteredByUserId], references: [id], name: "AdminRegisteredBy", onDelete: SetNull)
+
+  payment Payment?
 
   @@unique([attendanceId, userId], name: "attendee_unique")
   @@index([userId])
   @@index([attendancePoolId])
-  @@index([paymentRefundedByUserId])
   @@index([adminRegisteredByUserId])
   @@map("attendee")
 }
@@ -434,6 +457,7 @@ model Event {
   hostingGroups      EventHostingGroup[]
   deregisterReasons  DeregisterReason[]
   featuredPriorities EventFeaturedPriority[]
+  payments           Payment[]
 
   attendanceId String?     @map("attendance_id")
   parentId     String?     @map("parent_id")
@@ -683,6 +707,7 @@ model ArticleTagLink {
 }
 
 enum TaskType {
+  OPEN_PAYMENT_CHECKOUT                  @map("OPEN_PAYMENT_CHECKOUT")
   RESERVE_ATTENDEE                       @map("RESERVE_ATTENDEE")
   CHARGE_ATTENDEE                        @map("CHARGE_ATTENDEE")
   MERGE_ATTENDANCE_POOLS                 @map("MERGE_ATTENDANCE_POOLS")
@@ -937,6 +962,7 @@ enum NotificationPayloadType {
   USER        @map("USER")
   OFFLINE     @map("OFFLINE")
   JOB_LISTING @map("JOB_LISTING")
+  SIDEQUEST   @map("SIDEQUEST")
   NONE        @map("NONE")
 }
 
@@ -975,6 +1001,12 @@ enum NotificationType {
   NEW_MARK                           @map("NEW_MARK")
   /// A message about a new feedback form you have received.
   NEW_FEEDBACK_FORM                  @map("NEW_FEEDBACK_FORM")
+  /// A new sidequest has been published.
+  NEW_SIDEQUEST                      @map("NEW_SIDEQUEST")
+  /// A new sidequest request has been submitted.
+  NEW_SIDEQUEST_REQUEST              @map("NEW_SIDEQUEST_REQUEST")
+  /// A sidequest request has been reviewed.
+  SIDEQUEST_REQUEST_REVIEWED         @map("SIDEQUEST_REQUEST_REVIEWED")
 }
 
 enum NotificationStatus {
@@ -1133,4 +1165,202 @@ model UserFlagLink {
   @@index([userId])
   @@index([userFlagId])
   @@map("user_flag_link")
+}
+
+enum PaymentAttemptStatus {
+  CREATED
+  CHECKOUT_OPEN
+  PROCESSING
+  AUTHORIZED
+  CAPTURED
+  CANCELLED
+  EXPIRED
+  FAILED
+
+  @@map("payment_attempt_status")
+}
+
+enum PaymentCaptureMode {
+  AUTOMATIC
+  MANUAL
+
+  @@map("payment_capture_mode")
+}
+
+enum PaymentRefundStatus {
+  REQUESTED
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+
+  @@map("payment_refund_status")
+}
+
+model Payment {
+  id           String    @id @default(uuid())
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Description of what is being paid for
+  description  String
+  /// Immutable amount in øre (NOK). 15000 means NOK150.00. Currency is hard-coded to NOK.
+  amountOre    Int       @map("amount_ore")
+  /// Non-null means the payment requirement is waived (the user doesn't have to pay for the payment).
+  // Waiving is commonly used for event organizers so they don't have to pay for their own seats.
+  waivedAt     DateTime? @map("waived_at") @db.Timestamptz(3)
+  waiverReason String?   @map("waiver_reason")
+
+  userId         String  @map("user_id")
+  waivedByUserId String? @map("waived_by_user_id")
+  user           User    @relation("PaymentUser", fields: [userId], references: [id], onDelete: Restrict)
+  waivedBy       User?   @relation("PaymentWaivedBy", fields: [waivedByUserId], references: [id], onDelete: SetNull)
+
+  // Context for event payments:
+  // If we have payments for other purposes in the future, they can omit this
+  attendeeId String?   @unique @map("attendee_id")
+  eventId    String?   @map("event_id")
+  attendee   Attendee? @relation(fields: [attendeeId], references: [id], onDelete: SetNull)
+  event      Event?    @relation(fields: [eventId], references: [id], onDelete: Restrict)
+
+  attempts PaymentAttempt[]
+
+  @@index([userId])
+  @@index([waivedByUserId])
+  @@index([eventId])
+  @@map("payment")
+}
+
+model PaymentAttempt {
+  id                      String               @id @default(uuid())
+  createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime             @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  // Zero identifies an attempt imported from the previous payment system.
+  attemptNumber           Int                  @map("attempt_number")
+  status                  PaymentAttemptStatus @default(CREATED)
+  captureMode             PaymentCaptureMode   @map("capture_mode")
+  stripeCheckoutSessionId String?              @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId   String?              @unique @map("stripe_payment_intent_id")
+  /// Snapshotted before calling Stripe so retries use the same checkout request.
+  checkoutReturnUrl       String?              @map("checkout_return_url")
+  checkoutCustomerEmail   String?              @map("checkout_customer_email")
+  checkoutRequestedAt     DateTime?            @map("checkout_requested_at") @db.Timestamptz(3)
+  checkoutUrl             String?              @map("checkout_url")
+  checkoutExpiresAt       DateTime?            @map("checkout_expires_at") @db.Timestamptz(3)
+  captureScheduledAt      DateTime?            @map("capture_scheduled_at") @db.Timestamptz(3)
+  authorizationExpiresAt  DateTime?            @map("authorization_expires_at") @db.Timestamptz(3)
+  authorizedAt            DateTime?            @map("authorized_at") @db.Timestamptz(3)
+  capturedAt              DateTime?            @map("captured_at") @db.Timestamptz(3)
+  capturedAmountOre       Int                  @default(0) @map("captured_amount_ore")
+  lastSyncedAt            DateTime?            @map("last_synced_at") @db.Timestamptz(3)
+
+  paymentId String  @map("payment_id")
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  refunds PaymentRefund[]
+
+  @@unique([paymentId, attemptNumber])
+  @@unique([paymentId], map: "payment_attempt_one_active", where: raw("status = ANY (ARRAY['CREATED'::payment_attempt_status, 'CHECKOUT_OPEN'::payment_attempt_status, 'PROCESSING'::payment_attempt_status, 'AUTHORIZED'::payment_attempt_status])"))
+  @@index([paymentId, createdAt])
+  @@index([status, captureScheduledAt])
+  @@map("payment_attempt")
+}
+
+model PaymentRefund {
+  id             String              @id @default(uuid())
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Zero identifies an imported refund; null identifies an external Stripe refund.
+  refundNumber   Int?                @map("refund_number")
+  stripeRefundId String?             @unique @map("stripe_refund_id")
+  /// Amount to return in øre (NOK). 15000 means NOK150.00. Currency is hard-coded to NOK.
+  amountOre      Int                 @map("amount_ore")
+  status         PaymentRefundStatus @default(REQUESTED)
+  reason         String?
+
+  paymentAttemptId  String         @map("payment_attempt_id")
+  /// The user who requested the refund. Null when no requesting user is known (the refund was initiated in the Stripe
+  /// Dashboard), or if that user was deleted.
+  requestedByUserId String?        @map("requested_by_user_id")
+  paymentAttempt    PaymentAttempt @relation(fields: [paymentAttemptId], references: [id], onDelete: Restrict)
+  requestedBy       User?          @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([paymentAttemptId, refundNumber])
+  @@unique([paymentAttemptId], map: "payment_refund_one_pending", where: raw("status = ANY (ARRAY['REQUESTED'::payment_refund_status, 'PENDING'::payment_refund_status])"))
+  @@index([paymentAttemptId, createdAt])
+  @@index([requestedByUserId])
+  @@map("payment_refund")
+}
+
+enum SidequestStatus {
+  IN_REVIEW @map("IN_REVIEW")
+  PUBLISHED @map("PUBLISHED")
+  REJECTED  @map("REJECTED")
+  DELETED   @map("DELETED")
+
+  @@map("sidequest_status")
+}
+
+model Sidequest {
+  id                 String          @id @default(uuid())
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  title              String
+  description        String
+  start              DateTime        @db.Timestamptz(3)
+  end                DateTime        @db.Timestamptz(3)
+  registerEnd        DateTime?       @map("register_end") @db.Timestamptz(3)
+  deregisterDeadline DateTime?       @map("deregister_deadline") @db.Timestamptz(3)
+  imageUrl           String?         @map("image_url")
+  locationTitle      String?         @map("location_title")
+  locationAddress    String?         @map("location_address")
+  locationLink       String?         @map("location_link")
+  capacity           Int?
+  status             SidequestStatus @map("status")
+
+  interestGroupId String @map("interest_group_id")
+  interestGroup   Group  @relation(fields: [interestGroupId], references: [slug], onDelete: Cascade)
+
+  registrations SidequestRegistration[]
+  request       SidequestRequest?
+
+  @@index([interestGroupId])
+  @@map("sidequest")
+}
+
+model SidequestRegistration {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sidequestId String    @map("sidequest_id")
+  sidequest   Sidequest @relation(fields: [sidequestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sidequestId])
+  @@index([sidequestId])
+  @@map("sidequest_registration")
+}
+
+model SidequestRequest {
+  id                    String    @id @default(uuid())
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  description           String?
+  /// The amount of money requested for the Sidequest in NOK.
+  requestedAmountNok    Int?      @map("requested_amount_nok")
+  expectedAttendeeCount Int?      @map("expected_attendee_count")
+  approvedAmountNok     Int?      @map("approved_amount_nok")
+  reviewedAt            DateTime? @map("reviewed_at") @db.Timestamptz(3)
+  reviewNote            String?   @map("review_note")
+
+  sidequestId   String    @unique @map("sidequest_id")
+  requestedById String    @map("requested_by_id")
+  reviewedById  String?   @map("reviewed_by_id")
+  sidequest     Sidequest @relation(fields: [sidequestId], references: [id], onDelete: Cascade)
+  requestedBy   User      @relation(fields: [requestedById], references: [id])
+  reviewedBy    User?     @relation("SidequestRequestReviewer", fields: [reviewedById], references: [id])
+
+  @@index([requestedById])
+  @@index([reviewedById])
+  @@map("sidequest_request")
 }

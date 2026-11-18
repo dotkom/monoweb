@@ -1,6 +1,6 @@
 "use client"
 
-import * as Sentry from "@sentry/nextjs"
+import { reportError } from "@dash0/sdk-web"
 import NextError from "next/error"
 import { useEffect } from "react"
 
@@ -10,7 +10,7 @@ export type GlobalErrorProps = {
 
 export default function GlobalError({ error }: GlobalErrorProps) {
   useEffect(() => {
-    Sentry.captureException(error)
+    reportError(error)
   }, [error])
 
   return (

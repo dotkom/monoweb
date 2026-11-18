@@ -1,24 +1,30 @@
-import * as Sentry from "@sentry/nextjs"
+import { init } from "@dash0/sdk-web"
 import "core-js/stable"
 
-if (process.env.NEXT_PUBLIC_SENTRY_DSN !== undefined) {
-  console.info("Initializing Sentry for client-side Next.js...")
-  Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    // SENTRY_RELEASE and DOPPLER_ENVIRONMENT are embedded into the Dockerfile
-    release: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
-    environment: process.env.NEXT_PUBLIC_DOPPLER_ENVIRONMENT,
-    tracesSampleRate: 1,
-    sendDefaultPii: false,
-    debug: false,
-    skipOpenTelemetrySetup: true,
-    integrations: [
-      Sentry.thirdPartyErrorFilterIntegration({
-        filterKeys: ["monoweb-web"],
-        behaviour: "drop-error-if-exclusively-contains-third-party-frames",
-      }),
-    ],
+const endpointUrl = process.env.NEXT_PUBLIC_DASH0_ENDPOINT
+const authToken = process.env.NEXT_PUBLIC_DASH0_AUTH_TOKEN
+const dataset = process.env.NEXT_PUBLIC_DASH0_DATASET
+const rpcHost = process.env.NEXT_PUBLIC_RPC_HOST
+const environment = process.env.NEXT_PUBLIC_DOPPLER_ENVIRONMENT
+
+if (
+  endpointUrl !== undefined &&
+  endpointUrl !== "" &&
+  authToken !== undefined &&
+  authToken !== "" &&
+  dataset !== undefined &&
+  dataset !== "" &&
+  rpcHost !== undefined &&
+  rpcHost !== ""
+) {
+  init({
+    serviceName: "monoweb-web",
+    environment,
+    endpoint: {
+      url: endpointUrl,
+      authToken,
+      dataset,
+    },
+    propagators: [{ type: "traceparent", match: [new RegExp(rpcHost)] }],
   })
 }
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

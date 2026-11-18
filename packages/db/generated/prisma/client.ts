@@ -77,6 +77,11 @@ export type GroupMembershipRole = Prisma.GroupMembershipRoleModel
  */
 export type GroupRole = Prisma.GroupRoleModel
 /**
+ * Model InterestGroupComment
+ * 
+ */
+export type InterestGroupComment = Prisma.InterestGroupCommentModel
+/**
  * Model Attendance
  * 
  */
@@ -261,3 +266,33 @@ export type UserFlag = Prisma.UserFlagModel
  * 
  */
 export type UserFlagLink = Prisma.UserFlagLinkModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
+ * Model PaymentAttempt
+ * 
+ */
+export type PaymentAttempt = Prisma.PaymentAttemptModel
+/**
+ * Model PaymentRefund
+ * 
+ */
+export type PaymentRefund = Prisma.PaymentRefundModel
+/**
+ * Model Sidequest
+ * 
+ */
+export type Sidequest = Prisma.SidequestModel
+/**
+ * Model SidequestRegistration
+ * 
+ */
+export type SidequestRegistration = Prisma.SidequestRegistrationModel
+/**
+ * Model SidequestRequest
+ * 
+ */
+export type SidequestRequest = Prisma.SidequestRequestModel

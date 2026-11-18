@@ -9,7 +9,6 @@ import { createTrpcContext, procedure, t } from "./trpc"
 const telemetry = vi.hoisted(() => ({
   warn: vi.fn(),
   error: vi.fn(),
-  captureException: vi.fn(),
   span: {
     setAttribute: vi.fn(),
     setStatus: vi.fn(),
@@ -23,8 +22,6 @@ vi.mock("@dotkomonline/logger", () => ({
   EXPORT_SPAN_ON_ERROR_ATTRIBUTE: "app.trace.export_on_error",
   getLogger: () => telemetry,
 }))
-
-vi.mock("@sentry/node", () => ({ captureException: telemetry.captureException }))
 
 vi.mock("@opentelemetry/api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@opentelemetry/api")>()
@@ -66,7 +63,6 @@ describe("tRPC error reporting", () => {
       "UNAUTHORIZED"
     )
     expect(telemetry.error).not.toHaveBeenCalled()
-    expect(telemetry.captureException).not.toHaveBeenCalled()
     expect(telemetry.span.recordException).not.toHaveBeenCalled()
     expect(telemetry.span.setStatus).not.toHaveBeenCalled()
   })
@@ -94,7 +90,6 @@ describe("tRPC error reporting", () => {
       code
     )
     expect(telemetry.error).not.toHaveBeenCalled()
-    expect(telemetry.captureException).not.toHaveBeenCalled()
     expect(telemetry.span.recordException).not.toHaveBeenCalled()
     expect(telemetry.span.setStatus).not.toHaveBeenCalled()
   })
@@ -102,7 +97,7 @@ describe("tRPC error reporting", () => {
   it.each([
     new InternalServerError("Database unavailable"),
     new Error("Unexpected failure"),
-  ])("keeps server failures in error logs and Sentry", async (error) => {
+  ])("keeps server failures in error logs and traces", async (error) => {
     const router = t.router({
       fail: procedure.query(() => {
         throw error
@@ -118,9 +113,6 @@ describe("tRPC error reporting", () => {
       "fail",
       "query",
       expect.any(String),
-      expect.objectContaining({ code: "INTERNAL_SERVER_ERROR", cause: error })
-    )
-    expect(telemetry.captureException).toHaveBeenCalledWith(
       expect.objectContaining({ code: "INTERNAL_SERVER_ERROR", cause: error })
     )
     expect(telemetry.span.recordException).toHaveBeenCalledWith(

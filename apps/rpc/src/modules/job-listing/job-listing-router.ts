@@ -1,5 +1,4 @@
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
@@ -13,8 +12,6 @@ import {
   JobListingWriteSchema,
 } from "./job-listing"
 
-export type CreateJobListingInput = inferProcedureInput<typeof createJobListingProcedure>
-export type CreateJobListingOutput = inferProcedureOutput<typeof createJobListingProcedure>
 const createJobListingProcedure = procedure
   .input(
     z.object({
@@ -40,8 +37,6 @@ const createJobListingProcedure = procedure
     return createdJobListing
   })
 
-export type EditJobListingInput = inferProcedureInput<typeof editJobListingProcedure>
-export type EditJobListingOutput = inferProcedureOutput<typeof editJobListingProcedure>
 const editJobListingProcedure = procedure
   .input(
     z.object({
@@ -63,8 +58,6 @@ const editJobListingProcedure = procedure
     return updatedJobListing
   })
 
-export type FindManyJobListingsInput = inferProcedureInput<typeof findManyJobListingsProcedure>
-export type FindManyJobListingsOutput = inferProcedureOutput<typeof findManyJobListingsProcedure>
 const findManyJobListingsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: JobListingFilterQuerySchema.optional() }).prefault({}))
   .query(async ({ input, ctx }) => {
@@ -77,26 +70,18 @@ const findManyJobListingsProcedure = procedure
     }
   })
 
-export type ActiveJobListingsInput = inferProcedureInput<typeof activeJobListingsProcedure>
-export type ActiveJobListingsOutput = inferProcedureOutput<typeof activeJobListingsProcedure>
 const activeJobListingsProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
   return ctx.jobListingService.findActiveJobListings(ctx.prisma, input)
 })
 
-export type GetJobListingInput = inferProcedureInput<typeof getJobListingProcedure>
-export type GetJobListingOutput = inferProcedureOutput<typeof getJobListingProcedure>
 const getJobListingProcedure = procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => {
   return ctx.jobListingService.getById(ctx.prisma, input)
 })
 
-export type FindJobListingInput = inferProcedureInput<typeof findJobListingProcedure>
-export type FindJobListingOutput = inferProcedureOutput<typeof findJobListingProcedure>
 const findJobListingProcedure = procedure.input(JobListingSchema.shape.id).query(async ({ input, ctx }) => {
   return ctx.jobListingService.findById(ctx.prisma, input)
 })
 
-export type GetJobListingLocationsInput = inferProcedureInput<typeof getJobListingLocationsProcedure>
-export type GetJobListingLocationsOutput = inferProcedureOutput<typeof getJobListingLocationsProcedure>
 const getJobListingLocationsProcedure = procedure.query(async ({ ctx }) => {
   return ctx.jobListingService.findJobListingLocations(ctx.prisma)
 })

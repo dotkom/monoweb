@@ -150,6 +150,7 @@ export type EmploymentType = (typeof EmploymentType)[keyof typeof EmploymentType
 
 
 export const TaskType = {
+  OPEN_PAYMENT_CHECKOUT: 'OPEN_PAYMENT_CHECKOUT',
   RESERVE_ATTENDEE: 'RESERVE_ATTENDEE',
   CHARGE_ATTENDEE: 'CHARGE_ATTENDEE',
   MERGE_ATTENDANCE_POOLS: 'MERGE_ATTENDANCE_POOLS',
@@ -210,6 +211,7 @@ export const NotificationPayloadType = {
   USER: 'USER',
   OFFLINE: 'OFFLINE',
   JOB_LISTING: 'JOB_LISTING',
+  SIDEQUEST: 'SIDEQUEST',
   NONE: 'NONE'
 } as const
 
@@ -233,7 +235,10 @@ export const NotificationType = {
   NEW_JOB_LISTING: 'NEW_JOB_LISTING',
   NEW_OFFLINE: 'NEW_OFFLINE',
   NEW_MARK: 'NEW_MARK',
-  NEW_FEEDBACK_FORM: 'NEW_FEEDBACK_FORM'
+  NEW_FEEDBACK_FORM: 'NEW_FEEDBACK_FORM',
+  NEW_SIDEQUEST: 'NEW_SIDEQUEST',
+  NEW_SIDEQUEST_REQUEST: 'NEW_SIDEQUEST_REQUEST',
+  SIDEQUEST_REQUEST_REVIEWED: 'SIDEQUEST_REQUEST_REVIEWED'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -262,3 +267,46 @@ export const ContestResultOrder = {
 } as const
 
 export type ContestResultOrder = (typeof ContestResultOrder)[keyof typeof ContestResultOrder]
+
+
+export const PaymentAttemptStatus = {
+  CREATED: 'CREATED',
+  CHECKOUT_OPEN: 'CHECKOUT_OPEN',
+  PROCESSING: 'PROCESSING',
+  AUTHORIZED: 'AUTHORIZED',
+  CAPTURED: 'CAPTURED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED',
+  FAILED: 'FAILED'
+} as const
+
+export type PaymentAttemptStatus = (typeof PaymentAttemptStatus)[keyof typeof PaymentAttemptStatus]
+
+
+export const PaymentCaptureMode = {
+  AUTOMATIC: 'AUTOMATIC',
+  MANUAL: 'MANUAL'
+} as const
+
+export type PaymentCaptureMode = (typeof PaymentCaptureMode)[keyof typeof PaymentCaptureMode]
+
+
+export const PaymentRefundStatus = {
+  REQUESTED: 'REQUESTED',
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PaymentRefundStatus = (typeof PaymentRefundStatus)[keyof typeof PaymentRefundStatus]
+
+
+export const SidequestStatus = {
+  IN_REVIEW: 'IN_REVIEW',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  DELETED: 'DELETED'
+} as const
+
+export type SidequestStatus = (typeof SidequestStatus)[keyof typeof SidequestStatus]

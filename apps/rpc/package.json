@@ -60,6 +60,10 @@
       "import": "./src/modules/event/event.ts",
       "types": "./src/modules/event/event.ts"
     },
+    "./payment": {
+      "import": "./src/modules/payment/payment.ts",
+      "types": "./src/modules/payment/payment.ts"
+    },
     "./attendance": {
       "import": "./src/modules/event/attendance.ts",
       "types": "./src/modules/event/attendance.ts"
@@ -71,6 +75,10 @@
     "./audit-log": {
       "import": "./src/modules/audit-log/audit-log.ts",
       "types": "./src/modules/audit-log/audit-log.ts"
+    },
+    "./sidequest": {
+      "import": "./src/modules/sidequest/sidequest.ts",
+      "types": "./src/modules/sidequest/sidequest.ts"
     },
     "./permissions": {
       "import": "./src/permissions/principal.ts",
@@ -135,6 +143,10 @@
     "./workspace-permissions": {
       "import": "./src/permissions/workspace-permissions.ts",
       "types": "./src/permissions/workspace-permissions.ts"
+    },
+    "./sidequest-permissions": {
+      "import": "./src/permissions/sidequest-permissions.ts",
+      "types": "./src/permissions/sidequest-permissions.ts"
     }
   },
   "scripts": {
@@ -150,12 +162,12 @@
     "test:it": "vitest run -c ./vitest-integration.config.ts",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
-    "receive-stripe-webhooks": "stripe listen --forward-to localhost:4444/webhook/stripe"
+    "stripe:listen": "stripe listen --events checkout.session.completed,checkout.session.expired,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,payment_intent.amount_capturable_updated,payment_intent.succeeded,payment_intent.payment_failed,payment_intent.canceled,charge.refunded,refund.created,refund.updated,refund.failed --forward-to localhost:4444/webhook/stripe"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",
     "@aws-sdk/client-scheduler": "^3.844.0",
-    "@aws-sdk/client-ses": "^3.879.0",
+    "@aws-sdk/client-sesv2": "^3.1162.0",
     "@aws-sdk/client-sqs": "^3.883.0",
     "@aws-sdk/client-sts": "^3.821.0",
     "@aws-sdk/s3-presigned-post": "^3.821.0",
@@ -168,7 +180,6 @@
     "@googleapis/admin": "^30.3.0",
     "@googleapis/sheets": "^13.0.1",
     "@opentelemetry/api": "^1.10.0",
-    "@sentry/node": "^10.52.0",
     "@trpc/server": "11.8.1",
     "auth0": "^4.23.1",
     "commander": "^14.0.0",

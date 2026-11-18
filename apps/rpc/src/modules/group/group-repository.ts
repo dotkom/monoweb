@@ -1,6 +1,9 @@
 import type { DBHandle, GroupType, Prisma } from "@dotkomonline/db"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { differenceInMilliseconds } from "date-fns"
+import z from "zod"
+import { parseOrReport } from "../../invariant"
+import { type UserId, normalizeDbUser } from "../user/user"
 import {
   type Group,
   type GroupByMemberFilter,
@@ -18,10 +21,11 @@ import {
   type GroupRoleWrite,
   GroupSchema,
   type GroupWrite,
+  type InterestGroupComment,
+  type InterestGroupCommentId,
+  InterestGroupCommentSchema,
+  type InterestGroupCommentWrite,
 } from "./group"
-import { type UserId, normalizeDbUser } from "../user/user"
-import z from "zod"
-import { parseOrReport } from "../../invariant"
 
 const GROUP_TYPE_SORT_ORDER = {
   COMMITTEE: 0,
@@ -43,9 +47,10 @@ export interface GroupRepository {
   findManyByType(handle: DBHandle, groupType: GroupType): Promise<Group[]>
   findManyByUserId(handle: DBHandle, userId: UserId, filter?: GroupByMemberFilter): Promise<Group[]>
 
-  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
   findGroupMembersByRoleType(handle: DBHandle, groupSlug: GroupId, roleType: GroupRoleType): Promise<GroupMember[]>
 
+  findGroupMembershipById(handle: DBHandle, groupMembershipId: GroupMembershipId): Promise<GroupMembership | null>
+  findActiveGroupMembership(handle: DBHandle, groupSlug: GroupId, userId: UserId): Promise<GroupMembership | null>
   findManyGroupMemberships(
     handle: DBHandle,
     groupSlug: GroupId | null,
@@ -71,6 +76,18 @@ export interface GroupRepository {
     groupRoleData: Partial<GroupRoleWrite>
   ): Promise<GroupRole>
   deleteGroupRole(handle: DBHandle, groupRoleId: GroupRoleId): Promise<void>
+
+  createInterestGroupComment(
+    handle: DBHandle,
+    interestGroupId: GroupId,
+    data: InterestGroupCommentWrite,
+    authorId: UserId
+  ): Promise<InterestGroupComment>
+  findManyInterestGroupComments(handle: DBHandle, interestGroupId: GroupId): Promise<InterestGroupComment[]>
+  findInterestGroupCommentById(
+    handle: DBHandle,
+    commentId: InterestGroupCommentId
+  ): Promise<InterestGroupComment | null>
 }
 
 export function getGroupRepository(): GroupRepository {
@@ -292,6 +309,32 @@ export function getGroupRepository(): GroupRepository {
         : null
     },
 
+    async findActiveGroupMembership(handle, groupSlug, userId) {
+      const membership = await handle.groupMembership.findFirst({
+        where: {
+          groupId: groupSlug,
+          userId,
+          end: null,
+        },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      })
+
+      if (membership === null) {
+        return null
+      }
+
+      return parseOrReport(GroupMembershipSchema, {
+        ...membership,
+        roles: membership.roles.map(({ role }) => role),
+      })
+    },
+
     async findGroupMembersByRoleType(handle, groupSlug, roleType) {
       const users = await handle.user.findMany({
         where: {
@@ -405,6 +448,43 @@ export function getGroupRepository(): GroupRepository {
         where: { id: groupRoleId },
       })
     },
+
+    async createInterestGroupComment(handle, interestGroupId, data, authorId) {
+      const comment = await handle.interestGroupComment.create({
+        data: {
+          ...data,
+          interestGroupId,
+          authorId,
+        },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema, comment)
+    },
+
+    async findManyInterestGroupComments(handle, interestGroupId) {
+      const comments = await handle.interestGroupComment.findMany({
+        where: { interestGroupId },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema.array(), comments)
+    },
+
+    async findInterestGroupCommentById(handle, commentId) {
+      const comment = await handle.interestGroupComment.findUnique({
+        where: { id: commentId },
+        include: {
+          ...COMMENT_QUERY_WITH_AUTHOR,
+        },
+      })
+
+      return parseOrReport(InterestGroupCommentSchema.nullable(), comment)
+    },
   }
 }
 
@@ -470,3 +550,14 @@ function getMembershipFilterForUser(userId: UserId, includeEmailOnlyMemberships:
     },
   } as const satisfies Prisma.GroupMembershipWhereInput
 }
+
+const COMMENT_QUERY_WITH_AUTHOR = {
+  author: {
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      imageUrl: true,
+    },
+  },
+} as const satisfies Prisma.InterestGroupCommentInclude
