@@ -77,10 +77,10 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
         4. Use the value of the Militech Crusher shotgun
            (as it seems the be the only fucking non-iconic gun that appears in any TTRPG game and the video game),
            as a price anchor to calculate 2020->2077 in-universe inflation. The gun (tier 1*) costs [450 €$] in Cyberpunk 2020,
-           which increases to a whopping [7700 €$]**, giving an inflation of [[1711.11%]] between 2020 and 2077
+           which increases to a whopping [7700 €$]**, giving an inflation of [[1611.11%]] between 2020 and 2077
            * Tier 1 was chosen as the TTRPG does not have weapon tiers, and it felt the most fitting as you can buy it
              right after creating a fresh character. In addition, a tier 5 crusher costs about [[160,000]] €$, which would
-             equate to an inflation rate of [[35 555.55%]], which seemed like too much
+             equate to an inflation rate of [[35 455.56%]], which seemed like too much
            ** The 7700 number was guesstimated. After visiting EVERY arms dealer on a fresh save file, not a
               SINGLE one sold a crusher, but I had one in my inventory, which sold for [770 €$], and comparing the
               sale prices of other weapons in my inventory and the purchace prices of weapons they DID have available,
@@ -90,7 +90,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
            TTRPGs and videogame, and searching for a vendor who would sell a crusher (apparently an impossible task), and it is currently 5:30AM
         7. Wake up, realize your math is very off and fix it, then shed a single tear
       */
-      return `${(((value * (1 / 1.23) * 0.1) / 2) * 17.11).toFixed(2)} €$`
+      return `${(((value * (1 / 1.23) * 0.1) / 2) * 16.11).toFixed(2)} €$`
     case "COPIES_OF_UNDERTALE":
       return `${(value / 70).toFixed(2)} kopier av Undertale` // Undertale costs 70kr
     case "PK":
@@ -147,7 +147,7 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
     case "COC_GEMS":
       return ["(pris / 59) * 80", "80 gems koster 59 kr"]
     case "OPUS_5.5_TOKENS":
-      return ["(pris / 5 USD i kr) * 1 million", "1 million tokes koster 5 dollar"]
+      return ["(pris / 5 USD i kr) * 1 million", "1 million tokens koster 5 dollar"]
     case "FIFA_POINTS":
       return ["(pris / 279) * 2000", "2000 fifa points koster 279 kr"]
     case "CS_KEYS":
@@ -155,7 +155,7 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
     case "RP":
       return ["(pris / 201,93) * 2540", "Et gavekort med 2540 RP koster 201,93 kr"]
     case "GTA_DOLLARS":
-      return ["(pris / 39) * 200 000", "Et gavekort med 200 000 dollat koster 39 kr"]
+      return ["(pris / 39) * 200 000", "Et gavekort med 200 000 dollar koster 39 kr"]
     case "EDDIES":
       return [
         "((((pris * (1 / 1,23)) / 10) / 2) * 17,11",
@@ -182,7 +182,7 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
         'Vi henter spotprisen live i regionen NO3 fra <a href="https://www.hvakosterstrommen.no/strompris-api" target="_blank">hvakosterstrommen.no</a>',
       ]
     case "BEERS_AT_CIRCUS":
-      return ["pris / 60", "En øl på Circus koster 90 kr"]
+      return ["pris / 60", "En øl på Circus koster 60 kr"]
     case "ATB_MONTHLY_TICKETS":
       return ["pris / 265", "Et månedskort koster 265 kr for studenter"]
     case "OW_BUCKS":
