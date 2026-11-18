@@ -1,5 +1,4 @@
 import { formatEmailSubject } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
 import { emails } from "../email/email-template"
@@ -19,9 +18,6 @@ const InterestFormSchema = z.object({
   requestsFemalesInTechEvent: z.boolean().default(false),
   comment: z.string().default("Ingen kommentar"),
 })
-
-export type SubmitInterestInput = inferProcedureInput<typeof submitInterestProcedure>
-export type SubmitInterestOutput = inferProcedureOutput<typeof submitInterestProcedure>
 
 const submitInterestProcedure = procedure.input(InterestFormSchema).mutation(async ({ input, ctx }) => {
   const BEDKOM_EMAIL = "bedkom@online.ntnu.no"

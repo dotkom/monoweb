@@ -1,5 +1,4 @@
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { FailedPreconditionError } from "../../error"
@@ -178,8 +177,6 @@ const PaginatedNotificationsSchema = z.object({
   nextCursor: NotificationManagementSchema.shape.id.optional(),
 })
 
-export type GetMyNotificationsInput = inferProcedureInput<typeof getMyNotificationsProcedure>
-export type GetMyNotificationsOutput = inferProcedureOutput<typeof getMyNotificationsProcedure>
 const getMyNotificationsProcedure = procedureTraceErrorsOnly
   .input(PaginateInputSchema)
   .output(
@@ -198,8 +195,6 @@ const getMyNotificationsProcedure = procedureTraceErrorsOnly
     }
   })
 
-export type GetMyUnreadCountInput = inferProcedureInput<typeof getMyUnreadCountProcedure>
-export type GetMyUnreadCountOutput = inferProcedureOutput<typeof getMyUnreadCountProcedure>
 const getMyUnreadCountProcedure = procedureTraceErrorsOnly
   .output(z.number().int().nonnegative())
   .use(withAuthentication())
@@ -207,8 +202,6 @@ const getMyUnreadCountProcedure = procedureTraceErrorsOnly
     return await ctx.notificationService.countUnreadForUser(ctx.prisma, ctx.principal.subject)
   })
 
-export type MarkAsReadInput = inferProcedureInput<typeof markAsReadProcedure>
-export type MarkAsReadOutput = inferProcedureOutput<typeof markAsReadProcedure>
 const markAsReadProcedure = procedure
   .input(
     z.object({
@@ -222,8 +215,6 @@ const markAsReadProcedure = procedure
     return await ctx.notificationService.markAsRead(ctx.handle, input.notificationId, ctx.principal.subject)
   })
 
-export type MarkAllAsReadInput = inferProcedureInput<typeof markAllAsReadProcedure>
-export type MarkAllAsReadOutput = inferProcedureOutput<typeof markAllAsReadProcedure>
 const markAllAsReadProcedure = procedure
   .output(z.number().int().nonnegative())
   .use(withAuthentication())
@@ -232,14 +223,10 @@ const markAllAsReadProcedure = procedure
     return await ctx.notificationService.markAllAsRead(ctx.handle, ctx.principal.subject)
   })
 
-export type OnNewNotificationInput = inferProcedureInput<typeof onNewNotificationProcedure>
-export type OnNewNotificationOutput = inferProcedureOutput<typeof onNewNotificationProcedure>
 const onNewNotificationProcedure = procedure.use(withAuthentication()).subscription(async function* ({ ctx, signal }) {
   yield* ctx.notificationService.subscribeToNewNotifications(ctx.principal.subject, signal)
 })
 
-export type FindNotificationInput = inferProcedureInput<typeof findNotificationProcedure>
-export type FindNotificationOutput = inferProcedureOutput<typeof findNotificationProcedure>
 const findNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema.nullable())
@@ -253,8 +240,6 @@ const findNotificationProcedure = procedure
     return await ctx.notificationService.findById(ctx.prisma, input)
   })
 
-export type GetNotificationInput = inferProcedureInput<typeof getNotificationProcedure>
-export type GetNotificationOutput = inferProcedureOutput<typeof getNotificationProcedure>
 const getNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationManagementSchema)
@@ -268,8 +253,6 @@ const getNotificationProcedure = procedure
     return await ctx.notificationService.getById(ctx.prisma, input)
   })
 
-export type FindNotificationsInput = inferProcedureInput<typeof findNotificationsProcedure>
-export type FindNotificationsOutput = inferProcedureOutput<typeof findNotificationsProcedure>
 const findNotificationsProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
@@ -293,8 +276,6 @@ const findNotificationsProcedure = procedure
     }
   })
 
-export type PreviewRecipientSelectionInput = inferProcedureInput<typeof previewRecipientSelectionProcedure>
-export type PreviewRecipientSelectionOutput = inferProcedureOutput<typeof previewRecipientSelectionProcedure>
 const previewRecipientSelectionProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
@@ -330,8 +311,6 @@ const previewRecipientSelectionProcedure = procedure
     })
   })
 
-export type CreateNotificationDraftInput = inferProcedureInput<typeof createNotificationDraftProcedure>
-export type CreateNotificationDraftOutput = inferProcedureOutput<typeof createNotificationDraftProcedure>
 const createNotificationDraftProcedure = procedure
   .input(NotificationDraftCreateSchema)
   .output(NotificationManagementSchema)
@@ -448,8 +427,6 @@ const sendNotificationEmailProcedure = procedure
     await context.notificationService.sendEmail(context.prisma, notification)
   })
 
-export type EditNotificationInput = inferProcedureInput<typeof editNotificationProcedure>
-export type EditNotificationOutput = inferProcedureOutput<typeof editNotificationProcedure>
 const editNotificationProcedure = procedure
   .input(
     z.object({
@@ -481,8 +458,6 @@ const editNotificationProcedure = procedure
     return updatedNotification
   })
 
-export type DeleteNotificationInput = inferProcedureInput<typeof deleteNotificationProcedure>
-export type DeleteNotificationOutput = inferProcedureOutput<typeof deleteNotificationProcedure>
 const deleteNotificationProcedure = procedure
   .input(NotificationSchema.shape.id)
   .use(withAuthentication())
@@ -503,8 +478,6 @@ const deleteNotificationProcedure = procedure
     return true
   })
 
-export type FindRecipientsInput = inferProcedureInput<typeof findRecipientsProcedure>
-export type FindRecipientsOutput = inferProcedureOutput<typeof findRecipientsProcedure>
 const findRecipientsProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
@@ -536,8 +509,6 @@ const findRecipientsProcedure = procedure
     }
   })
 
-export type GetRecipientStatsInput = inferProcedureInput<typeof getRecipientStatsProcedure>
-export type GetRecipientStatsOutput = inferProcedureOutput<typeof getRecipientStatsProcedure>
 const getRecipientStatsProcedure = procedure
   .input(NotificationSchema.shape.id)
   .output(NotificationRecipientStatsSchema)
@@ -553,8 +524,6 @@ const getRecipientStatsProcedure = procedure
     return await ctx.notificationService.getRecipientStats(ctx.prisma, input)
   })
 
-export type AddRecipientsInput = inferProcedureInput<typeof addRecipientsProcedure>
-export type AddRecipientsOutput = inferProcedureOutput<typeof addRecipientsProcedure>
 const addRecipientsProcedure = procedure
   .input(
     z.object({
@@ -592,8 +561,6 @@ const addRecipientsProcedure = procedure
     return { addedCount }
   })
 
-export type RemoveRecipientsInput = inferProcedureInput<typeof removeRecipientsProcedure>
-export type RemoveRecipientsOutput = inferProcedureOutput<typeof removeRecipientsProcedure>
 const removeRecipientsProcedure = procedure
   .input(
     z.object({

@@ -1,5 +1,4 @@
 import { formatEmailSubject } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { procedure, t } from "../../trpc"
 import { emails } from "../email/email-template"
@@ -31,9 +30,6 @@ const InvoiceFormSchema = z.object({
   preferredDueDateLength: z.coerce.number().int().min(1).max(90).prefault(14),
   comment: z.string().default("Ingen kommentar"),
 })
-
-export type SubmitInvoiceInput = inferProcedureInput<typeof submitInvoiceProcedure>
-export type SubmitInvoiceOutput = inferProcedureOutput<typeof submitInvoiceProcedure>
 
 const submitInvoiceProcedure = procedure.input(InvoiceFormSchema).mutation(async ({ input, ctx }) => {
   const BEDKOM_EMAIL = "bedkom@online.ntnu.no"

@@ -1,6 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { permitIf } from "../../authorization"
 import { InvalidArgumentError, NotFoundError } from "../../error"
@@ -29,8 +28,6 @@ import {
   type SidequestSummaryWithRequest,
 } from "./sidequest"
 
-export type CreateSidequestInput = inferProcedureInput<typeof createSidequestProcedure>
-export type CreateSidequestOutput = inferProcedureOutput<typeof createSidequestProcedure>
 const createSidequestProcedure = procedure
   .input(
     z.object({
@@ -49,8 +46,6 @@ const createSidequestProcedure = procedure
     return buildSidequestView(sidequest, ctx.principal.subject)
   })
 
-export type UpdateSidequestInput = inferProcedureInput<typeof updateSidequestProcedure>
-export type UpdateSidequestOutput = inferProcedureOutput<typeof updateSidequestProcedure>
 const updateSidequestProcedure = procedure
   .input(
     z.object({
@@ -70,8 +65,6 @@ const updateSidequestProcedure = procedure
     return buildSidequestView(sidequest, ctx.principal.subject)
   })
 
-export type FindSidequestInput = inferProcedureInput<typeof findSidequestProcedure>
-export type FindSidequestOutput = inferProcedureOutput<typeof findSidequestProcedure>
 const findSidequestProcedure = procedure
   .input(
     z.object({
@@ -89,8 +82,6 @@ const findSidequestProcedure = procedure
     return buildSidequestView(sidequest, ctx.principal?.subject ?? null)
   })
 
-export type GetSidequestInput = inferProcedureInput<typeof getSidequestProcedure>
-export type GetSidequestOutput = inferProcedureOutput<typeof getSidequestProcedure>
 const getSidequestProcedure = procedure
   .input(
     z.object({
@@ -109,8 +100,6 @@ const getSidequestProcedure = procedure
     return buildSidequestView(sidequest, ctx.principal?.subject ?? null)
   })
 
-export type FindManySidequestsInput = inferProcedureInput<typeof findManySidequestsProcedure>
-export type FindManySidequestsOutput = inferProcedureOutput<typeof findManySidequestsProcedure>
 const findManySidequestsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: SidequestFilterQuerySchema.optional() }))
   .output(
@@ -136,8 +125,6 @@ const findManySidequestsProcedure = procedure
     }
   })
 
-export type RegisterForSidequestInput = inferProcedureInput<typeof registerForSidequestProcedure>
-export type RegisterForSidequestOutput = inferProcedureOutput<typeof registerForSidequestProcedure>
 const registerForSidequestProcedure = procedure
   .input(
     z.object({
@@ -165,8 +152,6 @@ const registerForSidequestProcedure = procedure
     return createdRegistration
   })
 
-export type DeregisterFromSidequestInput = inferProcedureInput<typeof deregisterFromSidequestProcedure>
-export type DeregisterFromSidequestOutput = inferProcedureOutput<typeof deregisterFromSidequestProcedure>
 const deregisterFromSidequestProcedure = procedure
   .input(
     z.object({
@@ -192,8 +177,6 @@ const deregisterFromSidequestProcedure = procedure
     )
   })
 
-export type FindSidequestRegistrationsInput = inferProcedureInput<typeof findSidequestRegistrationsProcedure>
-export type FindSidequestRegistrationsOutput = inferProcedureOutput<typeof findSidequestRegistrationsProcedure>
 const findSidequestRegistrationsProcedure = procedure
   .input(
     z.object({
@@ -210,8 +193,6 @@ const findSidequestRegistrationsProcedure = procedure
     return ctx.sidequestService.findRegistrations(ctx.handle, input.sidequestId)
   })
 
-export type CreateSidequestFileUploadInput = inferProcedureInput<typeof createSidequestFileUploadProcedure>
-export type CreateSidequestFileUploadOutput = inferProcedureOutput<typeof createSidequestFileUploadProcedure>
 const createSidequestFileUploadProcedure = procedure
   .input(
     z.object({
@@ -246,8 +227,6 @@ const createSidequestFileUploadProcedure = procedure
     return ctx.sidequestService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
-export type CreateSidequestRequestInput = inferProcedureInput<typeof createSidequestRequestProcedure>
-export type CreateSidequestRequestOutput = inferProcedureOutput<typeof createSidequestRequestProcedure>
 const createSidequestRequestProcedure = procedure
   .input(
     z.object({
@@ -288,8 +267,6 @@ const createSidequestRequestProcedure = procedure
     return stripReviewerIdentity(sidequestRequest)
   })
 
-export type ReviewSidequestRequestInput = inferProcedureInput<typeof reviewSidequestRequestProcedure>
-export type ReviewSidequestRequestOutput = inferProcedureOutput<typeof reviewSidequestRequestProcedure>
 const reviewSidequestRequestProcedure = procedure
   .input(
     z.object({
@@ -317,8 +294,6 @@ const reviewSidequestRequestProcedure = procedure
     return sidequestRequest
   })
 
-export type GetSidequestByIdWithRequestInput = inferProcedureInput<typeof getSidequestByIdWithRequestProcedure>
-export type GetSidequestByIdWithRequestOutput = inferProcedureOutput<typeof getSidequestByIdWithRequestProcedure>
 const getSidequestByIdWithRequestProcedure = procedure
   .input(
     z.object({
@@ -352,8 +327,6 @@ const getSidequestByIdWithRequestProcedure = procedure
     return stripReviewerIdentity(sidequest)
   })
 
-export type FindManySidequestsWithRequestInput = inferProcedureInput<typeof findManySidequestsWithRequestProcedure>
-export type FindManySidequestsWithRequestOutput = inferProcedureOutput<typeof findManySidequestsWithRequestProcedure>
 const findManySidequestsWithRequestProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({

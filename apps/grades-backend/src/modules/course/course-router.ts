@@ -1,10 +1,9 @@
 import { getCurrentUTC } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import type { inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { procedure, t } from "../../trpc"
 import { CourseFilterQuerySchema, type Semester } from "./course-types"
 
-export type FindCoursesInput = inferProcedureInput<typeof findCoursesProcedure>
 export type FindCoursesOutput = inferProcedureOutput<typeof findCoursesProcedure>
 const findCoursesProcedure = procedure
   .input(
@@ -32,35 +31,25 @@ const findCoursesProcedure = procedure
     }
   })
 
-export type FindCourseInput = inferProcedureInput<typeof findCourseProcedure>
-export type FindCourseOutput = inferProcedureOutput<typeof findCourseProcedure>
 const findCourseProcedure = procedure.input(z.string()).query(async ({ input, ctx }) => {
   const course = await ctx.courseService.find(ctx.prisma, input)
   return course
 })
 
-export type FindFacultiesInput = inferProcedureInput<typeof findFacultiesProcedure>
-export type FindFacultiesOutput = inferProcedureOutput<typeof findFacultiesProcedure>
 const findFacultiesProcedure = procedure.query(async ({ ctx }) => {
   const faculties = await ctx.courseService.findManyFaculties(ctx.prisma)
   return faculties
 })
 
-export type FindDepartmentsInput = inferProcedureInput<typeof findDepartmentsProcedure>
-export type FindDepartmentsOutput = inferProcedureOutput<typeof findDepartmentsProcedure>
 const findDepartmentsProcedure = procedure.query(async ({ ctx }) => {
   const departments = await ctx.courseService.findManyDepartments(ctx.prisma)
   return departments
 })
 
-export type FindManySitemapEntriesInput = inferProcedureInput<typeof findManySitemapEntriesProcedure>
-export type FindManySitemapEntriesOutput = inferProcedureOutput<typeof findManySitemapEntriesProcedure>
 const findManySitemapEntriesProcedure = procedure.query(async ({ ctx }) => {
   return await ctx.courseService.findManySitemapEntries(ctx.prisma)
 })
 
-export type FindFeaturedCoursesInput = inferProcedureInput<typeof findFeaturedCoursesProcedure>
-export type FindFeaturedCoursesOutput = inferProcedureOutput<typeof findFeaturedCoursesProcedure>
 const findFeaturedCoursesProcedure = procedure.query(async ({ ctx }) => {
   const currentMonth = getCurrentUTC().getMonth()
   const maxCoursesPerSection = 5

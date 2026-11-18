@@ -1,5 +1,4 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { InvalidArgumentError } from "../../error"
@@ -29,8 +28,6 @@ import {
   findActiveGroupMembershipIn,
 } from "./group"
 
-export type CreateGroupInput = inferProcedureInput<typeof createGroupProcedure>
-export type CreateGroupOutput = inferProcedureOutput<typeof createGroupProcedure>
 const createGroupProcedure = procedure
   .input(GroupWriteSchema)
   .use(withAuthentication())
@@ -45,40 +42,28 @@ const createGroupProcedure = procedure
     return createdGroup
   })
 
-export type AllGroupsInput = inferProcedureInput<typeof allGroupsProcedure>
-export type AllGroupsOutput = inferProcedureOutput<typeof allGroupsProcedure>
 const allGroupsProcedure = procedure
   .input(z.object({ filter: z.object({ includeEmailGroups: z.boolean().optional() }).optional() }).optional())
   .query(async ({ ctx, input }) =>
     ctx.groupService.findMany(ctx.prisma, { includeEmailGroups: input?.filter?.includeEmailGroups ?? false })
   )
 
-export type AllGroupsByTypeInput = inferProcedureInput<typeof allByTypeProcedure>
-export type AllGroupsByTypeOutput = inferProcedureOutput<typeof allByTypeProcedure>
 const allByTypeProcedure = procedure
   .input(GroupSchema.shape.type)
   .query(async ({ input, ctx }) => ctx.groupService.findManyByType(ctx.prisma, input))
 
-export type FindGroupInput = inferProcedureInput<typeof findGroupProcedure>
-export type FindGroupOutput = inferProcedureOutput<typeof findGroupProcedure>
 const findGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
   .query(async ({ input, ctx }) => ctx.groupService.findBySlug(ctx.prisma, input))
 
-export type GetGroupInput = inferProcedureInput<typeof getGroupProcedure>
-export type GetGroupOutput = inferProcedureOutput<typeof getGroupProcedure>
 const getGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
   .query(async ({ input, ctx }) => ctx.groupService.getBySlug(ctx.prisma, input))
 
-export type GetByTypeInput = inferProcedureInput<typeof getByTypeProcedure>
-export type GetByTypeOutput = inferProcedureOutput<typeof getByTypeProcedure>
 const getByTypeProcedure = procedure
   .input(z.object({ groupId: GroupSchema.shape.slug, type: GroupSchema.shape.type }))
   .query(async ({ input, ctx }) => ctx.groupService.getBySlugAndType(ctx.prisma, input.groupId, input.type))
 
-export type UpdateGroupInput = inferProcedureInput<typeof updateGroupProcedure>
-export type UpdateGroupOutput = inferProcedureOutput<typeof updateGroupProcedure>
 const updateGroupProcedure = procedure
   .input(
     z.object({
@@ -104,8 +89,6 @@ const updateGroupProcedure = procedure
     return updatedGroup
   })
 
-export type DeleteGroupInput = inferProcedureInput<typeof deleteGroupProcedure>
-export type DeleteGroupOutput = inferProcedureOutput<typeof deleteGroupProcedure>
 const deleteGroupProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withAuthentication())
@@ -126,8 +109,6 @@ const deleteGroupProcedure = procedure
     return deletedGroup
   })
 
-export type GetMembersInput = inferProcedureInput<typeof getMembersProcedure>
-export type GetMembersOutput = inferProcedureOutput<typeof getMembersProcedure>
 const getMembersProcedure = procedure.input(GroupSchema.shape.slug).query(async ({ input, ctx }) => {
   // We only show leaders of groups to unathenticated users, except for Hovedstyret who is public
   if (!ctx.principal && input !== CommitteeGroupSlug.HOVEDSTYRET) {
@@ -136,8 +117,6 @@ const getMembersProcedure = procedure.input(GroupSchema.shape.slug).query(async 
   return ctx.groupService.findMembersBySlug(ctx.prisma, input)
 })
 
-export type GetMemberInput = inferProcedureInput<typeof getMemberProcedure>
-export type GetMemberOutput = inferProcedureOutput<typeof getMemberProcedure>
 const getMemberProcedure = procedure
   .input(
     z.object({
@@ -147,8 +126,6 @@ const getMemberProcedure = procedure
   )
   .query(async ({ input, ctx }) => ctx.groupService.getMember(ctx.prisma, input.groupId, input.userId))
 
-export type AllByMemberInput = inferProcedureInput<typeof allByMemberProcedure>
-export type AllByMemberOutput = inferProcedureOutput<typeof allByMemberProcedure>
 const allByMemberProcedure = procedure
   .input(
     z.object({
@@ -163,15 +140,11 @@ const allByMemberProcedure = procedure
     })
   )
 
-export type AllMembershipsByUserIdInput = inferProcedureInput<typeof allMembershipsByUserIdProcedure>
-export type AllMembershipsByUserIdOutput = inferProcedureOutput<typeof allMembershipsByUserIdProcedure>
 const allMembershipsByUserIdProcedure = procedure
   .input(GroupMembershipSchema.shape.userId)
   .use(withAuthentication())
   .query(async ({ input, ctx }) => ctx.groupService.allMembershipsByUserId(ctx.prisma, input))
 
-export type StartMembershipInput = inferProcedureInput<typeof startMembershipProcedure>
-export type StartMembershipOutput = inferProcedureOutput<typeof startMembershipProcedure>
 const startMembershipProcedure = procedure
   .input(
     z.object({
@@ -206,8 +179,6 @@ const startMembershipProcedure = procedure
     return membership
   })
 
-export type EndMembershipInput = inferProcedureInput<typeof endMembershipProcedure>
-export type EndMembershipOutput = inferProcedureOutput<typeof endMembershipProcedure>
 const endMembershipProcedure = procedure
   .input(z.object({ groupId: GroupMembershipSchema.shape.groupId, userId: GroupMembershipSchema.shape.userId }))
   .use(withAuthentication())
@@ -231,8 +202,6 @@ const endMembershipProcedure = procedure
     return endedMembership
   })
 
-export type UpdateMembershipInput = inferProcedureInput<typeof updateMembershipProcedure>
-export type UpdateMembershipOutput = inferProcedureOutput<typeof updateMembershipProcedure>
 const updateMembershipProcedure = procedure
   .input(
     z.object({
@@ -268,8 +237,6 @@ const updateMembershipProcedure = procedure
     return updatedGroupMembership
   })
 
-export type DeleteMembershipInput = inferProcedureInput<typeof deleteMembershipProcedure>
-export type DeleteMembershipOutput = inferProcedureOutput<typeof deleteMembershipProcedure>
 const deleteMembershipProcedure = procedure
   .input(z.object({ id: GroupMembershipSchema.shape.id, groupId: GroupMembershipSchema.shape.groupId }))
   .output(z.void())
@@ -294,8 +261,6 @@ const deleteMembershipProcedure = procedure
     )
   })
 
-export type CreateRoleInput = inferProcedureInput<typeof createRoleProcedure>
-export type CreateRoleOutput = inferProcedureOutput<typeof createRoleProcedure>
 const createRoleProcedure = procedure
   .input(GroupRoleWriteSchema)
   .use(withAuthentication())
@@ -318,8 +283,6 @@ const createRoleProcedure = procedure
     return createdRole
   })
 
-export type UpdateRoleInput = inferProcedureInput<typeof updateRoleProcedure>
-export type UpdateRoleOutput = inferProcedureOutput<typeof updateRoleProcedure>
 const updateRoleProcedure = procedure
   .input(
     z.object({
@@ -347,8 +310,6 @@ const updateRoleProcedure = procedure
     return updatedRole
   })
 
-export type DeleteRoleInput = inferProcedureInput<typeof deleteRoleProcedure>
-export type DeleteRoleOutput = inferProcedureOutput<typeof deleteRoleProcedure>
 const deleteRoleProcedure = procedure
   .input(GroupRoleSchema.shape.id)
   .use(withAuthentication())
@@ -365,8 +326,6 @@ const deleteRoleProcedure = procedure
     return ctx.groupService.deleteRole(ctx.handle, input)
   })
 
-export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
-export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
   .input(
     z.object({
@@ -381,8 +340,6 @@ const createFileUploadProcedure = procedure
     return ctx.groupService.createFileUpload(input.filename, input.contentType, ctx.principal.subject)
   })
 
-export type StartInterestGroupMembershipInput = inferProcedureInput<typeof startInterestGroupMembershipProcedure>
-export type StartInterestGroupMembershipOutput = inferProcedureOutput<typeof startInterestGroupMembershipProcedure>
 const startInterestGroupMembershipProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withAuthentication())
@@ -412,8 +369,6 @@ const startInterestGroupMembershipProcedure = procedure
     return membership
   })
 
-export type EndInterestGroupMembershipInput = inferProcedureInput<typeof endInterestGroupMembershipProcedure>
-export type EndInterestGroupMembershipOutput = inferProcedureOutput<typeof endInterestGroupMembershipProcedure>
 const endInterestGroupMembershipProcedure = procedure
   .input(GroupSchema.shape.slug)
   .use(withAuthentication())
@@ -432,8 +387,6 @@ const endInterestGroupMembershipProcedure = procedure
     return endedMembership
   })
 
-export type CreateInterestGroupCommentInput = inferProcedureInput<typeof createInterestGroupCommentProcedure>
-export type CreateInterestGroupCommentOutput = inferProcedureOutput<typeof createInterestGroupCommentProcedure>
 const createInterestGroupCommentProcedure = procedure
   .input(z.object({ interestGroupId: GroupSchema.shape.slug, data: InterestGroupCommentWriteSchema }))
   .output(InterestGroupCommentSchema)
@@ -460,8 +413,6 @@ const createInterestGroupCommentProcedure = procedure
     return comment
   })
 
-export type FindManyInterestGroupCommentsInput = inferProcedureInput<typeof findManyInterestGroupCommentsProcedure>
-export type FindManyInterestGroupCommentsOutput = inferProcedureOutput<typeof findManyInterestGroupCommentsProcedure>
 const findManyInterestGroupCommentsProcedure = procedure
   .input(GroupSchema.shape.slug)
   .output(InterestGroupCommentSchema.array())
