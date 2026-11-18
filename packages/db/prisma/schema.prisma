@@ -110,24 +110,24 @@ model User {
   notificationPermissionsId String?                  @unique @map("notification_permissions_id")
   notificationPermissions   NotificationPermissions?
 
-  attendee                Attendee[]
-  personalMark            PersonalMark[]
-  groupMemberships        GroupMembership[]
-  memberships             Membership[]
-  givenMarks              PersonalMark[]          @relation("GivenBy")
-  auditLogs               AuditLog[]
-  deregisterReasons       DeregisterReason[]
-  notificationsReceived   NotificationRecipient[]
-  notificationsCreated    Notification[]          @relation("created_by")
-  notificationsUpdated    Notification[]          @relation("last_updated_by")
-  contestants             Contestant[]
-  contestTeams            ContestTeam[]           @relation("ContestTeamMember")
-  userFlagLinks           UserFlagLink[]
-  adminRegistered         Attendee[]              @relation("AdminRegisteredBy")
-  updatedEventPriorities  EventFeaturedPriority[]
-  payments                Payment[]               @relation("PaymentUser")
-  paymentsWaived          Payment[]               @relation("PaymentWaivedBy")
-  paymentRefundsRequested PaymentRefund[]
+  attendee                  Attendee[]
+  personalMark              PersonalMark[]
+  groupMemberships          GroupMembership[]
+  memberships               Membership[]
+  givenMarks                PersonalMark[]          @relation("GivenBy")
+  auditLogs                 AuditLog[]
+  deregisterReasons         DeregisterReason[]
+  notificationsReceived     NotificationRecipient[]
+  notificationsCreated      Notification[]          @relation("created_by")
+  notificationsUpdated      Notification[]          @relation("last_updated_by")
+  contestants               Contestant[]
+  contestTeams              ContestTeam[]           @relation("ContestTeamMember")
+  userFlagLinks             UserFlagLink[]
+  adminRegistered           Attendee[]              @relation("AdminRegisteredBy")
+  updatedEventPriorities    EventFeaturedPriority[]
+  payments                  Payment[]               @relation("PaymentUser")
+  paymentsWaived            Payment[]               @relation("PaymentWaivedBy")
+  paymentRefundsRequested   PaymentRefund[]
   sidequestRegistrations    SidequestRegistration[]
   sidequestRequests         SidequestRequest[]
   sidequestRequestsReviewed SidequestRequest[]      @relation("SidequestRequestReviewer")
@@ -278,10 +278,10 @@ enum GroupRoleType {
 }
 
 model GroupRole {
-  id   String        @id @default(uuid())
-  name String
-  type GroupRoleType @default(COSMETIC)
-  isDefault Boolean @default(false) @map("is_default")
+  id        String        @id @default(uuid())
+  name      String
+  type      GroupRoleType @default(COSMETIC)
+  isDefault Boolean       @default(false) @map("is_default")
 
   groupId String @map("group_id")
   group   Group  @relation(fields: [groupId], references: [slug], onDelete: Cascade)

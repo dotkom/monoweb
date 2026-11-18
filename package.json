@@ -21,6 +21,7 @@
     "lint": "pnpm run -r lint",
     "lint-check": "pnpm run -r lint-check",
     "prisma-schema-lint-check": "prisma-lint packages/db/prisma/schema.prisma packages/grades-db/prisma/schema.prisma",
+    "prisma-schema-format": "pnpm exec prisma format --schema packages/db/prisma/schema.prisma",
     "tflint-check": "tflint --chdir=infra --recursive --format=compact",
     "test": "pnpm run -r test",
     "emails:preview": "pnpm --filter @dotkomonline/rpc emails:preview",
