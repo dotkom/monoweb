@@ -14,6 +14,7 @@ export const CURRENCY_VALUES = [
   "GTA_DOLLARS",
   "EDDIES",
   "COPIES_OF_UNDERTALE",
+  "COPIES_OF_GTA_VI",
   "PK",
   "STORSTIPEND",
   "DAYS_OF_SAMF_MEMBERSHIP",
@@ -93,6 +94,8 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
       return `${(((value * (1 / 1.23) * 0.1) / 2) * 16.11).toFixed(2)} €$`
     case "COPIES_OF_UNDERTALE":
       return `${(value / 70).toFixed(2)} kopier av Undertale` // Undertale costs 70kr
+    case "COPIES_OF_GTA_VI":
+      return `${(value / 899).toFixed(3)} kopier av GTA VI` // GTA VI costs 899 kr
     case "PK":
       return `${(value / 10.33).toFixed(2)} PK-er` // A PK costs 10,33kr in the kiosk
     case "STORSTIPEND":
@@ -163,6 +166,8 @@ export const explainCurrencyCalculation = (currency: CurrenciesType) => {
       ]
     case "COPIES_OF_UNDERTALE":
       return ["pris / 70", "Undertale koster 70 kr"]
+    case "COPIES_OF_GTA_VI":
+      return ["pris / 899", "GTA VI koster 899 kr"]
     case "PK":
       return ["pris / 10,33", "En PK koster 10,33 kr i kiosken"]
     case "STORSTIPEND":
@@ -236,6 +241,8 @@ export const mapCurrencyEnumToString = (currency: CurrenciesType) => {
       return "Cyberpunk 2077 Eurodollars"
     case "COPIES_OF_UNDERTALE":
       return "Undertale kopier"
+    case "COPIES_OF_GTA_VI":
+      return "GTA VI kopier"
     case "PK":
       return "Powerkings"
     case "STORSTIPEND":
