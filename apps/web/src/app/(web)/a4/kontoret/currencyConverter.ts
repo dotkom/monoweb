@@ -58,7 +58,7 @@ export const convertCurrency = (currency: CurrenciesType, value: number, current
     case "CS_KEYS":
       return `${(value / 23.5).toFixed(2)} keys` // A CS key costs 23.50kr
     case "RP":
-      return `${(value / 201.93) * 2540} RP` // A 2540RP gift card costs 201.93kr
+      return `${((value / 201.93) * 2540).toFixed(2)} RP` // A 2540RP gift card costs 201.93kr
     case "GTA_DOLLARS":
       return `$${((value / 39) * 200_000).toFixed(2)}` // a $200000 shark card costs 39kr
     case "EDDIES":
