@@ -28,7 +28,7 @@ const MobileOfflineShowcase = ({ offline }: Props) => (
       <OfflineCard offline={offline} showTitle={false} />
     </div>
 
-    <Button className="bg-transparent border-0" size="lg" element={Link} href="/offline">
+    <Button variant="default"  size="lg" element={Link} href="/offline">
       Les tidligere utgaver
     </Button>
   </div>
