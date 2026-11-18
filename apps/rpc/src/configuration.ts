@@ -60,6 +60,13 @@ export const createConfiguration = () =>
       serviceAccount: config(process.env.RIF_SERVICE_ACCOUNT, null),
       spreadsheetId: config(process.env.RIF_SPREADSHEET_ID, null),
     },
+
+    zettle: {
+      secretKey: config(process.env.ZETTLE_API_SECRET_KEY, null),
+      clientId: config(process.env.ZETTLE_API_CLIENT_ID, null),
+      orgId: config(process.env.ZETTLE_ORG_ID, null),
+      inventoryId: config(process.env.ZETTLE_INVENTORY_ID, null)
+    }
   })
 
 /** Type where config.googleWorkspace has no nullable keys */

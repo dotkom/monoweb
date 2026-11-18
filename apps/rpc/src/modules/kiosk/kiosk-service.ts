@@ -2,6 +2,7 @@ import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-
 import type { ProductsReturn, ProductStock, StockReturn } from "./kiosk"
 import { InternalServerError } from "../../error"
 import { getLogger } from "@dotkomonline/logger"
+import type { Configuration } from "../../configuration"
 
 const logger = getLogger("kiosk-service")
 
@@ -52,11 +53,8 @@ class TTLCache<T> {
   }
 }
 
-const fetchAccessToken = async () => {
-  const zettleClientId = process.env.ZETTLE_API_CLIENT_ID
-  const zettleSecretKey = process.env.ZETTLE_API_SECRET_KEY
-
-  if (zettleClientId === undefined || zettleSecretKey === undefined) {
+const fetchAccessToken = async (zettleClientId: string | null, zettleSecretKey: string | null) => {
+  if (zettleClientId === null || zettleSecretKey === null) {
     logger.error("Missing zettle secrets")
     return "" // !"" will evaluate to true, throwing later if getAccessToken fails to fetch
   }
@@ -81,9 +79,7 @@ const fetchAccessToken = async () => {
   return data.access_token
 }
 
-const getProducts = async (token: string): Promise<ProductsReturn> => {
-  const orgId = process.env.ZETTLE_ORG_ID
-
+const getProducts = async (token: string, orgId: string | null): Promise<ProductsReturn> => {
   const res = await fetch(`https://products.izettle.com/organizations/${orgId}/products`, {
     headers: [["Authorization", `Bearer ${token}`]],
   })
@@ -100,9 +96,7 @@ const getProducts = async (token: string): Promise<ProductsReturn> => {
   return data
 }
 
-const getStock = async (token: string): Promise<StockReturn> => {
-  const inventoryId = process.env.ZETTLE_INVENTORY_ID
-
+const getStock = async (token: string, inventoryId: string | null): Promise<StockReturn> => {
   const res = await fetch(`https://inventory.izettle.com/v3/stock/${inventoryId}`, {
     headers: [["Authorization", `Bearer ${token}`]],
   })
@@ -144,11 +138,11 @@ export interface KioskService {
   getProductStock(): Promise<ProductStock[]>
 }
 
-export function getKioskService(): KioskService {
+export function getKioskService(configuration: Configuration): KioskService {
   const tokenCache = new TTLCache<string>({
     ttl: secondsToMilliseconds(7150), // access token expiry is always 7200 seconds
     fetchfn: async () => {
-      return fetchAccessToken()
+      return fetchAccessToken(configuration.zettle.clientId, configuration.zettle.secretKey)
     },
   })
 
@@ -172,8 +166,8 @@ export function getKioskService(): KioskService {
 
       if (!productList) {
         const token = await getAccessToken()
-        const products = await getProducts(token)
-        const stock = await getStock(token)
+        const products = await getProducts(token, configuration.zettle.orgId)
+        const stock = await getStock(token, configuration.zettle.inventoryId)
 
         productList = aggregateProductsWithStock(products, stock)
         productCache.set(productList)

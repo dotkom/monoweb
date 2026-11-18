@@ -323,7 +323,7 @@ export async function createServiceLayer(
       : null
 
   const authorizationService = getAuthorizationService()
-  const kioskService = getKioskService()
+  const kioskService = getKioskService(configuration)
 
   return {
     eventEmitter,
