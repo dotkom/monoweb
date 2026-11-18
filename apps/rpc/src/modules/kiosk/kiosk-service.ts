@@ -3,6 +3,7 @@ import type { ProductsReturn, ProductStock, StockReturn } from "./kiosk"
 import { InternalServerError } from "../../error"
 import { getLogger } from "@dotkomonline/logger"
 import type { Configuration } from "../../configuration"
+import { z } from "zod"
 
 const logger = getLogger("kiosk-service")
 
@@ -74,7 +75,12 @@ const fetchAccessToken = async (zettleClientId: string | null, zettleSecretKey: 
     return ""
   }
 
-  const data = (await res.json()) as { access_token: string; expires_in: number }
+  const tokenResponse = z.object({
+    access_token: z.string(),
+    expires_in: z.number()
+  })
+
+  const data = tokenResponse.parse(await res.json())
 
   return data.access_token
 }
