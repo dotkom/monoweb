@@ -121,3 +121,19 @@ export function canUploadGroupFiles(principal: AffiliatedPrincipal): boolean {
 
   return false
 }
+
+export function canCreateInterestGroupComment(principal: AffiliatedPrincipal, interestGroupId: GroupId): boolean {
+  if (isAdministrator(principal.affiliations)) {
+    return true
+  }
+
+  if (isGroupMember(principal.affiliations, CommitteeGroupSlug.BACKLOG)) {
+    return true
+  }
+
+  if (isGroupMember(principal.affiliations, interestGroupId)) {
+    return true
+  }
+
+  return false
+}

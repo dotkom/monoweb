@@ -388,12 +388,7 @@ describe("GroupService", () => {
     it("uses the default role when starting a membership without role ids", async () => {
       const defaultRole = makeRole({ id: "default-role", isDefault: true })
       const userId = randomUUID()
-      const member = { id: userId, groupMemberships: [] }
-
-      vi.spyOn(groupService, "endMembership").mockResolvedValue([])
-      vi.spyOn(groupService, "getOrCreateDefaultGroupRole").mockResolvedValue(defaultRole)
-      vi.spyOn(groupService, "getMember").mockResolvedValue(member as never)
-      vi.spyOn(groupRepository, "createGroupMembership").mockResolvedValue({
+      const membership = {
         id: randomUUID(),
         userId,
         groupId: CommitteeGroupSlug.DOTKOM,
@@ -402,10 +397,15 @@ describe("GroupService", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         roles: [defaultRole],
-      })
+      }
 
-      await groupService.startMembership(db, userId, CommitteeGroupSlug.DOTKOM)
+      vi.spyOn(groupService, "endMembership").mockResolvedValue(null)
+      vi.spyOn(groupService, "getOrCreateDefaultGroupRole").mockResolvedValue(defaultRole)
+      vi.spyOn(groupRepository, "createGroupMembership").mockResolvedValue(membership)
 
+      const result = await groupService.startMembership(db, userId, CommitteeGroupSlug.DOTKOM)
+
+      expect(result).toEqual(membership)
       expect(groupService.getOrCreateDefaultGroupRole).toHaveBeenCalledWith(db, CommitteeGroupSlug.DOTKOM)
       expect(groupRepository.createGroupMembership).toHaveBeenCalledWith(
         db,
@@ -417,12 +417,7 @@ describe("GroupService", () => {
     it("keeps explicit role ids when starting a membership", async () => {
       const roleId = "explicit-role"
       const userId = randomUUID()
-      const member = { id: userId, groupMemberships: [] }
-
-      vi.spyOn(groupService, "endMembership").mockResolvedValue([])
-      const getOrCreateSpy = vi.spyOn(groupService, "getOrCreateDefaultGroupRole")
-      vi.spyOn(groupService, "getMember").mockResolvedValue(member as never)
-      vi.spyOn(groupRepository, "createGroupMembership").mockResolvedValue({
+      const membership = {
         id: randomUUID(),
         userId,
         groupId: CommitteeGroupSlug.DOTKOM,
@@ -431,10 +426,15 @@ describe("GroupService", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         roles: [],
-      })
+      }
 
-      await groupService.startMembership(db, userId, CommitteeGroupSlug.DOTKOM, new Set([roleId]))
+      vi.spyOn(groupService, "endMembership").mockResolvedValue(null)
+      const getOrCreateSpy = vi.spyOn(groupService, "getOrCreateDefaultGroupRole")
+      vi.spyOn(groupRepository, "createGroupMembership").mockResolvedValue(membership)
 
+      const result = await groupService.startMembership(db, userId, CommitteeGroupSlug.DOTKOM, new Set([roleId]))
+
+      expect(result).toEqual(membership)
       expect(getOrCreateSpy).not.toHaveBeenCalled()
       expect(groupRepository.createGroupMembership).toHaveBeenCalledWith(
         db,
