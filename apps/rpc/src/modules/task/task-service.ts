@@ -1,26 +1,20 @@
 import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { getCurrentUTC } from "@dotkomonline/utils"
-import { subMinutes } from "date-fns"
-import type { Task, TaskId, TaskStatus, TaskWrite } from "./task"
-import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
-import { type InferTaskData, type TaskDefinition, getTaskDefinition, tasks } from "./task-definition"
+import { addMinutes, subMinutes } from "date-fns"
+import type { ClaimedTask, Task, TaskId, TaskWrite } from "./task"
+import { InvalidArgumentError } from "../../error"
+import { type InferTaskData, type TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 
 const CHECKOUT_LEASE_MINUTES = 5
 
+export type TaskOutcome = "COMPLETED" | "SKIPPED" | "FAILED" | "PENDING"
+
 export type TaskService = {
-  claimCheckoutTask(handle: DBHandle, task: Task): Promise<Date | null>
-  finishCheckoutTask(handle: DBHandle, taskId: TaskId, claimedAt: Date, data: Partial<TaskWrite>): Promise<void>
-  /**
-   * Updates a task
-   *
-   * @throws {NotFoundError} if the task with the given `taskId` does not exist
-   */
-  update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
-  setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
+  finishTask(handle: DBHandle, task: ClaimedTask, status: TaskOutcome): Promise<void>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  findNextPendingTask(handle: DBHandle): Promise<Task | null>
+  claimNextTask(handle: DBHandle): Promise<ClaimedTask | null>
 
   /**
    * Parse and validate the payload for a given task, given its specification.
@@ -38,82 +32,28 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
   const logger = getLogger("task-service")
 
   return {
-    async claimCheckoutTask(handle, task) {
-      const claimedAt = getCurrentUTC()
-      const leaseExpiredBefore = subMinutes(claimedAt, CHECKOUT_LEASE_MINUTES)
-      const isAbandonedCheckout =
-        task.status === "RUNNING" && task.processedAt !== null && task.processedAt <= leaseExpiredBefore
+    async finishTask(handle, task, status) {
+      const now = getCurrentUTC()
+      const update: Partial<TaskWrite> = { status, processedAt: now }
 
-      if (task.type !== tasks.OPEN_PAYMENT_CHECKOUT.type || (task.status !== "PENDING" && !isAbandonedCheckout)) {
-        return null
+      if (status === "PENDING") {
+        update.processedAt = null
+        update.scheduledAt = addMinutes(now, 1)
       }
 
-      const claimedTask = await taskRepository.update(
-        handle,
-        task.id,
-        {
-          status: "RUNNING",
-          processedAt: claimedAt,
-        },
-        task.status,
-        task.processedAt
-      )
-
-      return claimedTask === null ? null : claimedAt
-    },
-
-    async finishCheckoutTask(handle, taskId, claimedAt, data) {
-      // A reclaimed lease belongs to another worker; the previous worker must not acknowledge it.
-      await taskRepository.update(handle, taskId, data, "RUNNING", claimedAt)
-    },
-
-    async update(handle, taskId, data, oldState) {
-      const requestedTask = await taskRepository.findById(handle, taskId)
-
-      if (!requestedTask) {
-        throw new NotFoundError(`Task(ID=${taskId}) not found`)
-      }
-
-      // If the caller wants to update the task data, we must validate it against the task kind.
-      let newPayload = requestedTask.payload
-      if (data.payload) {
-        const definition = getTaskDefinition(requestedTask.type)
-        newPayload = this.parse(definition, data.payload) as Prisma.JsonValue
-      }
-
-      // Update the task with the new data and the updated and validated payload.
-      const task = await taskRepository.update(
-        handle,
-        taskId,
-        {
-          ...data,
-          payload: newPayload,
-        },
-        oldState
-      )
-
-      // If the task was not found, there is a critical system bug because this entire thing is ran inside a database
-      // transaction. This is merely a sanity check.
-      if (task === null) {
-        logger.error("Task(ID=%s) disappeared in between getById and update", taskId)
-        throw new IllegalStateError(taskId)
-      }
-
-      return task
-    },
-
-    async setTaskExecutionStatus(handle, taskId, status, oldStatus) {
-      return await this.update(handle, taskId, { processedAt: new Date(), status }, oldStatus)
+      // A worker can only finish its own claim, including after another worker reclaimed an abandoned checkout.
+      await taskRepository.update(handle, task.id, update, "RUNNING", task.processedAt)
     },
 
     async findById(handle, taskId) {
       return await taskRepository.findById(handle, taskId)
     },
 
-    async findNextPendingTask(handle) {
-      const checkoutLeaseExpiredBefore = subMinutes(getCurrentUTC(), CHECKOUT_LEASE_MINUTES)
+    async claimNextTask(handle) {
+      const claimedAt = getCurrentUTC()
+      const checkoutLeaseExpiredBefore = subMinutes(claimedAt, CHECKOUT_LEASE_MINUTES)
 
-      return await taskRepository.findNextPendingTask(handle, checkoutLeaseExpiredBefore)
+      return await taskRepository.claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore)
     },
 
     parse(taskDefinition, payload) {

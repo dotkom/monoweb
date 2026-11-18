@@ -19,7 +19,7 @@ import {
   getAttendeeRegistrationEligibleAt,
 } from "./attendance"
 import type { EventId } from "./event"
-import { buildPaymentView, type PaymentRecord } from "../payment/payment"
+import { buildPaymentView } from "../payment/payment"
 import { paymentInclude } from "../payment/payment-repository"
 import type { TaskId } from "../task/task"
 import { type UserId, normalizeDbUser } from "../user/user"
@@ -43,16 +43,17 @@ const attendeeInclude = {
   },
 } satisfies Prisma.AttendeeInclude
 
-type AttendeeWithRelations = Pick<
-  Attendee,
-  "createdAt" | "registrationPoolDelayHours" | "registrationMarkDelayHours"
-> & {
-  payment: PaymentRecord | null
-  user: Parameters<typeof normalizeDbUser>[0]
-  [key: string]: unknown
-}
+const attendanceInclude = {
+  pools: true,
+  attendees: {
+    include: attendeeInclude,
+    orderBy: {
+      createdAt: "asc",
+    },
+  },
+} satisfies Prisma.AttendanceInclude
 
-function normalizeAttendee<T extends AttendeeWithRelations>(attendee: T) {
+function normalizeAttendee(attendee: Prisma.AttendeeGetPayload<{ include: typeof attendeeInclude }>) {
   return {
     ...attendee,
     payment: attendee.payment === null ? null : buildPaymentView(attendee.payment),
@@ -61,7 +62,7 @@ function normalizeAttendee<T extends AttendeeWithRelations>(attendee: T) {
   }
 }
 
-function normalizeAttendance<T extends { attendees: AttendeeWithRelations[]; [key: string]: unknown }>(attendance: T) {
+function normalizeAttendance(attendance: Prisma.AttendanceGetPayload<{ include: typeof attendanceInclude }>) {
   return {
     ...attendance,
     attendees: attendance.attendees
@@ -129,6 +130,7 @@ export interface AttendanceRepository {
   ): Promise<AttendancePool>
   deleteAttendancePoolById(handle: DBHandle, attendancePoolId: AttendancePoolId): Promise<void>
   deleteAttendancePoolsByIds(handle: DBHandle, attendancePoolIds: AttendancePoolId[]): Promise<void>
+  hasRoomForReservation(handle: DBHandle, poolId: AttendancePoolId): Promise<boolean>
 }
 
 export function getAttendanceRepository(): AttendanceRepository {
@@ -152,15 +154,7 @@ export function getAttendanceRepository(): AttendanceRepository {
         where: {
           id: attendanceId,
         },
-        include: {
-          pools: true,
-          attendees: {
-            include: attendeeInclude,
-            orderBy: {
-              createdAt: "asc",
-            },
-          },
-        },
+        include: attendanceInclude,
       })
 
       return parseOrReport(AttendanceSchema.nullable(), attendance === null ? null : normalizeAttendance(attendance))
@@ -541,6 +535,29 @@ export function getAttendanceRepository(): AttendanceRepository {
           id: attendanceId,
         },
       })
+    },
+
+    async hasRoomForReservation(handle, poolId) {
+      // Hold the pool lock until the reservation commits. A separate count sees reservations made while waiting.
+      const [pool] = await handle.$queryRaw<{ capacity: number }[]>`
+        SELECT capacity FROM attendance_pool WHERE id = ${poolId} FOR NO KEY UPDATE
+      `
+      invariant(pool !== undefined, "Reservation pool no longer exists")
+
+      if (pool.capacity <= 0) {
+        return pool.capacity === 0
+      }
+
+      const registeredAttendees = await handle.attendee.count({
+        where: {
+          attendancePoolId: poolId,
+          registeredAt: {
+            not: null,
+          },
+        },
+      })
+
+      return registeredAttendees < pool.capacity
     },
   }
 }

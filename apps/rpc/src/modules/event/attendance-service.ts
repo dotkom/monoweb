@@ -923,12 +923,9 @@ export function getAttendanceService(
         registrationMarkDelayHours,
       })
 
-      const registeredPoolAttendees = attendance.attendees.filter(
-        (attendee) => attendee.attendancePoolId === pool.id && attendee.registeredAt !== null
-      )
       const isImmediateReservation =
-        (!isFuture(reservationActiveAt) && (pool.capacity === 0 || registeredPoolAttendees.length < pool.capacity)) ||
-        options.immediateReservation
+        options.immediateReservation ||
+        (!isFuture(reservationActiveAt) && (await attendanceRepository.hasRoomForReservation(handle, pool.id)))
 
       const userGrade = membership?.semester != null ? getStudyGrade(membership.semester) : null
 
@@ -1077,20 +1074,13 @@ export function getAttendanceService(
         return
       }
 
-      const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      invariant(pool !== undefined)
+      const hasRoom = await attendanceRepository.hasRoomForReservation(handle, attendee.attendancePoolId)
 
-      const registeredAdjacentAttendees = attendance.attendees.filter(
-        (adjacentAttendee) => adjacentAttendee.attendancePoolId === pool.id && adjacentAttendee.registeredAt !== null
-      )
-      const isPoolAtMaxCapacity = pool.capacity !== 0 && registeredAdjacentAttendees.length >= pool.capacity
-      const isFutureReservationTime = isFuture(attendee.registrationEligibleAt)
-
-      if (isPoolAtMaxCapacity) {
+      if (!hasRoom) {
         return
       }
 
-      if (isFutureReservationTime) {
+      if (isFuture(attendee.registrationEligibleAt)) {
         logger.warn(
           "ReserveAttendee task for Attendee(ID=%s) ran before registrationEligibleAt %s.",
           attendee.id,

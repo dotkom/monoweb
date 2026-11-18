@@ -224,6 +224,7 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
     locationLink: null,
   })
 
+  attendanceRepository.hasRoomForReservation.mockResolvedValue(true)
   attendanceRepository.findAttendanceByAttendeeId.mockResolvedValue(attendance)
   attendanceRepository.findAttendanceById.mockResolvedValue(attendance)
   attendanceRepository.updateAttendeeById.mockImplementation(async (_handle, _attendeeId, data) => {

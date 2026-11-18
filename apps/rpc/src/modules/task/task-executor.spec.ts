@@ -1,5 +1,5 @@
-import { type DBClient, type DBHandle, Prisma } from "@dotkomonline/db"
-import { addMinutes } from "date-fns"
+import { type DBClient, type DBHandle, Prisma, PrismaErrorCode } from "@dotkomonline/db"
+import Stripe from "stripe"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import type { Configuration } from "../../configuration"
@@ -8,7 +8,7 @@ import type { PaymentWorkflowService } from "../payment/payment-workflow-service
 import type { PaymentRecord } from "../payment/payment"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
-import type { Task } from "./task"
+import type { ClaimedTask, Task } from "./task"
 import { tasks } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import { getLocalTaskExecutor } from "./task-executor"
@@ -27,7 +27,17 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
     attendeeId: "attendee",
     paymentAttemptId: "attempt",
   }
-  const task = mock<Task>({ id: "task", type, payload })
+  const claimedAt = new Date()
+  const task: ClaimedTask = {
+    id: "task",
+    type,
+    payload,
+    status: "RUNNING",
+    processedAt: claimedAt,
+    createdAt: claimedAt,
+    scheduledAt: claimedAt,
+    recurringTaskId: null,
+  }
   const configuration = mock<Configuration>({
     tasks: {
       workerInterval: 100,
@@ -35,10 +45,8 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   })
 
   discoveryService.querySchedulableRecurringTasks.mockResolvedValue([])
-  discoveryService.queryNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
+  discoveryService.claimNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
   taskService.parse.mockReturnValue(payload)
-  const claimedAt = new Date()
-  taskService.claimCheckoutTask.mockResolvedValue(claimedAt)
   client.$transaction.mockImplementation(async (operation) => {
     return await operation(transactionHandle)
   })
@@ -66,12 +74,13 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   return {
     client,
     transactionHandle,
+    discoveryService,
     attendanceService,
     paymentWorkflowService,
     taskService,
     payload,
     runTask,
-    claimedAt,
+    task,
   }
 }
 
@@ -85,60 +94,69 @@ describe("task executor transaction boundaries", () => {
   })
 
   it("captures payments without an enclosing transaction and marks the task completed", async () => {
-    const { client, attendanceService, taskService, payload, runTask } = createFixture()
+    const { client, attendanceService, taskService, task, payload, runTask } = createFixture()
 
     await runTask()
 
     expect(client.$transaction).not.toHaveBeenCalled()
     expect(attendanceService.executeChargeAttendeeTask).toHaveBeenCalledExactlyOnceWith(client, payload)
-    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([
-      [client, "task", "RUNNING", "PENDING"],
-      [client, "task", "COMPLETED", "RUNNING"],
-    ])
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "COMPLETED")
   })
 
   it.each([
     { error: new Error("Stripe unavailable"), expectedStatus: "FAILED" },
     { error: new TaskSkippedError("Attempt was replaced"), expectedStatus: "SKIPPED" },
     {
-      error: new Prisma.PrismaClientKnownRequestError("Record not found", { code: "P2025", clientVersion: "test" }),
+      error: new Prisma.PrismaClientKnownRequestError("Record not found", {
+        code: PrismaErrorCode.RecordNotFound,
+        clientVersion: "test",
+      }),
       expectedStatus: "FAILED",
     },
   ])("records $expectedStatus when capture does not complete", async ({ error, expectedStatus }) => {
-    const { client, attendanceService, taskService, runTask } = createFixture()
+    const { client, attendanceService, taskService, task, runTask } = createFixture()
     attendanceService.executeChargeAttendeeTask.mockRejectedValue(error)
 
     await runTask()
 
     expect(client.$transaction).not.toHaveBeenCalled()
-    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([
-      [client, "task", "RUNNING", "PENDING"],
-      [client, "task", expectedStatus, "RUNNING"],
-    ])
-    expect(taskService.update).not.toHaveBeenCalled()
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, expectedStatus)
   })
 
-  it("reschedules a task that reports a concurrent modification", async () => {
-    const { client, attendanceService, taskService, runTask } = createFixture(tasks.MERGE_ATTENDANCE_POOLS.type)
-    attendanceService.executeMergeEventPoolsTask.mockRejectedValue(new ConcurrentModificationError("Pool changed"))
+  it.each([
+    new ConcurrentModificationError("Pool changed"),
+    new Prisma.PrismaClientKnownRequestError("Transaction write conflict", {
+      code: PrismaErrorCode.WriteConflictOrDeadlock,
+      clientVersion: "test",
+    }),
+  ])("reschedules a pool merge that encounters %s", async (error) => {
+    const { client, attendanceService, taskService, task, runTask } = createFixture(tasks.MERGE_ATTENDANCE_POOLS.type)
+    attendanceService.executeMergeEventPoolsTask.mockRejectedValue(error)
 
     await runTask()
 
-    expect(taskService.update).toHaveBeenCalledExactlyOnceWith(
-      client,
-      "task",
-      {
-        status: "PENDING",
-        scheduledAt: addMinutes(new Date(), 1),
-        processedAt: null,
-      },
-      "RUNNING"
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "PENDING")
+  })
+
+  it("retries a transactional completion check after a Stripe timeout", async () => {
+    const { client, transactionHandle, attendanceService, taskService, task, payload, runTask } = createFixture(
+      tasks.VERIFY_ATTENDANCE_COMPLETION.type
     )
-    expect(taskService.setTaskExecutionStatus).toHaveBeenCalledExactlyOnceWith(client, "task", "RUNNING", "PENDING")
+    const timeout = new Stripe.errors.StripeConnectionError({ message: "Request timed out" })
+    attendanceService.executeVerifyAttendanceCompletionTask.mockRejectedValue(timeout)
+
+    await runTask()
+
+    expect(client.$transaction).toHaveBeenCalledOnce()
+    expect(attendanceService.executeVerifyAttendanceCompletionTask).toHaveBeenCalledExactlyOnceWith(
+      transactionHandle,
+      payload
+    )
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "PENDING")
   })
 
   it("opens prepared checkouts outside a transaction through the payment workflow", async () => {
-    const { client, paymentWorkflowService, taskService, claimedAt, runTask } = createFixture(
+    const { client, paymentWorkflowService, taskService, task, runTask } = createFixture(
       tasks.OPEN_PAYMENT_CHECKOUT.type
     )
     paymentWorkflowService.openCheckout.mockResolvedValue(mock<PaymentRecord>({ attendeeId: "attendee" }))
@@ -147,40 +165,34 @@ describe("task executor transaction boundaries", () => {
 
     expect(client.$transaction).not.toHaveBeenCalled()
     expect(paymentWorkflowService.openCheckout).toHaveBeenCalledExactlyOnceWith(client, "attempt")
-    expect(taskService.finishCheckoutTask).toHaveBeenCalledExactlyOnceWith(client, "task", claimedAt, {
-      status: "COMPLETED",
-      processedAt: expect.any(Date),
-    })
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "COMPLETED")
   })
 
   it("reschedules a failed checkout without discarding the persisted attempt", async () => {
-    const { client, paymentWorkflowService, taskService, claimedAt, runTask } = createFixture(
+    const { client, paymentWorkflowService, taskService, task, runTask } = createFixture(
       tasks.OPEN_PAYMENT_CHECKOUT.type
     )
     paymentWorkflowService.openCheckout.mockRejectedValue(new Error("Stripe unavailable"))
 
     await runTask()
 
-    expect(taskService.finishCheckoutTask).toHaveBeenCalledExactlyOnceWith(client, "task", claimedAt, {
-      status: "PENDING",
-      scheduledAt: expect.any(Date),
-      processedAt: null,
-    })
-    expect(taskService.setTaskExecutionStatus).not.toHaveBeenCalledWith(client, "task", "COMPLETED", "RUNNING")
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "PENDING")
   })
 
   it("does not execute or acknowledge a checkout claimed by another worker", async () => {
-    const { paymentWorkflowService, taskService, runTask } = createFixture(tasks.OPEN_PAYMENT_CHECKOUT.type)
-    taskService.claimCheckoutTask.mockResolvedValue(null)
+    const { discoveryService, paymentWorkflowService, taskService, runTask } = createFixture(
+      tasks.OPEN_PAYMENT_CHECKOUT.type
+    )
+    discoveryService.claimNextTask.mockReset().mockResolvedValue(null)
 
     await runTask()
 
     expect(paymentWorkflowService.openCheckout).not.toHaveBeenCalled()
-    expect(taskService.finishCheckoutTask).not.toHaveBeenCalled()
+    expect(taskService.finishTask).not.toHaveBeenCalled()
   })
 
   it("keeps attendance pool changes inside a transaction", async () => {
-    const { client, transactionHandle, attendanceService, taskService, payload, runTask } = createFixture(
+    const { client, transactionHandle, attendanceService, taskService, task, payload, runTask } = createFixture(
       tasks.MERGE_ATTENDANCE_POOLS.type
     )
 
@@ -188,6 +200,6 @@ describe("task executor transaction boundaries", () => {
 
     expect(client.$transaction).toHaveBeenCalledOnce()
     expect(attendanceService.executeMergeEventPoolsTask).toHaveBeenCalledExactlyOnceWith(transactionHandle, payload)
-    expect(taskService.setTaskExecutionStatus).toHaveBeenLastCalledWith(client, "task", "COMPLETED", "RUNNING")
+    expect(taskService.finishTask).toHaveBeenCalledExactlyOnceWith(client, task, "COMPLETED")
   })
 })

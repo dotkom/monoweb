@@ -432,34 +432,24 @@ describe("payment ledger persistence", () => {
         processedAt: abandonedAt,
       },
     })
-    const abandonedTask = await core.taskService.findNextPendingTask(dbClient)
-    expect(abandonedTask).not.toBeNull()
-
-    if (abandonedTask === null) {
-      throw new Error("Missing abandoned checkout task")
-    }
-
     const claims = await Promise.all([
-      core.taskService.claimCheckoutTask(dbClient, abandonedTask),
-      core.taskService.claimCheckoutTask(dbClient, abandonedTask),
+      core.taskService.claimNextTask(dbClient),
+      core.taskService.claimNextTask(dbClient),
     ])
-    const claimedAt = claims.find((claim) => claim !== null)
-    expect(claims.filter((claim) => claim !== null)).toHaveLength(1)
+    const claimedTasks = claims.filter((task) => task !== null)
+    expect(claimedTasks).toHaveLength(1)
+    const [claimedTask] = claimedTasks
 
-    if (claimedAt == null) {
-      throw new Error("Checkout was not claimed")
-    }
-
-    await core.taskService.finishCheckoutTask(dbClient, abandonedTask.id, abandonedAt, { status: "COMPLETED" })
-    expect((await core.taskService.findById(dbClient, abandonedTask.id))?.status).toBe("RUNNING")
+    await core.taskService.finishTask(dbClient, { ...claimedTask, processedAt: abandonedAt }, "COMPLETED")
+    expect((await core.taskService.findById(dbClient, claimedTask.id))?.status).toBe("RUNNING")
 
     const recovered = await core.paymentWorkflowService.openCheckout(dbClient, attemptId)
-    await core.taskService.finishCheckoutTask(dbClient, abandonedTask.id, claimedAt, { status: "COMPLETED" })
+    await core.taskService.finishTask(dbClient, claimedTask, "COMPLETED")
 
     expect(recovered.attempts[0].status).toBe("CHECKOUT_OPEN")
     expect(stripe.checkout.sessions.create.mock.calls[1]).toEqual(stripe.checkout.sessions.create.mock.calls[0])
-    expect((await core.taskService.findById(dbClient, abandonedTask.id))?.status).toBe("COMPLETED")
-    expect(await core.taskService.findNextPendingTask(dbClient)).toBeNull()
+    expect((await core.taskService.findById(dbClient, claimedTask.id))?.status).toBe("COMPLETED")
+    expect(await core.taskService.claimNextTask(dbClient)).toBeNull()
   })
 
   it("expires a cancelled checkout and retains it when a replacement is created", async () => {
