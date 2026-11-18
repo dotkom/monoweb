@@ -1,4 +1,3 @@
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
@@ -6,8 +5,6 @@ import { canManageFadderuker } from "../../permissions/fadderuke-permissions"
 import { procedure, t } from "../../trpc"
 import { FadderukeSchema, FadderukeWriteSchema } from "./fadderuke"
 
-export type FindFadderukeByYearInput = inferProcedureInput<typeof findByYearProcedure>
-export type FindFadderukeByYearOutput = inferProcedureOutput<typeof findByYearProcedure>
 const findByYearProcedure = procedure
   .input(z.int())
   .output(FadderukeSchema.nullable())
@@ -15,13 +12,10 @@ const findByYearProcedure = procedure
     return ctx.fadderukeService.findByYear(ctx.prisma, input)
   })
 
-export type FindManyFadderukerOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure.output(FadderukeSchema.array()).query(async ({ ctx }) => {
   return ctx.fadderukeService.findMany(ctx.prisma)
 })
 
-export type GetFadderukeByIdInput = inferProcedureInput<typeof getByIdProcedure>
-export type GetFadderukeByIdOutput = inferProcedureOutput<typeof getByIdProcedure>
 const getByIdProcedure = procedure
   .input(FadderukeSchema.shape.id)
   .output(FadderukeSchema)
@@ -29,8 +23,6 @@ const getByIdProcedure = procedure
     return ctx.fadderukeService.getById(ctx.prisma, input)
   })
 
-export type CreateFadderukeInput = inferProcedureInput<typeof createProcedure>
-export type CreateFadderukeOutput = inferProcedureOutput<typeof createProcedure>
 const createProcedure = procedure
   .input(z.object({ fadderuke: FadderukeWriteSchema }))
   .output(FadderukeSchema)
@@ -46,8 +38,6 @@ const createProcedure = procedure
     return createdFadderuke
   })
 
-export type UpdateFadderukeInput = inferProcedureInput<typeof updateProcedure>
-export type UpdateFadderukeOutput = inferProcedureOutput<typeof updateProcedure>
 const updateProcedure = procedure
   .input(z.object({ fadderukeId: FadderukeSchema.shape.id, fadderuke: FadderukeWriteSchema.partial() }))
   .output(FadderukeSchema)
@@ -63,8 +53,6 @@ const updateProcedure = procedure
     return updatedFadderuke
   })
 
-export type DeleteFadderukeInput = inferProcedureInput<typeof deleteProcedure>
-export type DeleteFadderukeOutput = inferProcedureOutput<typeof deleteProcedure>
 const deleteProcedure = procedure
   .input(z.object({ fadderukeId: FadderukeSchema.shape.id }))
   .use(withAuthentication())

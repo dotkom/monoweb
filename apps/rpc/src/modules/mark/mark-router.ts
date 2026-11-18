@@ -1,5 +1,4 @@
 import { BasePaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import z from "zod"
 import { permitIf } from "../../authorization"
 import { InvalidArgumentError } from "../../error"
@@ -11,8 +10,6 @@ import { GroupSchema } from "../group/group"
 import { MarkFilterQuerySchema, MarkSchema, MarkWriteSchema } from "./mark"
 import { personalMarkRouter } from "./personal-mark-router"
 
-export type CreateMarkInput = inferProcedureInput<typeof createMarkProcedure>
-export type CreateMarkOutput = inferProcedureOutput<typeof createMarkProcedure>
 const createMarkProcedure = procedure
   .input(
     z.object({
@@ -38,8 +35,6 @@ const createMarkProcedure = procedure
     return createdMark
   })
 
-export type EditMarkInput = inferProcedureInput<typeof editMarkProcedure>
-export type EditMarkOutput = inferProcedureOutput<typeof editMarkProcedure>
 const editMarkProcedure = procedure
   .input(
     z.object({
@@ -72,8 +67,6 @@ const editMarkProcedure = procedure
     return updatedMark
   })
 
-export type GetMarkInput = inferProcedureInput<typeof getMarkProcedure>
-export type GetMarkOutput = inferProcedureOutput<typeof getMarkProcedure>
 const getMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())
@@ -89,8 +82,6 @@ const getMarkProcedure = procedure
     return mark
   })
 
-export type FindMarksInput = inferProcedureInput<typeof findManyProcedure>
-export type FindMarksOutput = inferProcedureOutput<typeof findManyProcedure>
 const findManyProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: MarkFilterQuerySchema.optional() }))
   .use(withAuthentication())
@@ -119,8 +110,6 @@ const findManyProcedure = procedure
     }
   })
 
-export type DeleteMarkInput = inferProcedureInput<typeof deleteMarkProcedure>
-export type DeleteMarkOutput = inferProcedureOutput<typeof deleteMarkProcedure>
 const deleteMarkProcedure = procedure
   .input(MarkSchema.shape.id)
   .use(withAuthentication())

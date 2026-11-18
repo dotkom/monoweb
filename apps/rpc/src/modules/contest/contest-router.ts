@@ -1,6 +1,5 @@
 import type { DBHandle } from "@dotkomonline/db"
 import { PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { InvalidArgumentError } from "../../error"
@@ -41,8 +40,6 @@ async function authorizeManageContest<TInput>(
   )
 }
 
-export type CreateContestInput = inferProcedureInput<typeof createContestProcedure>
-export type CreateContestOutput = inferProcedureOutput<typeof createContestProcedure>
 const createContestProcedure = procedure
   .input(z.object({ contest: ContestWriteSchema }))
   .use(withAuthentication())
@@ -64,8 +61,6 @@ const createContestProcedure = procedure
     return createdContest
   })
 
-export type UpdateContestInput = inferProcedureInput<typeof updateContestProcedure>
-export type UpdateContestOutput = inferProcedureOutput<typeof updateContestProcedure>
 const updateContestProcedure = procedure
   .input(
     z.object({
@@ -100,8 +95,6 @@ const updateContestProcedure = procedure
     return updatedContest
   })
 
-export type DeleteContestInput = inferProcedureInput<typeof deleteContestProcedure>
-export type DeleteContestOutput = inferProcedureOutput<typeof deleteContestProcedure>
 const deleteContestProcedure = procedure
   .input(
     z.object({
@@ -123,22 +116,16 @@ const deleteContestProcedure = procedure
     return contest
   })
 
-export type GetContestByIdInput = inferProcedureInput<typeof getContestByIdProcedure>
-export type GetContestByIdOutput = inferProcedureOutput<typeof getContestByIdProcedure>
 const getContestByIdProcedure = procedure
   .input(z.object({ contestId: ContestSchema.shape.id }))
   .query(async ({ input, ctx }) => {
     return ctx.contestService.getById(ctx.prisma, input.contestId)
   })
 
-export type FindManyContestsInput = inferProcedureInput<typeof findManyContestsProcedure>
-export type FindManyContestsOutput = inferProcedureOutput<typeof findManyContestsProcedure>
 const findManyContestsProcedure = procedure.input(PaginateInputSchema).query(async ({ input, ctx }) => {
   return ctx.contestService.findMany(ctx.prisma, input)
 })
 
-export type SetWinnerInput = inferProcedureInput<typeof setWinnerProcedure>
-export type SetWinnerOutput = inferProcedureOutput<typeof setWinnerProcedure>
 const setWinnerProcedure = procedure
   .input(
     z.object({
@@ -168,8 +155,6 @@ const setWinnerProcedure = procedure
     return updatedContest
   })
 
-export type AddContestantInput = inferProcedureInput<typeof addContestantProcedure>
-export type AddContestantOutput = inferProcedureOutput<typeof addContestantProcedure>
 const addContestantProcedure = procedure
   .input(
     z.object({
@@ -223,8 +208,6 @@ const addContestantProcedure = procedure
     return addedUserContestant
   })
 
-export type RemoveContestantInput = inferProcedureInput<typeof removeContestantProcedure>
-export type RemoveContestantOutput = inferProcedureOutput<typeof removeContestantProcedure>
 const removeContestantProcedure = procedure
   .input(
     z.object({
@@ -249,8 +232,6 @@ const removeContestantProcedure = procedure
     return contestant
   })
 
-export type UpdateContestantResultInput = inferProcedureInput<typeof updateContestantResultProcedure>
-export type UpdateContestantResultOutput = inferProcedureOutput<typeof updateContestantResultProcedure>
 const updateContestantResultProcedure = procedure
   .input(
     z.object({
@@ -282,8 +263,6 @@ const updateContestantResultProcedure = procedure
     return updatedContestantResult
   })
 
-export type UpdateTeamContestantInput = inferProcedureInput<typeof updateTeamContestantProcedure>
-export type UpdateTeamContestantOutput = inferProcedureOutput<typeof updateTeamContestantProcedure>
 const updateTeamContestantProcedure = procedure
   .input(
     z
@@ -321,8 +300,6 @@ const updateTeamContestantProcedure = procedure
     return updatedTeamContestant
   })
 
-export type GetContestWithContestantsInput = inferProcedureInput<typeof getContestWithContestantsProcedure>
-export type GetContestWithContestantsOutput = inferProcedureOutput<typeof getContestWithContestantsProcedure>
 const getContestWithContestantsProcedure = procedure
   .input(z.object({ contestId: ContestSchema.shape.id }))
   .query(async ({ input, ctx }) => {

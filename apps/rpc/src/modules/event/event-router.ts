@@ -1,6 +1,6 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
 import { BasePaginateInputSchema, PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
+import type { inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { ForbiddenError, InvalidArgumentError, NotFoundError } from "../../error"
@@ -49,8 +49,6 @@ function assertHasCommitteeOrganizer(groupIds: Iterable<string>): void {
   }
 }
 
-export type GetEventInput = inferProcedureInput<typeof getEventProcedure>
-export type GetEventOutput = inferProcedureOutput<typeof getEventProcedure>
 const getEventProcedure = procedure
   .input(EventSchema.shape.id)
   .output(EventWithAttendanceViewSchema)
@@ -94,8 +92,6 @@ const getEventForAdminByAttendanceIdProcedure = procedure
     return { event, attendance }
   })
 
-export type FindEventInput = inferProcedureInput<typeof findEventProcedure>
-export type FindEventOutput = inferProcedureOutput<typeof findEventProcedure>
 const findEventProcedure = procedure
   .input(EventSchema.shape.id)
   .output(EventWithAttendanceViewSchema.nullable())
@@ -116,8 +112,6 @@ const findEventProcedure = procedure
     return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
   })
 
-export type CreateEventInput = inferProcedureInput<typeof createEventProcedure>
-export type CreateEventOutput = inferProcedureOutput<typeof createEventProcedure>
 const createEventProcedure = procedure
   .input(
     z.object({
@@ -155,8 +149,6 @@ const createEventProcedure = procedure
     return { event, attendance: null }
   })
 
-export type EditEventInput = inferProcedureInput<typeof editEventProcedure>
-export type EditEventOutput = inferProcedureOutput<typeof editEventProcedure>
 const editEventProcedure = procedure
   .input(
     z.object({
@@ -206,8 +198,6 @@ const editEventProcedure = procedure
     return { event: updatedEvent, attendance }
   })
 
-export type DeleteEventInput = inferProcedureInput<typeof deleteEventProcedure>
-export type DeleteEventOutput = inferProcedureOutput<typeof deleteEventProcedure>
 const deleteEventProcedure = procedure
   .input(z.object({ id: EventSchema.shape.id }))
   .use(withAuthentication())
@@ -228,8 +218,6 @@ const deleteEventProcedure = procedure
     return deletedEvent
   })
 
-export type AllEventsInput = inferProcedureInput<typeof allEventsProcedure>
-export type AllEventsOutput = inferProcedureOutput<typeof allEventsProcedure>
 const allEventsProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
   .output(
@@ -264,7 +252,6 @@ const allEventsProcedure = procedure
     }
   })
 
-export type AllEventSummariesInput = inferProcedureInput<typeof allEventSummariesProcedure>
 export type AllEventSummariesOutput = inferProcedureOutput<typeof allEventSummariesProcedure>
 const allEventSummariesProcedure = procedure
   .input(BasePaginateInputSchema.extend({ filter: EventFilterQuerySchema.optional() }).prefault({}))
@@ -297,8 +284,6 @@ const allEventSummariesProcedure = procedure
     }
   })
 
-export type AllByAttendingUserIdInput = inferProcedureInput<typeof allByAttendingUserIdProcedure>
-export type AllByAttendingUserIdOutput = inferProcedureOutput<typeof allByAttendingUserIdProcedure>
 const allByAttendingUserIdProcedure = procedure
   .input(
     BasePaginateInputSchema.extend({
@@ -388,7 +373,6 @@ const allByAttendingUserIdForCalendarProcedure = procedure
     }
   })
 
-export type AllSummariesByAttendingUserIdInput = inferProcedureInput<typeof allSummariesByAttendingUserIdProcedure>
 export type AllSummariesByAttendingUserIdOutput = inferProcedureOutput<typeof allSummariesByAttendingUserIdProcedure>
 const allSummariesByAttendingUserIdProcedure = procedure
   .input(
@@ -437,8 +421,6 @@ const allSummariesByAttendingUserIdProcedure = procedure
     }
   })
 
-export type AddAttendanceInput = inferProcedureInput<typeof addAttendanceProcedure>
-export type AddAttendanceOutput = inferProcedureOutput<typeof addAttendanceProcedure>
 const addAttendanceProcedure = procedure
   .input(z.object({ values: AttendanceWriteSchema, eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceSchema)
@@ -468,8 +450,6 @@ const addAttendanceProcedure = procedure
     return { event: updatedEvent, attendance }
   })
 
-export type FindParentEventInput = inferProcedureInput<typeof findParentEventProcedure>
-export type FindParentEventOutput = inferProcedureOutput<typeof findParentEventProcedure>
 const findParentEventProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceViewSchema.nullable())
@@ -499,8 +479,6 @@ const findParentEventProcedure = procedure
     return buildEventWithAttendanceView({ event, attendance }, ctx.principal?.subject ?? null)
   })
 
-export type FindChildEventsInput = inferProcedureInput<typeof findChildEventsProcedure>
-export type FindChildEventsOutput = inferProcedureOutput<typeof findChildEventsProcedure>
 const findChildEventsProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(EventWithAttendanceViewSchema.array())
@@ -527,8 +505,6 @@ const findChildEventsProcedure = procedure
     )
   })
 
-export type FindUnansweredByUserInput = inferProcedureInput<typeof findUnansweredByUserProcedure>
-export type FindUnansweredByUserOutput = inferProcedureOutput<typeof findUnansweredByUserProcedure>
 const findUnansweredByUserProcedure = procedure
   .input(UserSchema.shape.id)
   .output(EventWithFeedbackFormSchema.array())
@@ -546,8 +522,6 @@ const findUnansweredByUserProcedure = procedure
     )
   })
 
-export type IsOrganizerInput = inferProcedureInput<typeof isOrganizerProcedure>
-export type IsOrganizerOutput = inferProcedureOutput<typeof isOrganizerProcedure>
 const isOrganizerProcedure = procedure
   .input(z.object({ eventId: EventSchema.shape.id }))
   .output(z.boolean())
@@ -561,12 +535,6 @@ const isOrganizerProcedure = procedure
     )
   })
 
-export type FindManyDeregisterReasonsWithEventInput = inferProcedureInput<
-  typeof findManyDeregisterReasonsWithEventProcedure
->
-export type FindManyDeregisterReasonsWithEventOutput = inferProcedureOutput<
-  typeof findManyDeregisterReasonsWithEventProcedure
->
 const findManyDeregisterReasonsWithEventProcedure = procedure
   .input(PaginateInputSchema)
   .use(withAuthentication())
@@ -580,7 +548,6 @@ const findManyDeregisterReasonsWithEventProcedure = procedure
     }
   })
 
-export type FindFeaturedEventsInput = inferProcedureInput<typeof findFeaturedEventsProcedure>
 export type FindFeaturedEventsOutput = inferProcedureOutput<typeof findFeaturedEventsProcedure>
 const findFeaturedEventsProcedure = procedure
   .input(
@@ -657,8 +624,6 @@ const listFeaturedPrioritiesProcedure = procedure
     return ctx.eventService.listFeaturedPriorities(ctx.prisma)
   })
 
-export type CreateFileUploadInput = inferProcedureInput<typeof createFileUploadProcedure>
-export type CreateFileUploadOutput = inferProcedureOutput<typeof createFileUploadProcedure>
 const createFileUploadProcedure = procedure
   .input(z.object({ filename: z.string(), contentType: z.string() }))
   .output(z.custom<PresignedPost>())

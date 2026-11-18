@@ -1,5 +1,4 @@
 import { PaginateInputSchema } from "@dotkomonline/utils"
-import type { inferProcedureInput, inferProcedureOutput } from "@trpc/server"
 import { z } from "zod"
 import { permitIf } from "../../authorization"
 import { withAuditLogEntry, withAuthentication, withAuthorization, withDatabaseTransaction } from "../../middlewares"
@@ -8,8 +7,6 @@ import { procedure, t } from "../../trpc"
 import { UserSchema } from "../user/user"
 import { CreatePersonalMarkSchema, PersonalMarkSchema } from "./mark"
 
-export type GetPersonalMarksByUserInput = inferProcedureInput<typeof getPersonalMarksByUserProcedure>
-export type GetPersonalMarksByUserOutput = inferProcedureOutput<typeof getPersonalMarksByUserProcedure>
 const getPersonalMarksByUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
@@ -18,8 +15,6 @@ const getPersonalMarksByUserProcedure = procedure
     return ctx.personalMarkService.findMarksByUserId(ctx.prisma, input.userId)
   })
 
-export type GetVisibleInformationInput = inferProcedureInput<typeof getVisibleInformationProcedure>
-export type GetVisibleInformationOutput = inferProcedureOutput<typeof getVisibleInformationProcedure>
 const getVisibleInformationProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id, paginate: PaginateInputSchema }))
   .use(withAuthentication())
@@ -28,8 +23,6 @@ const getVisibleInformationProcedure = procedure
     return ctx.personalMarkService.listVisibleInformationForUser(ctx.prisma, input.userId)
   })
 
-export type GetPersonalMarksByMarkInput = inferProcedureInput<typeof getPersonalMarksByMarkProcedure>
-export type GetPersonalMarksByMarkOutput = inferProcedureOutput<typeof getPersonalMarksByMarkProcedure>
 const getPersonalMarksByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
@@ -46,8 +39,6 @@ const getPersonalMarksByMarkProcedure = procedure
     return ctx.personalMarkService.findPersonalMarksByMarkId(ctx.prisma, input.markId)
   })
 
-export type GetPersonalMarkDetailsByMarkInput = inferProcedureInput<typeof getPersonalMarkDetailsByMarkProcedure>
-export type GetPersonalMarkDetailsByMarkOutput = inferProcedureOutput<typeof getPersonalMarkDetailsByMarkProcedure>
 const getPersonalMarkDetailsByMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId, paginate: PaginateInputSchema }))
   .use(withAuthentication())
@@ -63,8 +54,6 @@ const getPersonalMarkDetailsByMarkProcedure = procedure
     return ctx.personalMarkService.findPersonalMarkDetails(ctx.prisma, input.markId)
   })
 
-export type AddPersonalMarkToUserInput = inferProcedureInput<typeof addPersonalMarkToUserProcedure>
-export type AddPersonalMarkToUserOutput = inferProcedureOutput<typeof addPersonalMarkToUserProcedure>
 const addPersonalMarkToUserProcedure = procedure
   .input(CreatePersonalMarkSchema)
   .use(withAuthentication())
@@ -94,8 +83,6 @@ const addPersonalMarkToUserProcedure = procedure
     return addedPersonalMark
   })
 
-export type CountUsersWithMarkInput = inferProcedureInput<typeof countUsersWithMarkProcedure>
-export type CountUsersWithMarkOutput = inferProcedureOutput<typeof countUsersWithMarkProcedure>
 const countUsersWithMarkProcedure = procedure
   .input(z.object({ markId: PersonalMarkSchema.shape.markId }))
   .use(withAuthentication())
@@ -111,8 +98,6 @@ const countUsersWithMarkProcedure = procedure
     return ctx.personalMarkService.countUsersByMarkId(ctx.prisma, input.markId)
   })
 
-export type RemovePersonalMarkFromUserInput = inferProcedureInput<typeof removePersonalMarkFromUserProcedure>
-export type RemovePersonalMarkFromUserOutput = inferProcedureOutput<typeof removePersonalMarkFromUserProcedure>
 const removePersonalMarkFromUserProcedure = procedure
   .input(PersonalMarkSchema.pick({ userId: true, markId: true }))
   .use(withAuthentication())
@@ -137,8 +122,6 @@ const removePersonalMarkFromUserProcedure = procedure
     return removedPersonalMark
   })
 
-export type GetExpiryDateForUserInput = inferProcedureInput<typeof getExpiryDateForUserProcedure>
-export type GetExpiryDateForUserOutput = inferProcedureOutput<typeof getExpiryDateForUserProcedure>
 const getExpiryDateForUserProcedure = procedure
   .input(z.object({ userId: UserSchema.shape.id }))
   .use(withAuthentication())
