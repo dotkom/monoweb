@@ -1,4 +1,5 @@
 import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
+import { getAttendanceStatus } from "@/app/arrangementer/components/attendanceStatus"
 import { ScrollingClouds } from "@/components/atoms/ScrollingClouds"
 import { FrontPageOfflineShowcase } from "@/components/frontpage/FrontPageOfflineShowcase"
 import { Link } from "@/components/link"
@@ -18,7 +19,7 @@ import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import { Button, Text, Title, cn } from "@dotkomonline/ui"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { IconArrowRight, IconCalendarDollar, IconCalendarEvent } from "@tabler/icons-react"
-import { formatDistanceToNowStrict, isAfter, isFuture, startOfDay } from "date-fns"
+import { formatDistanceToNowStrict, isFuture, startOfDay } from "date-fns"
 import { nb } from "date-fns/locale"
 import { cookies } from "next/headers"
 import { CLOUD_ROWS } from "src/components/frontpage/FrontPageClouds"
@@ -93,7 +94,11 @@ export default async function App() {
 
   const now = getCurrentUTC()
   const suggestedEvent =
-    userEvents.length === 1 ? featuredEvents.find((featured) => canStillRegister(featured, now)) : undefined
+    userEvents.length === 1
+      ? featuredEvents.find(
+          (featured) => featured.attendance !== null && getAttendanceStatus(featured.attendance, now) === "OPEN"
+        )
+      : undefined
   const remainingFeaturedEvents = featuredEvents
     .filter((featured) => featured !== suggestedEvent)
     .slice(0, FEATURED_EVENT_COUNT)
@@ -184,18 +189,6 @@ export default async function App() {
   )
 }
 
-/**
- * True if the event doesn't require registration, or if registration hasn't ended yet. Full events still count,
- * since joining the waiting list is a registration too.
- */
-function canStillRegister({ attendance }: EventRouter.FindFeaturedEventsOutput[number], now: Date) {
-  if (attendance === null || attendance.pools.length === 0) {
-    return true
-  }
-
-  return isAfter(attendance.registerEnd, now)
-}
-
 function EmptyState({ text, children }: { text: string; children?: React.ReactNode }) {
   return (
     <div className="flex flex-col items-start gap-4 p-6 rounded-2xl bg-white dark:bg-stone-800/50">
@@ -228,8 +221,7 @@ function UserEvents({
               event={event}
               attendance={attendance}
               userId={userId}
-              variant="personal"
-              className="bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
+              className="h-full bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
               header={<UserEventLabel event={event} attendance={attendance} userId={userId} />}
             />
           </div>
@@ -240,8 +232,7 @@ function UserEvents({
               event={suggestedEvent.event}
               attendance={suggestedEvent.attendance}
               userId={userId}
-              variant="personal"
-              className="border-2 border-dashed border-blue-200 hover:border-blue-300 hover:bg-white/60 dark:border-stone-700 dark:hover:border-stone-600 dark:hover:bg-stone-800/50"
+              className="h-full border-2 border-dashed border-blue-200 bg-white hover:border-blue-300 hover:bg-white/60 dark:border-stone-700 dark:bg-stone-800/50 dark:hover:border-stone-600 dark:hover:bg-stone-800/50"
               header={
                 <Text className="w-fit rounded-lg bg-blue-100 px-3 py-1.5 text-base font-semibold text-blue-950 dark:bg-brand/30 dark:text-white">
                   Kanskje noe for deg?
@@ -282,7 +273,7 @@ function FeaturedEvents({ events }: { events: EventRouter.FindFeaturedEventsOutp
               <EventCard
                 event={event}
                 attendance={attendance}
-                className="bg-white dark:bg-stone-800/50 hover:bg-gray-50 dark:hover:bg-stone-800"
+                className="bg-white hover:bg-gray-50 dark:bg-stone-800/50 dark:hover:bg-stone-800"
               />
             </div>
           ))}
