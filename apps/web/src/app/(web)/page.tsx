@@ -12,6 +12,7 @@ import { IDENTITY_LINK_STATUS_COOKIE, IDENTITY_LINK_STATUS_VALUE } from "@/lib/l
 import { cookies } from "next/headers"
 import { server } from "@/utils/trpc/server"
 import { TZDate } from "@date-fns/tz"
+import type { EventRouter } from "@dotkomonline/rpc"
 import { attendeeHasPendingCompletionDeadline, getAttendee } from "@dotkomonline/rpc/attendance"
 import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { Offline } from "@dotkomonline/rpc/offline"
@@ -26,7 +27,6 @@ import { VelkomEkskomLeaderApplicationsNotice } from "src/components/notices/sma
 import { ArticleListItem } from "@/app/(web)/artikler/components/ArticleListItem"
 import { FrontPageOfflineShowcase } from "@/components/frontPageOfflineShowcase"
 
-type FeaturedEvent = Awaited<ReturnType<typeof server.event.findFeaturedEvents.query>>[number]
 type UserEvent = Awaited<ReturnType<typeof server.event.allSummariesByAttendingUserId.query>>["items"][number]
 
 // Rows of clouds spread down the page. Different widths and speeds give a bit of depth.
@@ -132,7 +132,7 @@ export default async function App() {
     }
   }
 
-  let featuredEvents: FeaturedEvent[] = []
+  let featuredEvents: EventRouter.FindFeaturedEventsOutput = []
 
   try {
     featuredEvents = await server.event.findFeaturedEvents.query({
@@ -262,7 +262,7 @@ export default async function App() {
  * True if the event doesn't require registration, or if registration hasn't ended yet. Full events still count,
  * since joining the waiting list is a registration too.
  */
-function canStillRegister({ attendance }: FeaturedEvent, now: Date) {
+function canStillRegister({ attendance }: EventRouter.FindFeaturedEventsOutput[number], now: Date) {
   if (attendance === null || attendance.pools.length === 0) {
     return true
   }
@@ -285,7 +285,7 @@ function UserEvents({
   userId,
 }: {
   events: UserEvent[]
-  suggestedEvent?: FeaturedEvent
+  suggestedEvent?: EventRouter.FindFeaturedEventsOutput[number]
   userId: string
 }) {
   // Two cards per view on desktop: (100% - 1 gap of 1.5rem) / 2
@@ -327,7 +327,7 @@ function NoUserEvents() {
   )
 }
 
-function FeaturedEvents({ events }: { events: FeaturedEvent[] }) {
+function FeaturedEvents({ events }: { events: EventRouter.FindFeaturedEventsOutput }) {
   return (
     <div data-featured-events className="flex flex-col gap-4">
       <Title className="text-3xl font-semibold">Fremhevede arrangementer</Title>
