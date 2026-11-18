@@ -36,16 +36,16 @@ export function MembershipWelcomeCard({ initialVisible }: { initialVisible: bool
 
         <div className="flex flex-col items-center gap-2">
           <div className="flex gap-3 justify-center">
-            <a href="https://slack.com">
+            <a href="https://onlinentnu.slack.com/">
               <IconBrandSlack width={25} height={25} />
             </a>
-            <a href="idk">
+            <a href="https://discord.gg/mS4ktAdFhu">
               <IconBrandDiscord width={25} height={25} />
             </a>
-            <a href="https://instagram.com">
+            <a href="https://www.instagram.com/online_ntnu/">
               <IconBrandInstagram width={25} height={25} />
             </a>
-            <a href="https://facebook.com">
+            <a href="https://www.facebook.com/groups/1547182375336132">
               <IconBrandFacebook width={25} height={25} />
             </a>
           </div>

@@ -51,7 +51,7 @@ import type { EmailService } from "../email/email-service"
 import type { NotificationService } from "../notification/notification-service"
 
 export interface UserService {
-  register(handle: DBHandle, subject: string): Promise<{ user: User, membershipChange: "first" | "renewed" | null }>
+  register(handle: DBHandle, subject: string): Promise<{ user: User; membershipChange: "first" | "renewed" | null }>
   update(handle: DBHandle, userId: UserId, data: Partial<UserWrite>): Promise<User>
   /**
    * Request a change of the user's contact email.
@@ -121,7 +121,10 @@ export interface UserService {
    *
    * This function should only be called if you actually want to registrer an automatically discovered membership.
    */
-  discoverMembership(handle: DBHandle, userId: UserId): Promise<{ user: User, membershipChange: "first" | "renewed" | null }>
+  discoverMembership(
+    handle: DBHandle,
+    userId: UserId
+  ): Promise<{ user: User; membershipChange: "first" | "renewed" | null }>
   createMembership(handle: DBHandle, userId: UserId, membership: MembershipWrite): Promise<User>
   updateMembership(handle: DBHandle, membershipId: MembershipId, membership: Partial<MembershipWrite>): Promise<User>
   deleteMembership(handle: DBHandle, membershipId: MembershipId): Promise<User>
@@ -658,7 +661,7 @@ export function getUserService(
         // If the best active membership is KNIGHT, we attempt to discover a new membership for the user, in case they
         // can find a "better" membership this way.
         if (membership !== null && membership.type !== "KNIGHT") {
-          return {user: syncedUser, membershipChange: null}
+          return { user: syncedUser, membershipChange: null }
         }
 
         // The membership of this user has expired since their last sign-in. Attempt to discover a need one.
@@ -907,7 +910,7 @@ export function getUserService(
           })
       }
 
-      return {user, membershipChange}
+      return { user, membershipChange }
     },
 
     async createMembership(handle, userId, data) {
@@ -932,32 +935,26 @@ export function getUserService(
 
       // Check that user exists
       const user = await this.getById(handle, userId)
-      
-      console.log("new membershup created, sent notification")
 
-      if (user.memberships.length === 0) {
-        
-      } else {
-        // await notificationService.send(handle, {
-        //   type: "",
-        //   title: "johan test",
-        //   shortDescription: "jdkjg",
-        //   content: "dfsjdfkldsfhieiiuehoeruyghiwrigwoiturewjk",
-        //   link: {
-        //     type: "URL",
-        //     url: "https://onlinentnu.slack.com/"
-        //   },
-        //   recipientSelection: {
-        //     rules: [
-        //       {
-        //         type: "USERS",
-        //         userIds: [userId]
-        //       }
-        //     ],
-        //     excludedUserIds: []
-        //   }
-        // })
-      }
+      logger.info("send notif")
+
+      // if (user.memberships.length === 0) {
+      await notificationService.send(handle, {
+        type: "BROADCAST",
+        title: "Medlemskap fornyet",
+        shortDescription: "Medlemskapet ditt er fornyet",
+        content: "Medlemskapet ditt har blitt fornyet, du kan nå melde deg på arrangementer igjen!",
+        recipientSelection: {
+          rules: [
+            {
+              type: "USERS",
+              userIds: [userId],
+            },
+          ],
+          excludedUserIds: [],
+        },
+      })
+      // }
 
       return await userRepository.createMembership(handle, user.id, data)
     },
