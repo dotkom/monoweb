@@ -114,7 +114,7 @@ export function UserCombobox({
           </Label>
         )}
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
-        <ComboboxChips ref={anchor} className="h-auto min-h-9">
+        <ComboboxChips ref={anchor}>
           <ComboboxValue>
             {(selected: UserMemberOption[]) => (
               <>

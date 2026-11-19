@@ -1,6 +1,5 @@
 "use client"
 
-import { cn } from "#lib/utils"
 import { useState } from "react"
 import {
   Combobox,
@@ -63,10 +62,7 @@ export function TagInput({
       onInputValueChange={setQuery}
       autoHighlight
     >
-      <ComboboxChips
-        ref={anchor}
-        className={cn("w-full cursor-text min-h-9 h-auto", className, value.length > 0 && "p-1")}
-      >
+      <ComboboxChips ref={anchor} className={className}>
         <ComboboxValue>
           {(tags: string[]) => (
             <>

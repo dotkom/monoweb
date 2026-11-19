@@ -181,15 +181,12 @@ function ComboboxSeparator({ className, ...props }: ComboboxPrimitive.Separator.
   )
 }
 
-function ComboboxChips({
-  className,
-  ...props
-}: React.ComponentPropsWithRef<typeof ComboboxPrimitive.Chips> & ComboboxPrimitive.Chips.Props) {
+function ComboboxChips({ className, ...props }: React.ComponentPropsWithRef<typeof ComboboxPrimitive.Chips>) {
   return (
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex h-9 w-full min-w-0 flex-wrap items-center gap-1 px-3 py-1.5 text-base md:text-sm",
+        "flex h-auto min-h-9 w-full min-w-0 cursor-text flex-wrap items-center gap-1 px-3 py-1.5 text-base has-[>[data-slot=combobox-chip]]:p-1 md:text-sm",
         fieldControlClass,
         fieldPrimarySurfaceClass,
         "focus-within:border-ring/40 focus-within:ring-2 focus-within:ring-ring/20 focus-within:ring-offset-0 focus-within:hover:border-ring/40",
