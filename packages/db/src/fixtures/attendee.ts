@@ -5,18 +5,18 @@ import { attendancePoolId, type FixtureAttendancePoolKey } from "./attendance-po
 import { getVolleyballEventEnd } from "./event"
 import { type FixtureUserKey, userId } from "./user"
 
-export const fixtureVolleyballAttendeeId = [
-  "c1000001-0000-4000-8000-000000000001",
-  "c1000002-0000-4000-8000-000000000002",
-  "c1000003-0000-4000-8000-000000000003",
-  "c1000004-0000-4000-8000-000000000004",
-  "c1000005-0000-4000-8000-000000000005",
-  "c1000006-0000-4000-8000-000000000006",
-  "c1000007-0000-4000-8000-000000000007",
-  "c1000008-0000-4000-8000-000000000008",
-  "c1000009-0000-4000-8000-000000000009",
-  "c1000010-0000-4000-8000-000000000010",
-] as const
+export const fixtureVolleyballAttendeeId: Partial<Record<FixtureUserKey, string>> = {
+  anders: "c1000001-0000-4000-8000-000000000001",
+  berta: "c1000002-0000-4000-8000-000000000002",
+  carl: "c1000003-0000-4000-8000-000000000003",
+  dina: "c1000004-0000-4000-8000-000000000004",
+  eirik: "c1000005-0000-4000-8000-000000000005",
+  frida: "c1000006-0000-4000-8000-000000000006",
+  helle: "c1000007-0000-4000-8000-000000000007",
+  ivar: "c1000008-0000-4000-8000-000000000008",
+  jenny: "c1000009-0000-4000-8000-000000000009",
+  kasper: "c1000010-0000-4000-8000-000000000010",
+}
 
 const now = roundToNearestHours(new Date(), { roundingMethod: "ceil" })
 
@@ -100,17 +100,15 @@ const attendeeAssignments: AttendeeAssignment[] = [
   { attendance: "may17Breakfast", pool: "may17Breakfast_all", user: "kasper", registeredDaysAgo: 21 },
 ]
 
-export const getAttendeeFixtures = () => {
-  let volleyballAttendeeIndex = 0
-
-  return attendeeAssignments.map(({ attendance, pool, user, registeredDaysAgo, registered = true }) => {
+export const getAttendeeFixtures = () =>
+  attendeeAssignments.map(({ attendance, pool, user, registeredDaysAgo, registered = true }) => {
     const registeredAt = subDays(now, registeredDaysAgo)
     const isVolleyballAttendee = attendance === "volleyball"
 
     return {
       ...(isVolleyballAttendee
         ? {
-            id: fixtureVolleyballAttendeeId[volleyballAttendeeIndex++],
+            id: fixtureVolleyballAttendeeId[user],
             attendedAt: addHours(getVolleyballEventEnd(), 1),
           }
         : {}),
@@ -124,4 +122,3 @@ export const getAttendeeFixtures = () => {
       selections: [],
     } satisfies Prisma.AttendeeCreateManyInput
   })
-}

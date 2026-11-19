@@ -16,7 +16,7 @@ import { getEventCompanyFixtures } from "./fixtures/event-company"
 import { getEventHostingGroupFixtures } from "./fixtures/event-hosting-group"
 import { getFadderukeFixture } from "./fixtures/fadderuke"
 import { getFeedbackFormFixture } from "./fixtures/feedback-form"
-import { getFeedbackAnswerEventFormFixture, getFeedbackFormAnswerFixtures } from "./fixtures/feedback-form-answers"
+import { getFeedbackFormAnswerFixtures } from "./fixtures/feedback-form-answers"
 import { getGroupFixtures, getGroupRoleFixtures } from "./fixtures/group"
 import { getGroupMembershipFixtures } from "./fixtures/group-membership"
 import { getGroupMembershipRoleFixtures } from "./fixtures/group-membership-role"
@@ -149,19 +149,40 @@ await db.groupMembershipRole.createMany({
   skipDuplicates: true,
 })
 
-const userIds = getUserFixtures().map((user) => user.id)
-await db.sidequest.createMany({
-  data: getSidequestFixtures(),
-  skipDuplicates: true,
-})
+for (const sidequest of getSidequestFixtures()) {
+  await db.sidequest.upsert({
+    where: {
+      id: sidequest.id,
+    },
+    create: sidequest,
+    update: {},
+  })
+}
 
-await db.sidequestRequest.createMany({
-  data: getSidequestRequestFixtures(userIds),
-})
-await db.sidequestRegistration.createMany({
-  data: getSidequestRegistrationFixtures(userIds),
-  skipDuplicates: true,
-})
+const userIds = getUserFixtures().map((user) => user.id)
+
+for (const request of getSidequestRequestFixtures(userIds)) {
+  await db.sidequestRequest.upsert({
+    where: {
+      sidequestId: request.sidequestId,
+    },
+    create: request,
+    update: {},
+  })
+}
+
+for (const registration of getSidequestRegistrationFixtures(userIds)) {
+  await db.sidequestRegistration.upsert({
+    where: {
+      userId_sidequestId: {
+        userId: registration.userId,
+        sidequestId: registration.sidequestId,
+      },
+    },
+    create: registration,
+    update: {},
+  })
+}
 
 for (const attendance of getAttendanceFixtures()) {
   await db.attendance.upsert({
@@ -210,40 +231,25 @@ await db.eventHostingGroup.createMany({
   skipDuplicates: true,
 })
 
-const nearestEvent = (
-  await db.event.findMany({
-    where: { start: { gt: new Date() } },
-    orderBy: { start: "asc" },
-    take: 1,
-  })
-).at(0)
-
-if (nearestEvent === undefined) {
-  throw new Error("Missing future event for feedback form fixture")
-}
-
-const volleyballEvent = await db.event.findUniqueOrThrow({
-  where: { id: eventId("volleyball") },
-})
-
-await db.feedbackForm.upsert({
-  where: { eventId: nearestEvent.id },
-  create: getFeedbackFormFixture(nearestEvent),
+const feedbackFormFixture = getFeedbackFormFixture()
+const feedbackForm = await db.feedbackForm.upsert({
+  where: {
+    eventId: feedbackFormFixture.eventId,
+  },
+  create: feedbackFormFixture,
   update: {},
 })
 
-await db.feedbackForm.upsert({
-  where: { id: getFeedbackAnswerEventFormFixture(volleyballEvent).id },
-  create: getFeedbackAnswerEventFormFixture(volleyballEvent),
-  update: {},
-})
-
-for (const feedbackFormAnswer of getFeedbackFormAnswerFixtures()) {
-  await db.feedbackFormAnswer.upsert({
-    where: { attendeeId: feedbackFormAnswer.attendeeId },
-    create: feedbackFormAnswer,
-    update: {},
-  })
+if (feedbackForm.id === feedbackFormFixture.id) {
+  for (const feedbackFormAnswer of getFeedbackFormAnswerFixtures()) {
+    await db.feedbackFormAnswer.upsert({
+      where: {
+        attendeeId: feedbackFormAnswer.attendeeId,
+      },
+      create: feedbackFormAnswer,
+      update: {},
+    })
+  }
 }
 
 for (const mark of getMarkFixtures()) {
