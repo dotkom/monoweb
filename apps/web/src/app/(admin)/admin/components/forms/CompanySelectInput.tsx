@@ -130,12 +130,14 @@ export function CompanySelectInput(props: CompanySelectInputProps) {
       autoHighlight={multiple}
     >
       {multiple ? (
-        <ComboboxChips ref={anchor} className="w-full cursor-text p-1">
+        <ComboboxChips ref={anchor}>
           <ComboboxValue>
             {(selected: CompanySelectOption[]) => (
               <>
                 {selected.map((item) => (
-                  <ComboboxChip key={item.value}>{item.label}</ComboboxChip>
+                  <ComboboxChip key={item.value} className="h-6.5">
+                    {item.label}
+                  </ComboboxChip>
                 ))}
                 <ComboboxChipsInput
                   id={id}
