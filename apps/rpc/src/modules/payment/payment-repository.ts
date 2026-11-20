@@ -46,6 +46,7 @@ export interface PaymentRepository {
   findAttemptByIdentifiers(handle: DBHandle, identifiers: PaymentAttemptIdentifiers[]): Promise<PaymentAttempt | null>
 
   attachCheckoutSession(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<void>
+  cancelUnopenedCheckout(handle: DBHandle, attemptId: string): Promise<void>
   markCheckoutRequested(handle: DBHandle, attemptId: string, requestedAt: Date): Promise<void>
 
   createRefund(handle: DBHandle, data: PaymentRefundWrite): Promise<PaymentRefund>
@@ -197,6 +198,25 @@ export function getPaymentRepository(): PaymentRepository {
         },
         data: {
           status,
+        },
+      })
+    },
+
+    async cancelUnopenedCheckout(handle, attemptId) {
+      // If Stripe is still creating the session, the checkout worker will attach it and expire it after it sees CANCELLED.
+      await handle.paymentAttempt.update({
+        where: {
+          id: attemptId,
+          status: "CREATED",
+          AND: [
+            {
+              stripeCheckoutSessionId: null,
+              stripePaymentIntentId: null,
+            },
+          ],
+        },
+        data: {
+          status: "CANCELLED",
         },
       })
     },

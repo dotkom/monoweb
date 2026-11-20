@@ -6,8 +6,9 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { clearInterval, type setInterval } from "node:timers"
 import PQueue from "p-queue"
+import Stripe from "stripe"
 import type { Configuration } from "../../configuration"
-import { IllegalStateError, TaskSkippedError } from "../../error"
+import { IllegalStateError, RetryableTaskError, TaskSkippedError } from "../../error"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
 import type { Task } from "./task"
@@ -101,10 +102,19 @@ export function getLocalTaskExecutor(
           return
         }
 
+        if (task.type === tasks.VERIFY_ATTENDANCE_COMPLETION.type) {
+          await attendanceService.executeVerifyAttendanceCompletionTask(
+            client,
+            payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
+          )
+
+          return
+        }
+
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
-        const notifyAfterCommit = await client.$transaction(async (handle) => {
+        await client.$transaction(async (handle) => {
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
@@ -116,12 +126,6 @@ export function getLocalTaskExecutor(
               return await attendanceService.executeMergeEventPoolsTask(
                 handle,
                 payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
-              )
-
-            case tasks.VERIFY_ATTENDANCE_COMPLETION.type:
-              return await attendanceService.executeVerifyAttendanceCompletionTask(
-                handle,
-                payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
               )
 
             case tasks.VERIFY_FEEDBACK_ANSWERED.type:
@@ -143,8 +147,6 @@ export function getLocalTaskExecutor(
             `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
           )
         })
-
-        await notifyAfterCommit?.(client)
       } catch (error: unknown) {
         const isSkippedError = error instanceof TaskSkippedError
 
@@ -182,13 +184,15 @@ export function getLocalTaskExecutor(
           return
         }
 
+        const shouldRetryCompletion =
+          task.type === tasks.VERIFY_ATTENDANCE_COMPLETION.type && isRetryableCompletionError(error)
         // A webhook can update the attempt while the capture worker is reading its status from Stripe.
         const shouldRetryCapture =
           task.type === tasks.CHARGE_ATTENDEE.type &&
           error instanceof Prisma.PrismaClientKnownRequestError &&
           error.code === "P2025"
 
-        if (shouldRetryCapture) {
+        if (shouldRetryCompletion || shouldRetryCapture) {
           outcome = "retrying"
           await taskService.update(
             client,
@@ -274,4 +278,18 @@ export function getLocalTaskExecutor(
       })
     },
   }
+}
+
+function isRetryableCompletionError(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    // Connection acquisition, optimistic update conflicts, transaction timeout, or serialization failure.
+    return ["P2024", "P2025", "P2028", "P2034"].includes(error.code)
+  }
+
+  return (
+    error instanceof RetryableTaskError ||
+    error instanceof Stripe.errors.StripeConnectionError ||
+    error instanceof Stripe.errors.StripeAPIError ||
+    error instanceof Stripe.errors.StripeRateLimitError
+  )
 }
