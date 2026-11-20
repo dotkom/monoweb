@@ -9,7 +9,7 @@ import type { PaymentWorkflowService } from "../payment/payment-workflow-service
 import type { PaymentRecord } from "../payment/payment"
 import type { AttendanceService } from "../event/attendance-service"
 import type { RecurringTaskService } from "./recurring-task-service"
-import type { Task } from "./task"
+import type { ClaimedTask, Task } from "./task"
 import { tasks } from "./task-definition"
 import type { TaskDiscoveryService } from "./task-discovery-service"
 import { getLocalTaskExecutor } from "./task-executor"
@@ -28,7 +28,17 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
     attendeeId: "attendee",
     paymentAttemptId: "attempt",
   }
-  const task = mock<Task>({ id: "task", type, payload })
+  const claimedAt = new Date()
+  const task: ClaimedTask = {
+    id: "task",
+    type,
+    payload,
+    status: "RUNNING",
+    processedAt: claimedAt,
+    createdAt: claimedAt,
+    scheduledAt: claimedAt,
+    recurringTaskId: null,
+  }
   const configuration = mock<Configuration>({
     tasks: {
       workerInterval: 100,
@@ -36,10 +46,8 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   })
 
   discoveryService.querySchedulableRecurringTasks.mockResolvedValue([])
-  discoveryService.queryNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
+  discoveryService.claimNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
   taskService.parse.mockReturnValue(payload)
-  const claimedAt = new Date()
-  taskService.claimCheckoutTask.mockResolvedValue(claimedAt)
   client.$transaction.mockImplementation(async (operation) => {
     return await operation(transactionHandle)
   })
@@ -67,6 +75,7 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   return {
     client,
     transactionHandle,
+    discoveryService,
     attendanceService,
     paymentWorkflowService,
     taskService,
@@ -92,10 +101,7 @@ describe("task executor transaction boundaries", () => {
 
     expect(client.$transaction).not.toHaveBeenCalled()
     expect(attendanceService.executeChargeAttendeeTask).toHaveBeenCalledExactlyOnceWith(client, payload)
-    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([
-      [client, "task", "RUNNING", "PENDING"],
-      [client, "task", "COMPLETED", "RUNNING"],
-    ])
+    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([[client, "task", "COMPLETED", "RUNNING"]])
   })
 
   it.each([
@@ -108,10 +114,7 @@ describe("task executor transaction boundaries", () => {
     await runTask()
 
     expect(client.$transaction).not.toHaveBeenCalled()
-    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([
-      [client, "task", "RUNNING", "PENDING"],
-      [client, "task", expectedStatus, "RUNNING"],
-    ])
+    expect(taskService.setTaskExecutionStatus.mock.calls).toEqual([[client, "task", expectedStatus, "RUNNING"]])
   })
 
   it("retries a completion check after a Stripe timeout without wrapping the check in a transaction", async () => {
@@ -135,7 +138,7 @@ describe("task executor transaction boundaries", () => {
       },
       "RUNNING"
     )
-    expect(taskService.setTaskExecutionStatus).toHaveBeenCalledExactlyOnceWith(client, "task", "RUNNING", "PENDING")
+    expect(taskService.setTaskExecutionStatus).not.toHaveBeenCalled()
   })
 
   it("opens prepared checkouts outside a transaction through the payment workflow", async () => {
@@ -171,8 +174,10 @@ describe("task executor transaction boundaries", () => {
   })
 
   it("does not execute or acknowledge a checkout claimed by another worker", async () => {
-    const { paymentWorkflowService, taskService, runTask } = createFixture(tasks.OPEN_PAYMENT_CHECKOUT.type)
-    taskService.claimCheckoutTask.mockResolvedValue(null)
+    const { discoveryService, paymentWorkflowService, taskService, runTask } = createFixture(
+      tasks.OPEN_PAYMENT_CHECKOUT.type
+    )
+    discoveryService.claimNextTask.mockReset().mockResolvedValue(null)
 
     await runTask()
 
