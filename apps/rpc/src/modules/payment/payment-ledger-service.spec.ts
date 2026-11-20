@@ -432,7 +432,8 @@ describe("payment ledger service", () => {
         checkoutExpiresAt: new Date("2026-11-08T11:00:00Z"),
         captureScheduledAt: expectedCaptureScheduledAt,
         lastSyncedAt: new Date("2026-11-08T10:00:00Z"),
-      })
+      }),
+      { updatedAt: attempt.updatedAt, status: "CHECKOUT_OPEN" }
     )
   })
 
@@ -594,7 +595,8 @@ describe("payment ledger service", () => {
       expect.objectContaining({
         stripeCheckoutSessionId: "session",
         status: "CHECKOUT_OPEN",
-      })
+      }),
+      { updatedAt: attempt.updatedAt, status: "CREATED" }
     )
   })
 

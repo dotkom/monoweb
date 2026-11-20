@@ -1,4 +1,4 @@
-import type { DBClient, Prisma, PrismaClient } from "@dotkomonline/db"
+import { type DBClient, Prisma, type PrismaClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { addMinutes } from "date-fns"
 import type { PaymentWorkflowService } from "../payment/payment-workflow-service"
@@ -176,6 +176,28 @@ export function getLocalTaskExecutor(
             scheduledAt: addMinutes(getCurrentUTC(), 1),
             processedAt: null,
           })
+
+          return
+        }
+
+        // A webhook can update the attempt while the capture worker is reading its status from Stripe.
+        const shouldRetryCapture =
+          task.type === tasks.CHARGE_ATTENDEE.type &&
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2025"
+
+        if (shouldRetryCapture) {
+          outcome = "retrying"
+          await taskService.update(
+            client,
+            task.id,
+            {
+              status: "PENDING",
+              scheduledAt: addMinutes(getCurrentUTC(), 1),
+              processedAt: null,
+            },
+            "RUNNING"
+          )
 
           return
         }

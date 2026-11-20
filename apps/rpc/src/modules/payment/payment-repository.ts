@@ -37,7 +37,12 @@ export interface PaymentRepository {
   reassignWaivers(handle: DBHandle, consumedUserId: string, survivorUserId: string): Promise<void>
 
   createAttempt(handle: DBHandle, data: PaymentAttemptWrite): Promise<PaymentAttempt>
-  updateAttempt(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<PaymentAttempt>
+  updateAttempt(
+    handle: DBHandle,
+    attemptId: string,
+    data: PaymentAttemptUpdate,
+    expected?: Pick<PaymentAttempt, "updatedAt" | "status">
+  ): Promise<PaymentAttempt>
   findAttemptByIdentifiers(handle: DBHandle, identifiers: PaymentAttemptIdentifiers[]): Promise<PaymentAttempt | null>
 
   attachCheckoutSession(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<void>
@@ -143,10 +148,11 @@ export function getPaymentRepository(): PaymentRepository {
       return parseOrReport(PaymentAttemptSchema, attempt)
     },
 
-    async updateAttempt(handle, attemptId, data) {
+    async updateAttempt(handle, attemptId, data, expected) {
       const attempt = await handle.paymentAttempt.update({
         where: {
           id: attemptId,
+          ...expected,
         },
         data,
         include: {
