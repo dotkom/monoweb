@@ -1,7 +1,7 @@
-import { env } from "@/env"
-import { useTRPC } from "@/utils/trpc/client"
 import { uploadFileToS3PresignedPost } from "@dotkomonline/utils"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { env } from "@/env"
+import { useTRPC } from "@/utils/trpc/client"
 
 /**
  * Create a presigned S3 URL for uploading user-related files, namely user avatar images.
@@ -33,6 +33,25 @@ export const useUserUpdateMutation = () => {
           queryClient.invalidateQueries(trpc.user.findByUsername.queryOptions(data.username)),
           queryClient.invalidateQueries(trpc.user.getMe.queryOptions()),
           queryClient.invalidateQueries(trpc.user.findMe.queryOptions()),
+        ])
+      },
+    })
+  )
+}
+
+export const useNotificationSettingsUpdateMutation = () => {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    trpc.notification.updateMySettings.mutationOptions({
+      onSuccess: async (settings) => {
+        queryClient.setQueryData(trpc.notification.getMySettings.queryKey(), settings)
+
+        await Promise.allSettled([
+          queryClient.invalidateQueries(trpc.notification.getMyNotifications.infiniteQueryFilter()),
+          queryClient.invalidateQueries(trpc.notification.getMyUnreadCount.queryOptions()),
+          queryClient.invalidateQueries(trpc.notification.getMyNotification.queryFilter()),
         ])
       },
     })

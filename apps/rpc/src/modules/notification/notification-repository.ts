@@ -1,5 +1,5 @@
 import { type DBHandle, Prisma } from "@dotkomonline/db"
-import { type Pageable, getCurrentUTC, pageQuery } from "@dotkomonline/utils"
+import { getCurrentUTC, type Pageable, pageQuery } from "@dotkomonline/utils"
 import { parseOrReport } from "../../invariant"
 import type { UserId } from "../user/user"
 import {
@@ -9,6 +9,8 @@ import {
   type NotificationManagement,
   NotificationManagementSchema,
   type NotificationRecipient,
+  type NotificationRecipientEmail,
+  NotificationRecipientEmailSchema,
   type NotificationRecipientFilterQuery,
   type NotificationRecipientListItem,
   NotificationRecipientListItemSchema,
@@ -17,12 +19,13 @@ import {
   NotificationRecipientSelectionSchema,
   type NotificationRecipientStats,
   NotificationSchema,
+  type NotificationType,
   type NotificationUpdate,
   type NotificationWrite,
-  type UserNotification,
-  UserNotificationSchema,
   parseNotificationLink,
   serializeNotificationLink,
+  type UserNotification,
+  UserNotificationSchema,
 } from "./notification"
 
 export interface NotificationRepository {
@@ -51,17 +54,27 @@ export interface NotificationRepository {
 
   addRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<NotificationRecipient[]>
   removeRecipients(handle: DBHandle, notificationId: NotificationId, userIds: UserId[]): Promise<number>
-  findRecipientEmails(handle: DBHandle, notificationId: NotificationId): Promise<string[]>
   findRecipients(
     handle: DBHandle,
     notificationId: NotificationId,
     filters: NotificationRecipientFilterQuery,
     page: Pageable
   ): Promise<NotificationRecipientListItem[]>
+  findRecipientEmails(
+    handle: DBHandle,
+    notificationId: NotificationId,
+    userIds?: UserId[]
+  ): Promise<NotificationRecipientEmail[]>
   getRecipientStats(handle: DBHandle, notificationId: NotificationId): Promise<NotificationRecipientStats>
 
-  findManyForUser(handle: DBHandle, userId: UserId, page: Pageable): Promise<UserNotification[]>
-  countUnreadForUser(handle: DBHandle, userId: UserId): Promise<number>
+  findManyForUser(
+    handle: DBHandle,
+    userId: UserId,
+    page: Pageable,
+    notificationTypes: NotificationType[]
+  ): Promise<UserNotification[]>
+  findForUser(handle: DBHandle, userId: UserId, notificationId: NotificationId): Promise<UserNotification | null>
+  countUnreadForUser(handle: DBHandle, userId: UserId, notificationTypes: NotificationType[]): Promise<number>
   markAsRead(handle: DBHandle, notificationId: NotificationId, userId: UserId): Promise<boolean>
   markAllAsRead(handle: DBHandle, userId: UserId): Promise<number>
 }
@@ -112,11 +125,15 @@ function buildWhereFromQuery(query: NotificationFilterQuery): Prisma.Notificatio
   const where: Prisma.NotificationWhereInput = {}
 
   if (query.byType !== undefined && query.byType.length > 0) {
-    where.type = { in: query.byType }
+    where.type = {
+      in: query.byType,
+    }
   }
 
   if (query.byActorGroupId !== undefined && query.byActorGroupId.length > 0) {
-    where.actorGroupId = { in: query.byActorGroupId }
+    where.actorGroupId = {
+      in: query.byActorGroupId,
+    }
   }
 
   if (query.byLink !== undefined) {
@@ -126,7 +143,10 @@ function buildWhereFromQuery(query: NotificationFilterQuery): Prisma.Notificatio
   }
 
   if (query.bySearchTerm !== undefined && query.bySearchTerm.length > 0) {
-    where.title = { contains: query.bySearchTerm, mode: "insensitive" }
+    where.title = {
+      contains: query.bySearchTerm,
+      mode: "insensitive",
+    }
   }
 
   return where
@@ -285,23 +305,6 @@ export function getNotificationRepository(): NotificationRepository {
       return result.count
     },
 
-    async findRecipientEmails(handle, notificationId) {
-      const recipients = await handle.notificationRecipient.findMany({
-        where: {
-          notificationId,
-        },
-        select: {
-          user: {
-            select: {
-              email: true,
-            },
-          },
-        },
-      })
-
-      return recipients.map((recipient) => recipient.user.email).filter((email): email is string => email !== null)
-    },
-
     async findRecipients(handle, notificationId, filters, page) {
       const rows = await handle.notificationRecipient.findMany({
         ...pageQuery(page),
@@ -345,6 +348,39 @@ export function getNotificationRepository(): NotificationRepository {
       return parseOrReport(NotificationRecipientListItemSchema.array(), rows)
     },
 
+    async findRecipientEmails(handle, notificationId, userIds) {
+      const recipients = await handle.notificationRecipient.findMany({
+        where: {
+          notificationId,
+          userId:
+            userIds === undefined
+              ? undefined
+              : {
+                  in: userIds,
+                },
+        },
+        select: {
+          userId: true,
+          user: {
+            select: {
+              email: true,
+            },
+          },
+        },
+      })
+      const recipientEmails = recipients.flatMap((recipient) => {
+        const email = recipient.user.email
+
+        if (email === null) {
+          return []
+        }
+
+        return [{ userId: recipient.userId, email }]
+      })
+
+      return parseOrReport(NotificationRecipientEmailSchema.array(), recipientEmails)
+    },
+
     async getRecipientStats(handle, notificationId) {
       const totalCount = await handle.notificationRecipient.count({
         where: {
@@ -367,13 +403,43 @@ export function getNotificationRepository(): NotificationRepository {
       }
     },
 
-    async findManyForUser(handle, userId, page) {
+    async findForUser(handle, userId, notificationId) {
+      const row = await handle.notificationRecipient.findFirst({
+        where: {
+          userId,
+          notificationId,
+          notification: {
+            status: "SENT",
+          },
+        },
+        include: {
+          notification: {
+            include: INCLUDE_ACTOR_GROUP,
+          },
+        },
+      })
+
+      if (row === null) {
+        return null
+      }
+
+      return parseOrReport(UserNotificationSchema, {
+        id: row.id,
+        readAt: row.readAt,
+        notification: mapInboxNotification(row.notification),
+      })
+    },
+
+    async findManyForUser(handle, userId, page, notificationTypes) {
       const rows = await handle.notificationRecipient.findMany({
         ...pageQuery(page),
         where: {
           userId,
           notification: {
             status: "SENT",
+            type: {
+              in: notificationTypes,
+            },
           },
         },
         orderBy: [
@@ -403,13 +469,16 @@ export function getNotificationRepository(): NotificationRepository {
       )
     },
 
-    async countUnreadForUser(handle, userId) {
+    async countUnreadForUser(handle, userId, notificationTypes) {
       return await handle.notificationRecipient.count({
         where: {
           userId,
           readAt: null,
           notification: {
             status: "SENT",
+            type: {
+              in: notificationTypes,
+            },
           },
         },
       })
@@ -423,7 +492,9 @@ export function getNotificationRepository(): NotificationRepository {
           notificationId,
           userId,
           readAt: null,
-          notification: { status: "SENT" },
+          notification: {
+            status: "SENT",
+          },
         },
         data: {
           readAt: now,
@@ -437,8 +508,16 @@ export function getNotificationRepository(): NotificationRepository {
       const now = getCurrentUTC()
 
       const result = await handle.notificationRecipient.updateMany({
-        where: { userId, readAt: null, notification: { status: "SENT" } },
-        data: { readAt: now },
+        where: {
+          userId,
+          readAt: null,
+          notification: {
+            status: "SENT",
+          },
+        },
+        data: {
+          readAt: now,
+        },
       })
 
       return result.count

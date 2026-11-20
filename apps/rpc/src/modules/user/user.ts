@@ -82,7 +82,7 @@ export const UserSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   privacyPermissionsId: z.string().nullable(),
-  notificationPermissionsId: z.string().nullable(),
+  notificationSettingsId: z.string().nullable(),
   memberships: z.array(MembershipSchema),
 })
 export type User = z.infer<typeof UserSchema>
@@ -339,28 +339,21 @@ export const PrivacyPermissionsWriteSchema = PrivacyPermissionsSchema.omit({
 })
 export type PrivacyPermissionsWrite = z.infer<typeof PrivacyPermissionsWriteSchema>
 
-export const NotificationPermissionsSchema = z.object({
+export const NotificationSettingsSchema = z.object({
   id: z.string(),
   userId: z.string(),
-  applications: z.boolean().default(true),
-  newArticles: z.boolean().default(true),
-  standardNotifications: z.boolean().default(true),
-  groupMessages: z.boolean().default(true),
-  markRulesUpdates: z.boolean().default(true),
-  receipts: z.boolean().default(true),
-  registrationByAdministrator: z.boolean().default(true),
-  registrationStart: z.boolean().default(true),
+  deliverySettings: z.record(z.string(), z.record(z.string(), z.boolean())),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
-export type NotificationPermissions = z.infer<typeof NotificationPermissionsSchema>
+export type NotificationSettings = z.infer<typeof NotificationSettingsSchema>
 
-export const NotificationPermissionsWriteSchema = NotificationPermissionsSchema.omit({
+export const NotificationSettingsWriteSchema = NotificationSettingsSchema.omit({
   createdAt: true,
   updatedAt: true,
   userId: true,
 })
-export type NotificationPermissionsWrite = z.infer<typeof NotificationPermissionsWriteSchema>
+export type NotificationSettingsWrite = z.infer<typeof NotificationSettingsWriteSchema>
 
 export const Auth0ConnectionSchema = z.object({
   identities: z.array(z.custom<GetUsers200ResponseOneOfInnerIdentitiesInner>()),
