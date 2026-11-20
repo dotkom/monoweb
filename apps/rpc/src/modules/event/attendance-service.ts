@@ -474,6 +474,106 @@ export function getAttendanceService(
     })
   }
 
+  async function preparePaymentWithDeadline(
+    handle: DBHandle,
+    attendance: Attendance,
+    attendee: Attendee,
+    completionDeadline: TZDate
+  ) {
+    const event = await eventService.getByAttendanceId(handle, attendance.id)
+    const isImmediatePayment = isPast(attendance.deregisterDeadline)
+
+    // Capture before deregistration closes or the five-day hold limit, whichever comes first.
+    const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline, "UTC")])
+    const returnUrl = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
+    const payment = await attendancePaymentService.prepareCheckout(handle, {
+      attendance,
+      attendee,
+      event,
+      returnUrl,
+      customerEmail: attendee.user.email,
+      captureMode: isImmediatePayment ? "AUTOMATIC" : "MANUAL",
+      captureScheduledAt: isImmediatePayment ? null : maximalChargeTime,
+    })
+
+    if (payment.isRequirementSatisfied) {
+      await clearAttendeeCompletionDeadline(handle, attendee.id)
+    } else {
+      await startAttendeeCompletionDeadline(handle, attendee.id, completionDeadline)
+    }
+
+    return payment
+  }
+
+  async function prepareReservationPayment(
+    handle: DBHandle,
+    attendance: Attendance,
+    updatedAttendee: Attendee,
+    payment: PaymentView | null
+  ) {
+    if (payment === null || (!payment.isRequirementSatisfied && payment.canStartCheckout)) {
+      const deadline = addHours(getCurrentUTC(), 24)
+      updatedAttendee.payment = await preparePaymentWithDeadline(handle, attendance, updatedAttendee, deadline)
+      updatedAttendee.completionDeadline = deadline
+    } else {
+      updatedAttendee.payment = payment
+    }
+  }
+
+  async function deregisterAttendeeAndPromoteNext(
+    handle: DBHandle,
+    attendance: Attendance,
+    attendee: Attendee,
+    event: Event,
+    options: EventDeregistrationOptions,
+    readPromotionPayment: (candidate: Attendee) => Promise<PaymentView | null>
+  ): Promise<() => void> {
+    const queue = getPromotionQueue(attendance, attendee)
+    const candidate = queue.at(0)
+
+    await attendanceRepository.deleteAttendeeById(handle, attendee.id)
+
+    let promotedAttendee: Attendee | null = null
+
+    if (candidate !== undefined) {
+      const reservation = AttendeeWriteSchema.parse({
+        ...candidate,
+        registeredAt: getCurrentUTC(),
+      })
+
+      validateAttendeeWrite(reservation)
+      promotedAttendee = await attendanceRepository.updateAttendeeById(handle, candidate.id, reservation)
+
+      if (attendance.attendancePrice !== null && attendance.attendancePrice > 0) {
+        const payment = await readPromotionPayment(candidate)
+        await prepareReservationPayment(handle, attendance, promotedAttendee, payment)
+      }
+    }
+
+    return () => {
+      emitRegisterChange(eventEmitter, attendance, attendee, "deregistered")
+      logger.info("Attendee(ID=%s,UserID=%s) deregistered from Event(ID=%s)", attendee.id, attendee.userId, event.id)
+
+      if (options.automaticDeregistrationReason !== undefined) {
+        sendEventAutomaticDeregistrationEmail(event, attendee, options.automaticDeregistrationReason)
+      }
+
+      if (promotedAttendee !== null) {
+        const remainingAttendance = {
+          ...attendance,
+          attendees: attendance.attendees.filter((existing) => existing.id !== attendee.id),
+        }
+
+        emitRegisterChange(eventEmitter, remainingAttendance, promotedAttendee, "updated")
+        sendEventRegistrationEmail(event, attendance, promotedAttendee)
+
+        for (const [index, queuedAttendee] of queue.slice(1, 4).entries()) {
+          sendQueueNotificationEmail(event, index + 1, queuedAttendee)
+        }
+      }
+    }
+  }
+
   async function completePaymentRequirement(
     handle: DBHandle,
     attendance: Attendance,
@@ -1044,13 +1144,7 @@ export function getAttendanceService(
         const payment =
           attendee.payment === null ? null : await attendancePaymentService.syncPayment(handle, attendee.payment.id)
 
-        if (payment === null || (!payment.isRequirementSatisfied && payment.canStartCheckout)) {
-          const deadline = addHours(getCurrentUTC(), 24)
-          updatedAttendee.payment = await this.prepareAttendeePayment(handle, attendeeId, deadline)
-          updatedAttendee.completionDeadline = deadline
-        } else {
-          updatedAttendee.payment = payment
-        }
+        await prepareReservationPayment(handle, attendance, updatedAttendee, payment)
       }
 
       if (data.registeredAt !== undefined) {
@@ -1135,71 +1229,23 @@ export function getAttendanceService(
         await attendancePaymentService.cancel(handle, attendee.payment.id)
       }
 
-      await attendanceRepository.deleteAttendeeById(handle, attendeeId)
       const event = await eventService.getByAttendanceId(handle, attendance.id)
+      const notify = await deregisterAttendeeAndPromoteNext(
+        handle,
+        attendance,
+        attendee,
+        event,
+        options,
+        async (candidate) => {
+          if (candidate.payment === null) {
+            return null
+          }
 
-      emitRegisterChange(eventEmitter, attendance, attendee, "deregistered")
-      logger.info(
-        "Attendee(ID=%s,UserID=%s) named %s has deregistered from Event(ID=%s) named %s with options: %o",
-        attendee.id,
-        attendee.user.id,
-        attendee.user.name || "<missing name>",
-        event.id,
-        event.title,
-        options
+          return await attendancePaymentService.syncPayment(handle, candidate.payment.id)
+        }
       )
 
-      if (options.automaticDeregistrationReason !== undefined) {
-        sendEventAutomaticDeregistrationEmail(event, attendee, options.automaticDeregistrationReason)
-      }
-
-      const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
-      invariant(pool !== undefined)
-
-      // If the deregistered attendee wasn't registered, no spot was freed up, so no queue promotion is needed.
-      if (attendee.registeredAt === null) {
-        return
-      }
-
-      const remainingAttendees = attendance.attendees.filter((a) => a.id !== attendee.id)
-      const registeredAttendeeCount = remainingAttendees.filter(
-        (remainingAttendee) => remainingAttendee.registeredAt !== null && remainingAttendee.attendancePoolId === pool.id
-      ).length
-
-      // If the pool is at capacity, we cannot reserve anyone new
-      if (pool.capacity !== 0 && (pool.capacity < 0 || registeredAttendeeCount >= pool.capacity)) {
-        return
-      }
-
-      // We are now looking for a replacement for the attendee that just deregistered. The criteria that we need to
-      // match are:
-      //
-      // 1. The attendee must be in the same pool as the deregistered attendee
-      // 2. The attendee must not already be registered
-      // 3. The attendee must have a reservation time not in the future
-      const sortedQueue = remainingAttendees
-        .filter((a) => a.attendancePoolId === pool.id)
-        .filter((queuedAttendee) => queuedAttendee.registeredAt === null)
-        .filter((queuedAttendee) => !isFuture(queuedAttendee.registrationEligibleAt))
-        .toSorted((firstAttendee, secondAttendee) =>
-          compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
-        )
-
-      const firstQueuedAdjacentAttendee = sortedQueue.at(0)
-
-      if (firstQueuedAdjacentAttendee === undefined) {
-        return
-      }
-
-      const promotedAttendee = await this.updateAttendeeById(handle, firstQueuedAdjacentAttendee.id, {
-        registeredAt: getCurrentUTC(),
-      })
-
-      sendEventRegistrationEmail(event, attendance, promotedAttendee)
-
-      for (const [index, queueAttendee] of sortedQueue.slice(1, 4).entries()) {
-        sendQueueNotificationEmail(event, index + 1, queueAttendee)
-      }
+      notify()
     },
 
     async findChargeAttendeeScheduleDate(handle, attendeeId) {
@@ -1354,29 +1400,7 @@ export function getAttendanceService(
         throw new FailedPreconditionError("Cannot create a payment for an attendee who is still in the queue")
       }
 
-      const event = await eventService.getByAttendanceId(handle, attendance.id)
-      const isImmediatePayment = isPast(attendance.deregisterDeadline)
-
-      // Capture before deregistration closes or the five-day hold limit, whichever comes first.
-      const maximalChargeTime = min([addDays(getCurrentUTC(), 5), new TZDate(attendance.deregisterDeadline, "UTC")])
-      const returnUrl = createAbsoluteEventPageUrl(configuration.WEB_PUBLIC_ORIGIN, event.id, event.title)
-      const payment = await attendancePaymentService.prepareCheckout(handle, {
-        attendance,
-        attendee,
-        event,
-        returnUrl,
-        customerEmail: attendee.user.email,
-        captureMode: isImmediatePayment ? "AUTOMATIC" : "MANUAL",
-        captureScheduledAt: isImmediatePayment ? null : maximalChargeTime,
-      })
-
-      if (payment.isRequirementSatisfied) {
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
-      } else {
-        await startAttendeeCompletionDeadline(handle, attendeeId, completionDeadline)
-      }
-
-      return payment
+      return await preparePaymentWithDeadline(handle, attendance, attendee, completionDeadline)
     },
 
     async createAttendeePaymentCharge(handle, attendeeId) {
@@ -1960,6 +1984,35 @@ export function getAttendanceService(
       await Promise.all(sendPromises)
     },
   }
+}
+
+function getPromotionQueue(attendance: Attendance, attendee: Attendee): Attendee[] {
+  const pool = attendance.pools.find((pool) => pool.id === attendee.attendancePoolId)
+  invariant(pool !== undefined)
+
+  // If the deregistered attendee wasn't registered, no spot was freed up, so no queue promotion is needed.
+  if (attendee.registeredAt === null) {
+    return []
+  }
+
+  const remainingAttendees = attendance.attendees.filter((otherAttendee) => otherAttendee.id !== attendee.id)
+  const registeredAttendeeCount = remainingAttendees.filter(
+    (remainingAttendee) => remainingAttendee.registeredAt !== null && remainingAttendee.attendancePoolId === pool.id
+  ).length
+
+  // If the pool is at capacity, we cannot reserve anyone new
+  if (pool.capacity !== 0 && (pool.capacity < 0 || registeredAttendeeCount >= pool.capacity)) {
+    return []
+  }
+
+  // Promote the first eligible attendee in the same pool after accounting for registration delays.
+  return remainingAttendees
+    .filter((otherAttendee) => otherAttendee.attendancePoolId === pool.id)
+    .filter((queuedAttendee) => queuedAttendee.registeredAt === null)
+    .filter((queuedAttendee) => !isFuture(queuedAttendee.registrationEligibleAt))
+    .toSorted((firstAttendee, secondAttendee) =>
+      compareAsc(firstAttendee.registrationEligibleAt, secondAttendee.registrationEligibleAt)
+    )
 }
 
 function isSelectionEqual(left: AttendanceSelection, right: AttendanceSelection): boolean {
