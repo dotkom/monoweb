@@ -2,6 +2,22 @@ import { describe, expect, it } from "vitest"
 import { core, dbClient } from "../../../vitest-integration.setup"
 
 describe("claiming due tasks", () => {
+  it("claims a due deadline ahead of an older checkout when polling attendance work", async () => {
+    await dbClient.task.createMany({
+      data: [
+        { id: "checkout", type: "OPEN_PAYMENT_CHECKOUT", scheduledAt: new Date(0) },
+        { id: "deadline", type: "VERIFY_ATTENDANCE_COMPLETION", scheduledAt: new Date() },
+      ],
+    })
+
+    const deadline = await core.taskService.claimNextTask(dbClient, ["VERIFY_ATTENDANCE_COMPLETION"])
+    expect(deadline?.id).toBe("deadline")
+    expect(await core.taskService.claimNextTask(dbClient, ["VERIFY_ATTENDANCE_COMPLETION"])).toBeNull()
+
+    const checkout = await core.taskService.claimNextTask(dbClient, ["OPEN_PAYMENT_CHECKOUT"])
+    expect(checkout?.id).toBe("checkout")
+  })
+
   it("skips a task locked by another worker and claims only eligible rows", async () => {
     const overdue = new Date(Date.now() - 60 * 60_000)
     const future = new Date(Date.now() + 60 * 60_000)

@@ -1,11 +1,11 @@
 import type { DBClient } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
-import type { ClaimedTask, RecurringTask } from "./task"
+import type { ClaimedTask, RecurringTask, TaskType } from "./task"
 import type { RecurringTaskService } from "./recurring-task-service"
 import type { TaskService } from "./task-service"
 
 export interface TaskDiscoveryService {
-  claimNextTask(): Promise<ClaimedTask | null>
+  claimNextTask(taskTypes: readonly TaskType[]): Promise<ClaimedTask | null>
   querySchedulableRecurringTasks(): Promise<RecurringTask[]>
 }
 
@@ -24,8 +24,8 @@ export function getLocalTaskDiscoveryService(
   logger.warn("TaskDiscoveryService started with local (postgres) backend")
 
   return {
-    async claimNextTask() {
-      return taskService.claimNextTask(client)
+    async claimNextTask(taskTypes) {
+      return taskService.claimNextTask(client, taskTypes)
     },
 
     async querySchedulableRecurringTasks() {

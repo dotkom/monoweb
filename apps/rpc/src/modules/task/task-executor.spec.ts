@@ -46,7 +46,16 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   })
 
   discoveryService.querySchedulableRecurringTasks.mockResolvedValue([])
-  discoveryService.claimNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
+  const pendingTasks = [task]
+  discoveryService.claimNextTask.mockImplementation(async (taskTypes) => {
+    const index = pendingTasks.findIndex((pendingTask) => taskTypes.includes(pendingTask.type))
+
+    if (index === -1) {
+      return null
+    }
+
+    return pendingTasks.splice(index, 1)[0]
+  })
   taskService.parse.mockReturnValue(payload)
   client.$transaction.mockImplementation(async (operation) => {
     return await operation(transactionHandle)
@@ -62,11 +71,11 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
     configuration
   )
 
-  async function runTask() {
+  async function runTask(pollCount = 1) {
     executor.startWorker(client, controller.signal)
 
     try {
-      await vi.advanceTimersByTimeAsync(configuration.tasks.workerInterval)
+      await vi.advanceTimersByTimeAsync(configuration.tasks.workerInterval * pollCount)
     } finally {
       controller.abort()
     }
@@ -75,6 +84,8 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   return {
     client,
     transactionHandle,
+    pendingTasks,
+    task,
     discoveryService,
     attendanceService,
     paymentWorkflowService,
@@ -92,6 +103,37 @@ describe("task executor transaction boundaries", () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it("drains due completion checks while a checkout is still running", async () => {
+    const { attendanceService, paymentWorkflowService, pendingTasks, task, runTask, taskService } = createFixture(
+      tasks.OPEN_PAYMENT_CHECKOUT.type
+    )
+    const checkout = Promise.withResolvers<PaymentRecord>()
+    paymentWorkflowService.openCheckout.mockReturnValue(checkout.promise)
+    pendingTasks.push({ ...task, id: "another-checkout" })
+
+    // The deadlines become due after the first poll starts the checkout.
+    setTimeout(() => {
+      pendingTasks.push(
+        { ...task, id: "first-deadline", type: "VERIFY_ATTENDANCE_COMPLETION" },
+        { ...task, id: "second-deadline", type: "VERIFY_ATTENDANCE_COMPLETION" }
+      )
+    }, 150)
+
+    try {
+      await runTask(2)
+
+      expect(paymentWorkflowService.openCheckout).toHaveBeenCalledTimes(1)
+      expect(attendanceService.executeVerifyAttendanceCompletionTask).toHaveBeenCalledTimes(2)
+      expect(pendingTasks.map((pendingTask) => pendingTask.id)).toEqual(["another-checkout"])
+    } finally {
+      checkout.resolve(mock<PaymentRecord>())
+    }
+
+    await vi.advanceTimersByTimeAsync(100)
+    expect(taskService.finishCheckoutTask).toHaveBeenCalledOnce()
+    expect(paymentWorkflowService.openCheckout).toHaveBeenCalledTimes(1)
   })
 
   it("captures payments without an enclosing transaction and marks the task completed", async () => {
