@@ -6,7 +6,7 @@ import { addHours, addMinutes, subMinutes } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import { TaskSkippedError } from "../../error"
-import { DEFAULT_MARK_DURATION, type Mark } from "../mark/mark"
+import { DEFAULT_MARK_DURATION, type Mark, type PersonalMark } from "../mark/mark"
 import type { PaymentView } from "../payment/payment"
 import type { Task } from "../task/task"
 import { tasks } from "../task/task-definition"
@@ -253,6 +253,9 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
       isRequirementSatisfied: false,
     })
   )
+  personalMarkService.recordAssignment.mockImplementation(async (_handle, userId, markId) => {
+    return mock<PersonalMark>({ userId, markId })
+  })
   markService.create
     .mockResolvedValueOnce(mock<Mark>({ id: "suspension" }))
     .mockResolvedValueOnce(mock<Mark>({ id: "missing-payment-mark" }))
@@ -329,7 +332,7 @@ describe("checkout recovery after registration", () => {
     expect(fixture.attendancePaymentService.cancel).toHaveBeenCalledWith(fixture.handle, fixture.payment.id)
     expect(fixture.attendanceRepository.deleteAttendeeById).toHaveBeenCalledWith(fixture.handle, fixture.attendee.id)
     expect(fixture.markService.create).not.toHaveBeenCalled()
-    expect(fixture.personalMarkService.addToUser).not.toHaveBeenCalled()
+    expect(fixture.personalMarkService.recordAssignment).not.toHaveBeenCalled()
   })
 
   it("broadcasts the available payment link immediately after opening checkout", async () => {
@@ -805,8 +808,23 @@ describe("missing payment penalties", () => {
       status
     )
 
-    await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
+    const notifyAfterCommit = await attendanceService.executeVerifyAttendanceCompletionTask(handle, {
+      attendeeId: attendee.id,
+    })
 
+    expect(personalMarkService.sendReceivedMarkEmail).not.toHaveBeenCalled()
+
+    const client = mock<DBClient>()
+    await notifyAfterCommit?.(client)
+
+    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({ markId: "suspension" })
+    )
+    expect(personalMarkService.sendReceivedMarkEmail).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({ markId: "missing-payment-mark" })
+    )
     expect(markService.create).toHaveBeenCalledTimes(2)
     expect(markService.create).toHaveBeenNthCalledWith(
       1,
@@ -820,9 +838,9 @@ describe("missing payment penalties", () => {
       expect.objectContaining({ type: "MISSING_PAYMENT", weight: 1, duration: DEFAULT_MARK_DURATION }),
       []
     )
-    expect(personalMarkService.addToUser).toHaveBeenCalledTimes(2)
-    expect(personalMarkService.addToUser).toHaveBeenCalledWith(handle, attendee.userId, "suspension")
-    expect(personalMarkService.addToUser).toHaveBeenCalledWith(handle, attendee.userId, "missing-payment-mark")
+    expect(personalMarkService.recordAssignment).toHaveBeenCalledTimes(2)
+    expect(personalMarkService.recordAssignment).toHaveBeenCalledWith(handle, attendee.userId, "suspension")
+    expect(personalMarkService.recordAssignment).toHaveBeenCalledWith(handle, attendee.userId, "missing-payment-mark")
   })
 
   it("deregisters an unpaid attendee before the deregistration deadline without assigning penalties", async () => {
@@ -842,7 +860,7 @@ describe("missing payment penalties", () => {
       },
     })
     expect(markService.create).not.toHaveBeenCalled()
-    expect(personalMarkService.addToUser).not.toHaveBeenCalled()
+    expect(personalMarkService.recordAssignment).not.toHaveBeenCalled()
   })
 
   it("does not assign penalties when payment has succeeded", async () => {
@@ -854,7 +872,7 @@ describe("missing payment penalties", () => {
     await attendanceService.executeVerifyAttendanceCompletionTask(handle, { attendeeId: attendee.id })
 
     expect(markService.create).not.toHaveBeenCalled()
-    expect(personalMarkService.addToUser).not.toHaveBeenCalled()
+    expect(personalMarkService.recordAssignment).not.toHaveBeenCalled()
   })
 })
 

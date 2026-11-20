@@ -104,7 +104,7 @@ export function getLocalTaskExecutor(
         // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
-        await client.$transaction(async (handle) => {
+        const notifyAfterCommit = await client.$transaction(async (handle) => {
           switch (task.type) {
             case tasks.RESERVE_ATTENDEE.type:
               return await attendanceService.executeReserveAttendeeTask(
@@ -143,6 +143,8 @@ export function getLocalTaskExecutor(
             `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
           )
         })
+
+        await notifyAfterCommit?.(client)
       } catch (error: unknown) {
         const isSkippedError = error instanceof TaskSkippedError
 
