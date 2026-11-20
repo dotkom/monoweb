@@ -1,5 +1,14 @@
 import { tz } from "@date-fns/tz"
-import { addDays, format, isValid, parseISO, startOfDay } from "date-fns"
+import {
+  addDays,
+  addHours,
+  differenceInMilliseconds,
+  format,
+  hoursToMilliseconds,
+  isValid,
+  parseISO,
+  startOfDay,
+} from "date-fns"
 import { z } from "zod"
 
 export const COMMITTEE_APPLICATION_MAXIMUM_EXCLUSIVE_GROUPS = 3
@@ -467,3 +476,86 @@ export type CommitteeApplicationInterviewMatchingResult = z.infer<
 export type CommitteeApplicationInterviewMatcher = (
   input: CommitteeApplicationInterviewMatchingInput
 ) => Promise<{ interviews: CommitteeApplicationInterviewAssignment[] }>
+
+export const COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE = 1e-7
+
+export function getInterviewPreferencePenalties(
+  interview: CommitteeApplicationInterviewAvailability,
+  publicationReferenceTime: Date
+) {
+  const noticeMilliseconds = Math.max(0, differenceInMilliseconds(interview.startsAt, publicationReferenceTime))
+  const noticeThreshold = hoursToMilliseconds(24)
+  const decayScale = hoursToMilliseconds(12)
+
+  if (noticeMilliseconds < noticeThreshold) {
+    return {
+      shortNoticePenalty: Math.expm1((noticeThreshold - noticeMilliseconds) / decayScale) / Math.expm1(2),
+      clusteringPenalty: 0,
+    }
+  }
+
+  const noon = addHours(startOfDay(interview.startsAt, { in: tz("UTC") }), 12)
+  const distanceFromNoon = Math.max(
+    0,
+    differenceInMilliseconds(noon, interview.endsAt),
+    differenceInMilliseconds(interview.startsAt, noon)
+  )
+
+  return {
+    shortNoticePenalty: 0,
+    clusteringPenalty: distanceFromNoon / decayScale,
+  }
+}
+
+export function getInterviewScheduleScore(
+  input: CommitteeApplicationInterviewMatchingInput,
+  interviews: CommitteeApplicationInterviewAssignment[]
+) {
+  const selections = new Map(input.groupSelections.map((selection) => [selection.id, selection]))
+  const applicantIds = new Set<string>()
+  const committeeDays = new Map<string, { startsAt: Date; endsAt: Date }>()
+  let shortNoticePenalty = 0
+  let clusteringPenalty = 0
+
+  for (const interview of interviews) {
+    const selection = selections.get(interview.groupSelectionId)
+
+    if (selection === undefined) {
+      throw new Error("An interview references an unknown application selection")
+    }
+
+    applicantIds.add(selection.applicationId)
+
+    const penalties = getInterviewPreferencePenalties(interview, input.publicationReferenceTime)
+    shortNoticePenalty += penalties.shortNoticePenalty
+    clusteringPenalty += penalties.clusteringPenalty
+
+    const day = format(interview.startsAt, "yyyy-MM-dd", norwegianTimeContext)
+    const committeeDayKey = JSON.stringify([interview.applicationGroupId, day])
+    const committeeDay = committeeDays.get(committeeDayKey)
+
+    if (committeeDay === undefined) {
+      committeeDays.set(committeeDayKey, { startsAt: interview.startsAt, endsAt: interview.endsAt })
+    } else {
+      if (interview.startsAt < committeeDay.startsAt) {
+        committeeDay.startsAt = interview.startsAt
+      }
+
+      if (interview.endsAt > committeeDay.endsAt) {
+        committeeDay.endsAt = interview.endsAt
+      }
+    }
+  }
+
+  const committeeSpanMilliseconds = [...committeeDays.values()].reduce((total, day) => {
+    return total + differenceInMilliseconds(day.endsAt, day.startsAt)
+  }, 0)
+
+  return {
+    interviewCount: interviews.length,
+    applicantCount: applicantIds.size,
+    shortNoticePenalty,
+    clusteringPenalty,
+    committeeSpanMilliseconds,
+  }
+}

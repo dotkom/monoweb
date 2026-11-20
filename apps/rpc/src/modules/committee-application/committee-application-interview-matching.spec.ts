@@ -1,4 +1,4 @@
-import { addMinutes, compareAsc, differenceInMinutes, isAfter, isBefore, parseISO } from "date-fns"
+import { addMinutes, compareAsc, differenceInMinutes, isAfter, isBefore, parseISO, subHours } from "date-fns"
 import { describe, expect, it } from "vitest"
 import type { CommitteeApplicationInterviewMatchingInput } from "./committee-application"
 import { matchCommitteeApplicationInterviews } from "./committee-application-interview-matching"
@@ -54,9 +54,40 @@ function addApplicant(
 }
 
 describe("matchCommitteeApplicationInterviews", () => {
-  it("preserves upstream aggregate capacity for differently aligned slots in the same room", async () => {
+  it("excludes past slots even when retaining them would increase the interview count", async () => {
     const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("11:30")
 
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") },
+      { startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30") },
+    ])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") }])
+    addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30") }])
+
+    const result = await matchCommitteeApplicationInterviews(input)
+
+    expect(result.matchedInterviews).toBe(1)
+    expect(result.interviews.map((interview) => interview.groupSelectionId)).toEqual(["bob:dotkom"])
+    expect(result.interviews[0].startsAt).toEqual(interviewTime("12:00"))
+  })
+
+  it("returns an empty schedule when every feasible interview is already in the past", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("12:00", 13)
+
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") }])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") }])
+
+    const result = await matchCommitteeApplicationInterviews(input)
+
+    expect(result.solverStatus).toBe("OPTIMAL")
+    expect(result.matchedInterviews).toBe(0)
+    expect(result.totalWantedInterviews).toBe(1)
+  })
+
+  it("does not double-book a room when interview blocks have differently aligned overlapping slots", async () => {
+    const input = emptyInput()
     addGroup(input, "dotkom", "MINUTES_30", [
       { startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30"), locationName: "Room A" },
       { startsAt: interviewTime("11:15"), endsAt: interviewTime("11:45"), locationName: "Room A" },
@@ -65,10 +96,118 @@ describe("matchCommitteeApplicationInterviews", () => {
     addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("11:15"), endsAt: interviewTime("11:45") }])
 
     const result = await matchCommitteeApplicationInterviews(input)
-    const startsAt = result.interviews.map((interview) => interview.startsAt).toSorted(compareAsc)
+    expect(result.matchedInterviews).toBe(1)
+  })
 
+  it("keeps the actual chosen room when differently aligned slots overlap in separate rooms", async () => {
+    const input = emptyInput()
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30"), locationName: "Room A" },
+      { startsAt: interviewTime("11:15"), endsAt: interviewTime("11:45"), locationName: "Room A" },
+      { startsAt: interviewTime("11:15"), endsAt: interviewTime("11:45"), locationName: "Room B" },
+    ])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") }])
+    addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("11:15"), endsAt: interviewTime("11:45") }])
+
+    const result = await matchCommitteeApplicationInterviews(input)
     expect(result.matchedInterviews).toBe(2)
-    expect(startsAt).toEqual([interviewTime("11:00"), interviewTime("11:15")])
+    expect(result.interviews.find((interview) => interview.groupSelectionId === "alice:dotkom")?.interviewBlockId).toBe(
+      "dotkom-block-0"
+    )
+    expect(result.interviews.find((interview) => interview.groupSelectionId === "bob:dotkom")?.interviewBlockId).toBe(
+      "dotkom-block-2"
+    )
+  })
+
+  it("groups equally preferred interviews into a compact committee session", async () => {
+    const input = emptyInput()
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("13:00") }])
+    addApplicant(
+      input,
+      "alice",
+      ["dotkom"],
+      [
+        { startsAt: interviewTime("11:00"), endsAt: interviewTime("11:30") },
+        { startsAt: interviewTime("12:30"), endsAt: interviewTime("13:00") },
+      ]
+    )
+    addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("11:30"), endsAt: interviewTime("12:30") }])
+
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(2)
+    const interviews = result.interviews.toSorted((first, second) => compareAsc(first.startsAt, second.startsAt))
+    expect(differenceInMinutes(interviews[1].startsAt, interviews[0].endsAt)).toBe(0)
+    expect(result.objectiveValue).toBeCloseTo(2 - 30 / 720 / 4, 10)
+  })
+
+  it("maximizes applicant coverage among schedules with the maximum interview count", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("20:00", 11)
+    addGroup(input, "dotkom", "MINUTES_20", [
+      { startsAt: interviewTime("12:00", 13), endsAt: interviewTime("12:20", 13) },
+    ])
+    addGroup(input, "appkom", "MINUTES_20", [
+      { startsAt: interviewTime("12:35", 13), endsAt: interviewTime("12:55", 13) },
+    ])
+    addApplicant(
+      input,
+      "alice",
+      ["dotkom", "appkom"],
+      [{ startsAt: interviewTime("12:00", 13), endsAt: interviewTime("13:00", 13) }]
+    )
+    addApplicant(
+      input,
+      "bob",
+      ["dotkom"],
+      [{ startsAt: interviewTime("12:00", 13), endsAt: interviewTime("12:20", 13) }]
+    )
+    addApplicant(
+      input,
+      "unavailable",
+      ["dotkom"],
+      [{ startsAt: interviewTime("17:00"), endsAt: interviewTime("18:00") }]
+    )
+
+    const result = await matchCommitteeApplicationInterviews(input)
+    // Giving both slots to Alice has the same count and time score, but serves only one person.
+    expect(result.matchedInterviews).toBe(2)
+    expect(result.interviews.map((interview) => interview.groupSelectionId).toSorted()).toEqual([
+      "alice:appkom",
+      "bob:dotkom",
+    ])
+    expect(result.interviews.find((interview) => interview.groupSelectionId === "alice:appkom")?.startsAt).toEqual(
+      interviewTime("12:35", 13)
+    )
+  })
+
+  it("preserves the maximum interview count while distributing interviews across applicants", async () => {
+    const input = emptyInput()
+    addGroup(input, "dotkom", "MINUTES_20", [{ startsAt: interviewTime("10:00"), endsAt: interviewTime("10:20") }])
+    addGroup(input, "appkom", "MINUTES_20", [{ startsAt: interviewTime("10:00"), endsAt: interviewTime("10:20") }])
+    addGroup(input, "bedkom", "MINUTES_20", [{ startsAt: interviewTime("10:35"), endsAt: interviewTime("10:55") }])
+    addGroup(input, "fagkom", "MINUTES_20", [{ startsAt: interviewTime("11:10"), endsAt: interviewTime("11:30") }])
+    addApplicant(
+      input,
+      "alice",
+      ["dotkom", "bedkom", "fagkom"],
+      [{ startsAt: interviewTime("10:00"), endsAt: interviewTime("12:00") }]
+    )
+    addApplicant(
+      input,
+      "bob",
+      ["appkom", "bedkom", "fagkom"],
+      [{ startsAt: interviewTime("10:00"), endsAt: interviewTime("12:00") }]
+    )
+    addApplicant(
+      input,
+      "charlie",
+      ["dotkom", "appkom"],
+      [{ startsAt: interviewTime("10:00"), endsAt: interviewTime("10:20") }]
+    )
+
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(4)
+    expect(new Set(result.interviews.map((interview) => interview.groupSelectionId.split(":")[0])).size).toBe(3)
   })
 
   it("schedules the shared 100-applicant calendar fixture within availability, room capacity, and applicant buffers", async () => {
@@ -76,7 +215,7 @@ describe("matchCommitteeApplicationInterviews", () => {
     expect(applicants).toHaveLength(100)
     const result = await matchCommitteeApplicationInterviews(input)
     expect(result.solverStatus).toBe("OPTIMAL")
-    expect(result.matchedInterviews).toBeGreaterThan(100)
+    expect(result.matchedInterviews).toBe(272)
     expect(result.totalWantedInterviews).toBe(input.groupSelections.length)
     expect(new Set(result.interviews.map((interview) => interview.groupSelectionId)).size).toBe(
       result.matchedInterviews
@@ -84,7 +223,7 @@ describe("matchCommitteeApplicationInterviews", () => {
     const selections = new Map(input.groupSelections.map((selection) => [selection.id, selection]))
     const blocks = new Map(input.interviewBlocks.map((block) => [block.id, block]))
     const interviewsByApplicant = new Map<string, typeof result.interviews>()
-    const interviewsBySlot = new Map<string, typeof result.interviews>()
+    const interviewsByRoom = new Map<string, typeof result.interviews>()
 
     for (const interview of result.interviews) {
       const selection = selections.get(interview.groupSelectionId)
@@ -109,10 +248,10 @@ describe("matchCommitteeApplicationInterviews", () => {
       const applicantInterviews = interviewsByApplicant.get(selection.applicationId) ?? []
       applicantInterviews.push(interview)
       interviewsByApplicant.set(selection.applicationId, applicantInterviews)
-      const slotKey = `${interview.applicationGroupId}:${interview.startsAt.getTime()}:${interview.endsAt.getTime()}`
-      const slotInterviews = interviewsBySlot.get(slotKey) ?? []
-      slotInterviews.push(interview)
-      interviewsBySlot.set(slotKey, slotInterviews)
+      const roomKey = `${block.applicationGroupId}:${block.locationName}`
+      const roomInterviews = interviewsByRoom.get(roomKey) ?? []
+      roomInterviews.push(interview)
+      interviewsByRoom.set(roomKey, roomInterviews)
     }
 
     for (const applicantInterviews of interviewsByApplicant.values()) {
@@ -127,22 +266,144 @@ describe("matchCommitteeApplicationInterviews", () => {
       }
     }
 
-    for (const slotInterviews of interviewsBySlot.values()) {
-      const interview = slotInterviews[0]
-      const availableRooms = input.interviewBlocks
-        .filter((block) => {
-          return (
-            block.applicationGroupId === interview.applicationGroupId &&
-            !isBefore(interview.startsAt, block.startsAt) &&
-            !isAfter(interview.endsAt, block.endsAt)
-          )
-        })
-        .map((block) => block.locationName)
-      const capacity = new Set(availableRooms).size
+    expect(interviewsByApplicant.size).toBe(100)
 
-      expect(slotInterviews.length).toBeLessThanOrEqual(capacity)
+    for (const roomInterviews of interviewsByRoom.values()) {
+      const sortedInterviews = roomInterviews.toSorted((first, second) => compareAsc(first.startsAt, second.startsAt))
+
+      for (let interviewIndex = 1; interviewIndex < sortedInterviews.length; interviewIndex += 1) {
+        expect(isBefore(sortedInterviews[interviewIndex].startsAt, sortedInterviews[interviewIndex - 1].endsAt)).toBe(
+          false
+        )
+      }
     }
   }, 60_000)
+
+  it.each([
+    [0, 1],
+    [6, 0.5449457660765887],
+    [12, 0.2689414213699951],
+    [18, 0.1015363240915518],
+    [23, 0.013602016976462955],
+    [24, 0],
+    [30, 0],
+  ])("uses a normalized exponential notice penalty at %i hours", async (noticeHours, expectedPenalty) => {
+    const input = emptyInput()
+    const startsAt = interviewTime("12:00")
+    const endsAt = addMinutes(startsAt, 30)
+    input.publicationReferenceTime = subHours(startsAt, noticeHours)
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt, endsAt, locationName: "Room A" },
+      { startsAt, endsAt, locationName: "Room B" },
+    ])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(1)
+    expect(result.objectiveValue).toBeCloseTo(1 - expectedPenalty / 2, 10)
+  })
+
+  it("prefers more preparation time over noon placement during short notice", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("20:00", 11)
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30") },
+      { startsAt: interviewTime("15:00"), endsAt: interviewTime("15:30") },
+    ])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("12:00"), endsAt: interviewTime("16:00") }])
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(1)
+    expect(result.interviews[0].startsAt).toEqual(interviewTime("15:00"))
+  })
+
+  it("prefers a slot with at least 24 hours' notice while retaining earlier slots needed for the maximum count", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("20:00", 11)
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt: interviewTime("09:00"), endsAt: interviewTime("09:30") },
+      { startsAt: interviewTime("09:00", 13), endsAt: interviewTime("09:30", 13) },
+    ])
+    addApplicant(
+      input,
+      "alice",
+      ["dotkom"],
+      [
+        { startsAt: interviewTime("09:00"), endsAt: interviewTime("09:30") },
+        { startsAt: interviewTime("09:00", 13), endsAt: interviewTime("09:30", 13) },
+      ]
+    )
+    expect((await matchCommitteeApplicationInterviews(input)).interviews[0].startsAt).toEqual(
+      interviewTime("09:00", 13)
+    )
+    addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("09:00"), endsAt: interviewTime("09:30") }])
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(2)
+    expect(result.interviews.find((interview) => interview.groupSelectionId === "bob:dotkom")?.startsAt).toEqual(
+      interviewTime("09:00")
+    )
+  })
+
+  it("schedules a zero-scoring interview when it is needed for the maximum count", async () => {
+    const input = emptyInput()
+    const startsAt = interviewTime("09:00")
+    const endsAt = addMinutes(startsAt, 30)
+    input.publicationReferenceTime = startsAt
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt, endsAt }])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    const result = await matchCommitteeApplicationInterviews(input)
+    expect(result.matchedInterviews).toBe(1)
+    expect(result.objectiveValue).toBeCloseTo(0, 10)
+  })
+
+  it.each([
+    [1439, 0.00021753664707686572],
+    [1440, 330 / 720],
+    [1441, 330 / 720],
+  ])("resumes noon scoring at exactly 24 hours (%i minutes)", async (noticeMinutes, expectedPenalty) => {
+    const input = emptyInput()
+    const startsAt = parseISO("2026-10-12T08:00:00+02:00")
+    const endsAt = addMinutes(startsAt, 30)
+    input.publicationReferenceTime = addMinutes(startsAt, -noticeMinutes)
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt, endsAt }])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    expect((await matchCommitteeApplicationInterviews(input)).objectiveValue).toBeCloseTo(1 - expectedPenalty, 8)
+  })
+
+  it("resumes noon scoring for later slots on the same calendar day", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = parseISO("2026-10-11T09:00:00+02:00")
+    const earlyStartsAt = parseISO("2026-10-12T08:00:00+02:00")
+    const startsAt = parseISO("2026-10-12T10:00:00+02:00")
+    const endsAt = addMinutes(startsAt, 30)
+    addGroup(input, "dotkom", "MINUTES_30", [
+      { startsAt: earlyStartsAt, endsAt: addMinutes(earlyStartsAt, 30) },
+      { startsAt, endsAt },
+    ])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    expect((await matchCommitteeApplicationInterviews(input)).objectiveValue).toBeCloseTo(1 - 210 / 720, 10)
+  })
+
+  it("measures short notice from publication across midnight", async () => {
+    const input = emptyInput()
+    input.publicationReferenceTime = parseISO("2026-10-12T23:00:00+02:00")
+    const startsAt = parseISO("2026-10-13T09:00:00+02:00")
+    const endsAt = addMinutes(startsAt, 30)
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt, endsAt }])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    expect((await matchCommitteeApplicationInterviews(input)).objectiveValue).toBeCloseTo(1 - 0.3461028528961682, 10)
+  })
+
+  it.each([
+    ["2026-10-24T08:00:00+02:00", "2026-10-25T08:00:00+01:00", 1 - 270 / 720],
+    ["2026-03-28T08:00:00+01:00", "2026-03-29T08:00:00+02:00", 1 - 0.013602016976462955],
+  ])("uses elapsed notice across Oslo daylight saving changes (%s)", async (publicationTime, interviewStart, expectedObjective) => {
+    const input = emptyInput()
+    input.publicationReferenceTime = parseISO(publicationTime)
+    const startsAt = parseISO(interviewStart)
+    const endsAt = addMinutes(startsAt, 30)
+    addGroup(input, "dotkom", "MINUTES_30", [{ startsAt, endsAt }])
+    addApplicant(input, "alice", ["dotkom"], [{ startsAt, endsAt }])
+    expect((await matchCommitteeApplicationInterviews(input)).objectiveValue).toBeCloseTo(expectedObjective, 10)
+  })
 
   it("returns an optimal empty result when there are no applications", async () => {
     expect(await matchCommitteeApplicationInterviews(emptyInput())).toEqual({
@@ -176,8 +437,8 @@ describe("matchCommitteeApplicationInterviews", () => {
     expect(result.interviews.find((interview) => interview.groupSelectionId === "bob:dotkom")?.startsAt).toEqual(
       interviewTime("11:00")
     )
-    // Three feasible applicant-slot-room variables: 2 - 2/9 - (30 minutes / 12 hours)/3.
-    expect(result.objectiveValue).toBeCloseTo(2 - 2 / 9 - 30 / 720 / 3, 10)
+    // Three feasible applicant-slot-room variables, with enough notice to avoid the morning penalty.
+    expect(result.objectiveValue).toBeCloseTo(2 - 30 / 720 / 3, 10)
   })
 
   it.each([
@@ -214,7 +475,7 @@ describe("matchCommitteeApplicationInterviews", () => {
     )
     const result = await matchCommitteeApplicationInterviews(input)
     expect(result.matchedInterviews).toBe(1)
-    expect(result.objectiveValue).toBeCloseTo(10 / 720, 10)
+    expect(result.objectiveValue).toBe(1)
   })
 
   it("discards incomplete slots at the end of a committee block", async () => {
@@ -226,17 +487,18 @@ describe("matchCommitteeApplicationInterviews", () => {
     expect(result.interviews[0].endsAt).toEqual(interviewTime("12:20"))
   })
 
-  it("preserves upstream behavior of dropping a single candidate with a negative coefficient", async () => {
+  it("schedules a single morning candidate when there is enough notice", async () => {
     const input = emptyInput()
     addGroup(input, "dotkom", "MINUTES_20", [{ startsAt: interviewTime("09:00"), endsAt: interviewTime("09:20") }])
     addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("09:00"), endsAt: interviewTime("10:00") }])
     const result = await matchCommitteeApplicationInterviews(input)
-    expect(result.matchedInterviews).toBe(0)
-    expect(result.objectiveValue).toBe(0)
+    expect(result.matchedInterviews).toBe(1)
+    expect(result.objectiveValue).toBeCloseTo(1 - 160 / 720, 10)
   })
 
-  it("penalizes the earliest feasible candidate day rather than the first configured interview day", async () => {
+  it("does not shift the short-notice penalty to the earliest feasible applicant day", async () => {
     const input = emptyInput()
+    input.publicationReferenceTime = interviewTime("20:00", 11)
     addGroup(input, "dotkom", "MINUTES_20", [
       { startsAt: interviewTime("12:00", 12), endsAt: interviewTime("12:20", 12) },
       { startsAt: interviewTime("12:00", 13), endsAt: interviewTime("12:20", 13) },
@@ -252,20 +514,24 @@ describe("matchCommitteeApplicationInterviews", () => {
       ]
     )
     const result = await matchCommitteeApplicationInterviews(input)
-    expect(result.interviews[0].startsAt).toEqual(interviewTime("12:00", 14))
+    expect(result.matchedInterviews).toBe(1)
     expect(result.objectiveValue).toBe(1)
   })
 
-  it("preserves the bonus for an interval crossing noon", async () => {
+  it.each([
+    ["11:40", "12:00"],
+    ["11:50", "12:10"],
+    ["12:00", "12:20"],
+  ])("assigns zero distance for an interview touching or spanning noon (%s-%s)", async (startTime, endTime) => {
     const input = emptyInput()
     addGroup(input, "dotkom", "MINUTES_20", [
-      { startsAt: interviewTime("11:50"), endsAt: interviewTime("12:10") },
-      { startsAt: interviewTime("12:00"), endsAt: interviewTime("12:20") },
+      { startsAt: interviewTime(startTime), endsAt: interviewTime(endTime) },
+      { startsAt: interviewTime("12:10"), endsAt: interviewTime("12:30") },
     ])
     addApplicant(input, "alice", ["dotkom"], [{ startsAt: interviewTime("11:00"), endsAt: interviewTime("13:00") }])
     const result = await matchCommitteeApplicationInterviews(input)
-    expect(result.interviews[0].startsAt).toEqual(interviewTime("11:50"))
-    expect(result.objectiveValue).toBeCloseTo(1 - 1 / 4 + 10 / 720 / 2, 10)
+    expect(result.interviews[0].startsAt).toEqual(interviewTime(startTime))
+    expect(result.objectiveValue).toBe(1)
   })
 
   it("uses UTC calendar days for scoring slots around midnight", async () => {
@@ -285,7 +551,7 @@ describe("matchCommitteeApplicationInterviews", () => {
     expect(result.objectiveValue).toBeCloseTo(1 - 690 / 720 / 2, 10)
   })
 
-  it("counts room choices in the upstream weight denominator", async () => {
+  it("counts room choices in the weight denominator and allocates parallel interviews to distinct blocks", async () => {
     const input = emptyInput()
     addGroup(input, "dotkom", "MINUTES_30", [
       { startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30"), locationName: "Room A" },
@@ -295,7 +561,8 @@ describe("matchCommitteeApplicationInterviews", () => {
     addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30") }])
     const result = await matchCommitteeApplicationInterviews(input)
     expect(result.matchedInterviews).toBe(2)
-    expect(result.objectiveValue).toBeCloseTo(2 - 2 / 16, 10)
+    expect(new Set(result.interviews.map((interview) => interview.interviewBlockId)).size).toBe(2)
+    expect(result.objectiveValue).toBe(2)
   })
 
   it("does not increase capacity for duplicate blocks in the same room", async () => {
@@ -308,6 +575,6 @@ describe("matchCommitteeApplicationInterviews", () => {
     addApplicant(input, "bob", ["dotkom"], [{ startsAt: interviewTime("12:00"), endsAt: interviewTime("12:30") }])
     const result = await matchCommitteeApplicationInterviews(input)
     expect(result.matchedInterviews).toBe(1)
-    expect(result.objectiveValue).toBeCloseTo(1 - 1 / 4, 10)
+    expect(result.objectiveValue).toBe(1)
   })
 })

@@ -1,6 +1,6 @@
 import type { DBHandle } from "@dotkomonline/db"
 import type { Pageable } from "@dotkomonline/utils"
-import { addMinutes, differenceInMinutes } from "date-fns"
+import { addMinutes, differenceInMinutes, minutesToMilliseconds } from "date-fns"
 import { FailedPreconditionError, IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
 import type { UserId } from "../user/user"
 import { hasValidMazemapRoom } from "../mazemap/mazemap"
@@ -40,10 +40,23 @@ import {
   COMMITTEE_APPLICATION_MAXIMUM_EXCLUSIVE_GROUPS,
   COMMITTEE_APPLICATION_INTERVIEW_DURATION_MINUTES,
   COMMITTEE_APPLICATION_APPLICANT_BUFFER_MINUTES,
+  COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE,
   getInterviewDays,
+  getInterviewScheduleScore,
   isInterviewAvailabilityValid,
 } from "./committee-application"
 import type { CommitteeApplicationRepository } from "./committee-application-repository"
+
+export interface CommitteeApplicationInterviewProposal {
+  applicationPeriod: CommitteeApplicationPeriod
+  input: CommitteeApplicationInterviewMatchingInput
+  previousInterviews: CommitteeApplicationInterview[]
+  interviews: CommitteeApplicationInterviewAssignment[]
+}
+
+export interface CommitteeApplicationInterviewPublication extends CommitteeApplicationInterviewProposal {
+  publicationTime: Date
+}
 
 export interface CommitteeApplicationService {
   createPeriod(handle: DBHandle, data: CommitteeApplicationPeriodCreate): Promise<CommitteeApplicationPeriod>
@@ -128,6 +141,11 @@ export interface CommitteeApplicationService {
   generateInterviews(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
+  ): Promise<CommitteeApplicationInterviewProposal>
+  saveGeneratedInterviews(
+    handle: DBHandle,
+    applicationPeriodId: CommitteeApplicationPeriodId,
+    proposal: CommitteeApplicationInterviewProposal
   ): Promise<CommitteeApplicationInterviewSchedule>
   clearInterviews(handle: DBHandle, applicationPeriodId: CommitteeApplicationPeriodId): Promise<void>
   getInterviewSchedule(
@@ -136,8 +154,13 @@ export interface CommitteeApplicationService {
   ): Promise<CommitteeApplicationInterviewSchedule>
   confirmInterviews(
     handle: DBHandle,
-    applicationPeriodId: CommitteeApplicationPeriodId
+    applicationPeriodId: CommitteeApplicationPeriodId,
+    proposal: CommitteeApplicationInterviewPublication | null
   ): Promise<CommitteeApplicationPeriod>
+  prepareInterviewPublication(
+    handle: DBHandle,
+    applicationPeriodId: CommitteeApplicationPeriodId
+  ): Promise<CommitteeApplicationInterviewPublication | null>
   revertInterviewPublicationAndMatching(
     handle: DBHandle,
     applicationPeriodId: CommitteeApplicationPeriodId
@@ -246,6 +269,10 @@ function validateInterviewAssignment(
   assignment: CommitteeApplicationInterviewAssignment,
   interviews: CommitteeApplicationInterviewAssignment[]
 ) {
+  if (assignment.startsAt < new Date()) {
+    throw new InvalidArgumentError("Interviews cannot be scheduled in the past")
+  }
+
   if (!isInterviewAvailabilityValid(assignment, applicationPeriod)) {
     throw new InvalidArgumentError("The interview must be within the interview window")
   }
@@ -322,6 +349,34 @@ function validateInterviewAssignment(
   }
 }
 
+function matchingInputVersion(input: CommitteeApplicationInterviewMatchingInput) {
+  return JSON.stringify({
+    applications: input.applications.toSorted((first, second) => first.id.localeCompare(second.id)),
+    groups: input.groups.toSorted((first, second) => first.id.localeCompare(second.id)),
+    groupSelections: input.groupSelections.toSorted((first, second) => first.id.localeCompare(second.id)),
+    availabilityBlocks: input.availabilityBlocks.toSorted((first, second) => {
+      const applicationOrder = first.applicationId.localeCompare(second.applicationId)
+
+      if (applicationOrder !== 0) {
+        return applicationOrder
+      }
+
+      const startOrder = first.startsAt.getTime() - second.startsAt.getTime()
+
+      if (startOrder !== 0) {
+        return startOrder
+      }
+
+      return first.endsAt.getTime() - second.endsAt.getTime()
+    }),
+    interviewBlocks: input.interviewBlocks.toSorted((first, second) => first.id.localeCompare(second.id)),
+  })
+}
+
+function interviewScheduleVersion(interviews: CommitteeApplicationInterview[]) {
+  return JSON.stringify(interviews.toSorted((first, second) => first.id.localeCompare(second.id)))
+}
+
 export function getCommitteeApplicationService(
   repository: CommitteeApplicationRepository,
   interviewMatcher?: CommitteeApplicationInterviewMatcher
@@ -392,6 +447,39 @@ export function getCommitteeApplicationService(
     }
 
     return input
+  }
+
+  async function validateInterviewProposal(
+    handle: DBHandle,
+    applicationPeriod: CommitteeApplicationPeriod,
+    proposal: CommitteeApplicationInterviewProposal
+  ) {
+    requireUnpublishedSchedule(applicationPeriod)
+    requireClosedApplications(applicationPeriod, new Date())
+
+    const input = await getMatchingInput(handle, applicationPeriod.id)
+    const currentInterviews = await repository.findManyInterviewsByPeriodId(handle, applicationPeriod.id)
+    const isPeriodUnchanged =
+      applicationPeriod.id === proposal.applicationPeriod.id &&
+      applicationPeriod.updatedAt.getTime() === proposal.applicationPeriod.updatedAt.getTime()
+    const isInputUnchanged = matchingInputVersion(input) === matchingInputVersion(proposal.input)
+    const isScheduleUnchanged =
+      interviewScheduleVersion(currentInterviews) === interviewScheduleVersion(proposal.previousInterviews)
+
+    if (!isPeriodUnchanged || !isInputUnchanged || !isScheduleUnchanged) {
+      throw new FailedPreconditionError(
+        "The application period or schedule changed during matching. Generate a fresh draft."
+      )
+    }
+
+    for (const assignment of proposal.interviews) {
+      validateInterviewAssignment(
+        applicationPeriod,
+        input,
+        assignment,
+        proposal.interviews.filter((candidate) => candidate !== assignment)
+      )
+    }
   }
 
   return {
@@ -764,7 +852,7 @@ export function getCommitteeApplicationService(
     },
 
     async generateInterviews(handle, applicationPeriodId) {
-      const applicationPeriod = await lockPeriod(handle, applicationPeriodId)
+      const applicationPeriod = await this.getPeriodById(handle, applicationPeriodId)
 
       requireUnpublishedSchedule(applicationPeriod)
 
@@ -775,6 +863,7 @@ export function getCommitteeApplicationService(
       }
 
       const input = await getMatchingInput(handle, applicationPeriodId)
+      const previousInterviews = await repository.findManyInterviewsByPeriodId(handle, applicationPeriodId)
 
       const result = await interviewMatcher(input)
 
@@ -787,7 +876,19 @@ export function getCommitteeApplicationService(
         )
       }
 
-      await repository.replaceInterviews(handle, applicationPeriodId, result.interviews)
+      return {
+        applicationPeriod,
+        input,
+        previousInterviews,
+        interviews: result.interviews,
+      }
+    },
+
+    async saveGeneratedInterviews(handle, applicationPeriodId, proposal) {
+      const applicationPeriod = await lockPeriod(handle, applicationPeriodId)
+
+      await validateInterviewProposal(handle, applicationPeriod, proposal)
+      await repository.replaceInterviews(handle, applicationPeriodId, proposal.interviews)
 
       return this.getInterviewSchedule(handle, applicationPeriodId)
     },
@@ -814,14 +915,34 @@ export function getCommitteeApplicationService(
       }
     },
 
-    async confirmInterviews(handle, applicationPeriodId) {
+    async confirmInterviews(handle, applicationPeriodId, proposal) {
       const applicationPeriod = await lockPeriod(handle, applicationPeriodId)
 
       if (applicationPeriod.interviewsPublishedAt !== null) {
         return applicationPeriod
       }
 
-      requireClosedApplications(applicationPeriod, new Date())
+      if (proposal === null) {
+        throw new FailedPreconditionError("The publication state changed. Review the schedule again.")
+      }
+
+      const publicationAge = Date.now() - proposal.publicationTime.getTime()
+
+      if (publicationAge > minutesToMilliseconds(1)) {
+        throw new FailedPreconditionError("The publication check expired. Confirm the schedule again.")
+      }
+
+      await validateInterviewProposal(handle, applicationPeriod, proposal)
+
+      return repository.setInterviewsPublishedAt(handle, applicationPeriodId, proposal.publicationTime)
+    },
+
+    async prepareInterviewPublication(handle, applicationPeriodId) {
+      const applicationPeriod = await this.getPeriodById(handle, applicationPeriodId)
+
+      if (applicationPeriod.interviewsPublishedAt !== null) {
+        return null
+      }
 
       const interviews = await repository.findManyInterviewsByPeriodId(handle, applicationPeriodId)
 
@@ -829,18 +950,31 @@ export function getCommitteeApplicationService(
         throw new IllegalStateError("There are no interviews to publish")
       }
 
-      const input = await getMatchingInput(handle, applicationPeriodId)
+      const proposal = await this.generateInterviews(handle, applicationPeriodId)
+      const draftScore = getInterviewScheduleScore(proposal.input, proposal.previousInterviews)
+      const optimalScore = getInterviewScheduleScore(proposal.input, proposal.interviews)
+      const tolerance = COMMITTEE_APPLICATION_INTERVIEW_PREFERENCE_TOLERANCE
+      const isDraftCurrent =
+        proposal.previousInterviews.length > 0 &&
+        proposal.previousInterviews.every((interview) => interview.startsAt >= proposal.input.publicationReferenceTime)
+      const isDraftOptimal =
+        draftScore.interviewCount === optimalScore.interviewCount &&
+        draftScore.applicantCount === optimalScore.applicantCount &&
+        draftScore.shortNoticePenalty <= optimalScore.shortNoticePenalty + tolerance &&
+        draftScore.clusteringPenalty <= optimalScore.clusteringPenalty + tolerance &&
+        draftScore.committeeSpanMilliseconds <= optimalScore.committeeSpanMilliseconds
 
-      for (const interview of interviews) {
-        validateInterviewAssignment(
-          applicationPeriod,
-          input,
-          interview,
-          interviews.filter((candidate) => candidate.id !== interview.id)
+      if (!isDraftCurrent || !isDraftOptimal) {
+        throw new FailedPreconditionError(
+          "The draft schedule is no longer optimal for publication. Generate and review a fresh draft."
         )
       }
 
-      return repository.setInterviewsPublishedAt(handle, applicationPeriodId, new Date())
+      return {
+        ...proposal,
+        interviews: proposal.previousInterviews,
+        publicationTime: proposal.input.publicationReferenceTime,
+      }
     },
 
     async revertInterviewPublicationAndMatching(handle, applicationPeriodId) {
