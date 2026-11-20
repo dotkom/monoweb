@@ -1,0 +1,8 @@
+/* Remove the footer for the application flow */
+html:has(.committee-application-flow) [data-site-footer] {
+  display: none;
+}
+
+.committee-application-flow {
+  min-height: calc(100svh - var(--navbar-height) - 2rem);
+}
