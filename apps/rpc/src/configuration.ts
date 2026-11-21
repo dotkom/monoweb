@@ -51,7 +51,7 @@ export const createConfiguration = () =>
       awsSesRegion: config(process.env.EMAIL_AWS_SES_REGION, "eu-north-1"),
     },
     tasks: {
-      workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 10000, z.coerce.number().int()),
+      workerInterval: config(process.env.TASKS_WORKER_INTERVAL, 1000, z.coerce.number().int().positive()),
     },
     // RIF (Interest Form) configuration for Google Sheets integration.
     // NOTE: This Google Sheets integration could be replaced with database storage

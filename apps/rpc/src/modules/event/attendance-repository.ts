@@ -73,6 +73,7 @@ function normalizeAttendance<T extends { attendees: AttendeeWithRelations[]; [ke
 }
 
 export interface AttendanceRepository {
+  hasRoomForReservation(handle: DBHandle, poolId: AttendancePoolId): Promise<boolean>
   createAttendance(handle: DBHandle, data: AttendanceWrite): Promise<Attendance>
   deleteAttendanceById(handle: DBHandle, attendanceId: AttendanceId): Promise<void>
   updateAttendanceById(handle: DBHandle, attendanceId: AttendanceId, data: AttendanceWrite): Promise<Attendance>
@@ -133,6 +134,29 @@ export interface AttendanceRepository {
 
 export function getAttendanceRepository(): AttendanceRepository {
   return {
+    async hasRoomForReservation(handle, poolId) {
+      // Hold the pool lock until the reservation commits. A separate count sees reservations made while waiting.
+      const [pool] = await handle.$queryRaw<{ capacity: number }[]>`
+        SELECT capacity FROM attendance_pool WHERE id = ${poolId} FOR NO KEY UPDATE
+      `
+      invariant(pool !== undefined, "Reservation pool no longer exists")
+
+      if (pool.capacity <= 0) {
+        return pool.capacity === 0
+      }
+
+      const registeredAttendees = await handle.attendee.count({
+        where: {
+          attendancePoolId: poolId,
+          registeredAt: {
+            not: null,
+          },
+        },
+      })
+
+      return registeredAttendees < pool.capacity
+    },
+
     async createAttendance(handle, data) {
       const row = await handle.attendance.create({
         data,

@@ -1031,6 +1031,43 @@ describe("attendance integration tests", async () => {
     expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
   })
 
+  it("queues a second registration competing for the last seat", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext({ capacity: 1 })
+    const secondUser = await createUserWithMembership()
+
+    async function checkAvailability(userId: string) {
+      const availability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        userId,
+        options
+      )
+      invariant(availability.success)
+
+      return availability
+    }
+
+    const first = await checkAvailability(user.id)
+    const second = await checkAvailability(secondUser.id)
+
+    await dbClient.$transaction(async (handle) => {
+      const reserved = await core.attendanceService.registerAttendee(handle, first)
+      expect(reserved.registeredAt).not.toBeNull()
+
+      // A separate connection cannot decide who gets the seat before the first reservation commits.
+      await expect(
+        dbClient.$transaction(async (concurrentHandle) => {
+          await concurrentHandle.$executeRaw`SET LOCAL lock_timeout = '150ms'`
+          await core.attendanceService.registerAttendee(concurrentHandle, second)
+        })
+      ).rejects.toThrow(/lock timeout/)
+    })
+
+    const queued = await dbClient.$transaction((handle) => core.attendanceService.registerAttendee(handle, second))
+    expect(queued.registeredAt).toBeNull()
+  })
+
   it("cancels an unopened checkout and reserves the released seat for the next attendee", async () => {
     const { attendance, user, options } = await createAttendanceRegistrationContext({ capacity: 1 })
     await core.attendanceService.updateAttendancePaymentPrice(dbClient, attendance.id, 100)

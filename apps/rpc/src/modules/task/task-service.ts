@@ -2,15 +2,14 @@ import type { DBHandle, Prisma } from "@dotkomonline/db"
 import { getLogger } from "@dotkomonline/logger"
 import { getCurrentUTC } from "@dotkomonline/utils"
 import { subMinutes } from "date-fns"
-import type { Task, TaskId, TaskStatus, TaskWrite } from "./task"
+import type { ClaimedTask, Task, TaskId, TaskStatus, TaskType, TaskWrite } from "./task"
 import { IllegalStateError, InvalidArgumentError, NotFoundError } from "../../error"
-import { type InferTaskData, type TaskDefinition, getTaskDefinition, tasks } from "./task-definition"
+import { type InferTaskData, type TaskDefinition, getTaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 
 const CHECKOUT_LEASE_MINUTES = 5
 
 export type TaskService = {
-  claimCheckoutTask(handle: DBHandle, task: Task): Promise<Date | null>
   finishCheckoutTask(handle: DBHandle, taskId: TaskId, claimedAt: Date, data: Partial<TaskWrite>): Promise<void>
   /**
    * Updates a task
@@ -20,7 +19,7 @@ export type TaskService = {
   update(handle: DBHandle, taskId: TaskId, data: Partial<TaskWrite>, oldState: TaskStatus): Promise<Task>
   setTaskExecutionStatus(handle: DBHandle, taskId: TaskId, status: TaskStatus, oldStatus: TaskStatus): Promise<Task>
   findById(handle: DBHandle, taskId: TaskId): Promise<Task | null>
-  findNextPendingTask(handle: DBHandle): Promise<Task | null>
+  claimNextTask(handle: DBHandle, taskTypes?: readonly TaskType[]): Promise<ClaimedTask | null>
 
   /**
    * Parse and validate the payload for a given task, given its specification.
@@ -38,30 +37,6 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
   const logger = getLogger("task-service")
 
   return {
-    async claimCheckoutTask(handle, task) {
-      const claimedAt = getCurrentUTC()
-      const leaseExpiredBefore = subMinutes(claimedAt, CHECKOUT_LEASE_MINUTES)
-      const isAbandonedCheckout =
-        task.status === "RUNNING" && task.processedAt !== null && task.processedAt <= leaseExpiredBefore
-
-      if (task.type !== tasks.OPEN_PAYMENT_CHECKOUT.type || (task.status !== "PENDING" && !isAbandonedCheckout)) {
-        return null
-      }
-
-      const claimedTask = await taskRepository.update(
-        handle,
-        task.id,
-        {
-          status: "RUNNING",
-          processedAt: claimedAt,
-        },
-        task.status,
-        task.processedAt
-      )
-
-      return claimedTask === null ? null : claimedAt
-    },
-
     async finishCheckoutTask(handle, taskId, claimedAt, data) {
       // A reclaimed lease belongs to another worker; the previous worker must not acknowledge it.
       await taskRepository.update(handle, taskId, data, "RUNNING", claimedAt)
@@ -110,10 +85,11 @@ export function getTaskService(taskRepository: TaskRepository): TaskService {
       return await taskRepository.findById(handle, taskId)
     },
 
-    async findNextPendingTask(handle) {
-      const checkoutLeaseExpiredBefore = subMinutes(getCurrentUTC(), CHECKOUT_LEASE_MINUTES)
+    async claimNextTask(handle, taskTypes) {
+      const claimedAt = getCurrentUTC()
+      const checkoutLeaseExpiredBefore = subMinutes(claimedAt, CHECKOUT_LEASE_MINUTES)
 
-      return await taskRepository.findNextPendingTask(handle, checkoutLeaseExpiredBefore)
+      return await taskRepository.claimNextTask(handle, claimedAt, checkoutLeaseExpiredBefore, taskTypes)
     },
 
     parse(taskDefinition, payload) {

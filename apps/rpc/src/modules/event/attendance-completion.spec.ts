@@ -228,6 +228,7 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
 
   attendance.pools = [mock<AttendancePool>({ id: attendee.attendancePoolId, capacity: -1 })]
   attendanceRepository.findAttendeeById.mockResolvedValue(attendee)
+  attendanceRepository.hasRoomForReservation.mockResolvedValue(true)
   attendanceRepository.findAttendanceByAttendeeId.mockResolvedValue(attendance)
   attendanceRepository.findAttendanceById.mockResolvedValue(attendance)
   attendanceRepository.updateAttendeeById.mockImplementation(async (_handle, _attendeeId, data) => {
