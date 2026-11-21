@@ -6,7 +6,8 @@ import { FieldShell, getFieldErrorMessage } from "@admin/components/forms/FieldS
 import { notifyFail } from "@admin/lib/notifications"
 import { MAX_MERGE_DELAY_HOURS } from "@dotkomonline/rpc/attendance"
 import { createPoolName } from "@dotkomonline/utils"
-import { Button, TextInput } from "@dotkomonline/ui"
+import { Button, Field, FieldContent, FieldDescription, FieldLabel, TextInput } from "@dotkomonline/ui"
+import { Switch } from "@dotkomonline/ui/components/switch"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconRestore } from "@tabler/icons-react"
 import { type FC, useEffect, useMemo, useState } from "react"
@@ -30,6 +31,7 @@ export const PoolFormSchema = z
     yearCriteria: z.array(z.number()).min(1, "Du må velge minst ett klassetrinn."),
     capacity: z.int().min(0),
     title: z.string().trim().min(1, "Oppgi et navn på påmeldingsgruppen."),
+    fillAddedSeats: z.boolean().optional(),
     mergeDelayHours: z.preprocess((val) => {
       if (typeof val === "number") {
         const num = Number(val)
@@ -96,10 +98,16 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
     defaultValues: {
       ...props.defaultValues,
       title: defaultTitle,
+      fillAddedSeats: false,
     },
   })
 
   const yearCriteria = form.watch("yearCriteria")
+  const capacity = form.watch("capacity")
+  const hasCapacityIncrease =
+    props.mode === "update" &&
+    props.defaultValues.capacity > 0 &&
+    (capacity === 0 || capacity > props.defaultValues.capacity)
   const generatedTitle = createPoolName(yearCriteria ?? [])
   const title = useWatch({ control: form.control, name: "title" })
   const canResetTitle = generatedTitle !== "" && title !== generatedTitle
@@ -124,7 +132,7 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
 
   const onSubmit = form.handleSubmit((values) => {
     try {
-      props.onSubmit(values)
+      props.onSubmit({ ...values, fillAddedSeats: hasCapacityIncrease && values.fillAddedSeats === true })
     } catch (error) {
       notifyFail({
         title: "Oops!",
@@ -173,6 +181,30 @@ export const PoolForm: FC<PoolFormProps> = (props) => {
         </div>
 
         <CapacityField control={form.control} setValue={form.setValue} min={props.minCapacity ?? 0} />
+
+        {hasCapacityIncrease && (
+          <Controller
+            control={form.control}
+            name="fillAddedSeats"
+            render={({ field }) => (
+              <Field orientation="horizontal">
+                <Switch
+                  id="fillAddedSeats"
+                  checked={field.value === true}
+                  onCheckedChange={field.onChange}
+                  onBlur={field.onBlur}
+                  aria-describedby="fillAddedSeats-description"
+                />
+                <FieldContent>
+                  <FieldLabel htmlFor="fillAddedSeats">Fyll nye plasser fra køen</FieldLabel>
+                  <FieldDescription id="fillAddedSeats-description" className="text-xs">
+                    De nye plassene fylles i kø-rekkefølge. De som får plass, får en e-post om at de er påmeldt.
+                  </FieldDescription>
+                </FieldContent>
+              </Field>
+            )}
+          />
+        )}
 
         <TextField
           control={form.control}

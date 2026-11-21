@@ -51,6 +51,7 @@ export function EditPoolModal({ open, onOpenChange, attendanceId, poolId, defaul
                     mergeDelayHours: values.mergeDelayHours,
                   },
                   id: poolId,
+                  fillAddedSeats: values.fillAddedSeats,
                 })
                 onOpenChange(false)
               }}

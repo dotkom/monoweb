@@ -201,6 +201,9 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
   const personalMarkService = mock<Parameters<typeof getAttendanceService>[5]>()
   const attendancePaymentService = mock<Parameters<typeof getAttendanceService>[6]>()
   const eventService = mock<Parameters<typeof getAttendanceService>[7]>()
+  const emailService = mock<Parameters<typeof getAttendanceService>[11]>()
+  emailService.send.mockResolvedValue(undefined)
+
   const attendee = createAttendee({
     payment: mock<PaymentView>({
       id: "payment",
@@ -269,7 +272,7 @@ function createPaymentContext(deregisterDeadline: Date, paymentStatus: PaymentVi
     mock(),
     mock(),
     mock({ WEB_PUBLIC_ORIGIN: "https://online.ntnu.no" }),
-    mock()
+    emailService
   )
 
   return {
