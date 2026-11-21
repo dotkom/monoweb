@@ -1031,6 +1031,121 @@ describe("attendance integration tests", async () => {
     expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
   })
 
+  it("cancels an unopened checkout and reserves the released seat for the next attendee", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext({ capacity: 1 })
+    await core.attendanceService.updateAttendancePaymentPrice(dbClient, attendance.id, 100)
+
+    async function register(userId: string) {
+      const availability = await core.attendanceService.getRegistrationAvailability(
+        dbClient,
+        attendance.id,
+        null,
+        userId,
+        options
+      )
+      invariant(availability.success)
+
+      return await core.attendanceService.registerAttendee(dbClient, availability)
+    }
+
+    const reserved = await register(user.id)
+    const nextUser = await createUserWithMembership()
+    const queued = await register(nextUser.id)
+    const attemptId = reserved.payment?.attemptId
+
+    invariant(attemptId != null)
+    expect(queued.registeredAt).toBeNull()
+    await dbClient.attendee.update({
+      where: {
+        id: reserved.id,
+      },
+      data: {
+        completionDeadline: subHours(getCurrentUTC(), 1),
+      },
+    })
+
+    await core.attendanceService.executeVerifyAttendanceCompletionTask(dbClient, { attendeeId: reserved.id })
+
+    const attempt = await dbClient.paymentAttempt.findUniqueOrThrow({
+      where: {
+        id: attemptId,
+      },
+    })
+    const afterRelease = await core.attendanceService.getAttendanceById(dbClient, attendance.id)
+
+    expect(attempt.status).toBe("CANCELLED")
+    expect(afterRelease.attendees).toHaveLength(1)
+    expect(afterRelease.attendees[0].id).toBe(queued.id)
+    expect(afterRelease.attendees[0].registeredAt).not.toBeNull()
+    expect(afterRelease.attendees[0].payment?.isCheckoutPending).toBe(true)
+    expect(stripe.checkout.sessions.create).not.toHaveBeenCalled()
+  })
+
+  it("keeps the seat and checkout when the completion deadline moves during Stripe reconciliation", async () => {
+    const { attendance, user, options } = await createAttendanceRegistrationContext()
+    await core.attendanceService.updateAttendancePaymentPrice(dbClient, attendance.id, 100)
+    const availability = await core.attendanceService.getRegistrationAvailability(
+      dbClient,
+      attendance.id,
+      null,
+      user.id,
+      options
+    )
+    invariant(availability.success)
+
+    const attendee = await core.attendanceService.registerAttendee(dbClient, availability)
+    const attemptId = attendee.payment?.attemptId
+    invariant(attemptId != null)
+
+    await dbClient.paymentAttempt.update({
+      where: {
+        id: attemptId,
+      },
+      data: {
+        status: "CHECKOUT_OPEN",
+        stripeCheckoutSessionId: "registration-checkout",
+        checkoutUrl: "https://checkout.stripe.com/registration",
+      },
+    })
+    await dbClient.attendee.update({
+      where: {
+        id: attendee.id,
+      },
+      data: {
+        completionDeadline: subHours(getCurrentUTC(), 1),
+      },
+    })
+
+    const extendedDeadline = addHours(getCurrentUTC(), 1)
+    stripe.checkout.sessions.retrieve.mockImplementationOnce(async () => {
+      await dbClient.attendee.update({
+        where: {
+          id: attendee.id,
+        },
+        data: {
+          completionDeadline: extendedDeadline,
+        },
+      })
+
+      return mock<Stripe.Response<Stripe.Checkout.Session>>({
+        id: "registration-checkout",
+        status: "open",
+        url: "https://checkout.stripe.com/registration",
+        amount_total: 10000,
+        currency: "nok",
+        expires_at: 2000000000,
+        payment_intent: null,
+      })
+    })
+
+    await core.attendanceService.executeVerifyAttendanceCompletionTask(dbClient, { attendeeId: attendee.id })
+    const reserved = await core.attendanceService.getAttendeeById(dbClient, attendee.id)
+
+    expect(reserved.completionDeadline?.getTime()).toBe(extendedDeadline.getTime())
+    expect(reserved.registeredAt).not.toBeNull()
+    expect(stripe.checkout.sessions.expire).not.toHaveBeenCalled()
+  })
+
   it("persists a paid registration with its original amount and a reusable checkout reference", async () => {
     const { attendance, user, options } = await createAttendanceRegistrationContext()
     await dbClient.attendance.update({

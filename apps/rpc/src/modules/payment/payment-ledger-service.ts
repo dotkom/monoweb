@@ -13,6 +13,7 @@ import {
   type CheckoutInput,
   type CreatePaymentInput,
   type PaymentAttemptIdentifiers,
+  type PaymentAttemptUpdate,
   type PaymentRecord,
   type PaymentAttempt,
 } from "./payment"
@@ -52,6 +53,12 @@ export interface PaymentLedgerService {
   syncAttempt(handle: DBHandle, attemptId: string, identifiers?: PaymentAttemptIdentifiers): Promise<PaymentRecord>
 
   /**
+   * Returns true if this attempt had an open checkout session in the ledger.
+   * The attendee may have paid before Stripe processed the expiration request. Read the final status before releasing the seat.
+   */
+  expireOpenCheckout(client: DBClient, attemptId: string): Promise<boolean>
+
+  /**
    * Captures an authorized payment attempt in Stripe and saves the updated payment status.
    */
   capture(handle: DBHandle, attemptId: string): Promise<PaymentRecord>
@@ -73,13 +80,8 @@ export function getPaymentLedgerService(
   stripe: Stripe,
   taskSchedulingService: TaskSchedulingService
 ): PaymentLedgerService {
-  async function syncRefunds(handle: DBHandle, attemptId: string, paymentIntentId: string): Promise<void> {
-    const refunds = stripe.refunds.list({
-      payment_intent: paymentIntentId,
-      limit: 100,
-    })
-
-    for await (const refund of refunds) {
+  async function saveRefunds(handle: DBHandle, attemptId: string, refunds: Stripe.Refund[]): Promise<void> {
+    for (const refund of refunds) {
       const status = getStripeRefundStatus(refund)
       const refundNumber = Number(refund.metadata?.refund_number)
       const localRefund =
@@ -226,7 +228,7 @@ export function getPaymentLedgerService(
           ? min([attempt.captureScheduledAt ?? now, authorizationCaptureDeadline])
           : attempt.captureScheduledAt
 
-      await paymentRepository.updateAttempt(handle, attemptId, {
+      const update: PaymentAttemptUpdate = {
         status,
         stripeCheckoutSessionId: stripeCheckoutSessionId ?? null,
         capturedAmountOre: paymentIntent?.amount_received ?? attempt.capturedAmountOre,
@@ -238,10 +240,35 @@ export function getPaymentLedgerService(
         captureScheduledAt,
         capturedAt: status === "CAPTURED" ? (attempt.capturedAt ?? now) : attempt.capturedAt,
         lastSyncedAt: now,
-      })
+      }
+
+      const expectedAttempt = {
+        updatedAt: attempt.updatedAt,
+        status: attempt.status,
+      }
+
+      const refunds: Stripe.Refund[] = []
 
       if (paymentIntentId !== null) {
-        await syncRefunds(handle, attemptId, paymentIntentId)
+        const pages = stripe.refunds.list({
+          payment_intent: paymentIntentId,
+          limit: 100,
+        })
+
+        for await (const refund of pages) {
+          refunds.push(refund)
+        }
+      }
+
+      async function saveReconciliation(database: DBHandle) {
+        await paymentRepository.updateAttempt(database, attemptId, update, expectedAttempt)
+        await saveRefunds(database, attemptId, refunds)
+      }
+
+      if (refunds.length > 0 && isDatabaseClient(handle)) {
+        await handle.$transaction(saveReconciliation)
+      } else {
+        await saveReconciliation(handle)
       }
 
       return await this.getById(handle, attempt.paymentId)
@@ -412,6 +439,33 @@ export function getPaymentLedgerService(
       return updatedPayment
     },
 
+    async expireOpenCheckout(client, attemptId) {
+      const payment = await paymentRepository.findByAttemptId(client, attemptId)
+      const attempt = payment?.attempts[0]
+
+      if (attempt?.id !== attemptId || attempt.status !== "CHECKOUT_OPEN" || attempt.stripeCheckoutSessionId === null) {
+        return false
+      }
+
+      try {
+        await stripe.checkout.sessions.expire(attempt.stripeCheckoutSessionId)
+      } catch (error) {
+        if (!(error instanceof Stripe.errors.StripeInvalidRequestError)) {
+          throw error
+        }
+
+        // Stripe rejects expiration if the attendee has already paid or the session has expired.
+        // An open session means expiration failed and can still accept payment.
+        const session = await stripe.checkout.sessions.retrieve(attempt.stripeCheckoutSessionId)
+
+        if (session.status === "open") {
+          throw error
+        }
+      }
+
+      return true
+    },
+
     async capture(handle, attemptId) {
       const payment = await this.syncAttempt(handle, attemptId)
       const attempt = payment.attempts.find((candidate) => candidate.id === attemptId)
@@ -565,4 +619,8 @@ export function getPaymentLedgerService(
       })
     },
   }
+}
+
+function isDatabaseClient(handle: DBHandle): handle is DBClient {
+  return "$transaction" in handle
 }

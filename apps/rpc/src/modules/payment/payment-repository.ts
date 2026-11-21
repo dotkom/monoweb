@@ -37,10 +37,16 @@ export interface PaymentRepository {
   reassignWaivers(handle: DBHandle, consumedUserId: string, survivorUserId: string): Promise<void>
 
   createAttempt(handle: DBHandle, data: PaymentAttemptWrite): Promise<PaymentAttempt>
-  updateAttempt(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<PaymentAttempt>
+  updateAttempt(
+    handle: DBHandle,
+    attemptId: string,
+    data: PaymentAttemptUpdate,
+    expected?: Pick<PaymentAttempt, "updatedAt" | "status">
+  ): Promise<PaymentAttempt>
   findAttemptByIdentifiers(handle: DBHandle, identifiers: PaymentAttemptIdentifiers[]): Promise<PaymentAttempt | null>
 
   attachCheckoutSession(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<void>
+  cancelUnopenedCheckout(handle: DBHandle, attemptId: string): Promise<void>
   markCheckoutRequested(handle: DBHandle, attemptId: string, requestedAt: Date): Promise<void>
 
   createRefund(handle: DBHandle, data: PaymentRefundWrite): Promise<PaymentRefund>
@@ -97,6 +103,8 @@ export function getPaymentRepository(): PaymentRepository {
 
     async findByAttemptId(handle, attemptId) {
       const payment = await handle.payment.findFirst({
+        // The optimistic update needs the timestamp as Prisma reads the column. JSON joins convert it in non-UTC sessions.
+        relationLoadStrategy: "query",
         where: {
           attempts: {
             some: {
@@ -143,10 +151,11 @@ export function getPaymentRepository(): PaymentRepository {
       return parseOrReport(PaymentAttemptSchema, attempt)
     },
 
-    async updateAttempt(handle, attemptId, data) {
+    async updateAttempt(handle, attemptId, data, expected) {
       const attempt = await handle.paymentAttempt.update({
         where: {
           id: attemptId,
+          ...expected,
         },
         data,
         include: {
@@ -191,6 +200,25 @@ export function getPaymentRepository(): PaymentRepository {
         },
         data: {
           status,
+        },
+      })
+    },
+
+    async cancelUnopenedCheckout(handle, attemptId) {
+      // If Stripe is still creating the session, the checkout worker will attach it and expire it after it sees CANCELLED.
+      await handle.paymentAttempt.update({
+        where: {
+          id: attemptId,
+          status: "CREATED",
+          AND: [
+            {
+              stripeCheckoutSessionId: null,
+              stripePaymentIntentId: null,
+            },
+          ],
+        },
+        data: {
+          status: "CANCELLED",
         },
       })
     },
