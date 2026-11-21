@@ -27,6 +27,8 @@ import {
   IconReceipt,
   IconSchool,
   IconUsers,
+  // Uncomment when a4 page is uncommented
+  //IconSofa,
 } from "@tabler/icons-react"
 import Link from "next/link"
 import { type ComponentType, type FC, useRef } from "react"
@@ -100,6 +102,14 @@ const links: MenuLink[] = [
         icon: IconBook2,
         description: "Onlines wiki, brukt av hele Trondheim.",
       },
+      /* Uncomment when stock is tracked
+      {
+        title: "A4",
+        href: "/a4",
+        icon: IconSofa,
+        description: "Informasjon om A4 og kontoret.",
+      },
+      */
     ],
   },
   {

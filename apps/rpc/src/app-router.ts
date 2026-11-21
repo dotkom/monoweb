@@ -15,6 +15,7 @@ import { rifRouter } from "./modules/rif/rif-router"
 import { sidequestRouter } from "./modules/sidequest/sidequest-router"
 import { userRouter } from "./modules/user/user-router"
 import { workspaceRouter } from "./modules/workspace-sync/workspace-router"
+import { kioskRouter } from "./modules/kiosk/kiosk-router"
 import { t } from "./trpc"
 
 export const appRouter = t.router({
@@ -35,6 +36,7 @@ export const appRouter = t.router({
   workspace: workspaceRouter,
   invoicification: invoicificationRouter,
   rif: rifRouter,
+  kiosk: kioskRouter,
 })
 
 export type AppRouter = typeof appRouter
