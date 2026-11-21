@@ -23,6 +23,35 @@ export const fixtureSidequestId = {
   racinglineSpa: "a1b2c3d4-e5f6-4789-a012-111111111202",
   julLucia: "a1b2c3d4-e5f6-4789-a012-111111111302",
   mineLineSpeedrun: "a1b2c3d4-e5f6-4789-a012-111111111602",
+  xSportSylan: "a1b2c3d4-e5f6-4789-a012-111111111103",
+  xSportGrip: "a1b2c3d4-e5f6-4789-a012-111111111104",
+  xSportOppdal: "a1b2c3d4-e5f6-4789-a012-111111111105",
+  xSportJaeren: "a1b2c3d4-e5f6-4789-a012-111111111106",
+  xSportGraakallen: "a1b2c3d4-e5f6-4789-a012-111111111107",
+  xSportBeachCleanup: "a1b2c3d4-e5f6-4789-a012-111111111108",
+  racinglineSimracing: "a1b2c3d4-e5f6-4789-a012-111111111203",
+  racinglineKarting: "a1b2c3d4-e5f6-4789-a012-111111111204",
+  racinglineWrapUp: "a1b2c3d4-e5f6-4789-a012-111111111205",
+  racinglineImola: "a1b2c3d4-e5f6-4789-a012-111111111206",
+  racinglineQualifying: "a1b2c3d4-e5f6-4789-a012-111111111207",
+  julOrnaments: "a1b2c3d4-e5f6-4789-a012-111111111303",
+  julJulebord: "a1b2c3d4-e5f6-4789-a012-111111111304",
+  julAdvent: "a1b2c3d4-e5f6-4789-a012-111111111305",
+  julGingerbread: "a1b2c3d4-e5f6-4789-a012-111111111306",
+  vodkaEstenstadmarka: "a1b2c3d4-e5f6-4789-a012-111111111402",
+  vodkaMidnightHike: "a1b2c3d4-e5f6-4789-a012-111111111403",
+  vodkaSummerSolstice: "a1b2c3d4-e5f6-4789-a012-111111111404",
+  vodkaNidelva: "a1b2c3d4-e5f6-4789-a012-111111111405",
+  faxeKjelleren: "a1b2c3d4-e5f6-4789-a012-111111111502",
+  faxeGeneralAssembly: "a1b2c3d4-e5f6-4789-a012-111111111503",
+  faxeTasting: "a1b2c3d4-e5f6-4789-a012-111111111504",
+  faxeMidnightMass: "a1b2c3d4-e5f6-4789-a012-111111111505",
+  faxeBlaatur: "a1b2c3d4-e5f6-4789-a012-111111111506",
+  mineLineRedstone: "a1b2c3d4-e5f6-4789-a012-111111111603",
+  mineLineSurvival: "a1b2c3d4-e5f6-4789-a012-111111111604",
+  mineLineMaintenance: "a1b2c3d4-e5f6-4789-a012-111111111605",
+  mineLineLan: "a1b2c3d4-e5f6-4789-a012-111111111606",
+  mineLineCreativeBuild: "a1b2c3d4-e5f6-4789-a012-111111111607",
 } as const
 
 export type FixtureSidequestKey = keyof typeof fixtureSidequestId
@@ -68,6 +97,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://maps.app.goo.gl/8dA2NN9YWDp7XyuV6",
     },
     {
+      id: sidequestId("xSportSylan"),
       createdAt: subWeeks(now, 1),
       updatedAt: now,
       title: "Topptur til Sylan",
@@ -93,6 +123,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("xSportGrip"),
       createdAt: subDays(now, 10),
       updatedAt: subDays(now, 2),
       title: "Klatrekveld på Grip",
@@ -112,6 +143,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://maps.app.goo.gl/hSEicfQFamY7r9oX8",
     },
     {
+      id: sidequestId("xSportOppdal"),
       createdAt: subMonths(now, 2),
       updatedAt: subMonths(now, 2),
       title: "Skiweekend i Oppdal",
@@ -131,6 +163,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("xSportJaeren"),
       createdAt: subMonths(now, 4),
       updatedAt: subMonths(now, 4),
       title: "Surfehelg på Jæren",
@@ -192,6 +225,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
+      id: sidequestId("racinglineSimracing"),
       createdAt: subDays(now, 7),
       updatedAt: now,
       title: "Simracing på kontoret",
@@ -211,6 +245,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
+      id: sidequestId("racinglineKarting"),
       createdAt: subDays(now, 20),
       updatedAt: subDays(now, 5),
       title: "Karting på Lade",
@@ -234,6 +269,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("racinglineWrapUp"),
       createdAt: subMonths(now, 1),
       updatedAt: subWeeks(now, 3),
       title: "Sesongavslutning: race wrap-up",
@@ -293,6 +329,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
+      id: sidequestId("julOrnaments"),
       createdAt: subDays(now, 5),
       updatedAt: now,
       title: "Juleverksted: ornamenter og kort",
@@ -312,6 +349,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://maps.app.goo.gl/hSEicfQFamY7r9oX8",
     },
     {
+      id: sidequestId("julJulebord"),
       createdAt: subDays(now, 12),
       updatedAt: subDays(now, 4),
       title: "Julebord for interessen",
@@ -331,6 +369,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("julAdvent"),
       createdAt: subMonths(now, 10),
       updatedAt: subMonths(now, 9),
       title: "Adventskalender-kickoff",
@@ -391,6 +430,7 @@ export const getSidequestFixtures = () =>
       capacity: 10,
     },
     {
+      id: sidequestId("vodkaEstenstadmarka"),
       createdAt: subDays(now, 15),
       updatedAt: subDays(now, 8),
       title: "Høsttur til Estenstadmarka",
@@ -407,6 +447,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("vodkaMidnightHike"),
       createdAt: subDays(now, 4),
       updatedAt: now,
       title: "Midnatttur med termos",
@@ -426,6 +467,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("vodkaSummerSolstice"),
       createdAt: subMonths(now, 2),
       updatedAt: subMonths(now, 2),
       title: "Sommersolhverv i skogen",
@@ -471,6 +513,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("faxeKjelleren"),
       createdAt: subDays(now, 18),
       updatedAt: subDays(now, 10),
       title: "Skål på Kjelleren",
@@ -487,6 +530,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("faxeGeneralAssembly"),
       createdAt: subDays(now, 3),
       updatedAt: now,
       title: "Ordenens generalforsamling",
@@ -506,6 +550,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
+      id: sidequestId("faxeTasting"),
       createdAt: subDays(now, 11),
       updatedAt: subDays(now, 6),
       title: "Faxe-smaking: klassisk vs. ny",
@@ -525,6 +570,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://maps.app.goo.gl/2fhoN4riGaY7s4yA7",
     },
     {
+      id: sidequestId("faxeMidnightMass"),
       createdAt: subMonths(now, 1),
       updatedAt: subMonths(now, 1),
       title: "Midnattsmesse for Faxe",
@@ -565,6 +611,7 @@ export const getSidequestFixtures = () =>
       capacity: 5,
     },
     {
+      id: sidequestId("mineLineRedstone"),
       createdAt: subDays(now, 12),
       updatedAt: subDays(now, 3),
       title: "Redstone-workshop",
@@ -584,6 +631,7 @@ export const getSidequestFixtures = () =>
       locationLink: "https://link.mazemap.com/PIAEEJsD",
     },
     {
+      id: sidequestId("mineLineSurvival"),
       createdAt: subWeeks(now, 5),
       updatedAt: subWeeks(now, 4),
       title: "Survival weekend: nether-update",
@@ -600,6 +648,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("mineLineMaintenance"),
       createdAt: subDays(now, 8),
       updatedAt: now,
       title: "Server-restart og vedlikehold",
@@ -619,6 +668,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("mineLineLan"),
       createdAt: subMonths(now, 2),
       updatedAt: subMonths(now, 2),
       title: "Mineline-LAN på kontoret",
@@ -652,6 +702,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("xSportGraakallen"),
       createdAt: subDays(now, 2),
       updatedAt: now,
       title: "Fjelltur til Gråkallen",
@@ -671,6 +722,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("racinglineImola"),
       createdAt: subDays(now, 16),
       updatedAt: subDays(now, 12),
       title: "Quali + race: Imola watch party",
@@ -687,6 +739,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("julGingerbread"),
       createdAt: subDays(now, 20),
       updatedAt: subDays(now, 18),
       title: "Pepperkakebaking",
@@ -703,6 +756,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("xSportBeachCleanup"),
       createdAt: subDays(now, 1),
       updatedAt: now,
       title: "Beach cleanup + badetur",
@@ -722,6 +776,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("mineLineCreativeBuild"),
       createdAt: subDays(now, 7),
       updatedAt: subDays(now, 2),
       title: "Creative build contest",
@@ -741,6 +796,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("faxeBlaatur"),
       createdAt: subDays(now, 4),
       updatedAt: subDays(now, 1),
       title: "Ordenens blåtur",
@@ -760,6 +816,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("vodkaNidelva"),
       createdAt: subDays(now, 3),
       updatedAt: now,
       title: "Vodka & vandring: Nidelva",
@@ -779,6 +836,7 @@ export const getSidequestFixtures = () =>
       locationLink: null,
     },
     {
+      id: sidequestId("racinglineQualifying"),
       createdAt: subHours(now, 20),
       updatedAt: now,
       title: "Friday night quali tips",
@@ -794,7 +852,7 @@ export const getSidequestFixtures = () =>
       locationAddress: "A4-137, Realfagbygget",
       locationLink: null,
     },
-  ] satisfies Prisma.SidequestCreateManyInput[]
+  ] satisfies (Prisma.SidequestCreateManyInput & { id: string })[]
 
 type SidequestRegistrationAssignment = {
   sidequestId: string
