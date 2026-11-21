@@ -1,0 +1,191 @@
+import { add, isPast, millisecondsToSeconds, secondsToMilliseconds } from "date-fns"
+import {
+  ProductsReturnSchema,
+  StockReturnSchema,
+  type ProductsReturn,
+  type ProductStock,
+  type StockReturn,
+} from "./kiosk"
+import { InternalServerError } from "../../error"
+import { getLogger } from "@dotkomonline/logger"
+import type { Configuration } from "../../configuration"
+import { z } from "zod"
+
+const logger = getLogger("kiosk-service")
+
+class TTLCache<T> {
+  value: T | null = null
+  expiry: Date
+  ttl: number
+  fetchfn: (() => Promise<T>) | undefined = undefined
+
+  constructor({
+    ttl,
+    fetchfn,
+  }: {
+    ttl: number
+    fetchfn?: () => Promise<T>
+  }) {
+    this.ttl = ttl
+    this.expiry = add(new Date(), { seconds: millisecondsToSeconds(ttl) })
+    this.fetchfn = fetchfn
+  }
+
+  async fetch() {
+    if (this.fetchfn === undefined) {
+      throw Error("Fetch cannot be called if fetchfn is not set. Use get and set instead")
+    }
+
+    if (!this.value || isPast(this.expiry)) {
+      this.expiry = add(new Date(), { seconds: millisecondsToSeconds(this.ttl) })
+      this.value = await this.fetchfn()
+
+      return this.value
+    }
+
+    return this.value
+  }
+
+  get() {
+    if (isPast(this.expiry)) {
+      return null
+    }
+
+    return this.value
+  }
+
+  set(value: T) {
+    this.value = value
+    this.expiry = add(new Date(), { seconds: millisecondsToSeconds(this.ttl) })
+  }
+}
+
+const fetchAccessToken = async (zettleClientId: string | null, zettleSecretKey: string | null) => {
+  if (zettleClientId === null || zettleSecretKey === null) {
+    logger.error("Missing zettle secrets")
+    return "" // !"" will evaluate to true, throwing later if getAccessToken fails to fetch
+  }
+
+  const grantTypeEncoded = encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer")
+  const zettleClientIdEncoded = encodeURIComponent(zettleClientId)
+  const zettleSecretKeyEncoded = encodeURIComponent(zettleSecretKey)
+
+  const res = await fetch(`https://oauth.zettle.com/token`, {
+    method: "POST",
+    headers: [["Content-Type", "application/x-www-form-urlencoded"]],
+    body: `grant_type=${grantTypeEncoded}&client_id=${zettleClientIdEncoded}&assertion=${zettleSecretKeyEncoded}`,
+  })
+
+  if (!res.ok) {
+    logger.error(`zettle auth token fetch failed with error: ${await res.json()}`)
+    return ""
+  }
+
+  const tokenResponse = z.object({
+    access_token: z.string(),
+    expires_in: z.number(),
+  })
+
+  const data = tokenResponse.parse(await res.json())
+
+  return data.access_token
+}
+
+const getProducts = async (token: string, orgId: string | null): Promise<ProductsReturn> => {
+  const res = await fetch(`https://products.izettle.com/organizations/${orgId}/products`, {
+    headers: [["Authorization", `Bearer ${token}`]],
+  })
+
+  if (!res.ok) {
+    logger.error(
+      `zettle products fetch (products.izettle.com/organizations/{orgId}/products) failed with error: ${await res.json()}`
+    )
+    throw new InternalServerError("Product fetch failed")
+  }
+
+  const data = ProductsReturnSchema.parse(await res.json())
+
+  return data
+}
+
+const getStock = async (token: string, inventoryId: string | null): Promise<StockReturn> => {
+  const res = await fetch(`https://inventory.izettle.com/v3/stock/${inventoryId}`, {
+    headers: [["Authorization", `Bearer ${token}`]],
+  })
+
+  if (!res.ok) {
+    logger.error(
+      `zettle inventory fetch (inventory.izettle.com/v3/stock/{inventoryId}) failed with error: ${await res.json()}`
+    )
+    throw new InternalServerError("Stock fetch failed")
+  }
+
+  const data = StockReturnSchema.parse(await res.json())
+
+  return data
+}
+
+const stockKey = (productUuid: string, variantUuid: string) => `${productUuid}:${variantUuid}`
+
+export function aggregateProductsWithStock(products: ProductsReturn, stock: StockReturn): ProductStock[] {
+  const stockByVariant = new Map(stock.map((entry) => [stockKey(entry.productUuid, entry.variantUuid), entry]))
+
+  return products
+    .map((product) => ({
+      id: product.uuid,
+      name: product.name,
+      category: product.category,
+      presentation: product.presentation ?? null,
+      price: product.variants[0]?.price ?? null,
+      vatPercentage: Number(product.vatPercentage),
+      balance: product.variants.reduce(
+        (total, variant) => total + Number(stockByVariant.get(stockKey(product.uuid, variant.uuid))?.balance ?? 0),
+        0
+      ),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "nb-NO"))
+}
+
+export interface KioskService {
+  getProductStock(): Promise<ProductStock[]>
+}
+
+export function getKioskService(configuration: Configuration): KioskService {
+  const tokenCache = new TTLCache<string>({
+    ttl: secondsToMilliseconds(7150), // access token expiry is always 7200 seconds
+    fetchfn: async () => {
+      return fetchAccessToken(configuration.zettle.clientId, configuration.zettle.secretKey)
+    },
+  })
+
+  const productCache = new TTLCache<ProductStock[]>({
+    ttl: secondsToMilliseconds(5),
+  })
+
+  const getAccessToken = async () => {
+    const token = await tokenCache.fetch()
+
+    if (!token) {
+      throw new InternalServerError("Failed to fetch access token")
+    }
+
+    return token
+  }
+
+  return {
+    getProductStock: async () => {
+      let productList = productCache.get()
+
+      if (!productList) {
+        const token = await getAccessToken()
+        const products = await getProducts(token, configuration.zettle.orgId)
+        const stock = await getStock(token, configuration.zettle.inventoryId)
+
+        productList = aggregateProductsWithStock(products, stock)
+        productCache.set(productList)
+      }
+
+      return productList
+    },
+  }
+}
