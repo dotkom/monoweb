@@ -170,6 +170,25 @@ export const createAbsoluteNotificationPageUrl = (origin: string, notificationId
   return toAbsoluteUrl(origin, notificationPageUrl)
 }
 
+export const createSidequestPageUrl = (
+  sidequestId: string,
+  sidequestTitle?: string
+): `/sidequests?sidequest=${string}&id=${string}` => {
+  const slug = sidequestTitle ? slugify(sidequestTitle) : "sidequest"
+
+  return `/sidequests?sidequest=${slug}&id=${sidequestId}`
+}
+
+export const createAbsoluteSidequestPageUrl = (
+  origin: string,
+  sidequestId: string,
+  sidequestTitle?: string
+): `${string}/sidequests?sidequest=${string}&id=${string}` => {
+  const slug = sidequestTitle ? slugify(sidequestTitle) : "sidequest"
+
+  return `${origin}/sidequests?sidequest=${slug}&id=${sidequestId}`
+}
+
 export const createJobListingSlug = (jobListingTitle: string): string => {
   return slugify(jobListingTitle)
 }
