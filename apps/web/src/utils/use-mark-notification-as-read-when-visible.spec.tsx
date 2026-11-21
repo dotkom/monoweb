@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 
-import type { NotificationType } from "@dotkomonline/rpc/notification"
 import React, { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -11,17 +10,14 @@ const observers: { callback: IntersectionObserverCallback; disconnect: ReturnTyp
 const markAsRead = vi.fn()
 
 function NotificationProbe({
-  notificationType,
   notificationId = "notification-one",
   readAt = null,
 }: {
-  notificationType: NotificationType
   notificationId?: string
   readAt?: Date | null
 }) {
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLDivElement>({
     notificationId,
-    notificationType,
     readAt,
     onMarkAsRead: markAsRead,
   })
@@ -65,11 +61,8 @@ function intersect(intersectionRatio: number) {
 }
 
 describe("notification visibility", () => {
-  it.each<NotificationType>([
-    "BROADCAST",
-    "NEW_FEEDBACK_FORM",
-  ])("marks %s once when at least half is visible", async (notificationType) => {
-    await act(async () => root.render(<NotificationProbe notificationType={notificationType} />))
+  it("marks a notification once when at least half is visible", async () => {
+    await act(async () => root.render(<NotificationProbe />))
 
     intersect(0)
     intersect(0.25)
@@ -81,25 +74,15 @@ describe("notification visibility", () => {
     expect(observers[0].disconnect).toHaveBeenCalled()
   })
 
-  it.each<NotificationType>([
-    "BROADCAST_IMPORTANT",
-    "NEW_MARK",
-  ])("does not automatically mark %s as read", async (notificationType) => {
-    await act(async () => root.render(<NotificationProbe notificationType={notificationType} />))
-
-    expect(observers).toHaveLength(0)
-    expect(markAsRead).not.toHaveBeenCalled()
-  })
-
   it("does not mark an already read notification", async () => {
-    await act(async () => root.render(<NotificationProbe notificationType="BROADCAST" readAt={new Date()} />))
+    await act(async () => root.render(<NotificationProbe readAt={new Date()} />))
 
     expect(observers).toHaveLength(0)
   })
 
   it("waits for the browser tab to become visible", async () => {
     const visibilityState = vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden")
-    await act(async () => root.render(<NotificationProbe notificationType="BROADCAST" />))
+    await act(async () => root.render(<NotificationProbe />))
 
     intersect(1)
     expect(markAsRead).not.toHaveBeenCalled()
@@ -110,11 +93,9 @@ describe("notification visibility", () => {
   })
 
   it("observes the next selected notification and disconnects on unmount", async () => {
-    await act(async () => root.render(<NotificationProbe notificationType="BROADCAST" />))
+    await act(async () => root.render(<NotificationProbe />))
     intersect(1)
-    await act(async () =>
-      root.render(<NotificationProbe notificationType="BROADCAST" notificationId="notification-two" />)
-    )
+    await act(async () => root.render(<NotificationProbe notificationId="notification-two" />))
     intersect(1)
 
     expect(markAsRead).toHaveBeenCalledTimes(2)

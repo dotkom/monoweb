@@ -4,11 +4,7 @@ import { Link } from "@/components/link"
 import { useCompactRelativeTime } from "@/utils/countdown/use-compact-relative-time"
 import { useMarkNotificationAsReadWhenVisible } from "@/utils/use-mark-notification-as-read-when-visible"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
-import {
-  getNotificationTypeConfiguration,
-  type Notification,
-  type NotificationColor,
-} from "@dotkomonline/rpc/notification"
+import type { Notification, NotificationType } from "@dotkomonline/rpc/notification"
 import { Button, Text, cn } from "@dotkomonline/ui"
 import { createNotificationPageUrl } from "@dotkomonline/utils"
 import { IconCheck } from "@tabler/icons-react"
@@ -21,7 +17,61 @@ const notificationAccentClasses = {
   red: "bg-red-200 dark:bg-red-400/33",
   gray: "bg-gray-200 dark:bg-stone-500/33",
   yellow: "bg-yellow-200 dark:bg-yellow-400/33",
-} as const satisfies Record<NotificationColor, string>
+} as const
+
+const notificationTypeColors = {
+  BROADCAST: {
+    accent: notificationAccentClasses.blue,
+  },
+  BROADCAST_IMPORTANT: {
+    accent: notificationAccentClasses.blue,
+  },
+  EVENT_REMINDER: {
+    accent: notificationAccentClasses.purple,
+  },
+  EVENT_UPDATE: {
+    accent: notificationAccentClasses.purple,
+  },
+  ATTENDANCE_REGISTRATION: {
+    accent: notificationAccentClasses.green,
+  },
+  ATTENDANCE_DEREGISTRATION: {
+    accent: notificationAccentClasses.red,
+  },
+  ATTENDANCE_REGISTRATION_FROM_QUEUE: {
+    accent: notificationAccentClasses.green,
+  },
+  ATTENDANCE_QUEUE_UPDATE: {
+    accent: notificationAccentClasses.gray,
+  },
+  ATTENDANCE_COMPLETION_FAILED: {
+    accent: notificationAccentClasses.red,
+  },
+  JOB_LISTING_REMINDER: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_ARTICLE: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_EVENT: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_INTEREST_GROUP: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_JOB_LISTING: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_OFFLINE: {
+    accent: notificationAccentClasses.gray,
+  },
+  NEW_MARK: {
+    accent: notificationAccentClasses.red,
+  },
+  NEW_FEEDBACK_FORM: {
+    accent: notificationAccentClasses.yellow,
+  },
+} as const satisfies Record<NotificationType, { accent: string }>
 
 export type NotificationItemNotification = Pick<
   Notification,
@@ -50,10 +100,9 @@ export function NotificationItem({
   const isUnread = readAt === null
   const actorGroupName = notification.actorGroup === null ? null : getGroupDisplayName(notification.actorGroup)
   const relativeCreatedAt = useCompactRelativeTime(notification.sentAt ?? notification.createdAt)
-  const notificationConfiguration = getNotificationTypeConfiguration(notification.type)
+  const notificationColor = notificationTypeColors[notification.type]
   const elementReference = useMarkNotificationAsReadWhenVisible<HTMLElement>({
     notificationId: notification.id,
-    notificationType: notification.type,
     readAt,
     onMarkAsRead,
   })
@@ -82,10 +131,7 @@ export function NotificationItem({
 
       <span
         aria-hidden
-        className={cn(
-          "pointer-events-none relative w-1 shrink-0 self-stretch rounded-full",
-          notificationAccentClasses[notificationConfiguration.color]
-        )}
+        className={cn("pointer-events-none relative w-1 shrink-0 self-stretch rounded-full", notificationColor.accent)}
       />
 
       <div className="pointer-events-none relative flex min-w-0 flex-1 flex-col gap-2">
@@ -108,11 +154,8 @@ export function NotificationItem({
                   className={cn(
                     "rounded-sm border-gray-200 bg-gray-50 transition-[opacity,scale] duration-300 ease-out motion-reduce:transition-none hover:bg-gray-200/70 dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
                     isUnread
-                      ? "pointer-events-auto scale-100"
-                      : "pointer-events-none scale-75 opacity-0 disabled:opacity-0 aria-disabled:opacity-0",
-                    isUnread &&
-                      notificationConfiguration.behavior !== "IMPORTANT" &&
-                      "md:opacity-0 md:group-hover/container:opacity-100 md:group-focus-within/container:opacity-100"
+                      ? "pointer-events-auto scale-100 md:opacity-0 md:group-hover/container:opacity-100 md:group-focus-within/container:opacity-100"
+                      : "pointer-events-none scale-75 opacity-0 disabled:opacity-0 aria-disabled:opacity-0"
                   )}
                 >
                   <IconCheck className="size-3.5" />
