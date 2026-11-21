@@ -17,6 +17,7 @@ export const fixtureGroupSlug = {
   oil: "oil",
   output: "output",
   prokom: "prokom",
+  redaksjonen: "redaksjonen",
   rfk: "rfk",
   trikom: "trikom",
   velkom: "velkom",
@@ -240,6 +241,15 @@ export const getGroupFixtures = () =>
       createdAt: new Date("2019-07-27T10:03:33+02:00"),
       imageUrl:
         "https://onlineweb4-prod.s3.eu-north-1.amazonaws.com/media/images/responsive/f4aea8d0-a8b3-48aa-b49f-2f7aa2a1ad08.png",
+      type: "COMMITTEE",
+      recruitmentMethod: "AUTUMN_APPLICATION",
+    },
+    {
+      slug: groupSlug("redaksjonen"),
+      abbreviation: "Redaksjonen",
+      name: "Redaksjonen",
+      description: "Redaksjonen lager Onlines tidsskrift Offline og dekker livet i linjeforeningen.",
+      email: "redaksjonen@online.ntnu.no",
       type: "COMMITTEE",
       recruitmentMethod: "AUTUMN_APPLICATION",
     },

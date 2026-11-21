@@ -30,4 +30,6 @@ export interface $DbEnums {
   payment_capture_mode: "AUTOMATIC" | "MANUAL"
   payment_refund_status: "REQUESTED" | "PENDING" | "SUCCEEDED" | "FAILED" | "CANCELLED"
   sidequest_status: "IN_REVIEW" | "PUBLISHED" | "REJECTED" | "DELETED"
+  committee_application_interview_duration: "MINUTES_20" | "MINUTES_30"
+  committee_application_group_type: "EXCLUSIVE" | "ADDITIVE"
 }
