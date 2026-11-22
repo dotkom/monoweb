@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events"
 import type { DBHandle } from "@dotkomonline/db"
 import type { TRPCContext } from "../../trpc"
+import type { PaymentView } from "../payment/payment"
 import { AttendeeSummarySchema, type Attendee, type RegisterChangeEvent } from "./attendance"
 import { attendanceRouter } from "./attendance-router"
 
@@ -50,6 +51,27 @@ const registerChange: RegisterChangeEvent = {
     { poolId: "pool-one", registeredCount: 3, capacity: 10, isPoolFull: false },
     { poolId: "pool-two", registeredCount: 2, capacity: 10, isPoolFull: false },
   ],
+}
+
+const authorizedPayment: PaymentView = {
+  id: "payment-one",
+  description: "Event registration",
+  amountOre: 10000,
+  status: "AUTHORIZED",
+  isCheckoutPending: false,
+  isRequirementSatisfied: true,
+  canStartCheckout: false,
+  canRefund: false,
+  canCancel: true,
+  canWaive: true,
+  checkoutUrl: null,
+  stripeDashboardUrl: null,
+  attemptId: "attempt-one",
+  captureScheduledAt: null,
+  refundedAt: null,
+  refundedAmountOre: 0,
+  paidAmountOre: 0,
+  waivedAt: null,
 }
 
 function createContext(currentUserId: string | null = null, isCommitteeMember = false) {
@@ -103,6 +125,43 @@ describe("single attendance registration subscription", () => {
 })
 
 describe("bulk registration subscription", () => {
+  it.each([null, "other-user", attendee.userId])("delivers payment updates to viewer %s", async (currentUserId) => {
+    const { context, eventEmitter } = createContext(currentUserId)
+    const caller = attendanceRouter.createCaller(context)
+
+    const subscription = await caller.onBulkRegisterChange({ eventIds: ["event-one"] })
+
+    const updatedAttendee = {
+      ...attendee,
+      payment: authorizedPayment,
+      completionDeadline: null,
+    }
+
+    const paymentUpdate: RegisterChangeEvent = {
+      ...registerChange,
+      status: "updated",
+      attendee: updatedAttendee,
+    }
+
+    const nextUpdate = subscription.next()
+
+    eventEmitter.emit("attendance:register-change", paymentUpdate)
+
+    const { value: update } = await nextUpdate
+
+    expect(update?.status).toBe("updated")
+    expect(update?.registeredAttendeeCount).toBe(5)
+
+    if (update?.isCurrentUser) {
+      expect(update.attendee).toEqual(paymentUpdate.attendee)
+    } else {
+      expect(update?.attendee).not.toHaveProperty("payment")
+      expect(update?.attendee).not.toHaveProperty("completionDeadline")
+    }
+
+    await subscription.return()
+  })
+
   it.each([null, "other-user"])("strips private attendee fields for viewer %s", async (currentUserId) => {
     const { context, eventEmitter } = createContext(currentUserId)
     const subscription = await attendanceRouter.createCaller(context).onBulkRegisterChange({
@@ -249,6 +308,45 @@ describe("bulk registration subscription", () => {
     abortController.abort()
 
     await expect(nextUpdate).rejects.toThrow()
+    expect(eventEmitter.listenerCount("attendance:register-change")).toBe(0)
+  })
+})
+
+describe("single attendance subscription", () => {
+  it("delivers the final payment and completion deadline update", async () => {
+    const { context, eventEmitter } = createContext(attendee.userId)
+    const caller = attendanceRouter.createCaller(context)
+
+    const subscription = await caller.onRegisterChange({ attendanceId: attendee.attendanceId })
+
+    const updatedAttendee = {
+      ...attendee,
+      payment: {
+        ...authorizedPayment,
+        status: "PAID" as const,
+        canCancel: false,
+        canRefund: true,
+        paidAmountOre: 10000,
+      },
+      completionDeadline: null,
+    }
+
+    const paymentUpdate: RegisterChangeEvent = {
+      ...registerChange,
+      status: "updated",
+      attendee: updatedAttendee,
+    }
+
+    const nextUpdate = subscription.next()
+
+    eventEmitter.emit("attendance:register-change", paymentUpdate)
+
+    const { value: update } = await nextUpdate
+
+    expect(update).toEqual({ ...paymentUpdate, isCurrentUser: true, registeredAttendeeCount: 5 })
+
+    await subscription.return()
+
     expect(eventEmitter.listenerCount("attendance:register-change")).toBe(0)
   })
 })

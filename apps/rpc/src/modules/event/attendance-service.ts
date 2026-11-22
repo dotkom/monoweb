@@ -1353,6 +1353,8 @@ export function getAttendanceService(
       const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
 
       if (payment.status === "PAID") {
+        await broadcastPaymentChange(handle, attendance, attendeeId)
+
         return
       }
 
@@ -1429,8 +1431,6 @@ export function getAttendanceService(
       const payment = await attendancePaymentService.syncPayment(handle, attendee.payment.id)
       const now = getCurrentUTC()
 
-      await broadcastPaymentChange(handle, attendance, attendeeId)
-
       if (!payment.isRequirementSatisfied) {
         const hasFailedAttempt =
           payment.status === "FAILED" || payment.status === "EXPIRED" || payment.status === "CANCELLED"
@@ -1449,10 +1449,13 @@ export function getAttendanceService(
           }
         }
 
+        await broadcastPaymentChange(handle, attendance, attendeeId)
+
         return
       }
 
       await clearAttendeeCompletionDeadline(handle, attendeeId)
+      await broadcastPaymentChange(handle, attendance, attendeeId)
 
       if (payment.status !== "AUTHORIZED") {
         return
@@ -1509,8 +1512,12 @@ export function getAttendanceService(
       const synchronizedAttendee = { ...attendee, payment }
 
       if (getMissingAttendanceCompletionRequirements(attendance, synchronizedAttendee).length === 0) {
-        await this.syncAttendeePayment(handle, attendeeId)
-        await clearAttendeeCompletionDeadline(handle, attendeeId)
+        if (payment === null || payment.isRequirementSatisfied === false) {
+          await clearAttendeeCompletionDeadline(handle, attendeeId)
+          await broadcastPaymentChange(handle, attendance, attendeeId)
+        } else {
+          await this.syncAttendeePayment(handle, attendeeId)
+        }
 
         return
       }
