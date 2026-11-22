@@ -83,66 +83,98 @@ export function getLocalTaskExecutor(
         const definition = getTaskDefinition(task.type)
         const payload = taskService.parse(definition, task.payload as Prisma.JsonValue)
 
-        // This happens in Stripe, so we don't want to hold a transaction open for an API call.
-        if (task.type === tasks.OPEN_PAYMENT_CHECKOUT.type) {
-          const { paymentAttemptId } = payload as InferTaskData<OpenPaymentCheckoutTaskDefinition>
-          await paymentWorkflowService.openCheckout(client, paymentAttemptId)
-
-          return
-        }
-
-        // This happens in Stripe, so we don't want to hold a transaction open for an API call.
-        if (task.type === tasks.CHARGE_ATTENDEE.type) {
-          await attendanceService.executeChargeAttendeeTask(
-            client,
-            payload as InferTaskData<ChargeAttendeeTaskDefinition>
-          )
-
-          return
-        }
-
-        // Run the entire job in its own isolated transaction. This ensures that if the job fails, it does not leave the
+        // We run most jobs in its own isolated transaction. This ensures that if the job fails, it does not leave the
         // system in a tainted state (to some degree). If the job performs third-party API calls, it is still possible to
         // leave the system in a tainted state, but that's a less severe bug than leaving the database in a tainted state.
-        await client.$transaction(async (handle) => {
-          switch (task.type) {
-            case tasks.RESERVE_ATTENDEE.type:
+        //
+        // We don't run API calls in a transaction, as they are not part of the database schema and should not be
+        // affected by the transaction. We generally want to hold as few transactions open as possible, so we have room
+        // for other transactions to be executed.
+        switch (task.type) {
+          case tasks.RESERVE_ATTENDEE.type: {
+            await client.$transaction(async (handle) => {
               return await attendanceService.executeReserveAttendeeTask(
                 handle,
                 payload as InferTaskData<ReserveAttendeeTaskDefinition>
               )
+            })
 
-            case tasks.MERGE_ATTENDANCE_POOLS.type:
+            return
+          }
+
+          case tasks.MERGE_ATTENDANCE_POOLS.type: {
+            await client.$transaction(async (handle) => {
               return await attendanceService.executeMergeEventPoolsTask(
                 handle,
                 payload as InferTaskData<MergeAttendancePoolsTaskDefinition>
               )
+            })
 
-            case tasks.VERIFY_ATTENDANCE_COMPLETION.type:
+            return
+          }
+
+          case tasks.VERIFY_ATTENDANCE_COMPLETION.type: {
+            await client.$transaction(async (handle) => {
               return await attendanceService.executeVerifyAttendanceCompletionTask(
                 handle,
                 payload as InferTaskData<VerifyAttendanceCompletionTaskDefinition>
               )
+            })
 
-            case tasks.VERIFY_FEEDBACK_ANSWERED.type:
+            return
+          }
+
+          case tasks.VERIFY_FEEDBACK_ANSWERED.type: {
+            await client.$transaction(async (handle) => {
               return await attendanceService.executeVerifyFeedbackAnsweredTask(
                 handle,
                 payload as InferTaskData<VerifyFeedbackAnsweredTaskDefinition>
               )
+            })
 
-            case tasks.SEND_FEEDBACK_FORM_EMAILS.type:
-              return await attendanceService.executeSendFeedbackFormLinkEmailsRecurringTask(handle)
-
-            case tasks.VERIFY_ATTENDEE_ATTENDED.type:
-              return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(handle)
+            return
           }
 
-          // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
-          // still keep this block here to prevent subtle bugs or missed cases in the future.
-          throw new IllegalStateError(
-            `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
-          )
-        })
+          case tasks.SEND_FEEDBACK_FORM_EMAILS.type: {
+            await client.$transaction(async (handle) => {
+              return await attendanceService.executeSendFeedbackFormLinkEmailsRecurringTask(handle)
+            })
+
+            return
+          }
+
+          case tasks.VERIFY_ATTENDEE_ATTENDED.type: {
+            await client.$transaction(async (handle) => {
+              return await attendanceService.executeVerifyAttendeeAttendedTaskRecurringTask(handle)
+            })
+
+            return
+          }
+
+          // This happens in Stripe, so we don't want to hold a transaction open for an API call.
+          case tasks.OPEN_PAYMENT_CHECKOUT.type: {
+            const { paymentAttemptId } = payload as InferTaskData<OpenPaymentCheckoutTaskDefinition>
+            await paymentWorkflowService.openCheckout(client, paymentAttemptId)
+
+            return
+          }
+
+          // This happens in Stripe, so we don't want to hold a transaction open for an API call.
+          case tasks.CHARGE_ATTENDEE.type: {
+            await attendanceService.executeChargeAttendeeTask(
+              client,
+              payload as InferTaskData<ChargeAttendeeTaskDefinition>
+            )
+
+            return
+          }
+        }
+
+        // NOTE: If you have done everything correctly, TypeScript should SCREAM "Unreachable code detected" below. We
+        // still keep this block here to prevent subtle bugs or missed cases in the future.
+        throw new IllegalStateError(
+          `Unreachable code reached in TaskExecutor for Task(ID=${task.id}) for unhandled TaskType ${task.type}`
+        )
       } catch (error: unknown) {
         const isSkippedError = error instanceof TaskSkippedError
 
