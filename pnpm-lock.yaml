@@ -484,7 +484,7 @@ importers:
         version: 1.4.0(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@splinetool/react-spline':
         specifier: ^4.0.0
-        version: 4.1.0(@splinetool/runtime@1.12.98)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.2.0(@splinetool/runtime@1.12.98)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@splinetool/runtime':
         specifier: ^1.9.98
         version: 1.12.98
@@ -3788,8 +3788,8 @@ packages:
   '@so-ric/colorspace@1.1.6':
     resolution: {integrity: sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw==}
 
-  '@splinetool/react-spline@4.1.0':
-    resolution: {integrity: sha512-Y379gm17gw+1nxT/YXTCJnVIWuu7tsUH1tp/YxsYb0pZnc9Gljk7Om4Kpq7WPq0bZ4zidVCxf6xn6jgDcbHifQ==}
+  '@splinetool/react-spline@4.2.0':
+    resolution: {integrity: sha512-wW5dOTGLxIDtuM3rXi1AmcteQKzghhAEyrIsS2gD16w1f675MTM5TV8X8l5W0PdNfnTntAcB5gjhp5snDIsFRg==}
     peerDependencies:
       '@splinetool/runtime': '*'
       next: '>=14.2.0'
@@ -11669,7 +11669,7 @@ snapshots:
       color: 5.0.3
       text-hex: 1.0.0
 
-  '@splinetool/react-spline@4.1.0(@splinetool/runtime@1.12.98)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@splinetool/react-spline@4.2.0(@splinetool/runtime@1.12.98)(next@16.4.6(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@22.20.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@splinetool/runtime': 1.12.98
       blurhash: 2.0.5
