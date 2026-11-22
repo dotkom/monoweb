@@ -6,6 +6,7 @@ import type { EventWithAttendanceSummary } from "@dotkomonline/rpc/event"
 import type { Fadderuke } from "@dotkomonline/rpc/fadderuke"
 import type { Group } from "@dotkomonline/rpc/group"
 import { getGroupDisplayName } from "@dotkomonline/rpc/group"
+import type { SidequestSummary } from "@dotkomonline/rpc/sidequest"
 import type { JobListing } from "@dotkomonline/rpc/job-listing"
 import type { Mark } from "@dotkomonline/rpc/mark"
 import type { Notification } from "@dotkomonline/rpc/notification"
@@ -159,6 +160,20 @@ export function toOfflineSearchItem(offline: Offline): SearchItem {
     icon: getIconForHref(href),
     keywords: [],
     resourceId: offline.id,
+  }
+}
+
+export function toSidequestSearchItem(sidequest: SidequestSummary): SearchItem {
+  const href = `/admin/sidequests/${sidequest.id}`
+
+  return {
+    id: `sidequest:${sidequest.id}`,
+    kind: "resource",
+    label: sidequest.title,
+    href,
+    icon: getIconForHref(href),
+    keywords: [],
+    resourceId: sidequest.id,
   }
 }
 

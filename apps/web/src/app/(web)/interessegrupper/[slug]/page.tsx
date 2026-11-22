@@ -1,15 +1,26 @@
-import { GroupPage } from "@/app/grupper/components/GroupPage"
+import { getServerSession } from "@/auth"
 import { server } from "@/utils/trpc/server"
-import { createGroupPageUrl, getGroupDisplayName } from "@dotkomonline/rpc/group"
+import { createGroupPageUrl, getGroupDisplayName, GroupTypeSchema } from "@dotkomonline/rpc/group"
 import { richTextToPlainText } from "@dotkomonline/utils"
 import type { Metadata } from "next"
+import notFound from "../../not-found"
+import { InterestGroupPage } from "../components/InterestGroupPage"
 
 interface InterestGroupPageProps {
   params: Promise<{ slug: string }>
 }
 
-const InterestGroupPage = ({ params }: InterestGroupPageProps) => {
-  return <GroupPage params={params} />
+const Page = async ({ params }: InterestGroupPageProps) => {
+  const { slug } = await params
+  const group = await server.group.find.query(slug)
+
+  if (group == null || group.type !== GroupTypeSchema.enum.INTEREST_GROUP) {
+    return notFound()
+  }
+
+  const [session, members] = await Promise.all([getServerSession(), server.group.getMembers.query(slug)])
+
+  return <InterestGroupPage interestGroup={group} userId={session?.sub} initialMembers={members} />
 }
 
 export async function generateMetadata({ params }: Pick<InterestGroupPageProps, "params">): Promise<Metadata> {
@@ -17,10 +28,10 @@ export async function generateMetadata({ params }: Pick<InterestGroupPageProps, 
 
   const group = await server.group.find.query(slug)
 
-  if (!group || group.type === "EMAIL_ONLY") {
+  if (group == null || group.type === GroupTypeSchema.enum.EMAIL_ONLY) {
     return {
-      title: "Gruppe ikke funnet | Linjeforeningen Online",
-      description: "Gruppen finnes ikke eller er slettet.",
+      title: "Interessegruppen ikke funnet | Linjeforeningen Online",
+      description: "Interessegruppen finnes ikke eller er slettet.",
     }
   }
 
@@ -54,4 +65,4 @@ export async function generateMetadata({ params }: Pick<InterestGroupPageProps, 
   }
 }
 
-export default InterestGroupPage
+export default Page

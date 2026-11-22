@@ -1,16 +1,18 @@
 "use client"
 
-import type { Event } from "@dotkomonline/rpc/event"
+import { CalendarBox } from "@/components/atoms/CalendarBox"
 import { Text } from "@dotkomonline/ui"
+import { capitalizeFirstLetter } from "@dotkomonline/utils"
 import { IconArrowNarrowRight } from "@tabler/icons-react"
 import { format as formatDate, isSameDay, isSameYear, isThisYear } from "date-fns"
 import { nb } from "date-fns/locale"
 import type { FC } from "react"
-import { CalendarBox } from "@/components/atoms/CalendarBox"
-import { capitalizeFirstLetter } from "@dotkomonline/utils"
 
 interface TimeBoxProps {
-  event: Event
+  event: {
+    start: Date
+    end: Date
+  }
 }
 
 export const TimeBox: FC<TimeBoxProps> = ({ event }) => {
