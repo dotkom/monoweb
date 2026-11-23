@@ -8,8 +8,9 @@ import { trace } from "@opentelemetry/api"
 export class ApplicationError extends Error {
   public readonly traceId: string | undefined
 
-  constructor(message: string) {
-    super(message)
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options)
+
     this.traceId = trace.getActiveSpan()?.spanContext().traceId
   }
 }
@@ -24,6 +25,7 @@ export class FailedPreconditionError extends ApplicationError {}
 export class ResourceExhaustedError extends ApplicationError {}
 export class ForbiddenError extends ApplicationError {}
 export class TaskSkippedError extends ApplicationError {}
+export class ConcurrentModificationError extends ApplicationError {}
 
 /**
  * This should probably have been called UnauthenticatedError, but this follows tRPC Error code naming scheme.

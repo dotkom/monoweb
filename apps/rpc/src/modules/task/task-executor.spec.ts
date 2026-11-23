@@ -1,8 +1,9 @@
-import type { DBClient, DBHandle } from "@dotkomonline/db"
+import { type DBClient, type DBHandle, Prisma } from "@dotkomonline/db"
+import { addMinutes } from "date-fns"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { mock } from "vitest-mock-extended"
 import type { Configuration } from "../../configuration"
-import { TaskSkippedError } from "../../error"
+import { ConcurrentModificationError, TaskSkippedError } from "../../error"
 import type { PaymentWorkflowService } from "../payment/payment-workflow-service"
 import type { PaymentRecord } from "../payment/payment"
 import type { AttendanceService } from "../event/attendance-service"
@@ -99,6 +100,10 @@ describe("task executor transaction boundaries", () => {
   it.each([
     { error: new Error("Stripe unavailable"), expectedStatus: "FAILED" },
     { error: new TaskSkippedError("Attempt was replaced"), expectedStatus: "SKIPPED" },
+    {
+      error: new Prisma.PrismaClientKnownRequestError("Record not found", { code: "P2025", clientVersion: "test" }),
+      expectedStatus: "FAILED",
+    },
   ])("records $expectedStatus when capture does not complete", async ({ error, expectedStatus }) => {
     const { client, attendanceService, taskService, runTask } = createFixture()
     attendanceService.executeChargeAttendeeTask.mockRejectedValue(error)
@@ -110,6 +115,26 @@ describe("task executor transaction boundaries", () => {
       [client, "task", "RUNNING", "PENDING"],
       [client, "task", expectedStatus, "RUNNING"],
     ])
+    expect(taskService.update).not.toHaveBeenCalled()
+  })
+
+  it("reschedules a task that reports a concurrent modification", async () => {
+    const { client, attendanceService, taskService, runTask } = createFixture(tasks.MERGE_ATTENDANCE_POOLS.type)
+    attendanceService.executeMergeEventPoolsTask.mockRejectedValue(new ConcurrentModificationError("Pool changed"))
+
+    await runTask()
+
+    expect(taskService.update).toHaveBeenCalledExactlyOnceWith(
+      client,
+      "task",
+      {
+        status: "PENDING",
+        scheduledAt: addMinutes(new Date(), 1),
+        processedAt: null,
+      },
+      "RUNNING"
+    )
+    expect(taskService.setTaskExecutionStatus).toHaveBeenCalledExactlyOnceWith(client, "task", "RUNNING", "PENDING")
   })
 
   it("opens prepared checkouts outside a transaction through the payment workflow", async () => {

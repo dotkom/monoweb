@@ -1,4 +1,5 @@
-import type { DBHandle, Prisma } from "@dotkomonline/db"
+import { type DBHandle, isRecordNotFoundError, Prisma } from "@dotkomonline/db"
+import { ConcurrentModificationError } from "../../error"
 import { parseOrReport } from "../../invariant"
 import {
   type PaymentAttempt,
@@ -37,7 +38,12 @@ export interface PaymentRepository {
   reassignWaivers(handle: DBHandle, consumedUserId: string, survivorUserId: string): Promise<void>
 
   createAttempt(handle: DBHandle, data: PaymentAttemptWrite): Promise<PaymentAttempt>
-  updateAttempt(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<PaymentAttempt>
+  updateAttempt(
+    handle: DBHandle,
+    attemptId: string,
+    data: PaymentAttemptUpdate,
+    expected?: Pick<PaymentAttempt, "updatedAt" | "status">
+  ): Promise<PaymentAttempt>
   findAttemptByIdentifiers(handle: DBHandle, identifiers: PaymentAttemptIdentifiers[]): Promise<PaymentAttempt | null>
 
   attachCheckoutSession(handle: DBHandle, attemptId: string, data: PaymentAttemptUpdate): Promise<void>
@@ -143,16 +149,28 @@ export function getPaymentRepository(): PaymentRepository {
       return parseOrReport(PaymentAttemptSchema, attempt)
     },
 
-    async updateAttempt(handle, attemptId, data) {
-      const attempt = await handle.paymentAttempt.update({
-        where: {
-          id: attemptId,
-        },
-        data,
-        include: {
-          refunds: true,
-        },
-      })
+    async updateAttempt(handle, attemptId, data, expected) {
+      const attempt = await handle.paymentAttempt
+        .update({
+          where: {
+            id: attemptId,
+            ...expected,
+          },
+          data,
+          include: {
+            refunds: true,
+          },
+        })
+        .catch((error: unknown) => {
+          if (expected === undefined || !isRecordNotFoundError(error)) {
+            throw error
+          }
+
+          throw new ConcurrentModificationError(
+            `PaymentAttempt(ID=${attemptId}) no longer matches the expected state`,
+            { cause: error }
+          )
+        })
 
       return parseOrReport(PaymentAttemptSchema, attempt)
     },
