@@ -896,13 +896,16 @@ describe("payment reconciliation safeguards", () => {
     expect(attendanceRepository.updateAttendeeCompletionDeadline).not.toHaveBeenCalled()
   })
 
-  it("resumes enforcement when a delayed payment fails after the completion check finished", async () => {
+  it.each([
+    "RUNNING",
+    "COMPLETED",
+  ] as const)("resumes enforcement when a delayed payment fails while the check is %s", async (status) => {
     const { handle, attendee, attendanceService, taskSchedulingService } = createPaymentContext(
       addHours(getCurrentUTC(), 12),
       "FAILED"
     )
     taskSchedulingService.findVerifyAttendanceCompletionTask.mockResolvedValue(
-      mock<Task>({ id: "completed-check", status: "COMPLETED" })
+      mock<Task>({ id: "completed-check", status })
     )
     const beforeSync = getCurrentUTC()
 
