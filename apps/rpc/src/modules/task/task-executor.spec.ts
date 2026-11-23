@@ -45,7 +45,8 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   })
 
   discoveryService.querySchedulableRecurringTasks.mockResolvedValue([])
-  discoveryService.claimNextTask.mockResolvedValueOnce(task).mockResolvedValue(null)
+  const pendingTasks = [task]
+  discoveryService.claimNextTask.mockImplementation(async () => pendingTasks.shift() ?? null)
   taskService.parse.mockReturnValue(payload)
   client.$transaction.mockImplementation(async (operation) => {
     return await operation(transactionHandle)
@@ -61,11 +62,11 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
     configuration
   )
 
-  async function runTask() {
+  async function runTask(pollCount = 1) {
     executor.startWorker(client, controller.signal)
 
     try {
-      await vi.advanceTimersByTimeAsync(configuration.tasks.workerInterval)
+      await vi.advanceTimersByTimeAsync(configuration.tasks.workerInterval * pollCount)
     } finally {
       controller.abort()
     }
@@ -74,13 +75,14 @@ function createFixture(type: Task["type"] = tasks.CHARGE_ATTENDEE.type) {
   return {
     client,
     transactionHandle,
+    pendingTasks,
+    task,
     discoveryService,
     attendanceService,
     paymentWorkflowService,
     taskService,
     payload,
     runTask,
-    task,
   }
 }
 
@@ -91,6 +93,25 @@ describe("task executor transaction boundaries", () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it("drains due tasks in sequence without waiting for another poll", async () => {
+    const { client, paymentWorkflowService, pendingTasks, task, runTask, taskService } = createFixture(
+      tasks.OPEN_PAYMENT_CHECKOUT.type
+    )
+    const completionTask: ClaimedTask = { ...task, id: "deadline", type: "VERIFY_ATTENDANCE_COMPLETION" }
+    const checkout = Promise.withResolvers<PaymentRecord>()
+    pendingTasks.push(completionTask)
+    paymentWorkflowService.openCheckout.mockReturnValue(checkout.promise)
+
+    setTimeout(() => checkout.resolve(mock<PaymentRecord>()), 150)
+
+    await runTask(2)
+
+    expect(taskService.finishTask.mock.calls).toEqual([
+      [client, task, "COMPLETED"],
+      [client, completionTask, "COMPLETED"],
+    ])
   })
 
   it("captures payments without an enclosing transaction and marks the task completed", async () => {

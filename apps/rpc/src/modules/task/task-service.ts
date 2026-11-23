@@ -4,7 +4,7 @@ import { getCurrentUTC } from "@dotkomonline/utils"
 import { addMinutes, subMinutes } from "date-fns"
 import type { ClaimedTask, Task, TaskId, TaskWrite } from "./task"
 import { InvalidArgumentError } from "../../error"
-import { type InferTaskData, type TaskDefinition } from "./task-definition"
+import type { InferTaskData, TaskDefinition } from "./task-definition"
 import type { TaskRepository } from "./task-repository"
 
 const CHECKOUT_LEASE_MINUTES = 5
