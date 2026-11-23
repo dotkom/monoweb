@@ -1,8 +1,11 @@
 import { Prisma } from "../generated/prisma/client"
 
+// https://www.prisma.io/docs/orm/reference/error-reference
 export const PrismaErrorCode = {
-  // https://www.prisma.io/docs/orm/reference/error-reference#ORM.MUTATION_ROW_MISSING
+  ConnectionPoolTimeout: "P2024",
   RecordNotFound: "P2025",
+  TransactionApiError: "P2028",
+  WriteConflictOrDeadlock: "P2034",
 } as const
 
 /**
