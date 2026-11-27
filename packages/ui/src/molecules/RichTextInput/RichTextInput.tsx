@@ -7,32 +7,21 @@ import {
   IconBold,
   IconClearFormatting,
   IconCode,
-  IconColumnInsertRight,
-  IconColumns1,
-  IconColumns2,
   IconH2,
   IconH3,
   IconH4,
   IconItalic,
-  IconLayoutNavbarFilled,
-  IconLayoutSidebarFilled,
   IconLink,
   IconList,
   IconListNumbers,
   IconPhotoPlus,
-  IconRowInsertBottom,
   IconSeparator,
   IconStrikethrough,
-  IconTableColumn,
-  IconTableOff,
-  IconTablePlus,
-  IconTableRow,
   IconUnderline,
   IconUnlink,
 } from "@tabler/icons-react"
 import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
-import { TableKit } from "@tiptap/extension-table"
 import Underline from "@tiptap/extension-underline"
 import { EditorContent, useEditor, type Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
@@ -45,7 +34,6 @@ import { cn } from "../../utils"
 import { ImageUploadModal } from "../ImageUploadModal/ImageUploadModal"
 import { richTextInputClasses, richTextSharedClasses } from "../RichText/rich-text-classes"
 import "./tiptap-image-styling.css"
-import "./tiptap-table-styling.css"
 
 const DEFAULT_IMAGE_WIDTH_IN_PIXELS = 710
 
@@ -243,83 +231,6 @@ function EditorToolbar({
           </ToolbarControl>
         </>
       )}
-
-      {!isEmail && (
-        <>
-          <ToolbarSeparator />
-
-          <ToolbarControl
-            aria-label="Insert table"
-            title="Insert table"
-            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 2, withHeaderRow: true }).run()}
-          >
-            <IconTablePlus className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Add column after"
-            title="Add column after"
-            onClick={() => editor.chain().focus().addColumnAfter().run()}
-          >
-            <IconColumnInsertRight className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Add row after"
-            title="Add row after"
-            onClick={() => editor.chain().focus().addRowAfter().run()}
-          >
-            <IconRowInsertBottom className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Delete column"
-            title="Delete column"
-            onClick={() => editor.chain().focus().deleteColumn().run()}
-          >
-            <IconTableColumn className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Delete row"
-            title="Delete row"
-            onClick={() => editor.chain().focus().deleteRow().run()}
-          >
-            <IconTableRow className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Split cells"
-            title="Split cells"
-            onClick={() => editor.chain().focus().splitCell().run()}
-          >
-            <IconColumns2 className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Merge cells"
-            title="Merge cells (select multiple cells)"
-            onClick={() => editor.chain().focus().mergeCells().run()}
-          >
-            <IconColumns1 className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Toggle header row"
-            title="Toggle header row"
-            onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-          >
-            <IconLayoutNavbarFilled className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Toggle header column"
-            title="Toggle header column"
-            onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
-          >
-            <IconLayoutSidebarFilled className="size-5" />
-          </ToolbarControl>
-          <ToolbarControl
-            aria-label="Delete table"
-            title="Delete table"
-            onClick={() => editor.chain().focus().deleteTable().run()}
-          >
-            <IconTableOff className="size-5" />
-          </ToolbarControl>
-        </>
-      )}
     </div>
   )
 }
@@ -352,11 +263,6 @@ export function RichTextInput({
       ...(isEmail
         ? []
         : [
-            TableKit.configure({
-              table: {
-                resizable: !disabled,
-              },
-            }),
             Image.configure({
               inline: false,
               resize: disabled
