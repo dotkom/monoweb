@@ -65,9 +65,6 @@ export function RichText({
 const wrapOverflowingElements = (sanitizedHtml: string) => {
   return (
     sanitizedHtml
-      // Wrap tables
-      .replace(/<table/g, '<div class="table-wrapper"><table')
-      .replace(/<\/table>/g, "</table></div>")
       // Wrap images
       // The regex is hard to read but it matches <img />, <img></img> and
       // <img> (no closing tag, which is what Tiptap generates)
