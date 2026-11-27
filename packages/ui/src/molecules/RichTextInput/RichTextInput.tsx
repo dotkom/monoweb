@@ -7,6 +7,7 @@ import {
   IconBold,
   IconClearFormatting,
   IconCode,
+  IconCodeblock,
   IconH2,
   IconH3,
   IconH4,
@@ -23,7 +24,7 @@ import {
 import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
 import Underline from "@tiptap/extension-underline"
-import { EditorContent, useEditor, type Editor } from "@tiptap/react"
+import { EditorContent, useEditor, useEditorState, type Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { Button } from "../../atoms/Button/Button"
@@ -66,8 +67,9 @@ function ToolbarControl({
       type="button"
       variant="ghost"
       size="sm"
-      className={cn("size-8 shrink-0 p-0", active && "bg-muted")}
+      className="size-8 shrink-0 p-0 aria-pressed:bg-muted"
       aria-label={ariaLabel}
+      aria-pressed={active}
       title={title}
       disabled={disabled}
       onClick={onClick}
@@ -91,6 +93,23 @@ function EditorToolbar({
   isEmail: boolean
   onInsertImage?: () => void
 }) {
+  const toolbarState = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      isBoldActive: editor.isActive("bold"),
+      isItalicActive: editor.isActive("italic"),
+      isUnderlineActive: editor.isActive("underline"),
+      isStrikethroughActive: editor.isActive("strike"),
+      isInlineCodeActive: editor.isActive("code"),
+      isCodeBlockActive: editor.isActive("codeBlock"),
+      isHeadingTwoActive: editor.isActive("heading", { level: 2 }),
+      isHeadingThreeActive: editor.isActive("heading", { level: 3 }),
+      isHeadingFourActive: editor.isActive("heading", { level: 4 }),
+      isBulletListActive: editor.isActive("bulletList"),
+      isOrderedListActive: editor.isActive("orderedList"),
+    }),
+  })
+
   return (
     <div className="sticky top-[var(--rich-text-toolbar-top,0px)] z-10 flex flex-wrap items-center gap-0.5 border-b border-field-border bg-background p-1">
       <ToolbarControl
@@ -122,7 +141,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Bold"
         title="Bold"
-        active={editor.isActive("bold")}
+        active={toolbarState.isBoldActive}
         onClick={() => editor.chain().focus().toggleBold().run()}
       >
         <IconBold className="size-5" />
@@ -130,7 +149,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Italic"
         title="Italic"
-        active={editor.isActive("italic")}
+        active={toolbarState.isItalicActive}
         onClick={() => editor.chain().focus().toggleItalic().run()}
       >
         <IconItalic className="size-5" />
@@ -138,7 +157,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Underline"
         title="Underline"
-        active={editor.isActive("underline")}
+        active={toolbarState.isUnderlineActive}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
       >
         <IconUnderline className="size-5" />
@@ -146,21 +165,12 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Strikethrough"
         title="Strikethrough"
-        active={editor.isActive("strike")}
+        active={toolbarState.isStrikethroughActive}
         onClick={() => editor.chain().focus().toggleStrike().run()}
       >
         <IconStrikethrough className="size-5" />
       </ToolbarControl>
-      {!isEmail && (
-        <ToolbarControl
-          aria-label="Code block"
-          title="Code block"
-          active={editor.isActive("codeBlock")}
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        >
-          <IconCode className="size-5" />
-        </ToolbarControl>
-      )}
+
       <LinkToolbarControl editor={editor} />
       <ToolbarControl
         aria-label="Unlink"
@@ -174,9 +184,31 @@ function EditorToolbar({
       <ToolbarSeparator />
 
       <ToolbarControl
+        aria-label="Inline code"
+        title="Inline code"
+        active={toolbarState.isInlineCodeActive}
+        disabled={toolbarState.isCodeBlockActive}
+        onClick={() => editor.chain().focus().toggleCode().run()}
+      >
+        <IconCode aria-hidden="true" className="size-5" />
+      </ToolbarControl>
+      {!isEmail && (
+        <ToolbarControl
+          aria-label="Code block"
+          title="Code block"
+          active={toolbarState.isCodeBlockActive}
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        >
+          <IconCodeblock aria-hidden="true" className="size-5" />
+        </ToolbarControl>
+      )}
+
+      <ToolbarSeparator />
+
+      <ToolbarControl
         aria-label="Heading 2"
         title="Heading 2"
-        active={editor.isActive("heading", { level: 2 })}
+        active={toolbarState.isHeadingTwoActive}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
       >
         <IconH2 className="size-5" />
@@ -184,7 +216,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Heading 3"
         title="Heading 3"
-        active={editor.isActive("heading", { level: 3 })}
+        active={toolbarState.isHeadingThreeActive}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
       >
         <IconH3 className="size-5" />
@@ -192,7 +224,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Heading 4"
         title="Heading 4"
-        active={editor.isActive("heading", { level: 4 })}
+        active={toolbarState.isHeadingFourActive}
         onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
       >
         <IconH4 className="size-5" />
@@ -200,7 +232,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Bullet list"
         title="Bullet list"
-        active={editor.isActive("bulletList")}
+        active={toolbarState.isBulletListActive}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
       >
         <IconList className="size-5" />
@@ -208,7 +240,7 @@ function EditorToolbar({
       <ToolbarControl
         aria-label="Ordered list"
         title="Ordered list"
-        active={editor.isActive("orderedList")}
+        active={toolbarState.isOrderedListActive}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
       >
         <IconListNumbers className="size-5" />

@@ -8,6 +8,7 @@ export const richTextSharedClasses = cn(
   "[&_ol>li::marker]:text-black dark:[&_ol>li::marker]:text-white",
   "prose-pre:p-2.5 prose-code:rounded-md prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-100 prose-pre:dark:bg-stone-800 prose-pre:dark:border-stone-700",
   "prose-code:text-black prose-code:dark:text-white",
+  "rich-text-inline-code",
   "prose-img:rounded-md",
   "[&_li>p]:my-0"
 )

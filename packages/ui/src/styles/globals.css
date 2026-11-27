@@ -176,3 +176,16 @@
     @apply font-body;
   }
 }
+
+@utility rich-text-inline-code {
+  & code:not(pre code) {
+    @apply box-decoration-clone rounded-xs bg-muted px-1 py-0.5 font-mono font-normal;
+    font-size: 0.875em;
+    overflow-wrap: anywhere;
+
+    &::before,
+    &::after {
+      content: none;
+    }
+  }
+}
