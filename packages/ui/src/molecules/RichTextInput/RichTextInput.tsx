@@ -8,9 +8,7 @@ import {
   IconClearFormatting,
   IconCode,
   IconCodeblock,
-  IconH2,
-  IconH3,
-  IconH4,
+  IconHeading,
   IconItalic,
   IconLink,
   IconList,
@@ -102,9 +100,7 @@ function EditorToolbar({
       isStrikethroughActive: editor.isActive("strike"),
       isInlineCodeActive: editor.isActive("code"),
       isCodeBlockActive: editor.isActive("codeBlock"),
-      isHeadingTwoActive: editor.isActive("heading", { level: 2 }),
-      isHeadingThreeActive: editor.isActive("heading", { level: 3 }),
-      isHeadingFourActive: editor.isActive("heading", { level: 4 }),
+      isHeadingActive: editor.isActive("heading", { level: 3 }),
       isBulletListActive: editor.isActive("bulletList"),
       isOrderedListActive: editor.isActive("orderedList"),
     }),
@@ -206,28 +202,12 @@ function EditorToolbar({
       <ToolbarSeparator />
 
       <ToolbarControl
-        aria-label="Heading 2"
-        title="Heading 2"
-        active={toolbarState.isHeadingTwoActive}
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-      >
-        <IconH2 className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Heading 3"
-        title="Heading 3"
-        active={toolbarState.isHeadingThreeActive}
+        aria-label="Heading"
+        title="Heading"
+        active={toolbarState.isHeadingActive}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
       >
-        <IconH3 className="size-5" />
-      </ToolbarControl>
-      <ToolbarControl
-        aria-label="Heading 4"
-        title="Heading 4"
-        active={toolbarState.isHeadingFourActive}
-        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-      >
-        <IconH4 className="size-5" />
+        <IconHeading aria-hidden="true" className="size-5" />
       </ToolbarControl>
       <ToolbarControl
         aria-label="Bullet list"
