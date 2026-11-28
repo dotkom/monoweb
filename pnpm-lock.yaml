@@ -318,7 +318,7 @@ importers:
         version: 14.0.3
       cron-parser:
         specifier: ^5.3.1
-        version: 5.10.6
+        version: 5.10.7
       date-fns:
         specifier: ^4.1.0
         version: 4.4.0
@@ -4940,8 +4940,8 @@ packages:
   caniuse-lite@1.0.30001820:
     resolution: {integrity: sha512-gfWD6MxqVCqAOwmODfZf7DchWvlrA+SRdNX7ceLfg3xRqe5ssjjpF7EgslC/0tiLiNTajdaNN/q8c/5u/7Gz8w==}
 
-  caniuse-lite@1.0.30001828:
-    resolution: {integrity: sha512-7MWeT+3DlrpuDybTWHl4Zb1Z80Z1fLLnOXuBjDXebzDVcqnEWUlV8JcbASg8B8BhcW8QT2UiR1KAtzYFIZHZYA==}
+  caniuse-lite@1.0.30001829:
+    resolution: {integrity: sha512-FeVvlaVr3r+cdHIYXyZhtVkqroSYjYaoNxItxQNjusurUE+IqODawDsbzk02HJgi2RdKiaGGFm+EKbXku+yITg==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -5189,8 +5189,8 @@ packages:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
 
-  cron-parser@5.10.6:
-    resolution: {integrity: sha512-kpoxgQyveO1l29nw+FWdvmotyV7eOSzGHQpxiXOEZIDOjqO1iR6kfgJ0PVHTuV26uBemKq3ppzma7dHFAG7viw==}
+  cron-parser@5.10.7:
+    resolution: {integrity: sha512-ST6Y7vq40qyah/5sGTKpj2DpABiRL9khy8xC+amICUXbwAWXzzzWs11wxyV/hG+SVQHMLyUKRxBZpqElsJo8+Q==}
     engines: {node: '>=18'}
 
   cross-spawn@7.0.6:
@@ -12713,7 +12713,7 @@ snapshots:
   browserslist@4.29.6:
     dependencies:
       baseline-browser-mapping: 2.11.40
-      caniuse-lite: 1.0.30001828
+      caniuse-lite: 1.0.30001829
       electron-to-chromium: 1.5.495
       node-releases: 2.0.66
       update-browserslist-db: 1.4.0(browserslist@4.29.6)
@@ -12785,7 +12785,7 @@ snapshots:
 
   caniuse-lite@1.0.30001820: {}
 
-  caniuse-lite@1.0.30001828: {}
+  caniuse-lite@1.0.30001829: {}
 
   ccount@2.0.1: {}
 
@@ -13023,7 +13023,7 @@ snapshots:
       crc-32: 1.2.2
       readable-stream: 4.8.0
 
-  cron-parser@5.10.6:
+  cron-parser@5.10.7:
     dependencies:
       luxon: 3.7.2
 
