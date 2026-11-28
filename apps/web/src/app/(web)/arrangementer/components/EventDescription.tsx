@@ -6,7 +6,7 @@ interface EventDescriptionProps {
 }
 
 export function EventDescription({ description, collapse }: EventDescriptionProps) {
-  const className = "max-w-full prose-img:max-w-full wrap-anywhere"
+  const className = "wrap-anywhere"
   const fullDescription = <RichText content={description} className={className} />
 
   if (collapse === undefined) {

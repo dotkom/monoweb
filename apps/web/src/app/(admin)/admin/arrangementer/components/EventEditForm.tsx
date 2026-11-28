@@ -25,6 +25,7 @@ import { useForm, type UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 import { useEventFileUploadMutation } from "../mutations"
 import { validateEventOrganizers, validateEventWrite } from "../validation"
+import { EVENT_DESCRIPTION_IMAGE_MAX_WIDTH } from "./EventWriteForm"
 
 const EVENT_FORM_DATA_TYPE = EventTypeSchema.options.map((type) => ({
   value: type,
@@ -84,7 +85,14 @@ export function EventEditForm({
   return (
     <Form form={resolvedForm} onSubmit={onSubmit}>
       <TextField control={control} name="title" label="Arrangementnavn" placeholder="Silent Disco" required />
-      <RichTextField control={control} name="description" label="Beskrivelse" required onFileUpload={uploadFile} />
+      <RichTextField
+        control={control}
+        name="description"
+        label="Beskrivelse"
+        required
+        onFileUpload={uploadFile}
+        maxImageWidth={EVENT_DESCRIPTION_IMAGE_MAX_WIDTH}
+      />
       <TextField
         control={control}
         name="locationTitle"
