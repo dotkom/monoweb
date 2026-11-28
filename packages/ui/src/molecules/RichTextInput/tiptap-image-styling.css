@@ -1,6 +1,6 @@
 .ProseMirror img {
   display: inline-block;
-  max-width: 100%;
+  max-width: min(100%, var(--rich-text-image-max-width, 100%));
   height: auto;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -15,17 +15,15 @@
   cursor: grabbing;
 }
 
-.ProseMirror [data-resize-state] {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
+.ProseMirror [data-resize-wrapper] {
+  min-width: 0;
+  max-width: min(100%, var(--rich-text-image-max-width, 100%));
 }
 
-.ProseMirror [data-resize-state] > img {
+.ProseMirror [data-resize-wrapper] > img {
   display: block;
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-sm);
+  /* biome-ignore lint/complexity/noImportantStyles: Tiptap writes an inline height that would stretch images when CSS caps their width. */
+  height: auto !important;
 }
 
 .ProseMirror .ProseMirror-selectednode img {
@@ -40,11 +38,19 @@
   background: var(--primary);
   cursor: pointer;
   opacity: 0;
+  pointer-events: none;
 }
 
-.ProseMirror .ProseMirror-selectednode ~ [data-resize-handle],
-.ProseMirror .ProseMirror-selectednode [data-resize-handle] {
+.ProseMirror [data-resize-handle]::after {
+  position: absolute;
+  inset: -0.45rem;
+  content: "";
+}
+
+.ProseMirror .ProseMirror-selectednode [data-resize-handle],
+.ProseMirror [data-resize-state="true"] [data-resize-handle] {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .ProseMirror [data-resize-handle="top-left"] {
@@ -64,21 +70,13 @@
 .ProseMirror [data-resize-handle="bottom-left"] {
   bottom: 0;
   left: 0;
-  transform: translate(-50%, -25%);
+  transform: translate(-50%, 50%);
   cursor: nesw-resize;
 }
 
 .ProseMirror [data-resize-handle="bottom-right"] {
   bottom: 0;
   right: 0;
-  transform: translate(50%, -25%);
+  transform: translate(50%, 50%);
   cursor: nwse-resize;
-}
-
-.ProseMirror [data-resize-state] > img:hover {
-  cursor: grab;
-}
-
-.ProseMirror [data-resize-state] > img:active {
-  cursor: grabbing;
 }

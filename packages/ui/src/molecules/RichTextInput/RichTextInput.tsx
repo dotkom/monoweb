@@ -22,9 +22,9 @@ import {
 import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
 import Underline from "@tiptap/extension-underline"
-import { EditorContent, useEditor, useEditorState, type Editor } from "@tiptap/react"
+import { EditorContent, ResizableNodeView, useEditor, useEditorState, type Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import { Button } from "../../atoms/Button/Button"
 import { Checkbox } from "../../atoms/Checkbox/Checkbox"
 import { TextInput } from "../../atoms/Input/TextInput"
@@ -43,6 +43,7 @@ export type RichTextInputProps = {
   className?: string
   isEmail?: boolean
   onFileUpload?: (file: File) => Promise<string>
+  maxImageWidth?: number
 }
 
 function ToolbarControl({
@@ -79,7 +80,7 @@ function ToolbarControl({
 }
 
 function ToolbarSeparator() {
-  return <Separator orientation="vertical" className="mx-0 h-6 self-center" />
+  return <Separator orientation="vertical" className="mx-1.5 h-6 self-center!" />
 }
 
 function EditorToolbar({
@@ -247,12 +248,47 @@ function EditorToolbar({
   )
 }
 
+const ResizableImage = Image.extend({
+  addNodeView() {
+    const createNodeView = this.parent?.()
+
+    if (createNodeView == null) {
+      return null
+    }
+
+    return (props) => {
+      const nodeView = createNodeView(props)
+
+      if (!(nodeView instanceof ResizableNodeView)) {
+        return nodeView
+      }
+
+      const update = nodeView.update.bind(nodeView)
+
+      nodeView.update = (node, decorations, innerDecorations) => {
+        const hasUpdated = update(node, decorations, innerDecorations)
+
+        // Tiptap applies the stored size on mount. Undo and redo also need to update the live image.
+        if (hasUpdated) {
+          const { width } = node.attrs
+          nodeView.element.style.width = width == null ? "" : `${width}px`
+        }
+
+        return hasUpdated
+      }
+
+      return nodeView
+    }
+  },
+})
+
 export function RichTextInput({
   value,
   onChange,
   disabled = false,
   className,
   onFileUpload,
+  maxImageWidth,
   isEmail = false,
 }: RichTextInputProps) {
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
@@ -275,7 +311,7 @@ export function RichTextInput({
       ...(isEmail
         ? []
         : [
-            Image.configure({
+            ResizableImage.configure({
               inline: false,
               resize: disabled
                 ? { enabled: false }
@@ -340,16 +376,18 @@ export function RichTextInput({
   const handleImageSubmit = (imageUrl: string, alt: string, title: string | undefined) => {
     const currentEditor = editorRef.current
 
-    if (!currentEditor || currentEditor.isDestroyed) {
+    if (currentEditor === null || currentEditor.isDestroyed) {
       return
     }
 
     const commandChain = currentEditor.chain()
     const imageInsertionSelection = imageInsertionSelectionRef.current
 
-    if (imageInsertionSelection) {
+    if (imageInsertionSelection !== null) {
       commandChain.setTextSelection(imageInsertionSelection)
     }
+
+    const width = Math.min(DEFAULT_IMAGE_WIDTH_IN_PIXELS, maxImageWidth ?? DEFAULT_IMAGE_WIDTH_IN_PIXELS)
 
     commandChain
       .focus()
@@ -357,7 +395,7 @@ export function RichTextInput({
         src: imageUrl,
         alt,
         title,
-        width: DEFAULT_IMAGE_WIDTH_IN_PIXELS,
+        width,
       })
       .run()
 
@@ -377,7 +415,16 @@ export function RichTextInput({
           onInsertImage={onFileUpload ? openImageUploadModal : undefined}
         />
       )}
-      <EditorContent editor={editor} className={cn(richTextInputClasses, disabled && "opacity-60")} />
+
+      <EditorContent
+        editor={editor}
+        className={cn(richTextInputClasses, disabled && "opacity-60")}
+        style={
+          maxImageWidth === undefined
+            ? undefined
+            : ({ "--rich-text-image-max-width": `${maxImageWidth}px` } as CSSProperties)
+        }
+      />
 
       {!isEmail && onFileUpload !== undefined && (
         <ImageUploadModal
